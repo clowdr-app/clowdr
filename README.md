@@ -228,8 +228,6 @@ localhost-based, rather than public, URLs:
 - frontend
   - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
   - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
-- services/actions
-  - `FRONTEND_DOMAIN`
 - services/realtime
   - `CORS_ORIGIN`
 

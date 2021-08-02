@@ -7614,8 +7614,7 @@ export type Conference_Configuration = {
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
-    id: Scalars["uuid"];
-    key: Scalars["String"];
+    key: Conference_ConfigurationKey_Enum;
     updatedAt: Scalars["timestamptz"];
     value: Scalars["jsonb"];
 };
@@ -7667,6 +7666,40 @@ export enum Conference_ConfigurationKey_Constraint {
     /** unique or primary key constraint */
     ConfigurationKeyPkey = "ConfigurationKey_pkey",
 }
+
+export enum Conference_ConfigurationKey_Enum {
+    /** A list of videos to be used as the background for title/sponsor slides. */
+    BackgroundVideos = "BACKGROUND_VIDEOS",
+    /** A string representing the app version. Changing this causes the user's browsers to refresh. */
+    ClowdrAppVersion = "CLOWDR_APP_VERSION",
+    EmailTemplateSubmissionRequest = "EMAIL_TEMPLATE_SUBMISSION_REQUEST",
+    EmailTemplateSubtitlesGenerated = "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+    /** List of S3 URLs. */
+    FillerVideos = "FILLER_VIDEOS",
+    /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
+    FrontendHost = "FRONTEND_HOST",
+    /** An image to be displayed if AWS MediaLive loses input. */
+    InputLossSlate = "INPUT_LOSS_SLATE",
+    /** A string representing a valid URL for users to register for the conference. */
+    RegistrationUrl = "REGISTRATION_URL",
+    /** A string representing a valid email address for contacting the conference organisers. */
+    SupportAddress = "SUPPORT_ADDRESS",
+    /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
+    TechSupportAddress = "TECH_SUPPORT_ADDRESS",
+    /** Text of the upload agreement or a URL to one. */
+    UploadAgreement = "UPLOAD_AGREEMENT",
+    /** The time in milliseconds since the UNIX epoch, as a string. */
+    UploadCutoffTimestamp = "UPLOAD_CUTOFF_TIMESTAMP",
+}
+
+/** Boolean expression to compare columns of type "conference_ConfigurationKey_enum". All fields are combined with logical 'AND'. */
+export type Conference_ConfigurationKey_Enum_Comparison_Exp = {
+    _eq?: Maybe<Conference_ConfigurationKey_Enum>;
+    _in?: Maybe<Array<Conference_ConfigurationKey_Enum>>;
+    _is_null?: Maybe<Scalars["Boolean"]>;
+    _neq?: Maybe<Conference_ConfigurationKey_Enum>;
+    _nin?: Maybe<Array<Conference_ConfigurationKey_Enum>>;
+};
 
 /** input type for inserting data into table "conference.ConfigurationKey" */
 export type Conference_ConfigurationKey_Insert_Input = {
@@ -7785,16 +7818,13 @@ export type Conference_Configuration_Bool_Exp = {
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
-    id?: Maybe<Uuid_Comparison_Exp>;
-    key?: Maybe<String_Comparison_Exp>;
+    key?: Maybe<Conference_ConfigurationKey_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     value?: Maybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "conference.Configuration" */
 export enum Conference_Configuration_Constraint {
-    /** unique or primary key constraint */
-    ConfigurationConferenceIdKeyKey = "Configuration_conferenceId_key_key",
     /** unique or primary key constraint */
     ConfigurationPkey = "Configuration_pkey",
 }
@@ -7819,8 +7849,7 @@ export type Conference_Configuration_Insert_Input = {
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
+    key?: Maybe<Conference_ConfigurationKey_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     value?: Maybe<Scalars["jsonb"]>;
 };
@@ -7830,8 +7859,6 @@ export type Conference_Configuration_Max_Fields = {
     __typename?: "conference_Configuration_max_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -7839,8 +7866,6 @@ export type Conference_Configuration_Max_Fields = {
 export type Conference_Configuration_Max_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -7849,8 +7874,6 @@ export type Conference_Configuration_Min_Fields = {
     __typename?: "conference_Configuration_min_fields";
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -7858,8 +7881,6 @@ export type Conference_Configuration_Min_Fields = {
 export type Conference_Configuration_Min_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
-    key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -7884,7 +7905,6 @@ export type Conference_Configuration_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
-    id?: Maybe<Order_By>;
     key?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
     value?: Maybe<Order_By>;
@@ -7892,7 +7912,8 @@ export type Conference_Configuration_Order_By = {
 
 /** primary key columns input for table: conference_Configuration */
 export type Conference_Configuration_Pk_Columns_Input = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -7907,8 +7928,6 @@ export enum Conference_Configuration_Select_Column {
     /** column name */
     CreatedAt = "createdAt",
     /** column name */
-    Id = "id",
-    /** column name */
     Key = "key",
     /** column name */
     UpdatedAt = "updatedAt",
@@ -7920,8 +7939,7 @@ export enum Conference_Configuration_Select_Column {
 export type Conference_Configuration_Set_Input = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
-    id?: Maybe<Scalars["uuid"]>;
-    key?: Maybe<Scalars["String"]>;
+    key?: Maybe<Conference_ConfigurationKey_Enum>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
     value?: Maybe<Scalars["jsonb"]>;
 };
@@ -7932,8 +7950,6 @@ export enum Conference_Configuration_Update_Column {
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "createdAt",
-    /** column name */
-    Id = "id",
     /** column name */
     Key = "key",
     /** column name */
@@ -14864,7 +14880,8 @@ export type Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Conference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 /** mutation root */
@@ -20341,7 +20358,8 @@ export type Query_RootConference_Configuration_AggregateArgs = {
 };
 
 export type Query_RootConference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 export type Query_RootConference_DemoCodeArgs = {
@@ -24221,7 +24239,6 @@ export type Room_Room = {
     chatId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
     chimeMeeting?: Maybe<Room_ChimeMeeting>;
-    colour: Scalars["String"];
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
@@ -24681,7 +24698,6 @@ export type Room_Room_Bool_Exp = {
     chat?: Maybe<Chat_Chat_Bool_Exp>;
     chatId?: Maybe<Uuid_Comparison_Exp>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
-    colour?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -24733,7 +24749,6 @@ export type Room_Room_Insert_Input = {
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
-    colour?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
@@ -24766,7 +24781,6 @@ export type Room_Room_Max_Fields = {
     __typename?: "room_Room_max_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -24783,7 +24797,6 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
-    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -24801,7 +24814,6 @@ export type Room_Room_Min_Fields = {
     __typename?: "room_Room_min_fields";
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -24818,7 +24830,6 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
     capacity?: Maybe<Order_By>;
     chatId?: Maybe<Order_By>;
-    colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
@@ -24863,7 +24874,6 @@ export type Room_Room_Order_By = {
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
-    colour?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
@@ -24905,8 +24915,6 @@ export enum Room_Room_Select_Column {
     /** column name */
     ChatId = "chatId",
     /** column name */
-    Colour = "colour",
-    /** column name */
     ConferenceId = "conferenceId",
     /** column name */
     CreatedAt = "created_at",
@@ -24937,7 +24945,6 @@ export type Room_Room_Set_Input = {
     backendName?: Maybe<Room_Backend_Enum>;
     capacity?: Maybe<Scalars["Int"]>;
     chatId?: Maybe<Scalars["uuid"]>;
-    colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
     currentModeName?: Maybe<Room_Mode_Enum>;
@@ -25012,8 +25019,6 @@ export enum Room_Room_Update_Column {
     Capacity = "capacity",
     /** column name */
     ChatId = "chatId",
-    /** column name */
-    Colour = "colour",
     /** column name */
     ConferenceId = "conferenceId",
     /** column name */
@@ -29347,7 +29352,8 @@ export type Subscription_RootConference_Configuration_AggregateArgs = {
 };
 
 export type Subscription_RootConference_Configuration_By_PkArgs = {
-    id: Scalars["uuid"];
+    conferenceId: Scalars["uuid"];
+    key: Conference_ConfigurationKey_Enum;
 };
 
 export type Subscription_RootConference_DemoCodeArgs = {
@@ -30716,8 +30722,6 @@ export enum System_ConfigurationKey_Enum {
     CookiePolicyLatestRevisionTimestamp = "COOKIE_POLICY_LATEST_REVISION_TIMESTAMP",
     /** The URL to the host cookie policy. Note: If self hosting Clowdr, this must be your organisation's cookie policy - you cannot legally reuse, rely on or copy Clowdr's cookie policy. */
     CookiePolicyUrl = "COOKIE_POLICY_URL",
-    /** A string representing the full frontend host URL for the app. */
-    DefaultFrontendHost = "DEFAULT_FRONTEND_HOST",
     /** Default backend platform for video rooms */
     DefaultVideoRoomBackend = "DEFAULT_VIDEO_ROOM_BACKEND",
     /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */

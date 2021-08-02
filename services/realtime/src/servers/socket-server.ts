@@ -20,7 +20,7 @@ import { httpServer } from "./http-server";
 // Initialise the websocket server
 export const socketServer = new socketIO.Server(httpServer, {
     cors: {
-        origin: process.env.CORS_ORIGIN,
+        origin: process.env.CORS_ORIGIN?.split(","),
         methods: ["GET", "POST"],
     },
     transports: ["websocket"],

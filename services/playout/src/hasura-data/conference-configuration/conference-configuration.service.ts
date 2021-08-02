@@ -2,7 +2,10 @@ import { gql } from "@apollo/client/core";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { validate } from "class-validator";
-import { ConferenceConfiguration_GetConfigurationValueDocument } from "../../generated/graphql";
+import {
+    ConferenceConfiguration_GetConfigurationValueDocument,
+    Conference_ConfigurationKey_Enum,
+} from "../../generated/graphql";
 import { GraphQlService } from "../graphql/graphql.service";
 
 export class ConferenceConfigurationService {
@@ -11,11 +14,15 @@ export class ConferenceConfigurationService {
         this.logger = logger.child({ component: this.constructor.name });
     }
 
-    public async getConferenceConfiguration(conferenceId: string, key: string): Promise<any> {
+    public async getConferenceConfiguration(conferenceId: string, key: Conference_ConfigurationKey_Enum): Promise<any> {
         gql`
-            query ConferenceConfiguration_GetConfigurationValue($key: String!, $conferenceId: uuid!) {
-                conference_Configuration(where: { key: { _eq: $key }, conferenceId: { _eq: $conferenceId } }) {
-                    id
+            query ConferenceConfiguration_GetConfigurationValue(
+                $key: conference_ConfigurationKey_enum!
+                $conferenceId: uuid!
+            ) {
+                conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+                    conferenceId
+                    key
                     value
                 }
             }
@@ -35,7 +42,7 @@ export class ConferenceConfigurationService {
     public async getConferenceConfigurationAndValidate<T extends object>(
         cls: ClassConstructor<T>,
         conferenceId: string,
-        key: string
+        key: Conference_ConfigurationKey_Enum
     ): Promise<T | null> {
         const result = await this.graphQlService.apolloClient.query({
             query: ConferenceConfiguration_GetConfigurationValueDocument,
@@ -59,7 +66,10 @@ export class ConferenceConfigurationService {
     }
 
     public async getFillerVideos(conferenceId: string): Promise<string[] | null> {
-        const result = await this.getConferenceConfiguration(conferenceId, "FILLER_VIDEOS");
+        const result = await this.getConferenceConfiguration(
+            conferenceId,
+            Conference_ConfigurationKey_Enum.FillerVideos
+        );
         const valid = Array.isArray(result) && result.every((x) => typeof x === "string");
         return valid ? result : null;
     }

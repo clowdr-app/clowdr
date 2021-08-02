@@ -1,0 +1,1 @@
+INSERT INTO "system"."Configuration"("key", "value", "updated_at", "created_at") VALUES (E'ALLOW_EMAILS_TO_DOMAINS', '["*"]', E'2021-07-31T23:32:29.336113+00:00', E'2021-07-31T23:32:29.336113+00:00');

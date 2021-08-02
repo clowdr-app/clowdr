@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client/core";
 import {
-    ConferenceConfigurationKey,
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
@@ -10,6 +9,7 @@ import assert from "assert";
 import Mustache from "mustache";
 import R from "ramda";
 import {
+    Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetElementDetailsDocument,
@@ -207,11 +207,11 @@ async function trySendTranscriptionEmail(elementId: string) {
             throw new Error("Could not find Element while sending");
         }
 
-        const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+        const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             element.conference.id,
-            ConferenceConfigurationKey.EmailTemplate_SubtitlesGenerated
+            Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated
         );
 
         if (!isEmailTemplate_BaseConfig(emailTemplates)) {
@@ -289,7 +289,7 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 
     const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
     const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
@@ -357,7 +357,7 @@ async function trySendTranscodeFailedEmail(elementId: string, elementName: strin
 
     const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
-    const magicItemLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
     const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
@@ -398,7 +398,9 @@ gql`
     query GetUploadAgreement($accessToken: String!) {
         content_Element(where: { accessToken: { _eq: $accessToken } }) {
             conference {
-                configurations(where: { key: { _eq: "UPLOAD_AGREEMENT" } }) {
+                configurations(where: { key: { _eq: UPLOAD_AGREEMENT } }) {
+                    conferenceId
+                    key
                     value
                 }
             }
@@ -420,12 +422,23 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
 
     if (
         result.data.content_Element.length === 1 &&
-        result.data.content_Element[0].conference.configurations.length === 1 &&
-        "text" in result.data.content_Element[0].conference.configurations[0].value
+        result.data.content_Element[0].conference.configurations.length === 1
     ) {
-        return {
-            agreementText: result.data.content_Element[0].conference.configurations[0].value.text,
-        };
+        const value = result.data.content_Element[0].conference.configurations[0].value;
+        if ("text" in value && "url" in value) {
+            return {
+                agreementText: value.text,
+                agreementUrl: value.url,
+            };
+        } else if ("text" in value) {
+            return {
+                agreementText: value.text,
+            };
+        } else if ("url" in value) {
+            return {
+                agreementUrl: value.url,
+            };
+        }
     }
 
     return {};

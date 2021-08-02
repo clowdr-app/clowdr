@@ -1,0 +1,1 @@
+INSERT INTO "system"."ConfigurationKey"("name", "description") VALUES (E'ALLOW_EMAILS_TO_DOMAINS', E'Allow-list (JSON array) of wildcard-match domains that the system should allow email to be sent to. See also NPM wildcard-match package.');

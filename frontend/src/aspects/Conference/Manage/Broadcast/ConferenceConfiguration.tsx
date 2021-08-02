@@ -5,6 +5,7 @@ import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
 import {
     ConferenceConfiguration_ConferenceConfigurationsFragment,
+    Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
@@ -17,17 +18,23 @@ gql`
     }
 
     fragment ConferenceConfiguration_ConferenceConfigurations on conference_Configuration {
-        id
+        conferenceId
         key
         value
     }
 
     mutation conference_Configuration_UpdateConferenceConfigurations(
-        $conferenceConfigurationId: uuid!
+        $conferenceId: uuid!
+        $key: conference_ConfigurationKey_enum!
         $value: jsonb!
     ) {
-        update_conference_Configuration_by_pk(pk_columns: { id: $conferenceConfigurationId }, _set: { value: $value }) {
-            id
+        update_conference_Configuration_by_pk(
+            pk_columns: { conferenceId: $conferenceId, key: $key }
+            _set: { value: $value }
+        ) {
+            conferenceId
+            key
+            value
         }
     }
 `;
@@ -46,7 +53,10 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
         >
             {(configurations: readonly ConferenceConfiguration_ConferenceConfigurationsFragment[]) => (
                 <FillerVideoConfiguration
-                    fillerVideos={configurations.find((x) => x.key === "FILLER_VIDEOS")?.value ?? null}
+                    fillerVideos={
+                        configurations.find((x) => x.key === Conference_ConfigurationKey_Enum.FillerVideos)?.value ??
+                        null
+                    }
                     update={() => {
                         //todo
                     }}
@@ -58,7 +68,6 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
 
 function FillerVideoConfiguration({
     fillerVideos,
-    update,
 }: {
     fillerVideos: string[] | null;
     update: (fillerVideos: any[]) => void;

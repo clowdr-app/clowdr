@@ -1845,7 +1845,6 @@
     permission:
       columns:
       - conferenceId
-      - id
       - key
       - value
       filter:
@@ -1859,7 +1858,6 @@
       columns:
       - conferenceId
       - created_at
-      - id
       - key
       - updated_at
       - value
@@ -1916,6 +1914,10 @@
             createdBy:
               _eq: X-Hasura-User-Id
       check: null
+- table:
+    schema: conference
+    name: ConfigurationKey
+  is_enum: true
 - table:
     schema: conference
     name: DemoCode

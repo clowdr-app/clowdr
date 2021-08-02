@@ -47,6 +47,7 @@ gql`
     query GetUploadAgreement($magicToken: String!) {
         getUploadAgreement(magicToken: $magicToken) {
             agreementText
+            agreementUrl
         }
     }
 `;
@@ -93,8 +94,11 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
 
     const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Clowdr");
 
-    const uploadAgreement = useMemo(() => {
+    const uploadAgreementText = useMemo(() => {
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
+    }, [uploadAgreementData]);
+    const uploadAgreementUrl = useMemo(() => {
+        return uploadAgreementData?.getUploadAgreement?.agreementUrl ?? undefined;
     }, [uploadAgreementData]);
 
     const formSubmitted = useCallback(async () => {
@@ -119,7 +123,8 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                 return (
                     <UploadTextForm
                         magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
                         existingText={existingData}
                     />
                 );
@@ -131,7 +136,8 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                         magicToken={magicToken}
                         elementId={uploadableElement.id}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
-                        uploadAgreement={uploadAgreement}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
                     />
                 );
@@ -142,7 +148,8 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                 return (
                     <UploadLinkForm
                         magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
                         existingLink={existingData}
                     />
@@ -155,7 +162,8 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                 return (
                     <UploadUrlForm
                         magicToken={magicToken}
-                        uploadAgreement={uploadAgreement}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
                         existingUrl={existingData}
                     />
@@ -172,14 +180,15 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                         magicToken={magicToken}
                         elementId={uploadableElement.id}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
-                        uploadAgreement={uploadAgreement}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
                     />
                 );
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [uploadableElement, magicToken, uploadAgreement, formSubmitted]);
+    }, [uploadableElement, magicToken, formSubmitted, uploadAgreementText, uploadAgreementUrl]);
 
     return (
         <Center>

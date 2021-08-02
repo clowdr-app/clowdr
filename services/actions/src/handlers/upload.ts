@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client/core";
 import {
-    ConferenceConfigurationKey,
     EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
@@ -20,6 +19,7 @@ import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
 import {
+    Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetUploadersDocument,
@@ -42,8 +42,9 @@ gql`
         content_Element(where: { accessToken: { _eq: $accessToken } }) {
             ...UploadableElementFields
             conference {
-                configurations(where: { key: { _eq: "UPLOAD_CUTOFF_TIMESTAMP" } }) {
-                    id
+                configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
+                    conferenceId
+                    key
                     value
                 }
             }
@@ -590,14 +591,14 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             job.uploader.conference.id,
-            ConferenceConfigurationKey.EmailTemplate_SubmissionRequest
+            Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
         );
 
         if (!isEmailTemplate_BaseConfig(emailTemplates)) {
             emailTemplates = null;
         }
 
-        const uploadLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_DOMAIN}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
+        const uploadLink = `{[FRONTEND_HOST]}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
 
         const view: EmailView_SubmissionRequest = {
             uploader: {

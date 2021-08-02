@@ -312,7 +312,6 @@ function findExistingItemPerson(
                 ItemPersonDescriptor
             >("personId")(ctxInner, element1, element2);
         })
-        // TODO: Find by name_affiliation
     );
 }
 
@@ -776,38 +775,21 @@ function findExistingPerson(
     elements: ProgramPersonDescriptor[],
     element: IntermediaryPersonDescriptor | ProgramPersonDescriptor
 ): number | undefined {
-    const generateMatchableName = (x: ProgramPersonDescriptor | IntermediaryPersonDescriptor): string | undefined => {
-        if (!x.name) {
-            return undefined;
-        }
-        if (x.affiliation) {
-            return `${x.name} (${x.affiliation})`;
-        }
-        return `${x.name} (No affiliation)`;
-    };
     const matchExact = isMatch_String_Exact();
-    const matchDistance = isMatch_String_EditDistance();
     return (
         findMatch(ctx, elements, element, isMatch_Id("Person")) ??
         findMatch(ctx, elements, element, isMatch_String_Exact("email")) ??
         findMatch(ctx, elements, element, (ctxInner, x, y) => {
-            const left = generateMatchableName(x);
-            const right = generateMatchableName(y);
-            if (!left || !right) {
-                return false;
-            }
-            return matchExact(ctxInner, left, right);
-        }) ??
-        findMatch(ctx, elements, element, (ctxInner, x, y) => {
-            const left = generateMatchableName(x);
-            const right = generateMatchableName(y);
-            if (!left || !right) {
+            if (!x.name || !y.name) {
                 return false;
             }
             // Match affiliation separately - long affiliation can skew the result unexpectedly
             return (
-                matchDistance(ctxInner, left.split("(")[0], right.split("(")[0]) &&
-                matchDistance(ctxInner, left.split("(")[1], right.split("(")[1])
+                matchExact(ctxInner, x.name.trim(), y.name.trim()) &&
+                ((!x.affiliation && !y.affiliation) ||
+                    (!!x.affiliation &&
+                        !!y.affiliation &&
+                        matchExact(ctxInner, x.affiliation.trim(), y.affiliation.trim())))
             );
         })
     );
@@ -818,18 +800,21 @@ function findExistingPersonForItem(
     elements: ProgramPersonDescriptor[],
     element: IntermediaryItemPersonDescriptor | ItemPersonDescriptor
 ): number | undefined {
-    const generateMatchableNameA = (x: ProgramPersonDescriptor): string | undefined => {
+    const generateMatchableNameA = (x: ProgramPersonDescriptor): { name: string; affiliation?: string } | undefined => {
         if (!x.name) {
             return undefined;
         }
         if (x.affiliation) {
-            return `${x.name}¦${x.affiliation}`;
+            return { name: x.name, affiliation: x.affiliation };
         }
-        return `${x.name}¦No affiliation`;
+        return { name: x.name };
     };
-    const generateMatchableNameB = (x: ItemPersonDescriptor | IntermediaryItemPersonDescriptor): string | undefined => {
-        if ("name_affiliation" in x) {
-            return x.name_affiliation;
+    const generateMatchableNameB = (
+        x: ItemPersonDescriptor | IntermediaryItemPersonDescriptor
+    ): { name: string; affiliation?: string } | undefined => {
+        if ("name_affiliation" in x && x.name_affiliation) {
+            const parts = x.name_affiliation?.split("¦").map((x) => x.trim());
+            return { name: parts[0], affiliation: parts[1].length ? parts[1] : undefined };
         }
 
         if (!x.personId) {
@@ -840,10 +825,9 @@ function findExistingPersonForItem(
         if (!p) {
             return undefined;
         }
-        return `${p.name}¦${p.affiliation ? p.affiliation : "No affiliation"}`;
+        return { name: p.name, affiliation: p.affiliation ? p.affiliation : undefined };
     };
     const matchExact = isMatch_String_Exact();
-    const matchDistance = isMatch_String_EditDistance();
     if (element.personId) {
         const pId = element.personId;
         const origDataIds = ctx.originatingDatas
@@ -872,18 +856,12 @@ function findExistingPersonForItem(
             if (!left || !right) {
                 return false;
             }
-            return matchExact(ctxInner, left, right);
-        }) ??
-        findMatch(ctx, elements, element, (ctxInner, x, y) => {
-            const left = generateMatchableNameA(x);
-            const right = generateMatchableNameB(y);
-            if (!left || !right) {
-                return false;
-            }
-            // Match affiliation separately - long affiliation can skew the result unexpectedly
             return (
-                matchDistance(ctxInner, left.split("¦")[0].trim(), right.split("¦")[0].trim()) &&
-                matchDistance(ctxInner, left.split("¦")[1].trim(), right.split("¦")[1].trim())
+                matchExact(ctxInner, left.name, right.name) &&
+                ((!left.affiliation && !right.affiliation) ||
+                    (!!left.affiliation &&
+                        !!right.affiliation &&
+                        matchExact(ctxInner, left.affiliation, right.affiliation)))
             );
         })
     );

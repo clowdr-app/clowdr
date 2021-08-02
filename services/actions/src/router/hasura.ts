@@ -14,7 +14,11 @@ const jwksClient = jwksRsa({
     jwksUri: `https://${process.env.AUTH0_API_DOMAIN}/.well-known/jwks.json`,
 });
 
-router.post("/auth", json(), async (req: Request, res: Response) => {
+// Note: The "Import Content/Schedule" pages caused body parser to regularly hit
+// the default 100kb limit. 5mb should be enough but for a very large conference
+// it may still fail. This manifests as an `"Invalid response from authorization hook"`
+// error response from Hasura to the browser.
+router.post("/auth", json({ limit: "5mb" }), async (req: Request, res: Response) => {
     // console.log("Auth request started");
 
     try {
@@ -64,7 +68,7 @@ router.post("/auth", json(), async (req: Request, res: Response) => {
             } else {
                 authScopes = [];
             }
-            
+
             // console.log("Auth scopes", authScopes);
 
             if (authScopes.includes("user")) {

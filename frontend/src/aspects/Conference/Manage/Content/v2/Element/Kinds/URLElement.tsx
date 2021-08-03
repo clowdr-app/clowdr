@@ -105,14 +105,6 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 ? "https://zoom.us/j/12345678901?pwd=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                 : "https://www.example.org/a-poster.pdf";
 
-        if (data.data.length === 0) {
-            data = {
-                ...data,
-                data: [],
-            };
-            setTimeout(() => update(data), 0);
-        }
-
         const latestVersion = data.data[data.data.length - 1] as UrlElementVersionData;
         if (latestVersion && latestVersion.data.baseType !== ElementBaseType.URL) {
             return <>URL Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;

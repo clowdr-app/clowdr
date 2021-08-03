@@ -76,14 +76,6 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
             return <>Video Element Template mistakenly used for type {data.typeName}.</>;
         }
 
-        if (data.data.length === 0) {
-            data = {
-                ...data,
-                data: [],
-            };
-            setTimeout(() => update(data), 0);
-        }
-
         const latestVersion = data.data[data.data.length - 1];
         if (latestVersion && latestVersion.data.baseType !== ElementBaseType.Video) {
             return <>Video Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;

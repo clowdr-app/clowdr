@@ -12,7 +12,6 @@ and all of our backend services.
 ## Setting Up
 
 1. `cp hasura/.env.example hasura/.env.local`
-1. In `docker-compose.yaml`, comment out the line `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`. We'll re-enable it once we have a JWT secret.
 1. If you are using an M1 Mac, note that Hasura's official Docker image does not yet support this platform. You will need to use a different image built by a third party. Swap `image: hasura/graphql-engine:v{version number}.cli-migrations-v2` for `image: fedormelexin/graphql-engine-arm64:v{version number}.cli-migrations-v2` in `docker-compose.yaml`, replacing the version number as appropriate.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`.

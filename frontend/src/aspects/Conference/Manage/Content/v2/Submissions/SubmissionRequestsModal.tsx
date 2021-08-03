@@ -146,6 +146,7 @@ gql`
             id
             email
             name
+            emailsSentCount
         }
     }
 `;
@@ -236,7 +237,8 @@ export function SendSubmissionRequestsModalInner({
 }): JSX.Element {
     const types = useMemo(() => Object.values(Content_ElementType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
-    const [onlyReminders, setOnlyReminders] = useState<boolean>(true);
+    const [onlyUnsubmitted, setOnlyUnsubmitted] = useState<boolean>(true);
+    const [onlyFirsts, setOnlyFirsts] = useState<boolean>(false);
     const filteredUploadableElements = useMemo(
         () =>
             uploadableElements.filter((upElement) => {
@@ -246,11 +248,12 @@ export function SendSubmissionRequestsModalInner({
                         : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
                 return (
                     (!selectedType || upElement.typeName === selectedType) &&
-                    (!onlyReminders || !upElement.data?.length) &&
-                    filteredUploaders.length > 0
+                    (!onlyUnsubmitted || !upElement.data?.length) &&
+                    filteredUploaders.length > 0 &&
+                    (upElement.uploadsRemaining ?? Number.POSITIVE_INFINITY) > 0
                 );
             }),
-        [uploadableElements, onlyReminders, selectedType, filterToUploaderIds]
+        [uploadableElements, onlyUnsubmitted, selectedType, filterToUploaderIds]
     );
     const uploadableElementsEl = useMemo(
         () => (
@@ -293,12 +296,15 @@ export function SendSubmissionRequestsModalInner({
         () =>
             R.flatten(
                 filteredUploadableElements.map((upElement) =>
-                    filterToUploaderIds === null
-                        ? upElement.uploaders.map((x) => x.id)
-                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id)).map((x) => x.id)
+                    (filterToUploaderIds === null
+                        ? upElement.uploaders
+                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id))
+                    )
+                        .filter((x) => !onlyFirsts || x.emailsSentCount === 0)
+                        .map((x) => x.id)
                 )
             ),
-        [filteredUploadableElements, filterToUploaderIds]
+        [filteredUploadableElements, onlyFirsts, filterToUploaderIds]
     );
 
     const toast = useToast();
@@ -355,13 +361,16 @@ export function SendSubmissionRequestsModalInner({
                         </ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <FormControl>
-                                <FormLabel>First requests and reminders only?</FormLabel>
+                            <Text mb={4} fontSize="md">
+                                This will only send requests for elements with at least one upload attempt remaining.
+                            </Text>
+                            <FormControl mb={4}>
+                                <FormLabel>Unsubmitted only?</FormLabel>
                                 <HStack>
                                     <chakra.span>No</chakra.span>
                                     <Switch
-                                        isChecked={onlyReminders}
-                                        onChange={(ev) => setOnlyReminders(ev.target.checked)}
+                                        isChecked={onlyUnsubmitted}
+                                        onChange={(ev) => setOnlyUnsubmitted(ev.target.checked)}
                                     />
                                     <chakra.span>Yes</chakra.span>
                                 </HStack>
@@ -369,7 +378,21 @@ export function SendSubmissionRequestsModalInner({
                                     Send emails only for elements which have not yet been submitted.
                                 </FormHelperText>
                             </FormControl>
-                            <Divider my={3} />
+                            <FormControl>
+                                <FormLabel>First requests only?</FormLabel>
+                                <HStack>
+                                    <chakra.span>No</chakra.span>
+                                    <Switch
+                                        isChecked={onlyFirsts}
+                                        onChange={(ev) => setOnlyFirsts(ev.target.checked)}
+                                    />
+                                    <chakra.span>Yes</chakra.span>
+                                </HStack>
+                                <FormHelperText>
+                                    Send emails only to people who have not already received one.
+                                </FormHelperText>
+                            </FormControl>
+                            <Divider my={5} />
                             <FormControl>
                                 <FormLabel>File type</FormLabel>
                                 <Select
@@ -384,7 +407,7 @@ export function SendSubmissionRequestsModalInner({
                                 </Select>
                             </FormControl>
                             {uploadableElementsEl}
-                            <Divider my={3} />
+                            <Divider my={5} />
                             <Heading as="h4" textAlign="left" size="sm" mt={4}>
                                 Email template
                             </Heading>
@@ -436,7 +459,7 @@ export function SendSubmissionRequestsModalInner({
                                 mt={4}
                                 colorScheme="purple"
                             >
-                                Send {uploaderIds.length} emails ({filteredUploadableElements.length} items)
+                                Send {uploaderIds.length} emails ({filteredUploadableElements.length} elements)
                             </Button>
                         </ModalFooter>
                     </Form>

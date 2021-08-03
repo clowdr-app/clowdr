@@ -58,31 +58,23 @@ export const FileElementTemplate: ElementBaseTemplate = {
             return <>File Element Template mistakenly used for type {data.typeName}.</>;
         }
 
-        if (data.data.length === 0) {
-            data = {
-                ...data,
-                data: [],
-            };
-            setTimeout(() => update(data), 0);
-        }
-
         const latestVersion = data.data[data.data.length - 1];
         if (latestVersion && latestVersion.data.baseType !== ElementBaseType.File) {
             return <>File Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;
         }
 
-        let imageSrc = undefined;
+        let fileSrc = undefined;
         if (latestVersion && latestVersion.data.baseType === ElementBaseType.File && latestVersion.data.s3Url !== "") {
             try {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                imageSrc = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                fileSrc = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             } catch {
                 /* Ignore */
             }
         }
         return (
             <>
-                {imageSrc ? (
+                {fileSrc ? (
                     <>
                         <Box pb={4}>
                             {data.typeName === Content_ElementType_Enum.ImageFile ||
@@ -92,11 +84,11 @@ export const FileElementTemplate: ElementBaseTemplate = {
                                         Current file
                                     </Heading>
                                     <Center>
-                                        <Image src={imageSrc} maxH={200} alt="No caption provided." />
+                                        <Image src={fileSrc} maxH={200} alt="No caption provided." />
                                     </Center>
                                 </>
                             ) : (
-                                <ExternalLinkButton to={imageSrc} isExternal>
+                                <ExternalLinkButton to={fileSrc} isExternal>
                                     Current file
                                 </ExternalLinkButton>
                             )}

@@ -545,36 +545,17 @@ This is useful for debugging. Go to _Extensions_ and install `Real-time Webtask 
 see some useful logs, uncomment `console.log` statements in the _Rules_ we
 created above.
 
-#### 7. Configure Hasura
-
-1. Generate your JWT Secret key using [Hasura's tool -
-   https://hasura.io/jwt-config/](https://hasura.io/jwt-config/)
-   - Select Auth0
-   - Enter your Auth0 Domain
-1. Copy your key (the whole JSON object that is generated in the JWT Config
-   box) into your local `hasura/.env.local` file
-   - e.g. `HASURA_GRAPHQL_JWT_SECRET='your key goes in here'`
-   - **Don't forget the wrapping single quotes!**
-1. Uncomment the `HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}`
-   line in `docker-compose.yaml`
-   - Don't forget to restart the `Hasura Console -- Local Development` task
-     in VSCode! (Again, if you get an error message about `version check: failed to get version from server: failed making version api call...`
-     try running the task again -- this could be due to a race condition.)
-1. Optionally: Copy your key into Hasura Cloud Environment configuration
-   - No need for the wrapping single quotes - Hasura's UI will handle that
-     for you.
-
-#### 8. Configure "new UI experience"
+#### 7. Configure "new UI experience"
 
 Under _Universal Login_ settings, set the _default look and feel_ to _**New**_.
 
-#### 9. (Optional) Customising the login page
+#### 8. (Optional) Customising the login page
 
 To customise what the Auth0 login page looks like, go to _Universal Login_ and
 have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
 properly.)
 
-#### 10. Configure your environment
+#### 9. Configure your environment
 
 You can now resume the frontend setup by configuring your [Frontend environment
 variables](/frontend/README.md#frontend-configuration).

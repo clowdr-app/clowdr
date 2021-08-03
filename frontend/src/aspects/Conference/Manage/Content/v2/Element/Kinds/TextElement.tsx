@@ -48,14 +48,6 @@ export const TextElementTemplate: ElementBaseTemplate = {
 
         const placeholder = data.typeName === Content_ElementType_Enum.Abstract ? "Abstract" : "Text";
 
-        if (data.data.length === 0) {
-            data = {
-                ...data,
-                data: [],
-            };
-            setTimeout(() => update(data), 0);
-        }
-
         const latestVersion = data.data[data.data.length - 1] as TextElementVersionData;
         if (latestVersion && latestVersion.data.baseType !== ElementBaseType.Text) {
             return <>Text Element Template mistakenly used for base type {latestVersion.data.baseType}.</>;

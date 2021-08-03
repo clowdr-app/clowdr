@@ -9,6 +9,7 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     side: "left" | "right";
     noTooltip?: boolean;
     showLabel: boolean;
+    ariaLabel?: string;
 };
 
 // function intermingle<T>(fn: (idx: number) => T) {
@@ -19,7 +20,7 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
 // }
 
 const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    { label, showLabel = true, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
+    { ariaLabel, label, showLabel = true, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const size = useBreakpointValue({
@@ -28,7 +29,7 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
     });
     return (
         <Button
-            aria-label={label}
+            aria-label={ariaLabel ?? label}
             size={size}
             p={showLabel ? 0 : 2}
             minW="100%"

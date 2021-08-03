@@ -149,7 +149,8 @@ export default function LeftMenu(): JSX.Element {
                 {maybeRegistrant ? (
                     <>
                         <MenuButton
-                            label={
+                            label="Socialise"
+                            ariaLabel={
                                 roomParticipants !== undefined &&
                                 roomParticipants !== false &&
                                 roomParticipants.length > 0

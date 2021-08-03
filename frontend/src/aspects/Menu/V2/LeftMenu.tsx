@@ -291,7 +291,7 @@ export default function LeftMenu(): JSX.Element {
                                     </MenuItem>
                                 )
                         )}
-                        {maybeUser.registrants.length ? <MenuDivider /> : undefined}
+                        {!conference || maybeUser.registrants.length > 1 ? <MenuDivider /> : undefined}
                         <MenuItem as={ReactLink} to="/join">
                             <FAIcon iconStyle="s" icon="ticket-alt" />
                             &nbsp;&nbsp; Use invite code

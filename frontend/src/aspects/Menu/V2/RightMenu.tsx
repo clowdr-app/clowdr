@@ -1,10 +1,11 @@
-import { Box, Flex, HStack, MenuItem, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, HStack, MenuItem, useBreakpointValue, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
+import { useRestorableState } from "../../Generic/useRestorableState";
 import FAIcon from "../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { useMainMenu } from "../V1/MainMenu/MainMenuState";
@@ -43,6 +44,14 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
         [maybeConference?.slug, maybeRegistrant, onRightBarClose, isVisible]
     );
     const purpleBg = useColorModeValue("purple.50", "purple.900");
+    const [_isExpanded, setIsExpanded] = useRestorableState<boolean>(
+        "RightMenu_IsExpanded",
+        true,
+        (x) => x.toString(),
+        (x) => x === "true"
+    );
+    const isExpanded = !!useBreakpointValue({ base: _isExpanded && !isRightBarOpen, "2xl": _isExpanded });
+    const isExpandedEnabled = useBreakpointValue({ base: !isRightBarOpen, "2xl": true });
     return (
         <HStack h="100%" w="100%" justifyContent="stretch" spacing={0}>
             <Box
@@ -62,9 +71,30 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 h="100%"
                 bgColor="purple.700"
             >
+                <MenuButton
+                    label={isExpanded ? "Collapse menu" : "Expand menu"}
+                    iconStyle="s"
+                    icon={isExpanded ? ["grip-lines-vertical", "arrow-right"] : ["arrow-left", "grip-lines-vertical"]}
+                    borderTopRadius={0}
+                    colorScheme={colorScheme}
+                    side="right"
+                    mb={1}
+                    showLabel={false}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    fontSize="xs"
+                    justifyContent="center"
+                    w="auto"
+                    minW="auto"
+                    alignSelf="flex-start"
+                    minH={0}
+                    h="auto"
+                    lineHeight={0}
+                    m={1.5}
+                    isDisabled={!isExpandedEnabled}
+                />
                 {maybeUser ? (
                     <>
-                        <LogoutButton asMenuButtonV2 />
+                        <LogoutButton asMenuButtonV2 showLabel={isExpanded} />
                         <MoreOptionsMenuButton
                             label="Options"
                             iconStyle="s"
@@ -73,6 +103,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             colorScheme={colorScheme}
                             side="right"
                             mb="auto"
+                            showLabel={isExpanded}
                         >
                             <MenuItem
                                 onClick={() => {
@@ -93,7 +124,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         </MoreOptionsMenuButton>
                     </>
                 ) : (
-                    <LoginButton asMenuButtonV2 />
+                    <LoginButton asMenuButtonV2 showLabel={isExpanded} />
                 )}
                 {maybeConference?.slug && maybeRegistrant ? (
                     <>
@@ -110,6 +141,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     onRightBarOpen();
                                 }}
                                 mb={1}
+                                showLabel={isExpanded}
                             >
                                 <Box pos="absolute" top={1} right={1} fontSize="xs">
                                     {pageChatUnreadCount}
@@ -129,6 +161,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     onRightBarOpen();
                                 }}
                                 mb={1}
+                                showLabel={isExpanded}
                             >
                                 <Box pos="absolute" top={1} right={1} fontSize="xs">
                                     {pageChatUnreadCount}
@@ -146,6 +179,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     onRightBarOpen();
                                 }}
                                 mb={1}
+                                showLabel={isExpanded}
                             />
                         </Route>
                         <MenuButton
@@ -160,6 +194,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                 onRightBarOpen();
                             }}
                             mb={1}
+                            showLabel={isExpanded}
                         >
                             <Box pos="absolute" top={1} right={1} fontSize="xs">
                                 {chatsUnreadCount}
@@ -177,6 +212,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                 onRightBarOpen();
                             }}
                             mb="auto"
+                            showLabel={isExpanded}
                         />
                     </>
                 ) : undefined}

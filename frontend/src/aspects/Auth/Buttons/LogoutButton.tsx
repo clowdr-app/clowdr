@@ -7,9 +7,11 @@ import MenuButton from "../../Menu/V2/MenuButton";
 export default function LogoutButton({
     asMenuItem,
     asMenuButtonV2,
+    showLabel,
 }: {
     asMenuItem?: boolean;
     asMenuButtonV2?: boolean;
+    showLabel?: boolean;
 }): JSX.Element {
     const { logout } = useAuth0();
     const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
@@ -24,6 +26,7 @@ export default function LogoutButton({
             side="right"
             onClick={() => logout({ returnTo })}
             mb={1}
+            showLabel={showLabel}
         />
     ) : asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })}>

@@ -8,6 +8,7 @@ export default function MoreOptionsMenuButton({
     icon,
     side,
     children,
+    showLabel = true,
     ...props
 }: ButtonProps & {
     label: string;
@@ -15,6 +16,7 @@ export default function MoreOptionsMenuButton({
     icon: string;
     side: "left" | "right";
     children: React.ReactNode | React.ReactNodeArray;
+    showLabel: boolean;
 }): JSX.Element {
     const size = useBreakpointValue({
         base: "md",
@@ -26,16 +28,25 @@ export default function MoreOptionsMenuButton({
                 as={Button}
                 aria-label={label}
                 size={size}
-                p={0}
+                p={showLabel ? 0 : 2}
                 minW="100%"
-                textAlign="left"
-                justifyContent="flex-start"
+                textAlign={showLabel ? "left" : "center"}
+                justifyContent={showLabel ? "flex-start" : "center"}
                 {...props}
             >
-                <FAIcon iconStyle={iconStyle} icon={icon} ml={3} mr={2} />
-                <chakra.span fontSize="sm" ml={1} mr={2}>
-                    {label}
-                </chakra.span>
+                <FAIcon
+                    iconStyle={iconStyle}
+                    icon={icon}
+                    w={6}
+                    ml={showLabel ? 3 : 0}
+                    mr={showLabel ? 2 : 0}
+                    textAlign="center"
+                />
+                {showLabel ? (
+                    <chakra.span fontSize="sm" ml={1} mr={2}>
+                        {label}
+                    </chakra.span>
+                ) : undefined}
             </MenuButton>
             <Portal>
                 <MenuList zIndex={2} maxH="100vh" overflow="auto">

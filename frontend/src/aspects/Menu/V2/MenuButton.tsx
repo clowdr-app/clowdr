@@ -8,17 +8,18 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
     icon: string | string[];
     side: "left" | "right";
     noTooltip?: boolean;
+    showLabel: boolean;
 };
 
-function intermingle<T>(fn: (idx: number) => T) {
-    function inner(xs: ((idx: number) => T)[]) {
-        return xs.flatMap((x, i) => (i === 0 ? [x(0)] : [fn(2 * i - 1), x(2 * i)]));
-    }
-    return inner;
-}
+// function intermingle<T>(fn: (idx: number) => T) {
+//     function inner(xs: ((idx: number) => T)[]) {
+//         return xs.flatMap((x, i) => (i === 0 ? [x(0)] : [fn(2 * i - 1), x(2 * i)]));
+//     }
+//     return inner;
+// }
 
 const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    { label, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
+    { label, showLabel = true, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const size = useBreakpointValue({
@@ -29,28 +30,30 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
         <Button
             aria-label={label}
             size={size}
-            p={0}
+            p={showLabel ? 0 : 2}
             minW="100%"
             ref={ref}
             textAlign="left"
-            justifyContent="flex-start"
+            justifyContent={showLabel ? "flex-start" : "center"}
             {...props}
         >
             {typeof icon === "string" ? (
-                <FAIcon iconStyle={iconStyle} icon={icon} ml={3} mr={2} />
+                <FAIcon
+                    iconStyle={iconStyle}
+                    icon={icon}
+                    w={6}
+                    ml={showLabel ? 3 : 0}
+                    mr={showLabel ? 2 : 0}
+                    textAlign="center"
+                />
             ) : (
-                intermingle((idx) => <span key={idx}>&nbsp;/&nbsp;</span>)(
-                    icon.map(
-                        (ic) =>
-                            function ButtonIcon(idx: number) {
-                                return <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />;
-                            }
-                    )
-                )
+                icon.map((ic, idx) => <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />)
             )}
-            <chakra.span fontSize="sm" ml={1} mr={2}>
-                {label}
-            </chakra.span>
+            {showLabel ? (
+                <chakra.span fontSize="sm" ml={1} mr={2}>
+                    {label}
+                </chakra.span>
+            ) : undefined}
             {children}
         </Button>
     );

@@ -1,4 +1,4 @@
-import { Box, Flex, Link, MenuDivider, MenuItem, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Link, MenuDivider, MenuItem } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
@@ -11,6 +11,7 @@ import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredE
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
+import { useRestorableState } from "../../Generic/useRestorableState";
 import FAIcon from "../../Icons/FAIcon";
 import { useLiveEvents } from "../../LiveEvents/LiveEvents";
 import useRoomParticipants from "../../Room/useRoomParticipants";
@@ -71,20 +72,35 @@ export default function LeftMenu(): JSX.Element {
     const liveRoomCount = Object.keys(liveEventsByRoom).length;
     const showLive = liveRoomCount > 0;
 
-    const barWidth = useBreakpointValue({
-        base: "3em",
-        lg: "4em",
-    });
+    const [isExpanded, setIsExpanded] = useRestorableState<boolean>(
+        "LeftMenu_IsExpanded",
+        true,
+        (x) => x.toString(),
+        (x) => x === "true"
+    );
     return (
         <>
-            <Flex
-                flexDir="column"
-                justifyContent="center"
-                alignItems="flex-start"
-                minW={barWidth}
-                h="100%"
-                bgColor="blue.600"
-            >
+            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="blue.600">
+                <MenuButton
+                    label={isExpanded ? "Collapse menu" : "Expand menu"}
+                    iconStyle="s"
+                    icon={isExpanded ? ["arrow-left", "grip-lines-vertical"] : ["grip-lines-vertical", "arrow-right"]}
+                    borderTopRadius={0}
+                    colorScheme={colorScheme}
+                    side="right"
+                    mb={1}
+                    showLabel={false}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    fontSize="xs"
+                    justifyContent="center"
+                    w="auto"
+                    minW="auto"
+                    alignSelf="flex-end"
+                    minH={0}
+                    h="auto"
+                    lineHeight={0}
+                    m={1.5}
+                />
                 <MenuButton
                     label="Home"
                     iconStyle="s"
@@ -97,6 +113,7 @@ export default function LeftMenu(): JSX.Element {
                     }}
                     mt="auto"
                     mb={1}
+                    showLabel={isExpanded}
                 />
                 {showLive ? (
                     <MenuButton
@@ -109,6 +126,7 @@ export default function LeftMenu(): JSX.Element {
                         ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
                         onClick={liveNow_OnOpen}
                         mb={1}
+                        showLabel={isExpanded}
                     >
                         <Box pos="absolute" top={1} right={1} fontSize="xs">
                             {liveRoomCount}
@@ -126,6 +144,7 @@ export default function LeftMenu(): JSX.Element {
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                     onClick={() => schedule_OnOpen()}
                     mb={maybeRegistrant ? 1 : "auto"}
+                    showLabel={isExpanded}
                 />
                 {maybeRegistrant ? (
                     <>
@@ -148,6 +167,7 @@ export default function LeftMenu(): JSX.Element {
                             ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
                             onClick={() => socialise_OnOpen()}
                             mb={1}
+                            showLabel={isExpanded}
                         >
                             {roomParticipants !== undefined &&
                             roomParticipants !== false &&
@@ -165,6 +185,7 @@ export default function LeftMenu(): JSX.Element {
                             colorScheme={colorScheme}
                             side="left"
                             mb="auto"
+                            showLabel={isExpanded}
                         >
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
@@ -207,6 +228,7 @@ export default function LeftMenu(): JSX.Element {
                         colorScheme={colorScheme}
                         side="left"
                         mb={1}
+                        showLabel={isExpanded}
                     >
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/checklist`}>
                             <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
@@ -248,6 +270,7 @@ export default function LeftMenu(): JSX.Element {
                         colorScheme={colorScheme}
                         side="left"
                         mb={1}
+                        showLabel={isExpanded}
                     >
                         {R.sortBy((registrant) => registrant.conference.shortName, maybeUser.registrants).map(
                             (registrant) =>
@@ -281,6 +304,8 @@ export default function LeftMenu(): JSX.Element {
                     side="left"
                     as={Link}
                     href="https://github.com/clowdr-app/clowdr/issues"
+                    showLabel={isExpanded}
+                    textDecoration="none"
                 />
             </Flex>
         </>

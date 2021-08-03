@@ -112,7 +112,6 @@ export default function LeftMenu(): JSX.Element {
                     onClick={() => {
                         history.push(`/conference/${conference.slug}`);
                     }}
-                    mt="auto"
                     mb={1}
                     showLabel={isExpanded}
                 />

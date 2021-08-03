@@ -91,39 +91,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                     m={1.5}
                     isDisabled={!isExpandedEnabled}
                 />
-                {maybeUser ? (
-                    <>
-                        <MoreOptionsMenuButton
-                            label="Options"
-                            iconStyle="s"
-                            icon="ellipsis-h"
-                            borderTopRadius={0}
-                            colorScheme={colorScheme}
-                            side="right"
-                            mb="auto"
-                            showLabel={isExpanded}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    colorMode.toggleColorMode();
-                                }}
-                            >
-                                <FAIcon iconStyle="s" icon="moon" />
-                                &nbsp;&nbsp;Toggle dark mode
-                            </MenuItem>
-                            <MenuItem as={ReactLink} to="/user/pushNotifications">
-                                <FAIcon iconStyle="s" icon="envelope-open-text" />
-                                &nbsp;&nbsp;Push notifications
-                            </MenuItem>
-                            {/* <MenuItem onClick={onOpenUXChoice}>
-                        <FAIcon iconStyle="s" icon="exchange-alt" />
-                        &nbsp;&nbsp;Change UI experience
-                    </MenuItem> */}
-                        </MoreOptionsMenuButton>
-                    </>
-                ) : (
-                    <LoginButton asMenuButtonV2 showLabel={isExpanded} />
-                )}
+                {!maybeUser ? <LoginButton asMenuButtonV2 showLabel={isExpanded} /> : undefined}
                 {maybeConference?.slug && maybeRegistrant ? (
                     <>
                         <Route path={`${path}/item/`}>
@@ -212,6 +180,38 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             mb="auto"
                             showLabel={isExpanded}
                         />
+                    </>
+                ) : undefined}
+                {maybeUser ? (
+                    <>
+                        <MoreOptionsMenuButton
+                            label="Options"
+                            iconStyle="s"
+                            icon="ellipsis-h"
+                            borderTopRadius={0}
+                            colorScheme={colorScheme}
+                            side="right"
+                            showLabel={isExpanded}
+                            h="auto"
+                            pt={1.5}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    colorMode.toggleColorMode();
+                                }}
+                            >
+                                <FAIcon iconStyle="s" icon="moon" />
+                                &nbsp;&nbsp;Toggle dark mode
+                            </MenuItem>
+                            <MenuItem as={ReactLink} to="/user/pushNotifications">
+                                <FAIcon iconStyle="s" icon="envelope-open-text" />
+                                &nbsp;&nbsp;Push notifications
+                            </MenuItem>
+                            {/* <MenuItem onClick={onOpenUXChoice}>
+                        <FAIcon iconStyle="s" icon="exchange-alt" />
+                        &nbsp;&nbsp;Change UI experience
+                    </MenuItem> */}
+                        </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
             </Flex>

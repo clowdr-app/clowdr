@@ -1023,7 +1023,10 @@ export function useSaveContentDiff():
                                 }
 
                                 for (const existingUploader of existingItem.uploaders) {
-                                    if (!updatedUploaders.has(existingUploader.id)) {
+                                    if (
+                                        !updatedUploaders.has(existingUploader.id) &&
+                                        !newUploaders.has(existingUploader.id)
+                                    ) {
                                         deleteUploaderKeys.add(existingUploader.id);
                                     }
                                 }

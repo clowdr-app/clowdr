@@ -1,4 +1,4 @@
-import { Box, Flex, Link, MenuDivider, MenuItem, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Link, MenuDivider, MenuItem, useBreakpointValue } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
@@ -18,7 +18,7 @@ import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
-const colorScheme = "blue";
+const colorScheme = "transparent";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
@@ -72,16 +72,31 @@ export default function LeftMenu(): JSX.Element {
     const showLive = liveRoomCount > 0;
 
     const barWidth = useBreakpointValue({
-        base: "3em",
-        lg: "4em",
+        base: "3.6em",
+        lg: "4.5em",
     });
-
     return (
         <>
-            <Flex flexDir="column" w={barWidth} justifyContent="center" alignItems="flex-start">
-                <Text fontSize="xs" textAlign="left" ml={1} mb={2}>
-                    Navigate
-                </Text>
+            <Flex
+                flexDir="column"
+                justifyContent="center"
+                alignItems="flex-start"
+                minW={barWidth}
+                h="100%"
+                bgColor="blue.500"
+            >
+                <MenuButton
+                    label="Conference home"
+                    iconStyle="s"
+                    icon="home"
+                    borderRadius={0}
+                    colorScheme={colorScheme}
+                    side="left"
+                    onClick={() => {
+                        history.push(`/conference/${conference.slug}`);
+                    }}
+                    mt="auto"
+                />
                 {showLive ? (
                     <MenuButton
                         label={`Live now: ${liveRoomCount} rooms`}
@@ -108,6 +123,7 @@ export default function LeftMenu(): JSX.Element {
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                     onClick={() => schedule_OnOpen()}
+                    mb={maybeRegistrant ? undefined : "auto"}
                 />
                 {maybeRegistrant ? (
                     <>
@@ -145,6 +161,7 @@ export default function LeftMenu(): JSX.Element {
                             borderRadius={0}
                             colorScheme={colorScheme}
                             side="left"
+                            mb="auto"
                         >
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
@@ -167,17 +184,6 @@ export default function LeftMenu(): JSX.Element {
                         </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
-                <MenuButton
-                    label="Conference home"
-                    iconStyle="s"
-                    icon="home"
-                    borderRadius={0}
-                    colorScheme={colorScheme}
-                    side="left"
-                    onClick={() => {
-                        history.push(`/conference/${conference.slug}`);
-                    }}
-                />
                 <RequireAtLeastOnePermissionWrapper
                     permissions={[
                         Permissions_Permission_Enum.ConferenceManageAttendees,
@@ -195,7 +201,7 @@ export default function LeftMenu(): JSX.Element {
                         iconStyle="s"
                         icon="cog"
                         borderRadius={0}
-                        colorScheme="gray"
+                        colorScheme={colorScheme}
                         side="left"
                     >
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/checklist`}>
@@ -235,7 +241,7 @@ export default function LeftMenu(): JSX.Element {
                         iconStyle="s"
                         icon="ticket-alt"
                         borderRadius={0}
-                        colorScheme="gray"
+                        colorScheme={colorScheme}
                         side="left"
                     >
                         {R.sortBy((registrant) => registrant.conference.shortName, maybeUser.registrants).map(
@@ -266,7 +272,7 @@ export default function LeftMenu(): JSX.Element {
                     iconStyle="s"
                     icon="comment-medical"
                     borderTopRadius={0}
-                    colorScheme="gray"
+                    colorScheme={colorScheme}
                     side="left"
                     as={Link}
                     href="https://github.com/clowdr-app/clowdr/issues"

@@ -1,4 +1,4 @@
-import { As, Button, PropsOf, Tooltip, useBreakpointValue } from "@chakra-ui/react";
+import { As, Button, PropsOf, useBreakpointValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
 import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -19,7 +19,7 @@ function intermingle<T>(fn: (idx: number) => T) {
 }
 
 const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    { label, iconStyle, icon, side, noTooltip, children, ...props }: React.PropsWithChildren<Props>,
+    { label, iconStyle, icon, side, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const size = useBreakpointValue({
@@ -27,18 +27,16 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
         lg: "lg",
     });
     const expandedFontSize = useBreakpointValue({
-        base: "xl",
-        lg: "2xl",
+        base: "lg",
+        lg: "xl",
     });
-    const barWidth = useBreakpointValue({
-        base: "3.5em",
-        lg: "4em",
-    });
-    const button = (
+    return (
         <Button
             aria-label={label}
             size={size}
-            minW={barWidth}
+            color="white"
+            p={0}
+            minW="100%"
             _hover={{
                 fontSize: expandedFontSize,
                 borderLeftRadius: side === "right" ? 2 : undefined,
@@ -49,9 +47,6 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
                 borderLeftRadius: side === "right" ? 2 : undefined,
                 borderRightRadius: side === "left" ? 2 : undefined,
                 boxShadow: defaultOutline_AsBoxShadow,
-                m: "2px",
-                mr: side === "right" ? 0 : undefined,
-                ml: side === "left" ? 0 : undefined,
             }}
             ref={ref}
             {...props}
@@ -71,7 +66,6 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
             {children}
         </Button>
     );
-    return noTooltip ? button : <Tooltip label={label}>{button}</Tooltip>;
 });
 
 export default MenuButton;

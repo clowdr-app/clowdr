@@ -2,12 +2,29 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button, MenuItem, Tooltip } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import FAIcon from "../../Icons/FAIcon";
+import MenuButton from "../../Menu/V2/MenuButton";
 
-export default function LogoutButton({ asMenuItem }: { asMenuItem?: boolean }): JSX.Element {
+export default function LogoutButton({
+    asMenuItem,
+    asMenuButtonV2,
+}: {
+    asMenuItem?: boolean;
+    asMenuButtonV2?: boolean;
+}): JSX.Element {
     const { logout } = useAuth0();
     const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
 
-    return asMenuItem ? (
+    return asMenuButtonV2 ? (
+        <MenuButton
+            label="Logout"
+            iconStyle="s"
+            icon="sign-out-alt"
+            borderRadius={0}
+            colorScheme="transparent"
+            side="right"
+            onClick={() => logout({ returnTo })}
+        />
+    ) : asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })}>
             <FAIcon iconStyle="s" icon="sign-out-alt" mr={2} aria-hidden={true} /> Log Out
         </MenuItem>

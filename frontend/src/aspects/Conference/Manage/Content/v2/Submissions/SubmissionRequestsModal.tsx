@@ -247,7 +247,8 @@ export function SendSubmissionRequestsModalInner({
                 return (
                     (!selectedType || upElement.typeName === selectedType) &&
                     (!onlyReminders || !upElement.data?.length) &&
-                    filteredUploaders.length > 0
+                    filteredUploaders.length > 0 &&
+                    (upElement.uploadsRemaining ?? Number.POSITIVE_INFINITY) > 0
                 );
             }),
         [uploadableElements, onlyReminders, selectedType, filterToUploaderIds]
@@ -355,6 +356,9 @@ export function SendSubmissionRequestsModalInner({
                         </ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
+                            <Text mb={4} fontSize="md">
+                                This will only send requests for elements with at least one upload attempt remaining.
+                            </Text>
                             <FormControl>
                                 <FormLabel>First requests and reminders only?</FormLabel>
                                 <HStack>
@@ -369,7 +373,7 @@ export function SendSubmissionRequestsModalInner({
                                     Send emails only for elements which have not yet been submitted.
                                 </FormHelperText>
                             </FormControl>
-                            <Divider my={3} />
+                            <Divider my={5} />
                             <FormControl>
                                 <FormLabel>File type</FormLabel>
                                 <Select
@@ -384,7 +388,7 @@ export function SendSubmissionRequestsModalInner({
                                 </Select>
                             </FormControl>
                             {uploadableElementsEl}
-                            <Divider my={3} />
+                            <Divider my={5} />
                             <Heading as="h4" textAlign="left" size="sm" mt={4}>
                                 Email template
                             </Heading>
@@ -436,7 +440,7 @@ export function SendSubmissionRequestsModalInner({
                                 mt={4}
                                 colorScheme="purple"
                             >
-                                Send {uploaderIds.length} emails ({filteredUploadableElements.length} items)
+                                Send {uploaderIds.length} emails ({filteredUploadableElements.length} elements)
                             </Button>
                         </ModalFooter>
                     </Form>

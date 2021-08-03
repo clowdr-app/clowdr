@@ -36580,7 +36580,7 @@ export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_ro
 
 export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any };
 
-export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string }> };
+export type SubmissionRequestsModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly itemTitle?: Maybe<string>, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly email: string, readonly name: string, readonly emailsSentCount: number }> };
 
 export type SubmissionsReviewModalDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -39017,6 +39017,7 @@ export const SubmissionRequestsModal_ElementFragmentDoc = gql`
     id
     email
     name
+    emailsSentCount
   }
 }
     `;

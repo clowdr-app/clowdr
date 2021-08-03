@@ -6,7 +6,6 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalFooter,
-    ModalHeader,
     ModalOverlay,
     Tab,
     TabList,
@@ -176,18 +175,19 @@ export default function SocialiseModal({
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Socialise</ModalHeader>
                     <ModalCloseButton ref={closeRef} />
-                    <ModalBody>
+                    <ModalBody display="flex" justifyContent="center" overflow="hidden">
                         <Tabs
-                            isFitted
                             variant="enclosed-colored"
                             colorScheme="purple"
                             isLazy
+                            w="100%"
+                            display="flex"
+                            flexDir="column"
                             index={selectedTabIndex}
                             onChange={setSelectedTabFromIndex}
                         >
-                            <TabList>
+                            <TabList justifyContent="center">
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="mug-hot" aria-hidden />
                                     &nbsp;&nbsp;Rooms

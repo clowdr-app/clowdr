@@ -18,7 +18,7 @@ import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
-const colorScheme = "transparent";
+const colorScheme = "blue";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
@@ -72,8 +72,8 @@ export default function LeftMenu(): JSX.Element {
     const showLive = liveRoomCount > 0;
 
     const barWidth = useBreakpointValue({
-        base: "3.6em",
-        lg: "4.5em",
+        base: "3em",
+        lg: "4em",
     });
     return (
         <>
@@ -83,10 +83,10 @@ export default function LeftMenu(): JSX.Element {
                 alignItems="flex-start"
                 minW={barWidth}
                 h="100%"
-                bgColor="blue.500"
+                bgColor="blue.600"
             >
                 <MenuButton
-                    label="Conference home"
+                    label="Home"
                     iconStyle="s"
                     icon="home"
                     borderRadius={0}
@@ -96,10 +96,11 @@ export default function LeftMenu(): JSX.Element {
                         history.push(`/conference/${conference.slug}`);
                     }}
                     mt="auto"
+                    mb={1}
                 />
                 {showLive ? (
                     <MenuButton
-                        label={`Live now: ${liveRoomCount} rooms`}
+                        label="Live now"
                         iconStyle="s"
                         icon="podcast"
                         borderBottomRadius={0}
@@ -107,6 +108,7 @@ export default function LeftMenu(): JSX.Element {
                         side="left"
                         ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
                         onClick={liveNow_OnOpen}
+                        mb={1}
                     >
                         <Box pos="absolute" top={1} right={1} fontSize="xs">
                             {liveRoomCount}
@@ -114,16 +116,16 @@ export default function LeftMenu(): JSX.Element {
                     </MenuButton>
                 ) : undefined}
                 <MenuButton
-                    label="Explore program"
+                    label="Program"
                     iconStyle="s"
-                    icon={["calendar", "search"]}
+                    icon={"calendar"}
                     px={0}
                     borderRadius={0}
                     colorScheme={colorScheme}
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                     onClick={() => schedule_OnOpen()}
-                    mb={maybeRegistrant ? undefined : "auto"}
+                    mb={maybeRegistrant ? 1 : "auto"}
                 />
                 {maybeRegistrant ? (
                     <>
@@ -145,6 +147,7 @@ export default function LeftMenu(): JSX.Element {
                             pos="relative"
                             ref={socialiseButtonRef as React.RefObject<HTMLButtonElement>}
                             onClick={() => socialise_OnOpen()}
+                            mb={1}
                         >
                             {roomParticipants !== undefined &&
                             roomParticipants !== false &&
@@ -197,12 +200,13 @@ export default function LeftMenu(): JSX.Element {
                     ]}
                 >
                     <MoreOptionsMenuButton
-                        label="Manage conference"
+                        label="Manage"
                         iconStyle="s"
                         icon="cog"
                         borderRadius={0}
                         colorScheme={colorScheme}
                         side="left"
+                        mb={1}
                     >
                         <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/checklist`}>
                             <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
@@ -237,12 +241,13 @@ export default function LeftMenu(): JSX.Element {
                 </RequireAtLeastOnePermissionWrapper>
                 {maybeUser ? (
                     <MoreOptionsMenuButton
-                        label="My conferences"
+                        label="Conferences"
                         iconStyle="s"
                         icon="ticket-alt"
                         borderRadius={0}
                         colorScheme={colorScheme}
                         side="left"
+                        mb={1}
                     >
                         {R.sortBy((registrant) => registrant.conference.shortName, maybeUser.registrants).map(
                             (registrant) =>

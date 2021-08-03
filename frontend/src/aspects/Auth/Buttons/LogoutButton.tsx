@@ -20,9 +20,10 @@ export default function LogoutButton({
             iconStyle="s"
             icon="sign-out-alt"
             borderRadius={0}
-            colorScheme="transparent"
+            colorScheme="purple"
             side="right"
             onClick={() => logout({ returnTo })}
+            mb={1}
         />
     ) : asMenuItem ? (
         <MenuItem size="sm" onClick={() => logout({ returnTo })}>

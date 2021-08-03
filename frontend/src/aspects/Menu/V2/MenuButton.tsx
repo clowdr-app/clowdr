@@ -1,6 +1,5 @@
-import { As, Button, PropsOf, useBreakpointValue } from "@chakra-ui/react";
+import { As, Button, chakra, PropsOf, useBreakpointValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
 
 type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
@@ -19,40 +18,26 @@ function intermingle<T>(fn: (idx: number) => T) {
 }
 
 const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    { label, iconStyle, icon, side, children, ...props }: React.PropsWithChildren<Props>,
+    { label, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const size = useBreakpointValue({
         base: "md",
         lg: "lg",
     });
-    const expandedFontSize = useBreakpointValue({
-        base: "lg",
-        lg: "xl",
-    });
     return (
         <Button
             aria-label={label}
             size={size}
-            color="white"
             p={0}
             minW="100%"
-            _hover={{
-                fontSize: expandedFontSize,
-                borderLeftRadius: side === "right" ? 2 : undefined,
-                borderRightRadius: side === "left" ? 2 : undefined,
-            }}
-            _focus={{
-                fontSize: expandedFontSize,
-                borderLeftRadius: side === "right" ? 2 : undefined,
-                borderRightRadius: side === "left" ? 2 : undefined,
-                boxShadow: defaultOutline_AsBoxShadow,
-            }}
             ref={ref}
+            textAlign="left"
+            justifyContent="flex-start"
             {...props}
         >
             {typeof icon === "string" ? (
-                <FAIcon iconStyle={iconStyle} icon={icon} />
+                <FAIcon iconStyle={iconStyle} icon={icon} ml={3} mr={2} />
             ) : (
                 intermingle((idx) => <span key={idx}>&nbsp;/&nbsp;</span>)(
                     icon.map(
@@ -63,6 +48,9 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
                     )
                 )
             )}
+            <chakra.span fontSize="sm" ml={1} mr={2}>
+                {label}
+            </chakra.span>
             {children}
         </Button>
     );

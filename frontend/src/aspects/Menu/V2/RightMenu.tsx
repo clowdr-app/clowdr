@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, MenuItem, useBreakpointValue, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, HStack, MenuItem, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import LoginButton from "../../Auth/Buttons/LoginButton";
@@ -13,7 +13,7 @@ import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebar/RightSidebarCurrentTab";
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
-const colorScheme = "transparent";
+const colorScheme = "purple";
 export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.Element {
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
@@ -29,10 +29,6 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     const [pageChatUnreadCount, setPageChatUnreadCount] = useState<string>("");
     const [chatsUnreadCount, setChatsUnreadCount] = useState<string>("");
 
-    const barWidth = useBreakpointValue({
-        base: "3em",
-        lg: "4em",
-    });
     const rightSections = useMemo(
         () =>
             maybeConference?.slug && maybeRegistrant ? (
@@ -51,8 +47,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
         <HStack h="100%" w="100%" justifyContent="stretch" spacing={0}>
             <Box
                 display={isRightBarOpen && maybeRegistrant ? "block" : "none"}
+                w="100%"
                 h="100%"
-                w={`calc(100% - ${barWidth})`}
                 zIndex={0}
                 bgColor={purpleBg}
             >
@@ -60,22 +56,21 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
             </Box>
             <Flex
                 flexDir="column"
-                justifyContent={maybeUser ? "center" : "flex-start"}
+                justifyContent="flex-start"
                 alignItems="flex-end"
                 zIndex={1}
-                minW={barWidth}
                 h="100%"
-                bgColor="purple.500"
+                bgColor="purple.700"
             >
                 {maybeUser ? (
                     <>
                         <LogoutButton asMenuButtonV2 />
                         <MoreOptionsMenuButton
-                            label="More options"
+                            label="Options"
                             iconStyle="s"
                             icon="ellipsis-h"
                             borderTopRadius={0}
-                            colorScheme="transparent"
+                            colorScheme={colorScheme}
                             side="right"
                             mb="auto"
                         >
@@ -104,7 +99,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                     <>
                         <Route path={`${path}/item/`}>
                             <MenuButton
-                                label="Chat for this page"
+                                label="Chat here"
                                 iconStyle="s"
                                 icon="comment"
                                 borderRadius={0}
@@ -114,6 +109,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     setCurrentTab(RightSidebarTabs.PageChat);
                                     onRightBarOpen();
                                 }}
+                                mb={1}
                             >
                                 <Box pos="absolute" top={1} right={1} fontSize="xs">
                                     {pageChatUnreadCount}
@@ -122,7 +118,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         </Route>
                         <Route path={`${path}/room/`}>
                             <MenuButton
-                                label="Chat for this page"
+                                label="Chat here"
                                 iconStyle="s"
                                 icon="comment"
                                 borderRadius={0}
@@ -132,6 +128,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     setCurrentTab(RightSidebarTabs.PageChat);
                                     onRightBarOpen();
                                 }}
+                                mb={1}
                             >
                                 <Box pos="absolute" top={1} right={1} fontSize="xs">
                                     {pageChatUnreadCount}
@@ -148,10 +145,11 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     setCurrentTab(RightSidebarTabs.RaiseHand);
                                     onRightBarOpen();
                                 }}
+                                mb={1}
                             />
                         </Route>
                         <MenuButton
-                            label="All your chats"
+                            label="Your chats"
                             iconStyle="s"
                             icon="comments"
                             borderRadius={0}
@@ -161,13 +159,14 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                 setCurrentTab(RightSidebarTabs.Chats);
                                 onRightBarOpen();
                             }}
+                            mb={1}
                         >
                             <Box pos="absolute" top={1} right={1} fontSize="xs">
                                 {chatsUnreadCount}
                             </Box>
                         </MenuButton>
                         <MenuButton
-                            label="Who's here with you"
+                            label="Who's here"
                             iconStyle="s"
                             icon="users"
                             borderRadius={0}

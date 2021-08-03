@@ -1,6 +1,5 @@
-import { Button, ButtonProps, Menu, MenuButton, MenuList, Portal, useBreakpointValue } from "@chakra-ui/react";
+import { Button, ButtonProps, chakra, Menu, MenuButton, MenuList, Portal, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
 
 export default function MoreOptionsMenuButton({
@@ -21,39 +20,22 @@ export default function MoreOptionsMenuButton({
         base: "md",
         lg: "lg",
     });
-    const expandedFontSize = useBreakpointValue({
-        base: "lg",
-        lg: "xl",
-    });
     return (
         <Menu placement={side === "left" ? "right" : "left"} colorScheme={props.colorScheme}>
             <MenuButton
                 as={Button}
                 aria-label={label}
                 size={size}
-                color="white"
                 p={0}
                 minW="100%"
-                _hover={{
-                    fontSize: expandedFontSize,
-                    borderLeftRadius: side === "right" ? 2 : undefined,
-                    borderRightRadius: side === "left" ? 2 : undefined,
-                }}
-                _focus={{
-                    fontSize: expandedFontSize,
-                    borderLeftRadius: side === "right" ? 2 : undefined,
-                    borderRightRadius: side === "left" ? 2 : undefined,
-                    boxShadow: defaultOutline_AsBoxShadow,
-                }}
-                _active={{
-                    fontSize: expandedFontSize,
-                    borderLeftRadius: side === "right" ? 2 : undefined,
-                    borderRightRadius: side === "left" ? 2 : undefined,
-                    boxShadow: defaultOutline_AsBoxShadow,
-                }}
+                textAlign="left"
+                justifyContent="flex-start"
                 {...props}
             >
-                <FAIcon iconStyle={iconStyle} icon={icon} />
+                <FAIcon iconStyle={iconStyle} icon={icon} ml={3} mr={2} />
+                <chakra.span fontSize="sm" ml={1} mr={2}>
+                    {label}
+                </chakra.span>
             </MenuButton>
             <Portal>
                 <MenuList zIndex={2} maxH="100vh" overflow="auto">

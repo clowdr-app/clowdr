@@ -26,6 +26,7 @@ import {
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
+    ElementBaseType,
     ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
@@ -824,6 +825,59 @@ export default function ChecklistPage(): JSX.Element {
         );
     }, [checklistResponse.data?.prerecordedEventsWithoutVideo, checklistResponse.data?.prerecordedEventsWithVideo]);
 
+    const prerecordedEventsVideosDontExceedTime = useMemo(() => {
+        const filteredEvents = checklistResponse.data?.prerecordedEventsWithVideo.filter(
+            (event) =>
+                event.item &&
+                event.item.elements.some((element) => {
+                    if (isElementDataBlob(element.data)) {
+                        const data = element.data as ElementDataBlob;
+                        const version = data.find(
+                            (version) =>
+                                version.data.type === Content_ElementType_Enum.VideoBroadcast &&
+                                version.data.broadcastTranscode &&
+                                version.data.broadcastTranscode.s3Url &&
+                                version.data.broadcastTranscode.s3Url !== ""
+                        );
+                        if (
+                            version?.data.baseType === ElementBaseType.Video &&
+                            version.data.broadcastTranscode &&
+                            version.data.broadcastTranscode.durationSeconds !== undefined
+                        ) {
+                            return (
+                                version.data.broadcastTranscode.durationSeconds >
+                                (Date.parse(event.endTime) - Date.parse(event.startTime)) / 1000
+                            );
+                        }
+                    }
+                    return false;
+                })
+        );
+        return (
+            <ChecklistItem
+                title="All videos for pre-recorded events are equal or shorter than the available time."
+                status="error"
+                description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has been assigned an item with a broadcast video longer than the scheduled event. This means the video will be cut short when played back in the stream (i.e. the end of the video will be cut-off)."
+                action={{
+                    title: "Manage Content",
+                    url: "content",
+                }}
+                ok={!!filteredEvents && filteredEvents.length === 0}
+            >
+                <Text>The following events do not meet the requirements of this rule:</Text>
+                <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
+                    {(x) => (
+                        <>
+                            {new Date(x.startTime).toLocaleString()} - {x.room?.name}
+                            <br />
+                            {x.name}: {x.item ? `"${x.item.title}"` : ""}
+                        </>
+                    )}
+                </ExpandableList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.prerecordedEventsWithVideo]);
+
     const videoPlayerEventsHaveItem = useMemo(() => {
         const filteredEvents = checklistResponse.data?.allLiveEventsWithPeople.filter(
             (event) => event.intendedRoomModeName === Room_Mode_Enum.VideoPlayer && !event.item
@@ -1207,6 +1261,8 @@ export default function ChecklistPage(): JSX.Element {
                         <GridItem colSpan={defaultColSpan}>{prerecordedEventsHaveVideoElement}</GridItem>
                         <GridItem colSpan={defaultColSpan}></GridItem>
                         <GridItem colSpan={defaultColSpan}>{prerecordedEventsHaveVideo}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
+                        <GridItem colSpan={defaultColSpan}>{prerecordedEventsVideosDontExceedTime}</GridItem>
                         <GridItem colSpan={2} rowSpan={2}></GridItem>
 
                         <GridItem colSpan={defaultColSpan}>

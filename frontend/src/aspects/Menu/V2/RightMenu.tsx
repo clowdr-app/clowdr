@@ -2,7 +2,6 @@ import { Box, Flex, HStack, MenuItem, useBreakpointValue, useColorMode, useColor
 import React, { useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import LoginButton from "../../Auth/Buttons/LoginButton";
-import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
@@ -94,7 +93,6 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 />
                 {maybeUser ? (
                     <>
-                        <LogoutButton asMenuButtonV2 showLabel={isExpanded} />
                         <MoreOptionsMenuButton
                             label="Options"
                             iconStyle="s"

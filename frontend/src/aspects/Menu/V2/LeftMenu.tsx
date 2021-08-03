@@ -3,6 +3,7 @@ import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../../generated/graphql";
+import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
@@ -187,6 +188,7 @@ export default function LeftMenu(): JSX.Element {
                             side="left"
                             mb="auto"
                             showLabel={isExpanded}
+                            imageSrc={maybeRegistrant.profile.photoURL_50x50 ?? undefined}
                         >
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
@@ -206,6 +208,7 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="person-booth" mr={2} aria-hidden={true} w="1.2em" /> My
                                 backstages
                             </MenuItem>
+                            <LogoutButton asMenuItem showLabel={isExpanded} />
                         </MoreOptionsMenuButton>
                     </>
                 ) : undefined}

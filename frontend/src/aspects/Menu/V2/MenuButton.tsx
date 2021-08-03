@@ -20,7 +20,7 @@ type Props<T extends As<any> = typeof Button> = PropsOf<T> & {
 // }
 
 const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    { ariaLabel, label, showLabel = true, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
+    { ariaLabel, label, showLabel, iconStyle, icon, children, ...props }: React.PropsWithChildren<Props>,
     ref
 ): JSX.Element {
     const size = useBreakpointValue({
@@ -31,7 +31,7 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
         <Button
             aria-label={ariaLabel ?? label}
             size={size}
-            p={showLabel ? 0 : 2}
+            p={2}
             minW="100%"
             ref={ref}
             textAlign="left"
@@ -39,22 +39,11 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
             {...props}
         >
             {typeof icon === "string" ? (
-                <FAIcon
-                    iconStyle={iconStyle}
-                    icon={icon}
-                    w={6}
-                    ml={showLabel ? 3 : 0}
-                    mr={showLabel ? 2 : 0}
-                    textAlign="center"
-                />
+                <FAIcon iconStyle={iconStyle} icon={icon} w={6} mr={showLabel ? 2 : 0} textAlign="center" />
             ) : (
                 icon.map((ic, idx) => <FAIcon key={idx} iconStyle={iconStyle} icon={ic} />)
             )}
-            {showLabel ? (
-                <chakra.span fontSize="sm" ml={1} mr={2}>
-                    {label}
-                </chakra.span>
-            ) : undefined}
+            {showLabel ? <chakra.span fontSize="sm">{label}</chakra.span> : undefined}
             {children}
         </Button>
     );

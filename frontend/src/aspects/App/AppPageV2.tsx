@@ -30,7 +30,7 @@ export default function AppPageV2(): JSX.Element {
     // const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const centerAlwaysVisible = useBreakpointValue({
         base: false,
-        md: true,
+        lg: true,
     });
     const [rightOpen, setRightOpen] = useState<boolean>(false);
     const rightVisible = isPermittedAccess && !!rightOpen;
@@ -159,13 +159,18 @@ function RightBar({
     rightVisible: boolean;
     rightSidebarWidthPc: number;
 }): JSX.Element {
+    const width = useBreakpointValue({
+        base: "400px",
+        xl: "500px",
+        "2xl": "600px",
+    });
     return (
         <Box
             zIndex={2}
             overflow={"visible"}
             height="100%"
             width={rightVisible ? (centerVisible ? rightSidebarWidthPc + "%" : "100%") : "auto"}
-            maxWidth={centerVisible ? "550px" : undefined}
+            maxWidth={centerVisible ? width : undefined}
             flex={rightVisible ? "1 0 300px" : "0 1 auto"}
             display="flex"
             flexDir="column"

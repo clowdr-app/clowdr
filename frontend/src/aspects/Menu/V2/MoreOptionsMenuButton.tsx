@@ -1,6 +1,15 @@
-import { Button, ButtonProps, Menu, MenuButton, MenuList, Portal, Tooltip, useBreakpointValue } from "@chakra-ui/react";
+import {
+    Button,
+    ButtonProps,
+    chakra,
+    Image,
+    Menu,
+    MenuButton,
+    MenuList,
+    Portal,
+    useBreakpointValue,
+} from "@chakra-ui/react";
 import React from "react";
-import { defaultOutline_AsBoxShadow } from "../../Chakra/Outline";
 import { FAIcon } from "../../Icons/FAIcon";
 
 export default function MoreOptionsMenuButton({
@@ -9,6 +18,8 @@ export default function MoreOptionsMenuButton({
     icon,
     side,
     children,
+    showLabel,
+    imageSrc,
     ...props
 }: ButtonProps & {
     label: string;
@@ -16,55 +27,39 @@ export default function MoreOptionsMenuButton({
     icon: string;
     side: "left" | "right";
     children: React.ReactNode | React.ReactNodeArray;
+    showLabel: boolean;
+    imageSrc?: string;
 }): JSX.Element {
     const size = useBreakpointValue({
         base: "md",
         lg: "lg",
     });
-    const expandedFontSize = useBreakpointValue({
-        base: "xl",
-        lg: "2xl",
-    });
-    const barWidth = useBreakpointValue({
-        base: "3.5em",
-        lg: "4em",
-    });
     return (
         <Menu placement={side === "left" ? "right" : "left"} colorScheme={props.colorScheme}>
-            <Tooltip label={label}>
-                <MenuButton
-                    as={Button}
-                    aria-label={label}
-                    size={size}
-                    minW={barWidth}
-                    _hover={{
-                        fontSize: expandedFontSize,
-                        borderLeftRadius: side === "right" ? 2 : undefined,
-                        borderRightRadius: side === "left" ? 2 : undefined,
-                    }}
-                    _focus={{
-                        fontSize: expandedFontSize,
-                        borderLeftRadius: side === "right" ? 2 : undefined,
-                        borderRightRadius: side === "left" ? 2 : undefined,
-                        boxShadow: defaultOutline_AsBoxShadow,
-                        m: "2px",
-                        mr: side === "right" ? 0 : undefined,
-                        ml: side === "left" ? 0 : undefined,
-                    }}
-                    _active={{
-                        fontSize: expandedFontSize,
-                        borderLeftRadius: side === "right" ? 2 : undefined,
-                        borderRightRadius: side === "left" ? 2 : undefined,
-                        boxShadow: defaultOutline_AsBoxShadow,
-                        m: "2px",
-                        mr: side === "right" ? 0 : undefined,
-                        ml: side === "left" ? 0 : undefined,
-                    }}
-                    {...props}
-                >
-                    <FAIcon iconStyle={iconStyle} icon={icon} />
-                </MenuButton>
-            </Tooltip>
+            <MenuButton
+                as={Button}
+                aria-label={label}
+                size={size}
+                p={2}
+                minW="100%"
+                textAlign={showLabel ? "left" : "center"}
+                justifyContent={showLabel ? "flex-start" : "center"}
+                {...props}
+            >
+                {imageSrc ? (
+                    <Image
+                        display="inline-block"
+                        title="Your profile photo"
+                        src={imageSrc}
+                        w={showLabel ? 6 : 8}
+                        mr={showLabel ? 2 : 0}
+                        borderRadius="100%"
+                    />
+                ) : (
+                    <FAIcon iconStyle={iconStyle} icon={icon} w={6} mr={showLabel ? 2 : 0} textAlign="center" />
+                )}
+                {showLabel ? <chakra.span fontSize="sm">{label}</chakra.span> : undefined}
+            </MenuButton>
             <Portal>
                 <MenuList zIndex={2} maxH="100vh" overflow="auto">
                     {children}

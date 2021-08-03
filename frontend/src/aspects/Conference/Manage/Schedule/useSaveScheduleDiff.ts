@@ -161,7 +161,7 @@ gql`
         insert_schedule_Continuation_one(
             object: {
                 colour: "#4471de"
-                defaultFor: "None"
+                defaultFor: "Presenters"
                 description: "Join the discussion room"
                 fromEvent: $newEventId
                 isActiveChoice: false

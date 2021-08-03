@@ -47822,7 +47822,7 @@ export const InsertEventInfoDocument = gql`
     ...EventInfo
   }
   insert_schedule_Continuation_one(
-    object: {colour: "#4471de", defaultFor: "None", description: "Join the discussion room", fromEvent: $id, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
+    object: {colour: "#4471de", defaultFor: "Presenters", description: "Join the discussion room", fromEvent: $id, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
   ) @include(if: $insertContinuation) {
     id
   }
@@ -48158,7 +48158,7 @@ export const InsertEventDocument = gql`
     ...EventInfo
   }
   insert_schedule_Continuation_one(
-    object: {colour: "#4471de", defaultFor: "None", description: "Join the discussion room", fromEvent: $newEventId, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
+    object: {colour: "#4471de", defaultFor: "Presenters", description: "Join the discussion room", fromEvent: $newEventId, isActiveChoice: false, priority: 0, to: {type: "AutoDiscussionRoom", id: null}}
   ) @include(if: $insertContinuation) {
     id
   }

@@ -364,7 +364,7 @@ export function SendSubmissionRequestsModalInner({
                             <Text mb={4} fontSize="md">
                                 This will only send requests for elements with at least one upload attempt remaining.
                             </Text>
-                            <FormControl>
+                            <FormControl mb={4}>
                                 <FormLabel>Unsubmitted only?</FormLabel>
                                 <HStack>
                                     <chakra.span>No</chakra.span>

@@ -73,7 +73,13 @@ export default function StarEventButton({
         };
     }, [isVisible]);
 
-    return (
+    const inner = useMemo(
+        () => (show && registrant ? <StarEventButtonInner eventIds={eventIds} registrant={registrant} /> : undefined),
+        [eventIds, registrant, show]
+    );
+    return show && registrant ? (
+        <>{inner}</>
+    ) : (
         <Observer
             onChange={({ isIntersecting }) => {
                 setIsVisible(isIntersecting);
@@ -87,7 +93,7 @@ export default function StarEventButton({
                 minW="1em"
                 {...props}
             >
-                {show && registrant ? <StarEventButtonInner eventIds={eventIds} registrant={registrant} /> : undefined}
+                {inner}
             </Box>
         </Observer>
     );

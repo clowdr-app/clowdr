@@ -1,13 +1,9 @@
-import type { ScheduleV2_BaseEventFragment } from "../../../../../generated/graphql";
+import type { ScheduleV2_LightweightEventFragment } from "../../../../../generated/graphql";
 
 export interface ParsedEvent {
-    event: ScheduleV2_BaseEventFragment;
+    lwEvent: ScheduleV2_LightweightEventFragment;
     startTimeMs: number;
     endTimeMs: number;
-}
-
-export interface ScheduleProps {
-    events: readonly ScheduleV2_BaseEventFragment[];
 }
 
 export interface EventCellDescriptor {

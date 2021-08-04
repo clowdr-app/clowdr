@@ -35701,6 +35701,31 @@ export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root'
     & Schedule_TagFragment
   )> };
 
+export type ScheduleV2_LightweightEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any };
+
+export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  startOfDay: Scalars['timestamptz'];
+  endOfDay: Scalars['timestamptz'];
+  filter: Schedule_Event_Bool_Exp;
+}>;
+
+
+export type ScheduleV2_DayLightweightEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & ScheduleV2_LightweightEventFragment
+  )> };
+
+export type ScheduleV2_DayEventsQueryVariables = Exact<{
+  eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+
+export type ScheduleV2_DayEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
+    { readonly __typename?: 'schedule_Event' }
+    & ScheduleV2_EventFragment
+  )> };
+
 export type ScheduleV2_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
 
 export type ScheduleV2_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
@@ -35726,14 +35751,16 @@ export type ScheduleV2_EventFragment = { readonly __typename?: 'schedule_Event',
     & ScheduleV2_ItemElementsFragment
   )> };
 
-export type ScheduleV2_EventQueryVariables = Exact<{
-  eventId: Scalars['uuid'];
+export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
+
+export type ScheduleV2_RoomsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_EventQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<(
-    { readonly __typename?: 'schedule_Event' }
-    & ScheduleV2_EventFragment
+export type ScheduleV2_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
+    { readonly __typename?: 'room_Room' }
+    & ScheduleV2_RoomFragment
   )> };
 
 export type ScheduleV2_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
@@ -35748,29 +35775,12 @@ export type ScheduleV2_TagsQuery = { readonly __typename?: 'query_root', readonl
     & ScheduleV2_TagFragment
   )> };
 
-export type ScheduleV2_BaseEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any };
-
-export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
-
-export type ScheduleV2_RoomsQueryVariables = Exact<{
-  roomIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type ScheduleV2_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<(
-    { readonly __typename?: 'room_Room' }
-    & ScheduleV2_RoomFragment
-  )> };
-
-export type ScheduleV2_AllEventsQueryVariables = Exact<{
+export type ScheduleV2_AllEvents_ParamsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_AllEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<(
-    { readonly __typename?: 'schedule_Event' }
-    & ScheduleV2_BaseEventFragment
-  )> };
+export type ScheduleV2_AllEvents_ParamsQuery = { readonly __typename?: 'query_root', readonly earliestStartingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any }>, readonly latestEndingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any> }> };
 
 export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<(
     { readonly __typename?: 'content_ItemProgramPerson' }
@@ -38635,6 +38645,14 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   managementModeName
 }
     `;
+export const ScheduleV2_LightweightEventFragmentDoc = gql`
+    fragment ScheduleV2_LightweightEvent on schedule_Event {
+  id
+  startTime
+  endTime
+  roomId
+}
+    `;
 export const ScheduleV2_ProgramPersonFragmentDoc = gql`
     fragment ScheduleV2_ProgramPerson on collection_ProgramPerson {
   id
@@ -38704,26 +38722,18 @@ export const ScheduleV2_EventFragmentDoc = gql`
     ${ScheduleV2_ItemElementsFragmentDoc}
 ${ScheduleV2_ElementFragmentDoc}
 ${ScheduleV2_ItemPersonFragmentDoc}`;
+export const ScheduleV2_RoomFragmentDoc = gql`
+    fragment ScheduleV2_Room on room_Room {
+  id
+  name
+  priority
+}
+    `;
 export const ScheduleV2_TagFragmentDoc = gql`
     fragment ScheduleV2_Tag on collection_Tag {
   id
   name
   colour
-  priority
-}
-    `;
-export const ScheduleV2_BaseEventFragmentDoc = gql`
-    fragment ScheduleV2_BaseEvent on schedule_Event {
-  id
-  startTime
-  endTime
-  roomId
-}
-    `;
-export const ScheduleV2_RoomFragmentDoc = gql`
-    fragment ScheduleV2_Room on room_Room {
-  id
-  name
   priority
 }
     `;
@@ -42134,41 +42144,116 @@ export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQu
 export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
 export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
 export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
-export const ScheduleV2_EventDocument = gql`
-    query ScheduleV2_Event($eventId: uuid!) {
-  schedule_Event_by_pk(id: $eventId) {
+export const ScheduleV2_DayLightweightEventsDocument = gql`
+    query ScheduleV2_DayLightweightEvents($conferenceId: uuid!, $startOfDay: timestamptz!, $endOfDay: timestamptz!, $filter: schedule_Event_bool_exp!) {
+  schedule_Event(
+    where: {_and: [{conferenceId: {_eq: $conferenceId}}, {startTime: {_lt: $endOfDay}}, {endTime: {_gt: $startOfDay}}, $filter]}
+  ) {
+    ...ScheduleV2_LightweightEvent
+  }
+}
+    ${ScheduleV2_LightweightEventFragmentDoc}`;
+
+/**
+ * __useScheduleV2_DayLightweightEventsQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_DayLightweightEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_DayLightweightEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_DayLightweightEventsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      startOfDay: // value for 'startOfDay'
+ *      endOfDay: // value for 'endOfDay'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useScheduleV2_DayLightweightEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>(ScheduleV2_DayLightweightEventsDocument, options);
+      }
+export function useScheduleV2_DayLightweightEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>(ScheduleV2_DayLightweightEventsDocument, options);
+        }
+export type ScheduleV2_DayLightweightEventsQueryHookResult = ReturnType<typeof useScheduleV2_DayLightweightEventsQuery>;
+export type ScheduleV2_DayLightweightEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_DayLightweightEventsLazyQuery>;
+export type ScheduleV2_DayLightweightEventsQueryResult = Apollo.QueryResult<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>;
+export const ScheduleV2_DayEventsDocument = gql`
+    query ScheduleV2_DayEvents($eventIds: [uuid!]!) {
+  schedule_Event(where: {id: {_in: $eventIds}}) {
     ...ScheduleV2_Event
   }
 }
     ${ScheduleV2_EventFragmentDoc}`;
 
 /**
- * __useScheduleV2_EventQuery__
+ * __useScheduleV2_DayEventsQuery__
  *
- * To run a query within a React component, call `useScheduleV2_EventQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_EventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useScheduleV2_DayEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_DayEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useScheduleV2_EventQuery({
+ * const { data, loading, error } = useScheduleV2_DayEventsQuery({
  *   variables: {
- *      eventId: // value for 'eventId'
+ *      eventIds: // value for 'eventIds'
  *   },
  * });
  */
-export function useScheduleV2_EventQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>) {
+export function useScheduleV2_DayEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>(ScheduleV2_EventDocument, options);
+        return Apollo.useQuery<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>(ScheduleV2_DayEventsDocument, options);
       }
-export function useScheduleV2_EventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>) {
+export function useScheduleV2_DayEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>(ScheduleV2_EventDocument, options);
+          return Apollo.useLazyQuery<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>(ScheduleV2_DayEventsDocument, options);
         }
-export type ScheduleV2_EventQueryHookResult = ReturnType<typeof useScheduleV2_EventQuery>;
-export type ScheduleV2_EventLazyQueryHookResult = ReturnType<typeof useScheduleV2_EventLazyQuery>;
-export type ScheduleV2_EventQueryResult = Apollo.QueryResult<ScheduleV2_EventQuery, ScheduleV2_EventQueryVariables>;
+export type ScheduleV2_DayEventsQueryHookResult = ReturnType<typeof useScheduleV2_DayEventsQuery>;
+export type ScheduleV2_DayEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_DayEventsLazyQuery>;
+export type ScheduleV2_DayEventsQueryResult = Apollo.QueryResult<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>;
+export const ScheduleV2_RoomsDocument = gql`
+    query ScheduleV2_Rooms($conferenceId: uuid!) {
+  room_Room(where: {conferenceId: {_eq: $conferenceId}, events: {}}) {
+    ...ScheduleV2_Room
+  }
+}
+    ${ScheduleV2_RoomFragmentDoc}`;
+
+/**
+ * __useScheduleV2_RoomsQuery__
+ *
+ * To run a query within a React component, call `useScheduleV2_RoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useScheduleV2_RoomsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useScheduleV2_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
+      }
+export function useScheduleV2_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
+        }
+export type ScheduleV2_RoomsQueryHookResult = ReturnType<typeof useScheduleV2_RoomsQuery>;
+export type ScheduleV2_RoomsLazyQueryHookResult = ReturnType<typeof useScheduleV2_RoomsLazyQuery>;
+export type ScheduleV2_RoomsQueryResult = Apollo.QueryResult<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>;
 export const ScheduleV2_TagsDocument = gql`
     query ScheduleV2_Tags($conferenceId: uuid!) {
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -42204,76 +42289,54 @@ export function useScheduleV2_TagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ScheduleV2_TagsQueryHookResult = ReturnType<typeof useScheduleV2_TagsQuery>;
 export type ScheduleV2_TagsLazyQueryHookResult = ReturnType<typeof useScheduleV2_TagsLazyQuery>;
 export type ScheduleV2_TagsQueryResult = Apollo.QueryResult<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>;
-export const ScheduleV2_RoomsDocument = gql`
-    query ScheduleV2_Rooms($roomIds: [uuid!]!) {
-  room_Room(where: {id: {_in: $roomIds}}) {
-    ...ScheduleV2_Room
+export const ScheduleV2_AllEvents_ParamsDocument = gql`
+    query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
+  earliestStartingEvent: schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}}
+    limit: 1
+    order_by: {startTime: asc}
+  ) {
+    id
+    startTime
+  }
+  latestEndingEvent: schedule_Event(
+    where: {conferenceId: {_eq: $conferenceId}}
+    limit: 1
+    order_by: {endTime: desc}
+  ) {
+    id
+    endTime
   }
 }
-    ${ScheduleV2_RoomFragmentDoc}`;
+    `;
 
 /**
- * __useScheduleV2_RoomsQuery__
+ * __useScheduleV2_AllEvents_ParamsQuery__
  *
- * To run a query within a React component, call `useScheduleV2_RoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useScheduleV2_AllEvents_ParamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useScheduleV2_AllEvents_ParamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useScheduleV2_RoomsQuery({
- *   variables: {
- *      roomIds: // value for 'roomIds'
- *   },
- * });
- */
-export function useScheduleV2_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
-      }
-export function useScheduleV2_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
-        }
-export type ScheduleV2_RoomsQueryHookResult = ReturnType<typeof useScheduleV2_RoomsQuery>;
-export type ScheduleV2_RoomsLazyQueryHookResult = ReturnType<typeof useScheduleV2_RoomsLazyQuery>;
-export type ScheduleV2_RoomsQueryResult = Apollo.QueryResult<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>;
-export const ScheduleV2_AllEventsDocument = gql`
-    query ScheduleV2_AllEvents($conferenceId: uuid!) {
-  schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ScheduleV2_BaseEvent
-  }
-}
-    ${ScheduleV2_BaseEventFragmentDoc}`;
-
-/**
- * __useScheduleV2_AllEventsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_AllEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_AllEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_AllEventsQuery({
+ * const { data, loading, error } = useScheduleV2_AllEvents_ParamsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useScheduleV2_AllEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>) {
+export function useScheduleV2_AllEvents_ParamsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>(ScheduleV2_AllEventsDocument, options);
+        return Apollo.useQuery<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>(ScheduleV2_AllEvents_ParamsDocument, options);
       }
-export function useScheduleV2_AllEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>) {
+export function useScheduleV2_AllEvents_ParamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>(ScheduleV2_AllEventsDocument, options);
+          return Apollo.useLazyQuery<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>(ScheduleV2_AllEvents_ParamsDocument, options);
         }
-export type ScheduleV2_AllEventsQueryHookResult = ReturnType<typeof useScheduleV2_AllEventsQuery>;
-export type ScheduleV2_AllEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_AllEventsLazyQuery>;
-export type ScheduleV2_AllEventsQueryResult = Apollo.QueryResult<ScheduleV2_AllEventsQuery, ScheduleV2_AllEventsQueryVariables>;
+export type ScheduleV2_AllEvents_ParamsQueryHookResult = ReturnType<typeof useScheduleV2_AllEvents_ParamsQuery>;
+export type ScheduleV2_AllEvents_ParamsLazyQueryHookResult = ReturnType<typeof useScheduleV2_AllEvents_ParamsLazyQuery>;
+export type ScheduleV2_AllEvents_ParamsQueryResult = Apollo.QueryResult<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_Item(

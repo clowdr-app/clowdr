@@ -21,7 +21,7 @@ export default function TagList({
     );
     const { onOpen } = useScheduleModal();
     return (
-        <HStack flexWrap="wrap" w="100%" {...props}>
+        <HStack flexWrap="wrap" w="100%" gridRowGap={2} {...props}>
             {sortedTags.map((tag) => (
                 <TagButton
                     key={tag.id}

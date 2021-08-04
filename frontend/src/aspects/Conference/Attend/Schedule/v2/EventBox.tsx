@@ -4,16 +4,11 @@ import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as luxon from "luxon";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import {
-    ScheduleV2_EventFragment,
-    ScheduleV2_TagFragment,
-    useScheduleV2_EventQuery,
-} from "../../../../../generated/graphql";
+import type { ScheduleV2_EventFragment, ScheduleV2_TagFragment } from "../../../../../generated/graphql";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
 import StarEventButton from "../StarEventButton";
-import { useSchedule } from "./ScheduleContext";
 import type { EventCellDescriptor } from "./Types";
 
 gql`
@@ -77,29 +72,11 @@ gql`
             }
         }
     }
-
-    query ScheduleV2_Event($eventId: uuid!) {
-        schedule_Event_by_pk(id: $eventId) {
-            ...ScheduleV2_Event
-        }
-    }
-
-    fragment ScheduleV2_Tag on collection_Tag {
-        id
-        name
-        colour
-        priority
-    }
-
-    query ScheduleV2_Tags($conferenceId: uuid!) {
-        collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ScheduleV2_Tag
-        }
-    }
 `;
 
 export default function EventBox({
     event,
+    fullEvent,
     isHourBoundary,
     isHourDiscontiguous,
     hourBoundaryBorderColor,
@@ -107,8 +84,11 @@ export default function EventBox({
     eventBorderColor,
     splitOverDayBoundary,
     tags,
+    timezone,
+    renderImmediately,
 }: {
     event: EventCellDescriptor;
+    fullEvent?: ScheduleV2_EventFragment;
     isHourBoundary: boolean;
     isHourDiscontiguous: boolean;
     hourBoundaryBorderColor: string;
@@ -116,9 +96,11 @@ export default function EventBox({
     eventBorderColor: string;
     splitOverDayBoundary: "first" | "second" | "no";
     tags: readonly ScheduleV2_TagFragment[];
+    timezone: luxon.Zone;
+    renderImmediately: boolean;
 }): JSX.Element {
-    const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [show, setShow] = useState<boolean>(false);
+    const [isVisible, setIsVisible] = useState<boolean>(renderImmediately);
+    const [show, setShow] = useState<boolean>(renderImmediately);
     useEffect(() => {
         let tId: number | undefined;
 
@@ -127,7 +109,7 @@ export default function EventBox({
                 (() => {
                     setShow(true);
                 }) as TimerHandler,
-                750
+                25
             );
         }
 
@@ -138,23 +120,10 @@ export default function EventBox({
         };
     }, [isVisible]);
 
-    const eventResponse = useScheduleV2_EventQuery({
-        variables: {
-            eventId: event.parsedEvent.event.id,
-        },
-        skip: !show,
-    });
-
-    return (
-        <IntersectionObserver
-            onChange={({ isIntersecting }) => {
-                setIsVisible(isIntersecting);
-            }}
-        >
-            {isVisible ? (
-                <Skeleton
-                    as={Td}
-                    isLoaded={show && !!eventResponse.data}
+    const box = useMemo(
+        () =>
+            show && fullEvent ? (
+                <Td
                     rowSpan={
                         splitOverDayBoundary === "first"
                             ? 1
@@ -165,41 +134,64 @@ export default function EventBox({
                     bgColor={eventBoxBgColor}
                     verticalAlign="top"
                     zIndex={0}
-                    borderTopColor={
-                        isHourBoundary
-                            ? hourBoundaryBorderColor
-                            : event.preceedingEventId
-                            ? eventBorderColor
-                            : undefined
-                    }
+                    borderTopColor={isHourBoundary ? hourBoundaryBorderColor : eventBorderColor}
                     borderTopStyle={isHourBoundary && isHourDiscontiguous ? "double" : "solid"}
-                    borderTopWidth={isHourBoundary && isHourDiscontiguous ? "6px" : "1px"}
+                    borderTopWidth={
+                        isHourBoundary && isHourDiscontiguous
+                            ? "6px"
+                            : !event.preceedingEventId || event.preceedingEventId !== event.parsedEvent.lwEvent.id
+                            ? "1px"
+                            : 0
+                    }
+                    borderBottomColor={eventBorderColor}
+                    borderBottomWidth="1px"
+                    borderBottomStyle="solid"
                     borderX="1px solid"
                     borderLeftColor={eventBorderColor}
                     borderRightColor={eventBorderColor}
-                    fadeDuration={0.8}
+                    pos="relative"
                 >
-                    {splitOverDayBoundary !== "second" && eventResponse.data?.schedule_Event_by_pk ? (
-                        <EventBoxContents
-                            event={event}
-                            eventInfo={eventResponse.data.schedule_Event_by_pk}
-                            tags={tags}
-                        />
+                    {splitOverDayBoundary !== "second" && fullEvent ? (
+                        <EventBoxContents event={event} eventInfo={fullEvent} tags={tags} timezone={timezone} />
                     ) : splitOverDayBoundary !== "second" ? (
                         <Box minH="24ex"></Box>
                     ) : undefined}
-                </Skeleton>
-            ) : (
-                <td
-                    rowSpan={
-                        splitOverDayBoundary === "first"
-                            ? 1
-                            : splitOverDayBoundary === "second"
-                            ? event.markerSpan - 1
-                            : event.markerSpan
-                    }
-                ></td>
-            )}
+                </Td>
+            ) : undefined,
+        [
+            event,
+            fullEvent,
+            eventBorderColor,
+            eventBoxBgColor,
+            hourBoundaryBorderColor,
+            isHourBoundary,
+            isHourDiscontiguous,
+            splitOverDayBoundary,
+            tags,
+            timezone,
+            show,
+        ]
+    );
+
+    return box ? (
+        box
+    ) : (
+        <IntersectionObserver
+            onChange={({ isIntersecting }) => {
+                setIsVisible(isIntersecting);
+            }}
+        >
+            <Skeleton
+                as={Td}
+                bg={eventBoxBgColor}
+                rowSpan={
+                    splitOverDayBoundary === "first"
+                        ? 1
+                        : splitOverDayBoundary === "second"
+                        ? event.markerSpan - 1
+                        : event.markerSpan
+                }
+            />
         </IntersectionObserver>
     );
 }
@@ -207,16 +199,16 @@ export default function EventBox({
 function EventBoxContents({
     eventInfo,
     tags,
+    timezone,
 }: {
     event: EventCellDescriptor;
     eventInfo: ScheduleV2_EventFragment;
     tags: readonly ScheduleV2_TagFragment[];
+    timezone: luxon.Zone;
 }): JSX.Element {
-    const params = useSchedule();
-
     const startTimeDT = useMemo(
-        () => luxon.DateTime.fromISO(eventInfo.startTime).setZone(params.timezone),
-        [eventInfo.startTime, params.timezone]
+        () => luxon.DateTime.fromISO(eventInfo.startTime).setZone(timezone),
+        [eventInfo.startTime, timezone]
     );
     const endTimeDT = useMemo(
         () => startTimeDT.plus({ seconds: eventInfo.durationSeconds }),

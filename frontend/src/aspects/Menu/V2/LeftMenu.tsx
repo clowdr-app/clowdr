@@ -187,7 +187,7 @@ export default function LeftMenu(): JSX.Element {
                             side="left"
                             mb="auto"
                             showLabel={isExpanded}
-                            imageSrc={maybeRegistrant.profile.photoURL_50x50 ?? undefined}
+                            imageSrc={maybeRegistrant.profile?.photoURL_50x50 ?? undefined}
                         >
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}

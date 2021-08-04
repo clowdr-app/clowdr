@@ -106,6 +106,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
             {...rest}
         >
             <QuickSendEmote />
+            <MessageTypeButtons isDisabled={composeCtx.isSending} w="100%" />
             <Box pos="relative" w="100%" h="auto" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
                 <Textarea
                     ref={composeBoxRef}
@@ -159,7 +160,6 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 /> */}
             </Box>
             <Flex w="100%" minH="2.4em">
-                <MessageTypeButtons isDisabled={composeCtx.isSending} />
                 {composeCtx.newMessageType === Chat_MessageType_Enum.Answer ? (
                     <Flex
                         fontSize={config.fontSizeRange.value * 0.7}
@@ -183,17 +183,19 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         >
                             {(composeCtx.newMessageData as AnswerMessageData).questionMessagesIds &&
                             (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds?.[0]
-                                ? `Answering message ${
-                                      (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds?.[0]
-                                  }`
-                                : (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds &&
+                                ? "Answering message"
+                                : //     `Answering message ${
+                                //       (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds?.[0]
+                                //   }`
+                                (composeCtx.newMessageData as AnswerMessageData).questionMessagesIds &&
                                   (composeCtx.newMessageData as AnswerMessageData).questionMessagesSIds?.[0]
-                                ? `Answering message ${
-                                      (composeCtx.newMessageData as AnswerMessageData).questionMessagesSIds?.[0]?.split(
-                                          "-"
-                                      )[0]
-                                  }`
-                                : "Select a question to answer"}
+                                ? "Answering message"
+                                : //         `Answering message ${
+                                  //       (composeCtx.newMessageData as AnswerMessageData).questionMessagesSIds?.[0]?.split(
+                                  //           "-"
+                                  //       )[0]
+                                  //   }`
+                                  "Select a question to answer"}
                         </Text>
                     </Flex>
                 ) : undefined}

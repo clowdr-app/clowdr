@@ -33,7 +33,8 @@ import ItemList from "../Content/ItemList";
 import { ExhibitionsGrid } from "../Exhibition/ExhibitionsPage";
 import { SponsorBoothsInner } from "../Rooms/V2/SponsorBooths";
 import SearchPanel from "../Search/SearchPanel";
-import { ScheduleFetchWrapper, ScheduleInner } from "./Schedule";
+import { ScheduleFetchWrapper, ScheduleInner } from "./v1/Schedule";
+import WholeSchedule from "./v2/WholeSchedule";
 
 gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
@@ -71,6 +72,7 @@ export enum ProgramModalTab {
     Sponsors = "Sponsors",
     Search = "Search",
     Schedule = "Schedule",
+    SchedulePreview = "ScheduleV2",
 }
 
 interface ScheduleModalContext {
@@ -258,6 +260,8 @@ export function ScheduleModal({
                 return offset1 + 1;
             case ProgramModalTab.HappeningSoon:
                 return 0;
+            case ProgramModalTab.SchedulePreview:
+                return offset2 + 4;
             case ProgramModalTab.Schedule:
                 return offset2 + 3;
             case ProgramModalTab.Search:
@@ -307,23 +311,34 @@ export function ScheduleModal({
                 case 4:
                     if (anyHappeningSoon && anySponsors) {
                         setSelectedTab(ProgramModalTab.Search);
-                    } else {
+                    } else if (anyHappeningSoon || anySponsors) {
                         setSelectedTab(ProgramModalTab.Schedule);
+                    } else {
+                        setSelectedTab(ProgramModalTab.SchedulePreview);
                     }
                     break;
                 case 5:
-                    setSelectedTab(ProgramModalTab.Schedule);
+                    if (anyHappeningSoon && anySponsors) {
+                        setSelectedTab(ProgramModalTab.Schedule);
+                    } else {
+                        setSelectedTab(ProgramModalTab.SchedulePreview);
+                    }
+                    break;
+                case 6:
+                    setSelectedTab(ProgramModalTab.SchedulePreview);
                     break;
             }
         },
         [anyHappeningSoon, anySponsors, setSelectedTab]
     );
 
+    const enableScheduleViewV2 = conference.scheduleViewVersion[0]?.value === "v2";
+
     return (
         <Modal
             initialFocusRef={closeRef}
             finalFocusRef={finalFocusRef}
-            size="6xl"
+            size="full"
             isCentered
             autoFocus={false}
             returnFocusOnClose={false}
@@ -375,6 +390,12 @@ export function ScheduleModal({
                                 <FAIcon iconStyle="s" icon="calendar" />
                                 &nbsp;&nbsp;Full schedule
                             </Tab>
+                            {enableScheduleViewV2 ? (
+                                <Tab>
+                                    <FAIcon iconStyle="s" icon="calendar" />
+                                    &nbsp;&nbsp;Schedule V2: Early preview
+                                </Tab>
+                            ) : undefined}
                         </TabList>
                         <TabPanels h="100%" overflow="hidden">
                             {anyHappeningSoon ? (
@@ -392,9 +413,14 @@ export function ScheduleModal({
                             <TabPanel w="100%" h="100%" overflowY="auto">
                                 <SearchPanel changeSearch={changeSearch} />
                             </TabPanel>
-                            <TabPanel w="100%" h="100%" display="flex" justifyContent="center">
+                            <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
                                 <ScheduleFetchWrapper />
                             </TabPanel>
+                            {enableScheduleViewV2 ? (
+                                <TabPanel w="100%" h="100%" display="flex" flexDir="column" alignItems="center">
+                                    <WholeSchedule />
+                                </TabPanel>
+                            ) : undefined}
                         </TabPanels>
                     </Tabs>
                 </ModalBody>

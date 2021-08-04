@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import assert from "assert";
 import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
@@ -127,6 +127,8 @@ function MessageList({
 
     const scrollbarColour = useColorModeValue("gray.500", "gray.200");
     const scrollbarBackground = useColorModeValue("gray.200", "gray.500");
+    const scrollbarColourT = useToken("colors", scrollbarColour);
+    const scrollbarBackgroundT = useToken("colors", scrollbarBackground);
 
     const ref = React.useRef<HTMLDivElement | null>(null);
     const shouldAutoScroll = React.useRef<boolean>(true);
@@ -316,8 +318,21 @@ function MessageList({
                         flexDir="column-reverse"
                         minH="100%"
                         css={{
-                            ["scrollbarWidth"]: "thin",
-                            ["scrollbarColor"]: `${scrollbarColour} ${scrollbarBackground}`,
+                            scrollbarWidth: "thin",
+                            scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
+                            "&::-webkit-scrollbar": {
+                                width: "6px",
+                                height: "6px",
+                            },
+                            "&::-webkit-scrollbar-track": {
+                                width: "8px",
+                                height: "8px",
+                                background: scrollbarBackgroundT,
+                            },
+                            "&::-webkit-scrollbar-thumb": {
+                                background: scrollbarColourT,
+                                borderRadius: "24px",
+                            },
                         }}
                         ref={ref}
                     >

@@ -16,7 +16,8 @@ import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
 import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
-import Schedule from "./Attend/Schedule/Schedule";
+import Schedule from "./Attend/Schedule/v1/Schedule";
+import ScheduleV2 from "./Attend/Schedule/v2/WholeSchedule";
 import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
 import ManageBroadcast from "./Manage/Broadcast/ManageBroadcasts";
 import ManageModeration from "./Manage/Chat/Moderation/ManageModeration";
@@ -185,6 +186,18 @@ export default function ConferenceRoutes(): JSX.Element {
                     }>
                 ) => <RoomPage roomId={props.match.params.roomId} />}
             />
+
+            <Route path={`${path}/schedule/v2`}>
+                <RequireAtLeastOnePermissionWrapper
+                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    permissions={[
+                        Permissions_Permission_Enum.ConferenceView,
+                        Permissions_Permission_Enum.ConferenceManageSchedule,
+                    ]}
+                >
+                    <ScheduleV2 />
+                </RequireAtLeastOnePermissionWrapper>
+            </Route>
 
             <Route path={`${path}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper

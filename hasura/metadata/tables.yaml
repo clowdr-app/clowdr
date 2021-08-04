@@ -6028,14 +6028,15 @@
               name: FlatUserPermission
       columns:
       - capacity
+      - colour
       - conferenceId
       - currentModeName
       - id
-      - name
-      - originatingItemId
-      - originatingDataId
-      - priority
       - managementModeName
+      - name
+      - originatingDataId
+      - originatingItemId
+      - priority
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -6043,6 +6044,7 @@
       columns:
       - capacity
       - chatId
+      - colour
       - conferenceId
       - created_at
       - currentModeName
@@ -6080,6 +6082,7 @@
       - backendName
       - capacity
       - chatId
+      - colour
       - conferenceId
       - created_at
       - currentModeName
@@ -6152,11 +6155,12 @@
     permission:
       columns:
       - capacity
-      - name
-      - originatingItemId
-      - originatingDataId
-      - priority
+      - colour
       - managementModeName
+      - name
+      - originatingDataId
+      - originatingItemId
+      - priority
       filter:
         _and:
         - conference:

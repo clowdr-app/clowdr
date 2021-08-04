@@ -7795,6 +7795,8 @@ export enum Conference_ConfigurationKey_Enum {
   InputLossSlate = 'INPUT_LOSS_SLATE',
   /** A string representing a valid URL for users to register for the conference. */
   RegistrationUrl = 'REGISTRATION_URL',
+  /** Select different versions of the schedule view. */
+  ScheduleViewVersion = 'SCHEDULE_VIEW_VERSION',
   /** A string representing a valid email address for contacting the conference organisers. */
   SupportAddress = 'SUPPORT_ADDRESS',
   /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -37674,7 +37676,7 @@ export type AuthdConferenceInfoFragment = { readonly __typename?: 'conference_Co
     & RegistrantDataFragment
   )> };
 
-export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<(
+export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<(
     { readonly __typename?: 'permissions_Group' }
     & GroupDataFragment
   )> };
@@ -39648,6 +39650,11 @@ export const PublicConferenceInfoFragmentDoc = gql`
     value
   }
   registrationURL: configurations(where: {key: {_eq: REGISTRATION_URL}}) {
+    conferenceId
+    key
+    value
+  }
+  scheduleViewVersion: configurations(where: {key: {_eq: SCHEDULE_VIEW_VERSION}}) {
     conferenceId
     key
     value

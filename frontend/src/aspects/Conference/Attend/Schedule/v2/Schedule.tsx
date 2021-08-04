@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Table, Th, Tr, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Box, Table, Text, Th, Tr, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
@@ -160,73 +160,80 @@ export default function Schedule({
     const roomHeadingBgColor = useColorModeValue("gray.50", "gray.900");
 
     return (
-        <Box
-            pos="relative"
-            h="100%"
-            maxH="95vh"
-            w="97%"
-            overflow="auto"
-            css={{
-                scrollbarWidth: "thin",
-                scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
-                "&::-webkit-scrollbar": {
-                    width: "6px",
-                    height: "6px",
-                },
-                "&::-webkit-scrollbar-track": {
-                    width: "8px",
-                    height: "8px",
-                    background: scrollbarBackgroundT,
-                },
-                "&::-webkit-scrollbar-thumb": {
-                    background: scrollbarColourT,
-                    borderRadius: "24px",
-                },
-            }}
-            onScroll={() => {
-                // TODO: Does this event trigger when auto-scroll is activated?
-                // If so, somehow we have to eliminate the loop
-                shouldAutoScrollToNow.current = false;
-            }}
-        >
-            <Table
-                variant="unstyled"
-                maxW="100%"
-                minW={`calc(${sortedRooms.length * 350}px + 4em)`}
-                __css={{ tableLayout: "fixed", borderCollapse: "separate", borderSpacing: "3px 0" }}
+        <VStack w="100%" overflow="hidden">
+            <Text py={2}>
+                This schedule view is an early prototype we are using to gather user feedback and to demonstrate the
+                direction we are headed in. Important features like accessibility properties, jump-to-day/jump-to-now
+                and other features are yet to be implemented.
+            </Text>
+            <Box
+                pos="relative"
+                h="100%"
+                maxH="95vh"
+                w="97%"
+                overflow="auto"
+                css={{
+                    scrollbarWidth: "thin",
+                    scrollbarColor: `${scrollbarColour} ${scrollbarBackground}`,
+                    "&::-webkit-scrollbar": {
+                        width: "6px",
+                        height: "6px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                        width: "8px",
+                        height: "8px",
+                        background: scrollbarBackgroundT,
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                        background: scrollbarColourT,
+                        borderRadius: "24px",
+                    },
+                }}
+                onScroll={() => {
+                    // TODO: Does this event trigger when auto-scroll is activated?
+                    // If so, somehow we have to eliminate the loop
+                    shouldAutoScrollToNow.current = false;
+                }}
             >
-                <Tr>
-                    <Th
-                        pos="sticky"
-                        top={0}
-                        left={0}
-                        bgColor={timeBoxBgColor}
-                        zIndex={3}
-                        whiteSpace="nowrap"
-                        minW="min-content"
-                        maxW="8em"
-                        w="8em"
-                        overflow="hidden"
-                    >
-                        Time
-                    </Th>
-                    {sortedRooms.map((room) => (
+                <Table
+                    variant="unstyled"
+                    maxW="100%"
+                    minW={`calc(${sortedRooms.length * 350}px + 4em)`}
+                    __css={{ tableLayout: "fixed", borderCollapse: "separate", borderSpacing: "3px 0" }}
+                >
+                    <Tr>
                         <Th
-                            key={room.id}
                             pos="sticky"
                             top={0}
-                            bgColor={roomHeadingBgColor} /* TODO: bgColor={room.colour} */
+                            left={0}
+                            bgColor={timeBoxBgColor}
+                            zIndex={3}
                             whiteSpace="nowrap"
-                            zIndex={1}
-                            textAlign="center"
-                            w="350px"
+                            minW="min-content"
+                            maxW="8em"
+                            w="6em"
+                            overflow="hidden"
                         >
-                            {room.name}
+                            Time
                         </Th>
-                    ))}
-                </Tr>
-                {dayEls}
-            </Table>
-        </Box>
+                        {sortedRooms.map((room) => (
+                            <Th
+                                key={room.id}
+                                pos="sticky"
+                                top={0}
+                                bgColor={roomHeadingBgColor} /* TODO: bgColor={room.colour} */
+                                whiteSpace="nowrap"
+                                zIndex={1}
+                                textAlign="center"
+                                w="350px"
+                            >
+                                {room.name}
+                            </Th>
+                        ))}
+                    </Tr>
+                    {dayEls}
+                </Table>
+            </Box>
+        </VStack>
     );
 }

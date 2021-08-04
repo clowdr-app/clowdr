@@ -426,7 +426,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                 p="0.6em"
                                 minW="min-content"
                                 maxW="8em"
-                                w="8em"
+                                w="6em"
                             >
                                 {marker.toLocaleString({
                                     hour: "numeric",

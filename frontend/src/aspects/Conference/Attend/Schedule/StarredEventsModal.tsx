@@ -10,7 +10,7 @@ import {
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
-import { ScheduleInner } from "./Schedule";
+import { ScheduleInner } from "./v1/Schedule";
 
 gql`
     query StarredEvents_SelectEventIds($registrantId: uuid!) {

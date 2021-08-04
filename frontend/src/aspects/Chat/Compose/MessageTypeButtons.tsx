@@ -1,4 +1,4 @@
-import { Button, ButtonProps, HStack, StackProps } from "@chakra-ui/react";
+import { Button, ButtonGroup, ButtonProps, StackProps, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
@@ -10,11 +10,21 @@ function MessageTypeButton({
     shouldHighlight,
     ...props
 }: ButtonProps & { messageType: Chat_MessageType_Enum; shouldHighlight: boolean }): JSX.Element {
-    const highlightColour = "purple.400";
-
+    const color = useColorModeValue("white", "black");
     return (
-        <Button minW="auto" minH="auto" w="auto" h="auto" p={0} m={0} background="none" borderRadius={0} {...props}>
-            <MessageTypeIndicator color={shouldHighlight ? highlightColour : undefined} messageType={messageType} />
+        // <Button  w="auto" h="auto" m={0} background="none" borderRadius={0}>
+        <Button
+            minW="auto"
+            minH="0"
+            py={0}
+            size="xs"
+            borderRadius="2em"
+            colorScheme="purple"
+            color={shouldHighlight ? color : undefined}
+            variant={shouldHighlight ? "solid" : "outline"}
+            {...props}
+        >
+            <MessageTypeIndicator showName={true} messageType={messageType} color="inherit" />
         </Button>
     );
 }
@@ -24,12 +34,15 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
     const config = useChatConfiguration();
 
     return (
-        <HStack
+        <ButtonGroup
             spacing={config.spacing}
             pl={config.spacing}
             fontSize={config.fontSizeRange.value}
-            justifyContent="flex-start"
+            justifyContent="center"
             alignItems="center"
+            colorScheme="purple"
+            pt={1}
+            pb={2}
             {...props}
         >
             {config.permissions.canMessage ? (
@@ -37,7 +50,6 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     isDisabled={isDisabled}
                     messageType={Chat_MessageType_Enum.Message}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Message}
-                    fontSize="inherit"
                     aria-label="Compose an ordinary message"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Message) {
@@ -51,7 +63,6 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     isDisabled={isDisabled}
                     messageType={Chat_MessageType_Enum.Question}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Question}
-                    fontSize="inherit"
                     aria-label="Compose a question"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Question) {
@@ -65,7 +76,6 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     isDisabled={isDisabled}
                     messageType={Chat_MessageType_Enum.Answer}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Answer}
-                    fontSize="inherit"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Answer) {
                             composeCtx.setNewMessageType(Chat_MessageType_Enum.Answer);
@@ -78,7 +88,6 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     isDisabled={isDisabled}
                     messageType={Chat_MessageType_Enum.Poll}
                     shouldHighlight={composeCtx.newMessageType === Chat_MessageType_Enum.Poll}
-                    fontSize="inherit"
                     aria-label="Compose a poll"
                     onClick={() => {
                         if (composeCtx.newMessageType !== Chat_MessageType_Enum.Poll) {
@@ -87,6 +96,6 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
                     }}
                 />
             ) : undefined}
-        </HStack>
+        </ButtonGroup>
     );
 }

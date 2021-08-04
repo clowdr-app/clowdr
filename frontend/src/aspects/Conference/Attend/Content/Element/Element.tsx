@@ -12,7 +12,7 @@ import ActiveSocialRooms from "../../Rooms/V2/ActiveSocialRooms";
 import LiveProgramRooms from "../../Rooms/V2/LiveProgramRooms";
 import SponsorBooths from "../../Rooms/V2/SponsorBooths";
 import { ProgramModalTab, useScheduleModal } from "../../Schedule/ProgramModal";
-import Schedule from "../../Schedule/Schedule";
+import Schedule from "../../Schedule/v1/Schedule";
 import ItemList from "../ItemList";
 import { VideoElement } from "./VideoElement";
 

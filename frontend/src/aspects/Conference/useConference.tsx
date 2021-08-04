@@ -58,6 +58,11 @@ gql`
             key
             value
         }
+        scheduleViewVersion: configurations(where: { key: { _eq: SCHEDULE_VIEW_VERSION } }) {
+            conferenceId
+            key
+            value
+        }
 
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData

@@ -64,8 +64,6 @@ export default function StarEventButton({
                 }) as TimerHandler,
                 250
             );
-        } else {
-            setShow(false);
         }
 
         return () => {
@@ -75,10 +73,16 @@ export default function StarEventButton({
         };
     }, [isVisible]);
 
-    return (
+    const inner = useMemo(
+        () => (show && registrant ? <StarEventButtonInner eventIds={eventIds} registrant={registrant} /> : undefined),
+        [eventIds, registrant, show]
+    );
+    return show && registrant ? (
+        <>{inner}</>
+    ) : (
         <Observer
-            onChange={(ev) => {
-                setIsVisible(ev.intersectionRatio > 0);
+            onChange={({ isIntersecting }) => {
+                setIsVisible(isIntersecting);
             }}
         >
             <Box
@@ -89,7 +93,7 @@ export default function StarEventButton({
                 minW="1em"
                 {...props}
             >
-                {show && registrant ? <StarEventButtonInner eventIds={eventIds} registrant={registrant} /> : undefined}
+                {inner}
             </Box>
         </Observer>
     );
@@ -266,7 +270,7 @@ function StarEventButtonInner({
     if (starsResponse.data.schedule_StarredEvent.length > 0) {
         return (
             <Button
-                aria-label="Remove event from your schedule"
+                aria-label="Remove event from your personal schedule"
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
@@ -301,7 +305,7 @@ function StarEventButtonInner({
     } else {
         return (
             <Button
-                aria-label="Remove event from your schedule"
+                aria-label="Add event to your personal schedule"
                 onClick={(ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();

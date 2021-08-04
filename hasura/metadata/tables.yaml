@@ -2304,83 +2304,77 @@
       computed_fields:
       - itemTitle
       filter:
-        _or:
+        _and:
         - _and:
-          - accessToken:
-              _is_null: false
-          - accessToken:
-              _eq: X-Hasura-Magic-Token
-        - _and:
-          - _and:
-            - conference:
-                _and:
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - _exists:
-                    _where:
-                      _and:
-                      - slug:
-                          _eq: X-Hasura-Conference-Slug
-                      - permission_name:
-                          _eq: CONFERENCE_VIEW
-                    _table:
-                      schema: public
-                      name: FlatUnauthPermission
-            - _or:
+          - conference:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
               - _exists:
                   _where:
                     _and:
-                    - entityId:
-                        _is_null: true
-                    - group:
-                        _and:
-                        - enabled:
-                            _eq: true
-                        - includeUnauthenticated:
-                            _eq: true
-                    - conferenceSlug:
+                    - slug:
                         _eq: X-Hasura-Conference-Slug
-                    - permissionSet:
-                        rolePermissions:
-                          permissionName:
-                            _eq: CONFERENCE_VIEW
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW
                   _table:
-                    schema: content
-                    name: ElementPermissionGrant
-              - permissionGrants:
+                    schema: public
+                    name: FlatUnauthPermission
+          - _or:
+            - _exists:
+                _where:
                   _and:
-                  - conferenceSlug:
-                      _eq: X-Hasura-Conference-Slug
-                  - permissionSet:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_VIEW
+                  - entityId:
+                      _is_null: true
                   - group:
                       _and:
                       - enabled:
                           _eq: true
                       - includeUnauthenticated:
                           _eq: true
-          - typeName:
-              _in:
-              - ABSTRACT
-              - TEXT
-              - VIDEO_FILE
-              - VIDEO_URL
-              - VIDEO_LINK
-              - IMAGE_FILE
-              - IMAGE_URL
-              - PAPER_FILE
-              - PAPER_URL
-              - PAPER_LINK
-              - LINK
-              - LINK_BUTTON
-              - VIDEO_BROADCAST
-              - VIDEO_PREPUBLISH
-              - CONTENT_GROUP_LIST
-              - WHOLE_SCHEDULE
-              - EXPLORE_PROGRAM_BUTTON
-              - EXPLORE_SCHEDULE_BUTTON
+                  - conferenceSlug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permissionSet:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW
+                _table:
+                  schema: content
+                  name: ElementPermissionGrant
+            - permissionGrants:
+                _and:
+                - conferenceSlug:
+                    _eq: X-Hasura-Conference-Slug
+                - permissionSet:
+                    rolePermissions:
+                      permissionName:
+                        _eq: CONFERENCE_VIEW
+                - group:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - includeUnauthenticated:
+                        _eq: true
+        - typeName:
+            _in:
+            - ABSTRACT
+            - TEXT
+            - VIDEO_FILE
+            - VIDEO_URL
+            - VIDEO_LINK
+            - IMAGE_FILE
+            - IMAGE_URL
+            - PAPER_FILE
+            - PAPER_URL
+            - PAPER_LINK
+            - LINK
+            - LINK_BUTTON
+            - VIDEO_BROADCAST
+            - VIDEO_PREPUBLISH
+            - CONTENT_GROUP_LIST
+            - WHOLE_SCHEDULE
+            - EXPLORE_PROGRAM_BUTTON
+            - EXPLORE_SCHEDULE_BUTTON
   - role: user
     permission:
       columns:
@@ -6034,14 +6028,15 @@
               name: FlatUserPermission
       columns:
       - capacity
+      - colour
       - conferenceId
       - currentModeName
       - id
-      - name
-      - originatingItemId
-      - originatingDataId
-      - priority
       - managementModeName
+      - name
+      - originatingDataId
+      - originatingItemId
+      - priority
       backend_only: false
   select_permissions:
   - role: unauthenticated
@@ -6049,6 +6044,7 @@
       columns:
       - capacity
       - chatId
+      - colour
       - conferenceId
       - created_at
       - currentModeName
@@ -6086,6 +6082,7 @@
       - backendName
       - capacity
       - chatId
+      - colour
       - conferenceId
       - created_at
       - currentModeName
@@ -6158,11 +6155,12 @@
     permission:
       columns:
       - capacity
-      - name
-      - originatingItemId
-      - originatingDataId
-      - priority
+      - colour
       - managementModeName
+      - name
+      - originatingDataId
+      - originatingItemId
+      - priority
       filter:
         _and:
         - conference:

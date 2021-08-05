@@ -117,17 +117,32 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                                 const oldElementIdx = data.data.indexOf(latestVersion);
                                 const newData = {
                                     ...data,
-                                    data: data.data.map((version, idx) => {
-                                        return idx === oldElementIdx
-                                            ? {
-                                                  ...version,
-                                                  data: {
-                                                      ...version.data,
-                                                      text: ev.target.value,
-                                                  },
-                                              }
-                                            : version;
-                                    }),
+                                    data:
+                                        oldElementIdx === -1
+                                            ? [
+                                                  ...data.data,
+                                                  {
+                                                      createdAt: Date.now(),
+                                                      createdBy: "user",
+                                                      data: {
+                                                          baseType: ElementBaseType.Link,
+                                                          type: data.typeName,
+                                                          text: ev.target.value,
+                                                          url: "",
+                                                      },
+                                                  } as LinkElementVersionData,
+                                              ]
+                                            : data.data.map((version, idx) => {
+                                                  return idx === oldElementIdx
+                                                      ? {
+                                                            ...version,
+                                                            data: {
+                                                                ...version.data,
+                                                                text: ev.target.value,
+                                                            },
+                                                        }
+                                                      : version;
+                                              }),
                                 };
                                 update(newData);
                                 setText(null);
@@ -159,17 +174,32 @@ export const LinkElementTemplate: ElementBaseTemplate = {
                                 const oldElementIdx = data.data.indexOf(latestVersion);
                                 const newData = {
                                     ...data,
-                                    data: data.data.map((version, idx) => {
-                                        return idx === oldElementIdx
-                                            ? {
-                                                  ...version,
-                                                  data: {
-                                                      ...version.data,
-                                                      url: ev.target.value,
-                                                  },
-                                              }
-                                            : version;
-                                    }),
+                                    data:
+                                        oldElementIdx === -1
+                                            ? [
+                                                  ...data.data,
+                                                  {
+                                                      createdAt: Date.now(),
+                                                      createdBy: "user",
+                                                      data: {
+                                                          baseType: ElementBaseType.Link,
+                                                          type: data.typeName,
+                                                          text: ev.target.value,
+                                                          url: ev.target.value,
+                                                      },
+                                                  } as LinkElementVersionData,
+                                              ]
+                                            : data.data.map((version, idx) => {
+                                                  return idx === oldElementIdx
+                                                      ? {
+                                                            ...version,
+                                                            data: {
+                                                                ...version.data,
+                                                                url: ev.target.value,
+                                                            },
+                                                        }
+                                                      : version;
+                                              }),
                                 };
                                 update(newData);
                                 setUrl(null);

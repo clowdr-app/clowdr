@@ -130,17 +130,31 @@ export const URLElementTemplate: ElementBaseTemplate = {
                                 const oldElementIdx = data.data.indexOf(latestVersion);
                                 const newData = {
                                     ...data,
-                                    data: data.data.map((version, idx) => {
-                                        return idx === oldElementIdx
-                                            ? {
-                                                  ...version,
-                                                  data: {
-                                                      ...version.data,
-                                                      url: ev.target.value,
-                                                  },
-                                              }
-                                            : version;
-                                    }),
+                                    data:
+                                        oldElementIdx === -1
+                                            ? [
+                                                  ...data.data,
+                                                  {
+                                                      createdAt: Date.now(),
+                                                      createdBy: "user",
+                                                      data: {
+                                                          baseType: ElementBaseType.URL,
+                                                          type: data.typeName,
+                                                          url: ev.target.value,
+                                                      },
+                                                  } as UrlElementVersionData,
+                                              ]
+                                            : data.data.map((version, idx) => {
+                                                  return idx === oldElementIdx
+                                                      ? {
+                                                            ...version,
+                                                            data: {
+                                                                ...version.data,
+                                                                url: ev.target.value,
+                                                            },
+                                                        }
+                                                      : version;
+                                              }),
                                 };
                                 update(newData);
                                 setUrl(null);

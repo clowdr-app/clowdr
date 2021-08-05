@@ -69,17 +69,31 @@ export const TextElementTemplate: ElementBaseTemplate = {
                         const oldElementIdx = data.data.indexOf(latestVersion);
                         const newData = {
                             ...data,
-                            data: data.data.map((version, idx) => {
-                                return idx === oldElementIdx
-                                    ? {
-                                          ...version,
-                                          data: {
-                                              ...version.data,
-                                              text: ev.target.value,
-                                          },
-                                      }
-                                    : version;
-                            }),
+                            data:
+                                oldElementIdx === -1
+                                    ? [
+                                          ...data.data,
+                                          {
+                                              createdAt: Date.now(),
+                                              createdBy: "user",
+                                              data: {
+                                                  baseType: ElementBaseType.Text,
+                                                  type: data.typeName,
+                                                  text: ev.target.value,
+                                              },
+                                          } as TextElementVersionData,
+                                      ]
+                                    : data.data.map((version, idx) => {
+                                          return idx === oldElementIdx
+                                              ? {
+                                                    ...version,
+                                                    data: {
+                                                        ...version.data,
+                                                        text: ev.target.value,
+                                                    },
+                                                }
+                                              : version;
+                                      }),
                         };
                         update(newData);
                         setText(null);

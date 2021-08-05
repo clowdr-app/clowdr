@@ -186,8 +186,8 @@ function RightSidebarSections_Inner({
                             <FAIcon iconStyle="s" icon="hand-paper" ml="-3px" />
                         </Tab>
                     </Tooltip>
-                    <Tooltip label="All your chats">
-                        <Tab ml={2} px={2} fontSize="lg" borderRadius="full" aria-label="All your chats">
+                    <Tooltip label="All my chats">
+                        <Tab ml={2} px={2} fontSize="lg" borderRadius="full" aria-label="All my chats">
                             <FAIcon iconStyle="s" icon="comments" />
                             {chatsUnread !== "" ? <>&nbsp;({chatsUnread})</> : ""}
                         </Tab>

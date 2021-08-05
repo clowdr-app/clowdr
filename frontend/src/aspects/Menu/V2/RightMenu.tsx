@@ -149,7 +149,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             />
                         </Route>
                         <MenuButton
-                            label="Your chats"
+                            label="My chats"
                             iconStyle="s"
                             icon="comments"
                             borderRadius={0}

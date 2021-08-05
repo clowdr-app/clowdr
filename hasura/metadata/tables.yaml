@@ -1853,6 +1853,7 @@
           - CLOWDR_APP_VERSION
           - REGISTRATION_URL
           - SUPPORT_ADDRESS
+          - SCHEDULE_VIEW_VERSION
   - role: user
     permission:
       columns:
@@ -1887,6 +1888,7 @@
             - CLOWDR_APP_VERSION
             - REGISTRATION_URL
             - SUPPORT_ADDRESS
+            - SCHEDULE_VIEW_VERSION
   update_permissions:
   - role: user
     permission:

@@ -568,6 +568,11 @@ In most cases you will also need to start up your tunnel (Packetriot/Ngrok) befo
 
 If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 
+## Create a Conference 
+Once you log in on Clowdr, you will need a demo code to create a conference. Go to data manager/conference/DemoCode on your Hasura console. On the Insert Row tab, set id to be default and click on Save. You will see a demo code is generated. Now use that to create a conference.
+
+After creating and configuring the conference, click on the setting icon on the left. You will see a yellow button with a lock icon, click on that and create a Permission Set as Organiser. 
+
 ## Formatting
 
 This repository uses Prettier for auto-formatting and checks for both pushes and

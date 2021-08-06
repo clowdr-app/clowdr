@@ -46,7 +46,6 @@ import { v4 as uuidv4 } from "uuid";
 import { LinkButton } from "../Chakra/LinkButton";
 import FAIcon from "../Icons/FAIcon";
 import UnsavedChangesWarning from "../LeavingPageWarnings/UnsavedChangesWarning";
-import { DateTimePicker } from "./DateTimePicker";
 import useDebouncedState from "./useDebouncedState";
 
 export enum FieldType {
@@ -516,12 +515,12 @@ const defaultRenderers: {
             }
         }
     },
-    [FieldType.datetime]: function renderDateTimeField(value: Date, editMode) {
-        if (editMode) {
-            return <DateTimePicker value={value} editMode={editMode} />;
-        } else {
-            return <>{formatISO9075(value)}</>;
-        }
+    [FieldType.datetime]: function renderDateTimeField(value: Date, _editMode) {
+        // if (editMode) {
+        //     return <DateTimePicker value={value} editMode={editMode} />;
+        // } else {
+        return <>{formatISO9075(value)}</>;
+        // }
     },
 };
 
@@ -1072,10 +1071,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
 
     const visibleFields = useMemo(
         () =>
-            (primaryKeyField.isHidden
-                ? []
-                : [(primaryKeyField as unknown) as Readonly<PrimaryField<T, keyof T>>]
-            ).concat(
+            (primaryKeyField.isHidden ? [] : [primaryKeyField as unknown as Readonly<PrimaryField<T, keyof T>>]).concat(
                 otherPrimaryFields
                     ? (Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, keyof T>>>).filter(
                           (x) => !x.isHidden && (x.isEditable || x.isEditableAtCreate)
@@ -1311,10 +1307,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
 
     const visibleFields = useMemo(
         () =>
-            (primaryKeyField.isHidden
-                ? []
-                : [(primaryKeyField as unknown) as Readonly<PrimaryField<T, keyof T>>]
-            ).concat(
+            (primaryKeyField.isHidden ? [] : [primaryKeyField as unknown as Readonly<PrimaryField<T, keyof T>>]).concat(
                 otherPrimaryFields
                     ? (Object.values(otherPrimaryFields) as Array<Readonly<PrimaryField<T, keyof T>>>).filter(
                           (x) => !x.isHidden

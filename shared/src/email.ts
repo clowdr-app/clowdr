@@ -8,13 +8,13 @@ export type EmailTemplate_Defaults = {
  * The default template for the subtitles generated email.
  */
 export const EMAIL_TEMPLATE_SUBTITLES_GENERATED: EmailTemplate_Defaults = {
-    htmlBodyTemplate: `<p>Dear {{uploader.name}},</p>
-<p>We have automatically generated subtitles for your item <em>{{file.name}}</em> ({{item.title}}) at {{conference.name}}.</p>
+    htmlBodyTemplate: `<p>Dear {{{uploader.name}}},</p>
+<p>We have automatically generated subtitles for your item <em>{{{file.name}}}</em> ({{{item.title}}}) at {{{conference.name}}}.</p>
 <p>Automated subtitles aren't always accurate, so you can <a href="{{{uploadLink}}}">review and edit them here</a>.</p>
 <p>Thank you,<br/>
 The Clowdr team
 </p>`,
-    subjectTemplate: "Clowdr: Submission SUCCESS: Subtitles generated for {{file.name}} at {{conference.name}}",
+    subjectTemplate: "{{{conference.shortName}}} (Clowdr): Subtitles generated for your {{{file.name}}} ({{{item.title}}})",
 };
 
 /**
@@ -41,11 +41,11 @@ export interface EmailView_SubtitlesGenerated {
  * The default template for the submission request email.
  */
 export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
-    htmlBodyTemplate: `<p>Dear {{uploader.name}},</p>
+    htmlBodyTemplate: `<p>Dear {{{uploader.name}}},</p>
 <p>
-    The organisers of {{conference.name}} are requesting that you or
-    your co-authors/co-presenters upload the following file: {{file.name}} for
-    "{{item.title}}".
+    The organisers of {{{conference.name}}} are requesting that you or
+    your co-authors/co-presenters upload the following file: {{{file.name}}} for
+    "{{{item.title}}}".
 </p>
 <p>
     Please do not forward or share this email: anyone with the link contained
@@ -66,7 +66,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
 <p>We hope you enjoy your conference,<br/>
 The Clowdr team
 </p>`,
-    subjectTemplate: "Clowdr: You are requested to submit {{file.name}} for {{item.title}} at {{conference.name}}",
+    subjectTemplate: "{{{conference.shortName}}} (Clowdr): Submit your {{{file.name}}} for {{{item.title}}}",
 };
 
 /**

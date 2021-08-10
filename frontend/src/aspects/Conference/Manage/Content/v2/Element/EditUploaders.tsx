@@ -34,6 +34,9 @@ import {
 import * as R from "ramda";
 import React, { useRef, useState } from "react";
 import {
+    ManageContent_SelectUploadersDocument,
+    ManageContent_SelectUploadersQuery,
+    ManageContent_SelectUploadersQueryVariables,
     ManageContent_UpdateElementMutation,
     ManageContent_UpdateElementMutationVariables,
     ManageContent_UploaderFragment,
@@ -122,23 +125,39 @@ export function EditUploaders({
         update: (cache, response) => {
             if (response.data?.insert_content_Uploader) {
                 const datas = response.data.insert_content_Uploader.returning;
-                cache.modify({
-                    fields: {
-                        content_Uploader(existingRefs: Reference[] = []) {
-                            const newRefs: Reference[] = [];
-                            for (const data of datas) {
-                                const newRef = cache.writeFragment({
-                                    data,
-                                    fragment: ManageContent_UploaderFragmentDoc,
-                                    fragmentName: "ManageContent_Uploader",
-                                });
-                                if (newRef) {
-                                    newRefs.push(newRef);
-                                }
-                            }
-                            return [...existingRefs, ...newRefs];
-                        },
-                    },
+                datas.forEach((data) => {
+                    cache.writeFragment({
+                        data,
+                        fragment: ManageContent_UploaderFragmentDoc,
+                        fragmentName: "ManageContent_Uploader",
+                    });
+
+                    {
+                        const query = cache.readQuery<
+                            ManageContent_SelectUploadersQuery,
+                            ManageContent_SelectUploadersQueryVariables
+                        >({
+                            query: ManageContent_SelectUploadersDocument,
+                            variables: {
+                                elementId: data.elementId,
+                            },
+                        });
+                        if (query) {
+                            cache.writeQuery<
+                                ManageContent_SelectUploadersQuery,
+                                ManageContent_SelectUploadersQueryVariables
+                            >({
+                                query: ManageContent_SelectUploadersDocument,
+                                data: {
+                                    ...query,
+                                    content_Uploader: [...query.content_Uploader.filter((x) => data.id !== x.id), data],
+                                },
+                                variables: {
+                                    elementId: data.elementId,
+                                },
+                            });
+                        }
+                    }
                 });
             }
         },

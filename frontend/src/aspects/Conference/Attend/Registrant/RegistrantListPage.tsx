@@ -9,9 +9,8 @@ import {
     InputLeftAddon,
     InputRightElement,
     Spinner,
-    Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchRegistrantsLazyQuery, useSelectRegistrantsQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
@@ -53,13 +52,15 @@ export function AllRegistrantsList(): JSX.Element {
 
     const conference = useConference();
 
-    const [
-        searchQuery,
-        { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchRegistrantsLazyQuery();
+    const [searchQuery, { loading: loadingSearch, error: errorSearch, data: dataSearch }] =
+        useSearchRegistrantsLazyQuery();
     useQueryErrorToast(errorSearch, false, "RegistrantListPage.tsx -- search");
 
-    const { loading: loadingRegistrants, error: errorRegistrants, data: dataRegistrants } = useSelectRegistrantsQuery({
+    const {
+        loading: loadingRegistrants,
+        error: errorRegistrants,
+        data: dataRegistrants,
+    } = useSelectRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -133,6 +134,11 @@ export function AllRegistrantsList(): JSX.Element {
         };
     }, [conference.id, search, searchQuery]);
 
+    const loadMore = useCallback(() => {
+        setIsLoadingMore(true);
+        setLoadedCount(loadedCount + 30);
+    }, [loadedCount]);
+
     return (
         <>
             <FormControl maxW={400}>
@@ -155,20 +161,20 @@ export function AllRegistrantsList(): JSX.Element {
             <RegistrantsList
                 allRegistrants={registrants ?? undefined}
                 searchedRegistrants={searched && search.length > 0 ? searched : undefined}
+                loadMore={loadMore}
+                moreAvailable={
+                    !!allRegistrants &&
+                    loadedCount < ((search.length > 0 ? searched?.length : undefined) ?? allRegistrants.length)
+                }
             />
-            {allRegistrants && loadedCount < allRegistrants.length ? (
-                <Button
-                    isLoading={isLoadingMore}
-                    onClick={() => {
-                        setIsLoadingMore(true);
-                        setLoadedCount(loadedCount + 30);
-                    }}
-                >
+            {allRegistrants &&
+            loadedCount < ((search.length > 0 ? searched?.length : undefined) ?? allRegistrants.length) ? (
+                <Button isLoading={isLoadingMore} onClick={loadMore} py={2}>
                     <FAIcon iconStyle="s" icon="chevron-down" mr={2} />
                     Load more
                 </Button>
             ) : (
-                <Text fontStyle="italic">(End of list)</Text>
+                <></>
             )}
         </>
     );

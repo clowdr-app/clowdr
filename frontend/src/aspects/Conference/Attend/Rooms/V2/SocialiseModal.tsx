@@ -5,7 +5,6 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalOverlay,
     Tab,
     TabList,
@@ -181,7 +180,9 @@ export default function SocialiseModal({
                             variant="enclosed-colored"
                             colorScheme="purple"
                             isLazy
+                            h="auto"
                             w="100%"
+                            overflow="hidden"
                             display="flex"
                             flexDir="column"
                             index={selectedTabIndex}
@@ -192,17 +193,17 @@ export default function SocialiseModal({
                                     <FAIcon iconStyle="s" icon="mug-hot" aria-hidden />
                                     &nbsp;&nbsp;Rooms
                                 </Tab>
-                                <Tab>
+                                <Tab overflow="hidden">
                                     <FAIcon iconStyle="s" icon="users" aria-hidden />
                                     &nbsp;&nbsp;People
                                 </Tab>
-                                <Tab>
+                                <Tab overflow="auto">
                                     <FAIcon iconStyle="s" icon="random" aria-hidden />
                                     &nbsp;&nbsp;Networking
                                 </Tab>
                             </TabList>
-                            <TabPanels>
-                                <TabPanel>
+                            <TabPanels overflow="hidden">
+                                <TabPanel h="100%" overflow="auto">
                                     <ActiveSocialRooms excludeLiveEventRooms />
                                     <InactiveSocialRooms />
                                     <Flex mt={4} justifyContent="center">
@@ -211,12 +212,12 @@ export default function SocialiseModal({
                                         </Button>
                                     </Flex>
                                 </TabPanel>
-                                <TabPanel>
-                                    <VStack spacing={4}>
+                                <TabPanel h="100%" overflow="hidden">
+                                    <VStack spacing={4} h="100%" overflow="hidden">
                                         <AllRegistrantsList />
                                     </VStack>
                                 </TabPanel>
-                                <TabPanel>
+                                <TabPanel h="100%" overflow="auto">
                                     <VStack spacing={4}>
                                         <ShuffleWaiting />
                                     </VStack>
@@ -224,7 +225,6 @@ export default function SocialiseModal({
                             </TabPanels>
                         </Tabs>
                     </ModalBody>
-                    <ModalFooter></ModalFooter>
                 </ModalContent>
             </Modal>
         </>

@@ -22,10 +22,8 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
     const conference = useConference();
     const registrant = useMaybeCurrentRegistrant();
 
-    const [
-        searchQuery,
-        { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchRegistrantsLazyQuery();
+    const [searchQuery, { loading: loadingSearch, error: errorSearch, data: dataSearch }] =
+        useSearchRegistrantsLazyQuery();
     useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search registrants");
 
     const [loadedCount, setLoadedCount] = useState<number>(30);

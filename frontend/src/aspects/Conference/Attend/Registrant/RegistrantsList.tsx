@@ -1,4 +1,5 @@
 import { Button, Center, Flex, Image, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import BadgeList from "../../../Badges/BadgeList";
@@ -68,9 +69,13 @@ export function RegistrantTile({ registrant, onClick }: { registrant: Registrant
 export default function RegistrantsList({
     allRegistrants,
     searchedRegistrants,
+    loadMore,
+    moreAvailable,
 }: {
     allRegistrants?: Registrant[];
     searchedRegistrants?: Registrant[];
+    loadMore: () => void;
+    moreAvailable: boolean;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedRegistrant, setSelectedRegistrant] = useState<Registrant | null>(null);
@@ -124,8 +129,20 @@ export default function RegistrantsList({
                 autoRows="min-content"
                 spacing={[2, 2, 4]}
                 maxW="5xl"
+                overflow="auto"
             >
                 {registrantsEls}
+                {moreAvailable ? (
+                    <IntersectionObserver
+                        onChange={({ isIntersecting }) => {
+                            if (isIntersecting) {
+                                loadMore();
+                            }
+                        }}
+                    >
+                        <div style={{ height: "10px" }}>&nbsp;</div>
+                    </IntersectionObserver>
+                ) : undefined}
             </SimpleGrid>
             <ProfileModal isOpen={isOpen} onClose={onClose} registrant={selectedRegistrant} />
         </>

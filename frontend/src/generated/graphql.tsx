@@ -35840,7 +35840,7 @@ export type ConferenceStatsQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly totalViewsStat?: Maybe<{ readonly __typename?: 'analytics_ItemTotalViews', readonly totalViewCount?: Maybe<any> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly totalViewsStat?: Maybe<{ readonly __typename?: 'analytics_ElementTotalViews', readonly totalViewCount?: Maybe<any> }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number }> }> }> };
+export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentItemStats', readonly id: any, readonly itemId: any, readonly viewCount: number, readonly updated_at: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentElementStats', readonly id: any, readonly elementId: any, readonly viewCount: number, readonly updated_at: any }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> }> }> }> };
 
 export type GetChannelStacksQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -42465,32 +42465,53 @@ export const ConferenceStatsDocument = gql`
     completedRegistrationsStat {
       count
     }
-    items(where: {totalViewsStat: {}}) {
+    items(where: {stats: {}}) {
       id
       title
-      totalViewsStat {
-        totalViewCount
+      stats(order_by: [{updated_at: asc}]) {
+        id
+        itemId
+        viewCount
+        updated_at
       }
       elements(
-        where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH, VIDEO_FILE]}, totalViewsStat: {}}
+        where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH, VIDEO_FILE]}, stats: {}}
       ) {
         id
         name
-        totalViewsStat {
-          totalViewCount
+        stats(order_by: [{updated_at: asc}]) {
+          id
+          elementId
+          viewCount
+          updated_at
         }
       }
     }
     rooms(where: {_or: [{managementModeName: {_eq: PUBLIC}}, {events: {}}]}) {
       id
       name
-      presenceCounts {
+      presenceCounts(order_by: [{created_at: asc}]) {
         created_at
         count
       }
-      stats {
+      stats(order_by: [{created_at: asc}]) {
         created_at
         hlsViewCount
+      }
+      events(order_by: [{startTime: asc}, {endTime: asc}]) {
+        id
+        name
+        item {
+          id
+          title
+        }
+        exhibition {
+          id
+          name
+        }
+        startTime
+        endTime
+        intendedRoomModeName
       }
     }
   }

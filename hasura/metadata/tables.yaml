@@ -57,7 +57,10 @@
   - role: user
     permission:
       columns:
+      - created_at
       - elementId
+      - id
+      - updated_at
       - viewCount
       filter:
         element:
@@ -101,7 +104,10 @@
   - role: user
     permission:
       columns:
+      - created_at
+      - id
       - itemId
+      - updated_at
       - viewCount
       filter:
         contentGroup:

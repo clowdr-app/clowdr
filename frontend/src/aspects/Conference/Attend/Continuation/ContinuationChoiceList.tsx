@@ -12,11 +12,13 @@ export default function ContinuationChoiceList({
     noBackstage,
     currentRole,
     onChoiceSelected,
+    leastDestructiveRef,
 }: {
     choices: readonly ContinuationChoices_ContinuationFragment[];
     isBackstage: boolean;
     noBackstage: boolean;
     currentRole: ContinuationDefaultFor;
+    leastDestructiveRef?: React.MutableRefObject<any>;
     onChoiceSelected: (choiceId: string | null, isDefault: boolean, isInitial: boolean) => void;
 }): JSX.Element {
     const sortedChoices = useMemo(() => R.sortBy((x) => x.priority, choices), [choices]);
@@ -72,6 +74,7 @@ export default function ContinuationChoiceList({
                         onChoiceSelected(null, defaultOptionId === null, false);
                     }}
                     variant="outline"
+                    ref={leastDestructiveRef}
                 >
                     <chakra.span mr={2}>Stay here</chakra.span>
                     {selectedOptionId === null ? (

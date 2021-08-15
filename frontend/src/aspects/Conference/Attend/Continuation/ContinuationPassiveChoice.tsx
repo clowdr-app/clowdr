@@ -1,23 +1,30 @@
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
     Box,
+    Button,
     CircularProgress,
     CircularProgressLabel,
     Flex,
     HStack,
     keyframes,
-    Portal,
     Text,
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import type { FocusableElement } from "@chakra-ui/utils";
 import type { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
+import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { formatRemainingTime } from "../Room/formatRemainingTime";
 import ContinuationChoiceList from "./ContinuationChoiceList";
 
-const closedTopPos = "calc(100vh - 10ex)";
+const closedTopPos = "calc(100vh - 11ex)";
 export default function ContinuationPassiveChoice({
     choices,
     isBackstage,
@@ -26,6 +33,7 @@ export default function ContinuationPassiveChoice({
     timeRemaining,
     timeMax,
     onChoiceSelected,
+    activate,
 }: {
     choices: readonly ContinuationChoices_ContinuationFragment[];
     isBackstage: boolean;
@@ -34,8 +42,9 @@ export default function ContinuationPassiveChoice({
     timeRemaining: number;
     timeMax: number;
     onChoiceSelected: (choiceId: string | null, isDefault: boolean) => void;
+    activate: () => void;
 }): JSX.Element {
-    const bgColor = useColorModeValue("gray.50", "gray.900");
+    const progressColour = useColorModeValue("gray.50", "gray.700");
     const borderColor = useColorModeValue("gray.300", "gray.600");
     const [vertical, setVertical] = useState<string>("50vh");
     const [madeFirstChoice, setMadeFirstChoice] = useState<boolean>(false);
@@ -53,7 +62,7 @@ export default function ContinuationPassiveChoice({
         [onChoiceSelected]
     );
     const transition =
-        "top 0.25s ease-in-out, bottom 0.25s ease-in-out, width 0.25s ease-in-out, opacity 0.25s ease-in-out";
+        "top 0.25s ease-in-out, bottom 0.25s ease-in-out, width 0.25s ease-in-out, height 0.25s ease-in-out, opacity 0.25s ease-in-out";
     const opacityKeyframesStr2 = keyframes`
         0% {
             opacity: 0;
@@ -82,85 +91,138 @@ export default function ContinuationPassiveChoice({
             clearTimeout(tId);
         };
     }, [madeFirstChoice]);
+    const leastDestructiveRef = useRef<FocusableElement | null>(null);
 
     return (
-        <Portal>
+        <AlertDialog
+            leastDestructiveRef={leastDestructiveRef}
+            onClose={() => {
+                // TODO: Is this needed?
+            }}
+            isOpen={true}
+            isCentered
+            motionPreset="slideInBottom"
+            trapFocus={vertical !== closedTopPos}
+        >
             <Box
                 pos="fixed"
-                top={0}
-                left={0}
-                w="100%"
-                h={vertical === closedTopPos ? "0" : "100%"}
+                left="0"
+                top="0"
+                w="100vw"
+                h="100vh"
                 bgColor="black"
-                zIndex={5000}
+                zIndex="overlay"
                 transition={transition}
-                opacity={vertical !== closedTopPos ? 0.4 : 0}
-            >
-                &nbsp;
-            </Box>
-            <Flex
+                opacity={vertical === closedTopPos ? 0 : 0.4}
+                pointerEvents={vertical === closedTopPos ? "none" : undefined}
+            />
+            <AlertDialogContent
                 position="fixed"
-                left="50vw"
                 justifyContent="center"
-                zIndex={5000}
+                zIndex="modal"
                 top={vertical}
                 transition={transition}
                 animation={`${opacityKeyframesStr2} 500ms 1 ease-out forwards`}
+                userSelect="none"
+                borderColor={borderColor}
+                borderWidth={1}
+                shadow={shadow}
+                my={0}
+                containerProps={{ pointerEvents: vertical === closedTopPos ? "none" : undefined }}
             >
-                <Flex
-                    pos="relative"
-                    left="-50%"
-                    borderColor={borderColor}
-                    borderWidth={1}
-                    bgColor={bgColor}
-                    shadow={shadow}
-                    w="auto"
-                    h="auto"
-                    py={2}
-                    px={4}
-                    borderRadius="3xl"
-                    flexDir="column"
-                    alignItems="stretch"
-                    maxW="100%"
+                <AlertDialogHeader
+                    fontSize="md"
+                    w="100%"
+                    mb={0}
+                    pb={0}
+                    tabIndex={vertical === closedTopPos ? 0 : -1}
+                    cursor={vertical === closedTopPos ? "pointer" : undefined}
                     onClick={() => {
                         if (vertical === closedTopPos) {
                             setMadeFirstChoice(true);
                             setVertical("50vh");
                         }
                     }}
+                    onKeyDown={(ev) => {
+                        if (ev.key === "Enter" || ev.key === "Space") {
+                            if (vertical === closedTopPos) {
+                                setMadeFirstChoice(true);
+                                setVertical("50vh");
+                            }
+                        }
+                    }}
+                    pointerEvents={vertical === closedTopPos ? "all" : undefined}
+                    _focus={
+                        vertical === closedTopPos
+                            ? {
+                                  boxShadow: defaultOutline_AsBoxShadow,
+                              }
+                            : undefined
+                    }
                 >
-                    <HStack flexWrap="wrap" mb={2} alignItems="flex-start" justifyContent="flex-start">
-                        <VStack mb={2} alignItems="flex-start">
-                            <Text fontWeight="bold">Where would you like to go next?</Text>
-                            <Text>
-                                {vertical !== closedTopPos
-                                    ? "Choose now for when the event ends."
-                                    : "Click to change your choice."}
+                    <HStack flexWrap="wrap" mb={2} alignItems="flex-start" justifyContent="flex-start" w="100%">
+                        <VStack mb={2} alignItems="flex-start" mr="auto">
+                            <Text fontWeight="bold" id="passive-continuation-choices-title" userSelect="none">
+                                Where would you like to go next?
+                            </Text>
+                            <Text id="passive-continuation-choices-description" userSelect="none">
+                                {vertical === closedTopPos
+                                    ? "Click to change your choice."
+                                    : "Choose now for when the event ends."}
                             </Text>
                         </VStack>
                         {timeRemaining > 0 ? (
-                            <Box>
-                                <CircularProgress size="40px" color="blue.400" value={timeRemaining} max={timeMax}>
-                                    <CircularProgressLabel>{Math.round(timeRemaining / 1000)}s</CircularProgressLabel>
-                                </CircularProgress>
+                            <Box mb={2}>
+                                <Button
+                                    size="md"
+                                    px={1}
+                                    py={1}
+                                    colorScheme="purple"
+                                    h="auto"
+                                    onClick={activate}
+                                    aria-label="Activate your choice now"
+                                >
+                                    <CircularProgress
+                                        size="40px"
+                                        color={progressColour}
+                                        value={timeRemaining}
+                                        max={timeMax}
+                                        userSelect="none"
+                                        mr={1}
+                                    >
+                                        <CircularProgressLabel>
+                                            {Math.round(timeRemaining / 1000)}s
+                                        </CircularProgressLabel>
+                                    </CircularProgress>
+                                    Go
+                                </Button>
                             </Box>
                         ) : undefined}
                     </HStack>
-                    <ContinuationChoiceList
-                        choices={choices}
-                        isBackstage={isBackstage}
-                        noBackstage={noBackstage}
-                        currentRole={currentRole}
-                        onChoiceSelected={setChoice}
-                    />
-                    {!madeFirstChoice ? (
+                </AlertDialogHeader>
+                {vertical === closedTopPos ? undefined : (
+                    <AlertDialogBody m={0} mt={-2} pt={0} pb={madeFirstChoice ? 2 : 0}>
+                        <Flex w="100%" borderRadius="3xl" flexDir="column" alignItems="stretch" maxW="100%">
+                            <ContinuationChoiceList
+                                choices={choices}
+                                isBackstage={isBackstage}
+                                noBackstage={noBackstage}
+                                currentRole={currentRole}
+                                onChoiceSelected={setChoice}
+                                leastDestructiveRef={leastDestructiveRef}
+                            />
+                        </Flex>
+                    </AlertDialogBody>
+                )}
+                {!madeFirstChoice ? (
+                    <AlertDialogFooter pt={0} pb={1}>
                         <Text fontSize="sm" mt={2}>
                             This window will minimise in{" "}
                             {formatRemainingTime((20000 - (now - initiallyShownAt)) / 1000, false)}
                         </Text>
-                    ) : undefined}
-                </Flex>
-            </Flex>
-        </Portal>
+                    </AlertDialogFooter>
+                ) : undefined}
+            </AlertDialogContent>
+        </AlertDialog>
     );
 }

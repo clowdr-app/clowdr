@@ -226,6 +226,10 @@ function ContinuationChoices_Inner({
             setActivateChoice(true);
         }
     }, [timeRemaining]);
+    const activate = useCallback(() => {
+        setActivateChoice(true);
+        setActivatedChoice(false);
+    }, []);
 
     const toast = useToast();
     const history = useHistory();
@@ -427,6 +431,7 @@ function ContinuationChoices_Inner({
                 timeRemaining={timeRemaining}
                 timeMax={passiveChoice_RevealThreshholdMs}
                 onChoiceSelected={passiveSet}
+                activate={activate}
             />
         )
     ) : (

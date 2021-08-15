@@ -63,15 +63,19 @@ gql`
         activeRooms: shuffleRooms(where: { isEnded: { _eq: false } }) {
             ...ActiveShuffleRoom
         }
+        events(where: { startTime: { _lte: $now }, endTime: { _gte: $now } }) {
+            id
+            endTime
+        }
     }
 
-    query SelectShufflePeriod($id: uuid!) {
+    query SelectShufflePeriod($id: uuid!, $now: timestamptz!) {
         room_ShufflePeriod_by_pk(id: $id) {
             ...ActiveShufflePeriod
         }
     }
 
-    query SelectActiveShufflePeriods($from: timestamptz!, $until: timestamptz!) {
+    query SelectActiveShufflePeriods($from: timestamptz!, $until: timestamptz!, $now: timestamptz!) {
         room_ShufflePeriod(where: { startAt: { _lte: $until }, endAt: { _gte: $from } }) {
             ...ActiveShufflePeriod
         }
@@ -302,13 +306,22 @@ async function attemptToMatchEntry_FCFS(
                 .getUTCMinutes()
                 .toString()
                 .padStart(2, "0")}`;
+
+            let roomDurationMinutes = activePeriod.roomDurationMinutes;
+            if (activePeriod.events.length > 0) {
+                for (const event of activePeriod.events) {
+                    const endTimeMs = Date.parse(event.endTime);
+                    const msToEnd = endTimeMs - now;
+                    roomDurationMinutes = Math.min(roomDurationMinutes, Math.max(1, Math.floor(msToEnd / (60 * 1000))));
+                }
+            }
             activeRooms.push(
                 await allocateToNewRoom(
                     activePeriod.id,
                     activePeriod.maxRegistrantsPerRoom + 1,
                     activePeriod.name + " room: " + timeStr,
                     activePeriod.conferenceId,
-                    activePeriod.roomDurationMinutes,
+                    roomDurationMinutes,
                     reshuffleUponEnd,
                     [...entriesToAllocate, entry],
                     unallocatedQueueEntries
@@ -427,6 +440,7 @@ export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEnt
         query: SelectShufflePeriodDocument,
         variables: {
             id: entry.shufflePeriodId,
+            now: new Date().toISOString(),
         },
     });
     if (!result.data.room_ShufflePeriod_by_pk) {
@@ -488,6 +502,7 @@ export async function processShuffleQueues(): Promise<void> {
         variables: {
             from: new Date(now - 24 * 60 * 60 * 1000).toISOString(),
             until: new Date(now + 60 * 1000).toISOString(),
+            now: new Date().toISOString(),
         },
     });
 

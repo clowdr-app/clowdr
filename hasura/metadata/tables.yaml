@@ -6512,6 +6512,15 @@
     using:
       foreign_key_constraint_on: organiserId
   array_relationships:
+  - name: events
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: Event
+        insertion_order: null
+        column_mapping:
+          id: shufflePeriodId
   - name: queueEntries
     using:
       foreign_key_constraint_on:

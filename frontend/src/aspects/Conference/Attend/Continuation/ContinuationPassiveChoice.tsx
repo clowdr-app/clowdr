@@ -103,6 +103,10 @@ export default function ContinuationPassiveChoice({
             isCentered
             motionPreset="slideInBottom"
             trapFocus={vertical !== closedTopPos}
+            blockScrollOnMount={vertical !== closedTopPos}
+            closeOnEsc={false}
+            closeOnOverlayClick={false}
+            scrollBehavior="inside"
         >
             <Box
                 pos="fixed"

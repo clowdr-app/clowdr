@@ -302,7 +302,7 @@ export class ChannelStack extends cdk.Stack {
                 playlistType: PlaylistType.EVENT,
                 playlistWindowSeconds: 60,
                 programDateTimeIntervalSeconds: 10,
-                segmentDurationSeconds: 1,
+                segmentDurationSeconds: 5,
                 streamSelection: {
                     maxVideoBitsPerSecond: 2147483647,
                     minVideoBitsPerSecond: 0,

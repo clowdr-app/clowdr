@@ -257,6 +257,12 @@ function RoomInner({
 
     alreadyBackstage.current = showBackstage;
 
+    const moveToNextBackstage = useCallback(() => {
+        if (nextRoomEvent) {
+            setBackstageSelectedEventId(nextRoomEvent.id);
+        }
+    }, [nextRoomEvent]);
+
     const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
     const showDefaultBreakoutRoom = useMemo(
         () =>
@@ -724,9 +730,11 @@ function RoomInner({
 
             <RoomContinuationChoices
                 currentRoomEvent={currentRoomEvent}
+                nextRoomEvent={nextRoomEvent}
                 roomDetails={roomDetails}
                 showBackstage={showBackstage}
                 currentRegistrantId={currentRegistrant.id}
+                moveToNextBackstage={moveToNextBackstage}
             />
         </>
     );

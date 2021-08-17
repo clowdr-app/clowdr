@@ -13,6 +13,7 @@ export default function ContinuationChoiceList({
     currentRole,
     onChoiceSelected,
     leastDestructiveRef,
+    selectDefault,
 }: {
     choices: readonly ContinuationChoices_ContinuationFragment[];
     isBackstage: boolean;
@@ -20,6 +21,7 @@ export default function ContinuationChoiceList({
     currentRole: ContinuationDefaultFor;
     leastDestructiveRef?: React.MutableRefObject<any>;
     onChoiceSelected: (choiceId: string | null, isDefault: boolean, isInitial: boolean) => void;
+    selectDefault: boolean;
 }): JSX.Element {
     const sortedChoices = useMemo(() => R.sortBy((x) => x.priority, choices), [choices]);
     const defaultOptionId = useMemo(() => {
@@ -44,8 +46,10 @@ export default function ContinuationChoiceList({
     }, [currentRole, isBackstage, noBackstage, sortedChoices]);
     const [selectedOptionId, setSelectedOptionId] = useState<string | null>(defaultOptionId);
     useEffect(() => {
-        onChoiceSelected(defaultOptionId, true, true);
-    }, [defaultOptionId, onChoiceSelected]);
+        if (selectDefault) {
+            onChoiceSelected(defaultOptionId, true, true);
+        }
+    }, [defaultOptionId, onChoiceSelected, selectDefault]);
 
     return (
         <OrderedList spacing={1}>

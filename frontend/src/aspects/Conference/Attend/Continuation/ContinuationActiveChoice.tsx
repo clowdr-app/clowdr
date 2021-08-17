@@ -77,6 +77,7 @@ export default function ContinuationActiveChoice({
                         noBackstage={noBackstage}
                         currentRole={currentRole}
                         onChoiceSelected={setChoice}
+                        selectDefault={true}
                     />
                 </ModalBody>
                 <ModalFooter></ModalFooter>

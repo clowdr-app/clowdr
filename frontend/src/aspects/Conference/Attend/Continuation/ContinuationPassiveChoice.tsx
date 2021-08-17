@@ -214,6 +214,7 @@ export default function ContinuationPassiveChoice({
                                 currentRole={currentRole}
                                 onChoiceSelected={setChoice}
                                 leastDestructiveRef={leastDestructiveRef}
+                                selectDefault={!madeFirstChoice}
                             />
                         </Flex>
                     </AlertDialogBody>

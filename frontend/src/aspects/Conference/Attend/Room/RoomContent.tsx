@@ -85,6 +85,10 @@ export function RoomContent({
     );
 
     const now5s = useRealTime(5000);
+    const currentEventEndTime = useMemo(
+        () => currentRoomEvent?.endTime && Date.parse(currentRoomEvent.endTime),
+        [currentRoomEvent?.endTime]
+    );
 
     return (
         <Box flexGrow={1}>
@@ -106,7 +110,9 @@ export function RoomContent({
                     <Heading as="h3" textAlign="left" size="lg" mb={2}>
                         {currentRoomEvent.name}
                     </Heading>
-                    {currentRoomEvent.shufflePeriod ? (
+                    {currentRoomEvent.shufflePeriod &&
+                    currentEventEndTime &&
+                    currentEventEndTime - now5s > 1.5 * 60 * 1000 ? (
                         <Center>
                             <ShufflePeriodBox period={currentRoomEvent.shufflePeriod} />
                         </Center>

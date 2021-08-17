@@ -27,12 +27,16 @@ async function onMessage(action: Action<Message>) {
     const chatId = action.data.chatId;
 
     if (
+        action.op === "INSERT" &&
         action.data.type !== Chat_MessageType_Enum.DuplicationMarker &&
         action.data.type !== Chat_MessageType_Enum.Emote
     ) {
         const redisSetKey = generateChatRecentMessagesSetKey(chatId);
         await redisClientP.zadd(redisSetKey, Date.parse(action.data.created_at), action.data.sId);
         await redisClientP.zremrangebyrank(redisSetKey, 0, -(1 + maxUnreadMessages));
+    } else if (action.op === "DELETE") {
+        const redisSetKey = generateChatRecentMessagesSetKey(chatId);
+        await redisClientP.zrem(redisSetKey, action.data.sId);
     }
 
     emitter.to(generateChatRoomName(chatId)).emit(`chat.messages.${eventName}`, action.data);
@@ -53,6 +57,10 @@ async function onMessage(action: Action<Message>) {
                             .catch(reject),
                     1500
                 );
+            });
+        } else if (action.op === "DELETE") {
+            await new Promise<unknown>((resolve, reject) => {
+                setTimeout(() => updateRecentMessagesAndUnreadCounts(action).then(resolve).catch(reject), 1500);
             });
         }
     }

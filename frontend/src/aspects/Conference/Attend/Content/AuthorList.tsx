@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Badge, Button, HStack, Text, TextProps, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Text, TextProps, useColorModeValue, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type {
@@ -85,7 +85,7 @@ export function AuthorList({
         ];
     }, [programPeopleData, hiddenRoles, hideRole, noRegistrantLink]);
 
-    const colSpacing = "8";
+    const colSpacing = "4";
     const rowSpacing = "2";
     const groupSpacing = 2;
     return (
@@ -212,6 +212,7 @@ export function AuthorInner({
     badgeColour?: string;
     registrant: RegistrantDataFragment | null;
 }): JSX.Element {
+    const bgColor = useColorModeValue("gray.100", "gray.800");
     return registrant?.profile ? (
         <ChatProfileModalProvider>
             <AuthorWithProfileContent
@@ -223,10 +224,24 @@ export function AuthorInner({
             />
         </ChatProfileModalProvider>
     ) : (
-        <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
+        <VStack
+            textAlign="left"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            bgColor={bgColor}
+            p={2}
+            borderRadius="lg"
+        >
             <Text fontWeight="bold" overflowWrap="normal" whiteSpace="normal">
                 {programPersonData.person.name}
             </Text>
+            {programPersonData.person.affiliation &&
+            programPersonData.person.affiliation !== "None" &&
+            programPersonData.person.affiliation !== "undefined" ? (
+                <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
+                    {programPersonData.person.affiliation}
+                </Text>
+            ) : undefined}
             {!hideRole ? (
                 <Badge
                     ml="2"
@@ -241,13 +256,6 @@ export function AuthorInner({
                 >
                     {programPersonData.roleName}
                 </Badge>
-            ) : undefined}
-            {programPersonData.person.affiliation &&
-            programPersonData.person.affiliation !== "None" &&
-            programPersonData.person.affiliation !== "undefined" ? (
-                <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
-                    {programPersonData.person.affiliation}
-                </Text>
             ) : undefined}
         </VStack>
     );
@@ -267,8 +275,16 @@ function AuthorWithProfileContent({
     profile: ProfileDataFragment;
 }) {
     const profileModal = useChatProfileModal();
+    const bgColor = useColorModeValue("gray.100", "gray.800");
     return (
-        <HStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
+        <HStack
+            textAlign="left"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            bgColor={bgColor}
+            p={2}
+            borderRadius="lg"
+        >
             {profile.photoURL_50x50 ? (
                 <ProfileBox
                     mt={1}
@@ -297,9 +313,18 @@ function AuthorWithProfileContent({
                     {!profile.photoURL_50x50 ? <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" /> : undefined}
                     {programPersonData.person.name}
                 </Button>
+                {profile.affiliation?.trim().length ||
+                (programPersonData.person.affiliation &&
+                    programPersonData.person.affiliation !== "None" &&
+                    programPersonData.person.affiliation !== "undefined") ? (
+                    <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
+                        {profile.affiliation?.trim().length
+                            ? profile.affiliation.trim()
+                            : programPersonData.person.affiliation}
+                    </Text>
+                ) : undefined}
                 {!hideRole ? (
                     <Badge
-                        ml="2"
                         colorScheme={
                             badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
                                 ? "purple"
@@ -311,16 +336,6 @@ function AuthorWithProfileContent({
                     >
                         {programPersonData.roleName}
                     </Badge>
-                ) : undefined}
-                {profile.affiliation?.trim().length ||
-                (programPersonData.person.affiliation &&
-                    programPersonData.person.affiliation !== "None" &&
-                    programPersonData.person.affiliation !== "undefined") ? (
-                    <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
-                        {profile.affiliation?.trim().length
-                            ? profile.affiliation.trim()
-                            : programPersonData.person.affiliation}
-                    </Text>
                 ) : undefined}
             </VStack>
         </HStack>

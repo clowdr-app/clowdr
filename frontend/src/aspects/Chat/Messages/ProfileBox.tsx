@@ -19,8 +19,8 @@ export default function ProfilePictureBox({
 
     return (
         <Button
-            maxW="50px"
-            maxH="50px"
+            maxW="40px"
+            maxH="40px"
             minW="unset"
             minH="unset"
             w="100%"

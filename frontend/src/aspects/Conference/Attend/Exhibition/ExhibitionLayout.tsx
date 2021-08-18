@@ -1,4 +1,15 @@
-import { chakra, Grid, Heading, HStack, Text, useColorMode, useToken, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    chakra,
+    Flex,
+    Grid,
+    Heading,
+    HStack,
+    Text,
+    useColorMode,
+    useColorModeValue,
+    useToken,
+} from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import {
@@ -33,10 +44,10 @@ function ItemTile({
     const { colorMode } = useColorMode();
     const baseBgColour = colorMode === "light" ? "blue.300" : "blue.600";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(exhibitionColour).getAlpha() !== 0 ? exhibitionColour : baseGrey), [
-        baseGrey,
-        exhibitionColour,
-    ]);
+    const baseColour = useMemo(
+        () => (Color(exhibitionColour).getAlpha() !== 0 ? exhibitionColour : baseGrey),
+        [baseGrey, exhibitionColour]
+    );
     const bgColour = useMemo(() => {
         const c = Color(baseColour).desaturate(colorMode == "dark" ? 60 : 70);
         const oldBrightness = c.getBrightness();
@@ -83,16 +94,24 @@ function ItemTile({
 
     const itemUrl = `/conference/${conference.slug}/item/${item.id}`;
 
+    const shadow = useColorModeValue("md", "light-md");
     return (
-        <VStack alignItems="flex-start" backgroundColor={bgColour.toRgbString()} color={textColour} p={[1, 2, 4]}>
-            <Heading as="h2" fontSize="lg" textAlign="left">
-                <chakra.span mr={4}>{item.title}</chakra.span>
-                <PageCountText path={`/conference/${conference.slug}/item/${item.id}`} />
-            </Heading>
-            <HStack spacing={2} flexWrap="wrap" rowGap={2}>
+        <Flex
+            flexDir="column"
+            alignItems="flex-start"
+            backgroundColor={bgColour.toRgbString()}
+            borderRadius="md"
+            boxShadow={shadow}
+            color={textColour}
+            p={[1, 2, 4]}
+        >
+            <HStack spacing={2}>
+                <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
+                    <chakra.span mr={4}>{item.title}</chakra.span>
+                    <PageCountText path={`/conference/${conference.slug}/item/${item.id}`} />
+                </Heading>
                 {liveRoomUrl && !hideLiveViewButton ? (
                     <LinkButton
-                        size="xs"
                         colorScheme="red"
                         to={liveRoomUrl}
                         title={"Event is happening now. Go to room"}
@@ -105,28 +124,32 @@ function ItemTile({
                         <PageCountText path={liveRoomUrl} fontSize="inherit" />
                     </LinkButton>
                 ) : undefined}
+            </HStack>
+            {primaryItem && <Element element={primaryItem} />}
+            <HStack my={4} spacing={4} rowGap={4} flexWrap="wrap" justifyContent="center" alignItems="center" w="100%">
                 {discussionRoomUrl ? (
-                    <LinkButton size="xs" colorScheme="blue" to={discussionRoomUrl} textDecoration="none">
-                        <FAIcon iconStyle="s" icon="link" mr={2} />
+                    <LinkButton colorScheme="blue" to={discussionRoomUrl} textDecoration="none">
+                        <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
-                            Discussion room
+                            Video room
                         </Text>
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
                 ) : undefined}
-                <LinkButton size="xs" colorScheme="purple" to={itemUrl} textDecoration="none">
+                <LinkButton colorScheme="purple" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />
                     <Text as="span" ml={1} mr={2}>
-                        View full item
+                        Find out more
                     </Text>
                     <PageCountText path={itemUrl} fontSize="inherit" />
                 </LinkButton>
             </HStack>
-            <TagList tags={item.itemTags} />
-            {primaryItem && <Element element={primaryItem} />}
-            <AuthorList programPeopleData={item.itemPeople} noRegistrantLink />
+            <Box my={4}>
+                <AuthorList programPeopleData={item.itemPeople} />
+            </Box>
             {/* <Text>TODO: A marker to show if any of the authors are present</Text> */}
-        </VStack>
+            <TagList mt="auto" tags={item.itemTags} />
+        </Flex>
     );
 }
 

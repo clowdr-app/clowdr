@@ -2,14 +2,18 @@ import { Button, ButtonProps, Image, useToast } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantDataFragment } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
-import { useChatConfiguration } from "../Configuration";
 import { useChatProfileModal } from "../Frame/ChatProfileModalProvider";
 
 export default function ProfilePictureBox({
     registrant,
+    showPlaceholderProfilePictures,
+    showProfilePictures,
     ...props
-}: { registrant: RegistrantDataFragment | null } & ButtonProps): JSX.Element {
-    const config = useChatConfiguration();
+}: {
+    registrant: RegistrantDataFragment | null;
+    showPlaceholderProfilePictures: boolean;
+    showProfilePictures: boolean;
+} & ButtonProps): JSX.Element {
     const profileModal = useChatProfileModal();
     const toast = useToast();
 
@@ -42,10 +46,7 @@ export default function ProfilePictureBox({
             }}
             fontSize="inherit"
         >
-            {config.messageConfig.showProfilePictures &&
-            registrant &&
-            registrant.profile &&
-            registrant.profile.photoURL_50x50 ? (
+            {showProfilePictures && registrant && registrant.profile && registrant.profile.photoURL_50x50 ? (
                 <Image
                     borderRadius={5}
                     w="100%"
@@ -56,7 +57,7 @@ export default function ProfilePictureBox({
                     overflow="hidden"
                     alt={`Profile picture of ${registrant.displayName}`}
                 />
-            ) : config.messageConfig.showPlaceholderProfilePictures && registrant !== null ? (
+            ) : showPlaceholderProfilePictures && registrant !== null ? (
                 <FAIcon iconStyle="s" icon="cat" fontSize={((props.w ?? 35) as number) * 0.8 + "px"} />
             ) : (
                 <></>

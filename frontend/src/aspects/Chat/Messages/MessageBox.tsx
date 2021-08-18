@@ -126,13 +126,19 @@ function MessageBody({
                 {message.type !== Chat_MessageType_Enum.Message && message.type !== Chat_MessageType_Enum.Emote ? (
                     <MessageTypeIndicator messageType={message.type} fontSize={pictureSize * 0.8} opacity={0.7} />
                 ) : message.senderId ? (
-                    <ProfileBox registrant={registrant} w={pictureSize} />
+                    <ProfileBox
+                        registrant={registrant}
+                        w={pictureSize}
+                        showPlaceholderProfilePictures={config.messageConfig.showPlaceholderProfilePictures}
+                        showProfilePictures={config.messageConfig.showProfilePictures}
+                    />
                 ) : undefined}
             </VStack>
         ),
         [
             registrant,
             config.spacing,
+            config.messageConfig,
             createdAt,
             message.senderId,
             message.type,

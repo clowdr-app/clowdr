@@ -1,12 +1,17 @@
 import { gql } from "@apollo/client";
-import { Badge, Button, HStack, Text, TextProps, useDisclosure, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Text, TextProps, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type { ProgramPersonDataFragment, RegistrantDataFragment } from "../../../../generated/graphql";
+import type {
+    ProfileDataFragment,
+    ProgramPersonDataFragment,
+    RegistrantDataFragment,
+} from "../../../../generated/graphql";
+import ChatProfileModalProvider, { useChatProfileModal } from "../../../Chat/Frame/ChatProfileModalProvider";
+import ProfileBox from "../../../Chat/Messages/ProfileBox";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useRegistrant } from "../../RegistrantsContext";
-import ProfileModal from "../Registrant/ProfileModal";
 
 gql`
     fragment ProgramPersonData on content_ItemProgramPerson {
@@ -207,29 +212,21 @@ export function AuthorInner({
     badgeColour?: string;
     registrant: RegistrantDataFragment | null;
 }): JSX.Element {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    return (
+    return registrant?.profile ? (
+        <ChatProfileModalProvider>
+            <AuthorWithProfileContent
+                programPersonData={programPersonData}
+                hideRole={hideRole}
+                badgeColour={badgeColour}
+                registrant={registrant}
+                profile={registrant.profile}
+            />
+        </ChatProfileModalProvider>
+    ) : (
         <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
-            {registrant?.profile ? (
-                <Button
-                    onClick={() => onOpen()}
-                    variant="ghost"
-                    p={0}
-                    m={0}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    h="auto"
-                    overflowWrap="normal"
-                    whiteSpace="normal"
-                >
-                    <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" />
-                    {programPersonData.person.name}
-                </Button>
-            ) : (
-                <Text fontWeight="bold" overflowWrap="normal" whiteSpace="normal">
-                    {programPersonData.person.name}
-                </Text>
-            )}
+            <Text fontWeight="bold" overflowWrap="normal" whiteSpace="normal">
+                {programPersonData.person.name}
+            </Text>
             {!hideRole ? (
                 <Badge
                     ml="2"
@@ -252,17 +249,81 @@ export function AuthorInner({
                     {programPersonData.person.affiliation}
                 </Text>
             ) : undefined}
-            {registrant && registrant.profile ? (
-                <ProfileModal
-                    registrant={{
-                        ...registrant,
-                        profile: registrant.profile,
-                    }}
-                    isOpen={isOpen}
-                    onClose={onClose}
+        </VStack>
+    );
+}
+
+function AuthorWithProfileContent({
+    programPersonData,
+    hideRole,
+    badgeColour,
+    registrant,
+    profile,
+}: {
+    programPersonData: ProgramPersonDataFragment;
+    hideRole?: boolean;
+    badgeColour?: string;
+    registrant: RegistrantDataFragment;
+    profile: ProfileDataFragment;
+}) {
+    const profileModal = useChatProfileModal();
+    return (
+        <HStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
+            {profile.photoURL_50x50 ? (
+                <ProfileBox
+                    mt={1}
+                    registrant={registrant}
+                    showPlaceholderProfilePictures={true}
+                    showProfilePictures={true}
                 />
             ) : undefined}
-        </VStack>
+            <VStack textAlign="left" justifyContent="flex-start" alignItems="flex-start">
+                <Button
+                    onClick={() =>
+                        profileModal.open({
+                            ...registrant,
+                            profile,
+                        })
+                    }
+                    variant="ghost"
+                    p={0}
+                    m={0}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    h="auto"
+                    overflowWrap="normal"
+                    whiteSpace="normal"
+                >
+                    {!profile.photoURL_50x50 ? <FAIcon iconStyle="s" icon="user" mr={2} fontSize="xs" /> : undefined}
+                    {programPersonData.person.name}
+                </Button>
+                {!hideRole ? (
+                    <Badge
+                        ml="2"
+                        colorScheme={
+                            badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
+                                ? "purple"
+                                : programPersonData.roleName.toUpperCase() === "CHAIR"
+                                ? "yellow"
+                                : "red"
+                        }
+                        verticalAlign="initial"
+                    >
+                        {programPersonData.roleName}
+                    </Badge>
+                ) : undefined}
+                {profile.affiliation?.trim().length ||
+                (programPersonData.person.affiliation &&
+                    programPersonData.person.affiliation !== "None" &&
+                    programPersonData.person.affiliation !== "undefined") ? (
+                    <Text fontSize="sm" maxW={180} overflowWrap="normal" whiteSpace="normal">
+                        {profile.affiliation?.trim().length
+                            ? profile.affiliation.trim()
+                            : programPersonData.person.affiliation}
+                    </Text>
+                ) : undefined}
+            </VStack>
+        </HStack>
     );
 }
 

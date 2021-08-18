@@ -265,7 +265,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                         ...editingRegistrant,
                                         profile: {
                                             ...editingRegistrant.profile,
-                                            [fieldName]: ev.target.value.trim(),
+                                            [fieldName]: ev.target.value,
                                         },
                                     });
                                 }}
@@ -301,7 +301,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                         ...editingRegistrant,
                                         profile: {
                                             ...editingRegistrant.profile,
-                                            [fieldName]: newV.trim(),
+                                            [fieldName]: newV.trimStart(),
                                         },
                                     });
                                 }}

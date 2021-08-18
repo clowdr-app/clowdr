@@ -1185,7 +1185,7 @@ export class GlobalChatState {
     });
 
     public get Chats(): Observable<ReadonlyMap<string, ChatState>> {
-        return (this.chatStatesObs as unknown) as Observable<ReadonlyMap<string, ChatState>>;
+        return this.chatStatesObs as unknown as Observable<ReadonlyMap<string, ChatState>>;
     }
 
     public observeChatId(chatId: string, observer: Observer<ChatState>): () => void {
@@ -1311,6 +1311,7 @@ export class GlobalChatState {
                                         </VStack>
                                     );
                                 },
+                                duration: 12000,
                             });
                             if (notificationId) {
                                 let numPopped = 0;

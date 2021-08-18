@@ -118,10 +118,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
     const isDirty = useMemo(() => !deepProfileIsEqual(registrant, editingRegistrant), [registrant, editingRegistrant]);
     const displayNameIsDirty = editingRegistrant.displayName !== registrant.displayName;
 
-    const [
-        updateProfile,
-        { loading: loadingUpdateAttendeProfile, error: errorUpdateProfile },
-    ] = useUpdateProfileMutation();
+    const [updateProfile, { loading: loadingUpdateAttendeProfile, error: errorUpdateProfile }] =
+        useUpdateProfileMutation();
     const [
         updateRegistrantDisplayName,
         { loading: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
@@ -267,7 +265,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                         ...editingRegistrant,
                                         profile: {
                                             ...editingRegistrant.profile,
-                                            [fieldName]: ev.target.value,
+                                            [fieldName]: ev.target.value.trim(),
                                         },
                                     });
                                 }}
@@ -293,7 +291,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                     let newV = ev.target.value;
                                     if (stripPrefixes) {
                                         for (const prefix of stripPrefixes) {
-                                            if (newV.startsWith(prefix)) {
+                                            if (newV.toLowerCase().startsWith(prefix)) {
                                                 newV = newV.substr(prefix.length);
                                                 break;
                                             }
@@ -303,7 +301,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                         ...editingRegistrant,
                                         profile: {
                                             ...editingRegistrant.profile,
-                                            [fieldName]: newV,
+                                            [fieldName]: newV.trim(),
                                         },
                                     });
                                 }}
@@ -319,13 +317,11 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
     const bioField = useMemo(() => textField("bio", "Bio", "textarea"), [textField]);
     const affiliationField = useMemo(() => textField("affiliation", "Affiliation"), [textField]);
     const affiliationURLField = useMemo(
-        () => textField("affiliationURL", "Affiliation URL", "url", "https://", ["https://", "http://"]),
+        () => textField("affiliationURL", "Affiliation URL", "url", "URL"),
         [textField]
     );
     const countryField = useMemo(() => textField("country", "Country"), [textField]);
-    const webPageField = useMemo(() => textField("website", "Website", "url", "https://", ["https://", "http://"]), [
-        textField,
-    ]);
+    const webPageField = useMemo(() => textField("website", "Website", "url", "URL"), [textField]);
     const githubField = useMemo(
         () =>
             textField("github", "GitHub", "text", "github.com/", [
@@ -366,9 +362,10 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
             ]),
         [textField]
     );
-    const timezoneField = useMemo(() => textField("timezoneUTCOffset", "Timezone Offset", "timezone", "UTC"), [
-        textField,
-    ]);
+    const timezoneField = useMemo(
+        () => textField("timezoneUTCOffset", "Timezone Offset", "timezone", "UTC"),
+        [textField]
+    );
 
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
 

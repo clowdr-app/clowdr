@@ -117,7 +117,16 @@ export default function ProfileModal({
                                                         &nbsp;
                                                         <Link
                                                             isExternal
-                                                            href={`https://${registrant.profile.affiliationURL}`}
+                                                            href={`${
+                                                                !registrant.profile.affiliationURL
+                                                                    .toLowerCase()
+                                                                    .startsWith("http://") &&
+                                                                !registrant.profile.affiliationURL
+                                                                    .toLowerCase()
+                                                                    .startsWith("https://")
+                                                                    ? "https://"
+                                                                    : ""
+                                                            }${registrant.profile.affiliationURL}`}
                                                         >
                                                             {registrant.profile.affiliation}
                                                         </Link>

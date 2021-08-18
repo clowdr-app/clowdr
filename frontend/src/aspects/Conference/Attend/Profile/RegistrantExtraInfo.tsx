@@ -35,7 +35,16 @@ export default function RegistrantExtraInfo({
                 <>
                     <GridItem fontWeight="600">Website</GridItem>
                     <GridItem overflowWrap="anywhere">
-                        <Link isExternal href={`https://${registrant.profile.website}`} overflowWrap="anywhere">
+                        <Link
+                            isExternal
+                            href={`${
+                                !registrant.profile.website.toLowerCase().startsWith("http://") &&
+                                !registrant.profile.website.toLowerCase().startsWith("https://")
+                                    ? "https://"
+                                    : ""
+                            }${registrant.profile.website}`}
+                            overflowWrap="anywhere"
+                        >
                             {registrant.profile.website}
                             &nbsp;
                             <chakra.sup>

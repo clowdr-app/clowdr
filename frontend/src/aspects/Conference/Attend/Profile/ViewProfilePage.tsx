@@ -119,7 +119,16 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                         {registrant.profile.affiliation || registrant.profile.affiliationURL ? (
                             <Box m={0}>
                                 {registrant.profile.affiliation && registrant.profile.affiliationURL ? (
-                                    <Link h="auto" isExternal href={`https://${registrant.profile.affiliationURL}`}>
+                                    <Link
+                                        h="auto"
+                                        isExternal
+                                        href={`${
+                                            !registrant.profile.affiliationURL.toLowerCase().startsWith("http://") &&
+                                            !registrant.profile.affiliationURL.toLowerCase().startsWith("https://")
+                                                ? "https://"
+                                                : ""
+                                        }${registrant.profile.affiliationURL}`}
+                                    >
                                         <Badge
                                             colorScheme="blue"
                                             variant="outline"

@@ -1,5 +1,6 @@
 import {
     Box,
+    chakra,
     Flex,
     Grid,
     GridItem,
@@ -127,83 +128,83 @@ export default function EventBoxModal({
                         mb={2}
                         fontSize="sm"
                         fontStyle="italic"
+                        display="flex"
+                        w="100%"
+                        flexWrap="wrap"
                     >
-                        <StarEventButton eventIds={eventIds} mb={1} mr={1} />
+                        <Box display="flex" pb={1} mr={2} justifyContent="center" alignItems="center">
+                            <StarEventButton eventIds={eventIds} />
+                        </Box>
                         {events.length === 1 ? (
-                            <>
+                            <Box mr={2}>
                                 <EventModeIcon
                                     mode={event0.intendedRoomModeName}
                                     durationSeconds={event0.durationSeconds}
                                     fontSize="inherit"
                                 />
-                                &nbsp;&nbsp;
-                            </>
+                            </Box>
                         ) : undefined}
-                        {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
-                            weekday: "short",
-                            month: "short",
-                            day: "2-digit",
-                            hour: "numeric",
-                            minute: "numeric",
-                            hour12: false,
-                        })}{" "}
-                        -{" "}
-                        {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
-                            .setZone(timelineParams.timezone)
-                            .toLocaleString({
+                        <chakra.span>
+                            {DateTime.fromMillis(eventStartMs).setZone(timelineParams.timezone).toLocaleString({
+                                weekday: "short",
+                                month: "short",
+                                day: "2-digit",
                                 hour: "numeric",
                                 minute: "numeric",
                                 hour12: false,
-                            })}
+                            })}{" "}
+                            -{" "}
+                            {DateTime.fromMillis(eventStartMs + durationSeconds * 1000)
+                                .setZone(timelineParams.timezone)
+                                .toLocaleString({
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                    hour12: false,
+                                })}
+                        </chakra.span>
                     </Text>
                     <Flex direction="row">
                         {eventTitle ? (
-                            <Text>
+                            <Text mr="auto">
                                 <Link ref={ref} as={ReactLink} to={itemUrl} textDecoration="none">
                                     <Twemoji className="twemoji" text={eventTitle} />
                                 </Link>
                             </Text>
                         ) : undefined}
-                        <Flex direction="row" justifyContent="flex-end" alignItems="start" ml="auto">
-                            {itemUrl ? (
-                                <LinkButton
-                                    ml={1}
-                                    mr={1}
-                                    size="xs"
-                                    colorScheme="purple"
-                                    to={itemUrl}
-                                    title={content ? "View item" : `Go to room ${roomName}`}
-                                    textDecoration="none"
-                                    ref={initialFocusRef}
-                                >
-                                    <FAIcon iconStyle="s" icon="link" />
-                                    <Text as="span" ml={1}>
-                                        {content ? "View" : "Room"}
-                                    </Text>
-                                </LinkButton>
-                            ) : undefined}
-                            {isLive ? (
-                                <LinkButton
-                                    ml={1}
-                                    mr={1}
-                                    size="xs"
-                                    colorScheme={"red"}
-                                    to={roomUrl}
-                                    title={`Event is happening now. Go to room ${roomName}`}
-                                    textDecoration="none"
-                                    ref={initialFocusRef}
-                                >
-                                    <FAIcon iconStyle="s" icon="link" mr={2} />
-                                    <Text as="span" ml={1}>
-                                        LIVE View
-                                    </Text>
-                                </LinkButton>
-                            ) : undefined}
-                        </Flex>
+                        {isLive ? (
+                            <LinkButton
+                                mx={2}
+                                colorScheme={"red"}
+                                to={roomUrl}
+                                title={`Event is happening now. Go to room ${roomName}`}
+                                textDecoration="none"
+                                ref={initialFocusRef}
+                            >
+                                <FAIcon iconStyle="s" icon="broadcast-tower" mr={2} />
+                                <Text as="span" ml={1}>
+                                    LIVE
+                                </Text>
+                            </LinkButton>
+                        ) : (
+                            <LinkButton
+                                mx={2}
+                                colorScheme="purple"
+                                to={roomUrl}
+                                title={`Event is later. Go to room ${roomName}`}
+                                textDecoration="none"
+                                size="sm"
+                                ref={initialFocusRef}
+                            >
+                                <FAIcon iconStyle="s" icon="link" mr={2} />
+                                <Text as="span" ml={1}>
+                                    Go to room
+                                </Text>
+                            </LinkButton>
+                        )}
                     </Flex>
                 </ModalHeader>
                 <ModalBody as={VStack} spacing={4} justifyContent="flex-start" alignItems="start">
-                    {content ? (
+                    {content?.itemTags.length ? (
                         <TagList
                             tags={content.itemTags.map(
                                 (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
@@ -220,7 +221,9 @@ export default function EventBoxModal({
                                 title="View the exhibition"
                                 textDecoration="none"
                             >
-                                View the exhibition
+                                <FAIcon iconStyle="s" icon="link" />
+                                &nbsp;&nbsp;
+                                <chakra.span>View the exhibition</chakra.span>
                             </LinkButton>
                         </>
                     ) : undefined}
@@ -228,6 +231,21 @@ export default function EventBoxModal({
                         <Box>
                             <Markdown>{abstractText}</Markdown>
                         </Box>
+                    ) : undefined}
+                    {itemUrl ? (
+                        <LinkButton
+                            my={1}
+                            colorScheme="purple"
+                            to={itemUrl}
+                            title={content ? "View item" : `Go to room ${roomName}`}
+                            textDecoration="none"
+                            ref={initialFocusRef}
+                        >
+                            <FAIcon iconStyle="s" icon="link" />
+                            <Text as="span" ml={1}>
+                                {content ? "Find out more" : "Go to room"}
+                            </Text>
+                        </LinkButton>
                     ) : undefined}
                     {events.length > 1 ? (
                         <VStack w="100%" alignItems="flex-start" spacing={1}>

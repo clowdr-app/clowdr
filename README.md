@@ -568,10 +568,21 @@ In most cases you will also need to start up your tunnel (Packetriot/Ngrok) befo
 
 If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 
-## Create a Conference 
-Once you log in on Clowdr, you will need a demo code to create a conference. Go to data manager/conference/DemoCode on your Hasura console. On the Insert Row tab, set id to be default and click on Save. You will see a demo code is generated. Now use that to create a conference.
+## Create a conference
 
-After creating and configuring the conference, click on the setting icon on the left. You will see a yellow button with a lock icon, click on that and create a Permission Set as Organiser. 
+When you log into Clowdr for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Clowdr UI. To create a demo code:
+
+1. Go to the _Data_ tab in the Hasura console.
+2. Open the _conference > DemoCode_ table. 
+3. Open the _Insert Row_ tab. Ensure that `id` is set to _Default_ and click _Save_. There is no need to enter any values manually.
+4. A demo code has now been created. Open the _Browse Rows_ tab and find the new row in the table.
+5. Copy the `id` column of the new row. This is your demo code - you can use it to create a conference in the Clowdr UI.
+
+### Modifying the default security settings
+
+By default, only the creator of a conference has permission to view its elements. You can give permissions to other groups of users by opening the _Content_ admin panel in Clowdr. Click the yellow button with a lock icon to open the (conference-)global element security settings.
+
+You probably want to at least add an entry for 'Organiser' permissions with the 'Organisers' group.
 
 ## Formatting
 

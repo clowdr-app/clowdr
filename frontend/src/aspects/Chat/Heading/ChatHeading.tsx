@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
     BoxProps,
@@ -7,11 +6,11 @@ import {
     HStack,
     Menu,
     MenuButton,
+    MenuDivider,
     MenuItem,
     MenuItemOption,
     MenuList,
     MenuOptionGroup,
-    Portal,
 } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
@@ -32,94 +31,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                 <HeadingText />
                 {config.currentRegistrantId ? (
                     <>
-                        <ButtonGroup isAttached borderRadius={5} overflow="hidden">
-                            <Menu>
-                                <MenuButton
-                                    as={Button}
-                                    rightIcon={<ChevronDownIcon />}
-                                    size="xs"
-                                    fontSize="1em"
-                                    aria-label="Adjust spacing around chat content"
-                                    pb="4px"
-                                    opacity={0.8}
-                                    _hover={{
-                                        opacity: 1,
-                                    }}
-                                    _focus={{
-                                        opacity: 1,
-                                    }}
-                                    transition="opacity 0.2s ease-in-out"
-                                >
-                                    <FAIcon iconStyle="s" icon="arrows-alt-v" />
-                                </MenuButton>
-                                <Portal>
-                                    <MenuList minW="unset">
-                                        <MenuOptionGroup
-                                            defaultValue={ChatSpacing[config.spacing]}
-                                            type="radio"
-                                            onChange={(val) => {
-                                                const newVal =
-                                                    typeof val === "string" ? findSpacing(val) : findSpacing(val[0]);
-                                                if (newVal) {
-                                                    config.setSpacing(newVal);
-                                                }
-                                            }}
-                                        >
-                                            <MenuItemOption value={ChatSpacing[ChatSpacing.COMPACT]}>
-                                                Compact
-                                            </MenuItemOption>
-                                            <MenuItemOption value={ChatSpacing[ChatSpacing.COMFORTABLE]}>
-                                                Comfortable
-                                            </MenuItemOption>
-                                            <MenuItemOption value={ChatSpacing[ChatSpacing.RELAXED]}>
-                                                Relaxed
-                                            </MenuItemOption>
-                                        </MenuOptionGroup>
-                                    </MenuList>
-                                </Portal>
-                            </Menu>
-                            <Menu closeOnSelect={false}>
-                                <MenuButton
-                                    as={Button}
-                                    rightIcon={<ChevronDownIcon />}
-                                    size="xs"
-                                    fontSize="1em"
-                                    aria-label="Adjust font size"
-                                    opacity={0.8}
-                                    _hover={{
-                                        opacity: 1,
-                                    }}
-                                    _focus={{
-                                        opacity: 1,
-                                    }}
-                                    transition="opacity 0.2s ease-in-out"
-                                    pb="4px"
-                                >
-                                    <FAIcon iconStyle="s" icon="font" />
-                                </MenuButton>
-                                <Portal>
-                                    <MenuList minW="unset">
-                                        <MenuItem
-                                            onClick={() => {
-                                                config.setFontSize((old) => old + 2);
-                                            }}
-                                            isDisabled={config.fontSizeRange.value >= (config.fontSizeRange.max ?? 16)}
-                                        >
-                                            <FAIcon iconStyle="s" icon="plus" mr={2} />
-                                            Increase
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => {
-                                                config.setFontSize((old) => old - 2);
-                                            }}
-                                            isDisabled={config.fontSizeRange.value <= (config.fontSizeRange.min ?? 16)}
-                                        >
-                                            <FAIcon iconStyle="s" icon="minus" mr={2} />
-                                            Decrease
-                                        </MenuItem>
-                                    </MenuList>
-                                </Portal>
-                            </Menu>
+                        <ButtonGroup isAttached borderRadius={5} closeOnSelect={false} overflow="hidden">
                             <ChatPinnedQueryProvider>
                                 <PinnedButton
                                     opacity={0.8}
@@ -160,6 +72,70 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                     m={0}
                                 />
                             </ChatSubscribedQueryProvider>
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    size="xs"
+                                    fontSize="1em"
+                                    aria-label="Adjust spacing around chat content"
+                                    pb="4px"
+                                    opacity={0.8}
+                                    _hover={{
+                                        opacity: 1,
+                                    }}
+                                    _focus={{
+                                        opacity: 1,
+                                    }}
+                                    transition="opacity 0.2s ease-in-out"
+                                >
+                                    <FAIcon iconStyle="s" icon="cog" />
+                                </MenuButton>
+                                <MenuList fontSize="sm" minW="unset" zIndex={1000}>
+                                    <MenuOptionGroup
+                                        defaultValue={ChatSpacing[config.spacing]}
+                                        type="radio"
+                                        onChange={(val) => {
+                                            const newVal =
+                                                typeof val === "string" ? findSpacing(val) : findSpacing(val[0]);
+                                            if (newVal) {
+                                                config.setSpacing(newVal);
+                                            }
+                                        }}
+                                        title="Spacing"
+                                    >
+                                        <MenuItemOption value={ChatSpacing[ChatSpacing.COMPACT]}>
+                                            Compact
+                                        </MenuItemOption>
+                                        <MenuItemOption value={ChatSpacing[ChatSpacing.COMFORTABLE]}>
+                                            Comfortable
+                                        </MenuItemOption>
+                                        <MenuItemOption value={ChatSpacing[ChatSpacing.RELAXED]}>
+                                            Relaxed
+                                        </MenuItemOption>
+                                    </MenuOptionGroup>
+                                    <MenuDivider />
+                                    <MenuOptionGroup title="Font size">
+                                        <MenuItem
+                                            onClick={() => {
+                                                config.setFontSize((old) => old + 2);
+                                            }}
+                                            isDisabled={config.fontSizeRange.value >= (config.fontSizeRange.max ?? 16)}
+                                        >
+                                            <FAIcon iconStyle="s" icon="plus" mr={2} />
+                                            Increase
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                config.setFontSize((old) => old - 2);
+                                            }}
+                                            isDisabled={config.fontSizeRange.value <= (config.fontSizeRange.min ?? 16)}
+                                        >
+                                            <FAIcon iconStyle="s" icon="minus" mr={2} />
+                                            Decrease
+                                        </MenuItem>
+                                    </MenuOptionGroup>
+                                </MenuList>
+                            </Menu>
                         </ButtonGroup>
                     </>
                 ) : undefined}

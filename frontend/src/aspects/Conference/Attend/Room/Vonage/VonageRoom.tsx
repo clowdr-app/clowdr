@@ -14,6 +14,7 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
+import type { DevicesProps } from "../Breakout/PermissionInstructions";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
 import { useVonageComputedState } from "./useVonageComputedState";
@@ -48,6 +49,7 @@ export function VonageRoom({
     requireMicrophone = false,
     completeJoinRef,
     onLeave,
+    onPermissionsProblem,
 }: {
     eventId: string | null;
     vonageSessionId: string;
@@ -59,6 +61,7 @@ export function VonageRoom({
     requireMicrophone?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -75,7 +78,7 @@ export function VonageRoom({
     const apolloClient = useApolloClient();
 
     return (
-        <VonageRoomStateProvider>
+        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>
             <ChatProfileModalProvider>
                 {mRegistrant ? (
                     <VonageRoomInner
@@ -165,6 +168,7 @@ export function VonageRoom({
                                   }
                                 : undefined
                         }
+                        onPermissionsProblem={onPermissionsProblem}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -179,12 +183,12 @@ function VonageRoomInner({
     isBackstageRoom,
     onRoomJoined,
     joinRoomButtonText,
-
     requireMicrophone,
     overrideJoining,
     beginJoin,
     cancelJoin,
     completeJoin,
+    onPermissionsProblem,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -192,12 +196,12 @@ function VonageRoomInner({
     isBackstageRoom: boolean;
     onRoomJoined?: (_joined: boolean) => void;
     joinRoomButtonText?: string;
-
     requireMicrophone: boolean;
     overrideJoining?: boolean;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoin?: React.MutableRefObject<() => Promise<void>>;
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
@@ -319,11 +323,11 @@ function VonageRoomInner({
                         state.cameraIntendedEnabled ? state.preferredCameraId : null,
                         state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null
                     );
-                } catch (e) {
-                    console.error("Failed to publish camera", e);
-                    toast({
-                        status: "error",
-                        title: "Failed to publish camera",
+                } catch (err) {
+                    console.error("Failed to publish camera or microphone", {
+                        err,
+                        cameraIntendedEnabled: state.cameraIntendedEnabled,
+                        microphoneIntendedEnabled: state.microphoneIntendedEnabled,
                     });
                 }
             }
@@ -722,6 +726,7 @@ function VonageRoomInner({
                     joining={joining}
                     joinRoomButtonText={joinRoomButtonText}
                     requireMicrophone={requireMicrophone}
+                    onPermissionsProblem={onPermissionsProblem}
                 />
             </Flex>
             <Box position="relative" mb={8} width="100%">

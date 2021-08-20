@@ -1,6 +1,6 @@
 import { useToast } from "@chakra-ui/react";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
-import { PermissionInstructions } from "../Conference/Attend/Room/Chime/PermissionInstructions";
+import type { DevicesProps } from "../Conference/Attend/Room/Breakout/PermissionInstructions";
 import { useRestorableState } from "../Generic/useRestorableState";
 
 export interface VonageRoomState {
@@ -127,7 +127,8 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, preferredCameraId: action.cameraId };
 
         case VonageRoomStateActionType.ClearPreferredCamera:
-            return { ...state, preferredCameraId: null };
+            state.cameraStream?.getTracks().forEach((track) => track.stop());
+            return { ...state, preferredCameraId: null, cameraIntendedEnabled: false, cameraStream: null };
 
         case VonageRoomStateActionType.SetCameraIntendedState:
             return { ...state, cameraIntendedEnabled: action.cameraEnabled, cameraOnError: action.onError };
@@ -146,7 +147,8 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, preferredMicrophoneId: action.microphoneId };
 
         case VonageRoomStateActionType.ClearPreferredMicrophone:
-            return { ...state, preferredMicrophoneId: null };
+            state.microphoneStream?.getTracks().forEach((track) => track.stop());
+            return { ...state, preferredMicrophoneId: null, microphoneIntendedEnabled: false, microphoneStream: null };
 
         case VonageRoomStateActionType.SetMicrophoneIntendedState:
             return { ...state, microphoneIntendedEnabled: action.microphoneEnabled, microphoneOnError: action.onError };
@@ -163,8 +165,10 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
 }
 
 export function VonageRoomStateProvider({
+    onPermissionsProblem,
     children,
 }: {
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
@@ -263,13 +267,7 @@ export function VonageRoomStateProvider({
                     state.cameraOnError();
                 } else {
                     console.error("Failed to start camera", e);
-                    toast({
-                        title: "Failed to start camera",
-                        description: <PermissionInstructions />,
-                        status: "error",
-                        isClosable: true,
-                        duration: 30000,
-                    });
+                    onPermissionsProblem({ microphone: true }, "Failed to start camera");
                 }
                 return;
             }
@@ -321,13 +319,7 @@ export function VonageRoomStateProvider({
                     state.microphoneOnError();
                 } else {
                     console.error("Failed to start microphone", e);
-                    toast({
-                        title: "Failed to start microphone",
-                        description: <PermissionInstructions />,
-                        status: "error",
-                        isClosable: true,
-                        duration: 30000,
-                    });
+                    onPermissionsProblem({ microphone: true }, "Failed to unmute");
                 }
                 return;
             }

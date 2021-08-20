@@ -1,5 +1,20 @@
-import React, { useMemo } from "react";
+import {
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    Spinner,
+    useDisclosure,
+} from "@chakra-ui/react";
+import React, { useCallback, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
+import {
+    DevicesProps,
+    devicesToFriendlyName,
+    PermissionInstructions,
+} from "../Conference/Attend/Room/Breakout/PermissionInstructions";
 import { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
 import { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
 import { SharedRoomContext } from "./useSharedRoomContext";
@@ -11,7 +26,21 @@ export function SharedRoomContextProvider({
 }): JSX.Element {
     const vonageNode = useMemo(() => portals.createHtmlPortalNode(), []);
     const chimeNode = useMemo(() => portals.createHtmlPortalNode(), []);
-    const ctx = useMemo(() => ({ vonagePortalNode: vonageNode, chimePortalNode: chimeNode }), [vonageNode, chimeNode]);
+    const [devices, setDevices] = useState<DevicesProps | null>(null);
+    const [title, setTitle] = useState<string | null>(null);
+    const permissionsModal = useDisclosure();
+    const onPermissionsProblem = useCallback(
+        (devices: DevicesProps, title: string | null) => {
+            setDevices(devices);
+            setTitle(title);
+            permissionsModal.onOpen();
+        },
+        [permissionsModal, setDevices]
+    );
+    const ctx = useMemo(
+        () => ({ vonagePortalNode: vonageNode, chimePortalNode: chimeNode, onPermissionsProblem }),
+        [vonageNode, chimeNode, onPermissionsProblem]
+    );
 
     return (
         <>
@@ -26,12 +55,29 @@ export function SharedRoomContextProvider({
                     isRaiseHandWaiting={undefined}
                     requireMicrophone={false}
                     completeJoinRef={undefined}
+                    onPermissionsProblem={onPermissionsProblem}
                 />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>
                 <ChimeRoom disable={true} roomId="" />
             </portals.InPortal>
-            <SharedRoomContext.Provider value={ctx}>{children}</SharedRoomContext.Provider>
+            <SharedRoomContext.Provider value={ctx}>
+                {children}
+                <Modal isOpen={permissionsModal.isOpen} onClose={permissionsModal.onClose} size="xl">
+                    <ModalOverlay />
+                    <ModalContent pb={2}>
+                        {devices
+                            ? <ModalHeader>{title}</ModalHeader> ?? (
+                                  <ModalHeader>
+                                      There seems to be an issue with your {devicesToFriendlyName(devices, "or")}
+                                  </ModalHeader>
+                              )
+                            : undefined}
+                        <ModalCloseButton />
+                        <ModalBody>{devices ? <PermissionInstructions {...devices} /> : <Spinner />}</ModalBody>
+                    </ModalContent>
+                </Modal>
+            </SharedRoomContext.Provider>
         </>
     );
 }

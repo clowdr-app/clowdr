@@ -15,7 +15,7 @@ Steps to follow as a system administrator:
    - If self-hosting Hasura GQL engine, restart it too.
 4. Netlify: Add the additional domain and wait for the SSL certificate to
    regenerate
-5. Set up a CNAME record to point the custom domain at app.clowdr.org
+5. Set up a CNAME record to point the custom domain at your Netlify instance (or, if in development, Packetriot)
 6. Test that everything works:
    1. Upload a profile picture.
    2. Send a chat message. Refresh to see if it's still there.

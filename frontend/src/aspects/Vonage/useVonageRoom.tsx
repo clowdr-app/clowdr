@@ -1,4 +1,5 @@
 import { useToast } from "@chakra-ui/react";
+import { detect } from "detect-browser";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 import type { DevicesProps } from "../Conference/Attend/Room/Breakout/PermissionInstructions";
 import { useRestorableState } from "../Generic/useRestorableState";
@@ -134,9 +135,12 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             }
             return { ...state, preferredCameraId: action.cameraId };
 
-        case VonageRoomStateActionType.ClearPreferredCamera:
-            state.cameraStream?.getTracks().forEach((track) => (track.enabled = false));
+        case VonageRoomStateActionType.ClearPreferredCamera: {
+            // Required until https://bugs.chromium.org/p/chromium/issues/detail?id=642785 is resolved
+            const isChrome = detect()?.name === "chrome";
+            state.cameraStream?.getTracks().forEach((track) => (isChrome ? track.stop() : (track.enabled = false)));
             return { ...state, preferredCameraId: null, cameraIntendedEnabled: false, cameraStream: null };
+        }
 
         case VonageRoomStateActionType.SetCameraIntendedState:
             return {
@@ -148,7 +152,9 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
 
         case VonageRoomStateActionType.SetCameraMediaStream:
             if (action.mediaStream === "disabled") {
-                state.cameraStream?.getTracks().forEach((track) => (track.enabled = false));
+                // Required until https://bugs.chromium.org/p/chromium/issues/detail?id=642785 is resolved
+                const isChrome = detect()?.name === "chrome";
+                state.cameraStream?.getTracks().forEach((track) => (isChrome ? track.stop() : (track.enabled = false)));
                 return { ...state };
             } else {
                 state.cameraStream?.getTracks().forEach((track) => track.stop());
@@ -162,9 +168,12 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             }
             return { ...state, preferredMicrophoneId: action.microphoneId };
 
-        case VonageRoomStateActionType.ClearPreferredMicrophone:
-            state.microphoneStream?.getTracks().forEach((track) => (track.enabled = false));
+        case VonageRoomStateActionType.ClearPreferredMicrophone: {
+            // Required until https://bugs.chromium.org/p/chromium/issues/detail?id=642785 is resolved
+            const isChrome = detect()?.name === "chrome";
+            state.microphoneStream?.getTracks().forEach((track) => (isChrome ? track.stop() : (track.enabled = false)));
             return { ...state, preferredMicrophoneId: null, microphoneIntendedEnabled: false, microphoneStream: null };
+        }
 
         case VonageRoomStateActionType.SetMicrophoneIntendedState:
             return {
@@ -176,7 +185,11 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
 
         case VonageRoomStateActionType.SetMicrophoneMediaStream:
             if (action.mediaStream === "disabled") {
-                state.microphoneStream?.getTracks().forEach((track) => (track.enabled = false));
+                // Required until https://bugs.chromium.org/p/chromium/issues/detail?id=642785 is resolved
+                const isChrome = detect()?.name === "chrome";
+                state.microphoneStream
+                    ?.getTracks()
+                    .forEach((track) => (isChrome ? track.stop() : (track.enabled = false)));
                 return { ...state };
             } else {
                 state.microphoneStream?.getTracks().forEach((track) => track.stop());

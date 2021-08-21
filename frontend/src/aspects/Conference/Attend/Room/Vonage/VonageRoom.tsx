@@ -296,23 +296,65 @@ function VonageRoomInner({
             }
         }
         setJoining(false);
-        dispatch({
-            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-            microphoneEnabled: false,
-            onError: undefined,
-        });
-        dispatch({
-            type: VonageRoomStateActionType.SetCameraIntendedState,
-            cameraEnabled: false,
-            onError: undefined,
-        });
-    }, [connected, dispatch, onRoomJoined, vonage]);
+    }, [connected, onRoomJoined, vonage]);
 
     useEffect(() => {
         if (stop) {
+            // Disconnect from the Vonage session, then soft-disable the microphone and camera
             leaveRoom().catch((e) => console.error("Failed to leave Vonage room", e));
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: false,
+                explicitlyDisabled: state.microphoneExplicitlyDisabled,
+                onError: undefined,
+            });
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: false,
+                explicitlyDisabled: state.cameraExplicitlyDisabled,
+                onError: undefined,
+            });
+        } else if (!connected && !joining) {
+            // Auto-start devices if we already have MediaStreams available
+            if (
+                !state.cameraExplicitlyDisabled &&
+                state.cameraStream?.getVideoTracks().some((t) => t.readyState === "live")
+            ) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetCameraIntendedState,
+                    cameraEnabled: true,
+                    onError: () => {
+                        dispatch({
+                            type: VonageRoomStateActionType.SetCameraMediaStream,
+                            mediaStream: "disabled",
+                        });
+                    },
+                });
+            }
+            if (
+                !state.microphoneExplicitlyDisabled &&
+                state.microphoneStream?.getAudioTracks().some((t) => t.readyState === "live")
+            ) {
+                dispatch({
+                    type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                    microphoneEnabled: true,
+                    onError: () => {
+                        dispatch({
+                            type: VonageRoomStateActionType.SetMicrophoneMediaStream,
+                            mediaStream: "disabled",
+                        });
+                    },
+                });
+            }
         }
-    }, [leaveRoom, stop]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stop]);
+
+    useEffect(() => {
+        if (!stop && !connected && !joining) {
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stop]);
 
     useEffect(() => {
         async function fn() {

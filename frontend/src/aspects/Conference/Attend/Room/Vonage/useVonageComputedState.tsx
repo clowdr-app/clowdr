@@ -29,11 +29,13 @@ export function useVonageComputedState(
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
+                    explicitlyDisabled: true,
                     onError: undefined,
                 });
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                     microphoneEnabled: false,
+                    explicitlyDisabled: true,
                     onError: undefined,
                 });
             }

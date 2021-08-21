@@ -6,10 +6,12 @@ import { useRestorableState } from "../Generic/useRestorableState";
 export interface VonageRoomState {
     preferredCameraId: string | null;
     cameraIntendedEnabled: boolean;
+    cameraExplicitlyDisabled: boolean;
     cameraOnError: (() => void) | undefined;
     cameraStream: MediaStream | null;
     preferredMicrophoneId: string | null;
     microphoneIntendedEnabled: boolean;
+    microphoneExplicitlyDisabled: boolean;
     microphoneOnError: (() => void) | undefined;
     microphoneStream: MediaStream | null;
     screenShareIntendedEnabled: boolean;
@@ -18,10 +20,12 @@ export interface VonageRoomState {
 const initialRoomState: VonageRoomState = {
     preferredCameraId: null,
     cameraIntendedEnabled: false,
+    cameraExplicitlyDisabled: true,
     cameraOnError: undefined,
     cameraStream: null,
     preferredMicrophoneId: null,
     microphoneIntendedEnabled: false,
+    microphoneExplicitlyDisabled: true,
     microphoneOnError: undefined,
     microphoneStream: null,
     screenShareIntendedEnabled: false,
@@ -62,12 +66,14 @@ interface ClearPreferredCamera {
 interface SetCameraIntendedState {
     type: VonageRoomStateActionType.SetCameraIntendedState;
     cameraEnabled: boolean;
+    /** Was the camera explicitly turned off by the user (or implicitly by permissions)? If they just left a room, is false. */
+    explicitlyDisabled?: boolean;
     onError: (() => void) | undefined;
 }
 
 interface SetCameraMediaStream {
     type: VonageRoomStateActionType.SetCameraMediaStream;
-    mediaStream: MediaStream | null;
+    mediaStream: MediaStream | "disabled";
 }
 
 interface SetPreferredMicrophone {
@@ -82,12 +88,14 @@ interface ClearPreferredMicrophone {
 interface SetMicrophoneIntendedState {
     type: VonageRoomStateActionType.SetMicrophoneIntendedState;
     microphoneEnabled: boolean;
+    /** Was the microphone explicitly turned off by the user (or implicitly by permissions)? If they just left a room, is false. */
+    explicitlyDisabled?: boolean;
     onError: (() => void) | undefined;
 }
 
 interface SetMicrophoneMediaStream {
     type: VonageRoomStateActionType.SetMicrophoneMediaStream;
-    mediaStream: MediaStream | null;
+    mediaStream: MediaStream | "disabled";
 }
 
 interface SetScreenShareIntendedState {
@@ -127,17 +135,25 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, preferredCameraId: action.cameraId };
 
         case VonageRoomStateActionType.ClearPreferredCamera:
-            state.cameraStream?.getTracks().forEach((track) => track.stop());
+            state.cameraStream?.getTracks().forEach((track) => (track.enabled = false));
             return { ...state, preferredCameraId: null, cameraIntendedEnabled: false, cameraStream: null };
 
         case VonageRoomStateActionType.SetCameraIntendedState:
-            return { ...state, cameraIntendedEnabled: action.cameraEnabled, cameraOnError: action.onError };
+            return {
+                ...state,
+                cameraIntendedEnabled: action.cameraEnabled,
+                cameraExplicitlyDisabled: action.explicitlyDisabled ?? false,
+                cameraOnError: action.onError,
+            };
 
         case VonageRoomStateActionType.SetCameraMediaStream:
-            if (action.mediaStream === null) {
+            if (action.mediaStream === "disabled") {
+                state.cameraStream?.getTracks().forEach((track) => (track.enabled = false));
+                return { ...state };
+            } else {
                 state.cameraStream?.getTracks().forEach((track) => track.stop());
+                return { ...state, cameraStream: action.mediaStream };
             }
-            return { ...state, cameraStream: action.mediaStream };
 
         case VonageRoomStateActionType.SetPreferredMicrophone:
             if (action.microphoneId !== state.preferredMicrophoneId) {
@@ -147,17 +163,25 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, preferredMicrophoneId: action.microphoneId };
 
         case VonageRoomStateActionType.ClearPreferredMicrophone:
-            state.microphoneStream?.getTracks().forEach((track) => track.stop());
+            state.microphoneStream?.getTracks().forEach((track) => (track.enabled = false));
             return { ...state, preferredMicrophoneId: null, microphoneIntendedEnabled: false, microphoneStream: null };
 
         case VonageRoomStateActionType.SetMicrophoneIntendedState:
-            return { ...state, microphoneIntendedEnabled: action.microphoneEnabled, microphoneOnError: action.onError };
+            return {
+                ...state,
+                microphoneIntendedEnabled: action.microphoneEnabled,
+                microphoneExplicitlyDisabled: action.explicitlyDisabled ?? false,
+                microphoneOnError: action.onError,
+            };
 
         case VonageRoomStateActionType.SetMicrophoneMediaStream:
-            if (action.mediaStream === null) {
+            if (action.mediaStream === "disabled") {
+                state.microphoneStream?.getTracks().forEach((track) => (track.enabled = false));
+                return { ...state };
+            } else {
                 state.microphoneStream?.getTracks().forEach((track) => track.stop());
+                return { ...state, microphoneStream: action.mediaStream };
             }
-            return { ...state, microphoneStream: action.mediaStream };
 
         case VonageRoomStateActionType.SetScreenShareIntendedState:
             return { ...state, screenShareIntendedEnabled: action.screenEnabled };
@@ -212,8 +236,8 @@ export function VonageRoomStateProvider({
 
     useEffect(() => {
         function stop() {
-            state.cameraStream?.getTracks().forEach((track) => track.stop());
-            state.microphoneStream?.getTracks().forEach((track) => track.stop());
+            state.cameraStream?.getTracks().forEach((track) => (track.enabled = false));
+            state.microphoneStream?.getTracks().forEach((track) => (track.enabled = false));
         }
 
         unmountRef.current = () => {
@@ -226,9 +250,7 @@ export function VonageRoomStateProvider({
 
     useEffect(() => {
         return () => {
-            if (unmountRef && unmountRef.current) {
-                unmountRef.current();
-            }
+            unmountRef.current?.();
         };
     }, []);
 
@@ -252,6 +274,25 @@ export function VonageRoomStateProvider({
                     },
                     audio: false,
                 });
+
+                // If the stream ends for external reasons, update the state
+                if (WeakRef) {
+                    const dispatchRef = new WeakRef(dispatch);
+                    mediaStream.getTracks().forEach((t) => {
+                        t.addEventListener("ended", () => {
+                            if (!mediaStream.getTracks().some((t) => t.readyState === "live")) {
+                                const dispatch = dispatchRef.deref();
+                                dispatch?.({
+                                    type: VonageRoomStateActionType.SetCameraIntendedState,
+                                    cameraEnabled: false,
+                                    explicitlyDisabled: true,
+                                    onError: undefined,
+                                });
+                            }
+                        });
+                    });
+                }
+
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraMediaStream,
                     mediaStream,
@@ -260,6 +301,7 @@ export function VonageRoomStateProvider({
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
+                    explicitlyDisabled: true,
                     onError: undefined,
                 });
 
@@ -283,7 +325,7 @@ export function VonageRoomStateProvider({
         async function disableCamera() {
             dispatch({
                 type: VonageRoomStateActionType.SetCameraMediaStream,
-                mediaStream: null,
+                mediaStream: "disabled",
             });
         }
 
@@ -305,6 +347,25 @@ export function VonageRoomStateProvider({
                     },
                     video: false,
                 });
+
+                // If the stream ends for external reasons, update the state
+                if (WeakRef) {
+                    const dispatchRef = new WeakRef(dispatch);
+                    mediaStream.getTracks().forEach((t) => {
+                        t.addEventListener("ended", () => {
+                            if (!mediaStream.getTracks().some((t) => t.readyState === "live")) {
+                                const dispatch = dispatchRef.deref();
+                                dispatch?.({
+                                    type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                                    microphoneEnabled: false,
+                                    explicitlyDisabled: true,
+                                    onError: undefined,
+                                });
+                            }
+                        });
+                    });
+                }
+
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneMediaStream,
                     mediaStream,
@@ -313,6 +374,7 @@ export function VonageRoomStateProvider({
                 dispatch({
                     type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                     microphoneEnabled: false,
+                    explicitlyDisabled: true,
                     onError: undefined,
                 });
                 if (state.microphoneOnError) {
@@ -335,7 +397,7 @@ export function VonageRoomStateProvider({
         async function disableMicrophone() {
             dispatch({
                 type: VonageRoomStateActionType.SetMicrophoneMediaStream,
-                mediaStream: null,
+                mediaStream: "disabled",
             });
         }
 

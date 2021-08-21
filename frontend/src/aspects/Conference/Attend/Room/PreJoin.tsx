@@ -1,6 +1,6 @@
 import { Optional } from "@ahanapediatrics/ahana-fp";
 import { VmShape, VolumeMeter } from "@ahanapediatrics/react-volume-meter";
-import { Box, Center, HStack, useToast, VStack } from "@chakra-ui/react";
+import { Box, Center, chakra, HStack, useToast, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { backgroundImage } from "../../../Vonage/resources";
@@ -50,10 +50,14 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                         width: "300px",
                         objectFit: "cover",
                         transform: "rotateY(180deg)",
+                        opacity: state.cameraIntendedEnabled ? "1" : "0",
                     }}
                 />
                 <HStack position="absolute" bottom="10px" right="20px" w="auto" h="min-content">
-                    {state.microphoneStream ? (
+                    {state.microphoneStream &&
+                    state.microphoneStream
+                        .getAudioTracks()
+                        .some((track) => track.enabled && track.readyState === "live") ? (
                         <>
                             <VolumeMeter
                                 audioContext={AudioContext}
@@ -66,10 +70,46 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                                     w: "100%",
                                 }}
                             />
-                            <FAIcon iconStyle="s" icon="volume-up" fontSize="lg" />
+                            <chakra.div w="2rem" h="2rem" bgColor="rgba(50,50,50,0.8)" borderRadius="50%">
+                                <FAIcon
+                                    iconStyle="s"
+                                    icon="volume-up"
+                                    fixedWidth={true}
+                                    fontSize="lg"
+                                    color="white"
+                                    __css={{
+                                        textAlign: "center",
+                                        display: "block",
+                                        w: "100%",
+                                        h: "100%",
+                                        i: {
+                                            verticalAlign: "middle",
+                                        },
+                                    }}
+                                    borderRadius="50%"
+                                />
+                            </chakra.div>
                         </>
                     ) : (
-                        <FAIcon iconStyle="s" icon="volume-mute" fontSize="xl" />
+                        <chakra.div w="2rem" h="2rem" bgColor="rgba(50,50,50,0.8)" borderRadius="50%">
+                            <FAIcon
+                                iconStyle="s"
+                                icon="volume-mute"
+                                fixedWidth={true}
+                                fontSize="lg"
+                                color="white"
+                                __css={{
+                                    textAlign: "center",
+                                    display: "block",
+                                    w: "100%",
+                                    h: "100%",
+                                    i: {
+                                        verticalAlign: "middle",
+                                    },
+                                }}
+                                borderRadius="50%"
+                            />
+                        </chakra.div>
                     )}
                 </HStack>
             </Box>

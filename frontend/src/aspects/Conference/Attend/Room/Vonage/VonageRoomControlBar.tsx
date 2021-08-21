@@ -1,6 +1,7 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
 import { Box, Button, chakra, HStack, Spinner, Stack, Tag, TagLabel, TagLeftIcon, Tooltip } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
+import { Mutex } from "async-mutex";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { DevicesProps, devicesToFriendlyName } from "../Breakout/PermissionInstructions";
@@ -129,14 +130,23 @@ export function VonageRoomControlBar({
             state.preferredMicrophoneId,
         ]
     );
+    const dialogOpenMutex = useRef(new Mutex());
     const onOpen = useCallback(
-        (video: boolean, audio: boolean) => {
+        async (video: boolean, audio: boolean) => {
+            const release = await dialogOpenMutex.current.acquire();
             setIsOpening(true);
             (async () => {
                 try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const canSeeVideoDevices = devices
+                        .filter((d) => d.kind === "videoinput")
+                        .some((d) => d.label.length > 0);
+                    const canSeeAudioDevices = devices
+                        .filter((d) => d.kind === "audioinput")
+                        .some((d) => d.label.length > 0);
                     if (
-                        (video && !userMediaPermissionGranted.camera) ||
-                        (audio && !userMediaPermissionGranted.microphone)
+                        (video && (!userMediaPermissionGranted.camera || !canSeeVideoDevices)) ||
+                        (audio && (!userMediaPermissionGranted.microphone || !canSeeAudioDevices))
                     ) {
                         try {
                             await navigator.mediaDevices.getUserMedia({ video, audio });
@@ -171,6 +181,7 @@ export function VonageRoomControlBar({
                     });
                 } finally {
                     setIsOpening(false);
+                    release();
                 }
             })();
         },
@@ -181,6 +192,14 @@ export function VonageRoomControlBar({
         if (!state.preferredCameraId) {
             setStartCameraOnClose(true);
             onOpen(true, false);
+        } else if (state.cameraIntendedEnabled) {
+            // Something must have desynced, so disable the camera
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: false,
+                explicitlyDisabled: true,
+                onError: undefined,
+            });
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetCameraIntendedState,
@@ -189,21 +208,26 @@ export function VonageRoomControlBar({
                     dispatch({
                         type: VonageRoomStateActionType.ClearPreferredCamera,
                     });
-                    dispatch({
-                        type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    setUserMediaPermissionGranted({
+                        camera: false,
+                        microphone: userMediaPermissionGranted.microphone,
                     });
+                    // dispatch({
+                    //     type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    // });
 
                     setStartCameraOnClose(true);
                     onOpen(true, false);
                 },
             });
         }
-    }, [dispatch, onOpen, state.preferredCameraId]);
+    }, [dispatch, onOpen, state.cameraIntendedEnabled, state.preferredCameraId, userMediaPermissionGranted.microphone]);
 
     const stopCamera = useCallback(() => {
         dispatch({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
+            explicitlyDisabled: true,
             onError: undefined,
         });
     }, [dispatch]);
@@ -212,16 +236,28 @@ export function VonageRoomControlBar({
         if (!state.preferredMicrophoneId) {
             setStartMicrophoneOnClose(true);
             onOpen(false, true);
+        } else if (state.microphoneIntendedEnabled) {
+            // Something must have desynced, so disable the microphone
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: false,
+                explicitlyDisabled: true,
+                onError: undefined,
+            });
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                 microphoneEnabled: true,
                 onError: () => {
-                    dispatch({
-                        type: VonageRoomStateActionType.ClearPreferredCamera,
-                    });
+                    // dispatch({
+                    //     type: VonageRoomStateActionType.ClearPreferredCamera,
+                    // });
                     dispatch({
                         type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    });
+                    setUserMediaPermissionGranted({
+                        camera: userMediaPermissionGranted.camera,
+                        microphone: false,
                     });
 
                     setStartMicrophoneOnClose(true);
@@ -229,12 +265,19 @@ export function VonageRoomControlBar({
                 },
             });
         }
-    }, [dispatch, onOpen, state.preferredMicrophoneId]);
+    }, [
+        dispatch,
+        onOpen,
+        state.microphoneIntendedEnabled,
+        state.preferredMicrophoneId,
+        userMediaPermissionGranted.camera,
+    ]);
 
     const stopMicrophone = useCallback(() => {
         dispatch({
             type: VonageRoomStateActionType.SetMicrophoneIntendedState,
             microphoneEnabled: false,
+            explicitlyDisabled: true,
             onError: undefined,
         });
     }, [dispatch]);
@@ -280,7 +323,7 @@ export function VonageRoomControlBar({
                 >
                     Choose microphone / camera
                 </Button>
-                {state.microphoneStream ? (
+                {state.microphoneStream && state.microphoneIntendedEnabled ? (
                     <Button onClick={stopMicrophone} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="microphone" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Mute</span>
@@ -291,7 +334,7 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
                     </Button>
                 )}
-                {state.cameraStream ? (
+                {state.cameraStream && state.cameraIntendedEnabled ? (
                     <Button onClick={stopCamera} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="video" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>

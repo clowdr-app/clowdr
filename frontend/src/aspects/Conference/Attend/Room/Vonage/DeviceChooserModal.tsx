@@ -42,18 +42,7 @@ export default function DeviceChooserModal({
         async function effect() {
             const devices = await navigator.mediaDevices.enumerateDevices();
             if (!devices.some((d) => d.label.length > 0)) {
-                try {
-                    await navigator.mediaDevices.getUserMedia({ video: showCamera, audio: showMicrophone });
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    setMediaDevices(devices);
-                } catch (err) {
-                    console.error("Could not get permission to list devices for DeviceChooserModal", {
-                        err,
-                        showCamera,
-                        showMicrophone,
-                    });
-                    onClose("unable-to-list");
-                }
+                onClose("unable-to-list");
             } else {
                 setMediaDevices(devices);
             }

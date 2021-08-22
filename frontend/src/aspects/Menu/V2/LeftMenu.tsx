@@ -306,7 +306,7 @@ export default function LeftMenu(): JSX.Element {
                     colorScheme={colorScheme}
                     side="left"
                     as={Link}
-                    href="https://github.com/clowdr-app/clowdr/issues"
+                    href="https://form.asana.com?k=TOpJbWqoZ36fWafSStJ9dQ&d=1198973227684402"
                     showLabel={isExpanded}
                     textDecoration="none"
                 />

@@ -734,6 +734,7 @@ function RoomInner({
                 roomDetails={roomDetails}
                 showBackstage={showBackstage}
                 currentRegistrantId={currentRegistrant.id}
+                currentBackstageEventId={backstageSelectedEventId}
                 moveToNextBackstage={moveToNextBackstage}
             />
         </>

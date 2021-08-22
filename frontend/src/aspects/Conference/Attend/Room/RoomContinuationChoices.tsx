@@ -18,6 +18,7 @@ export default function RoomContinuationChoices({
     roomDetails,
     showBackstage,
     currentRegistrantId,
+    currentBackstageEventId,
     moveToNextBackstage,
 }: {
     currentRoomEvent: Room_EventSummaryFragment | null;
@@ -25,6 +26,7 @@ export default function RoomContinuationChoices({
     roomDetails: RoomPage_RoomDetailsFragment;
     showBackstage: boolean;
     currentRegistrantId: string;
+    currentBackstageEventId: string | null;
     moveToNextBackstage?: () => void;
 }): JSX.Element {
     const now5s = useRealTime(5000);
@@ -70,7 +72,9 @@ export default function RoomContinuationChoices({
                     nextEventHasBackstage &&
                     !!nextRoomEvent?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
                 const includeAutoMoveBackstageContinuation =
-                    showBackstage && currentRegistrantIsNeededOnNextEventBackstage;
+                    showBackstage &&
+                    currentRegistrantIsNeededOnNextEventBackstage &&
+                    nextRoomEvent?.id !== currentBackstageEventId;
                 if (includeAutoMoveBackstageContinuation) {
                     setExtraChoices((old) =>
                         old?.eventId !== currentRoomEvent.id
@@ -145,6 +149,8 @@ export default function RoomContinuationChoices({
         nextRoomEvent?.eventPeople,
         currentRegistrant.id,
         moveToNextBackstage,
+        nextRoomEvent?.id,
+        currentBackstageEventId,
     ]);
 
     return continuationChoicesFrom ? (

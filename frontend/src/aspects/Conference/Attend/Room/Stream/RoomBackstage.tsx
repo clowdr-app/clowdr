@@ -101,12 +101,16 @@ function EventBackstage({
                     variant={isSelected ? "outline" : "solid"}
                 >
                     <Text fontSize="lg" whiteSpace="normal">
-                        {isSelected ? "Close this area" : "Open this area"}
+                        {isSelected
+                            ? "Close this backstage"
+                            : selectedEventId
+                            ? "Switch to this backstage"
+                            : "Open this backstage"}
                     </Text>
                 </Button>
             </HStack>
         ),
-        [borderColour, category, event.id, event.startTime, isSelected, setSelectedEventId, title]
+        [borderColour, category, event.id, event.startTime, isSelected, selectedEventId, setSelectedEventId, title]
     );
 
     const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} onLeave={onLeave} />, [event.id, onLeave]);

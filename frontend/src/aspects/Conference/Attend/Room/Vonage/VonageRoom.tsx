@@ -115,7 +115,7 @@ export function VonageRoom({
                                   }
                                 : undefined
                         }
-                        completeJoin={completeJoinRef}
+                        completeJoinRef={completeJoinRef}
                         onRoomJoined={
                             isBackstageRoom && eventId
                                 ? (joined) => {
@@ -187,27 +187,39 @@ function VonageRoomInner({
     overrideJoining,
     beginJoin,
     cancelJoin,
-    completeJoin,
+    completeJoinRef,
     onPermissionsProblem,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     stop: boolean;
     isBackstageRoom: boolean;
-    onRoomJoined?: (_joined: boolean) => void;
     joinRoomButtonText?: string;
     requireMicrophone: boolean;
+    onRoomJoined?: (_joined: boolean) => void;
     overrideJoining?: boolean;
     beginJoin?: () => void;
     cancelJoin?: () => void;
-    completeJoin?: React.MutableRefObject<() => Promise<void>>;
+    completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }): JSX.Element {
+    const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
+    const screenPublishContainerRef = useRef<HTMLDivElement>(null);
+    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
+
     const { state, dispatch } = useVonageRoom();
-    const { vonage, connected, connections, streams, screen, camera } = useVonageComputedState(
-        getAccessToken,
-        vonageSessionId
-    );
+    const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
+        useVonageComputedState({
+            getAccessToken,
+            vonageSessionId,
+            overrideJoining,
+            onRoomJoined,
+            isBackstageRoom,
+            beginJoin,
+            cancelJoin,
+            completeJoinRef,
+            cameraPublishContainerRef,
+        });
 
     const [cameraEnabled, setCameraEnabled] = useState<boolean>(false);
     useEffect(() => {
@@ -223,13 +235,6 @@ function VonageRoomInner({
     const registrant = useCurrentRegistrant();
     const toast = useToast();
 
-    const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
-    const screenPublishContainerRef = useRef<HTMLDivElement>(null);
-    const cameraPreviewRef = useRef<HTMLVideoElement>(null);
-
-    const [_joining, setJoining] = useState<boolean>(false);
-    const joining = !!overrideJoining || _joining;
-
     const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
         base: "low",
         lg: "normal",
@@ -240,63 +245,6 @@ function VonageRoomInner({
     const cameraResolution =
         screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
-
-    const joinRoom = useCallback(() => {
-        async function doJoinRoom() {
-            console.log("Joining room");
-            setJoining(true);
-
-            try {
-                await vonage.connectToSession();
-                onRoomJoined?.(true);
-                await vonage.publishCamera(
-                    cameraPublishContainerRef.current as HTMLElement,
-                    state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                    state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
-                    isBackstageRoom ? "1280x720" : "640x480"
-                );
-            } catch (e) {
-                console.error("Failed to join room", e);
-                toast({
-                    status: "error",
-                    description: "Cannot connect to room",
-                });
-            } finally {
-                setJoining(false);
-            }
-        }
-
-        if (beginJoin && cancelJoin && completeJoin) {
-            completeJoin.current = doJoinRoom;
-            beginJoin();
-        } else {
-            doJoinRoom();
-        }
-    }, [
-        vonage,
-        onRoomJoined,
-        state.cameraIntendedEnabled,
-        state.preferredCameraId,
-        state.microphoneIntendedEnabled,
-        state.preferredMicrophoneId,
-        isBackstageRoom,
-        toast,
-        beginJoin,
-        cancelJoin,
-        completeJoin,
-    ]);
-
-    const leaveRoom = useCallback(async () => {
-        if (connected) {
-            try {
-                await vonage.disconnect();
-                onRoomJoined?.(false);
-            } catch (e) {
-                console.warn("Failed to leave room", e);
-            }
-        }
-        setJoining(false);
-    }, [connected, onRoomJoined, vonage]);
 
     useEffect(() => {
         if (stop) {
@@ -346,12 +294,6 @@ function VonageRoomInner({
                     },
                 });
             }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stop]);
-
-    useEffect(() => {
-        if (!stop && !connected && !joining) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stop]);
@@ -756,13 +698,17 @@ function VonageRoomInner({
         [otherUnpublishedConnections, participantWidth]
     );
 
+    const joinRoom_ = useCallback(async () => {
+        joinRoom();
+    }, [joinRoom]);
+
     return (
         <Box width="100%">
             <Flex mt={4} justifyContent="center" alignItems="center" flexWrap="wrap" w="100%">
                 {preJoin}
                 {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
                 <VonageRoomControlBar
-                    onJoinRoom={joinRoom}
+                    onJoinRoom={joinRoom_}
                     onLeaveRoom={leaveRoom}
                     onCancelJoinRoom={cancelJoin}
                     joining={joining}

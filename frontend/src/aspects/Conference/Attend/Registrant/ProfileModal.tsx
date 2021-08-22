@@ -148,7 +148,7 @@ export default function ProfileModal({
                                                 colorScheme="purple"
                                                 size="sm"
                                             >
-                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> DM
+                                                <FAIcon icon="comment" iconStyle="s" mr={3} /> Chat
                                             </Button>
                                         ) : undefined}
                                         <LinkButton

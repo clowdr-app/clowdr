@@ -41,7 +41,7 @@ export function RoomContent({
     currentlySelectedVideoElementId?: string;
     onChooseVideo?: (elementId: string) => void;
 }): JSX.Element {
-    const bgColour = useColorModeValue("purple.200", "purple.700");
+    const bgColour = useColorModeValue("purple.100", "purple.900");
     const nextBgColour = useColorModeValue("gray.200", "gray.700");
 
     const currentRegistrant = useCurrentRegistrant();

@@ -502,7 +502,7 @@ export function ScheduleInner({
         return result;
     }, [eventsByRoom, rooms]);
 
-    const alternateBgColor = useColorModeValue("blue.100", "blue.700");
+    const alternateBgColor = useColorModeValue("purple.100", "purple.700");
     const borderColour = useColorModeValue("gray.400", "gray.400");
 
     const scrollToEventCbs = useMemo(() => new Map(), []);

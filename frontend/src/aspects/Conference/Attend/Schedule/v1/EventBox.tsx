@@ -111,7 +111,9 @@ export default function EventBox({
                         top={(100 * (Date.parse(ev.startTime) - eventStartMs)) / (1000 * durationSeconds) + "%"}
                         left={0}
                         w="100%"
-                        borderStyle="dashed"
+                        borderTopStyle="dashed"
+                        borderTopWidth="2px"
+                        borderBottom="none"
                     />
                 ))}
             </>
@@ -152,7 +154,7 @@ export default function EventBox({
         }
     }, [content.data, getContent, isOpen, event.itemId]);
 
-    const borderColour = useColorModeValue("blue.200", "blue.800");
+    const borderColour = useColorModeValue("purple.200", "purple.800");
     return (
         <>
             <Button
@@ -185,7 +187,7 @@ export default function EventBox({
                 tabIndex={0}
                 overflow="hidden"
                 minW={0}
-                colorScheme="blue"
+                colorScheme="gray"
                 role="button"
                 aria-label={`${eventTitle} starts ${DateTime.fromMillis(eventStartMs)
                     .setZone(timelineParams.timezone)

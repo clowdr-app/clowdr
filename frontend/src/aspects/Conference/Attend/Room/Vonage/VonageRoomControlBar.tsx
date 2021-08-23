@@ -148,18 +148,39 @@ export function VonageRoomControlBar({
                         (video && (!userMediaPermissionGranted.camera || !canSeeVideoDevices)) ||
                         (audio && (!userMediaPermissionGranted.microphone || !canSeeAudioDevices))
                     ) {
-                        try {
-                            await navigator.mediaDevices.getUserMedia({ video, audio });
-                        } catch (e) {
-                            // if you try to get user media while mic/cam are active, you run into an error
-                            const msg = e.toString();
-                            if (!msg.includes("Concurrent") || !msg.includes("limit")) {
-                                throw e;
+                        let gotVideoPermission = false;
+                        let gotAudioPermission = false;
+                        if (video) {
+                            try {
+                                await navigator.mediaDevices.getUserMedia({ video });
+                                gotVideoPermission = true;
+                            } catch (err) {
+                                // if you try to get user media while mic/cam are active, you run into an error
+                                const msg = err.toString();
+                                if (err.name === "NotFoundError") {
+                                    console.warn("No devices found by getUserMedia", { err, video });
+                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                    throw err;
+                                }
+                            }
+                        }
+                        if (audio) {
+                            try {
+                                await navigator.mediaDevices.getUserMedia({ audio });
+                                gotAudioPermission = true;
+                            } catch (err) {
+                                // if you try to get user media while mic/cam are active, you run into an error
+                                const msg = err.toString();
+                                if (err.name === "NotFoundError") {
+                                    console.warn("No devices found by getUserMedia", { err, audio });
+                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                    throw err;
+                                }
                             }
                         }
                         setUserMediaPermissionGranted({
-                            camera: userMediaPermissionGranted.camera || video,
-                            microphone: userMediaPermissionGranted.microphone || audio,
+                            camera: userMediaPermissionGranted.camera || gotVideoPermission,
+                            microphone: userMediaPermissionGranted.microphone || gotAudioPermission,
                         });
                     }
                     setDeviceModalState({

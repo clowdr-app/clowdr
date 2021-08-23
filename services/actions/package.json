@@ -6,7 +6,7 @@
     "scripts": {
         "build": "npm run build-shared && npm run build-this",
         "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../ --workspace=shared build",
+        "build-shared": "npm run --prefix=../../shared build",
         "start": "node build/server.js",
         "dev": "npm run build-shared && nodenv -E ./.env -e \"npm run dev-stage2\"",
         "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-actions\"",

@@ -10,7 +10,7 @@
     "scripts": {
         "build": "npm run build-shared && npm run build-this && npm run-script copy-resources",
         "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../ --workspace=shared build",
+        "build-shared": "npm run --prefix=../../shared build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "node build/server.js",
         "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-realtime\"",

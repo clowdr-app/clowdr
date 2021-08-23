@@ -425,6 +425,7 @@ function ContinuationChoices_Inner({
     return displayChoice ? (
         isActiveChoice ? (
             <ContinuationActiveChoice
+                selectedOptionId={selectedOptionId}
                 choices={choices}
                 isBackstage={isBackstage}
                 noBackstage={noBackstage}
@@ -435,6 +436,7 @@ function ContinuationChoices_Inner({
             />
         ) : (
             <ContinuationPassiveChoice
+                selectedOptionId={selectedOptionId}
                 choices={choices}
                 isBackstage={isBackstage}
                 noBackstage={noBackstage}

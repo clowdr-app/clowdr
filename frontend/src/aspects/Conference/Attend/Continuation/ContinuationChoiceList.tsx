@@ -1,7 +1,7 @@
-import { Button, chakra, ListItem, OrderedList, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import { Button, chakra, List, ListItem, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import Color from "tinycolor2";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
@@ -11,6 +11,7 @@ export default function ContinuationChoiceList({
     isBackstage,
     noBackstage,
     currentRole,
+    selectedOptionId,
     onChoiceSelected,
     leastDestructiveRef,
     selectDefault,
@@ -20,6 +21,7 @@ export default function ContinuationChoiceList({
     noBackstage: boolean;
     currentRole: ContinuationDefaultFor;
     leastDestructiveRef?: React.MutableRefObject<any>;
+    selectedOptionId: string | null;
     onChoiceSelected: (choiceId: string | null, isDefault: boolean, isInitial: boolean) => void;
     selectDefault: boolean;
 }): JSX.Element {
@@ -44,7 +46,6 @@ export default function ContinuationChoiceList({
         }
         return null;
     }, [currentRole, isBackstage, noBackstage, sortedChoices]);
-    const [selectedOptionId, setSelectedOptionId] = useState<string | null>(defaultOptionId);
     useEffect(() => {
         if (selectDefault) {
             onChoiceSelected(defaultOptionId, true, true);
@@ -52,14 +53,13 @@ export default function ContinuationChoiceList({
     }, [defaultOptionId, onChoiceSelected, selectDefault]);
 
     return (
-        <OrderedList spacing={1}>
+        <List spacing={2} py="3px">
             {sortedChoices.map((option) => (
                 <ListItem key={option.id} w="100%">
                     <ContinuationChoice
                         option={option}
                         isSelected={selectedOptionId === option.id}
                         onSelect={() => {
-                            setSelectedOptionId(option.id);
                             onChoiceSelected(option.id, false, false);
                         }}
                     />
@@ -67,20 +67,19 @@ export default function ContinuationChoiceList({
             ))}
             <ListItem w="100%">
                 <Button
-                    size="sm"
+                    size="md"
                     textAlign="left"
                     w="100%"
                     justifyContent="flex-start"
                     alignItems="center"
                     onClick={(ev) => {
                         ev.stopPropagation();
-                        setSelectedOptionId(null);
                         onChoiceSelected(null, defaultOptionId === null, false);
                     }}
                     variant="outline"
                     ref={leastDestructiveRef}
                 >
-                    <chakra.span mr={2}>Stay here</chakra.span>
+                    <chakra.span mr={2}>Stay on this page</chakra.span>
                     {selectedOptionId === null ? (
                         <FAIcon iconStyle="s" icon="check-circle" ml="auto" />
                     ) : (
@@ -88,7 +87,7 @@ export default function ContinuationChoiceList({
                     )}
                 </Button>
             </ListItem>
-        </OrderedList>
+        </List>
     );
 }
 
@@ -131,7 +130,7 @@ function ContinuationChoice({
 
     return (
         <Button
-            size="sm"
+            size="md"
             textAlign="left"
             w="100%"
             justifyContent="flex-start"
@@ -140,7 +139,6 @@ function ContinuationChoice({
             color={textColour}
             border={"1px solid"}
             borderColor={borderColour}
-            borderRadius="xl"
             shadow={shadow}
             _hover={{
                 bgColor: bgColour_Hover.toRgbString(),
@@ -162,7 +160,11 @@ function ContinuationChoice({
             }}
             isActive={isSelected ? true : undefined}
         >
-            <chakra.span mr={2}>{option.description}</chakra.span>
+            <chakra.span mr={2}>
+                {option.description === "Join the discussion room"
+                    ? "Continue the current discussion"
+                    : option.description}
+            </chakra.span>
             {isSelected ? <FAIcon iconStyle="s" icon="check-circle" ml="auto" /> : <chakra.div w={6}></chakra.div>}
         </Button>
     );

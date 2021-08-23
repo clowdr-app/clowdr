@@ -116,13 +116,9 @@ function EventBackstage({
     const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} onLeave={onLeave} />, [event.id, onLeave]);
     const area = useMemo(
         () =>
-            selectedEventId === event.id ? (
+            isSelected ? (
                 <Box mt={2} p={2} border={isNow ? "solid red" : undefined} borderWidth={4}>
                     {vonageRoom}
-                    <Alert status="info" mb={8}>
-                        <AlertIcon />
-                        Once this event ends, you can continue to a discussion room to continue the conversation.
-                    </Alert>
                     <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
                 </Box>
             ) : !isActive ? (
@@ -131,7 +127,7 @@ function EventBackstage({
                     This event has now finished. Once you close this room, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [event.id, isActive, isNow, selectedEventId, vonageRoom, roomChatId]
+        [isActive, isNow, isSelected, vonageRoom, roomChatId]
     );
 
     return (
@@ -244,7 +240,7 @@ export function RoomBackstage({
                     <AlertTitle>Welcome to the backstage for {roomName}</AlertTitle>
                     <AlertDescription display="block">
                         <UnorderedList>
-                            <ListItem>Each event in this room has a backstage.</ListItem>
+                            <ListItem>Each presentation and Q&amp;A event in this room has a backstage.</ListItem>
                             <ListItem>
                                 Each backstage becomes available to join twenty minutes before the associated event
                                 starts.

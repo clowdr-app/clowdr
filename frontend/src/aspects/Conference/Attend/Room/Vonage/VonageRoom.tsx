@@ -638,9 +638,9 @@ function VonageRoomInner({
     const nobodyElseAlert = useMemo(
         () =>
             connected && connections.length <= 1 ? (
-                <Alert status="info">
+                <Alert status="info" mt={2} w="max-content">
                     <AlertIcon />
-                    <AlertTitle>Nobody else has joined the room at the moment</AlertTitle>
+                    <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
                 </Alert>
             ) : (
                 <></>

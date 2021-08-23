@@ -26,7 +26,7 @@ export default function ManageExport(): JSX.Element {
                 Exports
             </Heading>
             <Text>
-                By using this &ldquo;Export to YouTube&rdquo; feature of Clowdr, you agree to{" "}
+                By using this &ldquo;Export to YouTube&rdquo; feature of Midspace, you agree to{" "}
                 <Link isExternal href="https://www.youtube.com/t/terms">
                     YouTube&apos;s Terms of Service
                 </Link>

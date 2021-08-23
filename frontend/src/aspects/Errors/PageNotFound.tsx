@@ -57,7 +57,7 @@ export default function PageNotFound(): JSX.Element {
                 ) : conferenceSlug && loggedIn ? (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                            You are logged into Clowdr but you will need an invitation code to access the full
+                            You are logged into Midspace but you will need an invitation code to access the full
                             conference.
                         </Text>
                         <Text

@@ -63,7 +63,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                 Connected accounts
             </Heading>
             <Text>
-                By connecting your YouTube account through this &ldquo;Export to YouTube&rdquo; feature of Clowdr, you
+                By connecting your YouTube account through this &ldquo;Export to YouTube&rdquo; feature of Midspace, you
                 agree to{" "}
                 <Link isExternal href="https://www.youtube.com/t/terms">
                     YouTube&apos;s Terms of Service

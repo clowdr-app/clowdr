@@ -250,7 +250,7 @@ function CookiePolicyCompliance({
                         Cookies
                     </Heading>
                     <Text>
-                        The Clowdr software (hosted by {hostOrganisationName}) requires the use of cookies in order to
+                        The Midspace software (hosted by {hostOrganisationName}) requires the use of cookies in order to
                         deliver the software service to you. Please{" "}
                         <Link isExternal href={cookiesURL}>
                             read the cookie policy
@@ -338,7 +338,7 @@ function TermsAndPPCompliance({
                             privacy policy
                             <ExternalLinkIcon ml={1} fontSize="xs" />
                         </Link>{" "}
-                        before continuing to use the Clowdr software hosted by {hostOrganisationName}.
+                        before continuing to use the Midspace software hosted by {hostOrganisationName}.
                     </Text>
                     <VStack alignItems="flex-start">
                         <Checkbox isChecked={termsChecked} onChange={(ev) => setTermsChecked(ev.target.checked)}>

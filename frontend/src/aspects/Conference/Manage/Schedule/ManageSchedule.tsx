@@ -1253,7 +1253,7 @@ function EditableScheduleTable(): JSX.Element {
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
                             .getMinutes()
                             .toString()
-                            .padStart(2, "0")} - Clowdr Schedule.csv`;
+                            .padStart(2, "0")} - Midspace Schedule.csv`;
                         if (navigator.msSaveBlob) {
                             navigator.msSaveBlob(csvData, fileName);
                         } else {

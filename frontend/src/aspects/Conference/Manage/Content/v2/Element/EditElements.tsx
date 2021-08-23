@@ -96,7 +96,7 @@ export function EditElements({
                     </AccordionButton>
                     <AccordionPanel pb={4}>
                         <Text>
-                            The following shows the raw data provided to Clowdr&apos;s Content Importer (accumulated
+                            The following shows the raw data provided to Midspace&apos;s Content Importer (accumulated
                             across one or more imports).
                         </Text>
                         <Text as="pre" w="100%" overflowWrap="break-word" whiteSpace="pre-wrap" mt={2}>

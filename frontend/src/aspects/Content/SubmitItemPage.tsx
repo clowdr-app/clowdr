@@ -92,7 +92,7 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
         return data.content_ElementByAccessToken[0];
     }, [data]);
 
-    const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Clowdr");
+    const title = useTitle(uploadableElement?.itemTitle ? `Submit ${uploadableElement.itemTitle}` : "Midspace");
 
     const uploadAgreementText = useMemo(() => {
         return uploadAgreementData?.getUploadAgreement?.agreementText ?? undefined;
@@ -244,7 +244,7 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                                                     <ListItem>
                                                         Please refer to{" "}
                                                         <Link
-                                                            href="https://clowdr.org/resources/video-subtitles"
+                                                            href="https://resources.midspace.app/video-subtitles"
                                                             isExternal
                                                         >
                                                             these instructions

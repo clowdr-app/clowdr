@@ -154,7 +154,7 @@ export function RaiseHandPanel(): JSX.Element {
                 ) : (
                     <Text fontSize="xs">
                         By clicking &ldquo;I&apos;m ready&rdquo; below, you agree to participate in the livestream. The
-                        stream may also be recorded and later published to Clowdr and external sites (such as YouTube)
+                        stream may also be recorded and later published to Midspace and external sites (such as YouTube)
                         at the discretion of your conference organisers.
                     </Text>
                 )}

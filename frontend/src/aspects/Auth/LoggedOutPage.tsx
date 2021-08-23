@@ -26,7 +26,7 @@ export default function LoggedOutPage(): JSX.Element {
                     You have been logged out.
                 </Heading>
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                    We hope you enjoyed using Clowdr&apos;s{" "}
+                    We hope you enjoyed using Midspace&apos;s{" "}
                     <Link isExternal href="https://github.com/clowdr-app/">
                         open-source
                     </Link>{" "}

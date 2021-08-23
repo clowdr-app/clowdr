@@ -40,10 +40,10 @@ export default function UXChoiceDialog(): JSX.Element {
                         <VStack alignItems="flex-start">
                             {rawChoice === null ? (
                                 <>
-                                    <Text fontSize="lg">New to Clowdr? We recommend our new, simpler experience</Text>
+                                    <Text fontSize="lg">New to Midspace? We recommend our new, simpler experience</Text>
                                     <Text fontSize="sm">All the same features, just easier to navigate.</Text>
                                     <Text fontSize="lg" pt={2}>
-                                        Used Clowdr recently and would rather stick with the old version?
+                                        Used Midspace recently and would rather stick with the old version?
                                     </Text>
                                 </>
                             ) : undefined}

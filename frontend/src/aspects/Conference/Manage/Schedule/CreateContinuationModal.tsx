@@ -820,7 +820,7 @@ export default function CreateContinuationModal({
                         <Text>This option can be edited by toggling it on the event settings.</Text>
                     ) : undefined}
                     <Text>
-                        An active choice requires a person to select an option before continuing to use Clowdr. A
+                        An active choice requires a person to select an option before continuing to use Midspace. A
                         passive choice is a small popup offering the choice but if none is selected, the person remains
                         in the same place.
                     </Text>

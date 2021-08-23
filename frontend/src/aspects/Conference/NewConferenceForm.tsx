@@ -327,7 +327,7 @@ export default function NewConferenceForm(): JSX.Element {
         if (!!value && isValidUUID(value)) {
             return undefined;
         } else {
-            return "Not a valid demo code.";
+            return "Not a valid access code.";
         }
     }
 
@@ -388,7 +388,7 @@ export default function NewConferenceForm(): JSX.Element {
                             toast({
                                 title: "Could not create conference",
                                 description:
-                                    "The name or short name may already be taken or your demo code may have already been used.",
+                                    "The name or short name may already be taken or your access code may have already been used.",
                                 status: "error",
                             });
                             // failed = true;
@@ -456,7 +456,7 @@ export default function NewConferenceForm(): JSX.Element {
                         toast({
                             title: "Failed to create conference",
                             description:
-                                "We were unable to create your conference as the demo code has already been used.",
+                                "We were unable to create your conference as the access code has already been used.",
                             status: "error",
                             duration: 7000,
                             isClosable: true,
@@ -465,7 +465,7 @@ export default function NewConferenceForm(): JSX.Element {
                         toast({
                             title: "Failed to create conference",
                             description: `An error has occurred while trying to create your conference.
-Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
+Please contact our tech support to investigate the issue shown below.`,
                             status: "error",
                             duration: null,
                             isClosable: true,
@@ -531,11 +531,11 @@ Please contact our tech support to investigate the issue shown below: support@cl
                                 isRequired
                                 marginTop="1em"
                             >
-                                <FormLabel htmlFor="new_conf_demo_code">Demo code</FormLabel>
+                                <FormLabel htmlFor="new_conf_demo_code">Access code</FormLabel>
                                 <InputGroup>
                                     <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
                                     <InputRightAddon>
-                                        <Tooltip label="To create a conference, please contact us at welcome@clowdr.org to receive your demo code.">
+                                        <Tooltip label="To create a conference, please contact us at to receive your access code.">
                                             {"What's this?"}
                                         </Tooltip>
                                     </InputRightAddon>

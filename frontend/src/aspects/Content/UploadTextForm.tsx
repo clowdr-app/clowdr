@@ -118,8 +118,8 @@ export default function UploadTextForm({
                                                 link to other website, embed external images and more.
                                                 <br />
                                                 <br />
-                                                On Clowdr, you can also use Markdown to embed YouTube videos, using the
-                                                same syntax as for images.
+                                                On Midspace, you can also use Markdown to embed YouTube videos, using
+                                                the same syntax as for images.
                                             </FormHelperText>
                                             <FormErrorMessage>{form.errors.text}</FormErrorMessage>
                                         </FormControl>

@@ -8,10 +8,10 @@ import {
 import React, { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
+import { PermissionsExplanationModal } from "../Breakout/PermissionsExplanationModal";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
 import { ContentShare } from "./ContentShare";
 import { DeviceSetup } from "./DeviceSetup/DeviceSetup";
-import { PermissionsExplanationModal } from "./PermissionsExplanationModal";
 import { VideoTiles } from "./VideoTiles";
 
 export interface Meeting {

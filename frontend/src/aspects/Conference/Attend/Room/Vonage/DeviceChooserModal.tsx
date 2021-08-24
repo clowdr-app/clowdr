@@ -15,7 +15,11 @@ import React, { useEffect, useMemo, useState } from "react";
 interface Props {
     isOpen: boolean;
     onOpen: () => void;
-    onClose: (madeSelection: boolean, cameraId?: string | null, microphoneId?: string | null) => void;
+    onClose: (
+        actionPerformed: "made-selection" | "cancelled" | "unable-to-list",
+        cameraId?: string | null,
+        microphoneId?: string | null
+    ) => void;
     cameraId: string | null;
     microphoneId: string | null;
     showCamera: boolean;
@@ -37,29 +41,36 @@ export default function DeviceChooserModal({
     useEffect(() => {
         async function effect() {
             const devices = await navigator.mediaDevices.enumerateDevices();
-            setMediaDevices(devices);
+            if (!devices.some((d) => d.label.length > 0)) {
+                onClose("unable-to-list");
+            } else {
+                setMediaDevices(devices);
+            }
         }
         if (isOpen) {
             effect();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
     function doClose() {
-        onClose(true, selectedCamera, selectedMicrophone);
+        onClose("made-selection", selectedCamera, selectedMicrophone);
     }
 
     function doCancel() {
-        onClose(false);
+        onClose("cancelled");
         setSelectedCamera(cameraId);
         setSelectedMicrophone(microphoneId);
     }
 
-    const availableCams = useMemo(() => mediaDevices.filter((device) => device.kind === "videoinput" && device.label), [
-        mediaDevices,
-    ]);
-    const availableMics = useMemo(() => mediaDevices.filter((device) => device.kind === "audioinput" && device.label), [
-        mediaDevices,
-    ]);
+    const availableCams = useMemo(
+        () => mediaDevices.filter((device) => device.kind === "videoinput" && device.label),
+        [mediaDevices]
+    );
+    const availableMics = useMemo(
+        () => mediaDevices.filter((device) => device.kind === "audioinput" && device.label),
+        [mediaDevices]
+    );
 
     return (
         <>

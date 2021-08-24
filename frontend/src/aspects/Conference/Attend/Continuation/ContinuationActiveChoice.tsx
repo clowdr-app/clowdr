@@ -24,6 +24,7 @@ export default function ContinuationActiveChoice({
     currentRole,
     timeRemaining,
     timeMax,
+    selectedOptionId,
     onChoiceSelected,
 }: {
     choices: readonly ContinuationChoices_ContinuationFragment[];
@@ -32,6 +33,7 @@ export default function ContinuationActiveChoice({
     currentRole: ContinuationDefaultFor;
     timeRemaining: number;
     timeMax: number;
+    selectedOptionId: string | null;
     onChoiceSelected: (choiceId: string | null, isDefault: boolean) => void;
 }): JSX.Element {
     const [hide, setHide] = useState<boolean>(false);
@@ -76,7 +78,9 @@ export default function ContinuationActiveChoice({
                         isBackstage={isBackstage}
                         noBackstage={noBackstage}
                         currentRole={currentRole}
+                        selectedOptionId={selectedOptionId}
                         onChoiceSelected={setChoice}
+                        selectDefault={true}
                     />
                 </ModalBody>
                 <ModalFooter></ModalFooter>

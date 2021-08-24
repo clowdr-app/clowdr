@@ -30,10 +30,9 @@ import {
 import type { DeviceChangeObserver } from "amazon-chime-sdk-js";
 import React, { useCallback, useEffect, useRef } from "react";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { PermissionInstructions } from "./PermissionInstructions";
+import { PermissionInstructions } from "../Breakout/PermissionInstructions";
 
 export function ChimeRoomControlBar(): JSX.Element {
-    const toast = useToast();
     const meetingManager = useMeetingManager();
     const meetingStatus = useMeetingStatus();
     const audioInputs = useAudioInputs();
@@ -46,6 +45,7 @@ export function ChimeRoomControlBar(): JSX.Element {
     const { muted, toggleMute } = useToggleLocalMute();
     const { toggleContentShare } = useContentShareControls();
     const videoNeedsRestartRef = useRef<boolean>(false);
+    const toast = useToast();
 
     useEffect(() => {
         audioVideo?.chooseVideoInputQuality(1280, 720, 30, 1400);
@@ -63,7 +63,7 @@ export function ChimeRoomControlBar(): JSX.Element {
             } catch (e) {
                 toast({
                     title: "Could not enable camera",
-                    description: <PermissionInstructions />,
+                    description: <PermissionInstructions camera={true} />,
                     isClosable: true,
                     duration: null,
                     status: "error",
@@ -87,7 +87,7 @@ export function ChimeRoomControlBar(): JSX.Element {
             } catch (e) {
                 toast({
                     title: "Could not enable camera",
-                    description: <PermissionInstructions />,
+                    description: <PermissionInstructions camera={true} />,
                     isClosable: true,
                     duration: null,
                     status: "error",
@@ -129,7 +129,7 @@ export function ChimeRoomControlBar(): JSX.Element {
         } catch (e) {
             toast({
                 title: "Could not enable camera",
-                description: <PermissionInstructions />,
+                description: <PermissionInstructions camera={true} />,
                 isClosable: true,
                 duration: null,
                 status: "error",
@@ -145,7 +145,7 @@ export function ChimeRoomControlBar(): JSX.Element {
             } catch (e) {
                 toast({
                     title: "Could not change audio input device",
-                    description: <PermissionInstructions />,
+                    description: <PermissionInstructions microphone={true} />,
                     isClosable: true,
                     duration: null,
                     status: "error",
@@ -170,7 +170,7 @@ export function ChimeRoomControlBar(): JSX.Element {
             } catch (e) {
                 toast({
                     title: "Could not change camera device",
-                    description: <PermissionInstructions />,
+                    description: <PermissionInstructions camera={true} />,
                     isClosable: true,
                     duration: null,
                     status: "error",

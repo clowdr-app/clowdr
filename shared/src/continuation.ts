@@ -71,6 +71,13 @@ export type ContinuationTo =
           tagId: string | null;
       };
 
+export type ExtendedContinuationTo =
+    | ContinuationTo
+    | {
+          type: "function";
+          f: () => void;
+      };
+
 export enum ContinuationDefaultFor {
     None = "None",
     All = "Everyone",

@@ -2,8 +2,8 @@ import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/toast";
 import {
     ContinuationDefaultFor,
-    ContinuationTo,
     ContinuationType,
+    ExtendedContinuationTo,
     NavigationView,
 } from "@clowdr-app/shared-types/build/continuation";
 import * as R from "ramda";
@@ -79,12 +79,14 @@ export default function ContinuationChoices({
     noBackstage,
     currentRole,
     currentRoomId,
+    extraChoices,
 }: {
     from: { eventId: string; itemId: string | null } | { shufflePeriodId: string; shuffleRoomEndsAt: number };
     isBackstage: boolean;
     noBackstage: boolean;
     currentRole: ContinuationDefaultFor;
     currentRoomId: string;
+    extraChoices: readonly ContinuationChoices_ContinuationFragment[];
 }): JSX.Element {
     // We do not want this to change on every render...
     const nowStatic_StartStr = useMemo(() => new Date(Date.now() + 60000).toISOString(), []);
@@ -103,9 +105,15 @@ export default function ContinuationChoices({
     const renderedAt = useMemo(() => Date.now(), []);
     const now = useRealTime(10000);
 
-    return response.data?.schedule_Continuation &&
-        (response.data?.schedule_Continuation.length > 0 || "shufflePeriodId" in from) &&
-        now - renderedAt > 15000 ? (
+    const allChoices = useMemo(
+        () =>
+            response.data?.schedule_Continuation
+                ? [...extraChoices, ...response.data.schedule_Continuation]
+                : extraChoices,
+        [response.data?.schedule_Continuation, extraChoices]
+    );
+
+    return response.data && (allChoices.length > 0 || "shufflePeriodId" in from) && now - renderedAt > 15000 ? (
         <ContinuationChoices_Inner
             from={
                 "eventId" in from
@@ -131,7 +139,7 @@ export default function ContinuationChoices({
                           eventRoomId: response.data.schedule_Event[0]?.roomId,
                       }
             }
-            choices={response.data.schedule_Continuation}
+            choices={allChoices}
             isBackstage={isBackstage}
             noBackstage={noBackstage}
             currentRole={currentRole}
@@ -173,7 +181,7 @@ function ContinuationChoices_Inner({
     const roomsResponse = useContinuationChoices_RoomsQuery({
         variables: {
             ids: choices.reduce((acc, option) => {
-                const to: ContinuationTo = option.to;
+                const to: ExtendedContinuationTo = option.to;
                 if (to.type === ContinuationType.AutoDiscussionRoom) {
                     const itemId = to.id ?? ("eventId" in from ? from.itemId : null);
                     if (itemId) {
@@ -246,8 +254,11 @@ function ContinuationChoices_Inner({
                     let error: string | null = null;
 
                     if (selectedOption) {
-                        const to: ContinuationTo = selectedOption.to;
+                        const to: ExtendedContinuationTo = selectedOption.to;
                         switch (to.type) {
+                            case "function":
+                                to.f();
+                                break;
                             case ContinuationType.URL:
                                 window.location.assign(to.url);
                                 break;
@@ -414,6 +425,7 @@ function ContinuationChoices_Inner({
     return displayChoice ? (
         isActiveChoice ? (
             <ContinuationActiveChoice
+                selectedOptionId={selectedOptionId}
                 choices={choices}
                 isBackstage={isBackstage}
                 noBackstage={noBackstage}
@@ -424,6 +436,7 @@ function ContinuationChoices_Inner({
             />
         ) : (
             <ContinuationPassiveChoice
+                selectedOptionId={selectedOptionId}
                 choices={choices}
                 isBackstage={isBackstage}
                 noBackstage={noBackstage}

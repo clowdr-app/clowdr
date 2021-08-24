@@ -1,20 +1,10 @@
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Button,
-    chakra,
-    HStack,
-    Spinner,
-    Stack,
-    Tag,
-    TagLabel,
-    TagLeftIcon,
-    Tooltip,
-    useToast,
-} from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
+import { Box, Button, chakra, HStack, Spinner, Stack, Tag, TagLabel, TagLeftIcon, Tooltip } from "@chakra-ui/react";
+import { Mutex } from "async-mutex";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
+import { DevicesProps, devicesToFriendlyName } from "../Breakout/PermissionInstructions";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
@@ -27,6 +17,7 @@ export function VonageRoomControlBar({
     joinRoomButtonText = "Join Room",
     joiningRoomButtonText = "Waiting to be admitted",
     requireMicrophone,
+    onPermissionsProblem,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
@@ -35,6 +26,7 @@ export function VonageRoomControlBar({
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
     requireMicrophone: boolean;
+    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
@@ -60,42 +52,64 @@ export function VonageRoomControlBar({
     const [startCameraOnClose, setStartCameraOnClose] = useState<boolean>(false);
     const [startMicrophoneOnClose, setStartMicrophoneOnClose] = useState<boolean>(false);
 
-    const toast = useToast();
+    // const toast = useToast();
 
     const onClose = useCallback(
-        (madeSelection: boolean, cameraId: string | null = null, microphoneId: string | null = null) => {
-            if (madeSelection) {
-                if (cameraId) {
-                    if (cameraId !== state.preferredCameraId) {
-                        dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+        (
+            madeSelection: "made-selection" | "cancelled" | "unable-to-list",
+            cameraId: string | null = null,
+            microphoneId: string | null = null
+        ) => {
+            switch (madeSelection) {
+                case "made-selection":
+                    if (cameraId) {
+                        if (cameraId !== state.preferredCameraId) {
+                            dispatch({ type: VonageRoomStateActionType.SetPreferredCamera, cameraId });
+                        }
+                    } else {
+                        dispatch({ type: VonageRoomStateActionType.ClearPreferredCamera });
                     }
-                } else {
-                    dispatch({ type: VonageRoomStateActionType.ClearPreferredCamera });
-                }
 
-                if (microphoneId) {
-                    if (microphoneId !== state.preferredMicrophoneId) {
-                        dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                    if (microphoneId) {
+                        if (microphoneId !== state.preferredMicrophoneId) {
+                            dispatch({ type: VonageRoomStateActionType.SetPreferredMicrophone, microphoneId });
+                        }
+                    } else {
+                        dispatch({ type: VonageRoomStateActionType.ClearPreferredMicrophone });
                     }
-                } else {
-                    dispatch({ type: VonageRoomStateActionType.ClearPreferredMicrophone });
-                }
 
-                if (startCameraOnClose && cameraId) {
-                    dispatch({
-                        type: VonageRoomStateActionType.SetCameraIntendedState,
-                        cameraEnabled: true,
-                        onError: undefined,
-                    });
-                }
+                    if (startCameraOnClose && cameraId) {
+                        dispatch({
+                            type: VonageRoomStateActionType.SetCameraIntendedState,
+                            cameraEnabled: true,
+                            onError: undefined,
+                        });
+                    }
 
-                if (startMicrophoneOnClose && microphoneId) {
-                    dispatch({
-                        type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-                        microphoneEnabled: true,
-                        onError: undefined,
-                    });
-                }
+                    if (startMicrophoneOnClose && microphoneId) {
+                        dispatch({
+                            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                            microphoneEnabled: true,
+                            onError: undefined,
+                        });
+                    }
+                    break;
+
+                case "unable-to-list":
+                    onPermissionsProblem(
+                        {
+                            camera: deviceModalState.showCamera,
+                            microphone: deviceModalState.showMicrophone,
+                        },
+                        `Could not list choices of ${devicesToFriendlyName(
+                            {
+                                camera: deviceModalState.showCamera,
+                                microphone: deviceModalState.showMicrophone,
+                            },
+                            "or"
+                        )}`
+                    );
+                    break;
             }
 
             setStartCameraOnClose(false);
@@ -109,33 +123,64 @@ export function VonageRoomControlBar({
         [
             deviceModalState,
             dispatch,
+            onPermissionsProblem,
             startCameraOnClose,
             startMicrophoneOnClose,
             state.preferredCameraId,
             state.preferredMicrophoneId,
         ]
     );
+    const dialogOpenMutex = useRef(new Mutex());
     const onOpen = useCallback(
-        (video: boolean, audio: boolean) => {
+        async (video: boolean, audio: boolean) => {
+            const release = await dialogOpenMutex.current.acquire();
             setIsOpening(true);
             (async () => {
                 try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const canSeeVideoDevices = devices
+                        .filter((d) => d.kind === "videoinput")
+                        .some((d) => d.label.length > 0);
+                    const canSeeAudioDevices = devices
+                        .filter((d) => d.kind === "audioinput")
+                        .some((d) => d.label.length > 0);
                     if (
-                        (video && !userMediaPermissionGranted.camera) ||
-                        (audio && !userMediaPermissionGranted.microphone)
+                        (video && (!userMediaPermissionGranted.camera || !canSeeVideoDevices)) ||
+                        (audio && (!userMediaPermissionGranted.microphone || !canSeeAudioDevices))
                     ) {
-                        try {
-                            await navigator.mediaDevices.getUserMedia({ video, audio });
-                        } catch (e) {
-                            // if you try to get user media while mic/cam are active, you run into an error
-                            const msg = e.toString();
-                            if (!msg.includes("Concurrent") || !msg.includes("limit")) {
-                                throw e;
+                        let gotVideoPermission = false;
+                        let gotAudioPermission = false;
+                        if (video) {
+                            try {
+                                await navigator.mediaDevices.getUserMedia({ video });
+                                gotVideoPermission = true;
+                            } catch (err) {
+                                // if you try to get user media while mic/cam are active, you run into an error
+                                const msg = err.toString();
+                                if (err.name === "NotFoundError") {
+                                    console.warn("No devices found by getUserMedia", { err, video });
+                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                    throw err;
+                                }
+                            }
+                        }
+                        if (audio) {
+                            try {
+                                await navigator.mediaDevices.getUserMedia({ audio });
+                                gotAudioPermission = true;
+                            } catch (err) {
+                                // if you try to get user media while mic/cam are active, you run into an error
+                                const msg = err.toString();
+                                if (err.name === "NotFoundError") {
+                                    console.warn("No devices found by getUserMedia", { err, audio });
+                                } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
+                                    throw err;
+                                }
                             }
                         }
                         setUserMediaPermissionGranted({
-                            camera: userMediaPermissionGranted.camera || video,
-                            microphone: userMediaPermissionGranted.microphone || audio,
+                            camera: userMediaPermissionGranted.camera || gotVideoPermission,
+                            microphone: userMediaPermissionGranted.microphone || gotAudioPermission,
                         });
                     }
                     setDeviceModalState({
@@ -144,30 +189,38 @@ export function VonageRoomControlBar({
                         showMicrophone: audio,
                     });
                 } catch (e) {
-                    toast({
-                        status: "error",
-                        title: "Unable to get media devices - was permission denied?",
-                        description: e.message ?? e.toString(),
-                        isClosable: true,
-                        duration: 15000,
-                        position: "bottom",
-                    });
+                    onPermissionsProblem(
+                        { camera: video, microphone: audio },
+                        `Could not list choices of ${devicesToFriendlyName(
+                            { camera: video, microphone: audio },
+                            "and"
+                        )}`
+                    );
                     setUserMediaPermissionGranted({
                         camera: video ? false : userMediaPermissionGranted.camera,
                         microphone: audio ? false : userMediaPermissionGranted.microphone,
                     });
                 } finally {
                     setIsOpening(false);
+                    release();
                 }
             })();
         },
-        [toast, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
+        [onPermissionsProblem, userMediaPermissionGranted.camera, userMediaPermissionGranted.microphone]
     );
 
     const startCamera = useCallback(() => {
         if (!state.preferredCameraId) {
             setStartCameraOnClose(true);
             onOpen(true, false);
+        } else if (state.cameraIntendedEnabled) {
+            // Something must have desynced, so disable the camera
+            dispatch({
+                type: VonageRoomStateActionType.SetCameraIntendedState,
+                cameraEnabled: false,
+                explicitlyDisabled: true,
+                onError: undefined,
+            });
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetCameraIntendedState,
@@ -176,21 +229,26 @@ export function VonageRoomControlBar({
                     dispatch({
                         type: VonageRoomStateActionType.ClearPreferredCamera,
                     });
-                    dispatch({
-                        type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    setUserMediaPermissionGranted({
+                        camera: false,
+                        microphone: userMediaPermissionGranted.microphone,
                     });
+                    // dispatch({
+                    //     type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    // });
 
                     setStartCameraOnClose(true);
                     onOpen(true, false);
                 },
             });
         }
-    }, [dispatch, onOpen, state.preferredCameraId]);
+    }, [dispatch, onOpen, state.cameraIntendedEnabled, state.preferredCameraId, userMediaPermissionGranted.microphone]);
 
     const stopCamera = useCallback(() => {
         dispatch({
             type: VonageRoomStateActionType.SetCameraIntendedState,
             cameraEnabled: false,
+            explicitlyDisabled: true,
             onError: undefined,
         });
     }, [dispatch]);
@@ -199,16 +257,28 @@ export function VonageRoomControlBar({
         if (!state.preferredMicrophoneId) {
             setStartMicrophoneOnClose(true);
             onOpen(false, true);
+        } else if (state.microphoneIntendedEnabled) {
+            // Something must have desynced, so disable the microphone
+            dispatch({
+                type: VonageRoomStateActionType.SetMicrophoneIntendedState,
+                microphoneEnabled: false,
+                explicitlyDisabled: true,
+                onError: undefined,
+            });
         } else {
             dispatch({
                 type: VonageRoomStateActionType.SetMicrophoneIntendedState,
                 microphoneEnabled: true,
                 onError: () => {
-                    dispatch({
-                        type: VonageRoomStateActionType.ClearPreferredCamera,
-                    });
+                    // dispatch({
+                    //     type: VonageRoomStateActionType.ClearPreferredCamera,
+                    // });
                     dispatch({
                         type: VonageRoomStateActionType.ClearPreferredMicrophone,
+                    });
+                    setUserMediaPermissionGranted({
+                        camera: userMediaPermissionGranted.camera,
+                        microphone: false,
                     });
 
                     setStartMicrophoneOnClose(true);
@@ -216,12 +286,19 @@ export function VonageRoomControlBar({
                 },
             });
         }
-    }, [dispatch, onOpen, state.preferredMicrophoneId]);
+    }, [
+        dispatch,
+        onOpen,
+        state.microphoneIntendedEnabled,
+        state.preferredMicrophoneId,
+        userMediaPermissionGranted.camera,
+    ]);
 
     const stopMicrophone = useCallback(() => {
         dispatch({
             type: VonageRoomStateActionType.SetMicrophoneIntendedState,
             microphoneEnabled: false,
+            explicitlyDisabled: true,
             onError: undefined,
         });
     }, [dispatch]);
@@ -267,7 +344,7 @@ export function VonageRoomControlBar({
                 >
                     Choose microphone / camera
                 </Button>
-                {state.microphoneStream ? (
+                {state.microphoneStream && state.microphoneIntendedEnabled ? (
                     <Button onClick={stopMicrophone} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="microphone" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Mute</span>
@@ -278,7 +355,7 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
                     </Button>
                 )}
-                {state.cameraStream ? (
+                {state.cameraStream && state.cameraIntendedEnabled ? (
                     <Button onClick={stopCamera} colorScheme="purple" isDisabled={joining}>
                         <FAIcon icon="video" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>

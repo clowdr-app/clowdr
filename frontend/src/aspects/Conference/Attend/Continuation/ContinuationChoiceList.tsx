@@ -160,11 +160,7 @@ function ContinuationChoice({
             }}
             isActive={isSelected ? true : undefined}
         >
-            <chakra.span mr={2}>
-                {option.description === "Join the discussion room"
-                    ? "Continue the current discussion"
-                    : option.description}
-            </chakra.span>
+            <chakra.span mr={2}>{option.description}</chakra.span>
             {isSelected ? <FAIcon iconStyle="s" icon="check-circle" ml="auto" /> : <chakra.div w={6}></chakra.div>}
         </Button>
     );

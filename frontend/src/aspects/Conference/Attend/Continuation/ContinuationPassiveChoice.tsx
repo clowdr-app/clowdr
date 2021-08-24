@@ -200,11 +200,7 @@ export default function ContinuationPassiveChoice({
                                     justifyContent="flex-start"
                                 >
                                     <chakra.span mr={2}>
-                                        {activeChoice
-                                            ? activeChoice.description === "Join the discussion room"
-                                                ? "Continue the current discussion"
-                                                : activeChoice.description
-                                            : "Stay on this page"}
+                                        {activeChoice ? activeChoice.description : "Stay on this page"}
                                     </chakra.span>
                                     <ChevronUpIcon fontSize="xl" mt={1} ml="auto" />
                                 </Flex>

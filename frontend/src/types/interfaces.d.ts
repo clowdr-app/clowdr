@@ -25,4 +25,4 @@ interface WeakRefConstructor {
     new <T extends object>(target?: T): WeakRef<T>;
 }
 
-const WeakRef: WeakRefConstructor;
+let WeakRef: WeakRefConstructor;

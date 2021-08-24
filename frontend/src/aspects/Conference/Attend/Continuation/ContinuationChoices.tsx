@@ -113,10 +113,10 @@ export default function ContinuationChoices({
         [response.data?.schedule_Continuation, extraChoices]
     );
 
-    return response.data && (allChoices.length > 0 || "shufflePeriodId" in from) && now - renderedAt > 15000 ? (
-        <ContinuationChoices_Inner
-            from={
-                "eventId" in from
+    const fromInternal = useMemo(
+        () =>
+            response.data && (allChoices.length > 0 || "shufflePeriodId" in from)
+                ? "eventId" in from
                     ? {
                           eventId: from.eventId,
                           itemId: from.itemId,
@@ -138,7 +138,13 @@ export default function ContinuationChoices({
                                   : 0,
                           eventRoomId: response.data.schedule_Event[0]?.roomId,
                       }
-            }
+                : undefined,
+        [allChoices.length, from, response.data]
+    );
+
+    return fromInternal && now - renderedAt > 15000 ? (
+        <ContinuationChoices_Inner
+            from={fromInternal}
             choices={allChoices}
             isBackstage={isBackstage}
             noBackstage={noBackstage}
@@ -200,6 +206,21 @@ function ContinuationChoices_Inner({
     const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
     const now = useRealTime(1000);
+    const initialTimeRemaining = useMemo(() => {
+        let endTime: number;
+        if ("eventId" in from) {
+            endTime = from.endTime;
+        } else {
+            if (from.roomEndTime < from.periodEndTime - from.roomDuration) {
+                // Time for another room, never display the choice
+                endTime = from.roomEndTime;
+            } else {
+                // No time for another room, display choice when this room ends
+                endTime = from.roomEndTime;
+            }
+        }
+        return endTime - Date.now();
+    }, [from]);
     const { displayChoice, timeRemaining } = useMemo(() => {
         let endTime: number;
         if ("eventId" in from) {
@@ -230,11 +251,13 @@ function ContinuationChoices_Inner({
     const [activateChoice, setActivateChoice] = useState<boolean>(false);
     const [activatedChoice, setActivatedChoice] = useState<boolean | string>(false);
     useEffect(() => {
-        if (timeRemaining < 0) {
+        if (initialTimeRemaining > 0 && timeRemaining < 0) {
+            console.log("Time remaining < 0, Setting activate choice", { timeRemaining, initialTimeRemaining });
             setActivateChoice(true);
         }
-    }, [timeRemaining]);
+    }, [initialTimeRemaining, timeRemaining]);
     const activate = useCallback(() => {
+        console.log("Activate called, Setting activate choice and clearing activated choice");
         setActivateChoice(true);
         setActivatedChoice(false);
     }, []);
@@ -257,6 +280,12 @@ function ContinuationChoices_Inner({
                         const to: ExtendedContinuationTo = selectedOption.to;
                         switch (to.type) {
                             case "function":
+                                console.log("Activate function", {
+                                    choices,
+                                    selectedOptionId,
+                                    activateChoice,
+                                    activatedChoice,
+                                });
                                 to.f();
                                 break;
                             case ContinuationType.URL:
@@ -264,6 +293,12 @@ function ContinuationChoices_Inner({
                                 break;
                             case ContinuationType.Room:
                                 if (currentRoomId !== to.id) {
+                                    console.log("Activate room", {
+                                        choices,
+                                        selectedOptionId,
+                                        activateChoice,
+                                        activatedChoice,
+                                    });
                                     history.push(`/conference/${conference.slug}/room/${to.id}`);
                                 }
                                 break;
@@ -287,6 +322,12 @@ function ContinuationChoices_Inner({
                                 break;
                             case ContinuationType.AutoDiscussionRoom:
                                 if (!roomsResponse.loading) {
+                                    console.log("Activate auto room", {
+                                        choices,
+                                        selectedOptionId,
+                                        activateChoice,
+                                        activatedChoice,
+                                    });
                                     const toItemId = to.id ?? ("eventId" in from ? from.itemId : null);
                                     const item = roomsResponse.data?.content_Item.find((item) => item.id === toItemId);
                                     if (item && item.rooms.length > 0) {
@@ -377,25 +418,8 @@ function ContinuationChoices_Inner({
                 activateChosenOption();
             }
         }
-    }, [
-        choices,
-        conference.slug,
-        history,
-        roomsResponse.data?.content_Item,
-        roomsResponse.data?.schedule_Event,
-        roomsResponse.error,
-        roomsResponse.loading,
-        selectedOptionId,
-        toast,
-        currentRoomId,
-        scheduleModal,
-        activatedChoice,
-        socialiseModal,
-        liveProgramRooms,
-        activateChoice,
-        myBackstages,
-        from,
-    ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedOptionId, activatedChoice, activateChoice]);
 
     useEffect(() => {
         if (typeof activatedChoice === "string") {
@@ -413,11 +437,13 @@ function ContinuationChoices_Inner({
     const activeSet = useCallback((choiceId: string | null, isDefault: boolean) => {
         setSelectedOptionId(choiceId);
         if (!isDefault) {
+            console.log("Active set called, Setting activate choice and clearing activated choice");
             setActivatedChoice(false);
             setActivateChoice(true);
         }
     }, []);
     const passiveSet = useCallback((choiceId: string | null, _isDefault: boolean) => {
+        console.log("Passive set called, Setting selected option id clearing activated choice");
         setSelectedOptionId(choiceId);
         setActivatedChoice(false);
     }, []);

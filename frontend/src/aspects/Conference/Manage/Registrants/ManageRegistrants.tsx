@@ -735,7 +735,7 @@ export default function ManageRegistrants(): JSX.Element {
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
                             .getMinutes()
                             .toString()
-                            .padStart(2, "0")} - Clowdr Registrants.csv`;
+                            .padStart(2, "0")} - Midspace Registrants.csv`;
                         if (navigator.msSaveBlob) {
                             navigator.msSaveBlob(csvData, fileName);
                         } else {

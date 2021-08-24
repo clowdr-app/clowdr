@@ -62,7 +62,7 @@ export function MenuBar(): JSX.Element {
                     {conference.shortName}
                 </LinkButton>
             ) : (
-                <LinkButton to="/" size="sm" w="3ex" aria-label="Clowdr home" p={0}>
+                <LinkButton to="/" size="sm" w="3ex" aria-label="Midspace home" p={0}>
                     <Image src="/android-chrome-192x192.png" objectFit="contain" aria-hidden />
                 </LinkButton>
             ),

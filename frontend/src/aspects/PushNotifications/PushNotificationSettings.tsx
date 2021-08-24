@@ -105,7 +105,7 @@ export default function PushNotificationSettings(): JSX.Element {
                     <AlertDescription as={VStack}>
                         <Text>
                             Apple&apos;s decision to obstruct open web standards, by refusing to implement the Push API,
-                            prevents Clowdr from supporting push notifications in Safari and all browsers on iOS.
+                            prevents Midspace from supporting push notifications in Safari and all browsers on iOS.
                         </Text>
                         <Text fontStyle="italic">
                             (Don&apos;t be fooled: all iOS browser apps have to use Apple&apos;s web engine, including

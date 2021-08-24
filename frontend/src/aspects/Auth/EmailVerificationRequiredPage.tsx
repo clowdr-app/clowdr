@@ -32,10 +32,7 @@ export default function EmailVerificationRequiredPage({
             {!message ? (
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
                     Before you can login you must verify your email address.{" "}
-                    <b>
-                        You should have received an email from&nbsp;
-                        <i>welcome@clowdr.org</i>
-                    </b>
+                    <b>You should have received an email from our domain</b>
                     &nbsp;with your verification link. After verifying your email, please log in to continue.
                 </Text>
             ) : undefined}

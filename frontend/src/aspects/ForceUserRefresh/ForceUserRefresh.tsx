@@ -99,7 +99,7 @@ export default function ForceUserRefresh(): JSX.Element {
         >
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>A new version of Clowdr is available!</ModalHeader>
+                <ModalHeader>A new version of Midspace is available!</ModalHeader>
                 <ModalBody>
                     <Text>
                         To receive the latest updates please refresh the page (<Kbd>F5</Kbd>)

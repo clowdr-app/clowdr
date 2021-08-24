@@ -658,7 +658,7 @@ export default function ManageProgramPeople(): JSX.Element {
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
                             .getMinutes()
                             .toString()
-                            .padStart(2, "0")} - Clowdr Program People.csv`;
+                            .padStart(2, "0")} - Midspace Program People.csv`;
                         if (navigator.msSaveBlob) {
                             navigator.msSaveBlob(csvData, fileName);
                         } else {

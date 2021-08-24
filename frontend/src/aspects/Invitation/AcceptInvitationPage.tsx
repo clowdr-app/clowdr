@@ -222,7 +222,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                     fontWeight="thin"
                     marginBottom="2rem"
                 >
-                    Sign up to Clowdr
+                    Sign up to Midspace
                 </Heading>
                 <Heading as="h2" fontSize="2.25rem" lineHeight="2.75rem" fontWeight="thin">
                     You&apos;re almost ready to join your conference.
@@ -238,7 +238,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                             </HStack>
                             <VStack alignItems="flex-start">
                                 <Text fontSize="lg">
-                                    <chakra.span fontWeight="bold">Sign up for a Clowdr account</chakra.span> or log
+                                    <chakra.span fontWeight="bold">Sign up for a Midspace account</chakra.span> or log
                                     into an existing one.
                                 </Text>
                             </VStack>
@@ -439,7 +439,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
 //                                 Confirmation email
 //                             </Heading>
 //                             <Text maxW={800}>
-//                                 Since you are using a different email address to log into Clowdr ({user.email}) from the
+//                                 Since you are using a different email address to log into Midspace ({user.email}) from the
 //                                 email address your invitation was sent to, we just need to confirm who you are.
 //                             </Text>
 //                             <Text maxW={800}>

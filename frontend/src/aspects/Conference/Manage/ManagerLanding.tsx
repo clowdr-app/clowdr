@@ -214,7 +214,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     to="support"
                     name="Support"
                     icon="question-circle"
-                    description="Learn about how to use Clowdr's management tools and best practices."
+                    description="Learn about how to use Midspace's management tools and best practices."
                 /> */}
             </Flex>
         </>

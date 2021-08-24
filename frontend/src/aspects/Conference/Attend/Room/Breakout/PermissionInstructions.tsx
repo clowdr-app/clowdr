@@ -67,7 +67,7 @@ export function PermissionInstructionsChrome(devices: DevicesProps): JSX.Element
     return (
         <>
             <Text>
-                It seems that your web browser is not allowing Clowdr to access the {devicesToFriendlyName(devices)}.
+                It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
                 Update your settings by clicking the icon in the address bar and setting the Camera and Microphone
                 permissions to Allow.
             </Text>
@@ -92,7 +92,7 @@ export function PermissionInstructionsFirefox(devices: DevicesProps): JSX.Elemen
     return (
         <>
             <Text>
-                It seems that your web browser is not allowing Clowdr to access the {devicesToFriendlyName(devices)}.
+                It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
                 Remove any blocked devices by clicking the icon in the address bar and then the appropriate x button.
             </Text>
             <Image
@@ -121,9 +121,9 @@ export function PemissionInstructionsSafari(devices: DevicesProps): JSX.Element 
     return (
         <>
             <Text>
-                It seems that your web browser is not allowing Clowdr to access the {devicesToFriendlyName(devices)}.
+                It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
                 You may need to tell Safari to allow this. Open <em>Safari &rarr; Preferences...</em> and go to the{" "}
-                <em>Website</em> tab. Choose &lsquo;Allow&rsquo; for {window.location.host ?? "Clowdr"} for{" "}
+                <em>Website</em> tab. Choose &lsquo;Allow&rsquo; for {window.location.host ?? "Midspace"} for{" "}
                 {devicesToFriendlyName(devices, "and")}.
             </Text>
             <Image
@@ -142,7 +142,7 @@ export function PermissionInstructionsOther(devices: DevicesProps): JSX.Element 
     return (
         <>
             <Text>
-                It seems that your web browser is not allowing Clowdr to access the {devicesToFriendlyName(devices)}.
+                It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
                 Please check your browser settings and try again.
             </Text>
         </>
@@ -194,7 +194,7 @@ function PermissionInstructionsOtherApplications(): JSX.Element {
             </Heading>
             <Text>
                 Make sure you have fully exited other video applications like Zoom, Skype or Google Meet. These may
-                prevent Clowdr from accessing your camera or microphone.
+                prevent Midspace from accessing your camera or microphone.
             </Text>
         </>
     );

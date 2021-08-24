@@ -71,7 +71,11 @@ export default function ImportPanel({
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    const { loading: groupsLoading, data: groupsData, error: groupsError } = useSelectAllGroupsQuery({
+    const {
+        loading: groupsLoading,
+        data: groupsData,
+        error: groupsError,
+    } = useSelectAllGroupsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -91,10 +95,8 @@ export default function ImportPanel({
     });
     useQueryErrorToast(registrantsError, false);
 
-    const [
-        importMutation,
-        { loading: importLoading, error: importError, data: importData },
-    ] = useImportRegistrantsMutation();
+    const [importMutation, { loading: importLoading, error: importError, data: importData }] =
+        useImportRegistrantsMutation();
     useQueryErrorToast(importError, false);
 
     const toast = useToast();
@@ -174,9 +176,10 @@ export default function ImportPanel({
     const noEmail = finalData.some((x) => x.email.length === 0);
     const noName = finalData.some((x) => x.name.length === 0);
 
-    const totalInputLength = useMemo(() => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0), [
-        inputData,
-    ]);
+    const totalInputLength = useMemo(
+        () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
+        [inputData]
+    );
 
     return (
         <VStack alignItems="flex-start" spacing={8}>
@@ -313,7 +316,7 @@ export default function ImportPanel({
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
-                        Your selected data has been de-duplicated against existing Clowdr data based on email address.
+                        Your selected data has been de-duplicated against existing Midspace data based on email address.
                     </AlertTitle>
                 </Alert>
             ) : undefined}

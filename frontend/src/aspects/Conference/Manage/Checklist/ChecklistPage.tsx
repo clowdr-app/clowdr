@@ -1036,7 +1036,7 @@ export default function ChecklistPage(): JSX.Element {
             <ChecklistItem
                 title="Events in the same room do not overlap"
                 status="error"
-                description="Oops, how did this happen! One or more events in the same room overlaps. Please edit your schedule to ensure events do not overlap. If this issue persists, please contact Clowdr tech support."
+                description="Oops, how did this happen! One or more events in the same room overlaps. Please edit your schedule to ensure events do not overlap. If this issue persists, please contact Midspace tech support."
                 action={{
                     title: "Manage Schedule",
                     url: "schedule",
@@ -1097,7 +1097,7 @@ export default function ChecklistPage(): JSX.Element {
             <ChecklistItem
                 title="All events have positive duration"
                 status="error"
-                description="Oops, how did this happen! One or more events has a negative duration. Please edit your schedule to ensure events end after they start. If this issue persists, please contact Clowdr tech support."
+                description="Oops, how did this happen! One or more events has a negative duration. Please edit your schedule to ensure events end after they start. If this issue persists, please contact Midspace tech support."
                 action={{
                     title: "Manage Schedule",
                     url: "schedule",

@@ -161,7 +161,7 @@ export default function ConfigPanel<T = IntermediaryContentData | IntermediarySc
                     <FormControl>
                         <FormLabel>Parser script (JSONata)</FormLabel>
                         <FormHelperText>
-                            Provide a JSONata script to interpret your imported data into Clowdr&apos;s intermediary
+                            Provide a JSONata script to interpret your imported data into Midspace&apos;s intermediary
                             format. We currently provide template scripts for Researchr and HotCRP. (In future we hope
                             to make this a proper configuration editor and provide an easier-to-use system for
                             customising standard templates).

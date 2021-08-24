@@ -45,11 +45,18 @@ export default function RoomContinuationChoices({
         eventId: null,
         choices: [],
     });
+    const [supressContinuationChoices, setSuppressContinuationChoices] = useState<boolean>(false);
 
     const currentRegistrant = useCurrentRegistrant();
 
     useEffect(() => {
         if (currentRoomEvent) {
+            const nextEventHasBackstage =
+                nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA;
+
+            setSuppressContinuationChoices(nextEventHasBackstage && nextRoomEvent?.id === currentBackstageEventId);
+
             const startTime = Date.parse(currentRoomEvent.startTime);
             if (now5s - startTime > 30000) {
                 setContinuationChoicesFrom((old) =>
@@ -65,9 +72,6 @@ export default function RoomContinuationChoices({
                     currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Presentation &&
                     currentRoomEvent.intendedRoomModeName !== Room_Mode_Enum.QAndA;
 
-                const nextEventHasBackstage =
-                    nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                    nextRoomEvent?.intendedRoomModeName === Room_Mode_Enum.QAndA;
                 const currentRegistrantIsNeededOnNextEventBackstage =
                     nextEventHasBackstage &&
                     !!nextRoomEvent?.eventPeople.some((person) => person.person.registrantId === currentRegistrant.id);
@@ -84,7 +88,7 @@ export default function RoomContinuationChoices({
                                       {
                                           colour: "#B9095B",
                                           defaultFor: ContinuationDefaultFor.All,
-                                          description: "Jump to your next backstage when this one ends",
+                                          description: "Move to your next backstage",
                                           id: uuidv4(),
                                           isActiveChoice: false,
                                           priority: Number.NEGATIVE_INFINITY,
@@ -153,7 +157,7 @@ export default function RoomContinuationChoices({
         currentBackstageEventId,
     ]);
 
-    return continuationChoicesFrom ? (
+    return continuationChoicesFrom && !supressContinuationChoices ? (
         <ContinuationChoices
             from={continuationChoicesFrom}
             isBackstage={continuationIsBackstage}

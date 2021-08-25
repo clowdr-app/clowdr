@@ -12,9 +12,10 @@ export const EMAIL_TEMPLATE_SUBTITLES_GENERATED: EmailTemplate_Defaults = {
 <p>We have automatically generated subtitles for your item <em>{{{file.name}}}</em> ({{{item.title}}}) at {{{conference.name}}}.</p>
 <p>Automated subtitles aren't always accurate, so you can <a href="{{{uploadLink}}}">review and edit them here</a>.</p>
 <p>Thank you,<br/>
-The Clowdr team
+The Midspace team
 </p>`,
-    subjectTemplate: "{{{conference.shortName}}} (Clowdr): Subtitles generated for your {{{file.name}}} ({{{item.title}}})",
+    subjectTemplate:
+        "{{{conference.shortName}}} (Midspace): Subtitles generated for your {{{file.name}}} ({{{item.title}}})",
 };
 
 /**
@@ -55,18 +56,18 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
     Please <a href="{{{uploadLink}}}">submit your content on this page</a> by 23:59 UTC on DD MMMM.
 </p>
 <p>
-    Please <a href="https://clowdr.org/resources/video-subtitles">watch this 6 minute instructional video</a> to learn how to use Clowdr's content upload system. This video also shows how to edit subtitles.
+    Please <a href="https://clowdr.org/resources/video-subtitles">watch this 6 minute instructional video</a> to learn how to use Midspace's content upload system. This video also shows how to edit subtitles.
 </p>
 <p>
     Please do not leave submitting to the last moment - this can be risky! If we are unable to automatically process your upload, it may not be possible to prepare it in time for the conference.
 </p>
 <p>
-    <li>If you are uploading a video, Clowdr will process it and auto-generate subtitles. You can then edit these subtitles.</li>
+    <li>If you are uploading a video, Midspace will process it and auto-generate subtitles. You can then edit these subtitles.</li>
 </p>
 <p>We hope you enjoy your conference,<br/>
-The Clowdr team
+The Midspace team
 </p>`,
-    subjectTemplate: "{{{conference.shortName}}} (Clowdr): Submit your {{{file.name}}} for {{{item.title}}}",
+    subjectTemplate: "{{{conference.shortName}}} (Midspace): Submit your {{{file.name}}} for {{{item.title}}}",
 };
 
 /**

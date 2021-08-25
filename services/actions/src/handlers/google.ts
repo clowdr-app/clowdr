@@ -241,7 +241,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
             },
         });
 
-        const clowdrTagline = "\n\nCreated with Clowdr: https://clowdr.org/";
+        const clowdrTagline = "\n\nCreated with Midspace: https://midspace.app/";
         const description =
             job.videoDescription.length > 5000 - clowdrTagline.length
                 ? `${job.videoDescription.substring(0, 5000 - clowdrTagline.length)}${clowdrTagline}`

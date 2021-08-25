@@ -15,7 +15,7 @@ if (!browserOK) {
     toast({
         description: `Your browser (${
             browser?.name ?? "unknown browser"
-        }) is officially Unsupported. We expect Clowdr to be unusable in your browser. Please switch to using a supported browser: Firefox, Chrome, Edge or Opera.`,
+        }) is officially Unsupported. We expect Midspace to be unusable in your browser. Please switch to using a supported browser: Firefox, Chrome, Edge or Opera.`,
         isClosable: false,
         duration: 60 * 60 * 1000,
         position: "top",
@@ -29,7 +29,7 @@ export default function AppLoadingScreen(): JSX.Element {
         <Center w="100%" h="100%">
             {!browserOK ? (
                 <div>
-                    Your browser ({browser?.name ?? "unknown browser"}) is officially Unsupported. We expect Clowdr to
+                    Your browser ({browser?.name ?? "unknown browser"}) is officially Unsupported. We expect Midspace to
                     be unusable in your browser. Please switch to using a supported browser: Firefox, Chrome, Edge or
                     Opera.
                 </div>

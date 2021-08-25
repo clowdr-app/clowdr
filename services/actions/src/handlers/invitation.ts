@@ -188,7 +188,7 @@ async function sendInviteEmails(
                 if (sendType) {
                     const htmlContents = `<p>Dear ${registrant.displayName},</p>
 
-<p>Sign up to Clowdr to attend ${registrant.conference.name}. Please use the link and invite code below to create
+<p>Sign up to Midspace to attend ${registrant.conference.name}. Please use the link and invite code below to create
 your account and access the conference.</p>
 
 <p>
@@ -197,7 +197,7 @@ your account and access the conference.</p>
 <p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
 
 <p>We hope you enjoy your conference,<br />
-The Clowdr team</p>`;
+The Midspace team</p>`;
 
                     const plainTextContents = htmlToText(htmlContents);
 
@@ -205,7 +205,7 @@ The Clowdr team</p>`;
                         emailAddress: registrant.invitation.invitedEmailAddress,
                         invitationId: registrant.invitation.id,
                         reason: "invite",
-                        subject: `Clowdr: ${sendType === "REPEAT" ? "[Reminder] " : ""}Join Clowdr to attend ${
+                        subject: `Midspace: ${sendType === "REPEAT" ? "[Reminder] " : ""}Join Midspace to attend ${
                             registrant.conference.shortName
                         }`,
                         htmlContents,
@@ -400,7 +400,7 @@ Page to enter the code: <a href="{[FRONTEND_HOST]}/invitation/accept/${invitatio
 (You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
 
 <p>We hope you enjoy your conference,<br/>
-The Clowdr team</p>`;
+The Midspace team</p>`;
 
     const plainTextContents = htmlToText(htmlContents);
     return {
@@ -449,7 +449,7 @@ export async function invitationConfirmSendInitialEmailHandler(
                     emailAddress: sendEmailTo,
                     invitationId: invitation.id,
                     userId: user.id,
-                    subject: "Clowdr: Confirm acceptance of invitation",
+                    subject: "Midspace: Confirm acceptance of invitation",
                     htmlContents,
                     plainTextContents,
                 },
@@ -486,7 +486,7 @@ export async function invitationConfirmSendRepeatEmailHandler(
                 emailAddress: sendEmailTo,
                 invitationId: invitation.id,
                 userId: user.id,
-                subject: "Clowdr: Confirm acceptance of invitation [Repeat]",
+                subject: "Midspace: Confirm acceptance of invitation [Repeat]",
                 htmlContents,
                 plainTextContents,
             },

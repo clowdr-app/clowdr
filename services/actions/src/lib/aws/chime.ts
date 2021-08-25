@@ -41,7 +41,7 @@ export async function doesChimeMeetingExist(chimeMeetingId: string): Promise<boo
 
 /**
  * Add an registrant to a Chime meeting and get the secret join token.
- * @param registrantId Clowdr registrant ID to be added to the meeting.
+ * @param registrantId Midspace registrant ID to be added to the meeting.
  * @param chimeMeetingId External ID of the Chime meeting.
  * @returns Join token for the registrant.
  */

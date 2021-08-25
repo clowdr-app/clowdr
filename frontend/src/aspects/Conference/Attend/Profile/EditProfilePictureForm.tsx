@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy from "@uppy/core";
+import Uppy, { UppyFile } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
@@ -35,11 +35,11 @@ export default function EditProfilePitureForm({
     registrant: RegistrantContextT;
 }): JSX.Element {
     const toast = useToast();
-    const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
+    const [files, setFiles] = useState<UppyFile[]>([]);
     const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
     const allowedFileTypes = useMemo(() => ["image/*", ".jpg", ".jpeg", ".png", ".gif", ".webp"], []);
     const uppy = useMemo(() => {
-        const uppy = Uppy<Uppy.StrictTypes>({
+        const uppy = new Uppy({
             id: "profile-photo-upload",
             meta: {
                 registrantId: registrant.id,
@@ -262,12 +262,7 @@ export default function EditProfilePitureForm({
                                         </Text>
                                     </Flex>
                                     <Box display={files.length === 1 ? "none" : ""}>
-                                        <DragDrop
-                                            width={350}
-                                            height={350}
-                                            uppy={uppy as Uppy.Uppy}
-                                            allowMultipleFiles={false}
-                                        />
+                                        <DragDrop width={350} height={350} uppy={uppy} allowMultipleFiles={false} />
                                     </Box>
                                     {registrant.profile.photoURL_350x350 ? (
                                         <Button
@@ -331,7 +326,7 @@ export default function EditProfilePitureForm({
                                 </FormHelperText>
                             </FormControl>
 
-                            <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
+                            <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 colorScheme="purple"
                                 isLoading={props.isSubmitting}

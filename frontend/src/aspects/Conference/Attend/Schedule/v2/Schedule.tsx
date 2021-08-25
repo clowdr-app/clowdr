@@ -50,7 +50,7 @@ export default function Schedule({
     latestEndingTime: luxon.DateTime;
     eventFilter?: Schedule_Event_Bool_Exp;
 }): JSX.Element {
-    const timezone = useMemo(() => new luxon.LocalZone(), []);
+    const timezone = useMemo(() => luxon.SystemZone.instance, []);
     const earliestStartingTime = useMemo(
         () => earliestStartingTime_UnknownTZ.setZone(timezone),
         [earliestStartingTime_UnknownTZ, timezone]

@@ -275,14 +275,14 @@ async function sendSubmittedEmail(
     <li>If you don't receive an update within 4 hours, please contact your conference organisers for technical support.</li>
 </ol>
 <p>Thank you,<br/>
-The Clowdr team
+The Midspace team
 </p>
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
                 emailAddress: uploader.email,
                 reason: "item_submitted",
-                subject: `Clowdr: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                subject: `Midspace: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
                 htmlContents,
             };
         });

@@ -107,7 +107,7 @@ export async function insertEmails(
         ? `<p>If you have any questions or require support, please contact your conference organisers via their website or at <a href="mailto:${supportAddress}">${supportAddress}</a>.</p>`
         : "";
     const conferenceTechSupportHTML = techSupportAddress
-        ? `<p>If you require technical support, such as an error message within Clowdr, please contact <a href="mailto:${techSupportAddress}">${techSupportAddress}</a>.</p>`
+        ? `<p>If you require technical support, such as an error message within Midspace, please contact <a href="mailto:${techSupportAddress}">${techSupportAddress}</a>.</p>`
         : "";
     const stopEmailsHTML = `<p>This is an automated email sent on behalf of ${hostOrganisationName}. If you believe you have received this email in error, please contact us via <a href="mailto:${stopEmailsAddress}">${stopEmailsAddress}</a></p>`;
 

@@ -7793,6 +7793,8 @@ export enum Conference_ConfigurationKey_Enum {
   InputLossSlate = 'INPUT_LOSS_SLATE',
   /** A string representing a valid URL for users to register for the conference. */
   RegistrationUrl = 'REGISTRATION_URL',
+  /** Select different versions of the schedule view. */
+  ScheduleViewVersion = 'SCHEDULE_VIEW_VERSION',
   /** A string representing a valid email address for contacting the conference organisers. */
   SupportAddress = 'SUPPORT_ADDRESS',
   /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -9826,6 +9828,7 @@ export type Content_Element_Order_By = {
   isHidden?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
+  itemTitle?: Maybe<Order_By>;
   layoutData?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -23138,6 +23141,7 @@ export type Registrant_Invitation_Order_By = {
   confirmationCode?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+  hash?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   inviteCode?: Maybe<Order_By>;
   invitedEmailAddress?: Maybe<Order_By>;
@@ -24008,6 +24012,7 @@ export type Registrant_Registrant_Order_By = {
   groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
+  inviteSent?: Maybe<Order_By>;
   profile?: Maybe<Registrant_Profile_Order_By>;
   programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
   roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -25289,6 +25294,7 @@ export type Room_Room = {
   chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   chimeMeeting?: Maybe<Room_ChimeMeeting>;
+  colour: Scalars['String'];
   /** An object relationship */
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
@@ -25764,6 +25770,7 @@ export type Room_Room_Bool_Exp = {
   chat?: Maybe<Chat_Chat_Bool_Exp>;
   chatId?: Maybe<Uuid_Comparison_Exp>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
+  colour?: Maybe<String_Comparison_Exp>;
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -25815,6 +25822,7 @@ export type Room_Room_Insert_Input = {
   chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   chatId?: Maybe<Scalars['uuid']>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
+  colour?: Maybe<Scalars['String']>;
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
@@ -25847,6 +25855,7 @@ export type Room_Room_Max_Fields = {
   __typename?: 'room_Room_max_fields';
   capacity?: Maybe<Scalars['Int']>;
   chatId?: Maybe<Scalars['uuid']>;
+  colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
@@ -25863,6 +25872,7 @@ export type Room_Room_Max_Fields = {
 export type Room_Room_Max_Order_By = {
   capacity?: Maybe<Order_By>;
   chatId?: Maybe<Order_By>;
+  colour?: Maybe<Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
@@ -25880,6 +25890,7 @@ export type Room_Room_Min_Fields = {
   __typename?: 'room_Room_min_fields';
   capacity?: Maybe<Scalars['Int']>;
   chatId?: Maybe<Scalars['uuid']>;
+  colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
@@ -25896,6 +25907,7 @@ export type Room_Room_Min_Fields = {
 export type Room_Room_Min_Order_By = {
   capacity?: Maybe<Order_By>;
   chatId?: Maybe<Order_By>;
+  colour?: Maybe<Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
@@ -25940,6 +25952,7 @@ export type Room_Room_Order_By = {
   chat?: Maybe<Chat_Chat_Order_By>;
   chatId?: Maybe<Order_By>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
+  colour?: Maybe<Order_By>;
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
@@ -25947,6 +25960,7 @@ export type Room_Room_Order_By = {
   currentModeName?: Maybe<Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
+  isProgramRoom?: Maybe<Order_By>;
   livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
   managementMode?: Maybe<Room_ManagementMode_Order_By>;
   managementModeName?: Maybe<Order_By>;
@@ -25981,6 +25995,8 @@ export enum Room_Room_Select_Column {
   /** column name */
   ChatId = 'chatId',
   /** column name */
+  Colour = 'colour',
+  /** column name */
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
@@ -26011,6 +26027,7 @@ export type Room_Room_Set_Input = {
   backendName?: Maybe<Room_Backend_Enum>;
   capacity?: Maybe<Scalars['Int']>;
   chatId?: Maybe<Scalars['uuid']>;
+  colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   currentModeName?: Maybe<Room_Mode_Enum>;
@@ -26085,6 +26102,8 @@ export enum Room_Room_Update_Column {
   Capacity = 'capacity',
   /** column name */
   ChatId = 'chatId',
+  /** column name */
+  Colour = 'colour',
   /** column name */
   ConferenceId = 'conferenceId',
   /** column name */

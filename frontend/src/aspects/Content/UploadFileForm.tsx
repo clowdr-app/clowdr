@@ -1,6 +1,6 @@
 import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy from "@uppy/core";
+import Uppy, { UppyFile } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
@@ -28,10 +28,10 @@ export default function UploadFileForm({
     handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
-    const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
+    const [files, setFiles] = useState<UppyFile[]>([]);
     const [submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
-        const uppy = Uppy<Uppy.StrictTypes>({
+        const uppy = new Uppy({
             id: "required-content-item-upload",
             meta: {
                 uploadableId: elementId,
@@ -156,7 +156,7 @@ export default function UploadFileForm({
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
                         <Form style={{ width: "100%" }}>
                             <FormControl isInvalid={!files} isRequired>
-                                <DragDrop uppy={uppy as Uppy.Uppy} allowMultipleFiles={false} />
+                                <DragDrop uppy={uppy} allowMultipleFiles={false} />
                                 <FormHelperText>File types: {allowedFileTypes.join(", ")}</FormHelperText>
                             </FormControl>
                             <UnorderedList mb={4}>
@@ -173,7 +173,7 @@ export default function UploadFileForm({
                                 uploadAgreementText={uploadAgreementText}
                                 uploadAgreementUrl={uploadAgreementUrl}
                             />
-                            <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
+                            <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 colorScheme="purple"
                                 isLoading={isSubmitting}

@@ -300,14 +300,14 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 <p>After this time, subtitles will be automatically embedded into the video files and moved into the content delivery system - they will no longer be editable.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your video, we will let you know as soon as possible!</p>
 <p>Thank you,<br/>
-The Clowdr team
+The Midspace team
 </p>
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcription_failed",
-            subject: `Clowdr: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `Midspace: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
         };
     });
@@ -361,19 +361,19 @@ async function trySendTranscodeFailedEmail(elementId: string, elementName: strin
 
     const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
         const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>There was a problem processing <b>${elementName}</b> (${elementDetails.data.content_Element_by_pk?.item.title}) for ${elementDetails.data.content_Element_by_pk?.conference.name}. Your video is not currently accepted by Clowdr's systems and currently will not be included in the conference pre-publications or live streams.</p>
+<p>There was a problem processing <b>${elementName}</b> (${elementDetails.data.content_Element_by_pk?.item.title}) for ${elementDetails.data.content_Element_by_pk?.conference.name}. Your video is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
-<p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Clowdr work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
+<p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
 <p>Thank you,<br/>
-The Clowdr team
+The Midspace team
 </p>
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
             emailAddress: uploader.email,
             reason: "item_transcode_failed",
-            subject: `Clowdr: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `Midspace: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
         };
     });

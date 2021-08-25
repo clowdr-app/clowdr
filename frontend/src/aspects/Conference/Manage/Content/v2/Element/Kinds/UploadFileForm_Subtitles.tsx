@@ -21,7 +21,7 @@ import {
     VideoTitlesBlob,
 } from "@clowdr-app/shared-types/build/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy from "@uppy/core";
+import Uppy, { UppyFile } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
@@ -46,7 +46,7 @@ export default function UploadFileForm_Subtitles({
     contentBaseType: ElementBaseType.Video;
 }): JSX.Element {
     const toast = useToast();
-    const [files, setFiles] = useState<Uppy.UppyFile[]>([]);
+    const [files, setFiles] = useState<UppyFile[]>([]);
 
     const [srtProblems, setSrtProblems] = useState<SrtValidationError[]>([]);
     useEffect(() => {
@@ -65,7 +65,7 @@ export default function UploadFileForm_Subtitles({
     }, [files]);
 
     const uppy = useMemo(() => {
-        const uppy = Uppy<Uppy.StrictTypes>({
+        const uppy = new Uppy({
             id: "subtitles-upload",
             meta: {
                 elementId: item.id,
@@ -229,7 +229,7 @@ export default function UploadFileForm_Subtitles({
                         <UnsavedChangesWarning hasUnsavedChanges={dirty} />
                         <Form style={{ width: "100%" }}>
                             <FormControl isInvalid={!files} isRequired>
-                                <DragDrop uppy={uppy as Uppy.Uppy} allowMultipleFiles={false} />
+                                <DragDrop uppy={uppy} allowMultipleFiles={false} />
                                 <FormHelperText>Subtitles must be in SRT format.</FormHelperText>
                             </FormControl>
                             <UnorderedList mb={2}>
@@ -251,7 +251,7 @@ export default function UploadFileForm_Subtitles({
                                     </ListItem>
                                 ))}
                             </List>
-                            <StatusBar uppy={uppy as Uppy.Uppy} hideAfterFinish hideUploadButton />
+                            <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 mt={2}
                                 colorScheme="purple"

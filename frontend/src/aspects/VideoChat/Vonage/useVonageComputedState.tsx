@@ -1,6 +1,6 @@
 import { useToast } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateActionType } from "../../Vonage/useVonageRoom";
 import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 

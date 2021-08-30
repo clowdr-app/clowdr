@@ -6,7 +6,7 @@ import {
     useRemoteVideoTileState,
 } from "amazon-chime-sdk-component-library-react";
 import React from "react";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
 import { LocalVideo } from "./LocalVideo";
 import { RemoteVideos } from "./RemoteVideos";
 

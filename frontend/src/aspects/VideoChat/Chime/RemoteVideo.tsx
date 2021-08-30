@@ -7,7 +7,7 @@ import {
     useRosterState,
 } from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useMemo, useRef } from "react";
-import PlaceholderImage from "../PlaceholderImage";
+import PlaceholderImage from "../../Conference/Attend/Room/PlaceholderImage";
 import { VonageOverlay } from "../Vonage/VonageOverlay";
 
 export function RemoteVideo({ participantWidth, tileId }: { tileId: number; participantWidth: number }): JSX.Element {
@@ -68,10 +68,10 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [registrantId, audioVideo]);
 
-    const connectionData = useMemo(() => JSON.stringify({ registrantId: roster[registrantId]?.externalUserId }), [
-        registrantId,
-        roster,
-    ]);
+    const connectionData = useMemo(
+        () => JSON.stringify({ registrantId: roster[registrantId]?.externalUserId }),
+        [registrantId, roster]
+    );
     return (
         <Box
             data-testid="video-tile"

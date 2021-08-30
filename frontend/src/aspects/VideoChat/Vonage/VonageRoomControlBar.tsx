@@ -2,9 +2,9 @@ import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons"
 import { Box, Button, chakra, HStack, Spinner, Stack, Tag, TagLabel, TagLeftIcon, Tooltip } from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import FAIcon from "../../../../Icons/FAIcon";
-import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { DevicesProps, devicesToFriendlyName } from "../Breakout/PermissionInstructions";
+import { DevicesProps, devicesToFriendlyName } from "../../Conference/Attend/Room/Breakout/PermissionInstructions";
+import FAIcon from "../../Icons/FAIcon";
+import { useVonageRoom, VonageRoomStateActionType } from "../../Vonage/useVonageRoom";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";

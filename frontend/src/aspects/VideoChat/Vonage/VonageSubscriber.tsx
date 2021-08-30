@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import type OT from "@opentok/client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import usePolling from "../../../../Generic/usePolling";
-import { useRegistrant } from "../../../RegistrantsContext";
+import { useRegistrant } from "../../Conference/RegistrantsContext";
+import usePolling from "../../Generic/usePolling";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";

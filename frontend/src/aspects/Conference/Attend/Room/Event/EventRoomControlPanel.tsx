@@ -20,7 +20,7 @@ import { RoomEventDetailsFragment, useGetEventParticipantStreamsSubscription } f
 import { useRealTime } from "../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useVonageGlobalState } from "../Vonage/VonageGlobalStateProvider";
+import { useVonageGlobalState } from "../../../../VideoChat/Vonage/VonageGlobalStateProvider";
 import { BroadcastControlPanel } from "./BroadcastControlPanel";
 import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";

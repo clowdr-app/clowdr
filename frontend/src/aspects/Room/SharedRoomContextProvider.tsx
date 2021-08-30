@@ -15,8 +15,8 @@ import {
     devicesToFriendlyName,
     PermissionInstructions,
 } from "../Conference/Attend/Room/Breakout/PermissionInstructions";
-import { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
-import { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
+import { ChimeRoom } from "../VideoChat/Chime/ChimeRoom";
+import { VonageRoom } from "../VideoChat/Vonage/VonageRoom";
 import { SharedRoomContext } from "./useSharedRoomContext";
 
 export function SharedRoomContextProvider({

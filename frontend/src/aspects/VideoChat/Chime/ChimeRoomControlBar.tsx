@@ -29,8 +29,8 @@ import {
 } from "amazon-chime-sdk-component-library-react";
 import type { DeviceChangeObserver } from "amazon-chime-sdk-js";
 import React, { useCallback, useEffect, useRef } from "react";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { PermissionInstructions } from "../Breakout/PermissionInstructions";
+import { PermissionInstructions } from "../../Conference/Attend/Room/Breakout/PermissionInstructions";
+import { FAIcon } from "../../Icons/FAIcon";
 
 export function ChimeRoomControlBar(): JSX.Element {
     const meetingManager = useMeetingManager();

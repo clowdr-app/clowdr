@@ -7,10 +7,10 @@ import App from "./App";
 import { AppError } from "./AppError";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
-import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
 import ApolloCustomProvider from "./aspects/GQL/ApolloCustomProvider";
 import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
+import { VonageGlobalStateProvider } from "./aspects/VideoChat/Vonage/VonageGlobalStateProvider";
 import "./index.css";
 
 ReactDOM.render(

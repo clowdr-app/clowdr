@@ -6,8 +6,8 @@ import {
     useToggleLocalMute,
 } from "amazon-chime-sdk-component-library-react";
 import React, { useEffect, useMemo, useRef } from "react";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
-import PlaceholderImage from "../PlaceholderImage";
+import PlaceholderImage from "../../Conference/Attend/Room/PlaceholderImage";
+import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
 import { VonageOverlay } from "../Vonage/VonageOverlay";
 
 export function LocalVideo({ participantWidth }: { participantWidth: number }): JSX.Element {

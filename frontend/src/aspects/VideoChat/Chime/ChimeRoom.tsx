@@ -7,8 +7,8 @@ import {
 } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
-import { PermissionsExplanationModal } from "../Breakout/PermissionsExplanationModal";
+import ChatProfileModalProvider from "../../Chat/Frame/ChatProfileModalProvider";
+import { PermissionsExplanationModal } from "../../Conference/Attend/Room/Breakout/PermissionsExplanationModal";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
 import { ContentShare } from "./ContentShare";
 import { DeviceSetup } from "./DeviceSetup/DeviceSetup";

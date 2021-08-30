@@ -8,15 +8,15 @@ import {
     Room_EventSummaryFragment,
     Room_EventSummaryFragmentDoc,
     useDeleteEventParticipantMutation,
-} from "../../../../../generated/graphql";
-import useUserId from "../../../../Auth/useUserId";
-import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
-import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
-import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
-import type { DevicesProps } from "../Breakout/PermissionInstructions";
-import PlaceholderImage from "../PlaceholderImage";
-import { PreJoin } from "../PreJoin";
+} from "../../../generated/graphql";
+import useUserId from "../../Auth/useUserId";
+import ChatProfileModalProvider from "../../Chat/Frame/ChatProfileModalProvider";
+import type { DevicesProps } from "../../Conference/Attend/Room/Breakout/PermissionInstructions";
+import PlaceholderImage from "../../Conference/Attend/Room/PlaceholderImage";
+import { PreJoin } from "../../Conference/Attend/Room/PreJoin";
+import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
+import { useRaiseHandState } from "../../RaiseHand/RaiseHandProvider";
+import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../Vonage/useVonageRoom";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";

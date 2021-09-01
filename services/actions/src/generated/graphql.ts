@@ -35081,6 +35081,13 @@ export type CombineVideosJob_CreateElementMutation = (
   )> }
 );
 
+export type CheckForFrontendHostsQueryVariables = Exact<{
+  host: Scalars['jsonb'];
+}>;
+
+
+export type CheckForFrontendHostsQuery = { __typename?: 'query_root', system_Configuration: Array<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, conference_Configuration: Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any, conference: { __typename?: 'conference_Conference', id: any, slug: string } }> };
+
 export type ElementAddNewVersionMutationVariables = Exact<{
   id: Scalars['uuid'];
   newVersion: Scalars['jsonb'];

@@ -19,6 +19,7 @@ import { router as chatRouter } from "./router/chat";
 import { router as chimeRouter } from "./router/chime";
 import { router as combineVideosJobRouter } from "./router/combineVideosJob";
 import { router as companionRouter } from "./router/companion";
+import { router as conferenceRouter } from "./router/conference";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as elementRouter } from "./router/element";
@@ -87,6 +88,7 @@ app.use("/queues", queuesRouter);
 app.use("/analytics", analyticsRouter);
 
 app.use("/hasura", hasuraRouter);
+app.use("/conference", conferenceRouter);
 
 app.get("/", function (_req, res) {
     res.send("Clowdr");

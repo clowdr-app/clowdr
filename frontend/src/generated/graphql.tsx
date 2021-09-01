@@ -684,6 +684,11 @@ export type GetGoogleOAuthUrlOutput = {
   readonly url: Scalars['String'];
 };
 
+export type GetSlugOutput = {
+  readonly __typename?: 'GetSlugOutput';
+  readonly slug?: Maybe<Scalars['String']>;
+};
+
 export type GetUploadAgreementOutput = {
   readonly __typename?: 'GetUploadAgreementOutput';
   readonly agreementText?: Maybe<Scalars['String']>;
@@ -20187,6 +20192,7 @@ export type Query_Root = {
   readonly content_Uploader_aggregate: Content_Uploader_Aggregate;
   /** fetch data from the table: "content.Uploader" using primary key columns */
   readonly content_Uploader_by_pk?: Maybe<Content_Uploader>;
+  readonly getSlug: GetSlugOutput;
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
   readonly job_queues_ChannelStackCreateJob: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
@@ -21491,6 +21497,11 @@ export type Query_RootContent_Uploader_AggregateArgs = {
 
 export type Query_RootContent_Uploader_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Query_RootGetSlugArgs = {
+  url: Scalars['String'];
 };
 
 
@@ -34965,6 +34976,13 @@ export enum Video_YouTubeUpload_Update_Column {
   VideoTitle = 'videoTitle'
 }
 
+export type GetSlugForUrlQueryVariables = Exact<{
+  url: Scalars['String'];
+}>;
+
+
+export type GetSlugForUrlQuery = { readonly __typename?: 'query_root', readonly getSlug: { readonly __typename?: 'GetSlugOutput', readonly slug?: Maybe<string> } };
+
 export type ChatState_SubdMessageFragment = { readonly __typename?: 'chat_Message', readonly id: number, readonly chatId: any, readonly message: string, readonly type: Chat_MessageType_Enum, readonly senderId?: Maybe<any> };
 
 export type InitialChatState_ChatFragment = { readonly __typename?: 'chat_Chat', readonly id: any, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string> }>, readonly nonDMRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly DMRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly roomPeople: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> }>, readonly pins: ReadonlyArray<{ readonly __typename?: 'chat_Pin', readonly registrantId: any, readonly chatId: any, readonly wasManuallyPinned: boolean }>, readonly subscriptions: ReadonlyArray<{ readonly __typename?: 'chat_Subscription', readonly registrantId: any, readonly chatId: any, readonly wasManuallySubscribed: boolean }> };
@@ -39111,6 +39129,41 @@ export const UserInfoFragmentDoc = gql`
   }
 }
     ${RegistrantFieldsFragmentDoc}`;
+export const GetSlugForUrlDocument = gql`
+    query GetSlugForUrl($url: String!) {
+  getSlug(url: $url) {
+    slug
+  }
+}
+    `;
+
+/**
+ * __useGetSlugForUrlQuery__
+ *
+ * To run a query within a React component, call `useGetSlugForUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSlugForUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSlugForUrlQuery({
+ *   variables: {
+ *      url: // value for 'url'
+ *   },
+ * });
+ */
+export function useGetSlugForUrlQuery(baseOptions: Apollo.QueryHookOptions<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>(GetSlugForUrlDocument, options);
+      }
+export function useGetSlugForUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>(GetSlugForUrlDocument, options);
+        }
+export type GetSlugForUrlQueryHookResult = ReturnType<typeof useGetSlugForUrlQuery>;
+export type GetSlugForUrlLazyQueryHookResult = ReturnType<typeof useGetSlugForUrlLazyQuery>;
+export type GetSlugForUrlQueryResult = Apollo.QueryResult<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>;
 export const InitialChatStateDocument = gql`
     query InitialChatState($registrantId: uuid!) {
   chat_Pin(where: {registrantId: {_eq: $registrantId}}) {

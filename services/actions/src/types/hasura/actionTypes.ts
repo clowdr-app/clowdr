@@ -168,6 +168,7 @@ type JoinRoomChimeSessionOutput = {
 
 type Query = {
     echo?: Maybe<EchoOutput>;
+    getSlug?: Maybe<GetSlugOutput>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     presence_Summary?: Maybe<PresenceSummaryOutput>;
     protectedEcho?: Maybe<ProtectedEchoOutput>;
@@ -295,4 +296,12 @@ type updateSubtitlesArgs = {
     elementId: string;
     subtitleText: string;
     magicToken: string;
+};
+
+type getSlugArgs = {
+    url: string;
+};
+
+type GetSlugOutput = {
+    slug?: Maybe<string>;
 };

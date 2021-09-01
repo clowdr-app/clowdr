@@ -9,12 +9,14 @@ export default function SignupButton({
     size,
     emailHint,
     isLoading,
+    colorScheme,
 }: {
     size?: string;
     asMenuItem?: boolean;
     redirectTo?: string;
     emailHint?: string;
     isLoading?: boolean;
+    colorScheme?: string;
 }): JSX.Element {
     const { isAuthenticated, loginWithRedirect } = useAuth0();
     const location = useLocation();
@@ -32,7 +34,7 @@ export default function SignupButton({
     return isAuthenticated ? (
         <></>
     ) : asMenuItem ? (
-        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="blue">
+        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme={colorScheme ?? "purple"}>
             Sign Up
         </MenuItem>
     ) : (
@@ -40,8 +42,7 @@ export default function SignupButton({
             isLoading={isLoading}
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme="blue"
-            role="menuitem"
+            colorScheme={colorScheme ?? "purple"}
         >
             Sign Up
         </Button>

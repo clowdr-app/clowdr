@@ -10,8 +10,10 @@ import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import MainMenu from "../Menu/V1/MainMenu/MainMenu";
 import LeftMenu from "../Menu/V2/LeftMenu";
 import RightMenu from "../Menu/V2/RightMenu";
+import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 export default function AppPageV2(): JSX.Element {
+    const user = useMaybeCurrentUser();
     const conference = useMaybeConference();
     const confSlug = conference?.slug;
     const attendee = useMaybeCurrentRegistrant();
@@ -22,10 +24,17 @@ export default function AppPageV2(): JSX.Element {
 
     const bgColour = useColorModeValue("gray.50", "gray.900");
 
+    const locationMatchRoot = useRouteMatch({
+        path: "/",
+        exact: true,
+    });
     const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
     const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
+    const isRootPage = locationMatchRoot !== null;
     const isRoomPage = locationMatchRoom !== null;
     const isItemPage = locationMatchItem !== null;
+
+    const isAppLandingPage = isRootPage && !user?.user;
 
     // const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const centerAlwaysVisible = useBreakpointValue({
@@ -101,11 +110,17 @@ export default function AppPageV2(): JSX.Element {
             css={{
                 ["scrollbarWidth"]: "thin",
             }}
-            ml={[2, 2, 2, 4]}
-            mr={rightVisible ? 0 : [2, 2, 2, 4]}
-            pr={rightVisible ? 2 : 0}
+            ml={isAppLandingPage ? 0 : [2, 2, 2, 4]}
+            mr={isAppLandingPage ? 0 : rightVisible ? 0 : [2, 2, 2, 4]}
+            pr={isAppLandingPage ? 0 : rightVisible ? 2 : 0}
         >
-            <VStack spacing={5} width="100%" mb="40px" role="region" aria-labelledby="page-heading">
+            <VStack
+                spacing={5}
+                width="100%"
+                mb={isAppLandingPage ? 0 : "40px"}
+                role="region"
+                aria-labelledby="page-heading"
+            >
                 {center}
             </VStack>
         </Box>
@@ -124,9 +139,9 @@ export default function AppPageV2(): JSX.Element {
             backgroundColor={bgColour}
         >
             <MainMenu state={mainMenuState}>
-                {leftBar}
+                {!isAppLandingPage ? leftBar : undefined}
                 {centerBar}
-                {rightBar}
+                {!isAppLandingPage ? rightBar : undefined}
             </MainMenu>
         </Flex>
     );

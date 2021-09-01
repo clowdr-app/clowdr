@@ -2374,50 +2374,107 @@
         - conference:
             slug:
               _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_CONTENT
-                  - CONFERENCE_VIEW
-            _table:
-              schema: public
-              name: FlatUserPermission
-        - _exists:
-            _where:
-              _and:
-              - _or:
-                - entityId:
-                    _is_null: true
-                - entityId:
-                    _ceq:
-                    - $
-                    - id
-              - _or:
-                - groupId:
-                    _is_null: true
-                - group:
+        - _or:
+          - _and:
+            - _exists:
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_CONTENT
+                      - CONFERENCE_VIEW
+                _table:
+                  schema: public
+                  name: FlatUserPermission
+            - _exists:
+                _where:
+                  _and:
+                  - _or:
+                    - entityId:
+                        _is_null: true
+                    - entityId:
+                        _ceq:
+                        - $
+                        - id
+                  - _or:
+                    - groupId:
+                        _is_null: true
+                    - group:
+                        _and:
+                        - groupRegistrants:
+                            registrant:
+                              userId:
+                                _eq: X-Hasura-User-Id
+                        - enabled:
+                            _eq: true
+                  - conferenceSlug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permissionSet:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW
+                _table:
+                  schema: content
+                  name: ElementPermissionGrant
+          - _and:
+            - _not:
+                _exists:
+                  _where:
                     _and:
-                    - groupRegistrants:
-                        registrant:
-                          userId:
-                            _eq: X-Hasura-User-Id
-                    - enabled:
-                        _eq: true
-              - conferenceSlug:
-                  _eq: X-Hasura-Conference-Slug
-              - permissionSet:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_VIEW
-            _table:
-              schema: content
-              name: ElementPermissionGrant
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _in:
+                        - CONFERENCE_MANAGE_CONTENT
+                        - CONFERENCE_VIEW
+                  _table:
+                    schema: public
+                    name: FlatUserPermission
+            - _exists:
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_VIEW
+                _table:
+                  schema: public
+                  name: FlatUnauthPermission
+            - _exists:
+                _where:
+                  _and:
+                  - _or:
+                    - entityId:
+                        _is_null: true
+                    - entityId:
+                        _ceq:
+                        - $
+                        - id
+                  - _or:
+                    - groupId:
+                        _is_null: true
+                    - group:
+                        _and:
+                        - enabled:
+                            _eq: true
+                        - includeUnauthenticated:
+                            _eq: true
+                  - conferenceSlug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permissionSet:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_VIEW
+                _table:
+                  schema: content
+                  name: ElementPermissionGrant
   update_permissions:
   - role: user
     permission:

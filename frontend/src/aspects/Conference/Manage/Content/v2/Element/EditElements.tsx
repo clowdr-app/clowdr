@@ -14,7 +14,8 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type {
+import {
+    Content_ItemType_Enum,
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
@@ -28,13 +29,13 @@ export function EditElements({
     originatingData,
     refetchElements,
     defaultOpenSecurityForId,
-    isSponsor,
+    itemType,
     openSendSubmissionRequests,
 }: {
     itemId: string;
     refetchElements: () => void;
     defaultOpenSecurityForId?: string;
-    isSponsor: boolean;
+    itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 } & Partial<ManageContent_ItemSecondaryFragment> & {
         elements: readonly ManageContent_ElementFragment[];
@@ -75,19 +76,21 @@ export function EditElements({
 
     return (
         <Accordion allowToggle allowMultiple w="100%">
-            <AccordionItem w="100%">
-                {({ isExpanded }) => (
-                    <>
-                        <AccordionButton bgColor={bgColor}>
-                            People
-                            <AccordionIcon ml="auto" />
-                        </AccordionButton>
-                        <AccordionPanel pb={4}>
-                            {isExpanded ? <EditItemPeoplePanel itemId={itemId} /> : <></>}
-                        </AccordionPanel>
-                    </>
-                )}
-            </AccordionItem>
+            {itemType !== Content_ItemType_Enum.LandingPage ? (
+                <AccordionItem w="100%">
+                    {({ isExpanded }) => (
+                        <>
+                            <AccordionButton bgColor={bgColor}>
+                                People
+                                <AccordionIcon ml="auto" />
+                            </AccordionButton>
+                            <AccordionPanel pb={4}>
+                                {isExpanded ? <EditItemPeoplePanel itemId={itemId} /> : <></>}
+                            </AccordionPanel>
+                        </>
+                    )}
+                </AccordionItem>
+            ) : undefined}
             {originatingData ? (
                 <AccordionItem w="100%">
                     <AccordionButton bgColor={bgColor}>
@@ -112,7 +115,7 @@ export function EditElements({
                     </AccordionPanel>
                 </AccordionItem>
             ) : undefined}
-            {isSponsor ? (
+            {itemType === Content_ItemType_Enum.Sponsor ? (
                 <AccordionItem w="100%">
                     <AccordionButton bgColor={bgColor}>
                         <Box flex="1" textAlign="left">

@@ -296,6 +296,8 @@ export default function ManageContentV2(): JSX.Element {
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
+            canDelete: (record) =>
+                record.typeName === Content_ItemType_Enum.LandingPage ? "Cannot delete the landing page item." : true,
             pages: {
                 defaultToLast: false,
             },
@@ -538,7 +540,7 @@ export default function ManageContentV2(): JSX.Element {
     } = useDisclosure();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingTitle, setEditingTitle] = useState<string | null>(null);
-    const [editingIsSponsor, setEditingIsSponsor] = useState<boolean | null>(null);
+    const [editingItemType, setEditingItemType] = useState<Content_ItemType_Enum | null>(null);
     const edit:
         | {
               open: (key: string) => void;
@@ -551,14 +553,14 @@ export default function ManageContentV2(): JSX.Element {
                     const item = data.find((x) => x.id === key);
                     if (item) {
                         setEditingTitle(item.title);
-                        setEditingIsSponsor(item.typeName === Content_ItemType_Enum.Sponsor);
+                        setEditingItemType(item.typeName);
                     } else {
                         setEditingTitle(null);
-                        setEditingIsSponsor(null);
+                        setEditingItemType(null);
                     }
                 } else {
                     setEditingTitle(null);
-                    setEditingIsSponsor(null);
+                    setEditingItemType(null);
                 }
                 if (key !== null) {
                     onSecondaryPanelOpen();
@@ -1005,7 +1007,7 @@ export default function ManageContentV2(): JSX.Element {
             <SecondaryEditor
                 itemId={editingId}
                 itemTitle={editingTitle}
-                isSponsor={editingIsSponsor ?? false}
+                itemType={editingItemType ?? Content_ItemType_Enum.Other}
                 onClose={onSecondaryPanelClose}
                 isOpen={isSecondaryPanelOpen}
                 openSendSubmissionRequests={openSendSubmissionRequests}

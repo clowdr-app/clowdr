@@ -37,16 +37,16 @@ import { CreateRoomButton } from "./CreateRoomButton";
 export function SecondaryEditor({
     itemId,
     itemTitle,
+    itemType,
     isOpen,
     onClose,
-    isSponsor,
     openSendSubmissionRequests,
 }: {
     itemId: string | null;
     itemTitle: string | null;
+    itemType: Content_ItemType_Enum;
     isOpen: boolean;
     onClose: () => void;
-    isSponsor: boolean;
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 }): JSX.Element {
     const { onCopy: onCopyItemId, hasCopied: hasCopiedItemId } = useClipboard(itemId ?? "");
@@ -87,7 +87,7 @@ export function SecondaryEditor({
                         {itemId && (
                             <SecondaryEditorInner
                                 itemId={itemId}
-                                isSponsor={isSponsor}
+                                itemType={itemType}
                                 openSendSubmissionRequests={openSendSubmissionRequests}
                             />
                         )}
@@ -100,11 +100,11 @@ export function SecondaryEditor({
 
 function SecondaryEditorInner({
     itemId,
-    isSponsor,
+    itemType,
     openSendSubmissionRequests,
 }: {
     itemId: string;
-    isSponsor: boolean;
+    itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
@@ -213,7 +213,7 @@ function SecondaryEditorInner({
                             itemResponse.refetch();
                         }}
                         defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
-                        isSponsor={isSponsor}
+                        itemType={itemType}
                         openSendSubmissionRequests={openSendSubmissionRequests}
                         {...result}
                     />

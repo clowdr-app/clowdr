@@ -1111,6 +1111,7 @@
       - colour
       - conferenceId
       - id
+      - isHidden
       - name
       - priority
       backend_only: false
@@ -1121,6 +1122,7 @@
       - colour
       - conferenceId
       - id
+      - isHidden
       - name
       - priority
       filter:
@@ -1145,6 +1147,7 @@
       - conferenceId
       - created_at
       - id
+      - isHidden
       - name
       - priority
       - updated_at
@@ -1184,6 +1187,7 @@
     permission:
       columns:
       - colour
+      - isHidden
       - name
       - priority
       filter:

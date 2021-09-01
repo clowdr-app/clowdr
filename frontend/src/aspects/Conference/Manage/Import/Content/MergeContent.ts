@@ -31,7 +31,6 @@ import {
     isMatch_Id,
     isMatch_Id_Generalised,
     isMatch_OriginatingDataId,
-    isMatch_String_EditDistance,
     isMatch_String_Exact,
     mergeFieldInPlace,
     mergeIdInPlace,
@@ -602,6 +601,7 @@ function convertExhibition(
         name: element.name,
         colour: element.colour ?? "rgba(0,0,0,0)",
         priority: element.priority ?? 0,
+        isHidden: element.isHidden ?? false,
     } as ExhibitionDescriptor;
 
     return result;
@@ -624,6 +624,7 @@ function mergeExhibition(
     mergeFieldInPlace(context, changes, result, "name", element1, element2);
     mergeFieldInPlace(context, changes, result, "colour", element1, element2);
     mergeFieldInPlace(context, changes, result, "priority", element1, element2);
+    mergeFieldInPlace(context, changes, result, "isHidden", element1, element2);
 
     changes.push({
         location: "Exhibition",
@@ -646,8 +647,7 @@ function findExistingExhibition(
 ): number | undefined {
     return (
         findMatch(ctx, elements, element, isMatch_Id("Exhibition")) ??
-        findMatch(ctx, elements, element, isMatch_String_Exact("name")) ??
-        findMatch(ctx, elements, element, isMatch_String_EditDistance("name"))
+        findMatch(ctx, elements, element, isMatch_String_Exact("name"))
     );
 }
 

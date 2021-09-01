@@ -57,6 +57,7 @@ export function convertContentToDescriptors(allContent: SelectAllContentQuery): 
                     colour: data.colour,
                     name: data.name,
                     priority: data.priority,
+                    isHidden: data.isHidden,
                 },
             ])
         ),

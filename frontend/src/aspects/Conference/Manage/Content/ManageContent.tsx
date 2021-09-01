@@ -234,6 +234,7 @@ gql`
         name
         colour
         priority
+        isHidden
     }
 
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {

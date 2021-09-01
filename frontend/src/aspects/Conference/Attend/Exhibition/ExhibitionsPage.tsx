@@ -47,7 +47,7 @@ gql`
     }
 
     query SelectAllExhibitions($conferenceId: uuid!) {
-        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, isHidden: { _eq: false } }) {
             ...ExhibitionSummary
         }
     }
@@ -60,10 +60,10 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     const { colorMode } = useColorMode();
     const baseBgColour = colorMode === "light" ? "gray.200" : "gray.600";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey), [
-        baseGrey,
-        exhibition.colour,
-    ]);
+    const baseColour = useMemo(
+        () => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey),
+        [baseGrey, exhibition.colour]
+    );
     const bgColour = useMemo(() => Color(baseColour), [baseColour]);
     const bgColour_Hover = useMemo(
         () => (colorMode === "light" ? Color(baseColour).darken(15) : Color(baseColour).lighten(15)),

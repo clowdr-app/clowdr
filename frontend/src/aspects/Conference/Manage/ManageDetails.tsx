@@ -114,6 +114,7 @@ export default function ManageName(): JSX.Element {
                             });
 
                             if (conference.slug !== variables.slug) {
+                                window.localStorage.removeItem("SLUG_CACHE");
                                 history.push(`/conference/${variables.slug}/manage/details`);
                             }
                         }

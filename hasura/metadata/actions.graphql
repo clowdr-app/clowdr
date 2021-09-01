@@ -20,6 +20,12 @@ type Mutation {
 }
 
 type Query {
+  getSlug (
+    url: String!
+  ): GetSlugOutput!
+}
+
+type Query {
   getUploadAgreement (
     magicToken: String!
   ): GetUploadAgreementOutput
@@ -293,5 +299,9 @@ type SubmitUploadableElementOutput {
 
 type NotifyEventEnded {
   ok : Boolean!
+}
+
+type GetSlugOutput {
+  slug : String
 }
 

@@ -1,10 +1,12 @@
+import { gql } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
+import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
 import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
@@ -19,6 +21,7 @@ import PushNotificationSettings from "./aspects/PushNotifications/PushNotificati
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
+import { useGetSlugForUrlQuery } from "./generated/graphql";
 
 export default function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
     return (
@@ -102,16 +105,6 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
             <Route exact path="/logged-out">
                 <LoggedOutPage />
             </Route>
-            <ProtectedRoute
-                altIfNotAuthed={
-                    <Route exact path="/">
-                        <NewUserLandingPage />
-                    </Route>
-                }
-                exact
-                path="/"
-                component={ExistingUserLandingPage}
-            />
 
             <ProtectedRoute exact path="/user" component={CurrentUserPage} />
 
@@ -149,6 +142,91 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />
 
+            <Route path="/">
+                <CheckSlug />
+            </Route>
+        </Switch>
+    );
+}
+
+gql`
+    query GetSlugForUrl($url: String!) {
+        getSlug(url: $url) {
+            slug
+        }
+    }
+`;
+
+function CheckSlug(): JSX.Element {
+    const slugCache = useMemo(() => {
+        const str = window.localStorage.getItem("SLUG_CACHE");
+        if (str) {
+            return JSON.parse(str);
+        }
+        return null;
+    }, []);
+    const origin = useMemo(() => window.location.origin, []);
+    const existingMapping = useMemo(() => slugCache?.[origin], [origin, slugCache]);
+    useEffect(() => {
+        if (existingMapping) {
+            window.location.replace(
+                `/conference/${existingMapping}${window.location.pathname}${window.location.hash}${window.location.search}`
+            );
+        }
+    }, [existingMapping]);
+    if (!existingMapping) {
+        return <CheckSlugInner />;
+    } else {
+        return <></>;
+    }
+}
+
+function CheckSlugInner(): JSX.Element {
+    const origin = useMemo(() => window.location.origin, []);
+    const response = useGetSlugForUrlQuery({
+        variables: {
+            url: origin,
+        },
+    });
+    useEffect(() => {
+        if (response.data?.getSlug?.slug) {
+            const cacheStr = window.localStorage.getItem("SLUG_CACHE");
+            let cache;
+            if (cacheStr) {
+                cache = JSON.parse(cacheStr);
+            } else {
+                cache = {};
+            }
+            cache[origin] = response.data.getSlug.slug;
+            window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
+
+            window.location.replace(
+                `/conference/${response.data.getSlug.slug}${window.location.pathname}${window.location.hash}${window.location.search}`
+            );
+        }
+    }, [origin, response.data?.getSlug?.slug]);
+    if (!response.loading && response.data) {
+        if (!response.data.getSlug?.slug) {
+            return <NoSlug />;
+        }
+    }
+
+    return <CenteredSpinner />;
+}
+
+function NoSlug(): JSX.Element {
+    return (
+        <Switch>
+            <ProtectedRoute
+                altIfNotAuthed={
+                    <Route exact path="/">
+                        <NewUserLandingPage />
+                    </Route>
+                }
+                exact
+                path="/"
+                component={ExistingUserLandingPage}
+            />
             <Route path="/">
                 <PageNotFound />
             </Route>

@@ -1,7 +1,9 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Flex, Link, Text } from "@chakra-ui/react";
+import { ButtonGroup, Link, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Link as ReactLink, Route, Switch, useLocation } from "react-router-dom";
+import LoginButton from "../Auth/Buttons/LoginButton";
+import SignupButton from "../Auth/Buttons/SignUpButton";
 import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
@@ -31,7 +33,7 @@ export default function PageNotFound(): JSX.Element {
             heading={
                 maybeConference && !registered
                     ? `Welcome to ${maybeConference.shortName}`
-                    : "Sorry, this is not available at the moment."
+                    : "Oops, this is not available at the moment."
             }
         >
             <>
@@ -88,28 +90,22 @@ export default function PageNotFound(): JSX.Element {
                 ) : (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
-                            You are not logged in
-                        </Text>
-                        <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
-                            Please try going to the home page and logging in before returning to this URL.
+                            Please log in or register to continue
                         </Text>
                     </>
                 )}
-                <Flex w="100%" flexWrap="wrap" alignItems="center" justifyContent="center">
+                <ButtonGroup pt={2} spacing={4} w="100%" flexWrap="wrap" alignItems="center" justifyContent="center">
                     {!registered && maybeConference?.registrationURL.length ? (
-                        <ExternalLinkButton
-                            mb={2}
-                            to={maybeConference.registrationURL[0].value}
-                            colorScheme="purple"
-                            mr={2}
-                        >
+                        <ExternalLinkButton to={maybeConference.registrationURL[0].value} colorScheme="purple" mr={2}>
                             <FAIcon iconStyle="s" icon="link" mr={2} />
                             Go to registration
                             <ExternalLinkIcon ml={1} />
                         </ExternalLinkButton>
+                    ) : !loggedIn ? (
+                        <SignupButton size="md" />
                     ) : undefined}
+                    {!loggedIn ? <LoginButton size="md" /> : undefined}
                     <LinkButton
-                        mb={2}
                         to={maybeConference ? `/conference/${maybeConference.slug}/` : "/"}
                         colorScheme={
                             (!registered && maybeConference?.registrationURL.length) ||
@@ -123,7 +119,6 @@ export default function PageNotFound(): JSX.Element {
                     </LinkButton>
                     {maybeConference?.supportAddress.length ? (
                         <ExternalLinkButton
-                            mb={2}
                             to={`mailto:${maybeConference.supportAddress[0].value}`}
                             colorScheme={!registered && maybeConference?.registrationURL.length ? "gray" : "purple"}
                             ml={2}
@@ -132,7 +127,7 @@ export default function PageNotFound(): JSX.Element {
                             Contact organisers
                         </ExternalLinkButton>
                     ) : undefined}
-                </Flex>
+                </ButtonGroup>
             </>
         </GenericErrorPage>
     );

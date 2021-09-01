@@ -12,6 +12,7 @@ export default function LoginButton({
     emailHint,
     isLoading,
     showLabel,
+    colorScheme,
 }: {
     size?: string;
     asMenuItem?: boolean;
@@ -20,6 +21,7 @@ export default function LoginButton({
     emailHint?: string;
     isLoading?: boolean;
     showLabel?: boolean;
+    colorScheme?: string;
 }): JSX.Element {
     const { loginWithRedirect } = useAuth0();
     const location = useLocation();
@@ -46,7 +48,7 @@ export default function LoginButton({
             showLabel={showLabel}
         />
     ) : asMenuItem ? (
-        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme="purple">
+        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme={colorScheme ?? "purple"}>
             Log In
         </MenuItem>
     ) : (
@@ -54,8 +56,7 @@ export default function LoginButton({
             isLoading={isLoading}
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme="purple"
-            role="menuitem"
+            colorScheme={colorScheme ?? "purple"}
         >
             Log In
         </Button>

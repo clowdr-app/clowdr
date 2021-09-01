@@ -290,7 +290,7 @@ export function EditElement({
                                         ev.stopPropagation();
                                     }}
                                 >
-                                    <FAIcon iconStyle="s" icon={element.isHidden ? "eye" : "eye-slash"} />
+                                    <FAIcon iconStyle="s" icon={element.isHidden ? "eye-slash" : "eye"} />
                                 </Button>
                             </Tooltip>
                             <HStack textAlign="left" mr={2} minW="auto" w="auto">

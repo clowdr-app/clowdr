@@ -35304,7 +35304,7 @@ export type ImmediateSwitch_GetElementsQueryVariables = Exact<{
 }>;
 
 
-export type ImmediateSwitch_GetElementsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }> }> };
+export type ImmediateSwitch_GetElementsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> } }> }> }> };
 
 export type ImmediateSwitch_CreateMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -40483,11 +40483,28 @@ export const ImmediateSwitch_GetElementsDocument = gql`
     id
     item {
       id
+      title
       elements(
         where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH]}}
       ) {
         id
         name
+      }
+    }
+    exhibition {
+      id
+      items {
+        id
+        item {
+          id
+          title
+          elements(
+            where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH]}}
+          ) {
+            id
+            name
+          }
+        }
       }
     }
   }

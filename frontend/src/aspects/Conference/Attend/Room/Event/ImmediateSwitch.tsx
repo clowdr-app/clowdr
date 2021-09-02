@@ -49,9 +49,24 @@ export function ImmediateSwitch({
                 id
                 item {
                     id
+                    title
                     elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                         id
                         name
+                    }
+                }
+                exhibition {
+                    id
+                    items {
+                        id
+                        item {
+                            id
+                            title
+                            elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
+                                id
+                                name
+                            }
+                        }
                     }
                 }
             }
@@ -87,16 +102,27 @@ export function ImmediateSwitch({
                     Filler video
                 </option>
                 {R.sort(
-                    (a, b) => a.name.localeCompare(b.name),
-                    elementsData?.schedule_Event_by_pk?.item?.elements ?? []
-                ).map((element) => (
-                    <option key={element.id} value={element.id}>
-                        {element.name}
-                    </option>
-                ))}
+                    (a, b) => a.title.localeCompare(b.title),
+                    elementsData?.schedule_Event_by_pk?.item && elementsData?.schedule_Event_by_pk?.exhibition?.items
+                        ? [
+                              elementsData.schedule_Event_by_pk.item,
+                              ...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item),
+                          ]
+                        : elementsData?.schedule_Event_by_pk?.item
+                        ? [elementsData.schedule_Event_by_pk.item]
+                        : elementsData?.schedule_Event_by_pk?.exhibition?.items
+                        ? [...elementsData.schedule_Event_by_pk.exhibition.items.map((x) => x.item)]
+                        : []
+                ).flatMap((item) =>
+                    R.sort((a, b) => a.name.localeCompare(b.name), item.elements).map((element) => (
+                        <option key={element.id} value={element.id}>
+                            {item.title}: {element.name}
+                        </option>
+                    ))
+                )}
             </>
         ),
-        [elementsData?.schedule_Event_by_pk?.item?.elements]
+        [elementsData?.schedule_Event_by_pk?.item, elementsData?.schedule_Event_by_pk?.exhibition?.items]
     );
 
     const disable = useMemo(() => !live || secondsUntilOffAir < 20, [live, secondsUntilOffAir]);

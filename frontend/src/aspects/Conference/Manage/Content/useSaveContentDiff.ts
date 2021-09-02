@@ -153,6 +153,7 @@ gql`
         colour
         name
         priority
+        isHidden
     }
 
     query SelectAllContent($conferenceId: uuid!) {
@@ -417,10 +418,10 @@ gql`
         }
     }
 
-    mutation UpdateExhibition($id: uuid!, $name: String!, $colour: String!, $priority: Int!) {
+    mutation UpdateExhibition($id: uuid!, $name: String!, $colour: String!, $priority: Int!, $isHidden: Boolean!) {
         update_collection_Exhibition_by_pk(
             pk_columns: { id: $id }
-            _set: { name: $name, colour: $colour, priority: $priority }
+            _set: { name: $name, colour: $colour, priority: $priority, isHidden: $isHidden }
         ) {
             ...ExhibitionInfo
         }
@@ -808,6 +809,7 @@ export function useSaveContentDiff():
                                         name: exhibition.name,
                                         colour: exhibition.colour,
                                         priority: exhibition.priority,
+                                        isHidden: exhibition.isHidden,
                                     })
                                 ),
                             },
@@ -827,6 +829,7 @@ export function useSaveContentDiff():
                                         name: exhibition.name,
                                         colour: exhibition.colour,
                                         priority: exhibition.priority,
+                                        isHidden: exhibition.isHidden,
                                     },
                                 });
                                 ok = true;

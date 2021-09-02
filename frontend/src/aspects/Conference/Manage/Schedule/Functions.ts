@@ -4,9 +4,7 @@ import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } fr
 import type { OriginatingDataDescriptor, OriginatingDataPart, TagDescriptor } from "../Shared/Types";
 import type { EventDescriptor, RoomDescriptor } from "./Types";
 
-export function convertScheduleToDescriptors(
-    schedule: SelectWholeScheduleQuery
-): {
+export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery): {
     rooms: Map<string, RoomDescriptor>;
     events: Map<string, EventDescriptor>;
     tags: Map<string, TagDescriptor>;
@@ -54,6 +52,7 @@ export function convertScheduleToDescriptors(
                     colour: tag.colour,
                     name: tag.name,
                     priority: tag.priority,
+                    isHidden: tag.isHidden,
                 },
             ])
         ),

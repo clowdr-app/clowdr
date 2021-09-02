@@ -2,6 +2,8 @@ import { gql, Reference } from "@apollo/client";
 import {
     Box,
     Button,
+    Center,
+    Checkbox,
     FormLabel,
     Input,
     Modal,
@@ -36,7 +38,11 @@ import {
     useManageContent_SelectAllExhibitionsQuery,
     useManageContent_UpdateExhibitionMutation,
 } from "../../../../../../generated/graphql";
-import { NumberRangeColumnFilter, TextColumnFilter } from "../../../../../CRUDTable2/CRUDComponents";
+import {
+    CheckBoxColumnFilter,
+    NumberRangeColumnFilter,
+    TextColumnFilter,
+} from "../../../../../CRUDTable2/CRUDComponents";
 import CRUDTable, {
     CellProps,
     ColumnHeaderProps,
@@ -256,13 +262,47 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     );
                 },
             },
+            {
+                id: "isHidden",
+                header: function Header(props: ColumnHeaderProps<ManageContent_ExhibitionFragment>) {
+                    return props.isInCreate ? (
+                        <FormLabel>Hidden?</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={props.onClick}>
+                            Hidden?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.isHidden,
+                set: (data, value: boolean) => {
+                    data.isHidden = value;
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<ManageContent_ExhibitionFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.isHidden === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function Cell(props: CellProps<Partial<ManageContent_ExhibitionFragment>, boolean>) {
+                    return (
+                        <Center>
+                            <Checkbox
+                                isChecked={props.value ?? false}
+                                onChange={(ev) => props.onChange?.(ev.target.checked)}
+                                onBlur={props.onBlur}
+                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                            />
+                        </Center>
+                    );
+                },
+            },
         ];
         return result;
     }, [colorMode]);
 
-    const data = useMemo(() => [...(exhibitionsResponse.data?.collection_Exhibition ?? [])], [
-        exhibitionsResponse.data?.collection_Exhibition,
-    ]);
+    const data = useMemo(
+        () => [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
+        [exhibitionsResponse.data?.collection_Exhibition]
+    );
 
     const {
         isOpen: isSecondaryPanelOpen,
@@ -315,6 +355,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     name: "",
                     colour: "rgba(0,0,0,0)",
                     priority: data?.length ?? 0,
+                    isHidden: false,
                 } as ManageContent_ExhibitionFragment),
             makeWhole: (d) => d as ManageContent_ExhibitionFragment,
             start: (record) => {
@@ -326,6 +367,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                             name: record.name,
                             colour: record.colour,
                             priority: record.priority,
+                            isHidden: record.isHidden,
                         },
                     },
                     update: (cache, response) => {
@@ -368,6 +410,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     name: record.name,
                     colour: record.colour,
                     priority: record.priority,
+                    isHidden: record.isHidden,
                 };
                 updateExhibition({
                     variables: {

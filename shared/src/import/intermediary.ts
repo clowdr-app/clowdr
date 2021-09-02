@@ -173,6 +173,7 @@ export interface IntermediaryExhibitionDescriptor {
     name?: string;
     colour?: string;
     priority?: number;
+    isHidden?: boolean;
 }
 
 export interface IntermediaryTagDescriptor {

@@ -15,6 +15,7 @@ export type ExhibitionDescriptor = {
     name: string;
     colour: string;
     priority: number;
+    isHidden: boolean;
 };
 
 export type ElementDescriptor = {

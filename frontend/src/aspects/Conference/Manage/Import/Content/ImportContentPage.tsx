@@ -207,7 +207,8 @@ const presetJSONata_CSVQuery_Exhibitions = `
     "exhibitions": [$.{
         "name": $.Name,
         "priority": $number($.Priority),
-        "colour": $.Colour
+        "colour": $.Colour,
+        "isHidden": $.Hidden
     }],
     "tags": [],
     "people": []

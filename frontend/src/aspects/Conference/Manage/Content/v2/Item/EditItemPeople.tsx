@@ -5,6 +5,7 @@ import {
     Button,
     ButtonGroup,
     chakra,
+    Divider,
     Flex,
     FormControl,
     FormLabel,
@@ -267,6 +268,24 @@ function ItemPersonsList({
         () =>
             R.sortWith(
                 [
+                    (x, y) =>
+                        x.roleName.toUpperCase() === "PRESENTER"
+                            ? y.roleName.toUpperCase() === "PRESENTER"
+                                ? 0
+                                : -1
+                            : x.roleName.toUpperCase() === "AUTHOR"
+                            ? y.roleName.toUpperCase() === "PRESENTER"
+                                ? 1
+                                : y.roleName.toUpperCase() === "AUTHOR"
+                                ? 0
+                                : -1
+                            : x.roleName.toUpperCase() === "CHAIR"
+                            ? y.roleName.toUpperCase() === "PRESENTER" || y.roleName.toUpperCase() === "AUTHOR"
+                                ? 1
+                                : y.roleName.toUpperCase() === "CHAIR"
+                                ? 0
+                                : -1
+                            : 0,
                     (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
                     (x, y) => x.person.name.localeCompare(y.person.name),
                 ],
@@ -275,10 +294,8 @@ function ItemPersonsList({
         [itemPeople]
     );
     const toast = useToast();
-    const [
-        updateItemProgramPerson,
-        updateItemProgramPersonResponse,
-    ] = useManageContent_UpdateItemProgramPersonMutation();
+    const [updateItemProgramPerson, updateItemProgramPersonResponse] =
+        useManageContent_UpdateItemProgramPersonMutation();
     const [deleteItemPerson, deleteItemPersonResponse] = useManageContent_DeleteItemProgramPersonMutation();
 
     return sortedReps.length > 0 ? (
@@ -289,296 +306,325 @@ function ItemPersonsList({
             <Box w="100%" overflow="auto">
                 <VStack minW="max-content" alignItems="flex-start">
                     {sortedReps.map((itemProgramPerson, idx) => (
-                        <Flex key={itemProgramPerson.id} w="100%">
-                            <ButtonGroup mr={2}>
-                                <Button
-                                    size="xs"
-                                    isDisabled={idx === 0}
-                                    onClick={() => {
-                                        const previousItemProgramPerson = sortedReps[idx - 1];
+                        <>
+                            <Flex key={itemProgramPerson.id} w="100%">
+                                <ButtonGroup mr={2}>
+                                    {idx !== 0 && sortedReps[idx - 1].roleName === sortedReps[idx].roleName ? (
+                                        <Button
+                                            size="xs"
+                                            onClick={() => {
+                                                const previousItemProgramPerson = sortedReps[idx - 1];
 
-                                        updateItemProgramPerson({
-                                            variables: {
-                                                itemPersonId: itemProgramPerson.id,
-                                                priority: idx - 1,
-                                                roleName: itemProgramPerson.roleName,
-                                            },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                    cache.modify({
-                                                        fields: {
-                                                            content_ItemProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                const newRef = cache.writeFragment({
-                                                                    data,
-                                                                    fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                                    fragmentName: "ManageContent_ItemProgramPerson",
-                                                                });
-                                                                if (
-                                                                    existingRefs.some(
-                                                                        (ref) => readField("id", ref) === data.id
-                                                                    )
-                                                                ) {
-                                                                    return existingRefs;
-                                                                }
-                                                                return [...existingRefs, newRef];
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            },
-                                        });
-
-                                        updateItemProgramPerson({
-                                            variables: {
-                                                itemPersonId: previousItemProgramPerson.id,
-                                                priority: idx,
-                                                roleName: previousItemProgramPerson.roleName,
-                                            },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                    cache.modify({
-                                                        fields: {
-                                                            content_ItemProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                const newRef = cache.writeFragment({
-                                                                    data,
-                                                                    fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                                    fragmentName: "ManageContent_ItemProgramPerson",
-                                                                });
-                                                                if (
-                                                                    existingRefs.some(
-                                                                        (ref) => readField("id", ref) === data.id
-                                                                    )
-                                                                ) {
-                                                                    return existingRefs;
-                                                                }
-                                                                return [...existingRefs, newRef];
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            },
-                                        });
-                                    }}
-                                >
-                                    <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
-                                </Button>
-                                <Button
-                                    size="xs"
-                                    isDisabled={idx === sortedReps.length - 1}
-                                    onClick={() => {
-                                        const previousItemProgramPerson = sortedReps[idx + 1];
-
-                                        updateItemProgramPerson({
-                                            variables: {
-                                                itemPersonId: itemProgramPerson.id,
-                                                priority: idx + 1,
-                                                roleName: itemProgramPerson.roleName,
-                                            },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                    cache.modify({
-                                                        fields: {
-                                                            content_ItemProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                const newRef = cache.writeFragment({
-                                                                    data,
-                                                                    fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                                    fragmentName: "ManageContent_ItemProgramPerson",
-                                                                });
-                                                                if (
-                                                                    existingRefs.some(
-                                                                        (ref) => readField("id", ref) === data.id
-                                                                    )
-                                                                ) {
-                                                                    return existingRefs;
-                                                                }
-                                                                return [...existingRefs, newRef];
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            },
-                                        });
-
-                                        updateItemProgramPerson({
-                                            variables: {
-                                                itemPersonId: previousItemProgramPerson.id,
-                                                priority: idx,
-                                                roleName: previousItemProgramPerson.roleName,
-                                            },
-                                            update: (cache, { data: _data }) => {
-                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                    cache.modify({
-                                                        fields: {
-                                                            content_ItemProgramPerson(
-                                                                existingRefs: Reference[] = [],
-                                                                { readField }
-                                                            ) {
-                                                                const newRef = cache.writeFragment({
-                                                                    data,
-                                                                    fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                                    fragmentName: "ManageContent_ItemProgramPerson",
-                                                                });
-                                                                if (
-                                                                    existingRefs.some(
-                                                                        (ref) => readField("id", ref) === data.id
-                                                                    )
-                                                                ) {
-                                                                    return existingRefs;
-                                                                }
-                                                                return [...existingRefs, newRef];
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            },
-                                        });
-                                    }}
-                                >
-                                    <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
-                                </Button>
-                            </ButtonGroup>
-                            <Tooltip
-                                label={
-                                    itemProgramPerson.person.registrantId
-                                        ? "Person is linked to registrant."
-                                        : "Person is not linked to registrant."
-                                }
-                            >
-                                <FAIcon
-                                    iconStyle="s"
-                                    icon={
-                                        itemProgramPerson.person.registrantId ? "check-circle" : "exclamation-triangle"
-                                    }
-                                    color={itemProgramPerson.person.registrantId ? "purple.400" : "yellow.400"}
-                                />
-                            </Tooltip>
-                            <Flex
-                                flexDir={["column", "column", "row"]}
-                                flexWrap="wrap"
-                                justifyContent="flex-start"
-                                alignItems="flex-start"
-                            >
-                                <chakra.span mx={2}>{itemProgramPerson.person.name}</chakra.span>
-                                <chakra.span ml={["0", "0", "auto"]} mr={2}>
-                                    &lt;
-                                    {itemProgramPerson.person.email?.length
-                                        ? itemProgramPerson.person.email
-                                        : "No email"}
-                                    &gt;
-                                </chakra.span>
-                            </Flex>
-                            <Select
-                                ml="auto"
-                                size="xs"
-                                value={itemProgramPerson.roleName}
-                                w="auto"
-                                isDisabled={updateItemProgramPersonResponse.loading}
-                                onChange={(ev) => {
-                                    updateItemProgramPerson({
-                                        variables: {
-                                            itemPersonId: itemProgramPerson.id,
-                                            priority: itemProgramPerson.priority ?? idx,
-                                            roleName: ev.target.value,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.update_content_ItemProgramPerson_by_pk) {
-                                                const data = _data.update_content_ItemProgramPerson_by_pk;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemProgramPerson(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            const newRef = cache.writeFragment({
-                                                                data,
-                                                                fragment: ManageContent_ItemProgramPersonFragmentDoc,
-                                                                fragmentName: "ManageContent_ItemProgramPerson",
+                                                updateItemProgramPerson({
+                                                    variables: {
+                                                        itemPersonId: itemProgramPerson.id,
+                                                        priority: idx - 1,
+                                                        roleName: itemProgramPerson.roleName,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    content_ItemProgramPerson(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        const newRef = cache.writeFragment({
+                                                                            data,
+                                                                            fragment:
+                                                                                ManageContent_ItemProgramPersonFragmentDoc,
+                                                                            fragmentName:
+                                                                                "ManageContent_ItemProgramPerson",
+                                                                        });
+                                                                        if (
+                                                                            existingRefs.some(
+                                                                                (ref) =>
+                                                                                    readField("id", ref) === data.id
+                                                                            )
+                                                                        ) {
+                                                                            return existingRefs;
+                                                                        }
+                                                                        return [...existingRefs, newRef];
+                                                                    },
+                                                                },
                                                             });
-                                                            if (
-                                                                existingRefs.some(
-                                                                    (ref) => readField("id", ref) === data.id
-                                                                )
-                                                            ) {
-                                                                return existingRefs;
-                                                            }
-                                                            return [...existingRefs, newRef];
-                                                        },
+                                                        }
                                                     },
                                                 });
-                                            }
-                                        },
-                                    });
-                                }}
-                                minW={"5em"}
-                            >
-                                <option value="AUTHOR">Author</option>
-                                <option value="CHAIR">Chair</option>
-                                <option value="PRESENTER">Presenter</option>
-                            </Select>
-                            <Button
-                                ml={2}
-                                aria-label="Delete"
-                                colorScheme="red"
-                                size="xs"
-                                isDisabled={deleteItemPersonResponse.loading}
-                                onClick={async () => {
-                                    try {
-                                        deleteItemPerson({
+
+                                                updateItemProgramPerson({
+                                                    variables: {
+                                                        itemPersonId: previousItemProgramPerson.id,
+                                                        priority: idx,
+                                                        roleName: previousItemProgramPerson.roleName,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    content_ItemProgramPerson(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        const newRef = cache.writeFragment({
+                                                                            data,
+                                                                            fragment:
+                                                                                ManageContent_ItemProgramPersonFragmentDoc,
+                                                                            fragmentName:
+                                                                                "ManageContent_ItemProgramPerson",
+                                                                        });
+                                                                        if (
+                                                                            existingRefs.some(
+                                                                                (ref) =>
+                                                                                    readField("id", ref) === data.id
+                                                                            )
+                                                                        ) {
+                                                                            return existingRefs;
+                                                                        }
+                                                                        return [...existingRefs, newRef];
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
+                                        </Button>
+                                    ) : (
+                                        <Box w="1.7em"></Box>
+                                    )}
+                                    {idx !== sortedReps.length - 1 &&
+                                    sortedReps[idx + 1].roleName === sortedReps[idx].roleName ? (
+                                        <Button
+                                            size="xs"
+                                            onClick={() => {
+                                                const previousItemProgramPerson = sortedReps[idx + 1];
+
+                                                updateItemProgramPerson({
+                                                    variables: {
+                                                        itemPersonId: itemProgramPerson.id,
+                                                        priority: idx + 1,
+                                                        roleName: itemProgramPerson.roleName,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    content_ItemProgramPerson(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        const newRef = cache.writeFragment({
+                                                                            data,
+                                                                            fragment:
+                                                                                ManageContent_ItemProgramPersonFragmentDoc,
+                                                                            fragmentName:
+                                                                                "ManageContent_ItemProgramPerson",
+                                                                        });
+                                                                        if (
+                                                                            existingRefs.some(
+                                                                                (ref) =>
+                                                                                    readField("id", ref) === data.id
+                                                                            )
+                                                                        ) {
+                                                                            return existingRefs;
+                                                                        }
+                                                                        return [...existingRefs, newRef];
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+
+                                                updateItemProgramPerson({
+                                                    variables: {
+                                                        itemPersonId: previousItemProgramPerson.id,
+                                                        priority: idx,
+                                                        roleName: previousItemProgramPerson.roleName,
+                                                    },
+                                                    update: (cache, { data: _data }) => {
+                                                        if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                            const data = _data.update_content_ItemProgramPerson_by_pk;
+                                                            cache.modify({
+                                                                fields: {
+                                                                    content_ItemProgramPerson(
+                                                                        existingRefs: Reference[] = [],
+                                                                        { readField }
+                                                                    ) {
+                                                                        const newRef = cache.writeFragment({
+                                                                            data,
+                                                                            fragment:
+                                                                                ManageContent_ItemProgramPersonFragmentDoc,
+                                                                            fragmentName:
+                                                                                "ManageContent_ItemProgramPerson",
+                                                                        });
+                                                                        if (
+                                                                            existingRefs.some(
+                                                                                (ref) =>
+                                                                                    readField("id", ref) === data.id
+                                                                            )
+                                                                        ) {
+                                                                            return existingRefs;
+                                                                        }
+                                                                        return [...existingRefs, newRef];
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
+                                        </Button>
+                                    ) : (
+                                        <Box w="1.7em"></Box>
+                                    )}
+                                </ButtonGroup>
+                                <Tooltip
+                                    label={
+                                        itemProgramPerson.person.registrantId
+                                            ? "Person is linked to registrant."
+                                            : "Person is not linked to registrant."
+                                    }
+                                >
+                                    <FAIcon
+                                        iconStyle="s"
+                                        icon={
+                                            itemProgramPerson.person.registrantId
+                                                ? "check-circle"
+                                                : "exclamation-triangle"
+                                        }
+                                        color={itemProgramPerson.person.registrantId ? "purple.400" : "yellow.400"}
+                                    />
+                                </Tooltip>
+                                <Flex
+                                    flexDir={["column", "column", "row"]}
+                                    flexWrap="wrap"
+                                    justifyContent="flex-start"
+                                    alignItems="flex-start"
+                                >
+                                    <chakra.span mx={2}>{itemProgramPerson.person.name}</chakra.span>
+                                    <chakra.span ml={["0", "0", "auto"]} mr={2}>
+                                        &lt;
+                                        {itemProgramPerson.person.email?.length
+                                            ? itemProgramPerson.person.email
+                                            : "No email"}
+                                        &gt;
+                                    </chakra.span>
+                                </Flex>
+                                <Select
+                                    ml="auto"
+                                    size="xs"
+                                    value={itemProgramPerson.roleName}
+                                    w="auto"
+                                    isDisabled={updateItemProgramPersonResponse.loading}
+                                    onChange={(ev) => {
+                                        updateItemProgramPerson({
                                             variables: {
                                                 itemPersonId: itemProgramPerson.id,
+                                                priority: itemProgramPerson.priority ?? idx,
+                                                roleName: ev.target.value,
                                             },
-                                            update: (cache, response) => {
-                                                if (response.data?.delete_content_ItemProgramPerson_by_pk) {
-                                                    const deletedId =
-                                                        response.data.delete_content_ItemProgramPerson_by_pk.id;
+                                            update: (cache, { data: _data }) => {
+                                                if (_data?.update_content_ItemProgramPerson_by_pk) {
+                                                    const data = _data.update_content_ItemProgramPerson_by_pk;
                                                     cache.modify({
                                                         fields: {
                                                             content_ItemProgramPerson(
                                                                 existingRefs: Reference[] = [],
                                                                 { readField }
                                                             ) {
-                                                                cache.evict({
-                                                                    id: deletedId,
-                                                                    fieldName: "ManageContent_ItemProgramPerson",
-                                                                    broadcast: true,
+                                                                const newRef = cache.writeFragment({
+                                                                    data,
+                                                                    fragment:
+                                                                        ManageContent_ItemProgramPersonFragmentDoc,
+                                                                    fragmentName: "ManageContent_ItemProgramPerson",
                                                                 });
-                                                                return existingRefs.filter(
-                                                                    (ref) => readField("id", ref) !== deletedId
-                                                                );
+                                                                if (
+                                                                    existingRefs.some(
+                                                                        (ref) => readField("id", ref) === data.id
+                                                                    )
+                                                                ) {
+                                                                    return existingRefs;
+                                                                }
+                                                                return [...existingRefs, newRef];
                                                             },
                                                         },
                                                     });
                                                 }
                                             },
                                         });
-                                    } catch (e) {
-                                        toast({
-                                            title: "Error unlinking person",
-                                            description: e.message ?? e.toString(),
-                                            isClosable: true,
-                                            duration: 10000,
-                                            position: "bottom",
-                                            status: "error",
-                                        });
-                                    }
-                                }}
-                            >
-                                <FAIcon iconStyle="s" icon="trash-alt" />
-                            </Button>
-                        </Flex>
+                                    }}
+                                    minW={"5em"}
+                                >
+                                    <option value="AUTHOR">Author</option>
+                                    <option value="CHAIR">Chair</option>
+                                    <option value="PRESENTER">Presenter</option>
+                                </Select>
+                                <Button
+                                    ml={2}
+                                    aria-label="Delete"
+                                    colorScheme="red"
+                                    size="xs"
+                                    isDisabled={deleteItemPersonResponse.loading}
+                                    onClick={async () => {
+                                        try {
+                                            deleteItemPerson({
+                                                variables: {
+                                                    itemPersonId: itemProgramPerson.id,
+                                                },
+                                                update: (cache, response) => {
+                                                    if (response.data?.delete_content_ItemProgramPerson_by_pk) {
+                                                        const deletedId =
+                                                            response.data.delete_content_ItemProgramPerson_by_pk.id;
+                                                        cache.modify({
+                                                            fields: {
+                                                                content_ItemProgramPerson(
+                                                                    existingRefs: Reference[] = [],
+                                                                    { readField }
+                                                                ) {
+                                                                    cache.evict({
+                                                                        id: deletedId,
+                                                                        fieldName: "ManageContent_ItemProgramPerson",
+                                                                        broadcast: true,
+                                                                    });
+                                                                    return existingRefs.filter(
+                                                                        (ref) => readField("id", ref) !== deletedId
+                                                                    );
+                                                                },
+                                                            },
+                                                        });
+                                                    }
+                                                },
+                                            });
+                                        } catch (e) {
+                                            toast({
+                                                title: "Error unlinking person",
+                                                description: e.message ?? e.toString(),
+                                                isClosable: true,
+                                                duration: 10000,
+                                                position: "bottom",
+                                                status: "error",
+                                            });
+                                        }
+                                    }}
+                                >
+                                    <FAIcon iconStyle="s" icon="trash-alt" />
+                                </Button>
+                            </Flex>
+
+                            {idx !== sortedReps.length - 1 &&
+                            sortedReps[idx + 1].roleName !== sortedReps[idx].roleName ? (
+                                <Divider />
+                            ) : undefined}
+                        </>
                     ))}
                 </VStack>
             </Box>

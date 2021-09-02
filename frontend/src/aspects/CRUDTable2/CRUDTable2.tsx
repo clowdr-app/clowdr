@@ -757,7 +757,7 @@ function RenderedCRUDTable<T>({
                                         if (!record) {
                                             return false;
                                         }
-                                        return row.canDelete?.(record);
+                                        return (row.canDelete?.(record) ?? true) === true;
                                     });
                                     onDelete(deletableKeys);
                                 }}

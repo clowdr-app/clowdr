@@ -127,7 +127,7 @@ export async function insertEmails(
             return {
                 ...email,
                 htmlContents: htmlContents + "\n" + addedHTML,
-                plainTextContents: (email.plainTextContents ?? htmlToText(htmlContents)) + "\n" + addedText,
+                plainTextContents: htmlToText(htmlContents) + "\n" + addedText,
             };
         });
     if (emailsToInsert.length < emails.length) {

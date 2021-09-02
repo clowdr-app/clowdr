@@ -44,25 +44,6 @@ gql`
             ok
         }
     }
-
-    mutation Invitation_ConfirmWithCode($inviteCode: uuid!, $confirmationCode: String!) {
-        invitationConfirmWithCode(inviteInput: { inviteCode: $inviteCode, confirmationCode: $confirmationCode }) {
-            confSlug
-            ok
-        }
-    }
-
-    mutation SendInitialConfirmationEmail($inviteCode: uuid!) {
-        invitationConfirmSendInitialEmail(inviteInput: { inviteCode: $inviteCode }) {
-            sent
-        }
-    }
-
-    mutation SendRepeatConfirmationEmail($inviteCode: uuid!) {
-        invitationConfirmSendRepeatEmail(inviteInput: { inviteCode: $inviteCode }) {
-            sent
-        }
-    }
 `;
 
 const Spinner = () => (

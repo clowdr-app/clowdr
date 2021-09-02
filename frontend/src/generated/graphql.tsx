@@ -33,11 +33,6 @@ export type Boolean_Comparison_Exp = {
   readonly _nin?: Maybe<ReadonlyArray<Scalars['Boolean']>>;
 };
 
-export type ConfirmInvitationInput = {
-  readonly confirmationCode: Scalars['String'];
-  readonly inviteCode: Scalars['uuid'];
-};
-
 export type ConfirmInvitationOutput = {
   readonly __typename?: 'ConfirmInvitationOutput';
   readonly confSlug?: Maybe<Scalars['String']>;
@@ -706,15 +701,6 @@ export type Int_Comparison_Exp = {
   readonly _lte?: Maybe<Scalars['Int']>;
   readonly _neq?: Maybe<Scalars['Int']>;
   readonly _nin?: Maybe<ReadonlyArray<Scalars['Int']>>;
-};
-
-export type InvitationConfirmationEmailInput = {
-  readonly inviteCode: Scalars['uuid'];
-};
-
-export type InvitationConfirmationEmailOutput = {
-  readonly __typename?: 'InvitationConfirmationEmailOutput';
-  readonly sent: Scalars['Boolean'];
 };
 
 export type JoinEventVonageSessionOutput = {
@@ -14460,9 +14446,6 @@ export type Mutation_Root = {
   /** insert a single row into the table: "video.YouTubeUpload" */
   readonly insert_video_YouTubeUpload_one?: Maybe<Video_YouTubeUpload>;
   readonly invitationConfirmCurrent?: Maybe<ConfirmInvitationOutput>;
-  readonly invitationConfirmSendInitialEmail?: Maybe<InvitationConfirmationEmailOutput>;
-  readonly invitationConfirmSendRepeatEmail?: Maybe<InvitationConfirmationEmailOutput>;
-  readonly invitationConfirmWithCode?: Maybe<ConfirmInvitationOutput>;
   readonly joinEventVonageSession?: Maybe<JoinEventVonageSessionOutput>;
   readonly joinRoomChimeSession?: Maybe<JoinRoomChimeSessionOutput>;
   readonly joinRoomVonageSession?: Maybe<JoinRoomVonageSessionOutput>;
@@ -17115,24 +17098,6 @@ export type Mutation_RootInsert_Video_YouTubeUpload_OneArgs = {
 /** mutation root */
 export type Mutation_RootInvitationConfirmCurrentArgs = {
   inviteCode: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootInvitationConfirmSendInitialEmailArgs = {
-  inviteInput: InvitationConfirmationEmailInput;
-};
-
-
-/** mutation root */
-export type Mutation_RootInvitationConfirmSendRepeatEmailArgs = {
-  inviteInput: InvitationConfirmationEmailInput;
-};
-
-
-/** mutation root */
-export type Mutation_RootInvitationConfirmWithCodeArgs = {
-  inviteInput: ConfirmInvitationInput;
 };
 
 
@@ -37109,28 +37074,6 @@ export type Invitation_ConfirmCurrentMutationVariables = Exact<{
 
 export type Invitation_ConfirmCurrentMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmCurrent?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: string }> };
 
-export type Invitation_ConfirmWithCodeMutationVariables = Exact<{
-  inviteCode: Scalars['uuid'];
-  confirmationCode: Scalars['String'];
-}>;
-
-
-export type Invitation_ConfirmWithCodeMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmWithCode?: Maybe<{ readonly __typename?: 'ConfirmInvitationOutput', readonly confSlug?: Maybe<string>, readonly ok: string }> };
-
-export type SendInitialConfirmationEmailMutationVariables = Exact<{
-  inviteCode: Scalars['uuid'];
-}>;
-
-
-export type SendInitialConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendInitialEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
-
-export type SendRepeatConfirmationEmailMutationVariables = Exact<{
-  inviteCode: Scalars['uuid'];
-}>;
-
-
-export type SendRepeatConfirmationEmailMutation = { readonly __typename?: 'mutation_root', readonly invitationConfirmSendRepeatEmail?: Maybe<{ readonly __typename?: 'InvitationConfirmationEmailOutput', readonly sent: boolean }> };
-
 export type GetEventsInNextHourQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   now: Scalars['timestamptz'];
@@ -48799,109 +48742,6 @@ export function useInvitation_ConfirmCurrentMutation(baseOptions?: Apollo.Mutati
 export type Invitation_ConfirmCurrentMutationHookResult = ReturnType<typeof useInvitation_ConfirmCurrentMutation>;
 export type Invitation_ConfirmCurrentMutationResult = Apollo.MutationResult<Invitation_ConfirmCurrentMutation>;
 export type Invitation_ConfirmCurrentMutationOptions = Apollo.BaseMutationOptions<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>;
-export const Invitation_ConfirmWithCodeDocument = gql`
-    mutation Invitation_ConfirmWithCode($inviteCode: uuid!, $confirmationCode: String!) {
-  invitationConfirmWithCode(
-    inviteInput: {inviteCode: $inviteCode, confirmationCode: $confirmationCode}
-  ) {
-    confSlug
-    ok
-  }
-}
-    `;
-export type Invitation_ConfirmWithCodeMutationFn = Apollo.MutationFunction<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>;
-
-/**
- * __useInvitation_ConfirmWithCodeMutation__
- *
- * To run a mutation, you first call `useInvitation_ConfirmWithCodeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInvitation_ConfirmWithCodeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [invitationConfirmWithCodeMutation, { data, loading, error }] = useInvitation_ConfirmWithCodeMutation({
- *   variables: {
- *      inviteCode: // value for 'inviteCode'
- *      confirmationCode: // value for 'confirmationCode'
- *   },
- * });
- */
-export function useInvitation_ConfirmWithCodeMutation(baseOptions?: Apollo.MutationHookOptions<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>(Invitation_ConfirmWithCodeDocument, options);
-      }
-export type Invitation_ConfirmWithCodeMutationHookResult = ReturnType<typeof useInvitation_ConfirmWithCodeMutation>;
-export type Invitation_ConfirmWithCodeMutationResult = Apollo.MutationResult<Invitation_ConfirmWithCodeMutation>;
-export type Invitation_ConfirmWithCodeMutationOptions = Apollo.BaseMutationOptions<Invitation_ConfirmWithCodeMutation, Invitation_ConfirmWithCodeMutationVariables>;
-export const SendInitialConfirmationEmailDocument = gql`
-    mutation SendInitialConfirmationEmail($inviteCode: uuid!) {
-  invitationConfirmSendInitialEmail(inviteInput: {inviteCode: $inviteCode}) {
-    sent
-  }
-}
-    `;
-export type SendInitialConfirmationEmailMutationFn = Apollo.MutationFunction<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>;
-
-/**
- * __useSendInitialConfirmationEmailMutation__
- *
- * To run a mutation, you first call `useSendInitialConfirmationEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendInitialConfirmationEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendInitialConfirmationEmailMutation, { data, loading, error }] = useSendInitialConfirmationEmailMutation({
- *   variables: {
- *      inviteCode: // value for 'inviteCode'
- *   },
- * });
- */
-export function useSendInitialConfirmationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>(SendInitialConfirmationEmailDocument, options);
-      }
-export type SendInitialConfirmationEmailMutationHookResult = ReturnType<typeof useSendInitialConfirmationEmailMutation>;
-export type SendInitialConfirmationEmailMutationResult = Apollo.MutationResult<SendInitialConfirmationEmailMutation>;
-export type SendInitialConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendInitialConfirmationEmailMutation, SendInitialConfirmationEmailMutationVariables>;
-export const SendRepeatConfirmationEmailDocument = gql`
-    mutation SendRepeatConfirmationEmail($inviteCode: uuid!) {
-  invitationConfirmSendRepeatEmail(inviteInput: {inviteCode: $inviteCode}) {
-    sent
-  }
-}
-    `;
-export type SendRepeatConfirmationEmailMutationFn = Apollo.MutationFunction<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
-
-/**
- * __useSendRepeatConfirmationEmailMutation__
- *
- * To run a mutation, you first call `useSendRepeatConfirmationEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendRepeatConfirmationEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendRepeatConfirmationEmailMutation, { data, loading, error }] = useSendRepeatConfirmationEmailMutation({
- *   variables: {
- *      inviteCode: // value for 'inviteCode'
- *   },
- * });
- */
-export function useSendRepeatConfirmationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>(SendRepeatConfirmationEmailDocument, options);
-      }
-export type SendRepeatConfirmationEmailMutationHookResult = ReturnType<typeof useSendRepeatConfirmationEmailMutation>;
-export type SendRepeatConfirmationEmailMutationResult = Apollo.MutationResult<SendRepeatConfirmationEmailMutation>;
-export type SendRepeatConfirmationEmailMutationOptions = Apollo.BaseMutationOptions<SendRepeatConfirmationEmailMutation, SendRepeatConfirmationEmailMutationVariables>;
 export const GetEventsInNextHourDocument = gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
   schedule_Event(

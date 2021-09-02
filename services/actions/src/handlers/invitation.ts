@@ -1,8 +1,5 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import crypto from "crypto";
-import { htmlToText } from "html-to-text";
-import { v4 as uuidv4 } from "uuid";
 import {
     Email_Insert_Input,
     InvitationPartsFragment,
@@ -11,10 +8,8 @@ import {
     RegistrantWithInvitePartsFragment,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
-    SendFreshInviteConfirmationEmailDocument,
     SetRegistrantUserIdDocument,
     UnmarkInvitationEmailJobsDocument,
-    UpdateInvitationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { insertEmails } from "./email";
@@ -199,8 +194,6 @@ your account and access the conference.</p>
 <p>We hope you enjoy your conference,<br />
 The Midspace team</p>`;
 
-                    const plainTextContents = htmlToText(htmlContents);
-
                     emailsToSend.set(registrant.id, {
                         emailAddress: registrant.invitation.invitedEmailAddress,
                         invitationId: registrant.invitation.id,
@@ -209,7 +202,6 @@ The Midspace team</p>`;
                             registrant.conference.shortName
                         }`,
                         htmlContents,
-                        plainTextContents,
                     });
                 }
             }
@@ -331,171 +323,5 @@ export async function invitationConfirmCurrentHandler(
             : invitation.registrant.userId
             ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
             : true;
-        // Dead code
-        // TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-        // TODO: Re-instate if using extra confirm-email step: && invitation.invitedEmailAddress.toLowerCase() === user.email.toLowerCase()
     });
-}
-
-// Dead function
-// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-function generateExternalConfirmationCode(invitation: {
-    confirmationCode: string;
-    invitedEmailAddress: string;
-}): string {
-    return crypto
-        .createHmac("sha256", invitation.confirmationCode)
-        .update(invitation.invitedEmailAddress.toLowerCase())
-        .digest("hex")
-        .toLowerCase();
-}
-
-// Dead function
-// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-export async function invitationConfirmWithCodeHandler(
-    args: invitationConfirmWithCodeArgs,
-    userId: string
-): Promise<ConfirmInvitationOutput> {
-    return confirmUser(args.inviteInput.inviteCode, userId, async (invitation, user) => {
-        if (
-            !invitation.registrant.userId &&
-            invitation.confirmationCode &&
-            invitation.linkToUserId &&
-            user.email &&
-            invitation.linkToUserId === user.id
-        ) {
-            const goldenCode = generateExternalConfirmationCode({
-                confirmationCode: invitation.confirmationCode,
-                invitedEmailAddress: invitation.invitedEmailAddress,
-            });
-            const inputCode = args.inviteInput.confirmationCode.toLowerCase();
-            return goldenCode === inputCode || "Confirmation code invalid";
-        }
-        return "Invitation or use state invalid";
-    });
-}
-
-// Dead function
-// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-function generateEmailContents(
-    confirmationCode: string,
-    invitation: InvitationPartsFragment,
-    user: InvitedUserPartsFragment
-) {
-    const externalConfirmationCode = generateExternalConfirmationCode({
-        confirmationCode,
-        invitedEmailAddress: invitation.invitedEmailAddress,
-    });
-
-    const htmlContents = `<p>Dear ${invitation.registrant.displayName},</p>
-
-<p>A user is trying to accept your invitation to ${invitation.registrant.conference.name}
-using the email address ${user.email}. If this was you, and you would like to use the
-email address shown (instead of your invitation address: ${invitation.invitedEmailAddress}),
-please enter the confirmation code shown below. If this was not you, please
-contact your conference organiser.</p>
-
-<p>Confirmation code: ${externalConfirmationCode}<br />
-Page to enter the code: <a href="{[FRONTEND_HOST]}/invitation/accept/${invitation.inviteCode}">{[FRONTEND_HOST]}/invitation/accept/${invitation.inviteCode}</a><br />
-(You will need to be logged in as ${user.email} in order to enter the confirmation code.)</p>
-
-<p>We hope you enjoy your conference,<br/>
-The Midspace team</p>`;
-
-    const plainTextContents = htmlToText(htmlContents);
-    return {
-        htmlContents,
-        plainTextContents,
-    };
-}
-
-// Dead function
-// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-export async function invitationConfirmSendInitialEmailHandler(
-    args: invitationConfirmSendInitialEmailArgs,
-    userId: string
-): Promise<InvitationConfirmationEmailOutput> {
-    const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
-
-    // UI race condition might cause us to receive a request for
-    // which we don't really want to send an email.
-    if (invitation.invitedEmailAddress === user.email) {
-        return {
-            sent: true,
-        };
-    }
-
-    if (!invitation.registrant.userId && (!invitation.linkToUserId || invitation.linkToUserId !== user.id)) {
-        const newConfirmationCodeForDB = uuidv4();
-        const sendEmailTo = invitation.invitedEmailAddress;
-        const { htmlContents, plainTextContents } = generateEmailContents(newConfirmationCodeForDB, invitation, user);
-        // updated_at serves as a mutex variable
-        const result = await apolloClient.mutate({
-            mutation: UpdateInvitationDocument,
-            variables: {
-                confirmationCode: newConfirmationCodeForDB,
-                invitationId: invitation.id,
-                userId: user.id,
-                updatedAt: invitation.updatedAt,
-            },
-        });
-        if (
-            result.data?.update_registrant_Invitation?.affected_rows &&
-            result.data?.update_registrant_Invitation?.affected_rows > 0
-        ) {
-            await apolloClient.mutate({
-                mutation: SendFreshInviteConfirmationEmailDocument,
-                variables: {
-                    emailAddress: sendEmailTo,
-                    invitationId: invitation.id,
-                    userId: user.id,
-                    subject: "Midspace: Confirm acceptance of invitation",
-                    htmlContents,
-                    plainTextContents,
-                },
-            });
-        }
-    }
-    return {
-        sent: true,
-    };
-}
-
-// Dead function
-// TODO: (Noted 2021-02-02 by Ed): Delete this at some point once we know it's not needed
-export async function invitationConfirmSendRepeatEmailHandler(
-    args: invitationConfirmSendRepeatEmailArgs,
-    userId: string
-): Promise<InvitationConfirmationEmailOutput> {
-    const { invitation, user } = await getInvitationAndUser(args.inviteInput.inviteCode, userId);
-    if (
-        !invitation.registrant.userId &&
-        invitation.linkToUserId &&
-        invitation.linkToUserId === user.id &&
-        invitation.confirmationCode
-    ) {
-        const sendEmailTo = invitation.invitedEmailAddress;
-        const { htmlContents, plainTextContents } = generateEmailContents(
-            invitation.confirmationCode,
-            invitation,
-            user
-        );
-        await apolloClient.mutate({
-            mutation: SendFreshInviteConfirmationEmailDocument,
-            variables: {
-                emailAddress: sendEmailTo,
-                invitationId: invitation.id,
-                userId: user.id,
-                subject: "Midspace: Confirm acceptance of invitation [Repeat]",
-                htmlContents,
-                plainTextContents,
-            },
-        });
-        return {
-            sent: true,
-        };
-    }
-    return {
-        sent: false,
-    };
 }

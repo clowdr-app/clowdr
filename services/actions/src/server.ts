@@ -3,12 +3,7 @@ import { json } from "body-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import { AuthenticatedRequest } from "./checkScopes";
-import {
-    invitationConfirmCurrentHandler,
-    invitationConfirmSendInitialEmailHandler,
-    invitationConfirmSendRepeatEmailHandler,
-    invitationConfirmWithCodeHandler,
-} from "./handlers/invitation";
+import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
 import { checkJwt } from "./middlewares/checkJwt";
@@ -111,60 +106,6 @@ app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, a
         return;
     }
 });
-
-app.post("/invitation/confirm/code", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
-    const params: invitationConfirmWithCodeArgs = req.body.input;
-    console.log("Invitation/confirm/code", params);
-    try {
-        const result = await invitationConfirmWithCodeHandler(params, req.userId);
-        return res.json(result);
-    } catch (e) {
-        console.error("Failure while processing /invitation/confirm/code", e);
-        res.status(500).json("Failure");
-        return;
-    }
-});
-
-app.post(
-    "/invitation/confirm/send/initial",
-    jsonParser,
-    checkJwt,
-    checkUserScopes,
-    async (_req: Request, res: Response) => {
-        const req = _req as AuthenticatedRequest;
-        const params: invitationConfirmSendInitialEmailArgs = req.body.input;
-        console.log("Invitation/confirm/send/initial", params);
-        try {
-            const result = await invitationConfirmSendInitialEmailHandler(params, req.userId);
-            return res.json(result);
-        } catch (e) {
-            console.error("Failure while processing /invitation/confirm/send/initial", e);
-            res.status(500).json("Failure");
-            return;
-        }
-    }
-);
-
-app.post(
-    "/invitation/confirm/send/repeat",
-    jsonParser,
-    checkJwt,
-    checkUserScopes,
-    async (_req: Request, res: Response) => {
-        const req = _req as AuthenticatedRequest;
-        const params: invitationConfirmSendRepeatEmailArgs = req.body.input;
-        console.log("Invitation/confirm/send/repeat", params);
-        try {
-            const result = await invitationConfirmSendRepeatEmailHandler(params, req.userId);
-            return res.json(result);
-        } catch (e) {
-            console.error("Failure while processing /invitation/confirm/send/repeat", e);
-            res.status(500).json("Failure");
-            return;
-        }
-    }
-);
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {

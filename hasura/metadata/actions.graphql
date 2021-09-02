@@ -38,24 +38,6 @@ type Mutation {
 }
 
 type Mutation {
-  invitationConfirmSendInitialEmail (
-    inviteInput: InvitationConfirmationEmailInput!
-  ): InvitationConfirmationEmailOutput
-}
-
-type Mutation {
-  invitationConfirmSendRepeatEmail (
-    inviteInput: InvitationConfirmationEmailInput!
-  ): InvitationConfirmationEmailOutput
-}
-
-type Mutation {
-  invitationConfirmWithCode (
-    inviteInput: ConfirmInvitationInput!
-  ): ConfirmInvitationOutput
-}
-
-type Mutation {
   joinEventVonageSession (
     eventId: uuid!
   ): JoinEventVonageSessionOutput

@@ -12,7 +12,9 @@ export async function sendUnreadCount(chatId: string, userId: string): Promise<v
         messageSId: undefined,
     });
     const redisSetKey = generateChatRecentMessagesSetKey(chatId);
-    const rank = readUpToIndex?.messageSId ? await redisClientP.zrevrank(redisSetKey, readUpToIndex.messageSId) : null;
+    const rank = readUpToIndex?.messageSId
+        ? await redisClientP.zrevrank(redisSetKey, readUpToIndex.messageSId)
+        : await redisClientP.zcard(redisSetKey);
 
     const roomName = notificationsRoomName(userId);
     if (rank === null) {

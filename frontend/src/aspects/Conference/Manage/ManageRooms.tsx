@@ -1,4 +1,5 @@
 import { gql, Reference } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
     AccordionButton,
@@ -33,10 +34,12 @@ import {
     NumberInputStepper,
     Select,
     Text,
+    Tooltip,
     UnorderedList,
     useClipboard,
     useDisclosure,
 } from "@chakra-ui/react";
+import Papa from "papaparse";
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -68,6 +71,7 @@ import CRUDTable, {
     ColumnHeaderProps,
     ColumnSpecification,
     DeepWriteable,
+    ExtraButton,
     RowSpecification,
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
@@ -698,9 +702,7 @@ function EditableRoomsCRUDTable() {
             {
                 id: "mode",
                 header: function ModeHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
-                    return props.isInCreate ? (
-                        <FormLabel>Current mode</FormLabel>
-                    ) : (
+                    return props.isInCreate ? undefined : (
                         <Button size="xs" onClick={props.onClick}>
                             Current mode{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
                         </Button>
@@ -709,9 +711,14 @@ function EditableRoomsCRUDTable() {
                 get: (data) => data.currentModeName,
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
-                filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
+                filterEl: SelectColumnFilter(
+                    Object.values(Room_Mode_Enum).map((modeName) => ({
+                        label: modeName === Room_Mode_Enum.Breakout ? "VIDEO_CHAT" : modeName,
+                        value: modeName,
+                    }))
+                ),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-                    return <Text>{props.value}</Text>;
+                    return <Text>{props.value === Room_Mode_Enum.Breakout ? "VIDEO_CHAT" : props.value}</Text>;
                 },
             },
             {
@@ -731,7 +738,7 @@ function EditableRoomsCRUDTable() {
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
                 filterFn: (rows, v: Room_ManagementMode_Enum) => rows.filter((r) => r.managementModeName === v),
-                filterEl: SelectColumnFilter(Object.values(Room_ManagementMode_Enum)),
+                filterEl: SelectColumnFilter([Room_ManagementMode_Enum.Private, Room_ManagementMode_Enum.Public]),
                 cell: function EventNameCell(props: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
                     if (
                         props.value !== Room_ManagementMode_Enum.Private &&
@@ -759,13 +766,13 @@ function EditableRoomsCRUDTable() {
                 },
             },
             {
-                id: "originatingItemid",
+                id: "originatingItemId",
                 header: function ContentHeader(props: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
                     return props.isInCreate ? (
-                        <FormLabel>Associated item to discuss (optional)</FormLabel>
+                        <FormLabel>Associated content to discuss (optional)</FormLabel>
                     ) : (
                         <Button size="xs" onClick={props.onClick}>
-                            Discussion Item{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            Content for discussion{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -1033,6 +1040,180 @@ function EditableRoomsCRUDTable() {
         }
     }, [deleteRoomsResponse.error, insertRoomResponse.error, updateRoomResponse.error]);
 
+    const buttons: ExtraButton<RoomWithParticipantInfoFragment>[] = useMemo(
+        () => [
+            // TODO
+            // {
+            //     render: function ImportButton(_selectedData) {
+            //         return (
+            //             <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/schedule`}>
+            //                 Import
+            //             </LinkButton>
+            //         );
+            //     },
+            // },
+            {
+                render: ({ selectedData }: { selectedData: RoomWithParticipantInfoFragment[] }) => {
+                    function doExport(dataToExport: readonly RoomWithParticipantInfoFragment[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((room) => ({
+                                "Conference Id": room.conferenceId,
+                                "Room Id": room.id,
+                                Name: room.name,
+                                "Is program room?": room.isProgramRoom ? "Yes" : "No",
+                                Priority: room.priority,
+                                Privacy: room.managementModeName,
+
+                                "Externally Sourced Data Id": room.originatingData?.id ?? "",
+                                "Associated Content Id": room.originatingItemId ?? "",
+                                "Associated Event Id": room.originatingEventId ?? "",
+
+                                "Created At": room.created_at,
+                                "Current Mode Name":
+                                    room.currentModeName === Room_Mode_Enum.Breakout
+                                        ? "VIDEO_CHAT"
+                                        : room.currentModeName,
+                                Capacity: room.capacity ?? "Not set",
+
+                                "Chat - Id": room.chat?.id ?? "",
+                                "Chat - Enable Auto Pin": room.chat ? (room.chat.enableAutoPin ? "Yes" : "No") : "",
+                                "Chat - Enable Mandatory Pin": room.chat
+                                    ? room.chat.enableMandatoryPin
+                                        ? "Yes"
+                                        : "No"
+                                    : "",
+                                "Chat - Enable Auto Subscribe": room.chat
+                                    ? room.chat.enableAutoSubscribe
+                                        ? "Yes"
+                                        : "No"
+                                    : "",
+                                "Chat - Enable Mandatory Subscribe": room.chat
+                                    ? room.chat.enableMandatorySubscribe
+                                        ? "Yes"
+                                        : "No"
+                                    : "",
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Midspace Rooms.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    const tooltip = (filler: string) => `Exports ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all rooms")}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Export
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList maxH="400px" overflowY="auto">
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (selectAllRoomsResult.data?.room_Room) {
+                                                doExport(selectAllRoomsResult.data.room_Room);
+                                            }
+                                        }}
+                                    >
+                                        All rooms
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (selectAllRoomsResult.data?.room_Room) {
+                                                doExport(
+                                                    selectAllRoomsResult.data.room_Room.filter(
+                                                        (room) => !!room.isProgramRoom
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Program rooms
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (selectAllRoomsResult.data?.room_Room) {
+                                                doExport(
+                                                    selectAllRoomsResult.data.room_Room.filter(
+                                                        (room) => !room.isProgramRoom
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Non-program rooms
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (selectAllRoomsResult.data?.room_Room) {
+                                                doExport(
+                                                    selectAllRoomsResult.data.room_Room.filter(
+                                                        (room) =>
+                                                            room.managementModeName === Room_ManagementMode_Enum.Public
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Public rooms
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (selectAllRoomsResult.data?.room_Room) {
+                                                doExport(
+                                                    selectAllRoomsResult.data.room_Room.filter(
+                                                        (room) =>
+                                                            room.managementModeName === Room_ManagementMode_Enum.Private
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Private rooms
+                                    </MenuItem>
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected rooms")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        onClick={() => doExport(selectedData)}
+                                    >
+                                        Export
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
+                },
+            },
+        ],
+        [selectAllRoomsResult.data?.room_Room]
+    );
+
     return (
         <>
             <CRUDTable
@@ -1169,6 +1350,7 @@ function EditableRoomsCRUDTable() {
                           }
                         : undefined
                 }
+                buttons={buttons}
                 forceReload={forceReloadRef}
             />
             <RoomSecondaryEditor

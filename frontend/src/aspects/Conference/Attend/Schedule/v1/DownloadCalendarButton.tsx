@@ -27,8 +27,8 @@ export default function DownloadCalendarButton({
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,
-                        url: `https://${window.location.host}/conference/${conference.slug}/room/${event.roomId}`,
-                        location: `https://${window.location.host}/conference/${conference.slug}/room/${event.roomId}`,
+                        url: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                        location: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
                         start: [
                             startTime.getUTCFullYear(),
                             startTime.getUTCMonth() + 1,
@@ -72,7 +72,7 @@ export default function DownloadCalendarButton({
                     const dataBlob = new Blob([value], { type: "text/calendar;charset=utf-8;" });
                     let fileURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
                         .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now

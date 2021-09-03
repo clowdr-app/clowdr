@@ -38,6 +38,7 @@ gql`
         originatingEventId
         originatingItemId
         managementModeName
+        isProgramRoom
         originatingData {
             ...OriginatingDataInfo
         }
@@ -89,7 +90,7 @@ gql`
     }
 
     query SelectWholeSchedule($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
+        room_Room(where: { conferenceId: { _eq: $conferenceId }, managementModeName: { _in: [PUBLIC, PRIVATE] } }) {
             ...RoomInfo
         }
         schedule_Event(

@@ -1196,58 +1196,97 @@ function EditableScheduleTable(): JSX.Element {
                     function doExport(dataToExport: readonly EventInfoFragment[]) {
                         const csvText = Papa.unparse(
                             dataToExport.map((event) => ({
-                                "Start time": new Date(event.startTime).toISOString(),
-                                "End time": event.endTime
+                                "Conference Id": event.conferenceId,
+                                "Event Id": event.id,
+                                "Externally Sourced Data Id": event.originatingDataId,
+
+                                Start: new Date(event.startTime).toISOString(),
+                                End: event.endTime
                                     ? new Date(event.endTime)
                                     : new Date(
                                           Date.parse(event.startTime) + event.durationSeconds * 1000
                                       ).toISOString(),
                                 "Duration (seconds)": event.durationSeconds,
-                                Name: event.name,
-                                Mode: event.intendedRoomModeName,
+                                Mode:
+                                    event.intendedRoomModeName === Room_Mode_Enum.Breakout
+                                        ? "VIDEO_CHAT"
+                                        : event.intendedRoomModeName,
 
-                                "Participate link": `/conference/${conference.slug}/room/${event.roomId}`,
-                                "Info link": event.itemId
-                                    ? `https://${window.location.host}/conference/${conference.slug}/item/${event.itemId}`
-                                    : event.exhibitionId
-                                    ? `https://${window.location.host}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
-                                    : `https://${window.location.host}/conference/${conference.slug}/schedule`,
-
-                                "Room id": event.roomId,
-                                "Room name":
+                                "Room Id": event.roomId,
+                                "Room Name":
                                     wholeSchedule.data?.room_Room.find((x) => x.id === event.roomId)?.name ?? "",
-                                "Room link": `https://${window.location.host}/conference/${conference.slug}/room/${event.roomId}`,
 
-                                "Content id": event.itemId ?? "",
-                                "Content title": event.itemId
+                                Name: event.name,
+
+                                "Content Id": event.itemId ?? "",
+                                "Content Title": event.itemId
                                     ? wholeSchedule.data?.content_Item.find((item) => item.id === event.itemId)
                                           ?.title ?? ""
                                     : "",
-                                "Content link": event.itemId
-                                    ? `https://${window.location.host}/conference/${conference.slug}/item/${event.itemId}`
-                                    : "",
 
-                                "Exhibition id": event.exhibitionId ?? "",
-                                "Exhibition title": event.exhibitionId
+                                "Exhibition Id": event.exhibitionId ?? "",
+                                "Exhibition Title": event.exhibitionId
                                     ? wholeSchedule.data?.collection_Exhibition.find(
                                           (exh) => exh.id === event.exhibitionId
-                                      ) ?? ""
-                                    : "",
-                                "Exhibition link": event.exhibitionId
-                                    ? `https://${window.location.host}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                      )?.name ?? ""
                                     : "",
 
-                                "Shuffle period id": event.shufflePeriodId ?? "",
-                                "Shuffle link": event.shufflePeriodId
-                                    ? `https://${window.location.host}/conference/${conference.slug}/shuffle`
+                                "Shuffle Period Id": event.shufflePeriodId ?? "",
+
+                                People: event.eventPeople.map((eventPerson) => {
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
+                                        (person) => person.id === eventPerson.personId
+                                    );
+                                    return `${eventPerson.personId} (${eventPerson.roleName}) [${
+                                        person
+                                            ? `${person.name} (${person.affiliation ?? "No affiliation"}) <${
+                                                  person.email ?? "No email"
+                                              }> ${person?.registrantId ? "Registered" : "Unregistered"}`
+                                            : "Person not found"
+                                    }]`;
+                                }),
+                                "Registered People": event.eventPeople.flatMap((eventPerson) => {
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
+                                        (person) => person.id === eventPerson.personId
+                                    );
+                                    return person?.registrantId
+                                        ? [
+                                              `${eventPerson.personId} (${eventPerson.roleName}) [${
+                                                  person
+                                                      ? `${person.name} (${person.affiliation ?? "No affiliation"}) <${
+                                                            person.email ?? "No email"
+                                                        }>`
+                                                      : "Person not found"
+                                              }]`,
+                                          ]
+                                        : [];
+                                }),
+
+                                "Participate Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                "Info link": event.itemId
+                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
+                                    : event.exhibitionId
+                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    : `${window.location.origin}/conference/${conference.slug}/schedule`,
+                                "Room Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                "Content Link": event.itemId
+                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
                                     : "",
+                                "Exhibition Link": event.exhibitionId
+                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    : "",
+                                "Shuffle Link": event.shufflePeriodId
+                                    ? `${window.location.origin}/conference/${conference.slug}/shuffle`
+                                    : "",
+
+                                "Tag Ids": event.eventTags.map((eventTag) => eventTag.tagId),
                             }))
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;
                         const now = new Date();
-                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                             .getDate()
                             .toString()
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
@@ -1286,22 +1325,24 @@ function EditableScheduleTable(): JSX.Element {
                                         All rooms
                                     </MenuItem>
                                     <MenuGroup>
-                                        {wholeSchedule.data?.room_Room.map((room) => (
-                                            <MenuItem
-                                                key={room.id}
-                                                onClick={() => {
-                                                    if (wholeSchedule.data?.schedule_Event) {
-                                                        doExport(
-                                                            wholeSchedule.data.schedule_Event.filter(
-                                                                (event) => event.roomId === room.id
-                                                            )
-                                                        );
-                                                    }
-                                                }}
-                                            >
-                                                {room.name}
-                                            </MenuItem>
-                                        ))}
+                                        {wholeSchedule.data?.room_Room
+                                            .filter((room) => room.isProgramRoom)
+                                            .map((room) => (
+                                                <MenuItem
+                                                    key={room.id}
+                                                    onClick={() => {
+                                                        if (wholeSchedule.data?.schedule_Event) {
+                                                            doExport(
+                                                                wholeSchedule.data.schedule_Event.filter(
+                                                                    (event) => event.roomId === room.id
+                                                                )
+                                                            );
+                                                        }
+                                                    }}
+                                                >
+                                                    {room.name}
+                                                </MenuItem>
+                                            ))}
                                     </MenuGroup>
                                 </MenuList>
                             </Menu>
@@ -1330,6 +1371,7 @@ function EditableScheduleTable(): JSX.Element {
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
             wholeSchedule.data?.schedule_Event,
+            wholeSchedule.data?.collection_ProgramPerson,
         ]
     );
 

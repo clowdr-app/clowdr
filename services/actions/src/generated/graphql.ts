@@ -6066,6 +6066,7 @@ export type Collection_Exhibition = {
   conferenceId: Scalars['uuid'];
   created_at: Scalars['timestamptz'];
   id: Scalars['uuid'];
+  isHidden: Scalars['Boolean'];
   /** An array relationship */
   items: Array<Content_ItemExhibition>;
   /** An aggregate relationship */
@@ -6168,6 +6169,7 @@ export type Collection_Exhibition_Bool_Exp = {
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  isHidden?: Maybe<Boolean_Comparison_Exp>;
   items?: Maybe<Content_ItemExhibition_Bool_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   priority?: Maybe<Int_Comparison_Exp>;
@@ -6194,6 +6196,7 @@ export type Collection_Exhibition_Insert_Input = {
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
   items?: Maybe<Content_ItemExhibition_Arr_Rel_Insert_Input>;
   name?: Maybe<Scalars['String']>;
   priority?: Maybe<Scalars['Int']>;
@@ -6276,6 +6279,7 @@ export type Collection_Exhibition_Order_By = {
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  isHidden?: Maybe<Order_By>;
   items_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
   name?: Maybe<Order_By>;
   priority?: Maybe<Order_By>;
@@ -6298,6 +6302,8 @@ export enum Collection_Exhibition_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
   Name = 'name',
   /** column name */
   Priority = 'priority',
@@ -6311,6 +6317,7 @@ export type Collection_Exhibition_Set_Input = {
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   priority?: Maybe<Scalars['Int']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -6370,6 +6377,8 @@ export enum Collection_Exhibition_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
   /** column name */
   Name = 'name',
   /** column name */

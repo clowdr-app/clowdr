@@ -292,7 +292,7 @@ export default function AnalyticsDashboard(): JSX.Element {
                     const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                     let csvURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
                         .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
@@ -315,7 +315,7 @@ export default function AnalyticsDashboard(): JSX.Element {
                     const jsonData = new Blob([jsonText], { type: "	application/json;charset=utf-8;" });
                     let jsonURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
                         .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
@@ -502,7 +502,7 @@ export default function AnalyticsDashboard(): JSX.Element {
                     const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                     let csvURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
                         .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
@@ -525,7 +525,7 @@ export default function AnalyticsDashboard(): JSX.Element {
                     const jsonData = new Blob([jsonText], { type: "	application/json;charset=utf-8;" });
                     let jsonURL: string | null = null;
                     const now = new Date();
-                    const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                    const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                         .getDate()
                         .toString()
                         .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now

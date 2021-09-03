@@ -12,6 +12,7 @@ import {
     MenuButton,
     MenuGroup,
     MenuItem,
+    MenuItemOption,
     MenuList,
     Text,
     Tooltip,
@@ -33,10 +34,12 @@ import {
     useInsertRegistrantMutation,
     useInsertRegistrantWithoutInviteMutation,
     useManagePeople_InsertCustomEmailJobMutation,
+    useManageRegistrants_SelectProfilesQuery,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
     useUpdateRegistrantMutation,
 } from "../../../../generated/graphql";
+import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
@@ -90,9 +93,32 @@ gql`
         inviteSent
     }
 
+    fragment ManageRegistrants_Profile on registrant_Profile {
+        registrantId
+        badges
+        affiliation
+        country
+        timezoneUTCOffset
+        bio
+        website
+        github
+        twitter
+        affiliationURL
+        pronouns
+        photoURL_50x50
+        photoURL_350x350
+        hasBeenEdited
+    }
+
     query SelectAllRegistrants($conferenceId: uuid!) {
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantParts
+        }
+    }
+
+    query ManageRegistrants_SelectProfiles($registrantIds: [uuid!]!) {
+        registrant_Profile(where: { registrantId: { _in: $registrantIds } }) {
+            ...ManageRegistrants_Profile
         }
     }
 
@@ -694,6 +720,10 @@ export default function ManageRegistrants(): JSX.Element {
         [allGroups?.permissions_Group]
     );
 
+    const [exportWithProfileData, setExportWithProfileData] = useState<boolean>(false);
+    const selectProfiles = useManageRegistrants_SelectProfilesQuery({
+        skip: true,
+    });
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
             {
@@ -710,26 +740,64 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 render: ({ selectedData }: { selectedData: RegistrantDescriptor[] }) => {
-                    function doExport(dataToExport: RegistrantDescriptor[]) {
+                    async function doExport(dataToExport: RegistrantDescriptor[]) {
+                        const profiles = exportWithProfileData
+                            ? (
+                                  await selectProfiles.refetch({
+                                      registrantIds: dataToExport.map((x) => x.id),
+                                  })
+                              ).data.registrant_Profile
+                            : [];
+
                         const csvText = Papa.unparse(
-                            dataToExport.map((registrant) => ({
-                                Name: registrant.displayName,
-                                Email: registrant.invitation?.invitedEmailAddress ?? "",
-                                "Invite sent": registrant.inviteSent ? "Yes" : "No",
-                                "Invite accepted": registrant.userId ? "Yes" : "No",
-                                "Invite code": registrant.invitation?.inviteCode ?? "",
-                                Groups: registrant.groupRegistrants.map(
-                                    (x) =>
-                                        allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
-                                        "<Unrecognised>"
-                                ),
-                            }))
+                            dataToExport.map((registrant) => {
+                                const result: any = {
+                                    "Conference Id": registrant.conferenceId,
+                                    "Registrant Id": registrant.id,
+                                    "User Id": registrant.userId,
+                                    Name: registrant.displayName,
+                                    Email: registrant.invitation?.invitedEmailAddress ?? "",
+                                    "Invite code": registrant.invitation?.inviteCode ?? "",
+                                    "Invite sent": registrant.inviteSent ? "Yes" : "No",
+                                    "Invite accepted": registrant.userId ? "Yes" : "No",
+                                    "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
+                                    "Group Names": registrant.groupRegistrants.map(
+                                        (x) =>
+                                            allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
+                                            "<Hidden>"
+                                    ),
+                                    "Created At": registrant.createdAt,
+                                    "Updated At": registrant.updatedAt,
+                                };
+
+                                if (exportWithProfileData) {
+                                    const profile = profiles.find((x) => x.registrantId === registrant.id);
+                                    result["Profile Data Exportable"] = profile ? "Yes" : "No";
+                                    result["Has Been Edited"] = profile ? (profile.hasBeenEdited ? "Yes" : "No") : "";
+                                    result.Badges =
+                                        profile?.badges.map((badge: BadgeData) => `${badge.name} [${badge.colour}]`) ??
+                                        "";
+                                    result.Affiliation = profile?.affiliation ?? "";
+                                    result.Country = profile?.country ?? "";
+                                    result["Timezone UTC Offset"] = profile?.timezoneUTCOffset ?? "";
+                                    result["Bio (Markdown)"] = profile?.bio ?? "";
+                                    result.Website = profile?.website ?? "";
+                                    result.GitHub = profile?.github ?? "";
+                                    result.Twitter = profile?.twitter ?? "";
+                                    result["Affiliation URL"] = profile?.affiliationURL ?? "";
+                                    result.Pronouns = profile?.pronouns ?? "";
+                                    result["Photo URL - 50px by 50px"] = profile?.photoURL_50x50 ?? "";
+                                    result["Photo URL - 350px by 350px"] = profile?.photoURL_350x350 ?? "";
+                                }
+
+                                return result;
+                            })
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;
                         const now = new Date();
-                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                             .getDate()
                             .toString()
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
@@ -758,6 +826,15 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
+                                    <MenuItemOption
+                                        closeOnSelect={false}
+                                        isChecked={exportWithProfileData}
+                                        onClick={() => {
+                                            setExportWithProfileData(!exportWithProfileData);
+                                        }}
+                                    >
+                                        With profile data
+                                    </MenuItemOption>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (

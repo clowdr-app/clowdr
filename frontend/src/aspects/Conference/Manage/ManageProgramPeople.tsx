@@ -642,17 +642,20 @@ export default function ManageProgramPeople(): JSX.Element {
                     function doExport(dataToExport: ManageProgramPeople_ProgramPersonFragment[]) {
                         const csvText = Papa.unparse(
                             dataToExport.map((person) => ({
+                                "Conference Id": person.conferenceId,
+                                "Person Id": person.id,
+                                "Registrant Id": person.registrantId ?? "",
+                                "Externally Sourced Data Id": person.originatingDataId,
                                 Name: person.name,
                                 Affiliation: person.affiliation ?? "",
                                 Email: person.email ?? "",
-                                LinkedToRegistrant: person.registrantId ? "Yes" : "No",
                             }))
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
                         let csvURL: string | null = null;
                         const now = new Date();
-                        const fileName = `${now.getFullYear()}-${now.getMonth().toString().padStart(2, "0")}-${now
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
                             .getDate()
                             .toString()
                             .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now

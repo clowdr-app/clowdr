@@ -1,6 +1,7 @@
 import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
+    Box,
     Button,
     FormLabel,
     Heading,
@@ -17,20 +18,24 @@ import {
     Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
+import Papa from "papaparse";
 import * as R from "ramda";
 import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
     Content_ItemType_Enum,
     Content_Item_Set_Input,
+    ManageContent_ExhibitionFragment,
     ManageContent_ItemFragment,
     ManageContent_ItemFragmentDoc,
+    ManageContent_TagFragment,
     Permissions_Permission_Enum,
     useManageContent_DeleteItemsMutation,
     useManageContent_InsertItemMutation,
     useManageContent_SelectAllExhibitionsQuery,
     useManageContent_SelectAllItemsQuery,
     useManageContent_SelectAllTagsQuery,
+    useManageContent_SelectItemsForExportQuery,
     useManageContent_UpdateItemMutation,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -146,9 +151,49 @@ gql`
         }
     }
 
+    fragment ManageContent_ItemForExport on content_Item {
+        id
+        conferenceId
+        title
+        shortTitle
+        typeName
+        originatingDataId
+        itemTags {
+            id
+            tagId
+        }
+        itemExhibitions {
+            id
+            exhibitionId
+            priority
+        }
+        rooms {
+            id
+        }
+        chatId
+        itemPeople {
+            ...ManageContent_ItemProgramPerson
+        }
+        elements {
+            ...ManageContent_Element
+            uploaders {
+                id
+                email
+                name
+                emailsSentCount
+            }
+        }
+    }
+
     query ManageContent_SelectAllItems($conferenceId: uuid!) {
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageContent_Item
+        }
+    }
+
+    query ManageContent_SelectItemsForExport($itemIds: [uuid!]!) {
+        content_Item(where: { id: { _in: $itemIds } }) {
+            ...ManageContent_ItemForExport
         }
     }
 
@@ -235,6 +280,10 @@ gql`
         colour
         priority
         isHidden
+        items {
+            id
+            itemId
+        }
     }
 
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
@@ -742,6 +791,9 @@ export default function ManageContentV2(): JSX.Element {
         },
         [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_UploaderIds]
     );
+    const selectItemsForExport = useManageContent_SelectItemsForExportQuery({
+        skip: true,
+    });
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
@@ -751,6 +803,250 @@ export default function ManageContentV2(): JSX.Element {
                             Import
                         </LinkButton>
                     );
+                },
+            },
+            {
+                render: ({ selectedData }: { selectedData: ManageContent_ItemFragment[] }) => {
+                    function doTagsExport(dataToExport: readonly ManageContent_TagFragment[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((tag) => ({
+                                "Conference Id": tag.conferenceId,
+                                "Tag Id": tag.id,
+                                Name: tag.name,
+                                Priority: tag.priority,
+                                Colour: tag.colour,
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Midspace Tags.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    function doExhibitionsExport(dataToExport: readonly ManageContent_ExhibitionFragment[]) {
+                        const csvText = Papa.unparse(
+                            dataToExport.map((exhibition) => ({
+                                "Conference Id": exhibition.conferenceId,
+                                "Exhibition Id": exhibition.id,
+                                Name: exhibition.name,
+                                Priority: exhibition.priority,
+                                Colour: exhibition.colour,
+                                Hidden: exhibition.isHidden ? "Yes" : "No",
+                            }))
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Midspace Exhibitions.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    async function doContentExport(dataToExport: readonly ManageContent_ItemFragment[]) {
+                        const contentForExport = await selectItemsForExport.refetch({
+                            itemIds: dataToExport.map((x) => x.id),
+                        });
+
+                        const csvText = Papa.unparse(
+                            contentForExport.data.content_Item.map((item) => {
+                                const result: any = {
+                                    "Conference Id": item.conferenceId,
+                                    "Content Id": item.id,
+                                    "Externally Sourced Data Id": item.originatingDataId,
+
+                                    Title: item.title,
+                                    "Short Title": item.shortTitle ?? "",
+                                    Type: item.typeName,
+                                    "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
+                                    Exhibitions: item.itemExhibitions.map(
+                                        (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
+                                    ),
+                                    "Discussion Room Ids": item.rooms.map((room) => room.id),
+                                    "Chat Id": item.chatId ?? "",
+
+                                    People: item.itemPeople.map(
+                                        (itemPerson) =>
+                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person.id} (${
+                                                itemPerson.roleName
+                                            }) [${itemPerson.person.name} (${
+                                                itemPerson.person.affiliation ?? "No affiliation"
+                                            }) <${itemPerson.person.email ?? "No email"}>]`
+                                    ),
+                                };
+
+                                for (let idx = 0; idx < item.elements.length; idx++) {
+                                    const baseName = `Element ${idx}`;
+                                    const element = item.elements[idx];
+                                    result[`${baseName}: Id`] = element.id;
+                                    result[`${baseName}: Name`] = element.name;
+                                    result[`${baseName}: Type`] = element.typeName;
+                                    result[`${baseName}: Data`] =
+                                        element.data && element.data instanceof Array
+                                            ? JSON.stringify(element.data[element.data.length - 1])
+                                            : null;
+                                    result[`${baseName}: Layout`] = element.layoutData
+                                        ? JSON.stringify(element.layoutData)
+                                        : null;
+                                    result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
+                                    result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
+                                    result[`${baseName}: Updated At`] = element.updatedAt;
+                                    result[`${baseName}: Uploaders`] = element.uploaders.map(
+                                        (uploader) =>
+                                            `${uploader.name} <${uploader.email}> (Emails sent: ${uploader.emailsSentCount})`
+                                    );
+                                }
+
+                                return result;
+                            })
+                        );
+
+                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                        let csvURL: string | null = null;
+                        const now = new Date();
+                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")} - Midspace Content.csv`;
+                        if (navigator.msSaveBlob) {
+                            navigator.msSaveBlob(csvData, fileName);
+                        } else {
+                            csvURL = window.URL.createObjectURL(csvData);
+                        }
+
+                        const tempLink = document.createElement("a");
+                        tempLink.href = csvURL ?? "";
+                        tempLink.setAttribute("download", fileName);
+                        tempLink.click();
+                    }
+
+                    const tooltip = (filler: string) => `Exports ${filler}.`;
+                    if (selectedData.length === 0) {
+                        return (
+                            <Menu>
+                                <Tooltip label={tooltip("all content, tags or exhibitions")}>
+                                    <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                                        Export
+                                    </MenuButton>
+                                </Tooltip>
+                                <MenuList maxH="400px" overflowY="auto">
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (allTags?.collection_Tag) {
+                                                doTagsExport(allTags.collection_Tag);
+                                            }
+                                        }}
+                                    >
+                                        Tags
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (allExhibitions?.collection_Exhibition) {
+                                                doExhibitionsExport(allExhibitions.collection_Exhibition);
+                                            }
+                                        }}
+                                    >
+                                        Exhibitions
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            if (allItems?.content_Item) {
+                                                doContentExport(allItems.content_Item);
+                                            }
+                                        }}
+                                    >
+                                        Content
+                                    </MenuItem>
+                                    <MenuGroup title="Content with tag">
+                                        {allTags?.collection_Tag.map((tag) => (
+                                            <MenuItem
+                                                key={tag.id}
+                                                onClick={() => {
+                                                    if (allItems?.content_Item) {
+                                                        doContentExport(
+                                                            allItems?.content_Item.filter((item) =>
+                                                                item.itemTags.some(
+                                                                    (itemTag) => itemTag.tagId === tag.id
+                                                                )
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {tag.name}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuGroup>
+                                    <MenuGroup title="Content in exhibtion">
+                                        {allExhibitions?.collection_Exhibition.map((exh) => (
+                                            <MenuItem
+                                                key={exh.id}
+                                                onClick={() => {
+                                                    if (allItems?.content_Item) {
+                                                        doContentExport(
+                                                            allItems?.content_Item.filter((item) =>
+                                                                exh.items.some((exhItm) => exhItm.itemId === item.id)
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {exh.name}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuGroup>
+                                </MenuList>
+                            </Menu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip label={tooltip("selected content")}>
+                                <Box>
+                                    <Button
+                                        colorScheme="purple"
+                                        isDisabled={selectedData.length === 0}
+                                        onClick={() => doContentExport(selectedData)}
+                                    >
+                                        Export
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
             {
@@ -794,9 +1090,9 @@ export default function ManageContentV2(): JSX.Element {
                                         }
                                     }}
                                 >
-                                    All items
+                                    All content
                                 </MenuItem>
-                                <MenuGroup title="Items with tag">
+                                <MenuGroup title="Content with tag">
                                     {allTags?.collection_Tag
                                         ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
                                               <MenuItem
@@ -860,9 +1156,9 @@ export default function ManageContentV2(): JSX.Element {
                                         }
                                     }}
                                 >
-                                    All items
+                                    All content
                                 </MenuItem>
-                                <MenuGroup title="Items with tag">
+                                <MenuGroup title="Content with tag">
                                     {allTags?.collection_Tag
                                         ? R.sortBy((x) => x.name, allTags.collection_Tag).map((tag) => (
                                               <MenuItem
@@ -913,9 +1209,11 @@ export default function ManageContentV2(): JSX.Element {
         ],
         [
             conference.slug,
+            selectItemsForExport,
             allTags?.collection_Tag,
-            sendSubmissionRequests_OnOpen,
+            allExhibitions?.collection_Exhibition,
             allItems?.content_Item,
+            sendSubmissionRequests_OnOpen,
             submissionsReview_OnOpen,
         ]
     );
@@ -926,6 +1224,29 @@ export default function ManageContentV2(): JSX.Element {
         forceReloadRef.current();
         editPGs_OnClose();
     }, [editPGs_OnClose, refetchAllItems]);
+
+    const alert = useMemo<
+        | {
+              title: string;
+              description: string;
+              status: "info" | "warning" | "error";
+          }
+        | undefined
+    >(
+        () =>
+            insertItemResponse.error || updateItemResponse.error || deleteItemsResponse.error
+                ? {
+                      status: "error",
+                      title: "Error saving changes",
+                      description:
+                          insertItemResponse.error?.message ??
+                          updateItemResponse.error?.message ??
+                          deleteItemsResponse.error?.message ??
+                          "Unknown error",
+                  }
+                : undefined,
+        [deleteItemsResponse.error, insertItemResponse.error, updateItemResponse.error]
+    );
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -984,19 +1305,7 @@ export default function ManageContentV2(): JSX.Element {
                         : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
-                alert={
-                    insertItemResponse.error || updateItemResponse.error || deleteItemsResponse.error
-                        ? {
-                              status: "error",
-                              title: "Error saving changes",
-                              description:
-                                  insertItemResponse.error?.message ??
-                                  updateItemResponse.error?.message ??
-                                  deleteItemsResponse.error?.message ??
-                                  "Unknown error",
-                          }
-                        : undefined
-                }
+                alert={alert}
                 edit={edit}
                 insert={insert}
                 update={update}

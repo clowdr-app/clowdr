@@ -157,6 +157,10 @@ function ItemProgramPersonRoleToEventProgramPersonRole(role: string): Schedule_E
             return Schedule_EventProgramPersonRole_Enum.Chair;
         case "session chair":
             return Schedule_EventProgramPersonRole_Enum.Chair;
+        case "session organizer":
+            return Schedule_EventProgramPersonRole_Enum.Chair;
+        case "organizer":
+            return Schedule_EventProgramPersonRole_Enum.Chair;
         default:
             return Schedule_EventProgramPersonRole_Enum.Presenter;
     }

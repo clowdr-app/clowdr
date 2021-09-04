@@ -1,11 +1,5 @@
 import { assertType, is } from "typescript-is";
 
-export enum ContentRole {
-    Author = "AUTHOR",
-    Presenter = "PRESENTER",
-    Chair = "CHAIR",
-}
-
 export enum Content_ElementType_Enum {
     /** Abstract Markdown text. */
     Abstract = "ABSTRACT",

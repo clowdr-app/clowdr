@@ -1,6 +1,6 @@
 import jsonata from "jsonata";
 import { assertType, TypeGuardError } from "typescript-is";
-import type { ContentRole, ElementDataBlob } from "../content";
+import type { ElementDataBlob } from "../content";
 
 declare enum RoomMode_Enum {
     /** Users may participate in the general video chat. */
@@ -146,7 +146,7 @@ export interface IntermediaryItemPersonDescriptor {
     id?: string;
     personId?: string;
     name_affiliation?: string;
-    role?: ContentRole;
+    role?: string;
     priority?: number;
 }
 

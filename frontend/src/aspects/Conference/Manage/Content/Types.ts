@@ -1,12 +1,6 @@
-import { ContentRole, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import type { Content_ElementType_Enum, Content_ItemType_Enum } from "../../../../generated/graphql";
-
-export const ContentRoleNames: ReadonlyArray<ContentRole> = [
-    ContentRole.Author,
-    ContentRole.Chair,
-    ContentRole.Presenter,
-];
 
 export type ExhibitionDescriptor = {
     isNew?: boolean;

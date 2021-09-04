@@ -87,6 +87,8 @@ declare enum ItemType_Enum {
     Poster = "POSTER",
     /** A presentation. */
     Presentation = "PRESENTATION",
+    /** Content representing a whole session. */
+    Session = "SESSION",
     /** A Q&A covering the whole session. */
     SessionQAndA = "SESSION_Q_AND_A",
     /** A scheduled social. */

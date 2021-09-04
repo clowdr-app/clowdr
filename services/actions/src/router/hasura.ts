@@ -18,7 +18,7 @@ const jwksClient = jwksRsa({
 // the default 100kb limit. 5mb should be enough but for a very large conference
 // it may still fail. This manifests as an `"Invalid response from authorization hook"`
 // error response from Hasura to the browser.
-router.post("/auth", json({ limit: "5mb" }), async (req: Request, res: Response) => {
+router.post("/auth", json({ limit: "20mb" }), async (req: Request, res: Response) => {
     // console.log("Auth request started");
 
     try {

@@ -86,7 +86,7 @@ app.use("/hasura", hasuraRouter);
 app.use("/conference", conferenceRouter);
 
 app.get("/", function (_req, res) {
-    res.send("Clowdr");
+    res.send("Midspace");
 });
 
 app.use(checkEventSecret);

@@ -14,8 +14,7 @@ export const EMAIL_TEMPLATE_SUBTITLES_GENERATED: EmailTemplate_Defaults = {
 <p>Thank you,<br/>
 The Midspace team
 </p>`,
-    subjectTemplate:
-        "{{{conference.shortName}}} (Midspace): Subtitles generated for your {{{file.name}}} ({{{item.title}}})",
+    subjectTemplate: "{{{conference.shortName}}}: Subtitles generated for your {{{file.name}}} ({{{item.title}}})",
 };
 
 /**
@@ -67,7 +66,7 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
 <p>We hope you enjoy your conference,<br/>
 The Midspace team
 </p>`,
-    subjectTemplate: "{{{conference.shortName}}} (Midspace): Submit your {{{file.name}}} for {{{item.title}}}",
+    subjectTemplate: "{{{conference.shortName}}}: Submit your {{{file.name}}} for {{{item.title}}}",
 };
 
 /**

@@ -283,7 +283,7 @@ The Midspace team
                 recipientName: uploader.name,
                 emailAddress: uploader.email,
                 reason: "item_submitted",
-                subject: `Midspace: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
                 htmlContents,
             };
         });

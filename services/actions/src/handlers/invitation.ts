@@ -199,7 +199,7 @@ The Midspace team</p>`;
                         emailAddress: registrant.invitation.invitedEmailAddress,
                         invitationId: registrant.invitation.id,
                         reason: "invite",
-                        subject: `Midspace: ${sendType === "REPEAT" ? "[Reminder] " : ""}Join Midspace to attend ${
+                        subject: `${sendType === "REPEAT" ? "[Reminder] " : ""}Join to attend ${
                             registrant.conference.shortName
                         }`,
                         htmlContents,

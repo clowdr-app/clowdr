@@ -195,6 +195,7 @@ your account and access the conference.</p>
 The Midspace team</p>`;
 
                     emailsToSend.set(registrant.id, {
+                        recipientName: registrant.displayName,
                         emailAddress: registrant.invitation.invitedEmailAddress,
                         invitationId: registrant.invitation.id,
                         reason: "invite",

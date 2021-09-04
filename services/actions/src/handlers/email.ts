@@ -160,6 +160,7 @@ gql`
             _inc: { retriesCount: 1 }
         ) {
             returning {
+                recipientName
                 emailAddress
                 htmlContents
                 plainTextContents
@@ -182,7 +183,10 @@ gql`
         apiKey: system_Configuration_by_pk(key: SENDGRID_API_KEY) {
             value
         }
-        sender: system_Configuration_by_pk(key: SENDGRID_SENDER) {
+        senderEmail: system_Configuration_by_pk(key: SENDGRID_SENDER) {
+            value
+        }
+        senderName: system_Configuration_by_pk(key: SENDGRID_SENDER_NAME) {
             value
         }
         replyTo: system_Configuration_by_pk(key: SENDGRID_REPLYTO) {
@@ -195,14 +199,14 @@ let sgMailInitialised:
     | false
     | {
           apiKey: string;
-          sender: string;
+          sender: string | { name: string; email: string };
           replyTo: string;
       } = false;
 async function initSGMail(): Promise<
     | false
     | {
           apiKey: string;
-          sender: string;
+          sender: string | { name: string; email: string };
           replyTo: string;
       }
 > {
@@ -212,13 +216,15 @@ async function initSGMail(): Promise<
                 query: GetSendGridConfigDocument,
             });
             assert(response.data.apiKey, "SendGrid API not configured");
-            assert(response.data.sender, "SendGrid Sender not configured");
+            assert(response.data.senderEmail, "SendGrid Sender not configured");
             assert(response.data.replyTo, "SendGrid Reply-To not configured");
 
             sgMail.setApiKey(response.data.apiKey.value);
             sgMailInitialised = {
                 apiKey: response.data.apiKey.value,
-                sender: response.data.sender.value,
+                sender: response.data.senderName
+                    ? { email: response.data.senderEmail.value, name: response.data.senderName.value }
+                    : response.data.senderEmail.value,
                 replyTo: response.data.replyTo.value,
             };
         } catch (e) {
@@ -232,7 +238,7 @@ async function initSGMail(): Promise<
 export async function processEmailsJobQueue(): Promise<void> {
     const sgConfig = await initSGMail();
     if (sgConfig) {
-        const senderAddress = sgConfig.sender;
+        const sender = sgConfig.sender;
         const replyToAddress = sgConfig.replyTo;
 
         const unsentEmailIds = await apolloClient.query({
@@ -252,8 +258,10 @@ export async function processEmailsJobQueue(): Promise<void> {
                 try {
                     if (email.retriesCount < 3) {
                         const msg: sgMail.MailDataRequired = {
-                            to: email.emailAddress,
-                            from: senderAddress,
+                            to: email.recipientName
+                                ? { name: email.recipientName, email: email.emailAddress }
+                                : email.emailAddress,
+                            from: sender,
                             subject: email.subject,
                             text: email.plainTextContents,
                             html: email.htmlContents,

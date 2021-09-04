@@ -43,6 +43,7 @@ export async function handleFlagInserted(data: Payload<FlagData>): Promise<void>
             await insertEmails(
                 [
                     {
+                        recipientName: "Conference Organiser",
                         emailAddress: conference.supportAddress[0].value,
                         reason: "chat_moderation_report",
                         subject: "[HIGH PRIORITY] Chat message reported in " + conference.shortName,
@@ -60,6 +61,7 @@ to view and resolve the report.</p>
             await insertEmails(
                 [
                     {
+                        recipientName: "System Administrator",
                         emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
                         reason: "chat_moderation_report",
                         subject: "[HIGH PRIORITY] Chat message reported in " + conference.shortName,

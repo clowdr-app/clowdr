@@ -280,6 +280,7 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
+                recipientName: uploader.name,
                 emailAddress: uploader.email,
                 reason: "item_submitted",
                 subject: `Midspace: Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
@@ -640,6 +641,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         const newEmail: Email_Insert_Input = {
+            recipientName: job.uploader.name,
             emailAddress: job.uploader.email,
             htmlContents,
             reason: "upload-request",

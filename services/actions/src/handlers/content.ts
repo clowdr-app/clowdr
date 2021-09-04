@@ -246,6 +246,7 @@ async function trySendTranscriptionEmail(elementId: string) {
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
+                recipientName: uploader.name,
                 emailAddress: uploader.email,
                 reason: "item_transcription_succeeded",
                 subject,
@@ -305,6 +306,7 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
+            recipientName: uploader.name,
             emailAddress: uploader.email,
             reason: "item_transcription_failed",
             subject: `Midspace: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
@@ -318,6 +320,7 @@ The Midspace team
 <p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
 <p>Good luck fixing me!</p>`;
         emails.push({
+            recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: "item_transcription_failed",
             subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
@@ -371,6 +374,7 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
+            recipientName: uploader.name,
             emailAddress: uploader.email,
             reason: "item_transcode_failed",
             subject: `Midspace: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
@@ -384,6 +388,7 @@ The Midspace team
 <p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
 <p>Good luck fixing me!</p>`;
         emails.push({
+            recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
             reason: "item_transcode_failed",
             subject: `URGENT: SYSTEM ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,

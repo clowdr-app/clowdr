@@ -8,6 +8,7 @@ export async function sendFailureEmail(failureReason: string, stackTrace?: strin
 ${stackTrace ? `<p>Stack trace: ${stackTrace}</p>` : ""}`;
         const emails = [
             {
+                recipientName: "System Administrator",
                 emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
                 reason: "item_transcode_failed",
                 subject: `URGENT: SYSTEM ERROR: Failure due to ${failureReason}`,

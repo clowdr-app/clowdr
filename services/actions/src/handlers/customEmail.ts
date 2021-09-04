@@ -14,6 +14,7 @@ import { insertEmails } from "./email";
 gql`
     query CustomEmail_SelectRegistrants($conferenceId: uuid!, $registrantIds: [uuid!]!) {
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, id: { _in: $registrantIds } }) {
+            displayName
             invitation {
                 invitedEmailAddress
                 id
@@ -58,6 +59,7 @@ async function sendCustomEmails(
         }
 
         emailsToSend.push({
+            recipientName: registrant.displayName,
             emailAddress: email,
             htmlContents: htmlBody,
             reason: "custom-email",

@@ -68,6 +68,7 @@ export type Email = {
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents: Scalars['String'];
   readonly reason: Scalars['String'];
+  readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount: Scalars['Int'];
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
   readonly subject: Scalars['String'];
@@ -153,6 +154,7 @@ export type Email_Bool_Exp = {
   readonly invitationId?: Maybe<Uuid_Comparison_Exp>;
   readonly plainTextContents?: Maybe<String_Comparison_Exp>;
   readonly reason?: Maybe<String_Comparison_Exp>;
+  readonly recipientName?: Maybe<String_Comparison_Exp>;
   readonly retriesCount?: Maybe<Int_Comparison_Exp>;
   readonly sentAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly subject?: Maybe<String_Comparison_Exp>;
@@ -182,6 +184,7 @@ export type Email_Insert_Input = {
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
+  readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -200,6 +203,7 @@ export type Email_Max_Fields = {
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
+  readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -216,6 +220,7 @@ export type Email_Max_Order_By = {
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
   readonly reason?: Maybe<Order_By>;
+  readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
@@ -233,6 +238,7 @@ export type Email_Min_Fields = {
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
+  readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -249,6 +255,7 @@ export type Email_Min_Order_By = {
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
   readonly reason?: Maybe<Order_By>;
+  readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
@@ -282,6 +289,7 @@ export type Email_Order_By = {
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
   readonly reason?: Maybe<Order_By>;
+  readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
@@ -312,6 +320,8 @@ export enum Email_Select_Column {
   /** column name */
   Reason = 'reason',
   /** column name */
+  RecipientName = 'recipientName',
+  /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
   SentAt = 'sentAt',
@@ -332,6 +342,7 @@ export type Email_Set_Input = {
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
+  readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -399,6 +410,8 @@ export enum Email_Update_Column {
   PlainTextContents = 'plainTextContents',
   /** column name */
   Reason = 'reason',
+  /** column name */
+  RecipientName = 'recipientName',
   /** column name */
   RetriesCount = 'retriesCount',
   /** column name */
@@ -11095,6 +11108,8 @@ export enum Content_ItemType_Enum {
   Poster = 'POSTER',
   /** A presentation. */
   Presentation = 'PRESENTATION',
+  /** Content representing a whole session. */
+  Session = 'SESSION',
   /** A Q&A covering the whole session. */
   SessionQAndA = 'SESSION_Q_AND_A',
   /** A scheduled social. */
@@ -32162,6 +32177,8 @@ export enum System_ConfigurationKey_Enum {
   SendgridReplyto = 'SENDGRID_REPLYTO',
   /** Default SendGrid Sender email address. */
   SendgridSender = 'SENDGRID_SENDER',
+  /** The name emails are from when sent via SendGrid. */
+  SendgridSenderName = 'SENDGRID_SENDER_NAME',
   /** Contact address for people to request emails never be sent to them again. */
   StopEmailsContactEmailAddress = 'STOP_EMAILS_CONTACT_EMAIL_ADDRESS',
   /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */

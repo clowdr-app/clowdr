@@ -10,6 +10,7 @@ import {
     useColorModeValue,
     useToken,
 } from "@chakra-ui/react";
+import { ElementBaseType, ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import {
@@ -76,7 +77,29 @@ function ItemTile({
             Content_ElementType_Enum.Text,
         ];
 
-        return [...item.elements].sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
+        return [...item.elements]
+            .filter((x) => {
+                const dataBlob = x.data as ElementDataBlob;
+                if (dataBlob.length) {
+                    const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
+                    switch (latestVersion.baseType) {
+                        case ElementBaseType.Component:
+                            return true;
+                        case ElementBaseType.File:
+                            return !!latestVersion.s3Url?.length;
+                        case ElementBaseType.Link:
+                            return !!latestVersion.text?.length && !!latestVersion.url?.length;
+                        case ElementBaseType.Text:
+                            return !!latestVersion.text?.length;
+                        case ElementBaseType.URL:
+                            return !!latestVersion.url?.length;
+                        case ElementBaseType.Video:
+                            return !!latestVersion.s3Url?.length;
+                    }
+                }
+                return false;
+            })
+            .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
     }, [item.elements]);
 
     const now = useRealTime(30000);
@@ -126,7 +149,15 @@ function ItemTile({
                 ) : undefined}
             </HStack>
             {primaryItem && <Element element={primaryItem} />}
-            <HStack my={4} spacing={4} rowGap={4} flexWrap="wrap" justifyContent="center" alignItems="center" w="100%">
+            <HStack
+                my={4}
+                spacing={4}
+                gridRowGap={4}
+                flexWrap="wrap"
+                justifyContent="center"
+                alignItems="center"
+                w="100%"
+            >
                 {discussionRoomUrl ? (
                     <LinkButton colorScheme="blue" to={discussionRoomUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />

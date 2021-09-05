@@ -93,7 +93,12 @@ export function Markdown(elProps?: {
     linkColour?: string;
     restrictHeadingSize?: boolean;
 }): JSX.Element {
-    const source = useMemo(() => autoLinkify(elProps?.children ?? ""), [elProps?.children]);
+    const source = useMemo(() => {
+        const linkified = autoLinkify(elProps?.children ?? "");
+        const cleanLines = linkified.replace(/\r/g, "").replace(/\n\n+/g, "\n");
+        const relined = cleanLines.replace(/\n/g, "\n\n");
+        return relined;
+    }, [elProps?.children]);
     return (
         <ReactMarkdown
             className={elProps?.className}

@@ -70,7 +70,7 @@ export default function ElementsGridLayout({
                         minW={0}
                         overflowX="auto"
                         key={element.id}
-                        colSpan={layoutBlob?.wide ? [2] : [2, 2, 1]}
+                        colSpan={!layoutBlob || layoutBlob.wide ? [2] : [2, 2, 1]}
                         p={4}
                         display="flex"
                         justifyContent={

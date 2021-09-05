@@ -13,7 +13,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getRegistrant } from "../lib/authorisation";
-import { createItemBreakoutRoom } from "../lib/room";
+import { createItemVideoChatRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
 import { Payload, RoomData } from "../types/hasura/event";
@@ -219,7 +219,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                 object: {
                     capacity: $capacity
                     conferenceId: $conferenceId
-                    currentModeName: BREAKOUT
+                    currentModeName: VIDEO_CHAT
                     name: $name
                     managementModeName: DM
                     roomPeople: { data: $data }
@@ -276,7 +276,7 @@ export async function handleCreateForItem(
     }
 
     try {
-        const roomId = await createItemBreakoutRoom(params.itemId, params.conferenceId);
+        const roomId = await createItemVideoChatRoom(params.itemId, params.conferenceId);
         return {
             roomId,
         };

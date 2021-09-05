@@ -322,12 +322,16 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
             {
                 id: "ProgramPerson",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function NameHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Person</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Person{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Person{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -376,12 +380,16 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
             },
             {
                 id: "role",
-                header: function RoleHeader(props: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function RoleHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventProgramPersonInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Role</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Role{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Role{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -390,13 +398,18 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                     record.roleName = value;
                 },
                 sort: (x: Room_Mode_Enum, y: Room_Mode_Enum) => x.localeCompare(y),
-                cell: function EventNameCell(props: CellProps<Partial<EventProgramPersonInfoFragment>>) {
+                cell: function EventNameCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<EventProgramPersonInfoFragment>>) {
                     return (
                         <Select
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value as Room_Mode_Enum)}
-                            onBlur={props.onBlur}
-                            ref={props.ref as LegacyRef<HTMLSelectElement>}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value as Room_Mode_Enum)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
                         >
                             {roleOptions.map((option) => {
                                 return (

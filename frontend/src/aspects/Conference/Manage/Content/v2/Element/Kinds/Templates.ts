@@ -1,4 +1,5 @@
 import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { AudioElementTemplate } from "./AudioElement";
 import { ComponentElementTemplate } from "./ComponentElement";
 import { FileElementTemplate } from "./FileElement";
 import { LinkElementTemplate } from "./LinkElement";
@@ -14,4 +15,5 @@ export const ElementBaseTemplates: { [K in ElementBaseType]: ElementBaseTemplate
     [ElementBaseType.Text]: TextElementTemplate,
     [ElementBaseType.URL]: URLElementTemplate,
     [ElementBaseType.Video]: VideoElementTemplate,
+    [ElementBaseType.Audio]: AudioElementTemplate,
 };

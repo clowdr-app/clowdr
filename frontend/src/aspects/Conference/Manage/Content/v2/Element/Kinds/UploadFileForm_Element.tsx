@@ -1,4 +1,14 @@
-import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    FormErrorMessage,
+    FormHelperText,
+    FormLabel,
+    Input,
+    ListItem,
+    UnorderedList,
+    useToast,
+} from "@chakra-ui/react";
 import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy, { UppyFile } from "@uppy/core";
@@ -8,7 +18,7 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import { Form, Formik } from "formik";
+import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import FAIcon from "../../../../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
@@ -23,7 +33,7 @@ export default function UploadFileForm_Element({
     item: ElementDescriptor;
     allowedFileTypes: string[];
     onElementChange?: (newItem: ElementDescriptor) => void;
-    contentBaseType: ElementBaseType.File | ElementBaseType.Video;
+    contentBaseType: ElementBaseType.File | ElementBaseType.Video | ElementBaseType.Audio;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
@@ -104,12 +114,15 @@ export default function UploadFileForm_Element({
         };
     }, [toast, uppy]);
 
+    const latestVersion = useMemo(() => (item.data?.length ? item.data[item.data.length - 1] : undefined), [item.data]);
+
     return (
         <Formik
             initialValues={{
                 agree: false,
+                altText: latestVersion?.data.baseType === ElementBaseType.File ? latestVersion.data.altText : "",
             }}
-            onSubmit={async (_values) => {
+            onSubmit={async (values) => {
                 if (!uppy) {
                     throw new Error("No Uppy instance");
                 }
@@ -165,6 +178,24 @@ export default function UploadFileForm_Element({
                                     },
                                 ],
                             });
+                        }
+                        if (contentBaseType === ElementBaseType.Audio) {
+                            onElementChange({
+                                ...item,
+                                data: [
+                                    ...item.data,
+                                    {
+                                        createdAt: Date.now(),
+                                        createdBy: "user",
+                                        data: {
+                                            baseType: ElementBaseType.Audio,
+                                            s3Url: `s3://${bucket}/${key}`,
+                                            type: item.typeName as any,
+                                            subtitles: {},
+                                        },
+                                    },
+                                ],
+                            });
                         } else if (contentBaseType === ElementBaseType.File) {
                             onElementChange({
                                 ...item,
@@ -177,6 +208,7 @@ export default function UploadFileForm_Element({
                                             baseType: ElementBaseType.File,
                                             s3Url: `s3://${bucket}/${key}`,
                                             type: item.typeName as any,
+                                            altText: values.altText?.length ? values.altText : undefined,
                                         },
                                     },
                                 ],
@@ -214,6 +246,31 @@ export default function UploadFileForm_Element({
                             ))}
                         </UnorderedList>
                         <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                        {contentBaseType === ElementBaseType.File ? (
+                            <Field
+                                name="altText"
+                                validate={(inValue: string | null | undefined) => {
+                                    let error;
+                                    if (!inValue?.length) {
+                                        error = "Please provide alternative text.";
+                                    }
+                                    return error;
+                                }}
+                            >
+                                {({ form, field }: FieldProps<string>) => (
+                                    <FormControl
+                                        mb={2}
+                                        isInvalid={!!form.errors.altText && !!form.touched.altText}
+                                        isRequired
+                                        mt={5}
+                                    >
+                                        <FormLabel>Alternative text (for accessibility)</FormLabel>
+                                        <Input type="text" {...field} />
+                                        <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
+                                    </FormControl>
+                                )}
+                            </Field>
+                        ) : undefined}
                         <Button
                             colorScheme="purple"
                             isLoading={isSubmitting}

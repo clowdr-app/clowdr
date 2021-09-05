@@ -53,7 +53,7 @@ export function EventModeIcon({
 }): JSX.Element {
     const iconEl = (() => {
         switch (mode) {
-            case Room_Mode_Enum.Breakout:
+            case Room_Mode_Enum.VideoChat:
                 return <FAIcon iconStyle="s" icon="users" fontSize={fontSize} mb={1} />;
             case Room_Mode_Enum.Exhibition:
                 return <FAIcon iconStyle="s" icon="puzzle-piece" fontSize={fontSize} mb={1} />;
@@ -97,7 +97,7 @@ function EventModeNameString(mode: Room_Mode_Enum, durationSeconds?: number): st
 
     let result = "";
     switch (mode) {
-        case Room_Mode_Enum.Breakout:
+        case Room_Mode_Enum.VideoChat:
             result = "Video-chat";
             break;
         case Room_Mode_Enum.Exhibition:

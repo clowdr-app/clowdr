@@ -21,7 +21,7 @@ import {
     isLive,
 } from "../lib/event";
 import { sendFailureEmail } from "../lib/logging/failureEmails";
-import { createItemBreakoutRoom } from "../lib/room";
+import { createItemVideoChatRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
 import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
@@ -307,7 +307,7 @@ export async function handleEventStartNotification(
                     if (to.id) {
                         if (!itemsCreatedRoomsFor.includes(to.id)) {
                             try {
-                                await createItemBreakoutRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
+                                await createItemVideoChatRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
                                 itemsCreatedRoomsFor.push(to.id);
                             } catch (e) {
                                 console.error(
@@ -320,7 +320,7 @@ export async function handleEventStartNotification(
                     } else if (result.data.schedule_Event_by_pk.item?.id) {
                         if (!itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)) {
                             try {
-                                await createItemBreakoutRoom(
+                                await createItemVideoChatRoom(
                                     result.data.schedule_Event_by_pk.item.id,
                                     result.data.schedule_Event_by_pk.conferenceId
                                 );
@@ -348,7 +348,7 @@ export async function handleEventStartNotification(
             !itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)
         ) {
             try {
-                await createItemBreakoutRoom(
+                await createItemVideoChatRoom(
                     result.data.schedule_Event_by_pk.item.id,
                     result.data.schedule_Event_by_pk.conferenceId
                 );

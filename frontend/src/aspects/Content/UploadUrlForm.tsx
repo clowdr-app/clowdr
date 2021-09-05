@@ -16,7 +16,7 @@ export default function UploadUrlForm({
     uploadAgreementText?: string;
     uploadAgreementUrl?: string;
     handleFormSubmitted?: () => Promise<void>;
-    existingUrl: { url: string } | null;
+    existingUrl: { url: string; title?: string } | null;
 }): JSX.Element {
     const toast = useToast();
     const [submitUploadableElement] = useSubmitUploadableElementMutation();
@@ -25,6 +25,7 @@ export default function UploadUrlForm({
             <Formik
                 initialValues={{
                     url: existingUrl?.url ?? null,
+                    title: existingUrl?.title ?? null,
                     agree: null,
                 }}
                 onSubmit={async (values) => {
@@ -33,6 +34,7 @@ export default function UploadUrlForm({
                             variables: {
                                 elementData: {
                                     url: values.url,
+                                    title: values.title,
                                 },
                                 magicToken,
                             },
@@ -84,9 +86,30 @@ export default function UploadUrlForm({
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl isInvalid={!!form.errors.url && !!form.touched.url} isRequired mt={5}>
                                         <FormLabel htmlFor="url">URL</FormLabel>
-                                        <Input {...field} id="url"></Input>
+                                        <Input {...field} id="url" />
                                         <FormHelperText>URL.</FormHelperText>
                                         <FormErrorMessage>{form.errors.url}</FormErrorMessage>
+                                    </FormControl>
+                                )}
+                            </Field>
+                            <Field
+                                name="title"
+                                validate={(inValue: string | null | undefined) => {
+                                    if (!inValue?.length) {
+                                        return "Missing title for accessibility";
+                                    }
+                                }}
+                            >
+                                {({ form, field }: FieldProps<string>) => (
+                                    <FormControl
+                                        isInvalid={!!form.errors.title && !!form.touched.title}
+                                        isRequired
+                                        mt={5}
+                                    >
+                                        <FormLabel htmlFor="title">URL Title (for accessibility)</FormLabel>
+                                        <Input {...field} id="title" />
+                                        <FormHelperText>Title.</FormHelperText>
+                                        <FormErrorMessage>{form.errors.title}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>

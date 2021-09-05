@@ -84,7 +84,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
         return (
             <>
                 {latestVersion?.data.baseType === ElementBaseType.Video ? (
-                    <VideoElement elementId={data.id} videoElementData={latestVersion.data} />
+                    <VideoElement elementId={data.id} elementData={latestVersion.data} />
                 ) : undefined}
                 <Heading as="h3" fontSize="lg" pt={8} mb={4}>
                     Upload new video

@@ -127,12 +127,16 @@ function ManageTagsModalBody(): JSX.Element {
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<ManageContent_TagFragment>) {
-                    return props.isInCreate ? (
+                header: function NameHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageContent_TagFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -150,26 +154,35 @@ function ManageTagsModalBody(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function NameCell(props: CellProps<Partial<ManageContent_TagFragment>>) {
+                cell: function NameCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageContent_TagFragment>>) {
                     return (
                         <Input
                             type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
             },
             {
                 id: "priority",
-                header: function PriorityHeader(props: ColumnHeaderProps<ManageContent_TagFragment>) {
-                    return props.isInCreate ? (
+                header: function PriorityHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageContent_TagFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Priority</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Priority{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Priority{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -188,16 +201,21 @@ function ManageTagsModalBody(): JSX.Element {
                     );
                 },
                 filterEl: NumberRangeColumnFilter(-1000, 1000),
-                cell: function EventNameCell(props: CellProps<Partial<ManageContent_TagFragment>>) {
+                cell: function EventNameCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageContent_TagFragment>>) {
                     return (
                         <NumberInput
-                            value={props.value ?? 3000}
+                            value={value ?? 3000}
                             min={0}
                             max={3000}
-                            onChange={(vStr, v) => props.onChange?.(vStr === "" ? 10 : v)}
-                            onBlur={props.onBlur}
+                            onChange={(vStr, v) => onChange?.(vStr === "" ? 10 : v)}
+                            onBlur={onBlur}
                         >
-                            <NumberInputField ref={props.ref as LegacyRef<HTMLInputElement>} />
+                            <NumberInputField ref={ref as LegacyRef<HTMLInputElement>} />
                             <NumberInputStepper>
                                 <NumberIncrementStepper aria-label="Increment" />
                                 <NumberDecrementStepper aria-label="Decrement" />
@@ -208,8 +226,8 @@ function ManageTagsModalBody(): JSX.Element {
             },
             {
                 id: "colour",
-                header: function ColourHeader(props: ColumnHeaderProps<ManageContent_TagFragment>) {
-                    return props.isInCreate ? (
+                header: function ColourHeader({ isInCreate }: ColumnHeaderProps<ManageContent_TagFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Colour</FormLabel>
                     ) : (
                         <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
@@ -221,30 +239,29 @@ function ManageTagsModalBody(): JSX.Element {
                 set: (record, value: string | null | undefined) => {
                     record.colour = value && value !== "" ? value : "rgba(0,0,0,0)";
                 },
-                cell: function ShortTitleCell(props: CellProps<Partial<ManageContent_TagFragment>>) {
-                    const colourObj = Color(props.value);
+                cell: function ShortTitleCell({ value, onChange }: CellProps<Partial<ManageContent_TagFragment>>) {
+                    const colourObj = Color(value);
                     return (
                         <Popover placement="bottom-start" returnFocusOnClose={false} isLazy>
                             <PopoverTrigger>
                                 <Button
                                     w="100%"
                                     color={
-                                        colourObj.isDark() &&
-                                        !(colorMode === "light" && props.value === "rgba(0,0,0,0)")
+                                        colourObj.isDark() && !(colorMode === "light" && value === "rgba(0,0,0,0)")
                                             ? "white"
                                             : "black"
                                     }
-                                    bgColor={props.value}
+                                    bgColor={value}
                                 >
-                                    {props.value}
+                                    {value}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                                 <Box color="black">
                                     <SketchPicker
                                         width="100%"
-                                        color={props.value}
-                                        onChange={(c) => props.onChange?.(`rgba(${c.rgb.r},${c.rgb.g},${c.rgb.b},1)`)}
+                                        color={value}
+                                        onChange={(c) => onChange?.(`rgba(${c.rgb.r},${c.rgb.g},${c.rgb.b},1)`)}
                                     />
                                 </Box>
                             </PopoverContent>

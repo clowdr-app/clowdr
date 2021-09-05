@@ -10,12 +10,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
+import { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
 import {
     DevicesProps,
     devicesToFriendlyName,
     PermissionInstructions,
-} from "../Conference/Attend/Room/Breakout/PermissionInstructions";
-import { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
+} from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
 import { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
 import { SharedRoomContext } from "./useSharedRoomContext";
 

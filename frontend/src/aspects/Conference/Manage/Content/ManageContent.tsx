@@ -387,12 +387,16 @@ export default function ManageContentV2(): JSX.Element {
             {
                 id: "title",
                 defaultSortDirection: SortDirection.Asc,
-                header: function TitleHeader(props: ColumnHeaderProps<ManageContent_ItemFragment>) {
-                    return props.isInCreate ? (
+                header: function TitleHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageContent_ItemFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Title</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Title{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Title{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -410,28 +414,37 @@ export default function ManageContentV2(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function TitleCell(props: CellProps<Partial<ManageContent_ItemFragment>>) {
+                cell: function TitleCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageContent_ItemFragment>>) {
                     return (
                         <Input
                             type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
+                            ref={ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
             },
             {
                 id: "shortTitle",
-                header: function ShortTitleHeader(props: ColumnHeaderProps<ManageContent_ItemFragment>) {
-                    return props.isInCreate ? (
+                header: function ShortTitleHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageContent_ItemFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Short Title</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Short Title{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Short Title{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -451,28 +464,37 @@ export default function ManageContentV2(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function ShortTitleCell(props: CellProps<Partial<ManageContent_ItemFragment>>) {
+                cell: function ShortTitleCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageContent_ItemFragment>>) {
                     return (
                         <Input
                             type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
+                            ref={ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
             },
             {
                 id: "typeName",
-                header: function ShortTitleHeader(props: ColumnHeaderProps<ManageContent_ItemFragment>) {
-                    return props.isInCreate ? (
+                header: function ShortTitleHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageContent_ItemFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Label</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Label{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Label{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -490,13 +512,18 @@ export default function ManageContentV2(): JSX.Element {
                     return vals.length === 0 ? rows : rows.filter((row) => vals.includes(row.typeName));
                 },
                 filterEl: MultiSelectColumnFilter(typeOptions),
-                cell: function TypeCell(props: CellProps<Partial<ManageContent_ItemFragment>, Content_ItemType_Enum>) {
+                cell: function TypeCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageContent_ItemFragment>, Content_ItemType_Enum>) {
                     return (
                         <Select
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value as Content_ItemType_Enum)}
-                            onBlur={props.onBlur}
-                            ref={props.ref as LegacyRef<HTMLSelectElement>}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value as Content_ItemType_Enum)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
                             maxW={400}
                         >
                             {typeOptions.map((opt) => {
@@ -512,8 +539,8 @@ export default function ManageContentV2(): JSX.Element {
             },
             {
                 id: "itemTags",
-                header: function ItemTagsHeader(props: ColumnHeaderProps<ManageContent_ItemFragment>) {
-                    return props.isInCreate ? (
+                header: function ItemTagsHeader({ isInCreate }: ColumnHeaderProps<ManageContent_ItemFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Tags</FormLabel>
                     ) : (
                         <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
@@ -547,20 +574,22 @@ export default function ManageContentV2(): JSX.Element {
                           });
                 },
                 filterEl: MultiSelectColumnFilter(tagOptions),
-                cell: function ContentCell(
-                    props: CellProps<
-                        Partial<ManageContent_ItemFragment>,
-                        ReadonlyArray<{ label: string; value: string }> | undefined
-                    >
-                ) {
+                cell: function ContentCell({
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<
+                    Partial<ManageContent_ItemFragment>,
+                    ReadonlyArray<{ label: string; value: string }> | undefined
+                >) {
                     return (
                         <MultiSelect
                             name="tags"
                             options={tagOptions}
-                            value={props.value ?? []}
+                            value={value ?? []}
                             placeholder="Select one or more tags"
-                            onChange={(ev) => props.onChange?.(ev)}
-                            onBlur={props.onBlur}
+                            onChange={(ev) => onChange?.(ev)}
+                            onBlur={onBlur}
                             styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
                         />
                     );

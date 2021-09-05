@@ -4,7 +4,7 @@ import { Mutex } from "async-mutex";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { DevicesProps, devicesToFriendlyName } from "../Breakout/PermissionInstructions";
+import { DevicesProps, devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";

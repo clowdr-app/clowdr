@@ -26,7 +26,7 @@ export default function RoomNameBox({
     // if (typeof room !== "string") {
     //     switch (room.currentModeName) {
     //         case Room_Mode_Enum.Zoom:
-    //         case Room_Mode_Enum.Breakout:
+    //         case Room_Mode_Enum.VideoChat:
     //             roomIcon = <FAIcon iconStyle="s" icon="users" />;
     //             break;
     //         case Room_Mode_Enum.Prerecorded:

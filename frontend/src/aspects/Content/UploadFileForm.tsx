@@ -1,11 +1,21 @@
-import { Button, FormControl, FormHelperText, ListItem, UnorderedList, useToast } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    FormErrorMessage,
+    FormHelperText,
+    FormLabel,
+    Input,
+    ListItem,
+    UnorderedList,
+    useToast,
+} from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy, { UppyFile } from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
-import { Form, Formik } from "formik";
+import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitUploadableElementMutation } from "../../generated/graphql";
 import FAIcon from "../Icons/FAIcon";
@@ -19,12 +29,14 @@ export default function UploadFileForm({
     uploadAgreementText,
     uploadAgreementUrl,
     handleFormSubmitted,
+    existingAltText,
 }: {
     elementId: string;
     magicToken: string;
     allowedFileTypes: string[];
     uploadAgreementText?: string;
     uploadAgreementUrl?: string;
+    existingAltText?: string;
     handleFormSubmitted?: () => Promise<void>;
 }): JSX.Element {
     const toast = useToast();
@@ -85,8 +97,9 @@ export default function UploadFileForm({
             <Formik
                 initialValues={{
                     agree: false,
+                    altText: existingAltText,
                 }}
-                onSubmit={async (_values) => {
+                onSubmit={async (values) => {
                     if (!uppy) {
                         throw new Error("No Uppy instance");
                     }
@@ -118,6 +131,7 @@ export default function UploadFileForm({
                             variables: {
                                 elementData: {
                                     s3Url: result.successful[0].uploadURL,
+                                    altText: values.altText,
                                 },
                                 magicToken,
                             },
@@ -169,6 +183,26 @@ export default function UploadFileForm({
                                     </ListItem>
                                 ))}
                             </UnorderedList>
+                            <Field
+                                name="altText"
+                                validate={(inValue: string | null | undefined) => {
+                                    if (!inValue?.length) {
+                                        return "Missing alternative text for accessibility";
+                                    }
+                                }}
+                            >
+                                {({ form, field }: FieldProps<string>) => (
+                                    <FormControl
+                                        isInvalid={!!form.errors.altText && !!form.touched.altText}
+                                        isRequired
+                                        mt={5}
+                                    >
+                                        <FormLabel htmlFor="altText">Alternative text (for accessibility)</FormLabel>
+                                        <Input {...field} id="altText" />
+                                        <FormErrorMessage>{form.errors.altText}</FormErrorMessage>
+                                    </FormControl>
+                                )}
+                            </Field>
                             <UploadAgreementField
                                 uploadAgreementText={uploadAgreementText}
                                 uploadAgreementUrl={uploadAgreementUrl}

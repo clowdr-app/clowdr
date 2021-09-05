@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { LanguageCode } from "@aws-sdk/client-transcribe";
-import { AWSJobStatus, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
+import { AudioElementBlob, AWSJobStatus, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import path from "path";
@@ -98,7 +98,10 @@ export async function completeTranscriptionJob(awsTranscribeJobName: string): Pr
 
     // Save the new version of the content item
     const newVersion = R.clone(latestVersion);
-    assert(is<VideoElementBlob>(newVersion.data), `Content item ${job.elementId} is not a video`);
+    assert(
+        is<VideoElementBlob>(newVersion.data) || is<AudioElementBlob>(newVersion.data),
+        `Content item ${job.elementId} is not a video or audio file.`
+    );
 
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
@@ -143,7 +146,10 @@ export async function failTranscriptionJob(awsTranscribeJobName: string): Promis
 
     // Save the new version of the content item
     const newVersion = R.clone(latestVersion);
-    assert(is<VideoElementBlob>(newVersion.data), `Content item ${job.elementId} is not a video`);
+    assert(
+        is<VideoElementBlob>(newVersion.data) || is<AudioElementBlob>(newVersion.data),
+        `Content item ${job.elementId} is not a video or audio file.`
+    );
 
     newVersion.data.subtitles = {};
     newVersion.data.subtitles[job.languageCode] = {
@@ -189,7 +195,7 @@ export async function startTranscribe(transcodeS3Url: string, elementId: string)
 
     await Transcribe.startTranscriptionJob({
         Media: {
-            MediaFileUri: transcodeS3Url, //todo
+            MediaFileUri: transcodeS3Url,
         },
         TranscriptionJobName: transcriptionJobName,
         LanguageCode: LanguageCode.EN_US,

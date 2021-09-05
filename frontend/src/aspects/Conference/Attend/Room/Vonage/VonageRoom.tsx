@@ -14,9 +14,9 @@ import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalPro
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
-import type { DevicesProps } from "../Breakout/PermissionInstructions";
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
+import type { DevicesProps } from "../VideoChat/PermissionInstructions";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";

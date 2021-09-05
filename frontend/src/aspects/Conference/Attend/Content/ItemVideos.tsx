@@ -22,7 +22,8 @@ export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragme
                 (element) =>
                     element.typeName === Content_ElementType_Enum.VideoBroadcast ||
                     element.typeName === Content_ElementType_Enum.VideoPrepublish ||
-                    element.typeName === Content_ElementType_Enum.VideoFile
+                    element.typeName === Content_ElementType_Enum.VideoFile ||
+                    element.typeName === Content_ElementType_Enum.AudioFile
             )
             .sort((x, y) => x.typeName.localeCompare(y.typeName))
             .map((element) => {
@@ -56,7 +57,7 @@ export function ItemVideos({ itemData }: { itemData: ItemElements_ItemDataFragme
                                 <VideoElement
                                     elementId={element.id}
                                     title={element.name}
-                                    videoElementData={latestVersion.data}
+                                    elementData={latestVersion.data}
                                     onPlay={() => setSelectedVideoId(element.id)}
                                     onPause={() => setSelectedVideoId(null)}
                                 />

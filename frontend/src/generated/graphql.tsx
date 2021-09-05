@@ -9468,6 +9468,12 @@ export enum Content_ElementType_Enum {
   Abstract = 'ABSTRACT',
   /** Show a summary of the currently active social and discussion rooms */
   ActiveSocialRooms = 'ACTIVE_SOCIAL_ROOMS',
+  /** File for an audio clip (stored by Clowdr). */
+  AudioFile = 'AUDIO_FILE',
+  /** Link to an audio clip (audio is not embedded in Clowdr UI). */
+  AudioLink = 'AUDIO_LINK',
+  /** URL for an audio clip (audio is embedded in Clowdr UI). */
+  AudioUrl = 'AUDIO_URL',
   /** List of content groups in the system. */
   ContentGroupList = 'CONTENT_GROUP_LIST',
   /** A horizontal divider */
@@ -24809,8 +24815,6 @@ export enum Room_Mode_Constraint {
 }
 
 export enum Room_Mode_Enum {
-  /** Users may participate in the general video chat. */
-  Breakout = 'BREAKOUT',
   /** An exhibition hall. */
   Exhibition = 'EXHIBITION',
   /** An empty room. */
@@ -24823,6 +24827,8 @@ export enum Room_Mode_Enum {
   QAndA = 'Q_AND_A',
   /** A shuffle queue. */
   Shuffle = 'SHUFFLE',
+  /** Users may participate in the general video chat. */
+  VideoChat = 'VIDEO_CHAT',
   /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
   VideoPlayer = 'VIDEO_PLAYER',
   /** Event is taking place in a Zoom room. */
@@ -40359,7 +40365,7 @@ export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonage
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(
-    object: {capacity: 50, conferenceId: $conferenceId, currentModeName: BREAKOUT, name: $name, managementModeName: $managementModeName}
+    object: {capacity: 50, conferenceId: $conferenceId, currentModeName: VIDEO_CHAT, name: $name, managementModeName: $managementModeName}
   ) {
     ...RoomListRoomDetails
   }

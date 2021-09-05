@@ -209,12 +209,12 @@ function EditElementsPermissionGrantsModalInner({
             {
                 id: "permissionSet",
                 defaultSortDirection: SortDirection.Asc,
-                header: function PermissionSetHeader(props: ColumnHeaderProps<RowType>) {
-                    return props.isInCreate ? (
+                header: function PermissionSetHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RowType>) {
+                    return isInCreate ? (
                         <FormLabel>Permission Set</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Permission Set{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Permission Set{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -223,31 +223,37 @@ function EditElementsPermissionGrantsModalInner({
                     record.permissionSetId = value as any as DeepWriteable<string | undefined>;
                 },
                 sort: (x: string, y: string) => x.localeCompare(y),
-                cell: function PermissionSetCell(props: CellProps<Partial<RowType>>) {
-                    return props.isInCreate ? (
+                cell: function PermissionSetCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RowType>>) {
+                    return isInCreate ? (
                         <Select
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            ref={props.ref as LegacyRef<HTMLSelectElement>}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
                         >
                             <option value="">Select a permission set</option>
                             {permissionSetOptions}
                         </Select>
                     ) : (
-                        <Text>{props.value ? permissionSets.get(props.value)?.name ?? "<Unknown>" : "<Unset>"}</Text>
+                        <Text>{value ? permissionSets.get(value)?.name ?? "<Unknown>" : "<Unset>"}</Text>
                     );
                 },
             },
             {
                 id: "group",
                 defaultSortDirection: SortDirection.Asc,
-                header: function GroupHeader(props: ColumnHeaderProps<RowType>) {
-                    return props.isInCreate ? (
+                header: function GroupHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RowType>) {
+                    return isInCreate ? (
                         <FormLabel>Group</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Group{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Group{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -256,30 +262,30 @@ function EditElementsPermissionGrantsModalInner({
                     record.groupId = (value === "" ? null : (value as any)) as DeepWriteable<string | null | undefined>;
                 },
                 sort: (x: string | null, y: string | null) => maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function GroupCell(props: CellProps<Partial<RowType>>) {
-                    return props.isInCreate ? (
+                cell: function GroupCell({ isInCreate, value, onChange, onBlur, ref }: CellProps<Partial<RowType>>) {
+                    return isInCreate ? (
                         <Select
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
-                            ref={props.ref as LegacyRef<HTMLSelectElement>}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
+                            ref={ref as LegacyRef<HTMLSelectElement>}
                         >
                             <option value="">Any group</option>
                             {groupOptions}
                         </Select>
                     ) : (
-                        <Text>{props.value ? groups.get(props.value)?.name ?? "<Unknown>" : "<Any>"}</Text>
+                        <Text>{value ? groups.get(value)?.name ?? "<Unknown>" : "<Any>"}</Text>
                     );
                 },
             },
             {
                 id: "elements",
-                header: function ElementsHeader(props: ColumnHeaderProps<RowType>) {
-                    return props.isInCreate ? (
+                header: function ElementsHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RowType>) {
+                    return isInCreate ? (
                         <FormLabel>Elements</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Elements{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Elements{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -301,8 +307,8 @@ function EditElementsPermissionGrantsModalInner({
                     }
                     return "All of selected";
                 },
-                cell: function GroupCell(props: CellProps<Partial<RowType>>) {
-                    return <Text>{props.value}</Text>;
+                cell: function GroupCell({ value }: CellProps<Partial<RowType>>) {
+                    return <Text>{value}</Text>;
                 },
             },
         ],

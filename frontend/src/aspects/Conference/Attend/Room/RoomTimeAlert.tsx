@@ -5,14 +5,14 @@ import { formatRemainingTime } from "./formatRemainingTime";
 
 export default function RoomTimeAlert({
     shuffleEndsAt,
-    showDefaultBreakoutRoom,
+    showDefaultVideoChatRoom,
     breakoutRoomClosesAt,
     zoomStartsAt,
     eventIsOngoing,
     broadcastStartsAt,
 }: {
     shuffleEndsAt: number;
-    showDefaultBreakoutRoom: boolean;
+    showDefaultVideoChatRoom: boolean;
     breakoutRoomClosesAt: number;
     zoomStartsAt: number;
     broadcastStartsAt: number;
@@ -20,7 +20,7 @@ export default function RoomTimeAlert({
 }): JSX.Element {
     const now = useRealTime(1000);
     const secondsUntilShuffleEnds = Math.round(shuffleEndsAt - now) / 1000;
-    const secondsUntilBreakoutRoomCloses = Math.round((breakoutRoomClosesAt - now) / 1000);
+    const secondsUntilVideoChatRoomCloses = Math.round((breakoutRoomClosesAt - now) / 1000);
     const secondsUntilZoomEvent = Math.round((zoomStartsAt - now) / 1000);
     const secondsUntilBroadcastEvent = Math.round((broadcastStartsAt - now) / 1000);
 
@@ -42,14 +42,14 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {showDefaultBreakoutRoom && secondsUntilBreakoutRoomCloses <= 180 ? (
+            {showDefaultVideoChatRoom && secondsUntilVideoChatRoomCloses <= 180 ? (
                 <Alert status="warning" pos="sticky" top={0} zIndex={1000} alignItems="flex-start">
                     <AlertIcon />
                     <AlertDescription as={VStack} w="100%">
                         <Text>
                             Video-chat closes in{" "}
                             <chakra.span fontWeight="bold">
-                                {formatRemainingTime(secondsUntilBreakoutRoomCloses, false)}
+                                {formatRemainingTime(secondsUntilVideoChatRoomCloses, false)}
                             </chakra.span>
                         </Text>
                     </AlertDescription>

@@ -64,7 +64,9 @@ export const FileElementTemplate: ElementBaseTemplate = {
         }
 
         let fileSrc = undefined;
+        let altText = undefined;
         if (latestVersion && latestVersion.data.baseType === ElementBaseType.File && latestVersion.data.s3Url !== "") {
+            altText = latestVersion.data.altText;
             try {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
                 fileSrc = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
@@ -84,7 +86,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
                                         Current file
                                     </Heading>
                                     <Center>
-                                        <Image src={fileSrc} maxH={200} alt="No caption provided." />
+                                        <Image src={fileSrc} maxH={200} alt={altText ?? "No caption provided."} />
                                     </Center>
                                 </>
                             ) : (
@@ -95,7 +97,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
                         </Box>
                     </>
                 ) : undefined}
-                <Heading as="h3" fontSize="lg" mb={4}>
+                <Heading as="h3" fontSize="lg" my={4} textAlign="left" alignSelf="flex-start">
                     Upload new file
                 </Heading>
                 <UploadFileForm_Element

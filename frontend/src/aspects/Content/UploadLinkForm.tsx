@@ -80,7 +80,7 @@ export default function UploadLinkForm({
                                         mt={5}
                                     >
                                         <FormLabel htmlFor="text">Text</FormLabel>
-                                        <Input {...field} id="text"></Input>
+                                        <Input {...field} id="text" />
                                         <FormHelperText>Display text for the link.</FormHelperText>
                                         <FormErrorMessage>{form.errors.text}</FormErrorMessage>
                                     </FormControl>
@@ -103,7 +103,7 @@ export default function UploadLinkForm({
                                 {({ form, field }: FieldProps<string>) => (
                                     <FormControl isInvalid={!!form.errors.url && !!form.touched.url} isRequired mt={5}>
                                         <FormLabel htmlFor="url">URL</FormLabel>
-                                        <Input {...field} id="url"></Input>
+                                        <Input {...field} id="url" />
                                         <FormHelperText>URL of the link.</FormHelperText>
                                         <FormErrorMessage>{form.errors.url}</FormErrorMessage>
                                     </FormControl>

@@ -96,6 +96,7 @@ function ElementInner({
                     </Container>
                 );
             case Content_ElementType_Enum.VideoUrl:
+            case Content_ElementType_Enum.AudioUrl:
                 return (
                     <AspectRatio ratio={16 / 9} w="100%" maxW="800px" maxH="90vh" m={2}>
                         <ReactPlayer
@@ -107,12 +108,33 @@ function ElementInner({
                         />
                     </AspectRatio>
                 );
+            case Content_ElementType_Enum.AudioFile:
+                {
+                    if (
+                        latestVersion.data.s3Url.endsWith(".mp3") ||
+                        latestVersion.data.s3Url.endsWith(".wav") ||
+                        latestVersion.data.s3Url.endsWith(".ogg")
+                    ) {
+                        return <VideoElement elementId={elementId} elementData={latestVersion.data} />;
+                    } else {
+                        return (
+                            <ExternalLinkButton to={latestVersion.data.s3Url} isExternal={true} colorScheme="blue">
+                                {name}
+                            </ExternalLinkButton>
+                        );
+                    }
+                }
+                break;
             case Content_ElementType_Enum.ImageUrl:
                 return (
                     <Image
                         src={latestVersion.data.url}
                         style={{ maxWidth: "100%" }}
-                        alt="External image - no caption provided"
+                        alt={
+                            latestVersion.data.title?.length
+                                ? latestVersion.data.title
+                                : "Off-site image - no caption provided"
+                        }
                     />
                 );
             case Content_ElementType_Enum.ImageFile:
@@ -126,7 +148,9 @@ function ElementInner({
                             src={`https://${bucket}.s3-${
                                 import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
                             }.amazonaws.com/${key}`}
-                            alt="No caption provided"
+                            alt={
+                                latestVersion.data.altText?.length ? latestVersion.data.altText : "No caption provided"
+                            }
                         />
                     );
                 } catch (e) {
@@ -149,7 +173,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoPrepublish:
             case Content_ElementType_Enum.VideoSponsorsFiller:
             case Content_ElementType_Enum.VideoTitles:
-                return <VideoElement elementId={elementId} videoElementData={latestVersion.data} />;
+                return <VideoElement elementId={elementId} elementData={latestVersion.data} />;
 
             case Content_ElementType_Enum.PaperUrl:
                 return (
@@ -203,7 +227,16 @@ function ElementInner({
                         key.endsWith(".jpeg") ||
                         key.endsWith(".webp")
                     ) {
-                        return <Image src={url} alt="No caption provided" />;
+                        return (
+                            <Image
+                                src={url}
+                                alt={
+                                    latestVersion.data.altText?.length
+                                        ? latestVersion.data.altText
+                                        : "No caption provided"
+                                }
+                            />
+                        );
                     } else {
                         return (
                             <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
@@ -217,6 +250,13 @@ function ElementInner({
             }
 
             case Content_ElementType_Enum.VideoLink:
+                return (
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
+                        {latestVersion.data.text}
+                    </ExternalLinkButton>
+                );
+
+            case Content_ElementType_Enum.AudioLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
                         {latestVersion.data.text}

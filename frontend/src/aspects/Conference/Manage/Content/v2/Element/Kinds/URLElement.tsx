@@ -66,6 +66,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
     renderEditor: function URLElementEditor({ data, update }: RenderEditorProps) {
         const toast = useToast();
         const [url, setUrl] = useState<string | null>(null);
+        const [title, setTitle] = useState<string | null>(null);
 
         const notice =
             data.typeName === Content_ElementType_Enum.Zoom ? (
@@ -104,6 +105,7 @@ export const URLElementTemplate: ElementBaseTemplate = {
                 : data.typeName === Content_ElementType_Enum.Zoom
                 ? "https://zoom.us/j/12345678901?pwd=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                 : "https://www.example.org/a-poster.pdf";
+        const textPlaceholder = "";
 
         const latestVersion = data.data[data.data.length - 1] as UrlElementVersionData;
         if (latestVersion && latestVersion.data.baseType !== ElementBaseType.URL) {
@@ -163,6 +165,62 @@ export const URLElementTemplate: ElementBaseTemplate = {
                                 toast({
                                     status: "error",
                                     title: "Error saving URL",
+                                    description: e.message,
+                                });
+                            }
+                        }}
+                    />
+                </FormControl>
+                <FormControl mt={2}>
+                    <FormLabel>URL title (for accessibility)</FormLabel>
+                    <Input
+                        type="text"
+                        placeholder={textPlaceholder}
+                        value={title ?? latestVersion?.data.title ?? ""}
+                        onChange={(ev) => {
+                            setTitle(ev.target.value);
+                        }}
+                        onBlur={(ev) => {
+                            try {
+                                if (ev.target.value === latestVersion?.data.title) {
+                                    return;
+                                }
+                                const oldElementIdx = data.data.indexOf(latestVersion);
+                                const newData = {
+                                    ...data,
+                                    data:
+                                        oldElementIdx === -1
+                                            ? [
+                                                  ...data.data,
+                                                  {
+                                                      createdAt: Date.now(),
+                                                      createdBy: "user",
+                                                      data: {
+                                                          baseType: ElementBaseType.URL,
+                                                          type: data.typeName,
+                                                          title: ev.target.value,
+                                                      },
+                                                  } as UrlElementVersionData,
+                                              ]
+                                            : data.data.map((version, idx) => {
+                                                  return idx === oldElementIdx
+                                                      ? {
+                                                            ...version,
+                                                            data: {
+                                                                ...version.data,
+                                                                title: ev.target.value,
+                                                            },
+                                                        }
+                                                      : version;
+                                              }),
+                                };
+                                update(newData);
+                                setUrl(null);
+                            } catch (e) {
+                                console.error("Error saving URL title", e);
+                                toast({
+                                    status: "error",
+                                    title: "Error saving URL title",
                                     description: e.message,
                                 });
                             }

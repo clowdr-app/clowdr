@@ -4,6 +4,7 @@ import {
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import {
+    AudioElementBlob,
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
@@ -139,8 +140,10 @@ async function createBlob(
                 baseType: ElementBaseType.File,
                 type: typeName,
                 s3Url: result.url,
+                altText: inputData.altText,
             };
         }
+        case Content_ElementType_Enum.AudioUrl:
         case Content_ElementType_Enum.ImageUrl:
         case Content_ElementType_Enum.PaperUrl:
         case Content_ElementType_Enum.PosterUrl:
@@ -153,7 +156,9 @@ async function createBlob(
                 baseType: ElementBaseType.URL,
                 type: typeName,
                 url: inputData.url,
+                title: inputData.title,
             };
+        case Content_ElementType_Enum.AudioLink:
         case Content_ElementType_Enum.Link:
         case Content_ElementType_Enum.LinkButton:
         case Content_ElementType_Enum.PaperLink:
@@ -183,6 +188,21 @@ async function createBlob(
             }
             return {
                 baseType: ElementBaseType.Video,
+                type: typeName,
+                s3Url: result.url,
+                subtitles: {},
+            };
+        }
+        case Content_ElementType_Enum.AudioFile: {
+            if (!inputData.s3Url) {
+                return { error: "No S3 URL supplied" };
+            }
+            const result = await checkS3Url(inputData.s3Url);
+            if (result.result === "error") {
+                return { error: result.message };
+            }
+            return {
+                baseType: ElementBaseType.Audio,
                 type: typeName,
                 s3Url: result.url,
                 subtitles: {},
@@ -423,7 +443,10 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
     const newVersion = R.clone(latestVersion);
     newVersion.createdAt = new Date().getTime();
     newVersion.createdBy = "user";
-    assert(is<VideoElementBlob>(newVersion.data), "Content item is not a video");
+    assert(
+        is<VideoElementBlob>(newVersion.data) || is<AudioElementBlob>(newVersion.data),
+        "Content item is not a video or audio file."
+    );
 
     const bucket = process.env.AWS_CONTENT_BUCKET_ID;
     const key = `${uuidv4()}.srt`;
@@ -556,6 +579,12 @@ function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
             return "Explore program button";
         case Content_ElementType_Enum.ExploreScheduleButton:
             return "Explore schedule button";
+        case Content_ElementType_Enum.AudioFile:
+            return "Audio file";
+        case Content_ElementType_Enum.AudioLink:
+            return "Audio link";
+        case Content_ElementType_Enum.AudioUrl:
+            return "Audio URL";
     }
 }
 

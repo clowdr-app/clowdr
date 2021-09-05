@@ -135,7 +135,7 @@ export function VideoPlayer({ elementId }: { elementId: string }): JSX.Element {
                                 {finished ? popoverEl : undefined}
                                 <VideoElement
                                     elementId={elementId}
-                                    videoElementData={videoElementBlob}
+                                    elementData={videoElementBlob}
                                     onFinish={() => setFinished(true)}
                                     onPlay={() => setFinished(false)}
                                 />

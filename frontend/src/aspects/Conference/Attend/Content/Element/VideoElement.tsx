@@ -1,5 +1,5 @@
 import { Heading, Text } from "@chakra-ui/react";
-import type { VideoElementBlob } from "@clowdr-app/shared-types/build/content";
+import type { AudioElementBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
 import AmazonS3URI from "amazon-s3-uri";
 import type Hls from "hls.js";
@@ -8,28 +8,29 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAsync } from "react-async-hook";
 import ReactPlayer, { Config } from "react-player";
 import type { TrackProps } from "react-player/file";
+import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import useTrackView from "../../../../Realtime/Analytics/useTrackView";
 
 export function VideoElement({
     elementId,
-    videoElementData,
+    elementData,
     title,
     onPlay,
     onPause,
     onFinish,
 }: {
     elementId: string;
-    videoElementData: VideoElementBlob;
+    elementData: VideoElementBlob | AudioElementBlob;
     title?: string;
     onPlay?: () => void;
     onPause?: () => void;
     onFinish?: () => void;
 }): JSX.Element {
     const videoURL = useMemo(() => {
-        let s3Url = videoElementData.transcode?.s3Url;
+        let s3Url = "transcode" in elementData ? elementData.transcode?.s3Url : undefined;
 
-        if (!s3Url && videoElementData.s3Url) {
-            s3Url = videoElementData.s3Url;
+        if (!s3Url && elementData.s3Url) {
+            s3Url = elementData.s3Url;
         }
 
         if (!s3Url) {
@@ -38,18 +39,18 @@ export function VideoElement({
         const { bucket, key } = new AmazonS3URI(s3Url);
 
         return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
-    }, [videoElementData.s3Url, videoElementData.transcode?.s3Url]);
+    }, [elementData]);
 
     const {
         result: subtitlesUrl,
         loading,
         error,
     } = useAsync(async () => {
-        if (!videoElementData.subtitles["en_US"] || !videoElementData.subtitles["en_US"].s3Url?.length) {
+        if (!elementData.subtitles["en_US"] || !elementData.subtitles["en_US"].s3Url?.length) {
             return undefined;
         } else {
             try {
-                const { bucket, key } = new AmazonS3URI(videoElementData.subtitles["en_US"].s3Url);
+                const { bucket, key } = new AmazonS3URI(elementData.subtitles["en_US"].s3Url);
                 const s3Url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
 
                 const response = await fetch(s3Url);
@@ -65,7 +66,7 @@ export function VideoElement({
                 console.error("Failure while parsing subtitle location", e);
             }
         }
-    }, [videoElementData.subtitles["en_US"]]);
+    }, [elementData.subtitles["en_US"]]);
 
     const config = useMemo<Config | null>(() => {
         if (loading) {
@@ -152,7 +153,11 @@ export function VideoElement({
                     {title}
                 </Heading>
             ) : undefined}
-            {!videoURL && !loading ? <Text mb={2}>Video not yet uploaded.</Text> : undefined}
+            {!videoURL && !loading ? (
+                <Text mb={2}>
+                    {elementData.type === Content_ElementType_Enum.AudioFile ? "Audio" : "Video"} not yet uploaded.
+                </Text>
+            ) : undefined}
             {player}
         </>
     );

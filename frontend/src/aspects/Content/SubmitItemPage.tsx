@@ -139,12 +139,14 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
+                        existingAltText={existingData?.altText}
                     />
                 );
             case Content_ElementType_Enum.Link:
             case Content_ElementType_Enum.LinkButton:
             case Content_ElementType_Enum.PaperLink:
             case Content_ElementType_Enum.VideoLink:
+            case Content_ElementType_Enum.AudioLink:
                 return (
                     <UploadLinkForm
                         magicToken={magicToken}
@@ -158,6 +160,7 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
             case Content_ElementType_Enum.PaperUrl:
             case Content_ElementType_Enum.PosterUrl:
             case Content_ElementType_Enum.VideoUrl:
+            case Content_ElementType_Enum.AudioUrl:
             case Content_ElementType_Enum.Zoom:
                 return (
                     <UploadUrlForm
@@ -183,6 +186,19 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
+                        existingAltText={existingData?.altText}
+                    />
+                );
+            case Content_ElementType_Enum.AudioFile:
+                return (
+                    <UploadFileForm
+                        magicToken={magicToken}
+                        elementId={uploadableElement.id}
+                        allowedFileTypes={[".mp3", ".wav", ".ogg", ".flac"]}
+                        uploadAgreementText={uploadAgreementText}
+                        uploadAgreementUrl={uploadAgreementUrl}
+                        handleFormSubmitted={formSubmitted}
+                        existingAltText={existingData?.altText}
                     />
                 );
             default:
@@ -271,6 +287,30 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                                                         regarding the maximum duration of your video.
                                                     </ListItem>
                                                     <ListItem>Maximum 1080p video quality</ListItem>
+                                                </UnorderedList>
+                                            </Box>
+                                        ) : undefined}
+                                        {uploadableElement.typeName === Content_ElementType_Enum.AudioFile ? (
+                                            <Box>
+                                                <UnorderedList>
+                                                    {uploadableElement.uploadsRemaining ? (
+                                                        <ListItem>
+                                                            {uploadableElement.uploadsRemaining} upload attempt
+                                                            {uploadableElement.uploadsRemaining > 1 ? "s" : ""}{" "}
+                                                            remaining.
+                                                        </ListItem>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                    <ListItem>
+                                                        Your conference organisers should have sent instructions
+                                                        regarding the maximum duration of your audio file.
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        Accepted file types are MP3, OGG/VORBIS, WAV and FLAC. For
+                                                        others to be able to listen in-browser (i.e. without downloading
+                                                        the file) please use MP3 format.
+                                                    </ListItem>
                                                 </UnorderedList>
                                             </Box>
                                         ) : undefined}

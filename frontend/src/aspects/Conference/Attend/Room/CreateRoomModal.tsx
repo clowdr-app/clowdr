@@ -36,7 +36,7 @@ gql`
             object: {
                 capacity: 50
                 conferenceId: $conferenceId
-                currentModeName: BREAKOUT
+                currentModeName: VIDEO_CHAT
                 name: $name
                 managementModeName: $managementModeName
             }

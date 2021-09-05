@@ -8,7 +8,7 @@ import {
 import React, { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
-import { PermissionsExplanationModal } from "../Breakout/PermissionsExplanationModal";
+import { PermissionsExplanationModal } from "../VideoChat/PermissionsExplanationModal";
 import { ChimeRoomControlBar } from "./ChimeRoomControlBar";
 import { ContentShare } from "./ContentShare";
 import { DeviceSetup } from "./DeviceSetup/DeviceSetup";

@@ -23,18 +23,24 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
         switch (latestVersion.data.baseType) {
             case ElementBaseType.File:
                 return (
-                    <ExternalLinkButton
-                        to={s3UrlToHttpUrl(latestVersion.data.s3Url)}
-                        isExternal={true}
-                        size="lg"
-                        height="auto"
-                        aria-label="Download previously uploaded file"
-                    >
-                        <VStack m={4}>
-                            <FAIcon iconStyle="s" icon="download" />
-                            <Text>Previously uploaded file</Text>
-                        </VStack>
-                    </ExternalLinkButton>
+                    <>
+                        <ExternalLinkButton
+                            to={s3UrlToHttpUrl(latestVersion.data.s3Url)}
+                            isExternal={true}
+                            size="lg"
+                            height="auto"
+                            aria-label="Download previously uploaded file"
+                        >
+                            <VStack m={4}>
+                                <FAIcon iconStyle="s" icon="download" />
+                                <Text>Previously uploaded file</Text>
+                            </VStack>
+                        </ExternalLinkButton>
+                        <Text>
+                            Alternative text:{" "}
+                            {latestVersion.data.altText?.length ? latestVersion.data.altText : "None provided"}
+                        </Text>
+                    </>
                 );
             case ElementBaseType.Link:
                 return (
@@ -46,9 +52,14 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                 return <Markdown>{latestVersion.data.text}</Markdown>;
             case ElementBaseType.URL:
                 return (
-                    <Text>
-                        URL: <a href={latestVersion.data.url}>{latestVersion.data.url}</a>
-                    </Text>
+                    <>
+                        <Text>
+                            URL: <a href={latestVersion.data.url}>{latestVersion.data.url}</a>
+                        </Text>
+                        <Text>
+                            Title: {latestVersion.data.title?.length ? latestVersion.data.title : "None provided"}
+                        </Text>
+                    </>
                 );
             case ElementBaseType.Video: {
                 if (latestVersion.data?.transcode?.status === "FAILED") {
@@ -63,6 +74,15 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                     <ReactPlayer
                         style={{ maxWidth: "100%" }}
                         url={s3UrlToHttpUrl(latestVersion.data.transcode.s3Url)}
+                        controls={true}
+                    />
+                );
+            }
+            case ElementBaseType.Audio: {
+                return (
+                    <ReactPlayer
+                        style={{ maxWidth: "100%" }}
+                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
                         controls={true}
                     />
                 );

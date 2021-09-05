@@ -33,7 +33,6 @@ import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useUXChoice, UXChoice } from "../../../UXChoice/UXChoice";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
-import { BreakoutRoom } from "./Breakout/BreakoutRoom";
 import JoinZoomButton from "./JoinZoomButton";
 import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
@@ -46,6 +45,7 @@ import { HlsPlayer } from "./Video/HlsPlayer";
 import { HlsPlayerV1 } from "./Video/HlsPlayerV1";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
 import { VideoPlayer } from "./Video/VideoPlayer";
+import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -264,13 +264,13 @@ function RoomInner({
     }, [nextRoomEvent]);
 
     const currentEventModeIsNone = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.None;
-    const showDefaultBreakoutRoom = useMemo(
+    const showDefaultVideoChatRoom = useMemo(
         () =>
             !roomDetails.isProgramRoom ||
-            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout ||
+            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
             (!currentRoomEvent &&
                 nextRoomEvent &&
-                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.Breakout &&
+                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
                 Date.parse(nextRoomEvent.startTime) <= now30s + 20 * 60 * 1000) ||
             (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
         [currentRoomEvent, nextRoomEvent, now30s, roomDetails.isProgramRoom, roomDetails.originatingItem?.typeName]
@@ -579,7 +579,7 @@ function RoomInner({
     //       have an upcoming broadcast or Zoom event. Thus it's possible
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
-    const nonBreakoutEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt);
+    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt);
     const currentRoomEventEndTime = useMemo(
         () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
         [currentRoomEvent]
@@ -587,13 +587,13 @@ function RoomInner({
     const breakoutEventEndsAt = useMemo(
         () =>
             currentRoomEventEndTime &&
-            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.Breakout &&
-            nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.Breakout
+            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
+            nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.VideoChat
                 ? currentRoomEventEndTime
                 : Number.POSITIVE_INFINITY,
         [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, nextRoomEvent?.intendedRoomModeName]
     );
-    const breakoutRoomClosesAt = Math.min(breakoutEventEndsAt, nonBreakoutEventStartsAt);
+    const breakoutRoomClosesAt = Math.min(breakoutEventEndsAt, nonVideoChatEventStartsAt);
 
     const startsSoonEl = useMemo(
         () => (
@@ -601,7 +601,7 @@ function RoomInner({
                 breakoutRoomClosesAt={breakoutRoomClosesAt}
                 broadcastStartsAt={broadcastEventStartsAt}
                 eventIsOngoing={!!currentRoomEvent}
-                showDefaultBreakoutRoom={showDefaultBreakoutRoom}
+                showDefaultVideoChatRoom={showDefaultVideoChatRoom}
                 shuffleEndsAt={shuffleRoomEndsAt}
                 zoomStartsAt={zoomEventStartsAt}
             />
@@ -610,7 +610,7 @@ function RoomInner({
             breakoutRoomClosesAt,
             broadcastEventStartsAt,
             currentRoomEvent,
-            showDefaultBreakoutRoom,
+            showDefaultVideoChatRoom,
             shuffleRoomEndsAt,
             zoomEventStartsAt,
         ]
@@ -619,7 +619,7 @@ function RoomInner({
     const playerEl = useMemo(() => {
         const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
-            !currentEventModeIsNone && !showDefaultBreakoutRoom && withinThreeMinutesOfBroadcastEvent;
+            !currentEventModeIsNone && !showDefaultVideoChatRoom && withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
@@ -676,7 +676,7 @@ function RoomInner({
     }, [
         currentRoomEvent,
         currentEventModeIsNone,
-        showDefaultBreakoutRoom,
+        showDefaultVideoChatRoom,
         withinThreeMinutesOfBroadcastEvent,
         showBackstage,
         selectedVideoElementId,
@@ -716,10 +716,10 @@ function RoomInner({
                     {!showBackstage ? (
                         <>
                             <Box bgColor={bgColour}>
-                                <BreakoutRoom
+                                <VideoChatRoom
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}
-                                    enable={showDefaultBreakoutRoom}
+                                    enable={showDefaultVideoChatRoom}
                                 />
                             </Box>
                             {contentEl}

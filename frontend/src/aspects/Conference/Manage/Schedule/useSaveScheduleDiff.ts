@@ -533,7 +533,7 @@ export function useSaveScheduleDiff():
                                         originatingDataId: room.originatingDataId,
                                         capacity: room.capacity,
                                         priority: room.priority,
-                                        currentModeName: Room_Mode_Enum.Breakout,
+                                        currentModeName: Room_Mode_Enum.VideoChat,
                                     })
                                 ),
                             },

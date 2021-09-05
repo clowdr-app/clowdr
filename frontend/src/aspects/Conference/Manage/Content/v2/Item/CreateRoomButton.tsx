@@ -25,16 +25,16 @@ export function CreateRoomButton({
 } & ButtonProps): JSX.Element {
     const conference = useConference();
     const toast = useToast();
-    const [createBreakoutMutation] = useItem_CreateRoomMutation();
-    const [creatingBreakout, setCreatingBreakout] = useState<boolean>(false);
-    const createBreakout = useCallback(async () => {
+    const [createVideoChatMutation] = useItem_CreateRoomMutation();
+    const [creatingVideoChat, setCreatingVideoChat] = useState<boolean>(false);
+    const createVideoChat = useCallback(async () => {
         if (!groupId) {
             return;
         }
 
         try {
-            setCreatingBreakout(true);
-            const { data } = await createBreakoutMutation({
+            setCreatingVideoChat(true);
+            const { data } = await createVideoChatMutation({
                 variables: {
                     conferenceId: conference.id,
                     itemId: groupId,
@@ -52,12 +52,12 @@ export function CreateRoomButton({
                 title: "Failed to create room.",
                 description: e?.message,
             });
-            setCreatingBreakout(false);
+            setCreatingVideoChat(false);
         }
-    }, [conference.id, createBreakoutMutation, groupId, refetch, toast]);
+    }, [conference.id, createVideoChatMutation, groupId, refetch, toast]);
 
     return (
-        <Button isLoading={creatingBreakout} onClick={createBreakout} {...props}>
+        <Button isLoading={creatingVideoChat} onClick={createVideoChat} {...props}>
             {buttonText}
         </Button>
     );

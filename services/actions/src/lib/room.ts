@@ -18,7 +18,7 @@ import { callWithRetry } from "../utils";
 import { createChimeMeeting, doesChimeMeetingExist } from "./aws/chime";
 import { deleteRoomChimeMeeting } from "./roomChimeMeeting";
 
-export async function createItemBreakoutRoom(itemId: string, conferenceId: string): Promise<string> {
+export async function createItemVideoChatRoom(itemId: string, conferenceId: string): Promise<string> {
     gql`
         query CreateItemRoom_GetItem($id: uuid!) {
             content_Item_by_pk(id: $id) {
@@ -60,7 +60,7 @@ export async function createItemBreakoutRoom(itemId: string, conferenceId: strin
                     capacity: 50
                     chatId: $chatId
                     conferenceId: $conferenceId
-                    currentModeName: BREAKOUT
+                    currentModeName: VIDEO_CHAT
                     name: $name
                     originatingItemId: $originatingItemId
                     managementModeName: PUBLIC

@@ -292,11 +292,7 @@ function EditableScheduleTable(): JSX.Element {
             Object.keys(Room_Mode_Enum)
                 .map((x) => {
                     const v = (Room_Mode_Enum as any)[x];
-                    if (v === Room_Mode_Enum.Breakout) {
-                        return { value: v, label: "Video-chat" };
-                    } else {
-                        return { value: v, label: formatEnumValue(v) };
-                    }
+                    return { value: v, label: formatEnumValue(v) };
                 })
                 .sort((x, y) => x.label.localeCompare(y.label)),
         []
@@ -351,12 +347,16 @@ function EditableScheduleTable(): JSX.Element {
                 id: ColumnId.StartTime,
                 isDataDependency: true,
                 defaultSortDirection: SortDirection.Asc,
-                header: function StartTimeHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function StartTimeHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Start time</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Start Time{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Start Time{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -367,34 +367,41 @@ function EditableScheduleTable(): JSX.Element {
                 filterFn: dateTimeFilterFn(["startTime"]),
                 filterEl: DateTimeColumnFilter,
                 sort: (x: Date, y: Date) => x.getTime() - y.getTime(),
-                cell: function StartTimeCell(props: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
+                cell: function StartTimeCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                    staleRecord,
+                }: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const start = staleRecord.startTime ? Date.parse(staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                    const isLivestream = staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(staleRecord.intendedRoomModeName)
                         : false;
 
                     return (
                         <HStack>
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                            {!isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the start time of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
                             <DateTimePicker
                                 size="sm"
-                                value={props.value}
+                                value={value}
                                 onChange={(v: Date | undefined) => {
-                                    props.onChange?.(v);
+                                    onChange?.(v);
                                 }}
-                                onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
-                                ref={props.ref as Ref<HTMLInputElement>}
+                                onBlur={onBlur}
+                                isDisabled={!isInCreate && (past || ongoing) && isLivestream}
+                                ref={ref as Ref<HTMLInputElement>}
                             />
                         </HStack>
                     );
@@ -403,12 +410,12 @@ function EditableScheduleTable(): JSX.Element {
             {
                 id: ColumnId.EndTime,
                 isDataDependency: true,
-                header: function EndTimeHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function EndTimeHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>End time</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            End Time{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            End Time{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -423,39 +430,46 @@ function EditableScheduleTable(): JSX.Element {
                 filterFn: dateTimeFilterFn(["endTime"]),
                 filterEl: DateTimeColumnFilter,
                 sort: (x: Date, y: Date) => x.getTime() - y.getTime(),
-                cell: function EndTimeCell(props: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
+                cell: function EndTimeCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                    staleRecord,
+                }: CellProps<Partial<EventInfoFragment>, Date | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const start = staleRecord.startTime ? Date.parse(staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoingNearBoundary(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                    const isLivestream = staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(staleRecord.intendedRoomModeName)
                         : false;
 
                     return (
                         <HStack>
-                            {!props.isInCreate && past && isLivestream ? (
+                            {!isInCreate && past && isLivestream ? (
                                 <Tooltip label="You cannot edit the end time of a past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                            {!isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the end time of an ongoing livestream event within 5 minutes of its start or 4 minutes of its end.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
                             <DateTimePicker
                                 size="sm"
-                                value={props.value}
+                                value={value}
                                 onChange={(v: Date | undefined) => {
-                                    props.onChange?.(v);
+                                    onChange?.(v);
                                 }}
-                                onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (past || ongoing) && isLivestream}
-                                ref={props.ref as Ref<HTMLInputElement>}
+                                onBlur={onBlur}
+                                isDisabled={!isInCreate && (past || ongoing) && isLivestream}
+                                ref={ref as Ref<HTMLInputElement>}
                             />
                         </HStack>
                     );
@@ -464,12 +478,12 @@ function EditableScheduleTable(): JSX.Element {
             {
                 id: ColumnId.Room,
                 isDataDependency: true,
-                header: function EndTimeHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function EndTimeHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Room</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Room{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Room{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -491,24 +505,31 @@ function EditableScheduleTable(): JSX.Element {
                     });
                 },
                 filterEl: TextColumnFilter,
-                cell: function RoomCell(props: CellProps<Partial<EventInfoFragment>, RoomInfoFragment | undefined>) {
+                cell: function RoomCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                    staleRecord,
+                }: CellProps<Partial<EventInfoFragment>, RoomInfoFragment | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const start = staleRecord.startTime ? Date.parse(staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                    const isLivestream = staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(staleRecord.intendedRoomModeName)
                         : false;
 
                     return (
                         <HStack>
-                            {props.value ? (
+                            {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/room/${props.value.id}`}
+                                    to={`/conference/${conference.slug}/room/${value.id}`}
                                     size="xs"
                                     aria-label="Go to room in new tab"
                                 >
@@ -517,28 +538,27 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                            {!isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the room of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
                             <Select
-                                value={props.value?.id ?? ""}
+                                value={value?.id ?? ""}
                                 onChange={(ev) =>
-                                    props.onChange?.(
+                                    onChange?.(
                                         wholeSchedule.data?.room_Room.find((room) => room.id === ev.target.value)
                                     )
                                 }
-                                onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
-                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                onBlur={onBlur}
+                                isDisabled={!isInCreate && (ongoing || past) && isLivestream}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
                                 {roomOptions}
-                                {props.value &&
-                                !roomOptions?.some((option) => option.props.value === props.value?.id) ? (
-                                    <option key={props.value.id} value={props.value.id}>
-                                        {wholeSchedule.data?.room_Room.find((x) => x.id === props.value?.id)?.name}
+                                {value && !roomOptions?.some((option) => option.props.value === value?.id) ? (
+                                    <option key={value.id} value={value.id}>
+                                        {wholeSchedule.data?.room_Room.find((x) => x.id === value?.id)?.name}
                                     </option>
                                 ) : undefined}
                             </Select>
@@ -548,12 +568,12 @@ function EditableScheduleTable(): JSX.Element {
             },
             {
                 id: ColumnId.RoomMode,
-                header: function EndTimeHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function EndTimeHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Mode</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Mode{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Mode{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -564,10 +584,16 @@ function EditableScheduleTable(): JSX.Element {
                 filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.intendedRoomModeName === v),
                 filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
                 sort: (x: Room_Mode_Enum, y: Room_Mode_Enum) => x.localeCompare(y),
-                cell: function RoomModeCell(props: CellProps<Partial<EventInfoFragment>, Room_Mode_Enum | undefined>) {
+                cell: function RoomModeCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                    staleRecord,
+                }: CellProps<Partial<EventInfoFragment>, Room_Mode_Enum | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const start = staleRecord.startTime ? Date.parse(staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
@@ -580,10 +606,10 @@ function EditableScheduleTable(): JSX.Element {
                                 </Tooltip>
                             ) : undefined}
                             <Select
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value as Room_Mode_Enum)}
-                                onBlur={props.onBlur}
-                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value as Room_Mode_Enum)}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
                                 {roomModeOptions.map((option) => {
@@ -594,7 +620,7 @@ function EditableScheduleTable(): JSX.Element {
                                             disabled={
                                                 ongoing &&
                                                 liveStreamRoomModes.includes(option.value) &&
-                                                option.value !== props.value
+                                                option.value !== value
                                                     ? true
                                                     : undefined
                                             }
@@ -610,12 +636,16 @@ function EditableScheduleTable(): JSX.Element {
             },
             {
                 id: ColumnId.Name,
-                header: function EventNameHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function EventNameHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -632,28 +662,28 @@ function EditableScheduleTable(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function EventNameCell(props: CellProps<Partial<EventInfoFragment>>) {
+                cell: function EventNameCell({ value, onChange, onBlur, ref }: CellProps<Partial<EventInfoFragment>>) {
                     return (
                         <Input
                             type="text"
-                            value={props.value ?? ""}
-                            onChange={(ev) => props.onChange?.(ev.target.value)}
-                            onBlur={props.onBlur}
+                            value={value ?? ""}
+                            onChange={(ev) => onChange?.(ev.target.value)}
+                            onBlur={onBlur}
                             border="1px solid"
                             borderColor="rgba(255, 255, 255, 0.16)"
-                            ref={props.ref as LegacyRef<HTMLInputElement>}
+                            ref={ref as LegacyRef<HTMLInputElement>}
                         />
                     );
                 },
             },
             {
                 id: ColumnId.Content,
-                header: function ContentHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function ContentHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Content (optional)</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Content{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Content{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -682,26 +712,31 @@ function EditableScheduleTable(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function ContentCell(
-                    props: CellProps<Partial<EventInfoFragment>, ItemFullNestedInfoFragment | undefined>
-                ) {
+                cell: function ContentCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                    staleRecord,
+                }: CellProps<Partial<EventInfoFragment>, ItemFullNestedInfoFragment | undefined>) {
                     const now = useRealTime(10000);
-                    const start = props.staleRecord.startTime ? Date.parse(props.staleRecord.startTime) : Date.now();
-                    const end = start + 1000 * (props.staleRecord.durationSeconds ?? 300);
+                    const start = staleRecord.startTime ? Date.parse(staleRecord.startTime) : Date.now();
+                    const end = start + 1000 * (staleRecord.durationSeconds ?? 300);
                     const startLeeway = 5 * 60 * 1000;
                     const endLeeway = 4 * 60 * 1000;
                     const ongoing = isOngoing(now, startLeeway, endLeeway, start, end);
                     const past = end < now - endLeeway;
-                    const isLivestream = props.staleRecord.intendedRoomModeName
-                        ? liveStreamRoomModes.includes(props.staleRecord.intendedRoomModeName)
+                    const isLivestream = staleRecord.intendedRoomModeName
+                        ? liveStreamRoomModes.includes(staleRecord.intendedRoomModeName)
                         : false;
 
                     return (
                         <HStack>
-                            {props.value ? (
+                            {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/item/${props.value.id}`}
+                                    to={`/conference/${conference.slug}/item/${value.id}`}
                                     size="xs"
                                     aria-label="Go to content in new tab"
                                 >
@@ -710,21 +745,21 @@ function EditableScheduleTable(): JSX.Element {
                                     </Tooltip>
                                 </LinkButton>
                             ) : undefined}
-                            {!props.isInCreate && (ongoing || past) && isLivestream ? (
+                            {!isInCreate && (ongoing || past) && isLivestream ? (
                                 <Tooltip label="You cannot edit the content of an ongoing or past livestream event.">
                                     <FAIcon color={"blue.400"} iconStyle="s" icon="info-circle" />
                                 </Tooltip>
                             ) : undefined}
                             <Select
-                                value={props.value?.id ?? ""}
+                                value={value?.id ?? ""}
                                 onChange={(ev) =>
-                                    props.onChange?.(
+                                    onChange?.(
                                         wholeSchedule.data?.content_Item.find((room) => room.id === ev.target.value)
                                     )
                                 }
-                                onBlur={props.onBlur}
-                                isDisabled={!props.isInCreate && (ongoing || past) && isLivestream}
-                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                onBlur={onBlur}
+                                isDisabled={!isInCreate && (ongoing || past) && isLivestream}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
@@ -736,12 +771,16 @@ function EditableScheduleTable(): JSX.Element {
             },
             {
                 id: ColumnId.Exhibition,
-                header: function ExhibitionHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function ExhibitionHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Exhibition (optional)</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Exhibition{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Exhibition{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -771,15 +810,18 @@ function EditableScheduleTable(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function ExhibitionCell(
-                    props: CellProps<Partial<EventInfoFragment>, ExhibitionInfoFragment | undefined>
-                ) {
+                cell: function ExhibitionCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<EventInfoFragment>, ExhibitionInfoFragment | undefined>) {
                     return (
                         <HStack>
-                            {props.value ? (
+                            {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/exhibition/${props.value.id}`}
+                                    to={`/conference/${conference.slug}/exhibition/${value.id}`}
                                     size="xs"
                                     aria-label="Go to exhibition in new tab"
                                 >
@@ -789,16 +831,16 @@ function EditableScheduleTable(): JSX.Element {
                                 </LinkButton>
                             ) : undefined}
                             <Select
-                                value={props.value?.id ?? ""}
+                                value={value?.id ?? ""}
                                 onChange={(ev) =>
-                                    props.onChange?.(
+                                    onChange?.(
                                         wholeSchedule.data?.collection_Exhibition.find(
                                             (room) => room.id === ev.target.value
                                         )
                                     )
                                 }
-                                onBlur={props.onBlur}
-                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
@@ -810,12 +852,16 @@ function EditableScheduleTable(): JSX.Element {
             },
             {
                 id: ColumnId.ShufflePeriod,
-                header: function ShufflePeriodHeader(props: ColumnHeaderProps<EventInfoFragment>) {
-                    return props.isInCreate ? (
+                header: function ShufflePeriodHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Shuffle Period (optional)</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Shuffle Period{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Shuffle Period{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -847,12 +893,15 @@ function EditableScheduleTable(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function ShufflePeriodCell(
-                    props: CellProps<Partial<EventInfoFragment>, ShufflePeriodInfoFragment | undefined>
-                ) {
+                cell: function ShufflePeriodCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<EventInfoFragment>, ShufflePeriodInfoFragment | undefined>) {
                     return (
                         <HStack>
-                            {props.value ? (
+                            {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
                                     to={`/conference/${conference.slug}/manage/shuffle`}
@@ -865,16 +914,16 @@ function EditableScheduleTable(): JSX.Element {
                                 </LinkButton>
                             ) : undefined}
                             <Select
-                                value={props.value?.id ?? ""}
+                                value={value?.id ?? ""}
                                 onChange={(ev) =>
-                                    props.onChange?.(
+                                    onChange?.(
                                         shufflePeriodsResponse.data?.room_ShufflePeriod.find(
                                             (room) => room.id === ev.target.value
                                         )
                                     )
                                 }
-                                onBlur={props.onBlur}
-                                ref={props.ref as LegacyRef<HTMLSelectElement>}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLSelectElement>}
                                 maxW={400}
                             >
                                 <option value={""}>{"<None selected>"}</option>
@@ -1032,7 +1081,7 @@ function EditableScheduleTable(): JSX.Element {
                           id: uuidv4(),
                           durationSeconds: 300,
                           conferenceId: conference.id,
-                          intendedRoomModeName: Room_Mode_Enum.Breakout,
+                          intendedRoomModeName: Room_Mode_Enum.VideoChat,
                           name: "Innominate event",
                           roomId: roomOptions[0].props.value,
                           startTime: DateTime.local()
@@ -1207,10 +1256,7 @@ function EditableScheduleTable(): JSX.Element {
                                           Date.parse(event.startTime) + event.durationSeconds * 1000
                                       ).toISOString(),
                                 "Duration (seconds)": event.durationSeconds,
-                                Mode:
-                                    event.intendedRoomModeName === Room_Mode_Enum.Breakout
-                                        ? "VIDEO_CHAT"
-                                        : event.intendedRoomModeName,
+                                Mode: event.intendedRoomModeName,
 
                                 "Room Id": event.roomId,
                                 "Room Name":

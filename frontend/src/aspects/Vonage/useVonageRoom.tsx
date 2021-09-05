@@ -1,7 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import { detect } from "detect-browser";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
-import type { DevicesProps } from "../Conference/Attend/Room/Breakout/PermissionInstructions";
+import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
 import { useRestorableState } from "../Generic/useRestorableState";
 
 export interface VonageRoomState {

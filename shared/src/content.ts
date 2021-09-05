@@ -5,6 +5,12 @@ export enum Content_ElementType_Enum {
     Abstract = "ABSTRACT",
     /** Show a summary of the currently active social and discussion rooms */
     ActiveSocialRooms = "ACTIVE_SOCIAL_ROOMS",
+    /** File for an audio clip (stored by Clowdr). */
+    AudioFile = "AUDIO_FILE",
+    /** Link to an audio clip (audio is not embedded in Clowdr UI). */
+    AudioLink = "AUDIO_LINK",
+    /** URL for an audio clip (audio is embedded in Clowdr UI). */
+    AudioUrl = "AUDIO_URL",
     /** List of content groups in the system. */
     ContentGroupList = "CONTENT_GROUP_LIST",
     /** A horizontal divider */
@@ -108,7 +114,10 @@ export type ElementBlob =
     | DividerBlob
     | SponsorBoothsBlob
     | ExploreProgramButtonBlob
-    | ExploreScheduleButtonBlob;
+    | ExploreScheduleButtonBlob
+    | AudioFileBlob
+    | AudioLinkBlob
+    | AudioURLBlob;
 
 export interface AbstractBlob extends TextualElementBlob {
     type: Content_ElementType_Enum.Abstract;
@@ -226,6 +235,18 @@ export interface SponsorBoothsBlob extends ComponentBlob {
     type: Content_ElementType_Enum.SponsorBooths;
 }
 
+export interface AudioFileBlob extends AudioElementBlob {
+    type: Content_ElementType_Enum.AudioFile;
+}
+
+export interface AudioLinkBlob extends LinkElementBlob {
+    type: Content_ElementType_Enum.AudioLink;
+}
+
+export interface AudioURLBlob extends UrlElementBlob {
+    type: Content_ElementType_Enum.AudioUrl;
+}
+
 /* Meta content types */
 
 export enum ElementBaseType {
@@ -235,6 +256,7 @@ export enum ElementBaseType {
     URL = "url",
     Link = "link",
     Video = "video",
+    Audio = "audio",
 }
 
 export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseType } = {
@@ -267,6 +289,9 @@ export const ElementBaseTypes: { [K in Content_ElementType_Enum]: ElementBaseTyp
     [Content_ElementType_Enum.SponsorBooths]: ElementBaseType.Component,
     [Content_ElementType_Enum.ExploreProgramButton]: ElementBaseType.Component,
     [Content_ElementType_Enum.ExploreScheduleButton]: ElementBaseType.Component,
+    [Content_ElementType_Enum.AudioFile]: ElementBaseType.Audio,
+    [Content_ElementType_Enum.AudioLink]: ElementBaseType.Link,
+    [Content_ElementType_Enum.AudioUrl]: ElementBaseType.URL,
 };
 
 export interface ComponentBlob extends BaseElementBlob {
@@ -281,17 +306,27 @@ export interface TextualElementBlob extends BaseElementBlob {
 export interface FileElementBlob extends BaseElementBlob {
     baseType: ElementBaseType.File;
     s3Url: string;
+    altText?: string;
 }
 
 export interface UrlElementBlob extends BaseElementBlob {
     baseType: ElementBaseType.URL;
     url: string;
+    title?: string;
 }
 
 export interface LinkElementBlob extends BaseElementBlob {
     baseType: ElementBaseType.Link;
     text: string;
     url: string;
+}
+
+export interface AudioElementBlob extends BaseElementBlob {
+    baseType: ElementBaseType.Audio;
+    s3Url: string;
+    sourceHasEmbeddedSubtitles?: boolean;
+    subtitles: Record<LanguageCode, SubtitleDetails>;
+    description?: string;
 }
 
 export interface VideoElementBlob extends BaseElementBlob {

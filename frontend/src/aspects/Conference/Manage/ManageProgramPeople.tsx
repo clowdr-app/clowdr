@@ -172,12 +172,16 @@ export default function ManageProgramPeople(): JSX.Element {
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
-                    return props.isInCreate ? (
+                header: function NameHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -195,20 +199,23 @@ export default function ManageProgramPeople(): JSX.Element {
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ProgramPersonCell(
-                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
-                ) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
+                cell: function ProgramPersonCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
                             <Input
                                 type="text"
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value)}
-                                onBlur={props.onBlur}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
                                 border="1px solid"
                                 borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                ref={ref as LegacyRef<HTMLInputElement>}
                                 mr={2}
                             />
                             <Button onClick={onCopy} size="xs" ml="auto">
@@ -221,14 +228,16 @@ export default function ManageProgramPeople(): JSX.Element {
             {
                 id: "affiliation",
                 defaultSortDirection: SortDirection.Asc,
-                header: function AffiliationHeader(
-                    props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>
-                ) {
-                    return props.isInCreate ? (
+                header: function AffiliationHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Affiliation</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Affiliation{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Affiliation{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -250,20 +259,23 @@ export default function ManageProgramPeople(): JSX.Element {
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ProgramPersonCell(
-                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
-                ) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
+                cell: function ProgramPersonCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
                             <Input
                                 type="text"
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value)}
-                                onBlur={props.onBlur}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
                                 border="1px solid"
                                 borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                ref={ref as LegacyRef<HTMLInputElement>}
                                 mr={2}
                             />
                             <Button onClick={onCopy} size="xs" ml="auto">
@@ -275,14 +287,16 @@ export default function ManageProgramPeople(): JSX.Element {
             },
             {
                 id: "email",
-                header: function AffiliationHeader(
-                    props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>
-                ) {
-                    return props.isInCreate ? (
+                header: function AffiliationHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Email</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Email{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Email{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -302,20 +316,23 @@ export default function ManageProgramPeople(): JSX.Element {
                 filterEl: TextColumnFilter,
                 sort: (x: string | undefined, y: string | undefined) =>
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
-                cell: function ProgramPersonCell(
-                    props: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>
-                ) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
+                cell: function ProgramPersonCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonFragment>, string | undefined>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
                             <Input
                                 type="email"
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value)}
-                                onBlur={props.onBlur}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
                                 border="1px solid"
                                 borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                ref={ref as LegacyRef<HTMLInputElement>}
                                 mr={2}
                             />
                             <Button onClick={onCopy} size="xs" ml="auto">
@@ -327,12 +344,16 @@ export default function ManageProgramPeople(): JSX.Element {
             },
             {
                 id: "Registrant",
-                header: function RegistrantHeader(props: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
-                    return props.isInCreate ? (
+                header: function RegistrantHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonFragment>) {
+                    return isInCreate ? (
                         <FormLabel>Registrant</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Registrant{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Registrant{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },

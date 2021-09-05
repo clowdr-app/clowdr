@@ -282,12 +282,12 @@ export default function ManageRegistrants(): JSX.Element {
             {
                 id: "name",
                 defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return props.isInCreate ? (
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Name{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -304,18 +304,18 @@ export default function ManageRegistrants(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function NameCell(props: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
+                cell: function NameCell({ value, onChange, onBlur, ref }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
                             <Input
                                 type="text"
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value)}
-                                onBlur={props.onBlur}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
                                 border="1px solid"
                                 borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                ref={ref as LegacyRef<HTMLInputElement>}
                                 mr={2}
                             />
                             <Button onClick={onCopy} size="xs" ml="auto">
@@ -327,13 +327,13 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 id: "inviteSent",
-                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
-                    if (props.isInCreate) {
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
-                            <Button size="xs" onClick={props.onClick}>
-                                Invite sent?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            <Button size="xs" onClick={onClick}>
+                                Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
                             </Button>
                         );
                     }
@@ -344,13 +344,16 @@ export default function ManageRegistrants(): JSX.Element {
                     return rows.filter((row) => row.inviteSent === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell(props: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                    if (props.isInCreate) {
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
                             <Center>
-                                <FAIcon iconStyle="s" icon={props.value ? "check" : "times"} />
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
                             </Center>
                         );
                     }
@@ -358,13 +361,13 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 id: "inviteAccepted",
-                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
-                    if (props.isInCreate) {
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
-                            <Button size="xs" onClick={props.onClick}>
-                                Invite accepted?{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                            <Button size="xs" onClick={onClick}>
+                                Invite accepted?{sortDir !== null ? ` ${sortDir}` : undefined}
                             </Button>
                         );
                     }
@@ -375,13 +378,16 @@ export default function ManageRegistrants(): JSX.Element {
                     return rows.filter((row) => !!row.userId === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell(props: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                    if (props.isInCreate) {
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
                             <Center>
-                                <FAIcon iconStyle="s" icon={props.value ? "check" : "times"} />
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
                             </Center>
                         );
                     }
@@ -389,12 +395,12 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 id: "invitedEmailAddress",
-                header: function NameHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return props.isInCreate ? (
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
                         <FormLabel>Invitation address</FormLabel>
                     ) : (
-                        <Button size="xs" onClick={props.onClick}>
-                            Invitation address{props.sortDir !== null ? ` ${props.sortDir}` : undefined}
+                        <Button size="xs" onClick={onClick}>
+                            Invitation address{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -425,25 +431,31 @@ export default function ManageRegistrants(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function InvitedEmailAddressCell(props: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
-                    if (props.isInCreate) {
+                cell: function InvitedEmailAddressCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    if (isInCreate) {
                         return (
                             <Input
                                 type="email"
-                                value={props.value ?? ""}
-                                onChange={(ev) => props.onChange?.(ev.target.value)}
-                                onBlur={props.onBlur}
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
                                 border="1px solid"
                                 borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={props.ref as LegacyRef<HTMLInputElement>}
+                                ref={ref as LegacyRef<HTMLInputElement>}
                             />
                         );
                     } else {
                         return (
                             <Flex alignItems="center">
-                                <Text px={2}>{props.value}</Text>
-                                {props.value ? (
+                                <Text px={2}>{value}</Text>
+                                {value ? (
                                     <Button onClick={onCopy} size="xs" ml="auto">
                                         <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
                                     </Button>
@@ -455,8 +467,8 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 id: "inviteCode",
-                header: function NameHeader(props) {
-                    if (props.isInCreate) {
+                header: function NameHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
@@ -479,17 +491,17 @@ export default function ManageRegistrants(): JSX.Element {
                     }
                 },
                 filterEl: TextColumnFilter,
-                cell: function InviteCodeCell(props: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(props.value ?? "");
-                    if (props.isInCreate) {
+                cell: function InviteCodeCell({ isInCreate, value }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    if (isInCreate) {
                         return undefined;
                     } else {
                         return (
                             <Flex alignItems="center">
                                 <Text fontFamily="monospace" px={2}>
-                                    {props.value}
+                                    {value}
                                 </Text>
-                                {props.value ? (
+                                {value ? (
                                     <Button onClick={onCopy} size="xs" ml="auto">
                                         <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
                                     </Button>
@@ -501,8 +513,8 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 id: "groups",
-                header: function ContentHeader(props: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return props.isInCreate ? (
+                header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
                         <FormLabel>Groups</FormLabel>
                     ) : (
                         <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
@@ -536,20 +548,22 @@ export default function ManageRegistrants(): JSX.Element {
                           });
                 },
                 filterEl: MultiSelectColumnFilter(groupOptions),
-                cell: function ContentCell(
-                    props: CellProps<
-                        Partial<RegistrantDescriptor>,
-                        ReadonlyArray<{ label: string; value: string }> | undefined
-                    >
-                ) {
+                cell: function ContentCell({
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<
+                    Partial<RegistrantDescriptor>,
+                    ReadonlyArray<{ label: string; value: string }> | undefined
+                >) {
                     return (
                         <MultiSelect
                             name="groups"
                             options={groupOptions}
-                            value={props.value ?? []}
+                            value={value ?? []}
                             placeholder="Select one or more groups"
-                            onChange={(ev) => props.onChange?.(ev)}
-                            onBlur={props.onBlur}
+                            onChange={(ev) => onChange?.(ev)}
+                            onBlur={onBlur}
                             styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
                         />
                     );
@@ -1190,9 +1204,11 @@ export default function ManageRegistrants(): JSX.Element {
             data,
             disabledGroups,
             enabledGroups,
+            exportWithProfileData,
             insertInvitationEmailJobsLoading,
             insertInvitationEmailJobsMutation,
             refetchAllRegistrants,
+            selectProfiles,
             sendCustomEmailModal,
             toast,
         ]

@@ -3,8 +3,6 @@ import { assertType, TypeGuardError } from "typescript-is";
 import type { ElementDataBlob } from "../content";
 
 declare enum RoomMode_Enum {
-    /** Users may participate in the general video chat. */
-    Breakout = "BREAKOUT",
     /** An exhibition hall. */
     Exhibition = "EXHIBITION",
     /** An empty room. */
@@ -17,6 +15,8 @@ declare enum RoomMode_Enum {
     QAndA = "Q_AND_A",
     /** A shuffle queue. */
     Shuffle = "SHUFFLE",
+    /** Users may participate in the general video chat. */
+    VideoChat = "VIDEO_CHAT",
     /** An ordinary video from either a VIDEO_URL content element or a video uploaded to Clowdr. */
     VideoPlayer = "VIDEO_PLAYER",
     /** Event is taking place in a Zoom room. */

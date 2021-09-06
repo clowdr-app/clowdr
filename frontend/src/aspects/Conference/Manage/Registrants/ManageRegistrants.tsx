@@ -789,7 +789,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     result["Profile Data Exportable"] = profile ? "Yes" : "No";
                                     result["Has Been Edited"] = profile ? (profile.hasBeenEdited ? "Yes" : "No") : "";
                                     result.Badges =
-                                        profile?.badges.map((badge: BadgeData) => `${badge.name} [${badge.colour}]`) ??
+                                        profile?.badges?.map((badge: BadgeData) => `${badge.name} [${badge.colour}]`) ??
                                         "";
                                     result.Affiliation = profile?.affiliation ?? "";
                                     result.Country = profile?.country ?? "";
@@ -849,6 +849,13 @@ export default function ManageRegistrants(): JSX.Element {
                                     >
                                         With profile data
                                     </MenuItemOption>
+                                    <MenuItem
+                                        onClick={() => {
+                                            doExport(data);
+                                        }}
+                                    >
+                                        All
+                                    </MenuItem>
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (

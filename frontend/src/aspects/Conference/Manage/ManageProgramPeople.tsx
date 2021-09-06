@@ -705,6 +705,13 @@ export default function ManageProgramPeople(): JSX.Element {
                                 <MenuList>
                                     <MenuItem
                                         onClick={() => {
+                                            doExport(data);
+                                        }}
+                                    >
+                                        All
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
                                             doExport(data.filter((a) => !!a.email));
                                         }}
                                     >

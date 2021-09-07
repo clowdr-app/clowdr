@@ -152,7 +152,7 @@ If not provided, this defaults to the system configuration.
 ### Example
 
 ```json
-"https://app.clowdr.org"
+"https://in.midspace.app"
 ```
 
 ## Upload agreements

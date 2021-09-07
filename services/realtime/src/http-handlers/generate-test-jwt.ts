@@ -31,7 +31,7 @@ export async function generateTestJWT(req: Request, res: Response, _next?: NextF
                     {
                         algorithm: testJWKs[0].alg,
                         audience: ["hasura", "https://clowdr.eu.auth0.com/userinfo"],
-                        issuer: "https://auth.clowdr.org/",
+                        issuer: "https://auth.midspace.app/",
                         subject: req.query.userId as string,
                         keyid: testJWKs[0].kid,
                         expiresIn: "1800s",

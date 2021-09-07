@@ -143,7 +143,7 @@ export default function ManageName(): JSX.Element {
                             toast({
                                 title: "Failed to save changes",
                                 description: `An error has occurred while trying to save your changes.
-    Please contact our tech support to investigate the issue shown below: support@clowdr.org`,
+    Please contact our tech support to investigate the issue shown below.`,
                                 status: "error",
                                 duration: null,
                                 isClosable: true,

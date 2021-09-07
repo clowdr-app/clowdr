@@ -146,7 +146,7 @@ You will not have the information required for all environment variables yet. Se
 | AUTH0_ISSUER_DOMAIN                              | `https://<auth0-subdomain>.auth0.com/`                                                                                        |          | Yes            |
 | HASURA_ADMIN_SECRET                              | Hasura admin secret (used for queries/mutations to Hasura, you can choose this value freely)                                  |          |
 | EVENT_SECRET                                     | Event trigger secret (used to verify Hasura events, you can choose this value freely)                                         |          |
-| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `app.clowdr.org`)                                                |          | Yes            |
+| FRONTEND_DOMAIN                                  | The domain of the frontend website (e.g. `localhost:3000` or `in.midspace.app`)                                               |          | Yes            |
 | STOP_EMAILS_CONTACT_EMAIL_ADDRESS                | The email address users should contact when they received unexpected emails (e.g. `stop-emails@example.org`)                  |          |
 | FAILURE_NOTIFICATIONS_EMAIL_ADDRESS              | The email address the system should send notifications when errors occurr, such as failing to process a video.                |          |
 | GRAPHQL_API_SECURE_PROTOCOLS                     | Boolean. Default: true. Whether to use https/wss or not.                                                                      |          |

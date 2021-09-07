@@ -260,7 +260,7 @@ export default function SubmitItemPage({ magicToken }: { magicToken: string }): 
                                                     <ListItem>
                                                         Please refer to{" "}
                                                         <Link
-                                                            href="https://resources.midspace.app/video-subtitles"
+                                                            href="https://resources.midspace.app/video-subtitles/uploading-videos/"
                                                             isExternal
                                                         >
                                                             these instructions

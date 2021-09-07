@@ -98,9 +98,19 @@ gql`
         name
     }
 
-    query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!) {
-        content_ItemProgramPerson(where: { itemId: { _in: $itemIds } }) {
+    query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
+        content_ItemProgramPerson(where: { _or: [{ itemId: { _in: $itemIds } }] }) {
             ...AddEventPeople_ItemPerson
+        }
+        content_ItemExhibition(where: { exhibitionId: { _in: $exhibitionIds } }) {
+            id
+            exhibitionId
+            item {
+                id
+                itemPeople {
+                    ...AddEventPeople_ItemPerson
+                }
+            }
         }
     }
 
@@ -182,63 +192,113 @@ function AddEventPeople_FromContentPanel({
 
     const [copying, setCopying] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const copy = useCallback(async () => {
-        setCopying(true);
-        setError(null);
+    const copy = useCallback(
+        async (includeContent: boolean, includeExhibitions: boolean) => {
+            setCopying(true);
+            setError(null);
 
-        try {
-            const eventsWithContent = events.filter((x) => !!x.itemId);
-            const itemIds: string[] = eventsWithContent.map((x) => x.itemId);
-            const itemPeopleQ = await selectItemPeopleQuery.refetch({
-                itemIds,
-            });
-            const itemPeople = itemPeopleQ.data.content_ItemProgramPerson;
-            const itemPeopleByGroup = new Map(
-                itemIds.map((groupId) => [groupId, itemPeople.filter((x) => x.itemId === groupId)])
-            );
-            const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
-            for (const event of eventsWithContent) {
-                const existingEventPeople = event.eventPeople;
-                const groupPeople = itemPeopleByGroup.get(event.itemId) as AddEventPeople_ItemPersonFragment[];
-                for (const groupPerson of groupPeople) {
-                    const groupPersonEventRole = ItemProgramPersonRoleToEventProgramPersonRole(groupPerson.roleName);
-                    if (
-                        !existingEventPeople.some(
-                            (person) =>
-                                person.personId === groupPerson.personId && person.roleName === groupPersonEventRole
-                        )
-                    ) {
-                        newEventPeople.push({
-                            eventId: event.id,
-                            personId: groupPerson.personId,
-                            roleName: groupPersonEventRole,
-                        });
+            try {
+                const eventsWithContent = includeContent ? events.filter((x) => !!x.itemId) : [];
+                const itemIds: string[] = eventsWithContent.map((x) => x.itemId);
+
+                const eventsWithExhibition = includeExhibitions ? events.filter((x) => !!x.exhibitionId) : [];
+                const exhibitionIds: string[] = eventsWithExhibition.map((x) => x.exhibitionId);
+
+                const itemPeopleQ = await selectItemPeopleQuery.refetch({
+                    itemIds,
+                    exhibitionIds,
+                });
+                const itemPeople = itemPeopleQ.data.content_ItemProgramPerson;
+                const itemExhibitions = itemPeopleQ.data.content_ItemExhibition;
+                const itemPeopleByItem = new Map<string, AddEventPeople_ItemPersonFragment[]>(
+                    itemIds.map((itemId) => [itemId, itemPeople.filter((x) => x.itemId === itemId)])
+                );
+                const exhibitionsMap = new Map<string, AddEventPeople_ItemPersonFragment[]>();
+                for (const itemExhibition of itemExhibitions) {
+                    const existing = exhibitionsMap.get(itemExhibition.exhibitionId);
+                    if (existing) {
+                        existing.push(...itemExhibition.item.itemPeople);
+                    } else {
+                        exhibitionsMap.set(itemExhibition.exhibitionId, [...itemExhibition.item.itemPeople]);
                     }
                 }
+                const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
+                for (const event of eventsWithContent) {
+                    const existingEventPeople = event.eventPeople;
+
+                    if (event.itemId && includeContent) {
+                        const itemPeopleItm = itemPeopleByItem.get(event.itemId);
+                        if (itemPeopleItm) {
+                            for (const itemPerson of itemPeopleItm) {
+                                const itemPersonEventRole = ItemProgramPersonRoleToEventProgramPersonRole(
+                                    itemPerson.roleName
+                                );
+                                if (
+                                    !existingEventPeople.some(
+                                        (person) =>
+                                            person.personId === itemPerson.personId &&
+                                            person.roleName === itemPersonEventRole
+                                    )
+                                ) {
+                                    newEventPeople.push({
+                                        eventId: event.id,
+                                        personId: itemPerson.personId,
+                                        roleName: itemPersonEventRole,
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (event.exhibitionId && includeExhibitions) {
+                        const itemPeopleExh = exhibitionsMap.get(event.exhibitionId);
+                        if (itemPeopleExh) {
+                            for (const itemPerson of itemPeopleExh) {
+                                const itemPersonEventRole = ItemProgramPersonRoleToEventProgramPersonRole(
+                                    itemPerson.roleName
+                                );
+                                if (
+                                    !existingEventPeople.some(
+                                        (person) =>
+                                            person.personId === itemPerson.personId &&
+                                            person.roleName === itemPersonEventRole
+                                    )
+                                ) {
+                                    newEventPeople.push({
+                                        eventId: event.id,
+                                        personId: itemPerson.personId,
+                                        roleName: itemPersonEventRole,
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                await insertEventPeople(eventsWithContent, newEventPeople, insert);
+
+                setCopying(false);
+                onClose();
+                toast({
+                    title: `${newEventPeople.length} new people copied`,
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "bottom",
+                });
+            } catch (e) {
+                setError(e.message || e.toString());
+                setCopying(false);
             }
-
-            await insertEventPeople(eventsWithContent, newEventPeople, insert);
-
-            setCopying(false);
-            onClose();
-            toast({
-                title: `${newEventPeople.length} new people copied`,
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-                position: "bottom",
-            });
-        } catch (e) {
-            setError(e.message || e.toString());
-            setCopying(false);
-        }
-    }, [events, insert, onClose, selectItemPeopleQuery, toast]);
+        },
+        [events, insert, onClose, selectItemPeopleQuery, toast]
+    );
 
     return (
         <>
             <AccordionButton>
                 <Box flex="1" textAlign="left">
-                    Copy from associated content
+                    Copy from associated content or exhibitions
                 </Box>
                 <AccordionIcon />
             </AccordionButton>
@@ -252,8 +312,14 @@ function AddEventPeople_FromContentPanel({
                         </VStack>
                     </Alert>
                 ) : undefined}
-                <Button colorScheme="purple" onClick={copy} isLoading={copying}>
-                    Copy
+                <Button colorScheme="purple" onClick={() => copy(true, false)} isLoading={copying} mb={2}>
+                    Copy from associated content only
+                </Button>
+                <Button colorScheme="purple" onClick={() => copy(false, true)} isLoading={copying} mb={2}>
+                    Copy from associated exhibitions only
+                </Button>
+                <Button colorScheme="purple" onClick={() => copy(true, true)} isLoading={copying}>
+                    Copy from associated content and exhibitions
                 </Button>
             </AccordionPanel>
         </>
@@ -372,7 +438,7 @@ function AddEventPeople_SingleProgramPersonPanel({
         <>
             <AccordionButton>
                 <Box flex="1" textAlign="left">
-                    Add a person
+                    Add a program person
                 </Box>
                 <AccordionIcon />
             </AccordionButton>
@@ -394,7 +460,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                     onChange={(ev) => setSelectedPersonId(ev.target.value)}
                     mb={4}
                 >
-                    <option value="">Select a person</option>
+                    <option value="">Select a program person</option>
                     {peopleOptions}
                 </Select>
                 <Select

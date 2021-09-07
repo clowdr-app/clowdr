@@ -35233,27 +35233,6 @@ export type SearchRegistrantsQueryVariables = Exact<{
 
 export type SearchRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }> };
 
-export type GetRoomChimeDataMutationVariables = Exact<{
-  roomId: Scalars['uuid'];
-}>;
-
-
-export type GetRoomChimeDataMutation = { readonly __typename?: 'mutation_root', readonly joinRoomChimeSession?: Maybe<{ readonly __typename?: 'JoinRoomChimeSessionOutput', readonly registrant?: Maybe<any>, readonly meeting?: Maybe<any>, readonly message?: Maybe<string> }> };
-
-export type GetRoomVonageTokenMutationVariables = Exact<{
-  roomId: Scalars['uuid'];
-}>;
-
-
-export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
-
-export type GetRoomVonageSessionIdQueryVariables = Exact<{
-  roomId: Scalars['uuid'];
-}>;
-
-
-export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
-
 export type Registrant_RegistrantCreateRoomMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   name: Scalars['String'];
@@ -35393,6 +35372,27 @@ export type VideoPlayer_GetElementQueryVariables = Exact<{
 
 
 export type VideoPlayer_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly isHidden: boolean, readonly data: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+
+export type GetRoomChimeDataMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomChimeDataMutation = { readonly __typename?: 'mutation_root', readonly joinRoomChimeSession?: Maybe<{ readonly __typename?: 'JoinRoomChimeSessionOutput', readonly registrant?: Maybe<any>, readonly meeting?: Maybe<any>, readonly message?: Maybe<string> }> };
+
+export type GetRoomVonageTokenMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
+
+export type GetRoomVonageSessionIdQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
 
 export type DeleteEventParticipantMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -36672,10 +36672,11 @@ export type AddEventPeople_GroupFragment = { readonly __typename?: 'permissions_
 
 export type AddEventPeople_SelectItemPeopleQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  exhibitionIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type AddEventPeople_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }> };
+export type AddEventPeople_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }>, readonly content_ItemExhibition: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }> } }> };
 
 export type AddEventPeople_SelectProgramPeopleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -40257,111 +40258,6 @@ export function useSearchRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type SearchRegistrantsQueryHookResult = ReturnType<typeof useSearchRegistrantsQuery>;
 export type SearchRegistrantsLazyQueryHookResult = ReturnType<typeof useSearchRegistrantsLazyQuery>;
 export type SearchRegistrantsQueryResult = Apollo.QueryResult<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>;
-export const GetRoomChimeDataDocument = gql`
-    mutation GetRoomChimeData($roomId: uuid!) {
-  joinRoomChimeSession(roomId: $roomId) {
-    registrant
-    meeting
-    message
-  }
-}
-    `;
-export type GetRoomChimeDataMutationFn = Apollo.MutationFunction<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
-
-/**
- * __useGetRoomChimeDataMutation__
- *
- * To run a mutation, you first call `useGetRoomChimeDataMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetRoomChimeDataMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getRoomChimeDataMutation, { data, loading, error }] = useGetRoomChimeDataMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomChimeDataMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument, options);
-      }
-export type GetRoomChimeDataMutationHookResult = ReturnType<typeof useGetRoomChimeDataMutation>;
-export type GetRoomChimeDataMutationResult = Apollo.MutationResult<GetRoomChimeDataMutation>;
-export type GetRoomChimeDataMutationOptions = Apollo.BaseMutationOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
-export const GetRoomVonageTokenDocument = gql`
-    mutation GetRoomVonageToken($roomId: uuid!) {
-  joinRoomVonageSession(roomId: $roomId) {
-    accessToken
-    sessionId
-  }
-}
-    `;
-export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-
-/**
- * __useGetRoomVonageTokenMutation__
- *
- * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, options);
-      }
-export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
-export const GetRoomVonageSessionIdDocument = gql`
-    query GetRoomVonageSessionId($roomId: uuid!) {
-  room_Room_by_pk(id: $roomId) {
-    id
-    publicVonageSessionId
-  }
-}
-    `;
-
-/**
- * __useGetRoomVonageSessionIdQuery__
- *
- * To run a query within a React component, call `useGetRoomVonageSessionIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomVonageSessionIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRoomVonageSessionIdQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomVonageSessionIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
-      }
-export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
-        }
-export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
-export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
-export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(
@@ -41006,6 +40902,111 @@ export function useVideoPlayer_GetElementLazyQuery(baseOptions?: Apollo.LazyQuer
 export type VideoPlayer_GetElementQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementQuery>;
 export type VideoPlayer_GetElementLazyQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementLazyQuery>;
 export type VideoPlayer_GetElementQueryResult = Apollo.QueryResult<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>;
+export const GetRoomChimeDataDocument = gql`
+    mutation GetRoomChimeData($roomId: uuid!) {
+  joinRoomChimeSession(roomId: $roomId) {
+    registrant
+    meeting
+    message
+  }
+}
+    `;
+export type GetRoomChimeDataMutationFn = Apollo.MutationFunction<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
+
+/**
+ * __useGetRoomChimeDataMutation__
+ *
+ * To run a mutation, you first call `useGetRoomChimeDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomChimeDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getRoomChimeDataMutation, { data, loading, error }] = useGetRoomChimeDataMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomChimeDataMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument, options);
+      }
+export type GetRoomChimeDataMutationHookResult = ReturnType<typeof useGetRoomChimeDataMutation>;
+export type GetRoomChimeDataMutationResult = Apollo.MutationResult<GetRoomChimeDataMutation>;
+export type GetRoomChimeDataMutationOptions = Apollo.BaseMutationOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
+export const GetRoomVonageTokenDocument = gql`
+    mutation GetRoomVonageToken($roomId: uuid!) {
+  joinRoomVonageSession(roomId: $roomId) {
+    accessToken
+    sessionId
+  }
+}
+    `;
+export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+
+/**
+ * __useGetRoomVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, options);
+      }
+export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
+export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export const GetRoomVonageSessionIdDocument = gql`
+    query GetRoomVonageSessionId($roomId: uuid!) {
+  room_Room_by_pk(id: $roomId) {
+    id
+    publicVonageSessionId
+  }
+}
+    `;
+
+/**
+ * __useGetRoomVonageSessionIdQuery__
+ *
+ * To run a query within a React component, call `useGetRoomVonageSessionIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVonageSessionIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomVonageSessionIdQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVonageSessionIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+      }
+export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
+        }
+export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
+export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
+export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
 export const DeleteEventParticipantDocument = gql`
     mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
   delete_schedule_EventProgramPerson(
@@ -46857,9 +46858,19 @@ export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEma
 export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
 export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
 export const AddEventPeople_SelectItemPeopleDocument = gql`
-    query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!) {
-  content_ItemProgramPerson(where: {itemId: {_in: $itemIds}}) {
+    query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
+  content_ItemProgramPerson(where: {_or: [{itemId: {_in: $itemIds}}]}) {
     ...AddEventPeople_ItemPerson
+  }
+  content_ItemExhibition(where: {exhibitionId: {_in: $exhibitionIds}}) {
+    id
+    exhibitionId
+    item {
+      id
+      itemPeople {
+        ...AddEventPeople_ItemPerson
+      }
+    }
   }
 }
     ${AddEventPeople_ItemPersonFragmentDoc}`;
@@ -46877,6 +46888,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
  * const { data, loading, error } = useAddEventPeople_SelectItemPeopleQuery({
  *   variables: {
  *      itemIds: // value for 'itemIds'
+ *      exhibitionIds: // value for 'exhibitionIds'
  *   },
  * });
  */

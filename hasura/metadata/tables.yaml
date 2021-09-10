@@ -1077,6 +1077,9 @@
   - name: conference
     using:
       foreign_key_constraint_on: conferenceId
+  - name: descriptiveItem
+    using:
+      foreign_key_constraint_on: descriptiveItemId
   array_relationships:
   - name: items
     using:
@@ -1121,6 +1124,7 @@
       columns:
       - colour
       - conferenceId
+      - descriptiveItemId
       - id
       - isHidden
       - name
@@ -1146,6 +1150,7 @@
       - colour
       - conferenceId
       - created_at
+      - descriptiveItemId
       - id
       - isHidden
       - name
@@ -1187,6 +1192,7 @@
     permission:
       columns:
       - colour
+      - descriptiveItemId
       - isHidden
       - name
       - priority

@@ -340,6 +340,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
     } = useDisclosure();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingName, setEditingName] = useState<string | null>(null);
+    const [editingDescriptiveItemId, setEditingDescriptiveItemId] = useState<string | null>(null);
     const edit:
         | {
               open: (key: string) => void;
@@ -352,6 +353,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     const exhibition = data.find((x) => x.id === key);
                     if (exhibition) {
                         setEditingName(exhibition.name);
+                        setEditingDescriptiveItemId(exhibition.descriptiveItemId ?? null);
                     }
                 }
                 if (key !== null) {
@@ -508,6 +510,44 @@ function ManageExhibitionsModalBody(): JSX.Element {
         [deleteExhibitions, deleteExhibitionsResponse.loading]
     );
 
+    const updateDescriptiveItemId = useCallback(
+        (itemId: string | null) => {
+            if (editingId) {
+                updateExhibition({
+                    variables: {
+                        id: editingId,
+                        update: {
+                            descriptiveItemId: itemId,
+                        },
+                    },
+                    update: (cache, { data: _data }) => {
+                        setEditingDescriptiveItemId(itemId);
+
+                        if (_data?.update_collection_Exhibition_by_pk) {
+                            const data = _data.update_collection_Exhibition_by_pk;
+                            cache.modify({
+                                fields: {
+                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
+                                        const newRef = cache.writeFragment({
+                                            data,
+                                            fragment: ManageContent_ExhibitionFragmentDoc,
+                                            fragmentName: "ManageContent_Exhibition",
+                                        });
+                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
+                                            return existingRefs;
+                                        }
+                                        return [...existingRefs, newRef];
+                                    },
+                                },
+                            });
+                        }
+                    },
+                });
+            }
+        },
+        [editingId, updateExhibition]
+    );
+
     return (
         <>
             {exhibitionsResponse.loading && !exhibitionsResponse.data ? (
@@ -539,6 +579,8 @@ function ManageExhibitionsModalBody(): JSX.Element {
             <SecondaryEditor
                 exhibitionId={editingId}
                 exhibitionName={editingName}
+                descriptiveItemId={editingDescriptiveItemId}
+                setDescriptiveItemId={updateDescriptiveItemId}
                 onClose={onSecondaryPanelClose}
                 isOpen={isSecondaryPanelOpen}
             />

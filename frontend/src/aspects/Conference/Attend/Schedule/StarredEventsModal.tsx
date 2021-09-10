@@ -3,7 +3,7 @@ import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, useDisc
 import type { FocusableElement } from "@chakra-ui/utils";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-    Schedule_ItemElementsFragment,
+    Schedule_ItemFieldsFragment,
     useStarredEvents_SelectEventIdsQuery,
     useStarredEvents_SelectEventsQuery,
 } from "../../../../generated/graphql";
@@ -29,7 +29,7 @@ gql`
         schedule_Event(where: { id: { _in: $eventIds } }) {
             ...Schedule_EventSummary
             item {
-                ...Schedule_ItemElements
+                ...Schedule_ItemFields
             }
         }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -160,7 +160,7 @@ function StarredEventsInner({ eventIds }: { eventIds: string[] }): JSX.Element {
                 events: roomsResult.data.schedule_Event,
                 items: roomsResult.data.schedule_Event
                     .filter((x) => !!x.item)
-                    .map((x) => x.item) as Schedule_ItemElementsFragment[],
+                    .map((x) => x.item) as Schedule_ItemFieldsFragment[],
                 tags: roomsResult.data.collection_Tag,
             });
         }

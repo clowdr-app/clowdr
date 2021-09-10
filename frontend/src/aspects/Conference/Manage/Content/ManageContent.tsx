@@ -280,6 +280,7 @@ gql`
         colour
         priority
         isHidden
+        descriptiveItemId
         items {
             id
             itemId
@@ -828,7 +829,11 @@ export default function ManageContentV2(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/content`}>
+                        <LinkButton
+                            key="import-button"
+                            colorScheme="purple"
+                            to={`/conference/${conference.slug}/manage/import/content`}
+                        >
                             Import
                         </LinkButton>
                     );

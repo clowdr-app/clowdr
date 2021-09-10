@@ -10,7 +10,7 @@ export default function DownloadCalendarButton({
     calendarName,
     ...props
 }: {
-    events: ReadonlyArray<TimelineEvent>;
+    events: () => ReadonlyArray<TimelineEvent>;
     calendarName: string;
 } & ButtonProps): JSX.Element {
     const conference = useConference();
@@ -21,7 +21,7 @@ export default function DownloadCalendarButton({
             colorScheme="purple"
             {...props}
             onClick={() => {
-                const convertedEvents: EventAttributes[] = events.map((event) => {
+                const convertedEvents: EventAttributes[] = events().map((event) => {
                     const startTime = new Date(event.startTime);
                     const endTime = new Date(Date.parse(event.startTime) + event.durationSeconds * 1000);
                     return {

@@ -17,7 +17,8 @@ import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useSt
 import {
     Schedule_EventSummaryFragment,
     Schedule_HappeningSoonQuery,
-    Schedule_ItemElementsFragment,
+    Schedule_ItemFieldsFragment,
+    Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_TagFragment,
     useGetSponsorBoothsQuery,
@@ -56,8 +57,11 @@ gql`
         ) {
             ...Schedule_EventSummary
             item {
-                ...Schedule_ItemElements
+                ...Schedule_ItemFields
             }
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_ProgramPerson
         }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_Tag
@@ -216,18 +220,18 @@ export function ScheduleModal({
                 {
                     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-                    items: ReadonlyArray<Schedule_ItemElementsFragment>;
+                    items: ReadonlyArray<Schedule_ItemFieldsFragment>;
                     tags: ReadonlyArray<Schedule_TagFragment>;
+                    people: ReadonlyArray<Schedule_ProgramPersonFragment>;
                 }
             >
                 queryResult={roomsResult}
                 getter={(x) => ({
                     rooms: x.room_Room,
                     events: x.schedule_Event,
-                    items: x.schedule_Event
-                        .filter((x) => !!x.item)
-                        .map((x) => x.item) as Schedule_ItemElementsFragment[],
+                    items: x.schedule_Event.filter((x) => !!x.item).map((x) => x.item) as Schedule_ItemFieldsFragment[],
                     tags: x.collection_Tag,
+                    people: x.collection_ProgramPerson,
                 })}
             >
                 {(data) => <ScheduleInner titleStr={"Happening Soon"} {...data} />}

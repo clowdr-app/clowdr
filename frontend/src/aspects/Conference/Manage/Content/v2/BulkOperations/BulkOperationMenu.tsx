@@ -28,6 +28,8 @@ import { CombineVideosModal } from "./CombineVideosModal";
 import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
 import { RemoveElementsOrUploadablesModal } from "./RemoveElementsOrUploadablesModal";
 import { SelectElementsOrUploadablesModal } from "./SelectElementsOrUploadablesModal";
+import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
+import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
 
 export function BulkOperationMenu({
     selectedData: selectedItems,
@@ -90,19 +92,32 @@ export function BulkOperationMenu({
                 });
             },
         },
-        // {
-        //     label: "Copy people to uploaders",
-        //     value: "COPY_UPLOADERS",
-        //     operation: (items) => {
-        //         setActiveOperation({
-        //             operation: "COPY_UPLOADERS",
-        //             items: items,
-        //             step: "SELECT",
-        //             elementsByItem: [],
-        //             restrictToTypes: null,
-        //         });
-        //     },
-        // },
+        {
+            label: "Synchronise uploaders from people",
+            value: "SYNCHRONISE_UPLOADERS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "SYNCHRONISE_UPLOADERS",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
+        {
+            label: "Update uploads remaining",
+            value: "UPDATE_UPLOADS_REMAINING",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "UPDATE_UPLOADS_REMAINING",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
         // {
         //     label: "Add/remove tags",
         //     value: "TAGS",
@@ -188,7 +203,7 @@ export function BulkOperationMenu({
     return (
         <>
             {selectedItems.length > 0 ? (
-                <Menu isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen}>
+                <Menu isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen} size="xl">
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                         Bulk edit
                     </MenuButton>
@@ -209,7 +224,14 @@ export function BulkOperationMenu({
                     </MenuList>
                 </Menu>
             ) : (
-                <Menu closeOnSelect={false} isLazy isOpen={menuIsOpen} onClose={menuOnClose} onOpen={menuOnOpen}>
+                <Menu
+                    closeOnSelect={false}
+                    isLazy
+                    isOpen={menuIsOpen}
+                    onClose={menuOnClose}
+                    onOpen={menuOnOpen}
+                    size="xl"
+                >
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                         Bulk edit
                     </MenuButton>
@@ -325,7 +347,8 @@ export function BulkOperationMenu({
                 isOpen={
                     (activeOperation?.operation === "SECURITY" ||
                         activeOperation?.operation === "COMBINE_VIDEOS" ||
-                        activeOperation?.operation === "COPY_UPLOADERS" ||
+                        activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
+                        activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" ||
                         activeOperation?.operation === "ELEMENTS_REMOVE") &&
                     activeOperation?.step === "SELECT"
                 }
@@ -350,8 +373,22 @@ export function BulkOperationMenu({
                             step: "ACT",
                             restrictToTypes: activeOperation.restrictToTypes,
                         });
-                    } else if (activeOperation?.operation === "COPY_UPLOADERS") {
-                        // TODO: Copy uploaders
+                    } else if (activeOperation?.operation === "SYNCHRONISE_UPLOADERS") {
+                        setActiveOperation({
+                            elementsByItem,
+                            items: activeOperation.items,
+                            operation: activeOperation.operation,
+                            step: "ACT",
+                            restrictToTypes: activeOperation.restrictToTypes,
+                        });
+                    } else if (activeOperation?.operation === "UPDATE_UPLOADS_REMAINING") {
+                        setActiveOperation({
+                            elementsByItem,
+                            items: [],
+                            operation: activeOperation.operation,
+                            step: "ACT",
+                            restrictToTypes: activeOperation.restrictToTypes,
+                        });
                     }
                 }}
                 restrictToTypes={activeOperation?.restrictToTypes ?? null}
@@ -365,6 +402,20 @@ export function BulkOperationMenu({
             />
             <CombineVideosModal
                 isOpen={activeOperation?.operation === "COMBINE_VIDEOS" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                elementsByItem={activeOperation?.elementsByItem ?? []}
+            />
+            <SynchroniseUploadersModal
+                isOpen={activeOperation?.operation === "SYNCHRONISE_UPLOADERS" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                elementsByItem={activeOperation?.elementsByItem ?? []}
+            />
+            <UpdateUploadsRemainingModal
+                isOpen={activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" && activeOperation?.step === "ACT"}
                 onClose={() => {
                     setActiveOperation(null);
                 }}

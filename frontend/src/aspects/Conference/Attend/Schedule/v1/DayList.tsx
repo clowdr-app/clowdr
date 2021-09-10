@@ -1,10 +1,11 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, HStack, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import React, { useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import type {
+    ProgramPersonDataFragment,
     Schedule_EventSummaryFragment,
-    Schedule_ItemElementsFragment,
+    Schedule_ItemFieldsFragment,
     Schedule_RoomSummaryFragment,
 } from "../../../../../generated/graphql";
 import useTimelineParameters from "./useTimelineParameters";
@@ -15,7 +16,9 @@ type FirstEventInfo = {
 };
 
 export interface TimelineEvent extends Schedule_EventSummaryFragment {
-    item?: Schedule_ItemElementsFragment;
+    item?: Schedule_ItemFieldsFragment;
+    itemPeople?: readonly ProgramPersonDataFragment[];
+    exhibitionPeople?: readonly ProgramPersonDataFragment[];
 }
 
 export interface TimelineRoom extends Schedule_RoomSummaryFragment {
@@ -127,13 +130,12 @@ export default function DayList({
                     {distinctDates.map((date, idx) => {
                         const date0 = date[0];
                         return (
-                            <>
+                            <Fragment key={date0.toISO()}>
                                 {idx > 0 && date0.weekNumber !== distinctDates[idx - 1][0].weekNumber ? (
                                     <MenuDivider />
                                 ) : undefined}
                                 <MenuItem
                                     m={0}
-                                    key={date0.toISO()}
                                     size="sm"
                                     onClick={() => {
                                         scrollToEvent(date[1].event);
@@ -153,7 +155,7 @@ export default function DayList({
                                     </Text>
                                     <Text as="span">{date0.toLocaleString({ weekday: "long" })}</Text>
                                 </MenuItem>
-                            </>
+                            </Fragment>
                         );
                     })}
                 </MenuList>

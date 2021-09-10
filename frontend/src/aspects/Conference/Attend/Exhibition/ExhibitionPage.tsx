@@ -10,6 +10,7 @@ import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
+import { Element } from "../Content/Element/Element";
 import { EventsTable } from "../Content/EventsTable";
 import ExhibitionLayout from "./ExhibitionLayout";
 
@@ -66,6 +67,12 @@ gql`
         colour
         priority
         conferenceId
+        descriptiveItem {
+            id
+            elements(where: { isHidden: { _eq: false }, typeName: { _in: [ABSTRACT, TEXT] } }) {
+                ...ElementData
+            }
+        }
         items {
             id
             itemId
@@ -108,6 +115,11 @@ function ExhibitionPageInner({
                 {/*TODO: Link to live event for this exhibition if any.*/}
             </Heading>
             <VStack>
+                {exhibition.descriptiveItem && exhibition.descriptiveItem.elements.length
+                    ? exhibition.descriptiveItem.elements.map((element) => (
+                          <Element key={element.id} element={element} />
+                      ))
+                    : undefined}
                 <Text w="auto" textAlign="left" p={0}>
                     <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
                     Times are shown in your local timezone.

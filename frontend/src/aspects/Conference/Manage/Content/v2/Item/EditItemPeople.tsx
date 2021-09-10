@@ -175,6 +175,8 @@ function AddItemPersonBody({
                             <option value="AUTHOR">Author</option>
                             <option value="CHAIR">Chair</option>
                             <option value="PRESENTER">Presenter</option>
+                            <option value="SESSION ORGANIZER">Session Organizer</option>
+                            <option value="DISCUSSANT">Discussant</option>
                         </Select>
                     </FormControl>
                 </VStack>
@@ -285,7 +287,11 @@ function ItemPersonsList({
                                 : y.roleName.toUpperCase() === "CHAIR"
                                 ? 0
                                 : -1
-                            : 0,
+                            : y.roleName.toUpperCase() === "AUTHOR" ||
+                              y.roleName.toUpperCase() === "PRESENTER" ||
+                              y.roleName.toUpperCase() === "CHAIR"
+                            ? 1
+                            : x.roleName.toUpperCase().localeCompare(y.roleName.toUpperCase()),
                     (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
                     (x, y) => x.person.name.localeCompare(y.person.name),
                 ],
@@ -567,6 +573,8 @@ function ItemPersonsList({
                                     <option value="AUTHOR">Author</option>
                                     <option value="CHAIR">Chair</option>
                                     <option value="PRESENTER">Presenter</option>
+                                    <option value="SESSION ORGANIZER">Session Organizer</option>
+                                    <option value="DISCUSSANT">Discussant</option>
                                 </Select>
                                 <Button
                                     ml={2}

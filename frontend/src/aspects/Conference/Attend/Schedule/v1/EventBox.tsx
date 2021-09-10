@@ -92,9 +92,10 @@ export default function EventBox({
                         })}{" "}
                         for {Math.round(durationSeconds / 60)} minutes
                     </Text>
+                    {event.itemPeople?.length ? <PlainAuthorsList people={event.itemPeople} /> : undefined}
+                    {event.exhibitionPeople?.length ? <PlainAuthorsList people={event.exhibitionPeople} /> : undefined}
                     {event.item ? (
                         <>
-                            <PlainAuthorsList people={event.item.itemPeople} />
                             <TagList
                                 tags={event.item.itemTags.map(
                                     (x) => ({ ...x, tag: tags.find((y) => x.tagId === y.id) } as any)
@@ -118,7 +119,17 @@ export default function EventBox({
                 ))}
             </>
         );
-    }, [eventIds, sortedEvents, event.item, event.name, eventStartMs, durationSeconds, tags]);
+    }, [
+        eventIds,
+        sortedEvents,
+        event.item,
+        event.itemPeople,
+        event.exhibitionPeople,
+        event.name,
+        eventStartMs,
+        durationSeconds,
+        tags,
+    ]);
 
     const eventFocusRef = React.useRef<HTMLButtonElement>(null);
     const { isOpen, onClose: _onClose, onOpen } = useDisclosure();

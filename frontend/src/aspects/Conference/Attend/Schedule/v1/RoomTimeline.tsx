@@ -1,8 +1,11 @@
 import { Box } from "@chakra-ui/react";
+import * as R from "ramda";
 import React, { useMemo } from "react";
 import type {
+    ProgramPersonDataFragment,
     Schedule_EventSummaryFragment,
-    Schedule_ItemElementsFragment,
+    Schedule_ItemFieldsFragment,
+    Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
@@ -108,6 +111,7 @@ function RoomTimelineWrapper({
     events,
     items,
     tags,
+    people,
 }: {
     room: Schedule_RoomSummaryFragment;
     hideTimeZoomButtons?: boolean;
@@ -116,8 +120,9 @@ function RoomTimelineWrapper({
     backgroundColor?: string;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    items: ReadonlyArray<Schedule_ItemFieldsFragment>;
     tags: readonly Schedule_TagFragment[];
+    people: readonly Schedule_ProgramPersonFragment[];
 }): JSX.Element {
     const roomEvents = useMemo(() => {
         const result: TimelineEvent[] = [];
@@ -125,15 +130,49 @@ function RoomTimelineWrapper({
         events.forEach((event) => {
             if (event.roomId === room.id) {
                 const item = event.itemId ? items.find((x) => x.id === event.itemId) : undefined;
+                const exhibitionItemPeople = R.uniqBy(
+                    (x) => x.personId,
+                    items
+                        .filter((x) => x.itemExhibitions.some((y) => y.exhibitionId === event.exhibitionId))
+                        .flatMap((x) => x.itemPeople)
+                );
                 result.push({
                     ...event,
                     item,
+                    itemPeople: item
+                        ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
+                              const itemPerson = item.itemPeople.find(
+                                  (itemPerson) => itemPerson.personId === person.id
+                              );
+                              if (itemPerson) {
+                                  acc.push({
+                                      ...itemPerson,
+                                      person,
+                                  });
+                              }
+                              return acc;
+                          }, [])
+                        : [],
+                    exhibitionPeople: exhibitionItemPeople?.length
+                        ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
+                              const itemPerson = exhibitionItemPeople.find(
+                                  (itemPerson) => itemPerson.personId === person.id
+                              );
+                              if (itemPerson) {
+                                  acc.push({
+                                      ...itemPerson,
+                                      person,
+                                  });
+                              }
+                              return acc;
+                          }, [])
+                        : [],
                 });
             }
         });
 
         return result;
-    }, [items, events, room.id]);
+    }, [people, items, events, room.id]);
 
     return room ? (
         <RoomTimelineInner
@@ -159,8 +198,9 @@ type Props = {
     width?: number;
     scrollToEventCbs: Map<string, () => void>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    items: ReadonlyArray<Schedule_ItemFieldsFragment>;
     tags: ReadonlyArray<Schedule_TagFragment>;
+    people: readonly Schedule_ProgramPersonFragment[];
 };
 
 export default function RoomTimeline({ ...props }: Props): JSX.Element {

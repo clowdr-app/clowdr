@@ -8,8 +8,10 @@ import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
 import {
     Permissions_Permission_Enum,
+    ProgramPersonDataFragment,
     Schedule_EventSummaryFragment,
-    Schedule_ItemElementsFragment,
+    Schedule_ItemFieldsFragment,
+    Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
     Schedule_TagFragment,
@@ -47,14 +49,12 @@ gql`
 
     fragment Schedule_ItemPerson on content_ItemProgramPerson {
         id
+        personId
         priority
         roleName
-        person {
-            ...Schedule_ProgramPerson
-        }
     }
 
-    fragment Schedule_ItemElements on content_Item {
+    fragment Schedule_ItemFields on content_Item {
         id
         title
         shortTitle
@@ -64,13 +64,18 @@ gql`
             itemId
             tagId
         }
+        itemExhibitions {
+            id
+            itemId
+            exhibitionId
+        }
         itemPeople {
             ...Schedule_ItemPerson
         }
     }
 
     fragment Schedule_Item on content_Item {
-        ...Schedule_ItemElements
+        ...Schedule_ItemFields
         abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
             ...Schedule_Element
         }
@@ -122,7 +127,10 @@ gql`
             ...Schedule_EventSummary
         }
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...Schedule_ItemElements
+            ...Schedule_ItemFields
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_ProgramPerson
         }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_Tag
@@ -161,7 +169,7 @@ function recombineSessions(
             startTimeMs: frame.startTimeMs,
             endTimeMs: frame.endTimeMs,
             durationMs: frame.durationMs,
-            items: roomIds.reduce((sessionsAcc, roomId) => {
+            items: roomIds.map((roomId) => {
                 const group = groups[roomId];
                 const { startTimeMs, endTimeMs } = group.reduce(
                     (acc, session) => ({
@@ -180,13 +188,13 @@ function recombineSessions(
                         room: group[0].room,
                         events: R.sortBy(
                             (x) => x.startTimeMs,
-                            group.reduce<Schedule_EventSummaryExt[]>((acc, session) => [...acc, ...session.events], [])
+                            group.flatMap<Schedule_EventSummaryExt>((session) => session.events)
                         ),
                     },
                 };
 
-                return [...sessionsAcc, session];
-            }, []),
+                return session;
+            }),
         };
     });
 }
@@ -301,13 +309,15 @@ function ScheduleFrame({
     items,
     isNewDay,
     tags,
+    people,
 }: {
     frame: Frame;
     alternateBgColor: string;
     borderColour: string;
     maxParallelRooms: number;
-    items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    items: ReadonlyArray<Schedule_ItemFieldsFragment>;
     tags: ReadonlyArray<Schedule_TagFragment>;
+    people: ReadonlyArray<Schedule_ProgramPersonFragment>;
     roomColWidth: number;
     timeBarWidth: number;
     scrollToEventCbs: Map<string, () => void>;
@@ -316,11 +326,10 @@ function ScheduleFrame({
 }): JSX.Element {
     const roomNameBoxes = useMemo(
         () =>
-            frame.items.reduce((acc, item, idx) => {
+            frame.items.map((item, idx) => {
                 const room = item.session.room;
 
-                return [
-                    ...acc,
+                return (
                     <RoomNameBox
                         key={room.id}
                         room={room}
@@ -328,9 +337,9 @@ function ScheduleFrame({
                         showBottomBorder={true}
                         borderColour={borderColour}
                         backgroundColor={idx % 2 === 0 ? alternateBgColor : undefined}
-                    />,
-                ];
-            }, [] as (JSX.Element | undefined)[]),
+                    />
+                );
+            }),
         [alternateBgColor, borderColour, frame.items, roomColWidth]
     );
 
@@ -338,8 +347,6 @@ function ScheduleFrame({
     const { fullTimeSpanSeconds } = useTimelineParameters();
 
     const innerHeightPx = ((window.innerHeight - 200) * fullTimeSpanSeconds) / visibleTimeSpanSeconds;
-
-    // const roomMarkers = useGenerateMarkers("100%", "", true, false, false);
 
     const labeledNowMarker = useMemo(() => <NowMarker showLabel setScrollToNow={setScrollToNow} />, [setScrollToNow]);
 
@@ -359,11 +366,12 @@ function ScheduleFrame({
                             events={item.session.events}
                             items={items}
                             tags={tags}
+                            people={people}
                         />
                     </Box>
                 );
             }, [] as (JSX.Element | undefined)[]),
-        [items, frame.items, roomColWidth, scrollToEventCbs, tags]
+        [items, frame.items, roomColWidth, scrollToEventCbs, tags, people]
     );
 
     const timelineParams = useTimelineParameters();
@@ -444,13 +452,15 @@ export function ScheduleInner({
     rooms,
     events: rawEvents,
     items,
+    people,
     tags,
     titleStr,
     noEventsText = titleStr,
 }: {
     rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
     events: ReadonlyArray<Schedule_EventSummaryFragment>;
-    items: ReadonlyArray<Schedule_ItemElementsFragment>;
+    items: ReadonlyArray<Schedule_ItemFieldsFragment>;
+    people: ReadonlyArray<Schedule_ProgramPersonFragment>;
     tags: ReadonlyArray<Schedule_TagFragment>;
     titleStr?: string;
     noEventsText?: string;
@@ -522,23 +532,20 @@ export function ScheduleInner({
     const frameEls = useMemo(() => {
         return frames.map((frame, idx) => {
             const avgEventDurationI = frame.items.reduce(
-                (acc, item) => {
-                    const { sum, count } = item.session.events.reduce(
-                        (acc, event) => ({
-                            sum: acc.sum + event.durationMs,
-                            count: acc.count + 1,
-                        }),
-                        { sum: 0, count: 0 }
-                    );
-                    return { sum: acc.sum + sum, count: acc.count + count };
-                },
+                (acc, item) =>
+                    item.session.events.reduce((acc, event) => {
+                        acc.sum = acc.sum + event.durationMs;
+                        acc.count = acc.count + 1;
+                        return acc;
+                    }, acc),
                 { sum: 0, count: 0 }
             );
             const avgEventsPerRoomI = frame.items.reduce(
-                (acc, item) => ({
-                    sum: acc.sum + item.session.events.length,
-                    count: acc.count + 1,
-                }),
+                (acc, item) => {
+                    acc.sum = acc.sum + item.session.events.length;
+                    acc.count = acc.count + 1;
+                    return acc;
+                },
                 { sum: 0, count: 0 }
             );
             const avgEventDuration = avgEventDurationI.count > 0 ? avgEventDurationI.sum / avgEventDurationI.count : 1;
@@ -561,6 +568,7 @@ export function ScheduleInner({
                             setScrollToNow={setScrollToNow}
                             items={items}
                             tags={tags}
+                            people={people}
                             roomColWidth={roomColWidth}
                             timeBarWidth={timeBarWidth}
                             isNewDay={isNewDay}
@@ -569,7 +577,7 @@ export function ScheduleInner({
                 </TimelineParameters>
             );
         });
-    }, [alternateBgColor, borderColour, frames, items, maxParallelRooms, roomColWidth, scrollToEventCbs, tags]);
+    }, [alternateBgColor, borderColour, frames, items, maxParallelRooms, roomColWidth, scrollToEventCbs, tags, people]);
 
     const scrollToEvent = useCallback(
         (ev: Schedule_EventSummaryFragment) => {
@@ -588,13 +596,31 @@ export function ScheduleInner({
         [rawEvents, rooms, scrollToEvent, scrollToNow]
     );
 
-    const eventsWithItems: TimelineEvent[] = useMemo(
+    const eventsWithItems = useCallback<() => TimelineEvent[]>(
         () =>
-            rawEvents.map((event) => ({
-                ...event,
-                item: event.itemId ? items.find((x) => x.id === event.itemId) : undefined,
-            })),
-        [rawEvents, items]
+            rawEvents.map<TimelineEvent>((event) => {
+                const item = event.itemId ? items.find((x) => x.id === event.itemId) : undefined;
+                return {
+                    ...event,
+                    item,
+                    itemPeople: item
+                        ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
+                              const itemPerson = item.itemPeople.find(
+                                  (itemPerson) => itemPerson.personId === person.id
+                              );
+                              if (itemPerson) {
+                                  acc.push({
+                                      ...itemPerson,
+                                      person,
+                                  });
+                              }
+                              return acc;
+                          }, [])
+                        : [],
+                    exhibitionPeople: event.exhibitionId ? [] : [],
+                };
+            }),
+        [rawEvents, items, people]
     );
 
     /*Plus 30 to the width to account for scrollbars!*/
@@ -650,6 +676,7 @@ export function ScheduleFetchWrapper(): JSX.Element {
         variables: {
             conferenceId: conference.id,
         },
+        fetchPolicy: "cache-first",
     });
     return (
         <ApolloQueryWrapper<
@@ -658,8 +685,9 @@ export function ScheduleFetchWrapper(): JSX.Element {
             {
                 rooms: ReadonlyArray<Schedule_RoomSummaryFragment>;
                 events: ReadonlyArray<Schedule_EventSummaryFragment>;
-                items: ReadonlyArray<Schedule_ItemElementsFragment>;
+                items: ReadonlyArray<Schedule_ItemFieldsFragment>;
                 tags: ReadonlyArray<Schedule_TagFragment>;
+                people: ReadonlyArray<Schedule_ProgramPersonFragment>;
             }
         >
             queryResult={roomsResult}
@@ -668,6 +696,7 @@ export function ScheduleFetchWrapper(): JSX.Element {
                 events: x.schedule_Event,
                 items: x.content_Item,
                 tags: x.collection_Tag,
+                people: x.collection_ProgramPerson,
             })}
         >
             {(data) => <ScheduleInner {...data} />}

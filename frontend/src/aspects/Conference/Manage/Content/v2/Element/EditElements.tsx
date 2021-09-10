@@ -126,7 +126,7 @@ export function EditElements({
                     </AccordionButton>
                     <AccordionPanel pb={4}>
                         <OrderedList>
-                            <ListItem>Add content of type &ldquo;Image file&rdquo;</ListItem>
+                            <ListItem>Add an element of type &ldquo;Image file&rdquo;</ListItem>
                             <ListItem>Enable the &ldquo;Logo&rdquo; option</ListItem>
                             <ListItem>
                                 For correct display, please also &ldquo;Hide

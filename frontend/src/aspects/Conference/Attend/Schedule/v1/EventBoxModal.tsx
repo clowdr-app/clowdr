@@ -23,7 +23,6 @@ import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
 import {
     Content_ElementType_Enum,
-    Schedule_EventSummaryFragment,
     Schedule_ItemFragment,
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
@@ -35,6 +34,7 @@ import { AuthorList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
 import StarEventButton from "../StarEventButton";
+import type { TimelineEvent } from "./DayList";
 import useTimelineParameters from "./useTimelineParameters";
 
 export default function EventBoxModal({
@@ -51,7 +51,7 @@ export default function EventBoxModal({
     eventStartMs: number;
     durationSeconds: number;
     roomName: string;
-    events: ReadonlyArray<Schedule_EventSummaryFragment>;
+    events: ReadonlyArray<TimelineEvent>;
     content: Schedule_ItemFragment | null | undefined;
     isOpen: boolean;
     onClose: () => void;
@@ -78,7 +78,14 @@ export default function EventBoxModal({
     }
     const roomUrl = `/conference/${conference.slug}/room/${event0.roomId}`;
     const itemUrl = content ? `/conference/${conference.slug}/item/${content.id}` : roomUrl;
-    const exhibitionId = useMemo(() => events.reduce((id, x) => id || x.exhibitionId, null), [events]);
+    const exhibitionId = useMemo(() => {
+        for (const event of events) {
+            if (event.exhibitionId) {
+                return event.exhibitionId;
+            }
+        }
+        return null;
+    }, [events]);
     const exhibitionUrl = exhibitionId ? `/conference/${conference.slug}/exhibition/${exhibitionId}` : null;
 
     const ref = useRef<HTMLAnchorElement>(null);
@@ -211,39 +218,23 @@ export default function EventBoxModal({
                             )}
                         />
                     ) : undefined}
-                    {exhibitionUrl ? (
-                        <>
-                            <Text>This event is an exhibition of multiple items of content.</Text>
-                            <LinkButton
-                                colorScheme="purple"
-                                size="lg"
-                                to={exhibitionUrl}
-                                title="View the exhibition"
-                                textDecoration="none"
-                            >
-                                <FAIcon iconStyle="s" icon="link" />
-                                &nbsp;&nbsp;
-                                <chakra.span>View the exhibition</chakra.span>
-                            </LinkButton>
-                        </>
-                    ) : undefined}
                     {abstractText ? (
                         <Box>
                             <Markdown>{abstractText}</Markdown>
                         </Box>
                     ) : undefined}
-                    {itemUrl ? (
+                    {exhibitionUrl || itemUrl ? (
                         <LinkButton
                             my={1}
                             colorScheme="purple"
-                            to={itemUrl}
-                            title={content ? "View item" : `Go to room ${roomName}`}
+                            to={exhibitionUrl ?? itemUrl}
+                            title={exhibitionUrl || itemUrl ? "Find out more" : `Go to room ${roomName}`}
                             textDecoration="none"
                             ref={initialFocusRef}
                         >
                             <FAIcon iconStyle="s" icon="link" />
                             <Text as="span" ml={1}>
-                                {content ? "Find out more" : "Go to room"}
+                                Find out more
                             </Text>
                         </LinkButton>
                     ) : undefined}
@@ -279,7 +270,7 @@ export default function EventBoxModal({
                             </Grid>
                         </VStack>
                     ) : undefined}
-                    {content?.itemPeople.length ? <AuthorList programPeopleData={content.itemPeople} /> : undefined}
+                    {event0?.itemPeople?.length ? <AuthorList programPeopleData={event0.itemPeople} /> : undefined}
                 </ModalBody>
             </ModalContent>
         </Modal>

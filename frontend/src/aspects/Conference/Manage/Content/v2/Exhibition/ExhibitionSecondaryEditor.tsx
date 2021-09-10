@@ -13,6 +13,7 @@ import {
     DrawerOverlay,
     Flex,
     FormControl,
+    FormHelperText,
     FormLabel,
     HStack,
     Popover,
@@ -34,6 +35,7 @@ import React, { useMemo, useState } from "react";
 import {
     ManageContent_ItemExhibitionFragment,
     ManageContent_ItemExhibitionFragmentDoc,
+    ManageContent_ItemFragment,
     useManageContent_DeleteItemExhibitionMutation,
     useManageContent_InsertItemExhibitionMutation,
     useManageContent_SelectAllItemsQuery,
@@ -83,11 +85,15 @@ export function SecondaryEditor({
     exhibitionName,
     isOpen,
     onClose,
+    descriptiveItemId,
+    setDescriptiveItemId,
 }: {
     exhibitionId: string | null;
     exhibitionName: string | null;
     isOpen: boolean;
     onClose: () => void;
+    descriptiveItemId: string | null;
+    setDescriptiveItemId: (id: string | null) => void;
 }): JSX.Element {
     return (
         <>
@@ -102,14 +108,30 @@ export function SecondaryEditor({
                         <Code fontSize="xs">{exhibitionId}</Code>
                     </DrawerHeader>
 
-                    <DrawerBody>{exhibitionId && <SecondaryEditorInner exhibitionId={exhibitionId} />}</DrawerBody>
+                    <DrawerBody>
+                        {exhibitionId && (
+                            <SecondaryEditorInner
+                                exhibitionId={exhibitionId}
+                                descriptiveItemId={descriptiveItemId}
+                                setDescriptiveItemId={setDescriptiveItemId}
+                            />
+                        )}
+                    </DrawerBody>
                 </DrawerContent>
             </Drawer>
         </>
     );
 }
 
-function SecondaryEditorInner({ exhibitionId }: { exhibitionId: string }): JSX.Element {
+function SecondaryEditorInner({
+    exhibitionId,
+    descriptiveItemId,
+    setDescriptiveItemId,
+}: {
+    exhibitionId: string;
+    descriptiveItemId: string | null;
+    setDescriptiveItemId: (id: string | null) => void;
+}): JSX.Element {
     const conference = useConference();
     const itemExhibitionsResponse = useManageContent_SelectItemExhibitionsQuery({
         variables: {
@@ -118,6 +140,26 @@ function SecondaryEditorInner({ exhibitionId }: { exhibitionId: string }): JSX.E
     });
     const itemExhibitions = itemExhibitionsResponse.data?.content_ItemExhibition;
     const itemExhibitionsIds = useMemo(() => itemExhibitions?.map((x) => x.item.id), [itemExhibitions]);
+
+    const itemsResponse = useManageContent_SelectAllItemsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const sortedItems = useMemo(
+        () =>
+            itemExhibitionsIds &&
+            itemsResponse.data?.content_Item &&
+            [...itemsResponse.data.content_Item].sort((x, y) => x.title.localeCompare(y.title)),
+        [itemExhibitionsIds, itemsResponse.data?.content_Item]
+    );
+    const filteredItems = useMemo(
+        () =>
+            sortedItems && itemExhibitionsIds
+                ? sortedItems.filter((item) => !itemExhibitionsIds.includes(item.id))
+                : undefined,
+        [itemExhibitionsIds, sortedItems]
+    );
 
     return (
         <VStack w="100%" alignExhibitions="flex-start">
@@ -133,10 +175,34 @@ function SecondaryEditorInner({ exhibitionId }: { exhibitionId: string }): JSX.E
                     <ExternalLinkIcon />
                 </LinkButton>
             </HStack>
+            {itemsResponse.loading && !sortedItems ? <Spinner label="Loading items" /> : undefined}
+            {sortedItems ? (
+                <FormControl>
+                    <FormLabel>Descriptive Item</FormLabel>
+                    <Select
+                        value={descriptiveItemId ?? ""}
+                        onChange={(ev) => setDescriptiveItemId(ev.target.value === "" ? null : ev.target.value)}
+                    >
+                        <option value="">&lt;No item&gt;</option>
+                        {sortedItems.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.title}
+                            </option>
+                        ))}
+                    </Select>
+                    <FormHelperText>
+                        Select a content item whose abstract or text element describes this exhibition.
+                    </FormHelperText>
+                </FormControl>
+            ) : undefined}
             <VStack spacing={2} alignItems="flex-start" w="100%">
                 <Text>Add or remove items in this exhibition.</Text>
                 {itemExhibitionsIds ? (
-                    <AddItemExhibition exhibitionId={exhibitionId} existingItemIds={itemExhibitionsIds} />
+                    <AddItemExhibition
+                        exhibitionId={exhibitionId}
+                        existingItemIds={itemExhibitionsIds}
+                        sortedItems={filteredItems}
+                    />
                 ) : undefined}
                 {itemExhibitionsResponse.loading && !itemExhibitions ? <Spinner label="Loading people" /> : undefined}
                 {itemExhibitions ? <ItemExhibitionsList exhibitionItems={itemExhibitions} /> : undefined}
@@ -149,34 +215,22 @@ function AddItemExhibitionBody({
     exhibitionId,
     existingItemIds,
     onClose,
+    sortedItems,
 }: {
     exhibitionId: string;
     existingItemIds: string[];
     onClose: () => void;
+    sortedItems: undefined | readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
-    const itemsResponse = useManageContent_SelectAllItemsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     const [insertItemExhibition, insertItemExhibitionResponse] = useManageContent_InsertItemExhibitionMutation();
-
-    const sortedItems = useMemo(
-        () =>
-            itemsResponse.data?.content_Item
-                .filter((item) => !existingItemIds.includes(item.id))
-                .sort((x, y) => x.title.localeCompare(y.title)),
-        [existingItemIds, itemsResponse.data?.content_Item]
-    );
 
     const toast = useToast();
     return (
         <>
             <PopoverHeader>Link item</PopoverHeader>
             <PopoverBody>
-                {itemsResponse.loading && !sortedItems ? <Spinner label="Loading items" /> : undefined}
                 {sortedItems ? (
                     <FormControl>
                         <FormLabel>Item</FormLabel>
@@ -247,7 +301,11 @@ function AddItemExhibitionBody({
     );
 }
 
-function AddItemExhibition(props: { exhibitionId: string; existingItemIds: string[] }): JSX.Element {
+function AddItemExhibition(props: {
+    exhibitionId: string;
+    existingItemIds: string[];
+    sortedItems: undefined | readonly ManageContent_ItemFragment[];
+}): JSX.Element {
     const { onOpen, onClose, isOpen } = useDisclosure();
 
     const bgColor = useColorModeValue("purple.50", "purple.900");

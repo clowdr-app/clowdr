@@ -190,7 +190,7 @@ export default function SearchPanel({
                                         fetchEventsQuery({
                                             variables: {
                                                 conferenceId: conference.id,
-                                                search: `%${search}%`,
+                                                search: `${search}`,
                                             },
                                         });
                                         break;
@@ -198,7 +198,7 @@ export default function SearchPanel({
                                         fetchItemsQuery({
                                             variables: {
                                                 conferenceId: conference.id,
-                                                search: `%${search}%`,
+                                                search: `${search}`,
                                             },
                                         });
                                         break;
@@ -206,7 +206,7 @@ export default function SearchPanel({
                                         fetchPeopleQuery({
                                             variables: {
                                                 conferenceId: conference.id,
-                                                search: `%${search}%`,
+                                                search: `${search}`,
                                             },
                                         });
                                         break;

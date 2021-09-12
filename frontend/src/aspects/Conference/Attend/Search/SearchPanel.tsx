@@ -39,27 +39,10 @@ gql`
         itemTags {
             ...ItemTagData
         }
-        # itemExhibitions {
-        #     ...ItemExhibitionData
-        # }
     }
 
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
-        content_Item(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _or: [
-                    { itemExhibitions: { exhibition: { name: { _ilike: $search } } } }
-                    { itemTags: { tag: { name: { _ilike: $search } } } }
-                    {
-                        itemPeople: {
-                            person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
-                        }
-                    }
-                    { title: { _ilike: $search } }
-                ]
-            }
-        ) {
+        content_searchItems(args: { conferenceId: $conferenceId, search: $search }) {
             ...SearchPanel_Item
         }
     }
@@ -91,58 +74,8 @@ gql`
     }
 
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
-        schedule_Event(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _or: [
-                    {
-                        eventPeople: {
-                            person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
-                        }
-                    }
-                    {
-                        exhibition: {
-                            _or: [
-                                { name: { _ilike: $search } }
-                                {
-                                    items: {
-                                        item: {
-                                            _or: [
-                                                { title: { _ilike: $search } }
-                                                {
-                                                    itemPeople: {
-                                                        person: {
-                                                            _or: [
-                                                                { name: { _ilike: $search } }
-                                                                { affiliation: { _ilike: $search } }
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                    {
-                        item: {
-                            _or: [
-                                { title: { _ilike: $search } }
-                                {
-                                    itemPeople: {
-                                        person: {
-                                            _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                    { name: { _ilike: $search } }
-                ]
-            }
+        schedule_searchEvents(
+            args: { conferenceId: $conferenceId, search: $search }
             order_by: [{ startTime: asc }, { endTime: asc }, { room: { name: asc } }]
         ) {
             ...SearchPanel_Event
@@ -164,12 +97,7 @@ gql`
     }
 
     query SearchPanel_People($conferenceId: uuid!, $search: String!) {
-        collection_ProgramPerson(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                _or: [{ affiliation: { _ilike: $search } }, { name: { _ilike: $search } }]
-            }
-        ) {
+        collection_searchProgramPerson(args: { search: $search, conferenceid: $conferenceId }) {
             ...SearchPanel_Person
         }
     }
@@ -303,12 +231,14 @@ export default function SearchPanel({
                         Times are shown in your local timezone.
                     </Text>
                     <List spacing={3} w="100%" px={2}>
-                        {eventsResponse.data.schedule_Event.map((event) => (
+                        {eventsResponse.data.schedule_searchEvents.map((event) => (
                             <ListItem key={event.id} w="100%">
                                 <SearchResult_Event event={event} />
                             </ListItem>
                         ))}
-                        {eventsResponse.data.schedule_Event.length === 0 ? <ListItem>No results</ListItem> : undefined}
+                        {eventsResponse.data.schedule_searchEvents.length === 0 ? (
+                            <ListItem>No results</ListItem>
+                        ) : undefined}
                     </List>
                 </>
             ) : undefined}
@@ -316,12 +246,14 @@ export default function SearchPanel({
                 <>
                     <Divider my={2} />
                     <List spacing={3} w="100%" px={2}>
-                        {itemsResponse.data.content_Item.map((item) => (
+                        {itemsResponse.data.content_searchItems.map((item) => (
                             <ListItem key={item.id} w="100%">
                                 <SearchResult_Item item={item} />
                             </ListItem>
                         ))}
-                        {itemsResponse.data.content_Item.length === 0 ? <ListItem>No results</ListItem> : undefined}
+                        {itemsResponse.data.content_searchItems.length === 0 ? (
+                            <ListItem>No results</ListItem>
+                        ) : undefined}
                     </List>
                 </>
             ) : undefined}
@@ -329,12 +261,12 @@ export default function SearchPanel({
                 <>
                     <Divider my={2} />
                     <List spacing={3} w="100%" overflowY="auto" flex="0 1 100%" px={2}>
-                        {peopleResponse.data.collection_ProgramPerson.map((person) => (
+                        {peopleResponse.data.collection_searchProgramPerson.map((person) => (
                             <ListItem key={person.id} w="100%">
                                 <SearchResult_Person person={person} />
                             </ListItem>
                         ))}
-                        {peopleResponse.data.collection_ProgramPerson.length === 0 ? (
+                        {peopleResponse.data.collection_searchProgramPerson.length === 0 ? (
                             <ListItem>No results</ListItem>
                         ) : undefined}
                     </List>

@@ -7132,6 +7132,11 @@ export type Collection_Tag_Variance_Order_By = {
   readonly priority?: Maybe<Order_By>;
 };
 
+export type Collection_SearchProgramPerson_Args = {
+  readonly conferenceid?: Maybe<Scalars['uuid']>;
+  readonly search?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "conference.Conference" */
 export type Conference_Conference = {
   readonly __typename?: 'conference_Conference';
@@ -9875,7 +9880,6 @@ export type Content_Element_Order_By = {
   readonly isHidden?: Maybe<Order_By>;
   readonly item?: Maybe<Content_Item_Order_By>;
   readonly itemId?: Maybe<Order_By>;
-  readonly itemTitle?: Maybe<Order_By>;
   readonly layoutData?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -11834,6 +11838,11 @@ export type Content_Uploader_Variance_Fields = {
 /** order by variance() on columns of table "content.Uploader" */
 export type Content_Uploader_Variance_Order_By = {
   readonly emailsSentCount?: Maybe<Order_By>;
+};
+
+export type Content_SearchItems_Args = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly search?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
@@ -20111,6 +20120,10 @@ export type Query_Root = {
   readonly collection_Tag_aggregate: Collection_Tag_Aggregate;
   /** fetch data from the table: "collection.Tag" using primary key columns */
   readonly collection_Tag_by_pk?: Maybe<Collection_Tag>;
+  /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+  readonly collection_searchProgramPerson: ReadonlyArray<Collection_ProgramPerson>;
+  /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+  readonly collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "conference.Conference" */
   readonly conference_Conference: ReadonlyArray<Conference_Conference>;
   /** fetch aggregated fields from the table: "conference.Conference" */
@@ -20205,6 +20218,10 @@ export type Query_Root = {
   readonly content_Uploader_aggregate: Content_Uploader_Aggregate;
   /** fetch data from the table: "content.Uploader" using primary key columns */
   readonly content_Uploader_by_pk?: Maybe<Content_Uploader>;
+  /** execute function "content.searchItems" which returns "content.Item" */
+  readonly content_searchItems: ReadonlyArray<Content_Item>;
+  /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+  readonly content_searchItems_aggregate: Content_Item_Aggregate;
   readonly getSlug: GetSlugOutput;
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
@@ -20442,6 +20459,10 @@ export type Query_Root = {
   readonly schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
   /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
   readonly schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+  /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+  readonly schedule_searchEvents: ReadonlyArray<Schedule_Event>;
+  /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+  readonly schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -21149,6 +21170,26 @@ export type Query_RootCollection_Tag_By_PkArgs = {
 };
 
 
+export type Query_RootCollection_SearchProgramPersonArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
+export type Query_RootCollection_SearchProgramPerson_AggregateArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
 export type Query_RootConference_ConferenceArgs = {
   distinct_on?: Maybe<ReadonlyArray<Conference_Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21510,6 +21551,26 @@ export type Query_RootContent_Uploader_AggregateArgs = {
 
 export type Query_RootContent_Uploader_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Query_RootContent_SearchItemsArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<ReadonlyArray<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+
+export type Query_RootContent_SearchItems_AggregateArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<ReadonlyArray<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
 };
 
 
@@ -22428,6 +22489,26 @@ export type Query_RootSchedule_StarredEvent_By_PkArgs = {
 };
 
 
+export type Query_RootSchedule_SearchEventsArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_SearchEvents_AggregateArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
 export type Query_RootSystem_ConfigurationArgs = {
   distinct_on?: Maybe<ReadonlyArray<System_Configuration_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -23175,7 +23256,6 @@ export type Registrant_Invitation_Order_By = {
   readonly confirmationCode?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
-  readonly hash?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly inviteCode?: Maybe<Order_By>;
   readonly invitedEmailAddress?: Maybe<Order_By>;
@@ -24046,7 +24126,6 @@ export type Registrant_Registrant_Order_By = {
   readonly groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
-  readonly inviteSent?: Maybe<Order_By>;
   readonly profile?: Maybe<Registrant_Profile_Order_By>;
   readonly programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
   readonly roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -25994,7 +26073,6 @@ export type Room_Room_Order_By = {
   readonly currentModeName?: Maybe<Order_By>;
   readonly events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly isProgramRoom?: Maybe<Order_By>;
   readonly livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
   readonly managementMode?: Maybe<Room_ManagementMode_Order_By>;
   readonly managementModeName?: Maybe<Order_By>;
@@ -29360,6 +29438,11 @@ export enum Schedule_StarredEvent_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+export type Schedule_SearchEvents_Args = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly search?: Maybe<Scalars['String']>;
+};
+
 export type Subscription_Root = {
   readonly __typename?: 'subscription_root';
   /** fetch data from the table: "Email" */
@@ -29518,6 +29601,10 @@ export type Subscription_Root = {
   readonly collection_Tag_aggregate: Collection_Tag_Aggregate;
   /** fetch data from the table: "collection.Tag" using primary key columns */
   readonly collection_Tag_by_pk?: Maybe<Collection_Tag>;
+  /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+  readonly collection_searchProgramPerson: ReadonlyArray<Collection_ProgramPerson>;
+  /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+  readonly collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "conference.Conference" */
   readonly conference_Conference: ReadonlyArray<Conference_Conference>;
   /** fetch aggregated fields from the table: "conference.Conference" */
@@ -29612,6 +29699,10 @@ export type Subscription_Root = {
   readonly content_Uploader_aggregate: Content_Uploader_Aggregate;
   /** fetch data from the table: "content.Uploader" using primary key columns */
   readonly content_Uploader_by_pk?: Maybe<Content_Uploader>;
+  /** execute function "content.searchItems" which returns "content.Item" */
+  readonly content_searchItems: ReadonlyArray<Content_Item>;
+  /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+  readonly content_searchItems_aggregate: Content_Item_Aggregate;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
   readonly job_queues_ChannelStackCreateJob: ReadonlyArray<Job_Queues_ChannelStackCreateJob>;
   /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
@@ -29846,6 +29937,10 @@ export type Subscription_Root = {
   readonly schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
   /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
   readonly schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+  /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+  readonly schedule_searchEvents: ReadonlyArray<Schedule_Event>;
+  /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+  readonly schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
   /** fetch data from the table: "system.Configuration" */
   readonly system_Configuration: ReadonlyArray<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -30552,6 +30647,26 @@ export type Subscription_RootCollection_Tag_By_PkArgs = {
 };
 
 
+export type Subscription_RootCollection_SearchProgramPersonArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
+export type Subscription_RootCollection_SearchProgramPerson_AggregateArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
 export type Subscription_RootConference_ConferenceArgs = {
   distinct_on?: Maybe<ReadonlyArray<Conference_Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30913,6 +31028,26 @@ export type Subscription_RootContent_Uploader_AggregateArgs = {
 
 export type Subscription_RootContent_Uploader_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootContent_SearchItemsArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<ReadonlyArray<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_SearchItems_AggregateArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<ReadonlyArray<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
 };
 
 
@@ -31818,6 +31953,26 @@ export type Subscription_RootSchedule_StarredEvent_AggregateArgs = {
 
 export type Subscription_RootSchedule_StarredEvent_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootSchedule_SearchEventsArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_SearchEvents_AggregateArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<ReadonlyArray<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 
@@ -35614,7 +35769,7 @@ export type SearchPanel_ItemsQueryVariables = Exact<{
 }>;
 
 
-export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
+export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', readonly content_searchItems: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
 
 export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
@@ -35624,7 +35779,7 @@ export type SearchPanel_EventsQueryVariables = Exact<{
 }>;
 
 
-export type SearchPanel_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
+export type SearchPanel_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_searchEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
 
 export type SearchPanel_PersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
@@ -35634,7 +35789,7 @@ export type SearchPanel_PeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPanel_PeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
+export type SearchPanel_PeopleQuery = { readonly __typename?: 'query_root', readonly collection_searchProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
 
 export type ConferenceStatsQueryVariables = Exact<{
   id: Scalars['uuid'];
@@ -41840,9 +41995,7 @@ export type ScheduleV2_AllEvents_ParamsLazyQueryHookResult = ReturnType<typeof u
 export type ScheduleV2_AllEvents_ParamsQueryResult = Apollo.QueryResult<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>;
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
-  content_Item(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{itemExhibitions: {exhibition: {name: {_ilike: $search}}}}, {itemTags: {tag: {name: {_ilike: $search}}}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {title: {_ilike: $search}}]}
-  ) {
+  content_searchItems(args: {conferenceId: $conferenceId, search: $search}) {
     ...SearchPanel_Item
   }
 }
@@ -41878,8 +42031,8 @@ export type SearchPanel_ItemsLazyQueryHookResult = ReturnType<typeof useSearchPa
 export type SearchPanel_ItemsQueryResult = Apollo.QueryResult<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>;
 export const SearchPanel_EventsDocument = gql`
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
-  schedule_Event(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{eventPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}, {exhibition: {_or: [{name: {_ilike: $search}}, {items: {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}}]}}, {item: {_or: [{title: {_ilike: $search}}, {itemPeople: {person: {_or: [{name: {_ilike: $search}}, {affiliation: {_ilike: $search}}]}}}]}}, {name: {_ilike: $search}}]}
+  schedule_searchEvents(
+    args: {conferenceId: $conferenceId, search: $search}
     order_by: [{startTime: asc}, {endTime: asc}, {room: {name: asc}}]
   ) {
     ...SearchPanel_Event
@@ -41917,8 +42070,8 @@ export type SearchPanel_EventsLazyQueryHookResult = ReturnType<typeof useSearchP
 export type SearchPanel_EventsQueryResult = Apollo.QueryResult<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>;
 export const SearchPanel_PeopleDocument = gql`
     query SearchPanel_People($conferenceId: uuid!, $search: String!) {
-  collection_ProgramPerson(
-    where: {conferenceId: {_eq: $conferenceId}, _or: [{affiliation: {_ilike: $search}}, {name: {_ilike: $search}}]}
+  collection_searchProgramPerson(
+    args: {search: $search, conferenceid: $conferenceId}
   ) {
     ...SearchPanel_Person
   }

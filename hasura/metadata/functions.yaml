@@ -1,1 +1,9 @@
-[]
+- function:
+    schema: collection
+    name: searchProgramPerson
+- function:
+    schema: content
+    name: searchItems
+- function:
+    schema: schedule
+    name: searchEvents

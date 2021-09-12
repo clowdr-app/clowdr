@@ -1,0 +1,16 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE OR REPLACE FUNCTION collection."searchProgramPerson"(search text, conferenceId uuid)
+--  RETURNS SETOF collection."ProgramPerson"
+--  LANGUAGE sql
+--  STABLE
+-- AS $function$
+-- SELECT   *
+-- FROM     "collection"."ProgramPerson"
+-- WHERE (  search <% ( "name" )
+--       OR search <% ( "affiliation" )
+--       )
+--       AND "conferenceId" = conferenceId
+-- ORDER BY similarity(search, ( "name" )) DESC;
+--
+-- $function$;

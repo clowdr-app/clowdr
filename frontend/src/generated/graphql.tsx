@@ -36243,6 +36243,21 @@ export type SynchroniseUploadersMutationVariables = Exact<{
 
 export type SynchroniseUploadersMutation = { readonly __typename?: 'mutation_root', readonly delete_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }>, readonly insert_content_Uploader?: Maybe<{ readonly __typename?: 'content_Uploader_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }> };
 
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> };
+
+export type UpdateExhibitionDescriptiveItemMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  descriptiveItemId: Scalars['uuid'];
+}>;
+
+
+export type UpdateExhibitionDescriptiveItemMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly descriptiveItemId?: Maybe<any> }> };
+
 export type UpdateUploadsRemainingMutationVariables = Exact<{
   elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   count: Scalars['Int'];
@@ -44304,7 +44319,10 @@ export const SynchroniseUploadersDocument = gql`
       id
     }
   }
-  insert_content_Uploader(objects: $insertUploaders) {
+  insert_content_Uploader(
+    objects: $insertUploaders
+    on_conflict: {constraint: Uploader_elementId_email_key, update_columns: []}
+  ) {
     returning {
       id
     }
@@ -44338,6 +44356,82 @@ export function useSynchroniseUploadersMutation(baseOptions?: Apollo.MutationHoo
 export type SynchroniseUploadersMutationHookResult = ReturnType<typeof useSynchroniseUploadersMutation>;
 export type SynchroniseUploadersMutationResult = Apollo.MutationResult<SynchroniseUploadersMutation>;
 export type SynchroniseUploadersMutationOptions = Apollo.BaseMutationOptions<SynchroniseUploadersMutation, SynchroniseUploadersMutationVariables>;
+export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
+    query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
+  collection_Exhibition(
+    where: {conferenceId: {_eq: $conferenceId}, descriptiveItemId: {_is_null: true}}
+  ) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery__
+ *
+ * To run a query within a React component, call `useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>(UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument, options);
+      }
+export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>(UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument, options);
+        }
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>;
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQueryHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQuery>;
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryResult = Apollo.QueryResult<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>;
+export const UpdateExhibitionDescriptiveItemDocument = gql`
+    mutation UpdateExhibitionDescriptiveItem($id: uuid!, $descriptiveItemId: uuid!) {
+  update_collection_Exhibition_by_pk(
+    pk_columns: {id: $id}
+    _set: {descriptiveItemId: $descriptiveItemId}
+  ) {
+    id
+    descriptiveItemId
+  }
+}
+    `;
+export type UpdateExhibitionDescriptiveItemMutationFn = Apollo.MutationFunction<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>;
+
+/**
+ * __useUpdateExhibitionDescriptiveItemMutation__
+ *
+ * To run a mutation, you first call `useUpdateExhibitionDescriptiveItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExhibitionDescriptiveItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateExhibitionDescriptiveItemMutation, { data, loading, error }] = useUpdateExhibitionDescriptiveItemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      descriptiveItemId: // value for 'descriptiveItemId'
+ *   },
+ * });
+ */
+export function useUpdateExhibitionDescriptiveItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>(UpdateExhibitionDescriptiveItemDocument, options);
+      }
+export type UpdateExhibitionDescriptiveItemMutationHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItemMutation>;
+export type UpdateExhibitionDescriptiveItemMutationResult = Apollo.MutationResult<UpdateExhibitionDescriptiveItemMutation>;
+export type UpdateExhibitionDescriptiveItemMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>;
 export const UpdateUploadsRemainingDocument = gql`
     mutation UpdateUploadsRemaining($elementIds: [uuid!]!, $count: Int!) {
   update_content_Element(

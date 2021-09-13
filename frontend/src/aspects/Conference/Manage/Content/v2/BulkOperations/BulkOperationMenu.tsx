@@ -29,6 +29,7 @@ import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
 import { RemoveElementsOrUploadablesModal } from "./RemoveElementsOrUploadablesModal";
 import { SelectElementsOrUploadablesModal } from "./SelectElementsOrUploadablesModal";
 import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
+import { UpdateExhibitionDescriptiveItemsModal } from "./UpdateExhibitionDescriptiveItemsModal";
 import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
 
 export function BulkOperationMenu({
@@ -113,6 +114,19 @@ export function BulkOperationMenu({
                     operation: "UPDATE_UPLOADS_REMAINING",
                     items: items,
                     step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
+        {
+            label: "Update exhibition descriptive items",
+            value: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
+                    items,
+                    step: "ACT",
                     elementsByItem: [],
                     restrictToTypes: null,
                 });
@@ -420,6 +434,16 @@ export function BulkOperationMenu({
                     setActiveOperation(null);
                 }}
                 elementsByItem={activeOperation?.elementsByItem ?? []}
+            />
+            <UpdateExhibitionDescriptiveItemsModal
+                isOpen={
+                    activeOperation?.operation === "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS" &&
+                    activeOperation?.step === "ACT"
+                }
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
             />
         </>
     );

@@ -26,6 +26,27 @@ import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } fro
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
 
+gql`
+    query LiveIndicator_GetLatest($eventId: uuid!) {
+        video_ImmediateSwitch(
+            order_by: { executedAt: desc_nulls_last }
+            where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
+            limit: 1
+        ) {
+            id
+            data
+            executedAt
+        }
+    }
+
+    query LiveIndicator_GetElement($elementId: uuid!) {
+        content_Element_by_pk(id: $elementId) {
+            id
+            data
+        }
+    }
+`;
+
 export function LiveIndicator({
     live,
     now,
@@ -43,27 +64,6 @@ export function LiveIndicator({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
-
-    gql`
-        query LiveIndicator_GetLatest($eventId: uuid!) {
-            video_ImmediateSwitch(
-                order_by: { executedAt: desc_nulls_last }
-                where: { eventId: { _eq: $eventId }, executedAt: { _is_null: false } }
-                limit: 1
-            ) {
-                id
-                data
-                executedAt
-            }
-        }
-
-        query LiveIndicator_GetElement($elementId: uuid!) {
-            content_Element_by_pk(id: $elementId) {
-                id
-                data
-            }
-        }
-    `;
 
     const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
         variables: {
@@ -91,12 +91,13 @@ export function LiveIndicator({
         return transformed;
     }, [latestImmediateSwitchData]);
 
-    const { data: currentElementData } = useLiveIndicator_GetElementQuery({
+    const { data: _currentElementData } = useLiveIndicator_GetElementQuery({
         variables: {
             elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
         },
         skip: latestSwitchData?.data.kind !== "video",
     });
+    const currentElementData = latestSwitchData?.data.kind === "video" ? _currentElementData : undefined;
 
     const durationCurrentElement = useMemo((): number | null => {
         if (

@@ -35541,7 +35541,7 @@ export type EnableBackstageStreamPreviewQueryVariables = Exact<{
 }>;
 
 
-export type EnableBackstageStreamPreviewQuery = { readonly __typename?: 'query_root', readonly conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+export type EnableBackstageStreamPreviewQuery = { readonly __typename?: 'query_root', readonly conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly key: Conference_ConfigurationKey_Enum, readonly conferenceId: any, readonly value: any }> };
 
 export type GetEventDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -41052,6 +41052,7 @@ export const EnableBackstageStreamPreviewDocument = gql`
     conferenceId: $conferenceId
   ) {
     key
+    conferenceId
     value
   }
 }

@@ -31,7 +31,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                 <HeadingText />
                 {config.currentRegistrantId ? (
                     <>
-                        <ButtonGroup isAttached borderRadius={5} closeOnSelect={false} overflow="hidden">
+                        <ButtonGroup isAttached borderRadius={5} overflow="hidden">
                             <ChatPinnedQueryProvider>
                                 <PinnedButton
                                     opacity={0.8}

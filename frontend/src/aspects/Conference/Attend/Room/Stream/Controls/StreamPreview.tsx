@@ -10,6 +10,7 @@ gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
         conference_Configuration_by_pk(key: ENABLE_BACKSTAGE_STREAM_PREVIEW, conferenceId: $conferenceId) {
             key
+            conferenceId
             value
         }
     }

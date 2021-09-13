@@ -2,9 +2,9 @@ import { Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } fr
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import type { EventParticipantStreamDetailsFragment } from "../../../../../generated/graphql";
+import type { EventParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
 
-export function PictureInPictureLayoutForm({
+export function SingleLayoutForm({
     setLayout,
     streams,
 }: {
@@ -13,16 +13,14 @@ export function PictureInPictureLayoutForm({
 }): JSX.Element {
     const toast = useToast();
     return (
-        <Formik<{ focus_stream_id: string; corner_stream_id: string }>
+        <Formik<{ stream_id: string }>
             initialValues={{
-                focus_stream_id: "",
-                corner_stream_id: "",
+                stream_id: "",
             }}
             onSubmit={async (values) => {
                 const layoutData: VonageSessionLayoutData = {
-                    type: VonageSessionLayoutType.PictureInPicture,
-                    focusStreamId: values.focus_stream_id,
-                    cornerStreamId: values.corner_stream_id,
+                    type: VonageSessionLayoutType.Single,
+                    focusStreamId: values.stream_id,
                 };
 
                 try {
@@ -38,14 +36,14 @@ export function PictureInPictureLayoutForm({
         >
             {(props) => (
                 <Form>
-                    <Field name="focus_stream_id">
+                    <Field name="stream_id">
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={!!form.errors.focus_stream_id && !!form.touched.focus_stream_id}
-                                defaultValue=""
+                                isInvalid={!!form.errors.stream_id && !!form.touched.stream_id}
                                 isRequired
+                                defaultValue=""
                             >
-                                <FormLabel htmlFor="focus_stream_id">Fullscreen Panel</FormLabel>
+                                <FormLabel htmlFor="stream_id">Stream</FormLabel>
                                 <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
                                     {streams.map((stream) => (
                                         <option key={stream.id} value={stream.vonageStreamId}>
@@ -53,26 +51,7 @@ export function PictureInPictureLayoutForm({
                                         </option>
                                     ))}
                                 </Select>
-                                <FormErrorMessage>{form.errors.focus_stream_id}</FormErrorMessage>
-                            </FormControl>
-                        )}
-                    </Field>
-                    <Field name="corner_stream_id">
-                        {({ field, form }: FieldProps<string>) => (
-                            <FormControl
-                                isInvalid={!!form.errors.corner_stream_id && !!form.touched.corner_stream_id}
-                                defaultValue=""
-                                isRequired
-                            >
-                                <FormLabel htmlFor="corner_stream_id">Inset Panel</FormLabel>
-                                <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
-                                    {streams.map((stream) => (
-                                        <option key={stream.id} value={stream.vonageStreamId}>
-                                            {stream.registrant.displayName} ({stream.vonageStreamType})
-                                        </option>
-                                    ))}
-                                </Select>
-                                <FormErrorMessage>{form.errors.corner_stream_id}</FormErrorMessage>
+                                <FormErrorMessage>{form.errors.stream_id}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>
@@ -82,7 +61,7 @@ export function PictureInPictureLayoutForm({
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}
-                        aria-label="Set layout to picture-in-picture mode"
+                        aria-label="Set layout to fullscreen mode"
                     >
                         Set layout
                     </Button>

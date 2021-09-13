@@ -16,37 +16,40 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { RoomEventDetailsFragment, useGetEventParticipantStreamsSubscription } from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
-import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { useVonageGlobalState } from "../Vonage/VonageGlobalStateProvider";
-import { BroadcastControlPanel } from "./BroadcastControlPanel";
+import {
+    RoomEventDetailsFragment,
+    useGetEventParticipantStreamsSubscription,
+} from "../../../../../../generated/graphql";
+import { useRealTime } from "../../../../../Generic/useRealTime";
+import useQueryErrorToast from "../../../../../GQL/useQueryErrorToast";
+import { FAIcon } from "../../../../../Icons/FAIcon";
+import { useVonageGlobalState } from "../../Vonage/VonageGlobalStateProvider";
+import { LayoutControls } from "./LayoutControls";
 import { ImmediateSwitch } from "./ImmediateSwitch";
 import { LiveIndicator } from "./LiveIndicator";
 
-export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
-    gql`
-        subscription GetEventParticipantStreams($eventId: uuid!) {
-            video_EventParticipantStream(where: { eventId: { _eq: $eventId } }) {
-                ...EventParticipantStreamDetails
-            }
+gql`
+    subscription GetEventParticipantStreams($eventId: uuid!) {
+        video_EventParticipantStream(where: { eventId: { _eq: $eventId } }) {
+            ...EventParticipantStreamDetails
         }
+    }
 
-        fragment EventParticipantStreamDetails on video_EventParticipantStream {
+    fragment EventParticipantStreamDetails on video_EventParticipantStream {
+        id
+        registrant {
             id
-            registrant {
-                id
-                displayName
-            }
-            conferenceId
-            eventId
-            vonageStreamType
-            vonageStreamId
-            registrantId
+            displayName
         }
-    `;
+        conferenceId
+        eventId
+        vonageStreamType
+        vonageStreamId
+        registrantId
+    }
+`;
 
+export function BackstageControls({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
     const realNow = useRealTime(1000);
@@ -109,7 +112,7 @@ export function EventRoomControlPanel({ event }: { event: RoomEventDetailsFragme
                                     ) : streamsLoading ? (
                                         <Spinner />
                                     ) : undefined}
-                                    <BroadcastControlPanel
+                                    <LayoutControls
                                         live={live}
                                         streams={streamsData?.video_EventParticipantStream ?? null}
                                         eventVonageSessionId={event.eventVonageSession?.id ?? null}

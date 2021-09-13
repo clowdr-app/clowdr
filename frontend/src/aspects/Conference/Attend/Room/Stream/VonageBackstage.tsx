@@ -9,7 +9,7 @@ import {
 } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
-import { EventRoomControlPanel } from "./EventRoomControlPanel";
+import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
     mutation GetEventVonageToken($eventId: uuid!) {
@@ -39,7 +39,7 @@ gql`
     }
 `;
 
-export function EventVonageRoom({
+export function VonageBackstage({
     eventId,
     isRaiseHandPreJoin = false,
     isRaiseHandWaiting,
@@ -79,7 +79,7 @@ export function EventVonageRoom({
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <VStack justifyContent="stretch" w="100%">
-                    {!isRaiseHandPreJoin ? <EventRoomControlPanel event={event} /> : undefined}
+                    {!isRaiseHandPreJoin ? <BackstageControls event={event} /> : undefined}
                     <Box w="100%">
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal

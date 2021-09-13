@@ -22,9 +22,9 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../generated/graphql";
-import { FAIcon } from "../../../../Icons/FAIcon";
-import { formatRemainingTime } from "../formatRemainingTime";
+import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
+import { FAIcon } from "../../../../../Icons/FAIcon";
+import { formatRemainingTime } from "../../formatRemainingTime";
 
 export function LiveIndicator({
     live,

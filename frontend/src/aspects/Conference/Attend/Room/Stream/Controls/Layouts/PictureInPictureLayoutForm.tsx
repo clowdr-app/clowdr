@@ -2,9 +2,9 @@ import { Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } fr
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import type { EventParticipantStreamDetailsFragment } from "../../../../../generated/graphql";
+import type { EventParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
 
-export function PairLayoutForm({
+export function PictureInPictureLayoutForm({
     setLayout,
     streams,
 }: {
@@ -13,16 +13,16 @@ export function PairLayoutForm({
 }): JSX.Element {
     const toast = useToast();
     return (
-        <Formik<{ left_stream_id: string; right_stream_id: string }>
+        <Formik<{ focus_stream_id: string; corner_stream_id: string }>
             initialValues={{
-                left_stream_id: "",
-                right_stream_id: "",
+                focus_stream_id: "",
+                corner_stream_id: "",
             }}
             onSubmit={async (values) => {
                 const layoutData: VonageSessionLayoutData = {
-                    type: VonageSessionLayoutType.Pair,
-                    leftStreamId: values.left_stream_id,
-                    rightStreamId: values.right_stream_id,
+                    type: VonageSessionLayoutType.PictureInPicture,
+                    focusStreamId: values.focus_stream_id,
+                    cornerStreamId: values.corner_stream_id,
                 };
 
                 try {
@@ -38,14 +38,14 @@ export function PairLayoutForm({
         >
             {(props) => (
                 <Form>
-                    <Field name="left_stream_id">
+                    <Field name="focus_stream_id">
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={!!form.errors.left_stream_id && !!form.touched.left_stream_id}
+                                isInvalid={!!form.errors.focus_stream_id && !!form.touched.focus_stream_id}
                                 defaultValue=""
                                 isRequired
                             >
-                                <FormLabel htmlFor="left_stream_id">Left Panel</FormLabel>
+                                <FormLabel htmlFor="focus_stream_id">Fullscreen Panel</FormLabel>
                                 <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
                                     {streams.map((stream) => (
                                         <option key={stream.id} value={stream.vonageStreamId}>
@@ -53,18 +53,18 @@ export function PairLayoutForm({
                                         </option>
                                     ))}
                                 </Select>
-                                <FormErrorMessage>{form.errors.left_stream_id}</FormErrorMessage>
+                                <FormErrorMessage>{form.errors.focus_stream_id}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>
-                    <Field name="right_stream_id">
+                    <Field name="corner_stream_id">
                         {({ field, form }: FieldProps<string>) => (
                             <FormControl
-                                isInvalid={!!form.errors.right_stream_id && !!form.touched.right_stream_id}
+                                isInvalid={!!form.errors.corner_stream_id && !!form.touched.corner_stream_id}
                                 defaultValue=""
                                 isRequired
                             >
-                                <FormLabel htmlFor="right_stream_id">Right Panel</FormLabel>
+                                <FormLabel htmlFor="corner_stream_id">Inset Panel</FormLabel>
                                 <Select {...{ ...field }} placeholder="Choose a stream" isRequired>
                                     {streams.map((stream) => (
                                         <option key={stream.id} value={stream.vonageStreamId}>
@@ -72,7 +72,7 @@ export function PairLayoutForm({
                                         </option>
                                     ))}
                                 </Select>
-                                <FormErrorMessage>{form.errors.right_stream_id}</FormErrorMessage>
+                                <FormErrorMessage>{form.errors.corner_stream_id}</FormErrorMessage>
                             </FormControl>
                         )}
                     </Field>
@@ -82,7 +82,7 @@ export function PairLayoutForm({
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}
-                        aria-label="Set layout to side-by-side mode"
+                        aria-label="Set layout to picture-in-picture mode"
                     >
                         Set layout
                     </Button>

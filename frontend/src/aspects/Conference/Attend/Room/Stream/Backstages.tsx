@@ -12,133 +12,22 @@ import {
     Box,
     Button,
     Heading,
-    HStack,
     ListItem,
     Text,
     UnorderedList,
     useColorModeValue,
     useToken,
-    VStack,
 } from "@chakra-ui/react";
-import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Twemoji } from "react-emoji-render";
 import * as portals from "react-reverse-portal";
 import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../../generated/graphql";
-import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
-import { EventVonageRoom } from "../Event/EventVonageRoom";
-import { formatRemainingTime } from "../formatRemainingTime";
+import Backstage from "./Backstage";
+import { isEventNow, isEventSoon } from "./isEventAt";
 
-function isEventNow(now: number, event: Room_EventSummaryFragment): boolean {
-    const startTime = Date.parse(event.startTime) - 5000;
-    const endTime = Date.parse(event.endTime);
-    return now >= startTime && now <= endTime;
-}
-
-function isEventSoon(now: number, event: Room_EventSummaryFragment): boolean {
-    const startTime = Date.parse(event.startTime);
-    return now >= startTime - 20 * 60 * 1000 - 5000 && now <= startTime;
-}
-
-function EventBackstage({
-    event,
-    selectedEventId,
-    setSelectedEventId,
-    roomChatId,
-    onLeave,
-}: {
-    roomChatId: string | undefined | null;
-    event: Room_EventSummaryFragment;
-    selectedEventId: string | null;
-    setSelectedEventId: (value: string | null) => void;
-    onLeave?: () => void;
-}): JSX.Element {
-    const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
-    const greyBorderColour = useColorModeValue(gray900, gray100);
-
-    const now = useRealTime(5000);
-    const isNow = isEventNow(now, event);
-    const isSoon = isEventSoon(now, event);
-    const isActive = isNow || isSoon;
-    const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
-    const borderColour = isNow ? "red" : greyBorderColour;
-    const title = event?.item ? `${event.item.title}${event.name.length ? ` (${event.name})` : ""}` : event.name;
-    const isSelected = event.id === selectedEventId;
-    const summaryInfo = useMemo(
-        () => (
-            <HStack
-                key={event.id}
-                border={`1px ${borderColour} solid`}
-                width="max-content"
-                maxW="100%"
-                w="100%"
-                justifyContent="space-between"
-                p={4}
-                alignItems="center"
-                borderRadius="md"
-            >
-                <Heading as="h3" size="md" width="min-content" textAlign="right" mr={8} whiteSpace="normal">
-                    {category}
-                </Heading>
-                <VStack px={8} alignItems="left" flexGrow={1}>
-                    <Heading as="h4" size="md" textAlign="left" mt={2} mb={1} whiteSpace="normal">
-                        <Twemoji className="twemoji" text={title} />
-                    </Heading>
-
-                    <Text my={2} fontStyle="italic" whiteSpace="normal">
-                        {formatRelative(Date.parse(event.startTime), Date.now())}
-                    </Text>
-                </VStack>
-                <Button
-                    colorScheme={isSelected ? "red" : "purple"}
-                    onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
-                    height="min-content"
-                    py={4}
-                    whiteSpace="normal"
-                    variant={isSelected ? "outline" : "solid"}
-                >
-                    <Text fontSize="lg" whiteSpace="normal">
-                        {isSelected
-                            ? "Close this backstage"
-                            : selectedEventId
-                            ? "Switch to this backstage"
-                            : "Open this backstage"}
-                    </Text>
-                </Button>
-            </HStack>
-        ),
-        [borderColour, category, event.id, event.startTime, isSelected, selectedEventId, setSelectedEventId, title]
-    );
-
-    const vonageRoom = useMemo(() => <EventVonageRoom eventId={event.id} onLeave={onLeave} />, [event.id, onLeave]);
-    const area = useMemo(
-        () =>
-            isSelected ? (
-                <Box mt={2} p={2} border={isNow ? "solid red" : undefined} borderWidth={4}>
-                    {vonageRoom}
-                    <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
-                </Box>
-            ) : !isActive ? (
-                <Alert status="warning" mb={8}>
-                    <AlertIcon />
-                    This event has now finished. Once you close this room, you will not be able to rejoin it.
-                </Alert>
-            ) : undefined,
-        [isActive, isNow, isSelected, vonageRoom, roomChatId]
-    );
-
-    return (
-        <>
-            {summaryInfo}
-            {area}
-        </>
-    );
-}
-
-export function RoomBackstage({
+export function Backstages({
     showBackstage,
     roomName,
     roomEvents,
@@ -194,12 +83,12 @@ export function RoomBackstage({
         onEventSelected((oldId) => (!oldId && activeEvents?.length === 1 ? activeEvents[0].id : oldId));
     }, [activeEvents, onEventSelected]);
 
-    const eventRooms = useMemo(() => {
+    const backstages = useMemo(() => {
         return (
             <Box mt={4} w="100%">
                 {activeEvents?.map((x) => (
                     <Box key={x.id} mt={2} w="100%">
-                        <EventBackstage
+                        <Backstage
                             event={x}
                             selectedEventId={selectedEventId}
                             setSelectedEventId={onEventSelected}
@@ -232,12 +121,12 @@ export function RoomBackstage({
         [roomName]
     );
 
-    const welcomeAlert = useMemo(
+    const welcomeInfo = useMemo(
         () => (
             <Alert status="info" my={4}>
                 <AlertIcon />
                 <Box flex="1">
-                    <AlertTitle>Welcome to the backstage for {roomName}</AlertTitle>
+                    <AlertTitle>Welcome to the backstages for {roomName}</AlertTitle>
                     <AlertDescription display="block">
                         <UnorderedList>
                             <ListItem>Each presentation and Q&amp;A event in this room has a backstage.</ListItem>
@@ -254,7 +143,7 @@ export function RoomBackstage({
         [roomName]
     );
 
-    const blankRoom = useMemo(
+    const videoChatForPermissionReset = useMemo(
         () =>
             showBackstage && !selectedEventId && sharedRoomContext ? (
                 <Box display="none">
@@ -271,7 +160,7 @@ export function RoomBackstage({
         [selectedEventId, sharedRoomContext, showBackstage]
     );
 
-    const streamAccess = useMemo(
+    const exitBackstageButton = useMemo(
         () =>
             !selectedEventId ? (
                 currentRoomEventId || nextRoomEventId ? (
@@ -283,7 +172,7 @@ export function RoomBackstage({
                             onClick={() => setIsWatchStreamConfirmOpen(true)}
                             mt={4}
                         >
-                            Watch stream
+                            Watch live-stream
                         </Button>
                         <AlertDialog
                             isOpen={isWatchStreamConfirmOpen}
@@ -293,12 +182,12 @@ export function RoomBackstage({
                             <AlertDialogOverlay>
                                 <AlertDialogContent>
                                     <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                        Watch stream
+                                        Watch live-stream
                                     </AlertDialogHeader>
 
                                     <AlertDialogBody>
-                                        Watching the stream while speaking is strongly discouraged. The stream lag can
-                                        cause a lot of confusion. Please stay in the backstage. Please do not use a
+                                        Watching the stream while speaking is discouraged. The stream lag can cause a
+                                        lot of confusion. Please be aware of the expected stream lag and avoid using a
                                         second device to watch the stream while you are active in the backstage.
                                     </AlertDialogBody>
 
@@ -315,7 +204,7 @@ export function RoomBackstage({
                                             }
                                             ml={3}
                                         >
-                                            Go to stream
+                                            Watch live-stream
                                         </Button>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -323,8 +212,14 @@ export function RoomBackstage({
                         </AlertDialog>
                     </>
                 ) : (
-                    <Button variant="outline" borderColor="red.600" color="red.600" isDisabled={true} mt={4}>
-                        Live stream ended
+                    <Button
+                        variant="outline"
+                        borderColor="red.600"
+                        color="red.600"
+                        onClick={() => setWatchStreamForEventId(nextRoomEventId)}
+                        mt={4}
+                    >
+                        Exit backstage
                     </Button>
                 )
             ) : undefined,
@@ -336,47 +231,22 @@ export function RoomBackstage({
             showBackstage ? (
                 <Box pos="relative" display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
                     {heading}
-                    {welcomeAlert}
-                    {eventRooms}
-                    {blankRoom}
-                    {streamAccess}
+                    {welcomeInfo}
+                    {backstages}
+                    {videoChatForPermissionReset}
+                    {exitBackstageButton}
                 </Box>
             ) : (
                 <></>
             ),
-        [backgroundColour, blankRoom, eventRooms, heading, showBackstage, streamAccess, welcomeAlert]
-    );
-}
-
-export function UpcomingBackstageBanner({ event }: { event: Room_EventSummaryFragment }): JSX.Element {
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const now = useRealTime(1000);
-    const timeRemaining = (startTime + 5000 - now - 20 * 60 * 1000) / 1000;
-
-    const title = useMemo(() => {
-        if (event.item) {
-            if (event.item.title.toLowerCase().includes(event.name.toLowerCase())) {
-                return event.item.title;
-            } else {
-                return event.name + ": " + event.item.title;
-            }
-        } else {
-            return event.name;
-        }
-    }, [event.item, event.name]);
-
-    return timeRemaining > 0 ? (
-        <Alert status="info" alignItems="flex-start" pos="sticky" top={0} zIndex={10000}>
-            <AlertIcon />
-            <VStack alignItems="start">
-                <AlertTitle>{formatRemainingTime(timeRemaining)} until your backstage is available</AlertTitle>
-                <AlertDescription>
-                    Your backstage for {title} will become available on this page. You will automatically be shown the
-                    backstage 20 minutes in advance of the live period of your event.
-                </AlertDescription>
-            </VStack>
-        </Alert>
-    ) : (
-        <></>
+        [
+            backgroundColour,
+            videoChatForPermissionReset,
+            backstages,
+            heading,
+            showBackstage,
+            exitBackstageButton,
+            welcomeInfo,
+        ]
     );
 }

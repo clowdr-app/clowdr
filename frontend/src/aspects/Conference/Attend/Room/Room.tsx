@@ -38,7 +38,8 @@ import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
 import { RoomControlBar } from "./RoomControlBar";
 import RoomTimeAlert from "./RoomTimeAlert";
-import { RoomBackstage, UpcomingBackstageBanner } from "./Stream/RoomBackstage";
+import { Backstages } from "./Stream/Backstages";
+import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
@@ -522,7 +523,7 @@ function RoomInner({
 
     const backStageEl = useMemo(
         () => (
-            <RoomBackstage
+            <Backstages
                 showBackstage={showBackstage}
                 roomName={roomDetails.name}
                 roomEvents={roomEventsForCurrentRegistrant}

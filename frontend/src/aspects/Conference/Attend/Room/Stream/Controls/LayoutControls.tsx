@@ -5,10 +5,10 @@ import React, { useCallback } from "react";
 import {
     EventParticipantStreamDetailsFragment,
     useUpdateEventVonageSessionLayoutMutation,
-} from "../../../../../generated/graphql";
-import { PairLayoutForm } from "./PairLayoutForm";
-import { PictureInPictureLayoutForm } from "./PictureInPictureLayoutForm";
-import { SingleLayoutForm } from "./SingleLayoutForm";
+} from "../../../../../../generated/graphql";
+import { PairLayoutForm } from "./Layouts/PairLayoutForm";
+import { PictureInPictureLayoutForm } from "./Layouts/PictureInPictureLayoutForm";
+import { SingleLayoutForm } from "./Layouts/SingleLayoutForm";
 
 gql`
     mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
@@ -21,7 +21,7 @@ gql`
     }
 `;
 
-export function BroadcastControlPanel({
+export function LayoutControls({
     live,
     streams,
     eventVonageSessionId,

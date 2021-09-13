@@ -2,7 +2,7 @@ import { Heading, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
-import { EventVonageRoom } from "../../../Conference/Attend/Room/Event/EventVonageRoom";
+import { VonageBackstage } from "../../../Conference/Attend/Room/Stream/VonageBackstage";
 import { useRegistrants } from "../../../Conference/RegistrantsContext";
 import type { Registrant } from "../../../Conference/useCurrentRegistrant";
 import { useRaiseHandState } from "../../../RaiseHand/RaiseHandProvider";
@@ -159,7 +159,7 @@ export function RaiseHandPanel(): JSX.Element {
                     </Text>
                 )}
 
-                <EventVonageRoom
+                <VonageBackstage
                     eventId={currentEventId.eventId}
                     isRaiseHandPreJoin={true}
                     isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}

@@ -28,10 +28,10 @@ import { validate } from "uuid";
 import {
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
-} from "../../../../../generated/graphql";
-import { useRealTime } from "../../../../Generic/useRealTime";
-import FAIcon from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
+} from "../../../../../../generated/graphql";
+import { useRealTime } from "../../../../../Generic/useRealTime";
+import FAIcon from "../../../../../Icons/FAIcon";
+import { useConference } from "../../../../useConference";
 
 export function ImmediateSwitch({
     live,
@@ -144,7 +144,7 @@ export function ImmediateSwitch({
                                 conferenceId: conference.id,
                             },
                         });
-                    } catch (err) {
+                    } catch (err: any) {
                         toast({
                             status: "error",
                             title: "Could not switch to filler video",
@@ -166,7 +166,7 @@ export function ImmediateSwitch({
                                 conferenceId: conference.id,
                             },
                         });
-                    } catch (err) {
+                    } catch (err: any) {
                         toast({
                             status: "error",
                             title: "Could not switch to live presentation",
@@ -198,7 +198,7 @@ export function ImmediateSwitch({
                                 conferenceId: conference.id,
                             },
                         });
-                    } catch (err) {
+                    } catch (err: any) {
                         toast({
                             status: "error",
                             title: "Could not switch to chosen video",

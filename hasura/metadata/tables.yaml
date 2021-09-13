@@ -1905,6 +1905,7 @@
             - REGISTRATION_URL
             - SUPPORT_ADDRESS
             - SCHEDULE_VIEW_VERSION
+            - ENABLE_BACKSTAGE_STREAM_PREVIEW
   update_permissions:
   - role: user
     permission:

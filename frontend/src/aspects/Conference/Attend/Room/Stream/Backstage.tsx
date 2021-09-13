@@ -25,12 +25,14 @@ export default function Backstage({
     setSelectedEventId,
     roomChatId,
     onLeave,
+    hlsUri,
 }: {
     roomChatId: string | undefined | null;
     event: Room_EventSummaryFragment;
     selectedEventId: string | null;
     setSelectedEventId: (value: string | null) => void;
     onLeave?: () => void;
+    hlsUri: string | undefined;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const greyBorderColour = useColorModeValue(gray900, gray100);
@@ -78,10 +80,10 @@ export default function Backstage({
                 >
                     <Text fontSize="lg" whiteSpace="normal">
                         {isSelected
-                            ? "Close this backstage"
+                            ? "Exit this backstage"
                             : selectedEventId
                             ? "Switch to this backstage"
-                            : "Open this backstage"}
+                            : "Show this backstage"}
                     </Text>
                 </Button>
             </HStack>
@@ -90,8 +92,8 @@ export default function Backstage({
     );
 
     const vonageBackstage = useMemo(
-        () => <VonageBackstage eventId={event.id} onLeave={onLeave} />,
-        [event.id, onLeave]
+        () => <VonageBackstage eventId={event.id} onLeave={onLeave} hlsUri={hlsUri} />,
+        [event.id, onLeave, hlsUri]
     );
     const area = useMemo(
         () =>

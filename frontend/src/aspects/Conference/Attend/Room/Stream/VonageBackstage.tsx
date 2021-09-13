@@ -45,12 +45,14 @@ export function VonageBackstage({
     isRaiseHandWaiting,
     completeJoinRef,
     onLeave,
+    hlsUri,
 }: {
     eventId: string;
     isRaiseHandPreJoin?: boolean;
     isRaiseHandWaiting?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
+    hlsUri: string | undefined;
 }): JSX.Element {
     const [getEventVonageToken] = useGetEventVonageTokenMutation({
         variables: {
@@ -79,7 +81,7 @@ export function VonageBackstage({
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <VStack justifyContent="stretch" w="100%">
-                    {!isRaiseHandPreJoin ? <BackstageControls event={event} /> : undefined}
+                    {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
                     <Box w="100%">
                         {event.eventVonageSession && sharedRoomContext ? (
                             <portals.OutPortal

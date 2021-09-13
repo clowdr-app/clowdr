@@ -24,8 +24,8 @@ import { useRealTime } from "../../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useVonageGlobalState } from "../../Vonage/VonageGlobalStateProvider";
-import { LayoutControls } from "./LayoutControls";
 import { ImmediateSwitch } from "./ImmediateSwitch";
+import { LayoutControls } from "./LayoutControls";
 import { LiveIndicator } from "./LiveIndicator";
 
 gql`
@@ -49,7 +49,13 @@ gql`
     }
 `;
 
-export function BackstageControls({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+export function BackstageControls({
+    event,
+    hlsUri,
+}: {
+    event: RoomEventDetailsFragment;
+    hlsUri: string | undefined;
+}): JSX.Element {
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
     const realNow = useRealTime(1000);
@@ -81,66 +87,53 @@ export function BackstageControls({ event }: { event: RoomEventDetailsFragment }
     }, [vonageGlobalState]);
 
     const broadcastPopover = useMemo(
-        () =>
-            isConnected ? (
-                <Popover placement="auto-end" isLazy>
-                    <PopoverTrigger>
-                        <VStack>
-                            <Button
-                                aria-label="Advanced broadcast controls"
-                                title="Advanced broadcast controls"
-                                textAlign="center"
-                            >
-                                <FAIcon icon="cogs" iconStyle="s" mr={2} />
-                                <Text>Stream layout</Text>
-                            </Button>
-                        </VStack>
-                    </PopoverTrigger>
-                    <Portal>
-                        <Box zIndex="500" position="relative">
-                            <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverCloseButton />
-                                <PopoverHeader>Broadcast controls</PopoverHeader>
-                                <PopoverBody>
-                                    <Text fontSize="sm" mb={2}>
-                                        Here you can control how the video streams from the backstage are laid out in
-                                        the broadcast video.
-                                    </Text>
-                                    {streamsError ? (
-                                        <>Error loading streams.</>
-                                    ) : streamsLoading ? (
-                                        <Spinner />
-                                    ) : undefined}
-                                    <LayoutControls
-                                        live={live}
-                                        streams={streamsData?.video_EventParticipantStream ?? null}
-                                        eventVonageSessionId={event.eventVonageSession?.id ?? null}
-                                    />
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Box>
-                    </Portal>
-                </Popover>
-            ) : undefined,
-        [
-            event.eventVonageSession?.id,
-            live,
-            streamsData?.video_EventParticipantStream,
-            streamsError,
-            streamsLoading,
-            isConnected,
-        ]
+        () => (
+            <Popover placement="auto-end" isLazy>
+                <PopoverTrigger>
+                    <VStack>
+                        <Button
+                            aria-label="Advanced broadcast controls"
+                            title="Advanced broadcast controls"
+                            textAlign="center"
+                        >
+                            <FAIcon icon="cogs" iconStyle="s" mr={2} />
+                            <Text>Stream layout</Text>
+                        </Button>
+                    </VStack>
+                </PopoverTrigger>
+                <Portal>
+                    <Box zIndex="500" position="relative">
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>Broadcast controls</PopoverHeader>
+                            <PopoverBody>
+                                <Text fontSize="sm" mb={2}>
+                                    Here you can control how the video streams from the backstage are laid out in the
+                                    broadcast video.
+                                </Text>
+                                {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
+                                <LayoutControls
+                                    live={live}
+                                    streams={streamsData?.video_EventParticipantStream ?? null}
+                                    eventVonageSessionId={event.eventVonageSession?.id ?? null}
+                                />
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Box>
+                </Portal>
+            </Popover>
+        ),
+        [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
     const immediateSwitchControls = useMemo(
-        () =>
-            isConnected ? (
-                <Box maxW="30ch">
-                    <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
-                </Box>
-            ) : undefined,
-        [event.id, live, secondsUntilOffAir, isConnected]
+        () => (
+            <Box maxW="30ch">
+                <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
+            </Box>
+        ),
+        [event.id, live, secondsUntilOffAir]
     );
 
     return (
@@ -152,6 +145,7 @@ export function BackstageControls({ event }: { event: RoomEventDetailsFragment }
                 now={now}
                 eventId={event.id}
                 isConnected={isConnected}
+                hlsUri={hlsUri}
             />
             <HStack flexWrap="wrap" w="100%" justifyContent="center" alignItems="flex-end" my={2}>
                 {immediateSwitchControls}

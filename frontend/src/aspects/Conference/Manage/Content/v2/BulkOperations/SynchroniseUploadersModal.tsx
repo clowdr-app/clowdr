@@ -17,6 +17,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Text,
+    useToast,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -57,7 +58,10 @@ gql`
                 id
             }
         }
-        insert_content_Uploader(objects: $insertUploaders) {
+        insert_content_Uploader(
+            objects: $insertUploaders
+            on_conflict: { constraint: Uploader_elementId_email_key, update_columns: [] }
+        ) {
             returning {
                 id
             }
@@ -125,6 +129,7 @@ function ModalInner({
         },
     ]);
 
+    const toast = useToast();
     const synchronise = useCallback(async () => {
         if (response.data) {
             const deleteUploaderIds: string[] = [];
@@ -137,10 +142,12 @@ function ModalInner({
                     );
 
                     for (const itemPerson of filteredPeople) {
-                        const isMissing = !element.uploaders.some(
-                            (uploader) =>
-                                uploader.name === itemPerson.person.name && uploader.email === itemPerson.person.email
-                        );
+                        const isMissing =
+                            !element.uploaders.some(
+                                (uploader) =>
+                                    uploader.name === itemPerson.person.name &&
+                                    uploader.email === itemPerson.person.email
+                            ) && !insertUploaders.some((uploader) => uploader.email === itemPerson.person.email);
                         if (isMissing) {
                             insertUploaders.push({
                                 conferenceId: conference.id,
@@ -171,12 +178,23 @@ function ModalInner({
                     },
                 });
 
+                toast({
+                    title: "Synchronised",
+                    status: "success",
+                    duration: 3000,
+                    position: "top",
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2500);
+
                 onClose();
             } catch (e) {
                 console.error("Failed to synchronise uploaders", e);
             }
         }
-    }, [conference.id, onClose, response.data, selectedRoles, sync]);
+    }, [conference.id, onClose, response.data, selectedRoles, sync, toast]);
 
     return (
         <>

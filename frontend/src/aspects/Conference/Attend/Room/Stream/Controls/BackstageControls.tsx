@@ -87,66 +87,53 @@ export function BackstageControls({
     }, [vonageGlobalState]);
 
     const broadcastPopover = useMemo(
-        () =>
-            isConnected ? (
-                <Popover placement="auto-end" isLazy>
-                    <PopoverTrigger>
-                        <VStack>
-                            <Button
-                                aria-label="Advanced broadcast controls"
-                                title="Advanced broadcast controls"
-                                textAlign="center"
-                            >
-                                <FAIcon icon="cogs" iconStyle="s" mr={2} />
-                                <Text>Stream layout</Text>
-                            </Button>
-                        </VStack>
-                    </PopoverTrigger>
-                    <Portal>
-                        <Box zIndex="500" position="relative">
-                            <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverCloseButton />
-                                <PopoverHeader>Broadcast controls</PopoverHeader>
-                                <PopoverBody>
-                                    <Text fontSize="sm" mb={2}>
-                                        Here you can control how the video streams from the backstage are laid out in
-                                        the broadcast video.
-                                    </Text>
-                                    {streamsError ? (
-                                        <>Error loading streams.</>
-                                    ) : streamsLoading ? (
-                                        <Spinner />
-                                    ) : undefined}
-                                    <LayoutControls
-                                        live={live}
-                                        streams={streamsData?.video_EventParticipantStream ?? null}
-                                        eventVonageSessionId={event.eventVonageSession?.id ?? null}
-                                    />
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Box>
-                    </Portal>
-                </Popover>
-            ) : undefined,
-        [
-            event.eventVonageSession?.id,
-            live,
-            streamsData?.video_EventParticipantStream,
-            streamsError,
-            streamsLoading,
-            isConnected,
-        ]
+        () => (
+            <Popover placement="auto-end" isLazy>
+                <PopoverTrigger>
+                    <VStack>
+                        <Button
+                            aria-label="Advanced broadcast controls"
+                            title="Advanced broadcast controls"
+                            textAlign="center"
+                        >
+                            <FAIcon icon="cogs" iconStyle="s" mr={2} />
+                            <Text>Stream layout</Text>
+                        </Button>
+                    </VStack>
+                </PopoverTrigger>
+                <Portal>
+                    <Box zIndex="500" position="relative">
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>Broadcast controls</PopoverHeader>
+                            <PopoverBody>
+                                <Text fontSize="sm" mb={2}>
+                                    Here you can control how the video streams from the backstage are laid out in the
+                                    broadcast video.
+                                </Text>
+                                {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
+                                <LayoutControls
+                                    live={live}
+                                    streams={streamsData?.video_EventParticipantStream ?? null}
+                                    eventVonageSessionId={event.eventVonageSession?.id ?? null}
+                                />
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Box>
+                </Portal>
+            </Popover>
+        ),
+        [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
     );
 
     const immediateSwitchControls = useMemo(
-        () =>
-            isConnected ? (
-                <Box maxW="30ch">
-                    <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
-                </Box>
-            ) : undefined,
-        [event.id, live, secondsUntilOffAir, isConnected]
+        () => (
+            <Box maxW="30ch">
+                <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
+            </Box>
+        ),
+        [event.id, live, secondsUntilOffAir]
     );
 
     return (

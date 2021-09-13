@@ -1,7 +1,19 @@
-import { Box, Text, VStack } from "@chakra-ui/react";
-import React from "react";
+import { gql } from "@apollo/client";
+import { Box, Button, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
+import { useConference } from "../../../../useConference";
 import { HlsPlayer } from "../../Video/HlsPlayer";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
+
+gql`
+    query EnableBackstageStreamPreview($conferenceId: uuid!) {
+        conference_Configuration_by_pk(key: ENABLE_BACKSTAGE_STREAM_PREVIEW, conferenceId: $conferenceId) {
+            key
+            value
+        }
+    }
+`;
 
 export default function StreamPreview({
     hlsUri,
@@ -12,15 +24,30 @@ export default function StreamPreview({
     isLive: boolean;
     isLiveOnAir: boolean;
 }): JSX.Element {
-    return hlsUri ? (
-        <VStack spacing={1} maxW="400px" maxH="240px" w="10vw" border="1px solid black">
-            <Text pos="relative" whiteSpace="normal" flex="0 1 100%">
-                Stream preview
-            </Text>
-            <Text pos="relative" whiteSpace="normal" fontSize="xs" flex="0 1 100%">
-                Please remember the preview plays with a lag.
-            </Text>
-            <Box pos="relative" flex="0 1 100%">
+    const bgColor = useColorModeValue("gray.100", "gray.800");
+    const [enabled, setEnabled] = useState<boolean>(true);
+    const conference = useConference();
+    const configResponse = useEnableBackstageStreamPreviewQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+
+    if (configResponse.data?.conference_Configuration_by_pk?.value !== true) {
+        return <></>;
+    }
+
+    return hlsUri && isLive && enabled ? (
+        <Box
+            pos="relative"
+            spacing={1}
+            minW="300px"
+            maxW="calc(9vh / 16vh)"
+            w="20vw"
+            border="1px solid #999"
+            bgColor={bgColor}
+        >
+            <Box pos="relative" w="100%" maxH="240px" overflow="hidden" zIndex={1}>
                 <VideoAspectWrapper>
                     {(onAspectRatioChange) => (
                         <HlsPlayer
@@ -34,13 +61,58 @@ export default function StreamPreview({
                     )}
                 </VideoAspectWrapper>
             </Box>
-            <Text pos="relative" whiteSpace="normal" fontSize="xs" flex="0 1 100%">
-                To avoid echoes, mute the preview while you are live on air.
-            </Text>
-        </VStack>
+            <VStack
+                pos="absolute"
+                whiteSpace="normal"
+                flex="0 1 100%"
+                zIndex={2}
+                bgColor="rgba(255, 255, 255, 0.8)"
+                color="black"
+                fontWeight="bold"
+                top={0}
+                left={0}
+                w="100%"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                px={1}
+                spacing={0}
+            >
+                <Text whiteSpace="normal" alignSelf="center">
+                    Stream preview
+                </Text>
+                <Text whiteSpace="normal" fontSize="xs">
+                    Please note: the preview plays with a lag.
+                </Text>
+                <Text whiteSpace="normal" fontSize="xs">
+                    To avoid echoes, mute the preview while you are live on air.
+                </Text>
+            </VStack>
+            <HStack spacing={1} justifyContent="center" p={1}>
+                <Text fontSize="sm" fontWeight="bold">
+                    Connection trouble?
+                </Text>
+                <Button colorScheme="purple" size="xs" onClick={() => setEnabled(false)}>
+                    Try disabling preview
+                </Button>
+            </HStack>
+        </Box>
+    ) : isLive && !enabled ? (
+        <Button colorScheme="purple" size="md" onClick={() => setEnabled(true)}>
+            Enable stream preview
+        </Button>
     ) : (
-        <Text pos="relative" maxW="400px" maxH="240px" w="10vw" whiteSpace="normal">
-            Stream preview not currently available
+        <Text
+            textAlign="center"
+            pos="relative"
+            minW="240px"
+            maxW="400px"
+            maxH="240px"
+            w="10vw"
+            whiteSpace="normal"
+            border="1px solid #999"
+            bgColor={bgColor}
+        >
+            Stream preview will be available when the stream starts.
         </Text>
     );
 }

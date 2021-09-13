@@ -28,6 +28,7 @@ import { validate } from "uuid";
 import {
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
+    useLiveIndicator_GetLatestQuery,
 } from "../../../../../../generated/graphql";
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import FAIcon from "../../../../../Icons/FAIcon";
@@ -86,6 +87,9 @@ export function ImmediateSwitch({
     });
 
     const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
+    const liveIndicatorLatest = useLiveIndicator_GetLatestQuery({
+        skip: true,
+    });
 
     const now = useRealTime(1000);
     const [lastSwitched, setLastSwitched] = useState<number>(0);
@@ -143,6 +147,9 @@ export function ImmediateSwitch({
                                 eventId,
                                 conferenceId: conference.id,
                             },
+                        });
+                        await liveIndicatorLatest.refetch({
+                            eventId,
                         });
                     } catch (err: any) {
                         toast({
@@ -211,7 +218,7 @@ export function ImmediateSwitch({
             }
             setLastSwitched(now);
         },
-        [conference.id, createImmediateSwitch, eventId, now, toast]
+        [conference.id, createImmediateSwitch, eventId, liveIndicatorLatest, now, toast]
     );
 
     const cancelRef = useRef<HTMLButtonElement>(null);

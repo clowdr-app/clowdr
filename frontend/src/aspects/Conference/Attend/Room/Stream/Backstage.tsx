@@ -80,10 +80,10 @@ export default function Backstage({
                 >
                     <Text fontSize="lg" whiteSpace="normal">
                         {isSelected
-                            ? "Close this backstage"
+                            ? "Exit this backstage"
                             : selectedEventId
                             ? "Switch to this backstage"
-                            : "Open this backstage"}
+                            : "Show this backstage"}
                     </Text>
                 </Button>
             </HStack>

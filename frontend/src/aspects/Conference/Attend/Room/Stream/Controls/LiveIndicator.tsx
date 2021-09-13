@@ -195,9 +195,17 @@ export function LiveIndicator({
             case "video_unknown_duration":
                 return (
                     <>
-                        <FAIcon icon="play" iconStyle="s" fontSize="lg" />
-                        <Text>Video or live</Text>
-                        <Text fontSize="xs">Unable to load video duration; the backstage may be live again.</Text>
+                        <VStack>
+                            <HStack>
+                                <FAIcon icon="play" iconStyle="s" fontSize="lg" />
+                                <Text>Video or live</Text>
+                            </HStack>
+                            <Text fontSize="xs" textTransform="none">
+                                Video duration unknown (not prepared for broadcast);
+                                <br />
+                                the backstage may be live again.
+                            </Text>
+                        </VStack>
                     </>
                 );
             case "video_ending":
@@ -243,17 +251,7 @@ export function LiveIndicator({
     const liveIndicactor = useMemo(
         () =>
             live ? (
-                <HStack
-                    alignItems="stretch"
-                    justifyContent="flex-start"
-                    mx="auto"
-                    flexWrap="wrap"
-                    pos="sticky"
-                    top={0}
-                    bgColor={bgColor}
-                    zIndex={10000}
-                    overflow="visible"
-                >
+                <>
                     <Badge
                         fontSize={isConnected ? "lg" : "md"}
                         colorScheme="red"
@@ -265,23 +263,13 @@ export function LiveIndicator({
                     >
                         <HStack>{whatIsLiveText}</HStack>
                     </Badge>
-                    <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center">
+                    <Stat fontSize="md" ml="auto" flexGrow={1} textAlign="center" p="2px">
                         <StatLabel>Time until end</StatLabel>
                         <StatNumber>{formatRemainingTime(secondsUntilOffAir)}</StatNumber>
                     </Stat>
-                </HStack>
+                </>
             ) : (
-                <HStack
-                    alignItems="stretch"
-                    justifyContent="flex-start"
-                    mx="auto"
-                    flexWrap="wrap"
-                    pos="sticky"
-                    top={0}
-                    bgColor={bgColor}
-                    zIndex={10000}
-                    overflow="visible"
-                >
+                <>
                     {secondsUntilLive > 0 ? (
                         <>
                             <Badge
@@ -309,7 +297,6 @@ export function LiveIndicator({
                                     flexGrow={1}
                                     textAlign="center"
                                     color={secondsUntilLive < 10 ? "white" : undefined}
-                                    p={2}
                                     backgroundColor={
                                         secondsUntilLive < 10
                                             ? secondsUntilLive % 2 >= 1
@@ -317,6 +304,7 @@ export function LiveIndicator({
                                                 : "black"
                                             : undefined
                                     }
+                                    p="2px"
                                 >
                                     <StatLabel>Time until start</StatLabel>
                                     <StatNumber>{formatRemainingTime(secondsUntilLive)}</StatNumber>
@@ -335,9 +323,9 @@ export function LiveIndicator({
                             <Text>Backstage is off air</Text>
                         </Badge>
                     )}
-                </HStack>
+                </>
             ),
-        [bgColor, isConnected, live, onOpen, secondsUntilLive, secondsUntilOffAir, whatIsLiveText]
+        [isConnected, live, onOpen, secondsUntilLive, secondsUntilOffAir, whatIsLiveText]
     );
     const isLiveOnAir = live && currentInput !== "video" && currentInput !== "filler";
     const streamPreview = useMemo(
@@ -346,10 +334,34 @@ export function LiveIndicator({
     );
 
     return (
-        <>
+        <HStack
+            alignItems="flex-start"
+            justifyContent="flex-start"
+            mx="auto"
+            flexWrap="wrap"
+            pos="sticky"
+            top={0}
+            zIndex={10000}
+            overflow="visible"
+            gridRowGap={2}
+        >
             {streamPreview}
-            {liveIndicactor}
-            {infoModal}
-        </>
+            <HStack
+                p={1}
+                bgColor={bgColor}
+                alignItems="flex-start"
+                justifyContent="flex-start"
+                mx="auto"
+                flexWrap="wrap"
+                pos="sticky"
+                top={0}
+                zIndex={10000}
+                overflow="visible"
+                gridRowGap={2}
+            >
+                {liveIndicactor}
+                {infoModal}
+            </HStack>
+        </HStack>
     );
 }

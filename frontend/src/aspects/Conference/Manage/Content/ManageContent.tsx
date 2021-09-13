@@ -1292,7 +1292,7 @@ export default function ManageContentV2(): JSX.Element {
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
-                Content &amp; Sponsors
+                Content &amp; {conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
             </Heading>
             {(loadingAllTags && !allTags) ||
             (loadingAllExhibitions && !allExhibitions) ||

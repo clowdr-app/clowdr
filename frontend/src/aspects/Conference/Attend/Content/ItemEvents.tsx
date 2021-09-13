@@ -5,6 +5,7 @@ import React, { useMemo } from "react";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { useConference } from "../../useConference";
 import { EventsTable } from "./EventsTable";
 
 gql`
@@ -24,6 +25,7 @@ gql`
 `;
 
 export function ItemEvents({ itemId, events }: { itemId: string; events: readonly ItemEventFragment[] }): JSX.Element {
+    const conference = useConference();
     const thisPaperTable = useMemo(() => <EventsTable events={events} includeRoom={true} />, [events]);
 
     const rooms = useMemo(
@@ -56,36 +58,38 @@ export function ItemEvents({ itemId, events }: { itemId: string; events: readonl
                     </Text>
                     {thisPaperTable}
                 </VStack>
-                <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
-                    <Heading as="h4" size="md" textAlign="left" pt={8}>
-                        Events around this content
-                    </Heading>
-                    <Text my={3} w="auto" textAlign="left" p={0}>
-                        <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                        Times are shown in your local timezone.
-                    </Text>
-                    {rooms.length > 1 ? (
-                        <Tabs variant="enclosed" isLazy>
-                            <TabList>
-                                {rooms.map(([roomId, { roomName }]) => (
-                                    <Tab key={roomId}>{roomName}</Tab>
-                                ))}
-                            </TabList>
+                {!conference.disableNearbyEvents?.[0]?.value ? (
+                    <VStack mr={2} flex="1 1 48%" alignItems="flex-start" maxW="max-content">
+                        <Heading as="h4" size="md" textAlign="left" pt={8}>
+                            Nearby events
+                        </Heading>
+                        <Text my={3} w="auto" textAlign="left" p={0}>
+                            <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                            Times are shown in your local timezone.
+                        </Text>
+                        {rooms.length > 1 ? (
+                            <Tabs variant="enclosed" isLazy>
+                                <TabList>
+                                    {rooms.map(([roomId, { roomName }]) => (
+                                        <Tab key={roomId}>{roomName}</Tab>
+                                    ))}
+                                </TabList>
 
-                            <TabPanels>
-                                {rooms.map(([roomId, { events }]) => (
-                                    <TabPanel key={roomId} p={0} pt={2}>
-                                        <RoomEventsSummary roomId={roomId} events={events} thisItemId={itemId} />
-                                    </TabPanel>
-                                ))}
-                            </TabPanels>
-                        </Tabs>
-                    ) : rooms.length > 0 ? (
-                        <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
-                    ) : (
-                        <Text>No events for this item</Text>
-                    )}
-                </VStack>
+                                <TabPanels>
+                                    {rooms.map(([roomId, { events }]) => (
+                                        <TabPanel key={roomId} p={0} pt={2}>
+                                            <RoomEventsSummary roomId={roomId} events={events} thisItemId={itemId} />
+                                        </TabPanel>
+                                    ))}
+                                </TabPanels>
+                            </Tabs>
+                        ) : rooms.length > 0 ? (
+                            <RoomEventsSummary roomId={rooms[0][0]} events={rooms[0][1].events} thisItemId={itemId} />
+                        ) : (
+                            <Text>No events for this item</Text>
+                        )}
+                    </VStack>
+                ) : undefined}
             </Flex>
         </>
     ) : (

@@ -383,7 +383,7 @@ export function ScheduleModal({
                             {anySponsors ? (
                                 <Tab>
                                     <FAIcon iconStyle="s" icon="star" />
-                                    &nbsp;&nbsp;Sponsors
+                                    &nbsp;&nbsp;{conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                                 </Tab>
                             ) : undefined}
                             <Tab>

@@ -1870,6 +1870,8 @@
           - REGISTRATION_URL
           - SUPPORT_ADDRESS
           - SCHEDULE_VIEW_VERSION
+          - SPONSORS_LABEL
+          - DISABLE_NEARBY_EVENTS
   - role: user
     permission:
       columns:
@@ -1906,6 +1908,8 @@
             - SUPPORT_ADDRESS
             - SCHEDULE_VIEW_VERSION
             - ENABLE_BACKSTAGE_STREAM_PREVIEW
+            - SPONSORS_LABEL
+            - DISABLE_NEARBY_EVENTS
   update_permissions:
   - role: user
     permission:

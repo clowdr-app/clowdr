@@ -64,6 +64,17 @@ gql`
             value
         }
 
+        sponsorsLabel: configurations(where: { key: { _eq: SPONSORS_LABEL } }) {
+            conferenceId
+            key
+            value
+        }
+        disableNearbyEvents: configurations(where: { key: { _eq: DISABLE_NEARBY_EVENTS } }) {
+            conferenceId
+            key
+            value
+        }
+
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData
         }

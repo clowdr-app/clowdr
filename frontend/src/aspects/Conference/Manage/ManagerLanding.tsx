@@ -130,9 +130,11 @@ export default function ManagerLandingPage(): JSX.Element {
                 />
                 <RestrictedDashboardButton
                     to="content"
-                    name="Sponsors"
+                    name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                     icon="star"
-                    description="Manage your sponsors, their booths and representatives."
+                    description={`Manage your ${
+                        conference.sponsorsLabel?.[0]?.value ?? "sponsors"
+                    }, their booths and representatives.`}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
                     ]}

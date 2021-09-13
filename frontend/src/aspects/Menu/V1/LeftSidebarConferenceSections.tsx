@@ -157,6 +157,7 @@ export function LeftSidebarConferenceSections_Inner({
     registrant: RegistrantFieldsFragment;
     onClose: () => void;
 }): JSX.Element {
+    const conference = useConference();
     const [defaultIndex, setDefaultIndex] = useRestorableState<number>(
         "LEFT_SIDEBAR_DEFAULT_PANEL_INDEX",
         -1,
@@ -265,7 +266,7 @@ export function LeftSidebarConferenceSections_Inner({
                             >
                                 <FAIcon iconStyle="s" icon="star" mr={4} w={6} />
                                 <Box flex="1" textAlign="left">
-                                    Sponsors
+                                    {conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>

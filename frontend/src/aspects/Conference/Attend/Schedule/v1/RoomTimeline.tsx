@@ -136,29 +136,28 @@ function RoomTimelineWrapper({
                         .filter((x) => x.itemExhibitions.some((y) => y.exhibitionId === event.exhibitionId))
                         .flatMap((x) => x.itemPeople)
                 );
+                const itemPeople = item
+                    ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
+                          const itemPerson = item.itemPeople.find((itemPerson) => itemPerson.personId === person.id);
+                          if (itemPerson) {
+                              acc.push({
+                                  ...itemPerson,
+                                  person,
+                              });
+                          }
+                          return acc;
+                      }, [])
+                    : [];
                 result.push({
                     ...event,
                     item,
-                    itemPeople: item
-                        ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
-                              const itemPerson = item.itemPeople.find(
-                                  (itemPerson) => itemPerson.personId === person.id
-                              );
-                              if (itemPerson) {
-                                  acc.push({
-                                      ...itemPerson,
-                                      person,
-                                  });
-                              }
-                              return acc;
-                          }, [])
-                        : [],
+                    itemPeople,
                     exhibitionPeople: exhibitionItemPeople?.length
                         ? people.reduce<ProgramPersonDataFragment[]>((acc, person) => {
                               const itemPerson = exhibitionItemPeople.find(
                                   (itemPerson) => itemPerson.personId === person.id
                               );
-                              if (itemPerson) {
+                              if (itemPerson && !itemPeople.some((x) => x.person.id === itemPerson.personId)) {
                                   acc.push({
                                       ...itemPerson,
                                       person,

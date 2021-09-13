@@ -534,6 +534,7 @@ function RoomInner({
                 onEventSelected={setBackstageSelectedEventId}
                 roomChatId={roomDetails.chatId}
                 onLeave={onLeaveBackstage}
+                hlsUri={hlsUri ?? undefined}
             />
         ),
         [
@@ -545,6 +546,7 @@ function RoomInner({
             nextRoomEvent?.id,
             backstageSelectedEventId,
             onLeaveBackstage,
+            hlsUri,
         ]
     );
 

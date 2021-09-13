@@ -38,6 +38,7 @@ export function Backstages({
     onEventSelected,
     roomChatId,
     onLeave,
+    hlsUri,
 }: {
     showBackstage: boolean;
     roomName: string;
@@ -49,6 +50,7 @@ export function Backstages({
     roomChatId: string | null | undefined;
     selectedEventId: string | null;
     onLeave?: () => void;
+    hlsUri: string | undefined;
 }): JSX.Element {
     const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
     const backgroundColour = useColorModeValue(gray100, gray900);
@@ -94,6 +96,7 @@ export function Backstages({
                             setSelectedEventId={onEventSelected}
                             roomChatId={roomChatId}
                             onLeave={onLeave}
+                            hlsUri={hlsUri}
                         />
                     </Box>
                 ))}
@@ -105,7 +108,7 @@ export function Backstages({
                 ) : undefined}
             </Box>
         );
-    }, [activeEvents, roomChatId, selectedEventId, onEventSelected, onLeave]);
+    }, [activeEvents, roomChatId, selectedEventId, onEventSelected, onLeave, hlsUri]);
 
     const sharedRoomContext = useSharedRoomContext();
 

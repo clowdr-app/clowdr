@@ -164,6 +164,7 @@ export function RaiseHandPanel(): JSX.Element {
                     isRaiseHandPreJoin={true}
                     isRaiseHandWaiting={raisedHandUserIds.includes(currentUser.id)}
                     completeJoinRef={completeJoinRef}
+                    hlsUri={undefined}
                 />
                 <Text fontWeight="bold" pt={4}>
                     Raised hands

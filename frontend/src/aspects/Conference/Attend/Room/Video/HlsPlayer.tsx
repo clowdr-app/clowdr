@@ -118,12 +118,25 @@ export function HlsPlayerInner({
         }
     }, [canPlay, intendPlayStream]);
 
+    // This is deliberately designed so that force mute operates
+    // as a one-off mute (an effect) rather than a global force
+    // which the user would be unable to override.
+    //
+    // This is so that force mute will trigger a stream preview
+    // to be muted when the backstage goes live. But the preview
+    // can be unmuted by the user if needed/desired.
     useEffect(() => {
         if (!videoRef.current) {
             return;
         }
-        videoRef.current.muted = forceMute || intendMuted;
-    }, [forceMute, intendMuted]);
+        videoRef.current.muted = intendMuted;
+    }, [intendMuted]);
+    useEffect(() => {
+        if (!videoRef.current) {
+            return;
+        }
+        videoRef.current.muted = forceMute || videoRef.current.muted;
+    }, [forceMute]);
 
     useEffect(() => {
         if (!videoRef.current || videoRef.current.volume === volume) {

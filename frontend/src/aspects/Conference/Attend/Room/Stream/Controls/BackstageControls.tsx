@@ -24,8 +24,8 @@ import { useRealTime } from "../../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useVonageGlobalState } from "../../Vonage/VonageGlobalStateProvider";
-import { LayoutControls } from "./LayoutControls";
 import { ImmediateSwitch } from "./ImmediateSwitch";
+import { LayoutControls } from "./LayoutControls";
 import { LiveIndicator } from "./LiveIndicator";
 
 gql`
@@ -49,7 +49,13 @@ gql`
     }
 `;
 
-export function BackstageControls({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+export function BackstageControls({
+    event,
+    hlsUri,
+}: {
+    event: RoomEventDetailsFragment;
+    hlsUri: string | undefined;
+}): JSX.Element {
     const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
     const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
     const realNow = useRealTime(1000);
@@ -152,6 +158,7 @@ export function BackstageControls({ event }: { event: RoomEventDetailsFragment }
                 now={now}
                 eventId={event.id}
                 isConnected={isConnected}
+                hlsUri={hlsUri}
             />
             <HStack flexWrap="wrap" w="100%" justifyContent="center" alignItems="flex-end" my={2}>
                 {immediateSwitchControls}

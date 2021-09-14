@@ -56,7 +56,7 @@ export function VonageBackstage({
 }): JSX.Element {
     const [getEventVonageToken] = useGetEventVonageTokenMutation({
         variables: {
-            eventId: eventId,
+            eventId,
         },
     });
 

@@ -10,11 +10,13 @@ export function VideoChatRoom({
     defaultVideoBackendName,
     roomDetails,
     enable,
+    eventId,
 }: {
     videoRoomBackendName?: string;
     defaultVideoBackendName?: string;
     roomDetails: RoomPage_RoomDetailsFragment;
     enable: boolean;
+    eventId: string | undefined;
 }): JSX.Element {
     const backend = useMemo(() => {
         switch (roomDetails.backendName) {
@@ -45,13 +47,13 @@ export function VideoChatRoom({
                     {enableChime ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
                 <Box pos="relative" display={enableVonage ? "block" : "none"}>
-                    <VideoChatVonageRoom room={roomDetails} enable={enableVonage} />
+                    <VideoChatVonageRoom room={roomDetails} enable={enableVonage} eventId={eventId} />
                     {enableVonage ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
                 {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
             </>
         );
-    }, [backend, enable, enableChime, enableVonage, roomDetails]);
+    }, [backend, enable, enableChime, enableVonage, roomDetails, eventId]);
 
     return breakoutRoomEl;
 }

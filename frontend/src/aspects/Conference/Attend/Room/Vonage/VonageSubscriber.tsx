@@ -3,6 +3,7 @@ import type OT from "@opentok/client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePolling from "../../../../Generic/usePolling";
 import { useRegistrant } from "../../../RegistrantsContext";
+import SubscriberControlBar from "./SubscriberControlBar";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { VonageOverlay } from "./VonageOverlay";
@@ -257,6 +258,10 @@ export function VonageSubscriber({
         [stream.connection.data, stream.videoType, streamHasAudio, videoStatus, enableVideo, audioBlocked]
     );
 
+    const controlBar = useMemo(() => {
+        return <SubscriberControlBar stream={stream} connection={stream.connection} />;
+    }, [stream]);
+
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden">
             {videoBox}
@@ -271,6 +276,7 @@ export function VonageSubscriber({
                 pointerEvents="none"
                 border={talking ? "3px solid green" : "0 none"}
             />
+            {controlBar}
         </Box>
     );
 }

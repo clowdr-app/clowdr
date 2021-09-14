@@ -29,6 +29,7 @@ interface InitialisedStateData {
     screenSharingSupported: boolean;
     onCameraStreamCreated: () => void;
     onScreenStreamCreated: () => void;
+    onMuteForced: () => void;
 }
 
 interface ConnectedStateData {
@@ -75,6 +76,34 @@ export class VonageGlobalState {
         return this.state.type === StateType.Connected ? this.state.screen : null;
     }
 
+    public get canForceMute(): boolean | null {
+        return this.state.type === StateType.Connected ? this.state.session.capabilities.forceMute !== 0 : null;
+    }
+
+    public get canForceUnpublish(): boolean | null {
+        return this.state.type === StateType.Connected ? this.state.session.capabilities.forceUnpublish !== 0 : null;
+    }
+
+    public get canForceDisconnect(): boolean | null {
+        return this.state.type === StateType.Connected ? this.state.session.capabilities.forceDisconnect !== 0 : null;
+    }
+
+    public async setGetTokenFunction(getToken: (sessionId: string) => Promise<string>): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.getToken = getToken;
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.getToken = getToken;
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: setGetTokenFunction failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
     public async initialiseState(
         getToken: (sessionId: string) => Promise<string>,
         sessionId: string,
@@ -84,7 +113,8 @@ export class VonageGlobalState {
         onCameraStreamDestroyed: (reason: string) => void,
         onScreenStreamDestroyed: (reason: string) => void,
         onCameraStreamCreated: () => void,
-        onScreenStreamCreated: () => void
+        onScreenStreamCreated: () => void,
+        onMuteForced: () => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -115,6 +145,7 @@ export class VonageGlobalState {
                 screenSharingSupported,
                 onCameraStreamCreated,
                 onScreenStreamCreated,
+                onMuteForced,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -169,6 +200,13 @@ export class VonageGlobalState {
                     console.error("VonageGlobalState: error handling sessionDisconnected", e)
                 )
             );
+            session.on("muteForced", (event) =>
+                this.onMuteForced(event).catch((e) => console.error("VonageGlobalState: error handling muteForced", e))
+            );
+
+            // TODO: session.capabilities.forceMute
+            // TODO: session.capabilities.forceDisconnect
+            // TODO: session.capabilities.forceUnpublish
 
             await new Promise<void>((resolve, reject) => {
                 session.connect(token, (error) => {
@@ -526,6 +564,87 @@ export class VonageGlobalState {
         }
     }
 
+    public async forceMute(streamId: string): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to force mute");
+            }
+
+            const stream = this.state.streams.find((stream) => stream.streamId === streamId);
+            if (!stream) {
+                throw new Error("Could not force mute the specified stream: Stream not found.");
+            }
+
+            await this.state.session.forceMuteStream(stream);
+        } catch (e) {
+            console.error("VonageGlobalState: force mute failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    public async forceUnpublish(streamId: string): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to force unpublish");
+            }
+
+            const stream = this.state.streams.find((stream) => stream.streamId === streamId);
+            if (!stream) {
+                throw new Error("Could not force unpublish the specified stream: Stream not found.");
+            }
+
+            const session = this.state.session;
+            await new Promise<void>((resolve, reject) =>
+                session.forceUnpublish(stream, (error) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                })
+            );
+        } catch (e) {
+            console.error("VonageGlobalState: force unpublish failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    public async forceDisconnect(connectionId: string): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type !== StateType.Connected) {
+                throw new Error("Invalid state transition: must be connected to force mute");
+            }
+
+            const connection = this.state.connections.find((connection) => connection.connectionId === connectionId);
+            if (!connection) {
+                throw new Error("Could not force disconnect the specified connection: Connection not found.");
+            }
+
+            const session = this.state.session;
+            await new Promise<void>((resolve, reject) =>
+                session.forceDisconnect(connection, (error) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                })
+            );
+        } catch (e) {
+            console.error("VonageGlobalState: force disconnect failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
     private async onStreamCreated(event: OT.Event<"streamCreated", OT.Session> & { stream: OT.Stream }): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -729,6 +848,22 @@ export class VonageGlobalState {
             }
         } catch (e) {
             console.error("VonageGlobalState: onScreenStreamDestroyed failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    private async onMuteForced(_event: OT.Event<"muteForced", OT.Session>): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onMuteForced();
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onMuteForced();
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onMuteForced failure", e);
             throw e;
         } finally {
             release();

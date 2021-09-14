@@ -1,6 +1,7 @@
 import { Center, createStandaloneToast, Spinner } from "@chakra-ui/react";
 import { detect } from "detect-browser";
 import React from "react";
+import { theme } from "./aspects/Chakra/ChakraCustomProvider";
 
 const browser = detect();
 const browserOK = !(
@@ -10,7 +11,7 @@ const browserOK = !(
     browser.name === "ios-webview"
 );
 
-const toast = createStandaloneToast();
+const toast = createStandaloneToast({ theme });
 if (!browserOK) {
     toast({
         description: `Your browser (${

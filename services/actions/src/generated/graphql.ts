@@ -6078,6 +6078,9 @@ export type Collection_Exhibition = {
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
   created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  descriptiveItem?: Maybe<Content_Item>;
+  descriptiveItemId?: Maybe<Scalars['uuid']>;
   id: Scalars['uuid'];
   isHidden: Scalars['Boolean'];
   /** An array relationship */
@@ -6181,6 +6184,8 @@ export type Collection_Exhibition_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  descriptiveItem?: Maybe<Content_Item_Bool_Exp>;
+  descriptiveItemId?: Maybe<Uuid_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   isHidden?: Maybe<Boolean_Comparison_Exp>;
   items?: Maybe<Content_ItemExhibition_Bool_Exp>;
@@ -6208,6 +6213,8 @@ export type Collection_Exhibition_Insert_Input = {
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  descriptiveItem?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
+  descriptiveItemId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   isHidden?: Maybe<Scalars['Boolean']>;
   items?: Maybe<Content_ItemExhibition_Arr_Rel_Insert_Input>;
@@ -6222,6 +6229,7 @@ export type Collection_Exhibition_Max_Fields = {
   colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  descriptiveItemId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   priority?: Maybe<Scalars['Int']>;
@@ -6233,6 +6241,7 @@ export type Collection_Exhibition_Max_Order_By = {
   colour?: Maybe<Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
+  descriptiveItemId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   priority?: Maybe<Order_By>;
@@ -6245,6 +6254,7 @@ export type Collection_Exhibition_Min_Fields = {
   colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  descriptiveItemId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   priority?: Maybe<Scalars['Int']>;
@@ -6256,6 +6266,7 @@ export type Collection_Exhibition_Min_Order_By = {
   colour?: Maybe<Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
+  descriptiveItemId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   priority?: Maybe<Order_By>;
@@ -6291,6 +6302,8 @@ export type Collection_Exhibition_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
+  descriptiveItem?: Maybe<Content_Item_Order_By>;
+  descriptiveItemId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   isHidden?: Maybe<Order_By>;
   items_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
@@ -6313,6 +6326,8 @@ export enum Collection_Exhibition_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  DescriptiveItemId = 'descriptiveItemId',
+  /** column name */
   Id = 'id',
   /** column name */
   IsHidden = 'isHidden',
@@ -6329,6 +6344,7 @@ export type Collection_Exhibition_Set_Input = {
   colour?: Maybe<Scalars['String']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  descriptiveItemId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   isHidden?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
@@ -6388,6 +6404,8 @@ export enum Collection_Exhibition_Update_Column {
   ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  DescriptiveItemId = 'descriptiveItemId',
   /** column name */
   Id = 'id',
   /** column name */
@@ -7112,6 +7130,11 @@ export type Collection_Tag_Variance_Order_By = {
   priority?: Maybe<Order_By>;
 };
 
+export type Collection_SearchProgramPerson_Args = {
+  conferenceid?: Maybe<Scalars['uuid']>;
+  search?: Maybe<Scalars['String']>;
+};
+
 /** columns and relationships of "conference.Conference" */
 export type Conference_Conference = {
   __typename?: 'conference_Conference';
@@ -7804,8 +7827,12 @@ export enum Conference_ConfigurationKey_Enum {
   BackgroundVideos = 'BACKGROUND_VIDEOS',
   /** A string representing the app version. Changing this causes the user's browsers to refresh. */
   ClowdrAppVersion = 'CLOWDR_APP_VERSION',
+  /** Boolean. Disable the "Events around this content" section of the Item pages. */
+  DisableNearbyEvents = 'DISABLE_NEARBY_EVENTS',
   EmailTemplateSubmissionRequest = 'EMAIL_TEMPLATE_SUBMISSION_REQUEST',
   EmailTemplateSubtitlesGenerated = 'EMAIL_TEMPLATE_SUBTITLES_GENERATED',
+  /** Boolean. Whether to enable the backstage stream preview or not. */
+  EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
   /** List of S3 URLs. */
   FillerVideos = 'FILLER_VIDEOS',
   /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
@@ -7816,6 +7843,8 @@ export enum Conference_ConfigurationKey_Enum {
   RegistrationUrl = 'REGISTRATION_URL',
   /** Select different versions of the schedule view. */
   ScheduleViewVersion = 'SCHEDULE_VIEW_VERSION',
+  /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
+  SponsorsLabel = 'SPONSORS_LABEL',
   /** A string representing a valid email address for contacting the conference organisers. */
   SupportAddress = 'SUPPORT_ADDRESS',
   /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -11814,6 +11843,11 @@ export type Content_Uploader_Variance_Fields = {
 /** order by variance() on columns of table "content.Uploader" */
 export type Content_Uploader_Variance_Order_By = {
   emailsSentCount?: Maybe<Order_By>;
+};
+
+export type Content_SearchItems_Args = {
+  conferenceId?: Maybe<Scalars['uuid']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
@@ -20091,6 +20125,10 @@ export type Query_Root = {
   collection_Tag_aggregate: Collection_Tag_Aggregate;
   /** fetch data from the table: "collection.Tag" using primary key columns */
   collection_Tag_by_pk?: Maybe<Collection_Tag>;
+  /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+  collection_searchProgramPerson: Array<Collection_ProgramPerson>;
+  /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+  collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "conference.Conference" */
   conference_Conference: Array<Conference_Conference>;
   /** fetch aggregated fields from the table: "conference.Conference" */
@@ -20185,6 +20223,10 @@ export type Query_Root = {
   content_Uploader_aggregate: Content_Uploader_Aggregate;
   /** fetch data from the table: "content.Uploader" using primary key columns */
   content_Uploader_by_pk?: Maybe<Content_Uploader>;
+  /** execute function "content.searchItems" which returns "content.Item" */
+  content_searchItems: Array<Content_Item>;
+  /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+  content_searchItems_aggregate: Content_Item_Aggregate;
   getSlug: GetSlugOutput;
   getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
@@ -20422,6 +20464,10 @@ export type Query_Root = {
   schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
   /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
   schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+  /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+  schedule_searchEvents: Array<Schedule_Event>;
+  /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+  schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
   /** fetch data from the table: "system.Configuration" */
   system_Configuration: Array<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -21129,6 +21175,26 @@ export type Query_RootCollection_Tag_By_PkArgs = {
 };
 
 
+export type Query_RootCollection_SearchProgramPersonArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
+export type Query_RootCollection_SearchProgramPerson_AggregateArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
 export type Query_RootConference_ConferenceArgs = {
   distinct_on?: Maybe<Array<Conference_Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21490,6 +21556,26 @@ export type Query_RootContent_Uploader_AggregateArgs = {
 
 export type Query_RootContent_Uploader_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Query_RootContent_SearchItemsArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+
+export type Query_RootContent_SearchItems_AggregateArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
 };
 
 
@@ -22405,6 +22491,26 @@ export type Query_RootSchedule_StarredEvent_AggregateArgs = {
 
 export type Query_RootSchedule_StarredEvent_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Query_RootSchedule_SearchEventsArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
+export type Query_RootSchedule_SearchEvents_AggregateArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 
@@ -29340,6 +29446,11 @@ export enum Schedule_StarredEvent_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+export type Schedule_SearchEvents_Args = {
+  conferenceId?: Maybe<Scalars['uuid']>;
+  search?: Maybe<Scalars['String']>;
+};
+
 export type Subscription_Root = {
   __typename?: 'subscription_root';
   /** fetch data from the table: "Email" */
@@ -29498,6 +29609,10 @@ export type Subscription_Root = {
   collection_Tag_aggregate: Collection_Tag_Aggregate;
   /** fetch data from the table: "collection.Tag" using primary key columns */
   collection_Tag_by_pk?: Maybe<Collection_Tag>;
+  /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+  collection_searchProgramPerson: Array<Collection_ProgramPerson>;
+  /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+  collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "conference.Conference" */
   conference_Conference: Array<Conference_Conference>;
   /** fetch aggregated fields from the table: "conference.Conference" */
@@ -29592,6 +29707,10 @@ export type Subscription_Root = {
   content_Uploader_aggregate: Content_Uploader_Aggregate;
   /** fetch data from the table: "content.Uploader" using primary key columns */
   content_Uploader_by_pk?: Maybe<Content_Uploader>;
+  /** execute function "content.searchItems" which returns "content.Item" */
+  content_searchItems: Array<Content_Item>;
+  /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+  content_searchItems_aggregate: Content_Item_Aggregate;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
   job_queues_ChannelStackCreateJob: Array<Job_Queues_ChannelStackCreateJob>;
   /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
@@ -29826,6 +29945,10 @@ export type Subscription_Root = {
   schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
   /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
   schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+  /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+  schedule_searchEvents: Array<Schedule_Event>;
+  /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+  schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
   /** fetch data from the table: "system.Configuration" */
   system_Configuration: Array<System_Configuration>;
   /** fetch data from the table: "system.ConfigurationKey" */
@@ -30532,6 +30655,26 @@ export type Subscription_RootCollection_Tag_By_PkArgs = {
 };
 
 
+export type Subscription_RootCollection_SearchProgramPersonArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
+export type Subscription_RootCollection_SearchProgramPerson_AggregateArgs = {
+  args: Collection_SearchProgramPerson_Args;
+  distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+  where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+
 export type Subscription_RootConference_ConferenceArgs = {
   distinct_on?: Maybe<Array<Conference_Conference_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30893,6 +31036,26 @@ export type Subscription_RootContent_Uploader_AggregateArgs = {
 
 export type Subscription_RootContent_Uploader_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootContent_SearchItemsArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_SearchItems_AggregateArgs = {
+  args: Content_SearchItems_Args;
+  distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Content_Item_Order_By>>;
+  where?: Maybe<Content_Item_Bool_Exp>;
 };
 
 
@@ -31798,6 +31961,26 @@ export type Subscription_RootSchedule_StarredEvent_AggregateArgs = {
 
 export type Subscription_RootSchedule_StarredEvent_By_PkArgs = {
   id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootSchedule_SearchEventsArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+
+export type Subscription_RootSchedule_SearchEvents_AggregateArgs = {
+  args: Schedule_SearchEvents_Args;
+  distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+  where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 
@@ -35637,10 +35820,11 @@ export type OngoingBroadcastableVideoRoomEventsQuery = { __typename?: 'query_roo
 
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
+  userId: Scalars['String'];
 }>;
 
 
-export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', conferenceId: any, id: any, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }> }> };
+export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', conferenceId: any, id: any, intendedRoomModeName: Room_Mode_Enum, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, room: { __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any, roleName: Schedule_EventProgramPersonRole_Enum }>, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> } }> };
 
 export type GetRoomThatUserCanJoinQueryVariables = Exact<{
   roomId?: Maybe<Scalars['uuid']>;
@@ -35671,6 +35855,16 @@ export type GetRegistrantQueryVariables = Exact<{
 export type GetRegistrantQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any }> };
 
 export type GetRegistrant_RegistrantFragment = { __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any };
+
+export type GetRegistrantWithPermissionsQueryVariables = Exact<{
+  userId: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetRegistrantWithPermissionsQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> };
+
+export type GetRegistrant_RegistrantWithPermissionsFragment = { __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> };
 
 export type GetRegistrantByConferenceSlugQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -35985,6 +36179,7 @@ export const UploadableElementFieldsFragmentDoc = {"kind":"Document","definition
 export const UploaderPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UploaderParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"content_Uploader"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"shortName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailsSentCount"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"element"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UploadableElementFields"}}]}}]}},...UploadableElementFieldsFragmentDoc.definitions]} as unknown as DocumentNode<UploaderPartsFragment, unknown>;
 export const VideoRenderJobDataFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoRenderJobData"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"video_VideoRenderJob"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"jobStatusName"}},{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"retriesCount"}}]}}]} as unknown as DocumentNode<VideoRenderJobDataFragment, unknown>;
 export const GetRegistrant_RegistrantFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetRegistrant_Registrant"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"registrant_Registrant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}}]}}]} as unknown as DocumentNode<GetRegistrant_RegistrantFragment, unknown>;
+export const GetRegistrant_RegistrantWithPermissionsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GetRegistrant_RegistrantWithPermissions"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"registrant_Registrant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"groupRegistrants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groupRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rolePermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionName"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRegistrant_RegistrantWithPermissionsFragment, unknown>;
 export const RoomParticipantFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RoomParticipant"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"room_Participant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}},{"kind":"Field","name":{"kind":"Name","value":"chimeMeeting"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"chimeMeetingId"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vonageConnectionId"}},{"kind":"Field","name":{"kind":"Name","value":"chimeRegistrantId"}}]}}]} as unknown as DocumentNode<RoomParticipantFragment, unknown>;
 export const FlagInserted_GetSupportAddressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FlagInserted_GetSupportAddress"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageSId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat_Message"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageSId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"shortName"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","alias":{"kind":"Name","value":"supportAddress"},"name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUPPORT_ADDRESS"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FlagInserted_GetSupportAddressQuery, FlagInserted_GetSupportAddressQueryVariables>;
 export const CombineVideosJob_GetJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CombineVideosJob_GetJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"job_queues_CombineVideosJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"NEW"},{"kind":"EnumValue","value":"IN_PROGRESS"}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"10"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"jobStatusName"}}]}}]}}]} as unknown as DocumentNode<CombineVideosJob_GetJobsQuery, CombineVideosJob_GetJobsQueryVariables>;
@@ -36070,11 +36265,12 @@ export const SelectNewVideoRenderJobsDocument = {"kind":"Document","definitions"
 export const MarkAndSelectNewVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectNewVideoRenderJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VideoRenderJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"NEW"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"IN_PROGRESS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"retriesCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoRenderJobData"}}]}}]}}]}},...VideoRenderJobDataFragmentDoc.definitions]} as unknown as DocumentNode<MarkAndSelectNewVideoRenderJobsMutation, MarkAndSelectNewVideoRenderJobsMutationVariables>;
 export const UnmarkVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnmarkVideoRenderJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VideoRenderJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"FAILED"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}},{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UnmarkVideoRenderJobsMutation, UnmarkVideoRenderJobsMutationVariables>;
 export const OngoingBroadcastableVideoRoomEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OngoingBroadcastableVideoRoomEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"time"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventVonageSession"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"intendedRoomModeName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"Q_AND_A"},{"kind":"EnumValue","value":"PRESENTATION"}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<OngoingBroadcastableVideoRoomEventsQuery, OngoingBroadcastableVideoRoomEventsQueryVariables>;
-export const Vonage_GetEventDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vonage_GetEventDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}}]}}]}}]} as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
+export const Vonage_GetEventDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vonage_GetEventDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roleName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}},{"kind":"Field","name":{"kind":"Name","value":"groupRegistrants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groupRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rolePermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionName"}}]}}]}}]}}]}}]}}]}}]}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
 export const GetRoomThatUserCanJoinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRoomThatUserCanJoin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}}]}}]} as unknown as DocumentNode<GetRoomThatUserCanJoinQuery, GetRoomThatUserCanJoinQueryVariables>;
 export const FetchPresenceSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FetchPresenceSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"presence_Summary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_unique_tabs"}},{"kind":"Field","name":{"kind":"Name","value":"total_unique_user_ids"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}}]}}]}}]} as unknown as DocumentNode<FetchPresenceSummaryQuery, FetchPresenceSummaryQueryVariables>;
 export const InsertAppStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertAppStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"analytics_AppStats_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_analytics_AppStats_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertAppStatsMutation, InsertAppStatsMutationVariables>;
 export const GetRegistrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRegistrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<GetRegistrantQuery, GetRegistrantQueryVariables>;
+export const GetRegistrantWithPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRegistrantWithPermissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_RegistrantWithPermissions"}}]}}]}},...GetRegistrant_RegistrantWithPermissionsFragmentDoc.definitions]} as unknown as DocumentNode<GetRegistrantWithPermissionsQuery, GetRegistrantWithPermissionsQueryVariables>;
 export const GetRegistrantByConferenceSlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRegistrantByConferenceSlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conference"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceSlug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<GetRegistrantByConferenceSlugQuery, GetRegistrantByConferenceSlugQueryVariables>;
 export const Authorisation_FindRegistrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Authorisation_FindRegistrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<Authorisation_FindRegistrantQuery, Authorisation_FindRegistrantQueryVariables>;
 export const GetConfigurationValueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetConfigurationValue"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"conference_ConfigurationKey_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conference_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetConfigurationValueQuery, GetConfigurationValueQueryVariables>;

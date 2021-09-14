@@ -135,7 +135,9 @@ export class ChannelStackService {
         roomId: string,
         roomName: string,
         conferenceId: string,
-        stackLogicalResourceId: string
+        stackLogicalResourceId: string,
+        rtmpOutputUrl: string | undefined,
+        rtmpOutputStreamKey: string | undefined
     ): Promise<DeployStackResult> {
         const awsPrefix = this.configService.get<string>("AWS_PREFIX");
         assert(awsPrefix, "Missing AWS_PREFIX");
@@ -161,6 +163,8 @@ export class ChannelStackService {
             roomId,
             roomName,
             conferenceId,
+            rtmpOutputUrl,
+            rtmpOutputStreamKey,
             tags: {
                 roomId,
                 roomName,

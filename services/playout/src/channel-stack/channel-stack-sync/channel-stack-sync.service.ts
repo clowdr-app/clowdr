@@ -50,7 +50,15 @@ export class ChannelStackSyncService {
         }
     }
 
-    public async getRoomsNeedingChannelStack(): Promise<{ roomId: string; roomName: string; conferenceId: string }[]> {
+    public async getRoomsNeedingChannelStack(): Promise<
+        {
+            roomId: string;
+            roomName: string;
+            conferenceId: string;
+            rtmpOutputUrl: string | undefined;
+            rtmpOutputStreamKey: string | undefined;
+        }[]
+    > {
         const now = new Date();
         const future = add(now, { hours: 1 });
 
@@ -73,9 +81,14 @@ export class ChannelStackSyncService {
                         }
                     }
                 ) {
-                    roomId: id
+                    id
                     conferenceId
-                    roomName: name
+                    name
+                    rtmpOutput {
+                        id
+                        url
+                        streamKey
+                    }
                 }
             }
         `;
@@ -88,7 +101,13 @@ export class ChannelStackSyncService {
             },
         });
 
-        return result.data.room_Room;
+        return result.data.room_Room.map((room) => ({
+            conferenceId: room.conferenceId,
+            roomId: room.id,
+            roomName: room.name,
+            rtmpOutputUrl: room.rtmpOutput?.url,
+            rtmpOutputStreamKey: room.rtmpOutput?.streamKey,
+        }));
     }
 
     public async getObsoleteChannelStacks(): Promise<
@@ -162,7 +181,9 @@ export class ChannelStackSyncService {
                     roomNeedingChannelStack.roomId,
                     roomNeedingChannelStack.roomName,
                     roomNeedingChannelStack.conferenceId,
-                    stackLogicalResourceId
+                    stackLogicalResourceId,
+                    roomNeedingChannelStack.rtmpOutputUrl,
+                    roomNeedingChannelStack.rtmpOutputStreamKey
                 )
                 .catch(async (e) => {
                     this.logger.error(

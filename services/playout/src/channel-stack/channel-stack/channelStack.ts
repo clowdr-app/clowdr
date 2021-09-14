@@ -72,6 +72,8 @@ export interface ChannelStackProps extends cdk.StackProps {
     roomId: string;
     roomName: string;
     conferenceId: string;
+    rtmpOutputUrl: string | undefined;
+    rtmpOutputStreamKey: string | undefined;
     awsPrefix: string;
     mediaLiveServiceRoleArn: string;
     awsContentBucketId: string;
@@ -347,6 +349,110 @@ export class ChannelStack extends cdk.Stack {
         const video480p30 = props.generateId();
 
         const destinationId = props.generateId();
+        const rtmpOutputDestinationId = props.generateId();
+
+        const outputGroups: Array<medialive.CfnChannel.OutputGroupProperty | cdk.IResolvable> | cdk.IResolvable = [
+            {
+                name: props.generateId(),
+                outputs: [
+                    {
+                        outputName: "1080p30",
+                        videoDescriptionName: video1080p30,
+                        audioDescriptionNames: [audioHQDescriptorName],
+                        outputSettings: {
+                            mediaPackageOutputSettings: {},
+                        },
+                    },
+                    {
+                        outputName: "720p30",
+                        videoDescriptionName: video720p30,
+                        audioDescriptionNames: [audioHQDescriptorName],
+                        outputSettings: {
+                            mediaPackageOutputSettings: {},
+                        },
+                    },
+                    {
+                        outputName: "480p30",
+                        videoDescriptionName: video480p30,
+                        audioDescriptionNames: [audioLQDescriptorName],
+                        outputSettings: {
+                            mediaPackageOutputSettings: {},
+                        },
+                    },
+                    {
+                        outputName: "captions",
+                        captionDescriptionNames: [captionDescriptorName],
+                        outputSettings: {
+                            mediaPackageOutputSettings: {},
+                        },
+                    },
+                ],
+                outputGroupSettings: {
+                    mediaPackageGroupSettings: {
+                        destination: {
+                            destinationRefId: destinationId,
+                        },
+                    },
+                },
+            },
+        ];
+
+        const destinations:
+            | Array<medialive.CfnChannel.OutputDestinationProperty | cdk.IResolvable>
+            | cdk.IResolvable
+            | undefined = [
+            {
+                id: destinationId,
+                settings: [],
+                mediaPackageSettings: [{ channelId: mediaPackageChannelId }],
+            },
+        ];
+
+        if (props.rtmpOutputUrl && props.rtmpOutputStreamKey) {
+            outputGroups.push({
+                outputGroupSettings: {
+                    rtmpGroupSettings: {
+                        authenticationScheme: "COMMON",
+                        cacheLength: 30,
+                        restartDelay: 15,
+                        cacheFullBehavior: "DISCONNECT_IMMEDIATELY",
+                        captionData: "ALL",
+                        inputLossAction: "EMIT_OUTPUT",
+                        adMarkers: [],
+                    },
+                },
+                name: props.generateId(),
+                outputs: [
+                    {
+                        outputSettings: {
+                            rtmpOutputSettings: {
+                                destination: {
+                                    destinationRefId: rtmpOutputDestinationId,
+                                },
+                                connectionRetryInterval: 2,
+                                numRetries: 10,
+                                certificateMode: "VERIFY_AUTHENTICITY",
+                            },
+                        },
+                        outputName: rtmpOutputDestinationId,
+                        videoDescriptionName: video1080p30,
+                        audioDescriptionNames: [audioHQDescriptorName],
+                        captionDescriptionNames: [],
+                    },
+                ],
+            });
+
+            destinations.push({
+                id: rtmpOutputDestinationId,
+                settings: [
+                    {
+                        url: props.rtmpOutputUrl,
+                        streamName: props.rtmpOutputStreamKey,
+                    },
+                ],
+                mediaPackageSettings: [],
+            });
+        }
 
         const channel = new medialive.CfnChannel(this, name, {
             name,
@@ -476,51 +582,7 @@ export class ChannelStack extends cdk.Stack {
                         audioSelectorName: undefined,
                     },
                 ],
-                outputGroups: [
-                    {
-                        name: props.generateId(),
-                        outputs: [
-                            {
-                                outputName: "1080p30",
-                                videoDescriptionName: video1080p30,
-                                audioDescriptionNames: [audioHQDescriptorName],
-                                outputSettings: {
-                                    mediaPackageOutputSettings: {},
-                                },
-                            },
-                            {
-                                outputName: "720p30",
-                                videoDescriptionName: video720p30,
-                                audioDescriptionNames: [audioHQDescriptorName],
-                                outputSettings: {
-                                    mediaPackageOutputSettings: {},
-                                },
-                            },
-                            {
-                                outputName: "480p30",
-                                videoDescriptionName: video480p30,
-                                audioDescriptionNames: [audioLQDescriptorName],
-                                outputSettings: {
-                                    mediaPackageOutputSettings: {},
-                                },
-                            },
-                            {
-                                outputName: "captions",
-                                captionDescriptionNames: [captionDescriptorName],
-                                outputSettings: {
-                                    mediaPackageOutputSettings: {},
-                                },
-                            },
-                        ],
-                        outputGroupSettings: {
-                            mediaPackageGroupSettings: {
-                                destination: {
-                                    destinationRefId: destinationId,
-                                },
-                            },
-                        },
-                    },
-                ],
+                outputGroups,
                 timecodeConfig: { source: TimecodeConfigSource.SYSTEMCLOCK },
                 videoDescriptions: [
                     {
@@ -589,13 +651,7 @@ export class ChannelStack extends cdk.Stack {
                 resolution: InputResolution.HD,
                 maximumBitrate: InputMaximumBitrate.MAX_10_MBPS,
             },
-            destinations: [
-                {
-                    id: destinationId,
-                    settings: [],
-                    mediaPackageSettings: [{ channelId: mediaPackageChannelId }],
-                },
-            ],
+            destinations,
         });
 
         return {

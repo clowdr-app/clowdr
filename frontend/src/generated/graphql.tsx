@@ -8430,6 +8430,8 @@ export enum Conference_ConfigurationKey_Enum {
   EmailTemplateSubtitlesGenerated = 'EMAIL_TEMPLATE_SUBTITLES_GENERATED',
   /** Boolean. Whether to enable the backstage stream preview or not. */
   EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
+  /** Boolean. Whether to enable the External RTMP Broadcast feature. */
+  EnableExternalRtmpBroadcast = 'ENABLE_EXTERNAL_RTMP_BROADCAST',
   /** List of S3 URLs. */
   FillerVideos = 'FILLER_VIDEOS',
   /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
@@ -15641,6 +15643,10 @@ export type Mutation_Root = {
   readonly delete_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
   /** delete single row from the table: "video.MediaLiveChannelStatus" */
   readonly delete_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+  /** delete data from the table: "video.RoomRtmpOutput" */
+  readonly delete_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+  /** delete single row from the table: "video.RoomRtmpOutput" */
+  readonly delete_video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
   /** delete data from the table: "video.RtmpInput" */
   readonly delete_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
   /** delete single row from the table: "video.RtmpInput" */
@@ -16014,6 +16020,10 @@ export type Mutation_Root = {
   readonly insert_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
   /** insert a single row into the table: "video.MediaLiveChannelStatus" */
   readonly insert_video_MediaLiveChannelStatus_one?: Maybe<Video_MediaLiveChannelStatus>;
+  /** insert data into the table: "video.RoomRtmpOutput" */
+  readonly insert_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+  /** insert a single row into the table: "video.RoomRtmpOutput" */
+  readonly insert_video_RoomRtmpOutput_one?: Maybe<Video_RoomRtmpOutput>;
   /** insert data into the table: "video.RtmpInput" */
   readonly insert_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
   /** insert a single row into the table: "video.RtmpInput" */
@@ -16382,6 +16392,10 @@ export type Mutation_Root = {
   readonly update_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
   /** update single row of the table: "video.MediaLiveChannelStatus" */
   readonly update_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+  /** update data of the table: "video.RoomRtmpOutput" */
+  readonly update_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+  /** update single row of the table: "video.RoomRtmpOutput" */
+  readonly update_video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
   /** update data of the table: "video.RtmpInput" */
   readonly update_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
   /** update single row of the table: "video.RtmpInput" */
@@ -17435,6 +17449,18 @@ export type Mutation_RootDelete_Video_MediaLiveChannelStatusArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpOutputArgs = {
+  where: Video_RoomRtmpOutput_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpOutput_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18721,6 +18747,20 @@ export type Mutation_RootInsert_Video_MediaLiveChannelStatusArgs = {
 export type Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs = {
   object: Video_MediaLiveChannelStatus_Insert_Input;
   on_conflict?: Maybe<Video_MediaLiveChannelStatus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpOutputArgs = {
+  objects: ReadonlyArray<Video_RoomRtmpOutput_Insert_Input>;
+  on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpOutput_OneArgs = {
+  object: Video_RoomRtmpOutput_Insert_Input;
+  on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
 };
 
 
@@ -20280,6 +20320,20 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs = {
   _inc?: Maybe<Video_MediaLiveChannelStatus_Inc_Input>;
   _set?: Maybe<Video_MediaLiveChannelStatus_Set_Input>;
   pk_columns: Video_MediaLiveChannelStatus_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpOutputArgs = {
+  _set?: Maybe<Video_RoomRtmpOutput_Set_Input>;
+  where: Video_RoomRtmpOutput_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpOutput_By_PkArgs = {
+  _set?: Maybe<Video_RoomRtmpOutput_Set_Input>;
+  pk_columns: Video_RoomRtmpOutput_Pk_Columns_Input;
 };
 
 
@@ -22212,6 +22266,12 @@ export type Query_Root = {
   readonly video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
   /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
   readonly video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+  /** fetch data from the table: "video.RoomRtmpOutput" */
+  readonly video_RoomRtmpOutput: ReadonlyArray<Video_RoomRtmpOutput>;
+  /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
+  readonly video_RoomRtmpOutput_aggregate: Video_RoomRtmpOutput_Aggregate;
+  /** fetch data from the table: "video.RoomRtmpOutput" using primary key columns */
+  readonly video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
   /** fetch data from the table: "video.RtmpInput" */
   readonly video_RtmpInput: ReadonlyArray<Video_RtmpInput>;
   /** fetch aggregated fields from the table: "video.RtmpInput" */
@@ -24503,6 +24563,29 @@ export type Query_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 
 
 export type Query_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootVideo_RoomRtmpOutputArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Order_By>>;
+  where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_RoomRtmpOutput_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Order_By>>;
+  where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_RoomRtmpOutput_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -27244,6 +27327,8 @@ export type Room_Room = {
   readonly roomPeople: ReadonlyArray<Room_RoomPerson>;
   /** An aggregate relationship */
   readonly roomPeople_aggregate: Room_RoomPerson_Aggregate;
+  /** An object relationship */
+  readonly rtmpOutput?: Maybe<Video_RoomRtmpOutput>;
   /** An array relationship */
   readonly shuffleRooms: ReadonlyArray<Room_ShuffleRoom>;
   /** An aggregate relationship */
@@ -27700,6 +27785,7 @@ export type Room_Room_Bool_Exp = {
   readonly priority?: Maybe<Int_Comparison_Exp>;
   readonly publicVonageSessionId?: Maybe<String_Comparison_Exp>;
   readonly roomPeople?: Maybe<Room_RoomPerson_Bool_Exp>;
+  readonly rtmpOutput?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -27751,6 +27837,7 @@ export type Room_Room_Insert_Input = {
   readonly priority?: Maybe<Scalars['Int']>;
   readonly publicVonageSessionId?: Maybe<Scalars['String']>;
   readonly roomPeople?: Maybe<Room_RoomPerson_Arr_Rel_Insert_Input>;
+  readonly rtmpOutput?: Maybe<Video_RoomRtmpOutput_Obj_Rel_Insert_Input>;
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   readonly stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
@@ -27882,6 +27969,7 @@ export type Room_Room_Order_By = {
   readonly priority?: Maybe<Order_By>;
   readonly publicVonageSessionId?: Maybe<Order_By>;
   readonly roomPeople_aggregate?: Maybe<Room_RoomPerson_Aggregate_Order_By>;
+  readonly rtmpOutput?: Maybe<Video_RoomRtmpOutput_Order_By>;
   readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   readonly stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
@@ -31809,6 +31897,12 @@ export type Subscription_Root = {
   readonly video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
   /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
   readonly video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+  /** fetch data from the table: "video.RoomRtmpOutput" */
+  readonly video_RoomRtmpOutput: ReadonlyArray<Video_RoomRtmpOutput>;
+  /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
+  readonly video_RoomRtmpOutput_aggregate: Video_RoomRtmpOutput_Aggregate;
+  /** fetch data from the table: "video.RoomRtmpOutput" using primary key columns */
+  readonly video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
   /** fetch data from the table: "video.RtmpInput" */
   readonly video_RtmpInput: ReadonlyArray<Video_RtmpInput>;
   /** fetch aggregated fields from the table: "video.RtmpInput" */
@@ -34087,6 +34181,29 @@ export type Subscription_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
 };
 
 
+export type Subscription_RootVideo_RoomRtmpOutputArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Order_By>>;
+  where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_RoomRtmpOutput_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Order_By>>;
+  where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_RoomRtmpOutput_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootVideo_RtmpInputArgs = {
   distinct_on?: Maybe<ReadonlyArray<Video_RtmpInput_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -36089,6 +36206,183 @@ export type Video_MediaLiveChannelStatus_Variance_Fields = {
   readonly __typename?: 'video_MediaLiveChannelStatus_variance_fields';
   readonly pipelinesRunningCount?: Maybe<Scalars['Float']>;
 };
+
+/**
+ * Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
+ *
+ *
+ * columns and relationships of "video.RoomRtmpOutput"
+ *
+ */
+export type Video_RoomRtmpOutput = {
+  readonly __typename?: 'video_RoomRtmpOutput';
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly room: Room_Room;
+  readonly roomId: Scalars['uuid'];
+  readonly streamKey: Scalars['String'];
+  readonly updated_at: Scalars['timestamptz'];
+  readonly url: Scalars['String'];
+};
+
+/** aggregated selection of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate = {
+  readonly __typename?: 'video_RoomRtmpOutput_aggregate';
+  readonly aggregate?: Maybe<Video_RoomRtmpOutput_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Video_RoomRtmpOutput>;
+};
+
+/** aggregate fields of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate_Fields = {
+  readonly __typename?: 'video_RoomRtmpOutput_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Video_RoomRtmpOutput_Max_Fields>;
+  readonly min?: Maybe<Video_RoomRtmpOutput_Min_Fields>;
+};
+
+
+/** aggregate fields of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "video.RoomRtmpOutput". All fields are combined with a logical 'AND'. */
+export type Video_RoomRtmpOutput_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Bool_Exp>>;
+  readonly _not?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Video_RoomRtmpOutput_Bool_Exp>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly room?: Maybe<Room_Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly streamKey?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly url?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Constraint {
+  /** unique or primary key constraint */
+  EventRtmpOutputPkey = 'EventRtmpOutput_pkey',
+  /** unique or primary key constraint */
+  RoomRtmpOutputRoomIdKey = 'RoomRtmpOutput_roomId_key'
+}
+
+/** input type for inserting data into table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly streamKey?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly url?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Video_RoomRtmpOutput_Max_Fields = {
+  readonly __typename?: 'video_RoomRtmpOutput_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly streamKey?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly url?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Video_RoomRtmpOutput_Min_Fields = {
+  readonly __typename?: 'video_RoomRtmpOutput_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly streamKey?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly url?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Mutation_Response = {
+  readonly __typename?: 'video_RoomRtmpOutput_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Video_RoomRtmpOutput>;
+};
+
+/** input type for inserting object relation for remote table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Obj_Rel_Insert_Input = {
+  readonly data: Video_RoomRtmpOutput_Insert_Input;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_On_Conflict = {
+  readonly constraint: Video_RoomRtmpOutput_Constraint;
+  readonly update_columns?: ReadonlyArray<Video_RoomRtmpOutput_Update_Column>;
+  readonly where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.RoomRtmpOutput". */
+export type Video_RoomRtmpOutput_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly streamKey?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly url?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_RoomRtmpOutput */
+export type Video_RoomRtmpOutput_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  StreamKey = 'streamKey',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url'
+}
+
+/** input type for updating data in table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly streamKey?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly url?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  StreamKey = 'streamKey',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url'
+}
 
 /** columns and relationships of "video.RtmpInput" */
 export type Video_RtmpInput = {
@@ -38666,6 +38960,13 @@ export type InsertRoomPeopleMutationVariables = Exact<{
 
 export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_room_RoomPerson?: Maybe<{ readonly __typename?: 'room_RoomPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> }> };
 
+export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type GetIsExternalRtmpBroadcastEnabledQuery = { readonly __typename?: 'query_root', readonly conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+
 export type InvitationPartsFragment = { readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> };
 
 export type RegistrantPartsFragment = { readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
@@ -38743,6 +39044,38 @@ export type SendEmail_GetAllGroupsQueryVariables = Exact<{
 
 
 export type SendEmail_GetAllGroupsQuery = { readonly __typename?: 'query_root', readonly permissions_Group: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly id: any, readonly enabled: boolean, readonly name: string }> };
+
+export type GetRoomRtmpOutputQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomRtmpOutputQuery = { readonly __typename?: 'query_root', readonly video_RoomRtmpOutput: ReadonlyArray<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any, readonly roomId: any, readonly created_at: any, readonly updated_at: any, readonly url: string, readonly streamKey: string }> };
+
+export type InsertRoomRtmpOutputMutationVariables = Exact<{
+  roomId: Scalars['uuid'];
+  url: Scalars['String'];
+  key: Scalars['String'];
+}>;
+
+
+export type InsertRoomRtmpOutputMutation = { readonly __typename?: 'mutation_root', readonly insert_video_RoomRtmpOutput_one?: Maybe<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any, readonly roomId: any, readonly created_at: any, readonly updated_at: any, readonly url: string, readonly streamKey: string }> };
+
+export type UpdateRoomRtmpOutputMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  url: Scalars['String'];
+  key: Scalars['String'];
+}>;
+
+
+export type UpdateRoomRtmpOutputMutation = { readonly __typename?: 'mutation_root', readonly update_video_RoomRtmpOutput_by_pk?: Maybe<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any, readonly roomId: any, readonly created_at: any, readonly updated_at: any, readonly url: string, readonly streamKey: string }> };
+
+export type DeleteRoomRtmpOutputMutationVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type DeleteRoomRtmpOutputMutation = { readonly __typename?: 'mutation_root', readonly delete_video_RoomRtmpOutput_by_pk?: Maybe<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any }> };
 
 export type AddEventPeople_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string };
 
@@ -48684,6 +49017,46 @@ export function useInsertRoomPeopleMutation(baseOptions?: Apollo.MutationHookOpt
 export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
+export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
+    query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
+  conference_Configuration_by_pk(
+    conferenceId: $conferenceId
+    key: ENABLE_EXTERNAL_RTMP_BROADCAST
+  ) {
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+
+/**
+ * __useGetIsExternalRtmpBroadcastEnabledQuery__
+ *
+ * To run a query within a React component, call `useGetIsExternalRtmpBroadcastEnabledQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIsExternalRtmpBroadcastEnabledQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIsExternalRtmpBroadcastEnabledQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useGetIsExternalRtmpBroadcastEnabledQuery(baseOptions: Apollo.QueryHookOptions<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>(GetIsExternalRtmpBroadcastEnabledDocument, options);
+      }
+export function useGetIsExternalRtmpBroadcastEnabledLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>(GetIsExternalRtmpBroadcastEnabledDocument, options);
+        }
+export type GetIsExternalRtmpBroadcastEnabledQueryHookResult = ReturnType<typeof useGetIsExternalRtmpBroadcastEnabledQuery>;
+export type GetIsExternalRtmpBroadcastEnabledLazyQueryHookResult = ReturnType<typeof useGetIsExternalRtmpBroadcastEnabledLazyQuery>;
+export type GetIsExternalRtmpBroadcastEnabledQueryResult = Apollo.QueryResult<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>;
 export const SelectAllRegistrantsDocument = gql`
     query SelectAllRegistrants($conferenceId: uuid!) {
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -49028,6 +49401,164 @@ export function useSendEmail_GetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsQuery>;
 export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
 export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
+export const GetRoomRtmpOutputDocument = gql`
+    query GetRoomRtmpOutput($roomId: uuid!) {
+  video_RoomRtmpOutput(where: {roomId: {_eq: $roomId}}) {
+    id
+    roomId
+    created_at
+    updated_at
+    url
+    streamKey
+  }
+}
+    `;
+
+/**
+ * __useGetRoomRtmpOutputQuery__
+ *
+ * To run a query within a React component, call `useGetRoomRtmpOutputQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomRtmpOutputQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomRtmpOutputQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomRtmpOutputQuery(baseOptions: Apollo.QueryHookOptions<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>(GetRoomRtmpOutputDocument, options);
+      }
+export function useGetRoomRtmpOutputLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>(GetRoomRtmpOutputDocument, options);
+        }
+export type GetRoomRtmpOutputQueryHookResult = ReturnType<typeof useGetRoomRtmpOutputQuery>;
+export type GetRoomRtmpOutputLazyQueryHookResult = ReturnType<typeof useGetRoomRtmpOutputLazyQuery>;
+export type GetRoomRtmpOutputQueryResult = Apollo.QueryResult<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>;
+export const InsertRoomRtmpOutputDocument = gql`
+    mutation InsertRoomRtmpOutput($roomId: uuid!, $url: String!, $key: String!) {
+  insert_video_RoomRtmpOutput_one(
+    object: {roomId: $roomId, url: $url, streamKey: $key}
+  ) {
+    id
+    roomId
+    created_at
+    updated_at
+    url
+    streamKey
+  }
+}
+    `;
+export type InsertRoomRtmpOutputMutationFn = Apollo.MutationFunction<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>;
+
+/**
+ * __useInsertRoomRtmpOutputMutation__
+ *
+ * To run a mutation, you first call `useInsertRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertRoomRtmpOutputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertRoomRtmpOutputMutation, { data, loading, error }] = useInsertRoomRtmpOutputMutation({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *      url: // value for 'url'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useInsertRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>(InsertRoomRtmpOutputDocument, options);
+      }
+export type InsertRoomRtmpOutputMutationHookResult = ReturnType<typeof useInsertRoomRtmpOutputMutation>;
+export type InsertRoomRtmpOutputMutationResult = Apollo.MutationResult<InsertRoomRtmpOutputMutation>;
+export type InsertRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>;
+export const UpdateRoomRtmpOutputDocument = gql`
+    mutation UpdateRoomRtmpOutput($id: uuid!, $url: String!, $key: String!) {
+  update_video_RoomRtmpOutput_by_pk(
+    pk_columns: {id: $id}
+    _set: {url: $url, streamKey: $key}
+  ) {
+    id
+    roomId
+    created_at
+    updated_at
+    url
+    streamKey
+  }
+}
+    `;
+export type UpdateRoomRtmpOutputMutationFn = Apollo.MutationFunction<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>;
+
+/**
+ * __useUpdateRoomRtmpOutputMutation__
+ *
+ * To run a mutation, you first call `useUpdateRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRoomRtmpOutputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRoomRtmpOutputMutation, { data, loading, error }] = useUpdateRoomRtmpOutputMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      url: // value for 'url'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useUpdateRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>(UpdateRoomRtmpOutputDocument, options);
+      }
+export type UpdateRoomRtmpOutputMutationHookResult = ReturnType<typeof useUpdateRoomRtmpOutputMutation>;
+export type UpdateRoomRtmpOutputMutationResult = Apollo.MutationResult<UpdateRoomRtmpOutputMutation>;
+export type UpdateRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>;
+export const DeleteRoomRtmpOutputDocument = gql`
+    mutation DeleteRoomRtmpOutput($id: uuid!) {
+  delete_video_RoomRtmpOutput_by_pk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteRoomRtmpOutputMutationFn = Apollo.MutationFunction<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
+
+/**
+ * __useDeleteRoomRtmpOutputMutation__
+ *
+ * To run a mutation, you first call `useDeleteRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRoomRtmpOutputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRoomRtmpOutputMutation, { data, loading, error }] = useDeleteRoomRtmpOutputMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>(DeleteRoomRtmpOutputDocument, options);
+      }
+export type DeleteRoomRtmpOutputMutationHookResult = ReturnType<typeof useDeleteRoomRtmpOutputMutation>;
+export type DeleteRoomRtmpOutputMutationResult = Apollo.MutationResult<DeleteRoomRtmpOutputMutation>;
+export type DeleteRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
   content_ItemProgramPerson(where: {_or: [{itemId: {_in: $itemIds}}]}) {

@@ -72,7 +72,7 @@ export default function SubscriberControlBar({
                         }}
                         size="xs"
                     >
-                        Kick
+                        Remove
                     </Button>
                 ) : undefined}
             </ButtonGroup>

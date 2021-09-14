@@ -35694,7 +35694,7 @@ export type StarredEvents_SelectEventsQueryVariables = Exact<{
 }>;
 
 
-export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
 
 export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
 
@@ -41757,6 +41757,9 @@ export const StarredEvents_SelectEventsDocument = gql`
       ...Schedule_ItemFields
     }
   }
+  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...Schedule_ProgramPerson
+  }
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     ...Schedule_Tag
   }
@@ -41764,6 +41767,7 @@ export const StarredEvents_SelectEventsDocument = gql`
     ${Schedule_RoomSummaryFragmentDoc}
 ${Schedule_EventSummaryFragmentDoc}
 ${Schedule_ItemFieldsFragmentDoc}
+${Schedule_ProgramPersonFragmentDoc}
 ${Schedule_TagFragmentDoc}`;
 
 /**

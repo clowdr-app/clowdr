@@ -32,6 +32,9 @@ gql`
                 ...Schedule_ItemFields
             }
         }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+            ...Schedule_ProgramPerson
+        }
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             ...Schedule_Tag
         }
@@ -162,6 +165,7 @@ function StarredEventsInner({ eventIds }: { eventIds: string[] }): JSX.Element {
                     .filter((x) => !!x.item)
                     .map((x) => x.item) as Schedule_ItemFieldsFragment[],
                 tags: roomsResult.data.collection_Tag,
+                people: roomsResult.data.collection_ProgramPerson,
             });
         }
     }, [roomsResult.data]);

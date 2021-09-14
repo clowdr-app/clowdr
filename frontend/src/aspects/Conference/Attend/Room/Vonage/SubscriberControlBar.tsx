@@ -68,7 +68,9 @@ export default function SubscriberControlBar({
                 {canForceDisconnect ? (
                     <Button
                         onClick={() => {
-                            vonage.forceDisconnect(connection.connectionId);
+                            if (window.confirm("Are you sure you want to remove this person from the room?")) {
+                                vonage.forceDisconnect(connection.connectionId);
+                            }
                         }}
                         size="xs"
                     >

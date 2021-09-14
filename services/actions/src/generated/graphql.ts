@@ -6706,6 +6706,10 @@ export type Collection_ProgramPersonWithAccessToken = {
   conference?: Maybe<Conference_Conference>;
   conferenceId?: Maybe<Scalars['uuid']>;
   email?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  eventPeople: Array<Schedule_EventProgramPerson>;
+  /** An aggregate relationship */
+  eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
   id?: Maybe<Scalars['uuid']>;
   /** An array relationship */
   itemPeople: Array<Content_ItemProgramPerson>;
@@ -6717,6 +6721,26 @@ export type Collection_ProgramPersonWithAccessToken = {
   registrant?: Maybe<Registrant_Registrant>;
   registrantId?: Maybe<Scalars['uuid']>;
   submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenEventPeopleArgs = {
+  distinct_on?: Maybe<Array<Schedule_EventProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_EventProgramPerson_Order_By>>;
+  where?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenEventPeople_AggregateArgs = {
+  distinct_on?: Maybe<Array<Schedule_EventProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Schedule_EventProgramPerson_Order_By>>;
+  where?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
 };
 
 
@@ -6785,6 +6809,7 @@ export type Collection_ProgramPersonWithAccessToken_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   email?: Maybe<String_Comparison_Exp>;
+  eventPeople?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   itemPeople?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
   name?: Maybe<String_Comparison_Exp>;
@@ -6806,6 +6831,7 @@ export type Collection_ProgramPersonWithAccessToken_Insert_Input = {
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   email?: Maybe<Scalars['String']>;
+  eventPeople?: Maybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
   itemPeople?: Maybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
   name?: Maybe<Scalars['String']>;
@@ -6864,6 +6890,7 @@ export type Collection_ProgramPersonWithAccessToken_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   email?: Maybe<Order_By>;
+  eventPeople_aggregate?: Maybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
   name?: Maybe<Order_By>;

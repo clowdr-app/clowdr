@@ -24,7 +24,7 @@ export default function SubscriberControlBar({
                 top={1}
                 left={1}
                 w="calc(100% - 20px)"
-                h="calc(100% - 4ex)"
+                h="calc(100% - 8.5ex)"
                 overflow="hidden"
                 colorScheme="blue"
                 flexWrap="wrap"

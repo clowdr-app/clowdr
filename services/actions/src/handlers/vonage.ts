@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
-import { Vonage_GetEventDetailsDocument } from "../generated/graphql";
+import { Permissions_Permission_Enum, Room_Mode_Enum, Vonage_GetEventDetailsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getRegistrant } from "../lib/authorisation";
+import { getRegistrantWithPermissions } from "../lib/authorisation";
 import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveEventParticipantStreams,
@@ -54,13 +54,44 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
 }
 
 gql`
-    query Vonage_GetEventDetails($eventId: uuid!) {
+    query Vonage_GetEventDetails($eventId: uuid!, $userId: String!) {
         schedule_Event_by_pk(id: $eventId) {
             conferenceId
             id
+            intendedRoomModeName
             eventVonageSession {
                 id
                 sessionId
+            }
+            room {
+                id
+                publicVonageSessionId
+            }
+            eventPeople(where: { person: { registrant: { userId: { _eq: $userId } } } }) {
+                id
+                roleName
+            }
+            conference {
+                id
+                registrants(where: { userId: { _eq: $userId } }) {
+                    ...GetRegistrant_Registrant
+                    groupRegistrants {
+                        id
+                        group {
+                            id
+                            groupRoles {
+                                id
+                                role {
+                                    id
+                                    rolePermissions {
+                                        id
+                                        permissionName
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -74,6 +105,7 @@ export async function handleJoinEvent(
         query: Vonage_GetEventDetailsDocument,
         variables: {
             eventId: payload.eventId,
+            userId,
         },
     });
 
@@ -82,42 +114,63 @@ export async function handleJoinEvent(
         return {};
     }
 
-    if (!result.data.schedule_Event_by_pk.eventVonageSession) {
+    const vonageSessionId =
+        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.QAndA ||
+        result.data.schedule_Event_by_pk.intendedRoomModeName === Room_Mode_Enum.Prerecorded
+            ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
+            : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
+    if (!vonageSessionId) {
         console.error("Could not retrieve Vonage session associated with event", payload.eventId);
         return {};
     }
 
-    let registrant;
-    try {
-        registrant = await getRegistrant(userId, result.data.schedule_Event_by_pk.conferenceId);
-    } catch (e) {
+    if (!result.data.schedule_Event_by_pk.conference.registrants.length) {
         console.error(
             "User does not have registrant at conference, refusing event join token",
             userId,
-            payload.eventId,
-            e
+            payload.eventId
         );
         return {};
     }
 
+    const registrant = result.data.schedule_Event_by_pk.conference.registrants[0];
+    const isChairOrConferenceOrganizerOrConferenceModerator =
+        result.data.schedule_Event_by_pk.eventPeople.some(
+            (eventPerson) =>
+                eventPerson.roleName.toUpperCase() === "CHAIR" ||
+                eventPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                eventPerson.roleName.toUpperCase() === "ORGANIZER"
+        ) ||
+        result.data.schedule_Event_by_pk.conference.registrants[0].groupRegistrants.some((groupRegistrant) =>
+            groupRegistrant.group.groupRoles.some((groupRole) =>
+                groupRole.role.rolePermissions.some(
+                    (rolePermission) =>
+                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
+                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
+                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
+                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
+                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
+                )
+            )
+        );
+    console.log(
+        `${registrant.displayName}: isChairOrConferenceOrganizerOrConferenceModerator`,
+        isChairOrConferenceOrganizerOrConferenceModerator
+    );
     const connectionData: CustomConnectionData = {
         registrantId: registrant.id,
         userId,
     };
 
     try {
-        const accessToken = Vonage.vonage.generateToken(result.data.schedule_Event_by_pk.eventVonageSession.sessionId, {
+        const accessToken = Vonage.vonage.generateToken(vonageSessionId, {
             data: JSON.stringify(connectionData),
-            role: "publisher",
+            role: isChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
         });
         return { accessToken };
     } catch (e) {
-        console.error(
-            "Failure while generating event Vonage session token",
-            payload.eventId,
-            result.data.schedule_Event_by_pk.eventVonageSession.sessionId,
-            e
-        );
+        console.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
     }
 
     return {};
@@ -137,7 +190,7 @@ export async function handleJoinRoom(
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
     const roomConferenceId = await getRoomConferenceId(payload.roomId);
-    const registrant = await getRegistrant(userId, roomConferenceId);
+    const registrant = await getRegistrantWithPermissions(userId, roomConferenceId);
     const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
 
     if (!canJoinRoom) {
@@ -159,9 +212,22 @@ export async function handleJoinRoom(
         userId,
     };
 
+    const isConferenceOrganizerOrConferenceModerator = registrant.groupRegistrants.some((groupRegistrant) =>
+        groupRegistrant.group.groupRoles.some((groupRole) =>
+            groupRole.role.rolePermissions.some(
+                (rolePermission) =>
+                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
+                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
+                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
+                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
+                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
+            )
+        )
+    );
+
     const accessToken = Vonage.vonage.generateToken(maybeVonageMeetingId, {
         data: JSON.stringify(connectionData),
-        role: "publisher",
+        role: isConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
     return {

@@ -723,6 +723,7 @@ function RoomInner({
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}
                                     enable={showDefaultVideoChatRoom}
+                                    eventId={currentRoomEvent?.id}
                                 />
                             </Box>
                             {contentEl}

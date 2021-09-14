@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import * as portals from "react-reverse-portal";
 import {
     RoomPage_RoomDetailsFragment,
+    useGetEventVonageTokenMutation,
     useGetRoomVonageSessionIdQuery,
     useGetRoomVonageTokenMutation,
 } from "../../../../../generated/graphql";
@@ -28,9 +29,11 @@ gql`
 
 export function VideoChatVonageRoom({
     room,
+    eventId,
     enable,
 }: {
     room: RoomPage_RoomDetailsFragment;
+    eventId: string | undefined;
     enable: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
@@ -40,14 +43,28 @@ export function VideoChatVonageRoom({
             roomId: room.id,
         },
     });
+    const [getEventVonageToken] = useGetEventVonageTokenMutation({
+        variables: {
+            eventId,
+        },
+    });
 
     const getAccessToken = useCallback(async () => {
-        const result = await getRoomVonageToken();
-        if (!result.data?.joinRoomVonageSession?.accessToken) {
-            throw new Error("No Vonage session ID");
+        console.log("Event Id", eventId);
+        if (eventId) {
+            const result = await getEventVonageToken();
+            if (!result.data?.joinEventVonageSession?.accessToken) {
+                throw new Error("No Vonage session ID");
+            }
+            return result.data?.joinEventVonageSession.accessToken;
+        } else {
+            const result = await getRoomVonageToken();
+            if (!result.data?.joinRoomVonageSession?.accessToken) {
+                throw new Error("No Vonage session ID");
+            }
+            return result.data?.joinRoomVonageSession.accessToken;
         }
-        return result.data?.joinRoomVonageSession.accessToken;
-    }, [getRoomVonageToken]);
+    }, [getRoomVonageToken, getEventVonageToken, eventId]);
 
     const [publicVonageSessionId, setPublicVonageSessionId] = useState<string | null | undefined>(
         room.publicVonageSessionId

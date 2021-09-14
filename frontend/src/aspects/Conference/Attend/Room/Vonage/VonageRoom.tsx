@@ -17,6 +17,7 @@ import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCur
 import PlaceholderImage from "../PlaceholderImage";
 import { PreJoin } from "../PreJoin";
 import type { DevicesProps } from "../VideoChat/PermissionInstructions";
+import SubscriberControlBar from "./SubscriberControlBar";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
@@ -693,6 +694,7 @@ function VonageRoomInner({
                         <VonageOverlay connectionData={connection.data} microphoneEnabled={false} />
                     </Box>
                     <PlaceholderImage connectionData={connection.data} />
+                    <SubscriberControlBar connection={connection} />
                 </Box>
             )),
         [otherUnpublishedConnections, participantWidth]

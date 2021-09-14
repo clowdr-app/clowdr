@@ -1,8 +1,11 @@
-import { useToast } from "@chakra-ui/react";
+import { createStandaloneToast, useToast } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
+
+const standaloneToast = createStandaloneToast({ theme });
 
 export function useVonageComputedState({
     getAccessToken,
@@ -47,7 +50,7 @@ export function useVonageComputedState({
 
     const onCameraStreamDestroyed = useCallback(
         (reason: string) => {
-            if (reason === "mediaStopped") {
+            if (reason === "mediaStopped" || reason === "forceUnpublished") {
                 dispatch({
                     type: VonageRoomStateActionType.SetCameraIntendedState,
                     cameraEnabled: false,
@@ -61,13 +64,24 @@ export function useVonageComputedState({
                     onError: undefined,
                 });
             }
+
+            if (reason === "forceUnpublished") {
+                standaloneToast({
+                    title: "Muted",
+                    description: "You have been muted by a moderator.",
+                    status: "warning",
+                    duration: 20000,
+                    isClosable: true,
+                    position: "top",
+                });
+            }
         },
         [dispatch]
     );
     const onScreenStreamDestroyed = useCallback(
         (reason: string) => {
             setScreen(vonage.screen);
-            if (reason === "mediaStopped") {
+            if (reason === "mediaStopped" || reason === "forceUnpublished") {
                 dispatch({
                     type: VonageRoomStateActionType.SetScreenShareIntendedState,
                     screenEnabled: false,
@@ -87,6 +101,7 @@ export function useVonageComputedState({
             try {
                 await vonage.connectToSession();
                 onRoomJoined?.(true);
+                (window as any).vonage = vonage;
                 if (cameraPublishContainerRef.current) {
                     try {
                         await vonage.publishCamera(
@@ -156,6 +171,10 @@ export function useVonageComputedState({
         setJoining(false);
     }, [connected, onRoomJoined, vonage]);
 
+    useEffect(() => {
+        vonage.setGetTokenFunction(getAccessToken);
+    }, [getAccessToken, vonage]);
+
     const previousVonageSessionId = useRef<string>("");
     useEffect(() => {
         async function fn() {
@@ -207,6 +226,16 @@ export function useVonageComputedState({
                     },
                     () => {
                         setScreen(vonage.state.type === StateType.Connected ? vonage.state.screen : null);
+                    },
+                    () => {
+                        standaloneToast({
+                            title: "Muted",
+                            description: "You have been muted by a moderator.",
+                            status: "warning",
+                            duration: 20000,
+                            isClosable: true,
+                            position: "top",
+                        });
                     }
                 );
             } catch (e) {

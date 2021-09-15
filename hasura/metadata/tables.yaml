@@ -2272,6 +2272,11 @@
       function:
         schema: content
         name: Element_itemTitle
+  - name: uploadersCount
+    definition:
+      function:
+        schema: content
+        name: countUploaders
   insert_permissions:
   - role: user
     permission:
@@ -2415,6 +2420,7 @@
       - uploadsRemaining
       computed_fields:
       - itemTitle
+      - uploadersCount
       filter:
         _and:
         - conference:

@@ -8949,6 +8949,8 @@ export type Content_Element = {
   readonly updatedAt: Scalars['timestamptz'];
   /** An array relationship */
   readonly uploaders: ReadonlyArray<Content_Uploader>;
+  /** A computed field, executes function "content.countUploaders" */
+  readonly uploadersCount?: Maybe<Scalars['bigint']>;
   /** An aggregate relationship */
   readonly uploaders_aggregate: Content_Uploader_Aggregate;
   readonly uploadsRemaining?: Maybe<Scalars['Int']>;
@@ -9739,6 +9741,7 @@ export type Content_Element_Bool_Exp = {
   readonly typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly uploaders?: Maybe<Content_Uploader_Bool_Exp>;
+  readonly uploadersCount?: Maybe<Bigint_Comparison_Exp>;
   readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
   readonly youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
@@ -9897,6 +9900,7 @@ export type Content_Element_Order_By = {
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadersCount?: Maybe<Order_By>;
   readonly uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
   readonly uploadsRemaining?: Maybe<Order_By>;
   readonly youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
@@ -36218,14 +36222,16 @@ export type CombineVideosModal_GetElementsQueryVariables = Exact<{
 
 export type CombineVideosModal_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly createdAt: any, readonly itemId: any, readonly data: any, readonly name: string }> };
 
-export type SEoUm_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string }, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> };
+export type SelectElements_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly uploadersCount?: Maybe<any> }> };
+
+export type SelectElements_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly uploadersCount?: Maybe<any> };
 
 export type SEoUm_InfosQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string }, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any }> }> };
+export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly data: any, readonly uploadersCount?: Maybe<any> }> }> };
 
 export type SynchroniseUploaders_SelectDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -38737,22 +38743,25 @@ export const ExhibitionInfoFragmentDoc = gql`
   isHidden
 }
     `;
-export const SEoUm_ElementFragmentDoc = gql`
-    fragment SEoUM_Element on content_Element {
+export const SelectElements_ElementFragmentDoc = gql`
+    fragment SelectElements_Element on content_Element {
   id
   name
   typeName
   itemId
   data
-  item {
-    id
-    title
-  }
-  uploaders {
-    id
-  }
+  uploadersCount
 }
     `;
+export const SelectElements_ItemFragmentDoc = gql`
+    fragment SelectElements_Item on content_Item {
+  id
+  title
+  elements {
+    ...SelectElements_Element
+  }
+}
+    ${SelectElements_ElementFragmentDoc}`;
 export const ManageContent_UploaderFragmentDoc = gql`
     fragment ManageContent_Uploader on content_Uploader {
   id
@@ -44229,11 +44238,11 @@ export type CombineVideosModal_GetElementsLazyQueryHookResult = ReturnType<typeo
 export type CombineVideosModal_GetElementsQueryResult = Apollo.QueryResult<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>;
 export const SEoUm_InfosDocument = gql`
     query SEoUM_Infos($itemIds: [uuid!]!) {
-  content_Element(where: {itemId: {_in: $itemIds}}) {
-    ...SEoUM_Element
+  content_Item(where: {id: {_in: $itemIds}}) {
+    ...SelectElements_Item
   }
 }
-    ${SEoUm_ElementFragmentDoc}`;
+    ${SelectElements_ItemFragmentDoc}`;
 
 /**
  * __useSEoUm_InfosQuery__
@@ -44282,7 +44291,9 @@ export const SynchroniseUploaders_SelectDataDocument = gql`
       }
     }
   }
-  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+  collection_ProgramPerson(
+    where: {conferenceId: {_eq: $conferenceId}, email: {_is_null: false}}
+  ) {
     id
     name
     email

@@ -24,35 +24,37 @@ import {
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
-import * as R from "ramda";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     Content_ElementType_Enum,
     ManageContent_ItemFragment,
-    SEoUm_ElementFragment,
+    SelectElements_ElementFragment,
+    SelectElements_ItemFragment,
     useSEoUm_InfosQuery,
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
 
 gql`
-    fragment SEoUM_Element on content_Element {
+    fragment SelectElements_Item on content_Item {
+        id
+        title
+        elements {
+            ...SelectElements_Element
+        }
+    }
+
+    fragment SelectElements_Element on content_Element {
         id
         name
         typeName
         itemId
         data
-        item {
-            id
-            title
-        }
-        uploaders {
-            id
-        }
+        uploadersCount
     }
 
     query SEoUM_Infos($itemIds: [uuid!]!) {
-        content_Element(where: { itemId: { _in: $itemIds } }) {
-            ...SEoUM_Element
+        content_Item(where: { id: { _in: $itemIds } }) {
+            ...SelectElements_Item
         }
     }
 `;
@@ -110,6 +112,7 @@ function ModalInner({
         variables: {
             itemIds,
         },
+        fetchPolicy: "no-cache",
     });
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
@@ -141,14 +144,27 @@ function ModalInner({
         );
     }, [contentTypeOptions, typeFilter]);
 
-    const nameOptions = useMemo(
-        () =>
-            R.uniq(infos.data ? infos.data.content_Element.map((x) => x.name) : []).map((x) => ({
-                label: x,
-                value: x,
-            })),
-        [infos.data]
-    );
+    const nameOptions = useMemo(() => {
+        const elementNames = new Set<string>();
+        if (infos.data) {
+            for (const item of infos.data.content_Item) {
+                for (const element of item.elements) {
+                    elementNames.add(element.name);
+                }
+            }
+        }
+        const result: {
+            label: string;
+            value: string;
+        }[] = [];
+        for (const name of elementNames) {
+            result.push({
+                label: name,
+                value: name,
+            });
+        }
+        return result;
+    }, [infos.data]);
 
     const [titleFilter, setTitleFilter] = useState<string>("");
     const titleInput = useMemo(() => {
@@ -212,50 +228,84 @@ function ModalInner({
         );
     }, [includeUploadersFilter]);
 
-    const filteredElements = useMemo(() => {
-        const titleFilterLC = titleFilter.toLowerCase();
-        return infos.data?.content_Element
-            ? R.filter(
-                  R.allPass([
-                      (x) => restrictToTypes === null || restrictToTypes.some((y) => y === x.typeName),
-                      (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
-                      (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
-                      (x: SEoUm_ElementFragment) =>
-                          titleFilterLC.length === 0 || !!x.item?.title.toLowerCase().includes(titleFilterLC),
-                      (x) =>
-                          includeUploadedFilter === "BOTH" ||
-                          (includeUploadedFilter === "WITH" && x.data?.length) ||
-                          (includeUploadedFilter === "WITHOUT" && !x.data?.length),
-                      (x) =>
-                          includeUploadersFilter === "BOTH" ||
-                          (includeUploadersFilter === "WITH" && x.uploaders.length) ||
-                          (includeUploadersFilter === "WITHOUT" && !x.uploaders.length),
-                  ]),
-                  infos.data.content_Element
-              )
-            : [];
-    }, [
-        includeUploadedFilter,
-        includeUploadersFilter,
-        infos.data?.content_Element,
-        nameFilter,
-        restrictToTypes,
-        titleFilter,
-        typeFilter,
-    ]);
+    const elementTests = useMemo<Array<(element: SelectElements_ElementFragment) => boolean>>(() => {
+        return [
+            (x) => restrictToTypes === null || restrictToTypes.some((y) => y === x.typeName),
+            (x) => typeFilter.length === 0 || typeFilter.some((y) => y.value === x.typeName),
+            (x) => nameFilter.length === 0 || nameFilter.some((y) => y.value === x.name),
+            (x) =>
+                includeUploadedFilter === "BOTH" ||
+                (includeUploadedFilter === "WITH" && x.data?.length) ||
+                (includeUploadedFilter === "WITHOUT" && !x.data?.length),
+            (x) =>
+                includeUploadersFilter === "BOTH" ||
+                (includeUploadersFilter === "WITH" && x.uploadersCount) ||
+                (includeUploadersFilter === "WITHOUT" && !x.uploadersCount),
+        ];
+    }, [includeUploadedFilter, includeUploadersFilter, nameFilter, restrictToTypes, typeFilter]);
 
-    const displayResult: {
-        itemId: string;
-        elements: SEoUm_ElementFragment[];
-    }[] = useMemo(() => {
-        const intermediary = R.groupBy((x) => x.itemId, filteredElements);
+    const [filteredItems, setFilteredItems] = useState<SelectElements_ItemFragment[]>([]);
 
-        return R.sortBy(
-            (x) => x.elements[0].item.title,
-            Object.entries(intermediary).map(([itemId, elements]) => ({ itemId, elements }))
-        );
-    }, [filteredElements]);
+    useEffect(() => {
+        let tId: number | undefined;
+        if (infos.data?.content_Item) {
+            const items = infos.data.content_Item;
+            tId = setTimeout(
+                (() => {
+                    setFilteredItems(
+                        items.reduce<SelectElements_ItemFragment[]>((result, item) => {
+                            if (item.title.toLowerCase().includes(titleFilter.toLowerCase())) {
+                                const resultElements: SelectElements_ElementFragment[] = [];
+                                for (const element of item.elements) {
+                                    if (elementTests.every((pred) => pred(element))) {
+                                        resultElements.push(element);
+                                    }
+                                }
 
+                                if (resultElements.length > 0) {
+                                    result.push({
+                                        ...item,
+                                        elements: resultElements,
+                                    });
+                                }
+                            }
+
+                            return result;
+                        }, [])
+                    );
+                }) as TimerHandler,
+                500
+            );
+        }
+
+        return () => {
+            if (tId !== undefined) {
+                clearTimeout(tId);
+            }
+        };
+    }, [elementTests, infos.data?.content_Item, titleFilter]);
+
+    const { listItems, elementsCount } = useMemo(
+        () => ({
+            listItems: filteredItems.map((item) => (
+                <ListItem key={item.id} mb={2}>
+                    <chakra.span noOfLines={1}>{item.title}</chakra.span>
+                    <UnorderedList listStylePosition="inside">
+                        {item.elements.map((element) => (
+                            <ListItem key={element.id}>
+                                {element.name}
+                                {` (${element.data?.length ? "Submitted" : "Not submitted"}; ${
+                                    element.uploadersCount ?? "Unknown number of"
+                                } uploaders)`}
+                            </ListItem>
+                        ))}
+                    </UnorderedList>
+                </ListItem>
+            )),
+            elementsCount: filteredItems.reduce((count, item) => count + item.elements.length, 0),
+        }),
+        [filteredItems]
+    );
     return (
         <>
             <ModalBody>
@@ -278,24 +328,10 @@ function ModalInner({
                                 Filtered elements
                             </Heading>
                             <Text>
-                                {displayResult.length} items ({filteredElements.length} elements)
+                                {filteredItems.length} items ({elementsCount} elements)
                             </Text>
                             <UnorderedList listStyleType="none" maxH="70vh" overflow="auto">
-                                {displayResult.map(({ elements }) => (
-                                    <ListItem key={elements[0].itemId} mb={2}>
-                                        <chakra.span noOfLines={1}>{elements[0].item.title}</chakra.span>
-                                        <UnorderedList listStylePosition="inside">
-                                            {elements.map((element) => (
-                                                <ListItem key={element.id}>
-                                                    {element.name}
-                                                    {` (${element.data?.length ? "Submitted" : "Not submitted"}; ${
-                                                        element.uploaders.length
-                                                    } uploaders)`}
-                                                </ListItem>
-                                            ))}
-                                        </UnorderedList>
-                                    </ListItem>
-                                ))}
+                                {listItems}
                             </UnorderedList>
                         </VStack>
                     </HStack>
@@ -313,9 +349,9 @@ function ModalInner({
                         mr={3}
                         onClick={() => {
                             onSelect(
-                                displayResult.map((x: { itemId: string; elements: SEoUm_ElementFragment[] }) => ({
-                                    itemId: x.itemId,
-                                    elementIds: x.elements.map((y) => y.id),
+                                filteredItems.map((item) => ({
+                                    itemId: item.id,
+                                    elementIds: item.elements.map((y) => y.id),
                                 }))
                             );
                         }}

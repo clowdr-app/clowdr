@@ -403,6 +403,7 @@ export async function handleEventEndNotification(
         const preloadMillis = 1000;
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
+        const roomId = result.data.schedule_Event_by_pk.roomId;
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
@@ -412,7 +413,7 @@ export async function handleEventEndNotification(
                     console.error("Failed to stop event broadcasts", { eventId, e });
                 });
             } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
-                stopRoomVonageArchiving(eventId).catch((e) => {
+                stopRoomVonageArchiving(roomId, eventId).catch((e) => {
                     console.error("Failed to stop event archiving", { eventId, e });
                 });
             }

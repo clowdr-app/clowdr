@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client/core";
-import { Permissions_Permission_Enum, Room_Mode_Enum, Vonage_GetEventDetailsDocument } from "../generated/graphql";
+import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import assert from "assert";
+import { formatRFC7231 } from "date-fns";
+import {
+    GetEventForArchiveDocument,
+    InsertVonageArchiveElementDocument,
+    Permissions_Permission_Enum,
+    Room_Mode_Enum,
+    Vonage_GetEventDetailsDocument,
+} from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getRegistrantWithPermissions } from "../lib/authorisation";
 import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
@@ -83,17 +93,121 @@ export async function handleVonageSessionMonitoringWebhook(payload: SessionMonit
     return success;
 }
 
-export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
-    const nameParts = payload.name.split("/");
-    const roomId = nameParts[0];
-    const eventId = nameParts[1];
-    console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
+gql`
+    query GetEventForArchive($eventId: uuid!) {
+        schedule_Event_by_pk(id: $eventId) {
+            id
+            name
+            startTime
+            conferenceId
+            item {
+                id
+                elements_aggregate {
+                    aggregate {
+                        count
+                    }
+                }
+            }
+        }
+    }
 
-    if (eventId) {
-        // TODO: If ongoing event in the related room, and event has a content id, work out how to add a Video File element
-        //       and start the captions transcode
-    } else {
-        // TODO: Else no ongoing event, it's just a social room - so, we need to decide where to store them
+    mutation InsertVonageArchiveElement($object: content_Element_insert_input!) {
+        insert_content_Element_one(object: $object) {
+            id
+        }
+    }
+`;
+
+export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
+    if (payload.event === "archive" && payload.status === "uploaded") {
+        const nameParts = payload.name.split("/");
+        const roomId = nameParts[0];
+        const eventId = nameParts[1];
+        // console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
+
+        if (eventId) {
+            const response = await apolloClient.query({
+                query: GetEventForArchiveDocument,
+                variables: {
+                    eventId,
+                },
+            });
+
+            if (!response.data?.schedule_Event_by_pk) {
+                console.error("Could not find event for Vonage archive", {
+                    roomId,
+                    eventId,
+                    sessionId: payload.sessionId,
+                    archiveId: payload.id,
+                });
+                return false;
+            }
+
+            const event = response.data.schedule_Event_by_pk;
+
+            if (!event.item) {
+                console.log("Nowhere to store event Vonage archive", {
+                    roomId,
+                    eventId,
+                    sessionId: payload.sessionId,
+                    archiveId: payload.id,
+                });
+                return true;
+            }
+
+            assert(process.env.AWS_CONTENT_BUCKET_ID);
+            const data: ElementDataBlob = [
+                {
+                    createdAt: Date.now(),
+                    createdBy: "system",
+                    data: {
+                        baseType: ElementBaseType.Video,
+                        type: Content_ElementType_Enum.VideoFile,
+                        s3Url: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${payload.partnerId}/${payload.id}/archive.mp4`,
+                        subtitles: {},
+                    },
+                },
+            ];
+            const layoutData: LayoutDataBlob = {
+                contentType: Content_ElementType_Enum.VideoFile,
+                hidden: false,
+                wide: true,
+                priority: event.item.elements_aggregate.aggregate?.count ?? 0,
+            };
+
+            const startTime = formatRFC7231(Date.parse(event.startTime));
+            try {
+                await apolloClient.mutate({
+                    mutation: InsertVonageArchiveElementDocument,
+                    variables: {
+                        object: {
+                            conferenceId: event.conferenceId,
+                            data,
+                            isHidden: false,
+                            itemId: event.item.id,
+                            layoutData,
+                            name: `Recording of ${event.name} from ${startTime}`,
+                            typeName: Content_ElementType_Enum.VideoFile,
+                            uploadsRemaining: 0,
+                        },
+                    },
+                });
+            } catch (e) {
+                console.error("Failed to store event Vonage archive", {
+                    roomId,
+                    eventId,
+                    sessionId: payload.sessionId,
+                    archiveId: payload.id,
+                    error: e,
+                });
+                return false;
+            }
+
+            return true;
+        } else {
+            // TODO: Else no ongoing event, it's just a social room - so, we need to decide where to store them
+            return false;
+        }
     }
 
     return true;

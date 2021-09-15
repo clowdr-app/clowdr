@@ -280,18 +280,19 @@ export async function startRoomVonageArchiving(roomId: string, eventId: string |
         startedSessionArchives
     );
 
-    if (startedSessionArchives.length > 1) {
-        console.warn(
-            "Found more than one live archive for session - which is not allowed. Stopping them.",
-            archiveDetails.vonageSessionId
-        );
+    if (
+        startedSessionArchives.filter(
+            (archive) => !archive.name.startsWith(roomId) || archive.name.split("/")[1] !== eventId
+        ).length > 0
+    ) {
+        console.warn("Stopping previous archives of the session.", archiveDetails.vonageSessionId);
 
         for (const archive of startedSessionArchives) {
             try {
                 await Vonage.stopArchive(archive.id);
             } catch (e) {
                 console.error(
-                    "Error while stopping invalid archive",
+                    "Error while stopping previous archive",
                     archiveDetails.vonageSessionId,
                     archive.status,
                     e
@@ -302,7 +303,9 @@ export async function startRoomVonageArchiving(roomId: string, eventId: string |
         startedSessionArchives = [];
     }
 
-    const existingArchive = startedSessionArchives.find((archive) => archive.name.startsWith(roomId));
+    const existingArchive = startedSessionArchives.find(
+        (archive) => archive.name.startsWith(roomId) && archive.name.split("/")[1] === eventId
+    );
     if (!existingArchive) {
         console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
         try {
@@ -332,7 +335,7 @@ export async function startRoomVonageArchiving(roomId: string, eventId: string |
     }
 }
 
-export async function stopRoomVonageArchiving(roomId: string): Promise<void> {
+export async function stopRoomVonageArchiving(roomId: string, eventId: string | undefined): Promise<void> {
     let archiveDetails: RoomArchiveDetails;
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
@@ -356,7 +359,7 @@ export async function stopRoomVonageArchiving(roomId: string): Promise<void> {
     for (const existingArchive of existingSessionArchives) {
         try {
             if (existingArchive.status === "started" || existingArchive.status === "paused") {
-                if (existingArchive.name.startsWith(roomId)) {
+                if (existingArchive.name.startsWith(roomId) && existingArchive.name.split("/")[1] === eventId) {
                     await callWithRetry(async () => await Vonage.stopArchive(existingArchive.id));
                 }
             }

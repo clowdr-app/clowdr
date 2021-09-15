@@ -11,7 +11,7 @@ import {
 import React from "react";
 import type { ManageContent_ItemFragment } from "../../../../../../generated/graphql";
 
-export function AddUploadablesModal({
+export function RemoveElementsModal({
     isOpen,
     onClose,
     items,
@@ -24,7 +24,7 @@ export function AddUploadablesModal({
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Add uploadable elements</ModalHeader>
+                <ModalHeader>Remove elements or uploadable elements</ModalHeader>
                 <ModalCloseButton />
                 {isOpen ? <ModalInner items={items} onClose={onClose} /> : undefined}
             </ModalContent>

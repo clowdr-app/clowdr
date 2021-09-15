@@ -18,6 +18,7 @@ import {
     ModalOverlay,
     Text,
     useToast,
+    VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -29,17 +30,13 @@ import MultiSelect from "../../../../../Chakra/MultiSelect";
 import { useConference } from "../../../../useConference";
 
 gql`
-    query SynchroniseUploaders_SelectData($itemIds: [uuid!]!, $elementIds: [uuid!]!) {
+    query SynchroniseUploaders_SelectData($itemIds: [uuid!]!, $elementIds: [uuid!]!, $conferenceId: uuid!) {
         content_Item(where: { id: { _in: $itemIds } }) {
             id
             itemPeople(where: { person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] } }) {
                 id
                 roleName
-                person {
-                    id
-                    name
-                    email
-                }
+                personId
             }
             elements(where: { id: { _in: $elementIds } }) {
                 id
@@ -49,6 +46,11 @@ gql`
                     email
                 }
             }
+        }
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId }, email: { _is_null: false } }) {
+            id
+            name
+            email
         }
     }
 
@@ -68,6 +70,13 @@ gql`
         }
     }
 `;
+
+function isNotUndefined<T>(x: T | undefined): x is T {
+    if (x === undefined) {
+        return false;
+    }
+    return true;
+}
 
 export function SynchroniseUploadersModal({
     isOpen,
@@ -110,7 +119,9 @@ function ModalInner({
         variables: {
             itemIds,
             elementIds,
+            conferenceId: conference.id,
         },
+        fetchPolicy: "no-cache",
     });
     const [sync, syncResponse] = useSynchroniseUploadersMutation();
 
@@ -132,36 +143,35 @@ function ModalInner({
     const toast = useToast();
     const synchronise = useCallback(async () => {
         if (response.data) {
+            const data = response.data;
+
             const deleteUploaderIds: string[] = [];
             const insertUploaders: Content_Uploader_Insert_Input[] = [];
 
-            for (const item of response.data.content_Item) {
-                for (const element of item.elements) {
-                    const filteredPeople = item.itemPeople.filter((x) =>
-                        selectedRoles.some((role) => role.value === x.roleName.toUpperCase())
-                    );
+            for (const item of data.content_Item) {
+                const filteredPeople = item.itemPeople
+                    .filter((x) => selectedRoles.some((role) => role.value === x.roleName.toUpperCase()))
+                    .map((itemPerson) => data.collection_ProgramPerson.find((x) => x.id === itemPerson.personId))
+                    .filter(isNotUndefined);
 
-                    for (const itemPerson of filteredPeople) {
-                        const isMissing =
-                            !element.uploaders.some(
-                                (uploader) =>
-                                    uploader.name === itemPerson.person.name &&
-                                    uploader.email === itemPerson.person.email
-                            ) && !insertUploaders.some((uploader) => uploader.email === itemPerson.person.email);
+                for (const element of item.elements) {
+                    for (const person of filteredPeople) {
+                        const isMissing = !element.uploaders.some(
+                            (uploader) => uploader.name === person.name && uploader.email === person.email
+                        );
                         if (isMissing) {
                             insertUploaders.push({
                                 conferenceId: conference.id,
                                 elementId: element.id,
-                                email: itemPerson.person.email,
-                                name: itemPerson.person.name,
+                                email: person.email,
+                                name: person.name,
                             });
                         }
                     }
 
                     for (const uploader of element.uploaders) {
                         const isMissing = !filteredPeople.some(
-                            (itemPerson) =>
-                                uploader.name === itemPerson.person.name && uploader.email === itemPerson.person.email
+                            (person) => uploader.name === person.name && uploader.email === person.email
                         );
                         if (isMissing) {
                             deleteUploaderIds.push(uploader.id);
@@ -254,17 +264,20 @@ function ModalInner({
                 ) : undefined}
             </ModalBody>
             <ModalFooter>
-                <ButtonGroup spacing={2}>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button
-                        colorScheme="purple"
-                        isDisabled={!response.data}
-                        isLoading={response.loading || syncResponse.loading}
-                        onClick={synchronise}
-                    >
-                        Synchronise
-                    </Button>
-                </ButtonGroup>
+                <VStack>
+                    {response.loading ? <Text>Loading sychronisation data, please wait.</Text> : undefined}
+                    <ButtonGroup spacing={2}>
+                        <Button onClick={onClose}>Cancel</Button>
+                        <Button
+                            colorScheme="purple"
+                            isDisabled={!response.data}
+                            isLoading={response.loading || syncResponse.loading}
+                            onClick={synchronise}
+                        >
+                            Synchronise
+                        </Button>
+                    </ButtonGroup>
+                </VStack>
             </ModalFooter>
         </>
     );

@@ -69,6 +69,7 @@ function ModalInner({
         variables: {
             conferenceId: conference.id,
         },
+        fetchPolicy: "no-cache",
     });
     const [doUpdate, updateResponse] = useUpdateExhibitionDescriptiveItemMutation();
     const [updatedCount, setUpdatedCount] = useState<number>(0);

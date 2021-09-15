@@ -23,11 +23,10 @@ import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermi
 import { AddElementsModal } from "./AddElementsModal";
 import { AddRemoveExhibitionsModal } from "./AddRemoveExhibitionsModal";
 import { AddRemoveTagsModal } from "./AddRemoveTagsModal";
-import { AddUploadablesModal } from "./AddUploadablesModal";
 import { CombineVideosModal } from "./CombineVideosModal";
 import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
-import { RemoveElementsOrUploadablesModal } from "./RemoveElementsOrUploadablesModal";
-import { SelectElementsOrUploadablesModal } from "./SelectElementsOrUploadablesModal";
+import { RemoveElementsModal } from "./RemoveElementsModal";
+import { SelectElementsModal } from "./SelectElementsModal";
 import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
 import { UpdateExhibitionDescriptiveItemsModal } from "./UpdateExhibitionDescriptiveItemsModal";
 import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
@@ -185,20 +184,7 @@ export function BulkOperationMenu({
         //     },
         // },
         // {
-        //     label: "Add uploadable elements",
-        //     value: "UPLOADABLES_ADD",
-        //     operation: (items) => {
-        //         setActiveOperation({
-        //             operation: "UPLOADABLES_ADD",
-        //             items: items,
-        //             step: "ACT",
-        //             elementsByItem: [],
-        //             restrictToTypes: null,
-        //         });
-        //     },
-        // },
-        // {
-        //     label: "Remove elements or uploadables",
+        //     label: "Remove elements",
         //     value: "ELEMENTS_REMOVE",
         //     operation: (items) => {
         //         setActiveOperation({
@@ -210,6 +196,7 @@ export function BulkOperationMenu({
         //         });
         //     },
         // },
+        // TODO: Update element layout data
     ];
 
     const toast = useToast();
@@ -336,13 +323,6 @@ export function BulkOperationMenu({
                 }}
                 items={activeOperation?.items ?? []}
             />
-            <AddUploadablesModal
-                isOpen={activeOperation?.operation === "UPLOADABLES_ADD"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
             <LinkUnlinkPeopleModal
                 isOpen={activeOperation?.operation === "PEOPLE"}
                 onClose={() => {
@@ -350,14 +330,14 @@ export function BulkOperationMenu({
                 }}
                 items={activeOperation?.items ?? []}
             />
-            <RemoveElementsOrUploadablesModal
+            <RemoveElementsModal
                 isOpen={activeOperation?.operation === "ELEMENTS_REMOVE" && activeOperation?.step === "ACT"}
                 onClose={() => {
                     setActiveOperation(null);
                 }}
                 items={activeOperation?.items ?? []}
             />
-            <SelectElementsOrUploadablesModal
+            <SelectElementsModal
                 isOpen={
                     (activeOperation?.operation === "SECURITY" ||
                         activeOperation?.operation === "COMBINE_VIDEOS" ||

@@ -57,7 +57,7 @@ gql`
     }
 `;
 
-export function SelectElementsOrUploadablesModal({
+export function SelectElementsModal({
     isOpen,
     onClose,
     items,
@@ -79,7 +79,7 @@ export function SelectElementsOrUploadablesModal({
         <Modal isOpen={isOpen} onClose={onClose} size="6xl">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Select elements and uploadables</ModalHeader>
+                <ModalHeader>Select elements</ModalHeader>
                 <ModalCloseButton />
                 {isOpen ? (
                     <ModalInner items={items} onClose={onClose} onSelect={onSelect} restrictToTypes={restrictToTypes} />
@@ -183,11 +183,11 @@ function ModalInner({
                         setIncludeUploadedFilter(ev.target.value);
                     }}
                 >
-                    <option value="BOTH">Uploadables with or without submission</option>
-                    <option value="WITH">Only uploadables with a submission</option>
-                    <option value="WITHOUT">Only uploadables without a submission</option>
+                    <option value="BOTH">Elements with or without submission</option>
+                    <option value="WITH">Only elements with a submission</option>
+                    <option value="WITHOUT">Only elements without a submission</option>
                 </Select>
-                <FormHelperText>Include uploadables that have received a submission.</FormHelperText>
+                <FormHelperText>Include elements that have received a submission.</FormHelperText>
             </FormControl>
         );
     }, [includeUploadedFilter]);
@@ -203,11 +203,11 @@ function ModalInner({
                         setIncludeUploadersFilter(ev.target.value);
                     }}
                 >
-                    <option value="BOTH">Uploadables with or without uploaders</option>
-                    <option value="WITH">Only uploadables with at least one uploader</option>
-                    <option value="WITHOUT">Only uploadables without any uploaders</option>
+                    <option value="BOTH">Elements with or without uploaders</option>
+                    <option value="WITH">Only elements with at least one uploader</option>
+                    <option value="WITHOUT">Only elements without any uploaders</option>
                 </Select>
-                <FormHelperText>Include uploadables that have at least one uploader.</FormHelperText>
+                <FormHelperText>Include elements that have at least one uploader.</FormHelperText>
             </FormControl>
         );
     }, [includeUploadersFilter]);
@@ -275,7 +275,7 @@ function ModalInner({
                         <Divider m={0} h="unset" orientation="vertical" />
                         <VStack spacing={4} flex="1 1 48%">
                             <Heading as="h3" fontSize="md">
-                                Filtered elements &amp; uploadables
+                                Filtered elements
                             </Heading>
                             <Text>
                                 {displayResult.length} items ({filteredElements.length} elements)

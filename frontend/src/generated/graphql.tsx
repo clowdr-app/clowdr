@@ -36230,10 +36230,11 @@ export type SEoUm_InfosQuery = { readonly __typename?: 'query_root', readonly co
 export type SynchroniseUploaders_SelectDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SynchroniseUploaders_SelectDataQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly email?: Maybe<string> } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly name: string, readonly email: string }> }> }> };
+export type SynchroniseUploaders_SelectDataQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly personId: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly uploaders: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly name: string, readonly email: string }> }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly email?: Maybe<string> }> };
 
 export type SynchroniseUploadersMutationVariables = Exact<{
   deleteUploaderIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -44262,7 +44263,7 @@ export type SEoUm_InfosQueryHookResult = ReturnType<typeof useSEoUm_InfosQuery>;
 export type SEoUm_InfosLazyQueryHookResult = ReturnType<typeof useSEoUm_InfosLazyQuery>;
 export type SEoUm_InfosQueryResult = Apollo.QueryResult<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>;
 export const SynchroniseUploaders_SelectDataDocument = gql`
-    query SynchroniseUploaders_SelectData($itemIds: [uuid!]!, $elementIds: [uuid!]!) {
+    query SynchroniseUploaders_SelectData($itemIds: [uuid!]!, $elementIds: [uuid!]!, $conferenceId: uuid!) {
   content_Item(where: {id: {_in: $itemIds}}) {
     id
     itemPeople(
@@ -44270,11 +44271,7 @@ export const SynchroniseUploaders_SelectDataDocument = gql`
     ) {
       id
       roleName
-      person {
-        id
-        name
-        email
-      }
+      personId
     }
     elements(where: {id: {_in: $elementIds}}) {
       id
@@ -44284,6 +44281,11 @@ export const SynchroniseUploaders_SelectDataDocument = gql`
         email
       }
     }
+  }
+  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+    email
   }
 }
     `;
@@ -44302,6 +44304,7 @@ export const SynchroniseUploaders_SelectDataDocument = gql`
  *   variables: {
  *      itemIds: // value for 'itemIds'
  *      elementIds: // value for 'elementIds'
+ *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */

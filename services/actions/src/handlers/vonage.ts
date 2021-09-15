@@ -3,11 +3,15 @@ import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clo
 import { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
+import { validate as validateUUID } from "uuid";
 import {
+    AddVonageRoomRecordingToUserListDocument,
+    CheckForVonageRoomRecordingDocument,
     GetEventForArchiveDocument,
     InsertVonageArchiveElementDocument,
     Permissions_Permission_Enum,
     Room_Mode_Enum,
+    SaveVonageRoomRecordingDocument,
     Vonage_GetEventDetailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -116,24 +120,77 @@ gql`
             id
         }
     }
+
+    query CheckForVonageRoomRecording($roomId: uuid!, $vonageSessionId: String!) {
+        video_VonageRoomRecording(
+            where: {
+                roomId: { _eq: $roomId }
+                vonageSessionId: { _eq: $vonageSessionId }
+                endedAt: { _is_null: true }
+                s3Url: { _is_null: true }
+            }
+        ) {
+            id
+        }
+    }
+
+    mutation SaveVonageRoomRecording($id: uuid!, $endedAt: timestamptz!, $s3Url: String) {
+        update_video_VonageRoomRecording_by_pk(pk_columns: { id: $id }, _set: { endedAt: $endedAt, s3Url: $s3Url }) {
+            id
+        }
+    }
 `;
 
 export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
-    if (payload.event === "archive" && payload.status === "uploaded") {
+    if (payload.status === "uploaded") {
         const nameParts = payload.name.split("/");
         const roomId = nameParts[0];
         const eventId = nameParts[1];
         // console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
 
+        if (!roomId || !validateUUID(roomId)) {
+            throw new Error(`Room Id is not valid: ${roomId}`);
+        }
+
+        assert(process.env.AWS_CONTENT_BUCKET_ID, "AWS_CONTENT_BUCKET_ID environment variable missing!");
+        const s3Url = `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${payload.partnerId}/${payload.id}/archive.mp4`;
+
+        // Always try to save the recording into our Vonage Room Recording table
+        // (This is also what enables users to access the list of recordings they've participated in)
+        const response = await apolloClient.query({
+            query: CheckForVonageRoomRecordingDocument,
+            variables: {
+                roomId,
+                vonageSessionId: payload.sessionId,
+            },
+        });
+
+        if (response.data.video_VonageRoomRecording.length > 0) {
+            const recording = response.data.video_VonageRoomRecording[0];
+            await apolloClient.mutate({
+                mutation: SaveVonageRoomRecordingDocument,
+                variables: {
+                    id: recording.id,
+                    endedAt: new Date(payload.createdAt + 1000 * payload.duration).toISOString(),
+                    s3Url,
+                },
+            });
+        }
+
+        // Try to save the recording into a content item too?
         if (eventId) {
-            const response = await apolloClient.query({
+            if (!validateUUID(eventId)) {
+                throw new Error(`Event Id is not valid: ${eventId}`);
+            }
+
+            const eventResponse = await apolloClient.query({
                 query: GetEventForArchiveDocument,
                 variables: {
                     eventId,
                 },
             });
 
-            if (!response.data?.schedule_Event_by_pk) {
+            if (!eventResponse.data?.schedule_Event_by_pk) {
                 console.error("Could not find event for Vonage archive", {
                     roomId,
                     eventId,
@@ -143,7 +200,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 return false;
             }
 
-            const event = response.data.schedule_Event_by_pk;
+            const event = eventResponse.data.schedule_Event_by_pk;
 
             if (!event.item) {
                 console.log("Nowhere to store event Vonage archive", {
@@ -155,7 +212,6 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 return true;
             }
 
-            assert(process.env.AWS_CONTENT_BUCKET_ID);
             const data: ElementDataBlob = [
                 {
                     createdAt: Date.now(),
@@ -163,7 +219,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                     data: {
                         baseType: ElementBaseType.Video,
                         type: Content_ElementType_Enum.VideoFile,
-                        s3Url: `s3://${process.env.AWS_CONTENT_BUCKET_ID}/${payload.partnerId}/${payload.id}/archive.mp4`,
+                        s3Url,
                         subtitles: {},
                     },
                 },
@@ -202,12 +258,41 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 });
                 return false;
             }
-
-            return true;
-        } else {
-            // TODO: Else no ongoing event, it's just a social room - so, we need to decide where to store them
-            return false;
         }
+    } else if (payload.status === "failed") {
+        console.error("Vonage archive failed.", payload);
+
+        const nameParts = payload.name.split("/");
+        const roomId = nameParts[0];
+
+        if (!roomId || !validateUUID(roomId)) {
+            throw new Error(`Room Id is not valid: ${roomId}`);
+        }
+
+        const response = await apolloClient.query({
+            query: CheckForVonageRoomRecordingDocument,
+            variables: {
+                roomId,
+                vonageSessionId: payload.sessionId,
+            },
+        });
+
+        if (response.data.video_VonageRoomRecording.length > 0) {
+            const recording = response.data.video_VonageRoomRecording[0];
+            await apolloClient.mutate({
+                mutation: SaveVonageRoomRecordingDocument,
+                variables: {
+                    id: recording.id,
+                    endedAt: new Date(payload.createdAt + 1000 * payload.duration).toISOString(),
+                    s3Url: null,
+                },
+            });
+        }
+
+        // Yes, return true to the webhook handler
+        // - we successfully handled the webhook,
+        //   even though the recording itself failed
+        return true;
     }
 
     return true;
@@ -314,10 +399,6 @@ export async function handleJoinEvent(
                 )
             )
         );
-    console.log(
-        `${registrant.displayName}: isChairOrConferenceOrganizerOrConferenceModerator`,
-        isChairOrConferenceOrganizerOrConferenceModerator
-    );
     const connectionData: CustomConnectionData = {
         registrantId: registrant.id,
         userId,
@@ -328,6 +409,13 @@ export async function handleJoinEvent(
             data: JSON.stringify(connectionData),
             role: isChairOrConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
         });
+
+        addRegistrantToVonageRecording(result.data.schedule_Event_by_pk.room.id, vonageSessionId, registrant.id).catch(
+            (error) => {
+                console.error("Error adding Vonage recording to user's list", { userId, payload, error });
+            }
+        );
+
         return { accessToken };
     } catch (e) {
         console.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
@@ -390,8 +478,47 @@ export async function handleJoinRoom(
         role: isConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
+    addRegistrantToVonageRecording(payload.roomId, maybeVonageMeetingId, registrant.id).catch((error) => {
+        console.error("Error adding Vonage recording to user's list", { userId, payload, error });
+    });
+
     return {
         accessToken,
         sessionId: maybeVonageMeetingId,
     };
+}
+
+gql`
+    mutation AddVonageRoomRecordingToUserList($recordingId: uuid!, $registrantId: uuid!) {
+        insert_registrant_SavedVonageRoomRecording_one(
+            object: { isHidden: false, recordingId: $recordingId, registrantId: $registrantId }
+            on_conflict: { constraint: SavedVonageRoomRecording_recordingId_registrantId_key, update_columns: [] }
+        ) {
+            id
+        }
+    }
+`;
+
+export async function addRegistrantToVonageRecording(
+    roomId: string,
+    vonageSessionId: string,
+    registrantId: string
+): Promise<void> {
+    const response = await apolloClient.query({
+        query: CheckForVonageRoomRecordingDocument,
+        variables: {
+            roomId,
+            vonageSessionId,
+        },
+    });
+
+    if (response.data.video_VonageRoomRecording.length > 0) {
+        await apolloClient.mutate({
+            mutation: AddVonageRoomRecordingToUserListDocument,
+            variables: {
+                recordingId: response.data.video_VonageRoomRecording[0].id,
+                registrantId,
+            },
+        });
+    }
 }

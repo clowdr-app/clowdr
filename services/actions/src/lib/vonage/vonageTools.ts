@@ -2,6 +2,7 @@ import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
 import {
     CreateEventParticipantStreamDocument,
+    CreateVonageRoomRecordingDocument,
     GetEventBroadcastDetailsDocument,
     GetEventByVonageSessionIdDocument,
     GetRoomArchiveDetailsDocument,
@@ -222,6 +223,12 @@ gql`
             id
         }
     }
+
+    mutation CreateVonageRoomRecording($object: video_VonageRoomRecording_insert_input!) {
+        insert_video_VonageRoomRecording_one(object: $object) {
+            id
+        }
+    }
 `;
 
 interface RoomArchiveDetails {
@@ -249,25 +256,28 @@ export async function getRoomArchiveDetails(roomId: string): Promise<RoomArchive
     };
 }
 
-export async function startRoomVonageArchiving(roomId: string, eventId: string | undefined): Promise<void> {
+export async function startRoomVonageArchiving(
+    roomId: string,
+    eventId: string | undefined,
+    initiatedBy?: string
+): Promise<string | null> {
     let archiveDetails: RoomArchiveDetails;
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
     } catch (e) {
         console.error("Error retrieving Vonage broadcast details for room", e);
-        return;
+        return null;
     }
 
-    const existingSessionArchives = await callWithRetry(
-        async () =>
-            await Vonage.listArchives({
-                sessionId: archiveDetails.vonageSessionId,
-            })
+    const existingSessionArchives = await callWithRetry(() =>
+        Vonage.listArchives({
+            sessionId: archiveDetails.vonageSessionId,
+        })
     );
 
     if (existingSessionArchives === undefined) {
         console.error("Could not retrieve existing session archives.", archiveDetails.vonageSessionId);
-        return;
+        return null;
     }
 
     let startedSessionArchives = existingSessionArchives?.filter(
@@ -289,7 +299,7 @@ export async function startRoomVonageArchiving(roomId: string, eventId: string |
 
         for (const archive of startedSessionArchives) {
             try {
-                await Vonage.stopArchive(archive.id);
+                await callWithRetry(() => Vonage.stopArchive(archive.id));
             } catch (e) {
                 console.error(
                     "Error while stopping previous archive",
@@ -309,29 +319,46 @@ export async function startRoomVonageArchiving(roomId: string, eventId: string |
     if (!existingArchive) {
         console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
         try {
-            const archive = await Vonage.startArchive(archiveDetails.vonageSessionId, {
-                name: roomId + (eventId ? "/" + eventId : ""),
-                resolution: "1280x720",
-                outputMode: "composed",
-                hasAudio: true,
-                hasVideo: true,
-                layout: {
-                    type: "bestFit",
-                    screenshareType: "verticalPresentation",
+            const recordingResponse = await apolloClient.mutate({
+                mutation: CreateVonageRoomRecordingDocument,
+                variables: {
+                    object: {
+                        roomId,
+                        startedAt: new Date().toISOString(),
+                        vonageSessionId: archiveDetails.vonageSessionId,
+                        initiatedBy,
+                    },
                 },
             });
+
+            const archive = await callWithRetry(() =>
+                Vonage.startArchive(archiveDetails.vonageSessionId, {
+                    name: roomId + (eventId ? "/" + eventId : ""),
+                    resolution: "1280x720",
+                    outputMode: "composed",
+                    hasAudio: true,
+                    hasVideo: true,
+                    layout: {
+                        type: "bestFit",
+                        screenshareType: "verticalPresentation",
+                    },
+                })
+            );
 
             if (archive) {
                 console.log("Started Vonage archive", archive.id, archiveDetails.vonageSessionId, roomId);
             } else {
-                throw new Error("No archive returned by Vonage");
+                console.error("No archive returned by Vonage", archiveDetails.vonageSessionId, roomId);
             }
+
+            return recordingResponse.data?.insert_video_VonageRoomRecording_one?.id ?? null;
         } catch (e) {
             console.error("Failed to start archive", archiveDetails.vonageSessionId, roomId, e);
-            return;
+            return null;
         }
     } else {
         console.log("There is already an existing archive for the session.", archiveDetails.vonageSessionId, roomId);
+        return null;
     }
 }
 

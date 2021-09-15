@@ -6034,6 +6034,40 @@
                 schema: public
                 name: FlatUserPermission
 - table:
+    schema: registrant
+    name: SavedVonageRoomRecording
+  object_relationships:
+  - name: recording
+    using:
+      foreign_key_constraint_on: recordingId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - recordingId
+      - isHidden
+      - registrantId
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - isHidden
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+- table:
     schema: room
     name: Backend
   is_enum: true
@@ -6419,6 +6453,15 @@
         table:
           schema: analytics
           name: RoomStats
+  - name: vonageRecordings
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: VonageRoomRecording
+        insertion_order: null
+        column_mapping:
+          id: roomId
   computed_fields:
   - name: isProgramRoom
     definition:
@@ -8996,6 +9039,48 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- table:
+    schema: video
+    name: VonageRoomRecording
+  object_relationships:
+  - name: initiator
+    using:
+      foreign_key_constraint_on: initiatedBy
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  array_relationships:
+  - name: saves
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: SavedVonageRoomRecording
+        insertion_order: null
+        column_mapping:
+          id: recordingId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - roomId
+      - startedAt
+      - endedAt
+      - vonageSessionId
+      - s3Url
+      - initiatedBy
+      filter:
+        _or:
+        - initiator:
+            userId:
+              _eq: X-Hasura-User-Id
+        - saves:
+            registrant:
+              userId:
+                _eq: X-Hasura-User-Id
 - table:
     schema: video
     name: YouTubeUpload

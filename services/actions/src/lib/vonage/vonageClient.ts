@@ -10,11 +10,20 @@ const vonage = new OpenTok(process.env.OPENTOK_API_KEY, process.env.OPENTOK_API_
 export default {
     vonage,
     createSession: promisify(vonage.createSession.bind(vonage)),
+    listStreams: promisify(vonage.listStreams.bind(vonage)),
+
     startBroadcast: promisify(vonage.startBroadcast.bind(vonage)),
     stopBroadcast: promisify(vonage.stopBroadcast.bind(vonage)),
     listBroadcasts: promisify(vonage.listBroadcasts.bind(vonage)),
-    forceDisconnect: promisify(vonage.forceDisconnect.bind(vonage)),
+
+    startArchive: promisify(vonage.startArchive.bind(vonage)),
+    stopArchive: promisify(vonage.stopArchive.bind(vonage)),
+    listArchives: promisify(vonage.listArchives.bind(vonage)),
+    getArchive: promisify(vonage.getArchive.bind(vonage)),
+
     setBroadcastLayout: promisify(vonage.setBroadcastLayout.bind(vonage)),
+    setArchiveLayout: promisify(vonage.setArchiveLayout.bind(vonage)),
     setStreamClassLists: promisify(vonage.setStreamClassLists.bind(vonage)),
-    listStreams: promisify(vonage.listStreams.bind(vonage)),
+
+    forceDisconnect: promisify(vonage.forceDisconnect.bind(vonage)),
 };

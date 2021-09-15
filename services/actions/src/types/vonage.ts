@@ -1,29 +1,29 @@
-export type WebhookReqBody = ConnectionCreated | ConnectionDestroyed | StreamCreated | StreamDestroyed;
+export type SessionMonitoringWebhookReqBody = ConnectionCreated | ConnectionDestroyed | StreamCreated | StreamDestroyed;
 
-interface WebhookBase {
+interface SessionMonitoringWebhookBase {
     sessionId: string;
     projectId: string;
     event: string;
     timestamp: number;
 }
 
-interface ConnectionCreated extends WebhookBase {
+interface ConnectionCreated extends SessionMonitoringWebhookBase {
     event: "connectionCreated";
     connection: ConnectionData;
 }
 
-interface ConnectionDestroyed extends WebhookBase {
+interface ConnectionDestroyed extends SessionMonitoringWebhookBase {
     event: "connectionDestroyed";
     reason: "clientDisconnected" | "forceDisconnected" | "networkDisconnected";
     connection: ConnectionData;
 }
 
-interface StreamCreated extends WebhookBase {
+interface StreamCreated extends SessionMonitoringWebhookBase {
     event: "streamCreated";
     stream: StreamData;
 }
 
-interface StreamDestroyed extends WebhookBase {
+interface StreamDestroyed extends SessionMonitoringWebhookBase {
     event: "streamDestroyed";
     reason: "clientDisconnected" | "forceDisconnected" | "forceUnpublished" | "mediaStopped" | "networkDisconnected";
     stream: StreamData;
@@ -46,4 +46,20 @@ export interface StreamData {
 export interface CustomConnectionData {
     userId: string;
     registrantId: string;
+}
+
+export interface ArchiveMonitoringWebhookReqBody {
+    createdAt: number;
+    updatedAt: number;
+    duration: number;
+    id: string;
+    name: string;
+    partnerId: number;
+    resolution: string;
+    reason: string;
+    sessionId: string;
+    size: string | number;
+    status: "available" | "expired" | "failed" | "paused" | "started" | "stopped" | "uploaded";
+    url?: string | null;
+    event: "archive";
 }

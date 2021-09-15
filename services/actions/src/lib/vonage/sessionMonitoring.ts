@@ -1,13 +1,21 @@
 import { assertType } from "typescript-is";
-import { OngoingBroadcastableVideoRoomEventsDocument } from "../../generated/graphql";
+import {
+    OngoingArchivableVideoRoomEventsDocument,
+    OngoingBroadcastableVideoRoomEventsDocument,
+} from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import { CustomConnectionData, WebhookReqBody } from "../../types/vonage";
+import { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
 import { getRoomByVonageSessionId } from "../room";
 import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";
-import { addEventParticipantStream, removeEventParticipantStream, startEventBroadcast } from "./vonageTools";
+import {
+    addEventParticipantStream,
+    removeEventParticipantStream,
+    startEventBroadcast,
+    startRoomVonageArchiving,
+} from "./vonageTools";
 
-export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Promise<boolean> {
+export async function startBroadcastIfOngoingEvent(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
     const ongoingMatchingEvents = await apolloClient.query({
         query: OngoingBroadcastableVideoRoomEventsDocument,
         variables: {
@@ -47,7 +55,47 @@ export async function startBroadcastIfOngoingEvent(payload: WebhookReqBody): Pro
     return true;
 }
 
-export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Promise<boolean> {
+export async function startArchiveIfOngoingEvent(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
+    const ongoingMatchingEvents = await apolloClient.query({
+        query: OngoingArchivableVideoRoomEventsDocument,
+        variables: {
+            sessionId: payload.sessionId,
+            time: new Date().toISOString(),
+        },
+    });
+
+    if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
+        console.error(
+            "Error while retrieving ongoing archivable events related to a Vonage session.",
+            payload.sessionId,
+            ongoingMatchingEvents.error,
+            ongoingMatchingEvents.errors
+        );
+        return false;
+    }
+
+    if (ongoingMatchingEvents.data.schedule_Event.length === 0) {
+        console.log("No ongoing archivable events connected to this session.", payload.sessionId);
+        return true;
+    }
+
+    if (ongoingMatchingEvents.data.schedule_Event.length > 1) {
+        console.error(
+            "Unexpectedly found multiple ongoing archivable events connected to this session. Aborting.",
+            payload.sessionId
+        );
+        return false;
+    }
+
+    const ongoingMatchingEvent = ongoingMatchingEvents.data.schedule_Event[0];
+
+    console.log("Vonage session has ongoing matching event, ensuring archive is started", payload.sessionId);
+    await startRoomVonageArchiving(ongoingMatchingEvent.roomId, ongoingMatchingEvent.id);
+
+    return true;
+}
+
+export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
     let success = true;
 
     if (payload.event === "connectionCreated") {
@@ -126,7 +174,7 @@ export async function addAndRemoveRoomParticipants(payload: WebhookReqBody): Pro
     return success;
 }
 
-export async function addAndRemoveEventParticipantStreams(payload: WebhookReqBody): Promise<boolean> {
+export async function addAndRemoveEventParticipantStreams(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
     let success = true;
 
     if (payload.event === "streamCreated") {

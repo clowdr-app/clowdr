@@ -4,6 +4,7 @@ import {
     CreateEventParticipantStreamDocument,
     GetEventBroadcastDetailsDocument,
     GetEventByVonageSessionIdDocument,
+    GetRoomArchiveDetailsDocument,
     RemoveEventParticipantStreamDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
@@ -18,10 +19,6 @@ gql`
     query GetEventBroadcastDetails($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
-            startTime
-            durationSeconds
-            endTime
-            intendedRoomModeName
             room {
                 id
                 channelStack {
@@ -105,12 +102,12 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             })
     );
 
-    if (!existingSessionBroadcasts) {
+    if (existingSessionBroadcasts === undefined) {
         console.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
         return;
     }
 
-    const startedSessionBroadcasts = existingSessionBroadcasts?.filter((broadcast) => broadcast.status === "started");
+    let startedSessionBroadcasts = existingSessionBroadcasts?.filter((broadcast) => broadcast.status === "started");
 
     console.log(
         `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`,
@@ -135,6 +132,8 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
                 );
             }
         }
+
+        startedSessionBroadcasts = [];
     }
 
     const existingBroadcast = startedSessionBroadcasts.find((broadcast) =>
@@ -212,6 +211,157 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
             }
         } catch (e) {
             console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id, e);
+        }
+    }
+}
+
+gql`
+    query GetRoomArchiveDetails($roomId: uuid!) {
+        room_Room_by_pk(id: $roomId) {
+            publicVonageSessionId
+            id
+        }
+    }
+`;
+
+interface RoomArchiveDetails {
+    vonageSessionId: string;
+}
+
+export async function getRoomArchiveDetails(roomId: string): Promise<RoomArchiveDetails> {
+    const eventResult = await apolloClient.query({
+        query: GetRoomArchiveDetailsDocument,
+        variables: {
+            roomId,
+        },
+    });
+
+    if (!eventResult.data.room_Room_by_pk) {
+        throw new Error("Could not find room");
+    }
+
+    if (!eventResult.data.room_Room_by_pk.publicVonageSessionId) {
+        throw new Error("Could not find Vonage session ID for room");
+    }
+
+    return {
+        vonageSessionId: eventResult.data.room_Room_by_pk.publicVonageSessionId,
+    };
+}
+
+export async function startRoomVonageArchiving(roomId: string, eventId: string | undefined): Promise<void> {
+    let archiveDetails: RoomArchiveDetails;
+    try {
+        archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
+    } catch (e) {
+        console.error("Error retrieving Vonage broadcast details for room", e);
+        return;
+    }
+
+    const existingSessionArchives = await callWithRetry(
+        async () =>
+            await Vonage.listArchives({
+                sessionId: archiveDetails.vonageSessionId,
+            })
+    );
+
+    if (existingSessionArchives === undefined) {
+        console.error("Could not retrieve existing session archives.", archiveDetails.vonageSessionId);
+        return;
+    }
+
+    let startedSessionArchives = existingSessionArchives?.filter(
+        (archive) => archive.status === "started" || archive.status === "paused"
+    );
+
+    console.log(
+        `Vonage session has ${startedSessionArchives.length} existing live archives`,
+        archiveDetails.vonageSessionId,
+        startedSessionArchives
+    );
+
+    if (startedSessionArchives.length > 1) {
+        console.warn(
+            "Found more than one live archive for session - which is not allowed. Stopping them.",
+            archiveDetails.vonageSessionId
+        );
+
+        for (const archive of startedSessionArchives) {
+            try {
+                await Vonage.stopArchive(archive.id);
+            } catch (e) {
+                console.error(
+                    "Error while stopping invalid archive",
+                    archiveDetails.vonageSessionId,
+                    archive.status,
+                    e
+                );
+            }
+        }
+
+        startedSessionArchives = [];
+    }
+
+    const existingArchive = startedSessionArchives.find((archive) => archive.name.startsWith(roomId));
+    if (!existingArchive) {
+        console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
+        try {
+            const archive = await Vonage.startArchive(archiveDetails.vonageSessionId, {
+                name: roomId + (eventId ? "/" + eventId : ""),
+                resolution: "1280x720",
+                outputMode: "composed",
+                hasAudio: true,
+                hasVideo: true,
+                layout: {
+                    type: "bestFit",
+                    screenshareType: "verticalPresentation",
+                },
+            });
+
+            if (archive) {
+                console.log("Started Vonage archive", archive.id, archiveDetails.vonageSessionId, roomId);
+            } else {
+                throw new Error("No archive returned by Vonage");
+            }
+        } catch (e) {
+            console.error("Failed to start archive", archiveDetails.vonageSessionId, roomId, e);
+            return;
+        }
+    } else {
+        console.log("There is already an existing archive for the session.", archiveDetails.vonageSessionId, roomId);
+    }
+}
+
+export async function stopRoomVonageArchiving(roomId: string): Promise<void> {
+    let archiveDetails: RoomArchiveDetails;
+    try {
+        archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
+    } catch (e) {
+        console.error("Error retrieving Vonage archive details for room", e);
+        return;
+    }
+
+    const existingSessionArchives = await callWithRetry(
+        async () =>
+            await Vonage.listArchives({
+                sessionId: archiveDetails.vonageSessionId,
+            })
+    );
+
+    if (!existingSessionArchives) {
+        console.error("Could not retrieve existing session archives.", archiveDetails.vonageSessionId);
+        return;
+    }
+
+    for (const existingArchive of existingSessionArchives) {
+        try {
+            if (existingArchive.status === "started" || existingArchive.status === "paused") {
+                if (existingArchive.name.startsWith(roomId)) {
+                    await callWithRetry(async () => await Vonage.stopArchive(existingArchive.id));
+                }
+            }
+        } catch (e) {
+            console.error("Could not stop existing session archive", roomId, existingArchive.id, e);
         }
     }
 }

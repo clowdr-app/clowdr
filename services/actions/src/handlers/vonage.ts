@@ -6,10 +6,15 @@ import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVo
 import {
     addAndRemoveEventParticipantStreams,
     addAndRemoveRoomParticipants,
+    startArchiveIfOngoingEvent,
     startBroadcastIfOngoingEvent,
 } from "../lib/vonage/sessionMonitoring";
 import Vonage from "../lib/vonage/vonageClient";
-import { CustomConnectionData, WebhookReqBody } from "../types/vonage";
+import {
+    ArchiveMonitoringWebhookReqBody,
+    CustomConnectionData,
+    SessionMonitoringWebhookReqBody,
+} from "../types/vonage";
 
 gql`
     query OngoingBroadcastableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
@@ -24,15 +29,40 @@ gql`
             id
         }
     }
+
+    query OngoingArchivableVideoRoomEvents($time: timestamptz!, $sessionId: String!) {
+        schedule_Event(
+            where: {
+                room: { publicVonageSessionId: { _eq: $sessionId } }
+                intendedRoomModeName: { _eq: VIDEO_CHAT }
+                endTime: { _gt: $time }
+                startTime: { _lte: $time }
+            }
+        ) {
+            id
+            roomId
+        }
+    }
 `;
 
-export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBody): Promise<boolean> {
+export async function handleVonageSessionMonitoringWebhook(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
     let success = true;
 
     try {
-        success &&= await startBroadcastIfOngoingEvent(payload);
+        if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
+            success &&= await startBroadcastIfOngoingEvent(payload);
+        }
     } catch (e) {
         console.error("Error while starting broadcast if ongoing event", e);
+        success = false;
+    }
+
+    try {
+        if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
+            success &&= await startArchiveIfOngoingEvent(payload);
+        }
+    } catch (e) {
+        console.error("Error while starting archive if ongoing event", e);
         success = false;
     }
 
@@ -51,6 +81,22 @@ export async function handleVonageSessionMonitoringWebhook(payload: WebhookReqBo
     }
 
     return success;
+}
+
+export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
+    const nameParts = payload.name.split("/");
+    const roomId = nameParts[0];
+    const eventId = nameParts[1];
+    console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
+
+    if (eventId) {
+        // TODO: If ongoing event in the related room, and event has a content id, work out how to add a Video File element
+        //       and start the captions transcode
+    } else {
+        // TODO: Else no ongoing event, it's just a social room - so, we need to decide where to store them
+    }
+
+    return true;
 }
 
 gql`

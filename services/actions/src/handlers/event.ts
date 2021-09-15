@@ -240,6 +240,7 @@ gql`
             conferenceId
             intendedRoomModeName
             roomId
+            enableRecording
             eventVonageSession {
                 id
                 sessionId
@@ -404,6 +405,7 @@ export async function handleEventEndNotification(
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
         const roomId = result.data.schedule_Event_by_pk.roomId;
+        const enableRecording = result.data.schedule_Event_by_pk.enableRecording;
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
@@ -412,7 +414,7 @@ export async function handleEventEndNotification(
                 stopEventBroadcasts(eventId).catch((e) => {
                     console.error("Failed to stop event broadcasts", { eventId, e });
                 });
-            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
+            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && enableRecording) {
                 stopRoomVonageArchiving(roomId, eventId).catch((e) => {
                     console.error("Failed to stop event archiving", { eventId, e });
                 });
@@ -429,15 +431,19 @@ export async function handleEventEndNotification(
             });
         }, endTimeMillis - nowMillis - 500);
 
-        const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
-
-        setTimeout(() => {
-            if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
-                createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
-                    console.error("Failed to create MediaPackage harvest job", { eventId, e });
-                });
-            }
-        }, harvestJobWaitForMillis);
+        if (enableRecording) {
+            const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
+            setTimeout(() => {
+                if (
+                    intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                    intendedRoomModeName === Room_Mode_Enum.QAndA
+                ) {
+                    createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
+                        console.error("Failed to create MediaPackage harvest job", { eventId, e });
+                    });
+                }
+            }, harvestJobWaitForMillis);
+        }
     } else {
         console.log("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
     }

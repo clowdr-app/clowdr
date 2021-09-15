@@ -248,6 +248,7 @@ export interface IntermediaryEventDescriptor {
     people?: IntermediaryEventPersonDescriptor[];
     tagNames?: Array<string>;
     exhibitionName?: string | null;
+    enableRecording?: boolean | null;
 }
 
 export interface IntermediaryEventPersonDescriptor {

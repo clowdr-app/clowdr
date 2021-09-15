@@ -7564,11 +7564,12 @@
               name: FlatUserPermission
       columns:
       - conferenceId
-      - itemId
       - durationSeconds
+      - enableRecording
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7580,12 +7581,13 @@
     permission:
       columns:
       - conferenceId
-      - itemId
       - durationSeconds
+      - enableRecording
       - endTime
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7610,13 +7612,14 @@
     permission:
       columns:
       - conferenceId
-      - itemId
       - created_at
       - durationSeconds
+      - enableRecording
       - endTime
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7658,6 +7661,7 @@
     permission:
       columns:
       - durationSeconds
+      - enableRecording
       - exhibitionId
       - intendedRoomModeName
       - itemId

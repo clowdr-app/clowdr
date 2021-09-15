@@ -74,6 +74,7 @@ gql`
         itemId
         exhibitionId
         shufflePeriodId
+        enableRecording
     }
 
     fragment EventProgramPersonInfo on schedule_EventProgramPerson {
@@ -593,6 +594,7 @@ export function useSaveScheduleDiff():
                                                     tagId,
                                                 })),
                                             },
+                                            enableRecording: event.enableRecording,
                                         },
                                         newEventId: event.id,
                                         insertContinuation:

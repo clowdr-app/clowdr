@@ -81,7 +81,7 @@ export function SelectElementsModal({
         <Modal isOpen={isOpen} onClose={onClose} size="6xl">
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Select elements</ModalHeader>
+                <ModalHeader>Select items or elements</ModalHeader>
                 <ModalCloseButton />
                 {isOpen ? (
                     <ModalInner items={items} onClose={onClose} onSelect={onSelect} restrictToTypes={restrictToTypes} />

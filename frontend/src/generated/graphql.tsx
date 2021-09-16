@@ -37827,6 +37827,13 @@ export type UpdateExhibitionMutationVariables = Exact<{
 
 export type UpdateExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }> };
 
+export type BulkEdit_AddElementsMutationVariables = Exact<{
+  objects: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
+}>;
+
+
+export type BulkEdit_AddElementsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly affected_rows: number }> };
+
 export type CombineVideosModal_CreateCombineVideosJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
   createdByRegistrantId: Scalars['uuid'];
@@ -37894,6 +37901,14 @@ export type UpdateExhibitionDescriptiveItemMutationVariables = Exact<{
 
 
 export type UpdateExhibitionDescriptiveItemMutation = { readonly __typename?: 'mutation_root', readonly update_collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly descriptiveItemId?: Maybe<any> }> };
+
+export type UpdateLayoutMutationVariables = Exact<{
+  elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
+  layoutData: Scalars['jsonb'];
+}>;
+
+
+export type UpdateLayoutMutation = { readonly __typename?: 'mutation_root', readonly update_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly affected_rows: number }> };
 
 export type UpdateUploadsRemainingMutationVariables = Exact<{
   elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -45790,6 +45805,39 @@ export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
 export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
 export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
+export const BulkEdit_AddElementsDocument = gql`
+    mutation BulkEdit_AddElements($objects: [content_Element_insert_input!]!) {
+  insert_content_Element(objects: $objects) {
+    affected_rows
+  }
+}
+    `;
+export type BulkEdit_AddElementsMutationFn = Apollo.MutationFunction<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>;
+
+/**
+ * __useBulkEdit_AddElementsMutation__
+ *
+ * To run a mutation, you first call `useBulkEdit_AddElementsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkEdit_AddElementsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkEditAddElementsMutation, { data, loading, error }] = useBulkEdit_AddElementsMutation({
+ *   variables: {
+ *      objects: // value for 'objects'
+ *   },
+ * });
+ */
+export function useBulkEdit_AddElementsMutation(baseOptions?: Apollo.MutationHookOptions<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>(BulkEdit_AddElementsDocument, options);
+      }
+export type BulkEdit_AddElementsMutationHookResult = ReturnType<typeof useBulkEdit_AddElementsMutation>;
+export type BulkEdit_AddElementsMutationResult = Apollo.MutationResult<BulkEdit_AddElementsMutation>;
+export type BulkEdit_AddElementsMutationOptions = Apollo.BaseMutationOptions<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>;
 export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
     mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByRegistrantId: uuid!, $outputName: String!, $data: jsonb!) {
   insert_job_queues_CombineVideosJob_one(
@@ -46126,6 +46174,43 @@ export function useUpdateExhibitionDescriptiveItemMutation(baseOptions?: Apollo.
 export type UpdateExhibitionDescriptiveItemMutationHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItemMutation>;
 export type UpdateExhibitionDescriptiveItemMutationResult = Apollo.MutationResult<UpdateExhibitionDescriptiveItemMutation>;
 export type UpdateExhibitionDescriptiveItemMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>;
+export const UpdateLayoutDocument = gql`
+    mutation UpdateLayout($elementIds: [uuid!]!, $layoutData: jsonb!) {
+  update_content_Element(
+    where: {id: {_in: $elementIds}}
+    _append: {layoutData: $layoutData}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type UpdateLayoutMutationFn = Apollo.MutationFunction<UpdateLayoutMutation, UpdateLayoutMutationVariables>;
+
+/**
+ * __useUpdateLayoutMutation__
+ *
+ * To run a mutation, you first call `useUpdateLayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLayoutMutation, { data, loading, error }] = useUpdateLayoutMutation({
+ *   variables: {
+ *      elementIds: // value for 'elementIds'
+ *      layoutData: // value for 'layoutData'
+ *   },
+ * });
+ */
+export function useUpdateLayoutMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLayoutMutation, UpdateLayoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateLayoutMutation, UpdateLayoutMutationVariables>(UpdateLayoutDocument, options);
+      }
+export type UpdateLayoutMutationHookResult = ReturnType<typeof useUpdateLayoutMutation>;
+export type UpdateLayoutMutationResult = Apollo.MutationResult<UpdateLayoutMutation>;
+export type UpdateLayoutMutationOptions = Apollo.BaseMutationOptions<UpdateLayoutMutation, UpdateLayoutMutationVariables>;
 export const UpdateUploadsRemainingDocument = gql`
     mutation UpdateUploadsRemaining($elementIds: [uuid!]!, $count: Int!) {
   update_content_Element(

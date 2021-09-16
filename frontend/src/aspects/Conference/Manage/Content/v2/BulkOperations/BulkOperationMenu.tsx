@@ -21,14 +21,11 @@ import {
 } from "../../../../../../generated/graphql";
 import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
 import { AddElementsModal } from "./AddElementsModal";
-import { AddRemoveExhibitionsModal } from "./AddRemoveExhibitionsModal";
-import { AddRemoveTagsModal } from "./AddRemoveTagsModal";
 import { CombineVideosModal } from "./CombineVideosModal";
-import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
-import { RemoveElementsModal } from "./RemoveElementsModal";
 import { SelectElementsModal } from "./SelectElementsModal";
 import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
 import { UpdateExhibitionDescriptiveItemsModal } from "./UpdateExhibitionDescriptiveItemsModal";
+import { UpdateLayoutModal } from "./UpdateLayoutModal";
 import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
 
 export function BulkOperationMenu({
@@ -63,37 +60,20 @@ export function BulkOperationMenu({
         operation: (items: readonly ManageContent_ItemFragment[]) => void;
     }[] = [
         {
-            label: "Combine videos",
-            value: "COMBINE_VIDEOS",
+            label: "Add elements",
+            value: "ELEMENTS_ADD",
             operation: (items) => {
                 setActiveOperation({
-                    operation: "COMBINE_VIDEOS",
+                    operation: "ELEMENTS_ADD",
                     items: items,
-                    step: "SELECT",
-                    elementsByItem: [],
-                    restrictToTypes: [
-                        Content_ElementType_Enum.VideoFile,
-                        Content_ElementType_Enum.VideoBroadcast,
-                        Content_ElementType_Enum.VideoPrepublish,
-                    ],
-                });
-            },
-        },
-        {
-            label: "Manage security",
-            value: "SECURITY",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "SECURITY",
-                    items,
-                    step: "SELECT",
+                    step: "ACT",
                     elementsByItem: [],
                     restrictToTypes: null,
                 });
             },
         },
         {
-            label: "Synchronise uploaders from people",
+            label: "Synchronise uploaders",
             value: "SYNCHRONISE_UPLOADERS",
             operation: (items) => {
                 setActiveOperation({
@@ -106,26 +86,13 @@ export function BulkOperationMenu({
             },
         },
         {
-            label: "Update uploads remaining",
+            label: "Edit element uploads remaining",
             value: "UPDATE_UPLOADS_REMAINING",
             operation: (items) => {
                 setActiveOperation({
                     operation: "UPDATE_UPLOADS_REMAINING",
                     items: items,
                     step: "SELECT",
-                    elementsByItem: [],
-                    restrictToTypes: null,
-                });
-            },
-        },
-        {
-            label: "Update exhibition descriptive items",
-            value: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
-                    items,
-                    step: "ACT",
                     elementsByItem: [],
                     restrictToTypes: null,
                 });
@@ -170,19 +137,32 @@ export function BulkOperationMenu({
         //         });
         //     },
         // },
-        // {
-        //     label: "Add elements",
-        //     value: "ELEMENTS_ADD",
-        //     operation: (items) => {
-        //         setActiveOperation({
-        //             operation: "ELEMENTS_ADD",
-        //             items: items,
-        //             step: "ACT",
-        //             elementsByItem: [],
-        //             restrictToTypes: null,
-        //         });
-        //     },
-        // },
+        {
+            label: "Edit element layout",
+            value: "ELEMENTS_LAYOUT",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "ELEMENTS_LAYOUT",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
+        {
+            label: "Update exhibition descriptive items",
+            value: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "UPDATE_EXHIBITION_DESCRIPTIVE_ITEMS",
+                    items,
+                    step: "ACT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
         // {
         //     label: "Remove elements",
         //     value: "ELEMENTS_REMOVE",
@@ -196,7 +176,36 @@ export function BulkOperationMenu({
         //         });
         //     },
         // },
-        // TODO: Update element layout data
+        {
+            label: "Combine videos",
+            value: "COMBINE_VIDEOS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "COMBINE_VIDEOS",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: [
+                        Content_ElementType_Enum.VideoFile,
+                        Content_ElementType_Enum.VideoBroadcast,
+                        Content_ElementType_Enum.VideoPrepublish,
+                    ],
+                });
+            },
+        },
+        {
+            label: "Manage security",
+            value: "SECURITY",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "SECURITY",
+                    items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
     ];
 
     const toast = useToast();
@@ -302,48 +311,13 @@ export function BulkOperationMenu({
                     </MenuList>
                 </Menu>
             )}
-            <AddElementsModal
-                isOpen={activeOperation?.operation === "ELEMENTS_ADD"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
-            <AddRemoveExhibitionsModal
-                isOpen={activeOperation?.operation === "EXHIBITIONS"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
-            <AddRemoveTagsModal
-                isOpen={activeOperation?.operation === "TAGS"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
-            <LinkUnlinkPeopleModal
-                isOpen={activeOperation?.operation === "PEOPLE"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
-            <RemoveElementsModal
-                isOpen={activeOperation?.operation === "ELEMENTS_REMOVE" && activeOperation?.step === "ACT"}
-                onClose={() => {
-                    setActiveOperation(null);
-                }}
-                items={activeOperation?.items ?? []}
-            />
             <SelectElementsModal
                 isOpen={
                     (activeOperation?.operation === "SECURITY" ||
                         activeOperation?.operation === "COMBINE_VIDEOS" ||
                         activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
                         activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" ||
-                        activeOperation?.operation === "ELEMENTS_REMOVE") &&
+                        activeOperation?.operation === "ELEMENTS_LAYOUT") &&
                     activeOperation?.step === "SELECT"
                 }
                 onClose={() => {
@@ -351,31 +325,13 @@ export function BulkOperationMenu({
                 }}
                 items={activeOperation?.items ?? []}
                 onSelect={(elementsByItem) => {
-                    if (activeOperation?.operation === "SECURITY" || activeOperation?.operation === "ELEMENTS_REMOVE") {
-                        setActiveOperation({
-                            elementsByItem,
-                            items: activeOperation.items,
-                            operation: activeOperation.operation,
-                            step: "ACT",
-                            restrictToTypes: activeOperation.restrictToTypes,
-                        });
-                    } else if (activeOperation?.operation === "COMBINE_VIDEOS") {
-                        setActiveOperation({
-                            elementsByItem,
-                            items: [],
-                            operation: activeOperation.operation,
-                            step: "ACT",
-                            restrictToTypes: activeOperation.restrictToTypes,
-                        });
-                    } else if (activeOperation?.operation === "SYNCHRONISE_UPLOADERS") {
-                        setActiveOperation({
-                            elementsByItem,
-                            items: activeOperation.items,
-                            operation: activeOperation.operation,
-                            step: "ACT",
-                            restrictToTypes: activeOperation.restrictToTypes,
-                        });
-                    } else if (activeOperation?.operation === "UPDATE_UPLOADS_REMAINING") {
+                    if (
+                        activeOperation?.operation === "SECURITY" ||
+                        activeOperation?.operation === "COMBINE_VIDEOS" ||
+                        activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
+                        activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" ||
+                        activeOperation?.operation === "ELEMENTS_LAYOUT"
+                    ) {
                         setActiveOperation({
                             elementsByItem,
                             items: [],
@@ -387,6 +343,49 @@ export function BulkOperationMenu({
                 }}
                 restrictToTypes={activeOperation?.restrictToTypes ?? null}
             />
+
+            <AddElementsModal
+                isOpen={activeOperation?.operation === "ELEMENTS_ADD" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
+            />
+            <UpdateLayoutModal
+                isOpen={activeOperation?.operation === "ELEMENTS_LAYOUT" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                elementsByItem={activeOperation?.elementsByItem ?? []}
+            />
+            {/* <AddRemoveExhibitionsModal
+                isOpen={activeOperation?.operation === "EXHIBITIONS"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
+            /> */}
+            {/* <AddRemoveTagsModal
+                isOpen={activeOperation?.operation === "TAGS"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
+            /> */}
+            {/* <LinkUnlinkPeopleModal
+                isOpen={activeOperation?.operation === "PEOPLE"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
+            /> */}
+            {/* <RemoveElementsModal
+                isOpen={activeOperation?.operation === "ELEMENTS_REMOVE" && activeOperation?.step === "ACT"}
+                onClose={() => {
+                    setActiveOperation(null);
+                }}
+                items={activeOperation?.items ?? []}
+            /> */}
             <EditElementsPermissionGrantsModal
                 isOpen={activeOperation?.operation === "SECURITY" && activeOperation?.step === "ACT"}
                 onClose={() => {

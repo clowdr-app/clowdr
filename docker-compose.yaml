@@ -2,7 +2,7 @@ version: "3.6"
 services:
   postgres:
     image: postgres:12
-    restart: always
+    restart: "no"
     ports:
       - 5432:5432
     volumes:
@@ -19,6 +19,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    restart: "no"
   redis:
     image: redis
     ports:
@@ -29,7 +30,7 @@ services:
       - "8080:8080"
     depends_on:
       - "postgres"
-    restart: always
+    restart: "no"
     volumes:
       - ./hasura/migrations:/hasura-migrations
       - ./hasura/metadata:/hasura-metadata
@@ -53,6 +54,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.8.14-management
     hostname: rabbitmq-1
+    restart: "no"
     ports:
       - "5672:5672"
       - "15672:15672"

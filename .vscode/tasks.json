@@ -19,7 +19,7 @@
             // Use `"-p", "Hasura 3",` as the first arguments to use a different
             // Docker project name
             // Keywords: project_name, project-name, container name, container-name
-            "args": ["compose", "--env-file", "./hasura/.env.local", "up", "-d"]
+            "args": ["compose", "--env-file", "./hasura/.env.local", "-p", "${input:docker-project-name}", "up", "-d"]
         },
         // Hasura Console -- Local Development
         {
@@ -273,6 +273,14 @@
             "dependsOrder": "parallel",
             "isBackground": true,
             "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "docker-project-name",
+            "description": "Docker project name",
+            "default": "clowdr",
+            "type": "promptString"
         }
     ]
 }

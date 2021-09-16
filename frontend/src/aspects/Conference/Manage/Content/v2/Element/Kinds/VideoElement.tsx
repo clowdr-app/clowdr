@@ -38,7 +38,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                 : type === Content_ElementType_Enum.VideoCountdown
                 ? "Timer countdown video"
                 : type === Content_ElementType_Enum.VideoFile
-                ? "Video (cannot be live-streamed)"
+                ? "Video"
                 : type === Content_ElementType_Enum.VideoFiller
                 ? "Filler video"
                 : type === Content_ElementType_Enum.VideoPrepublish

@@ -12,6 +12,7 @@ import {
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
+    FindMatchingProgramPersonForUploaderDocument,
     GetElementDetailsDocument,
     GetUploadableElementDocument,
     GetUploadAgreementDocument,
@@ -468,6 +469,68 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
             return {
                 agreementUrl: value.url,
             };
+        }
+    }
+
+    return {};
+}
+
+gql`
+    query FindMatchingProgramPersonForUploader(
+        $elementId: uuid!
+        $elementAccessToken: String!
+        $uploaderEmail: String!
+    ) {
+        content_Element(
+            where: {
+                id: { _eq: $elementId }
+                accessToken: { _eq: $elementAccessToken }
+                uploaders: { email: { _eq: $uploaderEmail } }
+            }
+        ) {
+            id
+            itemId
+            conference {
+                id
+                programPeople(where: { email: { _eq: $uploaderEmail } }) {
+                    id
+                    accessToken
+                    itemPeople {
+                        id
+                        itemId
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export async function handleGetProgramPersonAccessToken(
+    args: getProgramPersonAccessTokenArgs
+): Promise<MatchingPersonOutput> {
+    const response = await apolloClient.query({
+        query: FindMatchingProgramPersonForUploaderDocument,
+        variables: {
+            ...args,
+        },
+    });
+
+    if (response.data.content_Element.length > 0) {
+        const element = response.data.content_Element[0];
+
+        if (element.conference.programPeople.length === 1) {
+            return {
+                accessToken: element.conference.programPeople[0].accessToken,
+            };
+        } else if (element.conference.programPeople.length > 0) {
+            const person = element.conference.programPeople.find((person) =>
+                person.itemPeople.some((itemPerson) => itemPerson.itemId === element.itemId)
+            );
+            if (person) {
+                return {
+                    accessToken: person.accessToken,
+                };
+            }
         }
     }
 

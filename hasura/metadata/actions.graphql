@@ -20,6 +20,14 @@ type Mutation {
 }
 
 type Query {
+  getProgramPersonAccessToken (
+    elementId: uuid!
+    uploaderEmail: String!
+    elementAccessToken: String!
+  ): MatchingPersonOutput!
+}
+
+type Query {
   getSlug (
     url: String!
   ): GetSlugOutput!
@@ -285,5 +293,9 @@ type NotifyEventEnded {
 
 type GetSlugOutput {
   slug : String
+}
+
+type MatchingPersonOutput {
+  accessToken : String
 }
 

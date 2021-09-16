@@ -735,6 +735,11 @@ export type JoinRoomVonageSessionOutput = {
   readonly sessionId?: Maybe<Scalars['String']>;
 };
 
+export type MatchingPersonOutput = {
+  readonly __typename?: 'MatchingPersonOutput';
+  readonly accessToken?: Maybe<Scalars['String']>;
+};
+
 export type NotifyEventEnded = {
   readonly __typename?: 'NotifyEventEnded';
   readonly ok: Scalars['Boolean'];
@@ -6456,6 +6461,7 @@ export type Collection_Exhibition_Variance_Order_By = {
 /** columns and relationships of "collection.ProgramPerson" */
 export type Collection_ProgramPerson = {
   readonly __typename?: 'collection_ProgramPerson';
+  readonly accessToken: Scalars['String'];
   readonly affiliation?: Maybe<Scalars['String']>;
   /** An object relationship */
   readonly conference: Conference_Conference;
@@ -6519,6 +6525,357 @@ export type Collection_ProgramPersonItemPeople_AggregateArgs = {
   where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
 };
 
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly itemPeople: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+  /** An aggregate relationship */
+  readonly itemPeople_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessTokenItemPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessTokenItemPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** aggregated selection of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken_aggregate';
+  readonly aggregate?: Maybe<Collection_ProgramPersonByAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Collection_ProgramPersonByAccessToken>;
+};
+
+/** aggregate fields of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Collection_ProgramPersonByAccessToken_Max_Fields>;
+  readonly min?: Maybe<Collection_ProgramPersonByAccessToken_Min_Fields>;
+};
+
+
+/** aggregate fields of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "collection.ProgramPersonByAccessToken". All fields are combined with a logical 'AND'. */
+export type Collection_ProgramPersonByAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
+  readonly affiliation?: Maybe<String_Comparison_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly email?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Insert_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Collection_ProgramPersonByAccessToken_Max_Fields = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate min on columns */
+export type Collection_ProgramPersonByAccessToken_Min_Fields = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** response of any mutation on the table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Mutation_Response = {
+  readonly __typename?: 'collection_ProgramPersonByAccessToken_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Collection_ProgramPersonByAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Obj_Rel_Insert_Input = {
+  readonly data: Collection_ProgramPersonByAccessToken_Insert_Input;
+};
+
+/** Ordering options when selecting data from "collection.ProgramPersonByAccessToken". */
+export type Collection_ProgramPersonByAccessToken_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly affiliation?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemPeople_aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+};
+
+/** select columns of table "collection.ProgramPersonByAccessToken" */
+export enum Collection_ProgramPersonByAccessToken_Select_Column {
+  /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
+  Affiliation = 'affiliation',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Email = 'email',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  RegistrantId = 'registrantId'
+}
+
+/** input type for updating data in table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Set_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  readonly conference?: Maybe<Conference_Conference>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly itemPeople: ReadonlyArray<Content_ItemProgramPerson>;
+  /** An aggregate relationship */
+  readonly itemPeople_aggregate: Content_ItemProgramPerson_Aggregate;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly registrant?: Maybe<Registrant_Registrant>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenItemPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Order_By>>;
+  where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenItemPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Order_By>>;
+  where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+/** aggregated selection of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken_aggregate';
+  readonly aggregate?: Maybe<Collection_ProgramPersonWithAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Collection_ProgramPersonWithAccessToken>;
+};
+
+/** aggregate fields of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Collection_ProgramPersonWithAccessToken_Max_Fields>;
+  readonly min?: Maybe<Collection_ProgramPersonWithAccessToken_Min_Fields>;
+};
+
+
+/** aggregate fields of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "collection.ProgramPersonWithAccessToken". All fields are combined with a logical 'AND'. */
+export type Collection_ProgramPersonWithAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
+  readonly affiliation?: Maybe<String_Comparison_Exp>;
+  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly email?: Maybe<String_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+  readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Insert_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Collection_ProgramPersonWithAccessToken_Max_Fields = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate min on columns */
+export type Collection_ProgramPersonWithAccessToken_Min_Fields = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
+/** response of any mutation on the table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Mutation_Response = {
+  readonly __typename?: 'collection_ProgramPersonWithAccessToken_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Collection_ProgramPersonWithAccessToken>;
+};
+
+/** Ordering options when selecting data from "collection.ProgramPersonWithAccessToken". */
+export type Collection_ProgramPersonWithAccessToken_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly affiliation?: Maybe<Order_By>;
+  readonly conference?: Maybe<Conference_Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly email?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+};
+
+/** select columns of table "collection.ProgramPersonWithAccessToken" */
+export enum Collection_ProgramPersonWithAccessToken_Select_Column {
+  /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
+  Affiliation = 'affiliation',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Email = 'email',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  RegistrantId = 'registrantId'
+}
+
+/** input type for updating data in table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Set_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly affiliation?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+};
+
 /** aggregated selection of "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate = {
   readonly __typename?: 'collection_ProgramPerson_aggregate';
@@ -6560,6 +6917,7 @@ export type Collection_ProgramPerson_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Collection_ProgramPerson_Bool_Exp>>;
   readonly _not?: Maybe<Collection_ProgramPerson_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Collection_ProgramPerson_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
   readonly affiliation?: Maybe<String_Comparison_Exp>;
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -6579,11 +6937,14 @@ export enum Collection_ProgramPerson_Constraint {
   /** unique or primary key constraint */
   ProgramPersonConferenceIdNameAffiliationKey = 'ProgramPerson_conferenceId_name_affiliation_key',
   /** unique or primary key constraint */
-  ProgramPersonPkey = 'ProgramPerson_pkey'
+  ProgramPersonPkey = 'ProgramPerson_pkey',
+  /** unique or primary key constraint */
+  CollectionProgramPersonAccessToken = 'collection_ProgramPerson_accessToken'
 }
 
 /** input type for inserting data into table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Insert_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
@@ -6601,6 +6962,7 @@ export type Collection_ProgramPerson_Insert_Input = {
 /** aggregate max on columns */
 export type Collection_ProgramPerson_Max_Fields = {
   readonly __typename?: 'collection_ProgramPerson_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
@@ -6612,6 +6974,7 @@ export type Collection_ProgramPerson_Max_Fields = {
 
 /** order by max() on columns of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Max_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly affiliation?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
@@ -6624,6 +6987,7 @@ export type Collection_ProgramPerson_Max_Order_By = {
 /** aggregate min on columns */
 export type Collection_ProgramPerson_Min_Fields = {
   readonly __typename?: 'collection_ProgramPerson_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
@@ -6635,6 +6999,7 @@ export type Collection_ProgramPerson_Min_Fields = {
 
 /** order by min() on columns of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Min_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly affiliation?: Maybe<Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly email?: Maybe<Order_By>;
@@ -6669,6 +7034,7 @@ export type Collection_ProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "collection.ProgramPerson". */
 export type Collection_ProgramPerson_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
   readonly affiliation?: Maybe<Order_By>;
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
@@ -6691,6 +7057,8 @@ export type Collection_ProgramPerson_Pk_Columns_Input = {
 /** select columns of table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Select_Column {
   /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
   Affiliation = 'affiliation',
   /** column name */
   ConferenceId = 'conferenceId',
@@ -6708,6 +7076,7 @@ export enum Collection_ProgramPerson_Select_Column {
 
 /** input type for updating data in table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Set_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
   readonly affiliation?: Maybe<Scalars['String']>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly email?: Maybe<Scalars['String']>;
@@ -6719,6 +7088,8 @@ export type Collection_ProgramPerson_Set_Input = {
 
 /** update columns of table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Update_Column {
+  /** column name */
+  AccessToken = 'accessToken',
   /** column name */
   Affiliation = 'affiliation',
   /** column name */
@@ -9224,6 +9595,382 @@ export type Content_ElementByAccessToken_Variance_Fields = {
   readonly uploadsRemaining?: Maybe<Scalars['Float']>;
 };
 
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken = {
+  readonly __typename?: 'content_ElementByPersonAccessToken';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
+  /** An object relationship */
+  readonly item?: Maybe<Content_ItemByPersonAccessToken>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessTokenDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessTokenLayoutDataArgs = {
+  path?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_aggregate';
+  readonly aggregate?: Maybe<Content_ElementByPersonAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_ElementByPersonAccessToken>;
+};
+
+/** aggregate fields of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_aggregate_fields';
+  readonly avg?: Maybe<Content_ElementByPersonAccessToken_Avg_Fields>;
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Content_ElementByPersonAccessToken_Max_Fields>;
+  readonly min?: Maybe<Content_ElementByPersonAccessToken_Min_Fields>;
+  readonly stddev?: Maybe<Content_ElementByPersonAccessToken_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Content_ElementByPersonAccessToken_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Content_ElementByPersonAccessToken_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Content_ElementByPersonAccessToken_Sum_Fields>;
+  readonly var_pop?: Maybe<Content_ElementByPersonAccessToken_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Content_ElementByPersonAccessToken_Var_Samp_Fields>;
+  readonly variance?: Maybe<Content_ElementByPersonAccessToken_Variance_Fields>;
+};
+
+
+/** aggregate fields of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_Order_By = {
+  readonly avg?: Maybe<Content_ElementByPersonAccessToken_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Content_ElementByPersonAccessToken_Max_Order_By>;
+  readonly min?: Maybe<Content_ElementByPersonAccessToken_Min_Order_By>;
+  readonly stddev?: Maybe<Content_ElementByPersonAccessToken_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Content_ElementByPersonAccessToken_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Content_ElementByPersonAccessToken_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Content_ElementByPersonAccessToken_Sum_Order_By>;
+  readonly var_pop?: Maybe<Content_ElementByPersonAccessToken_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Content_ElementByPersonAccessToken_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Content_ElementByPersonAccessToken_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Content_ElementByPersonAccessToken_Append_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Content_ElementByPersonAccessToken_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Content_ElementByPersonAccessToken_Avg_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_avg_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Avg_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "content.ElementByPersonAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ElementByPersonAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Bool_Exp>>;
+  readonly accessToken?: Maybe<String_Comparison_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly data?: Maybe<Jsonb_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+  readonly itemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly layoutData?: Maybe<Jsonb_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly typeName?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploadsRemaining?: Maybe<Int_Comparison_Exp>;
+};
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Content_ElementByPersonAccessToken_Delete_At_Path_Input = {
+  readonly data?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly layoutData?: Maybe<ReadonlyArray<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Content_ElementByPersonAccessToken_Delete_Elem_Input = {
+  readonly data?: Maybe<Scalars['Int']>;
+  readonly layoutData?: Maybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Content_ElementByPersonAccessToken_Delete_Key_Input = {
+  readonly data?: Maybe<Scalars['String']>;
+  readonly layoutData?: Maybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Inc_Input = {
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Insert_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type Content_ElementByPersonAccessToken_Max_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_max_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Max_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly typeName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ElementByPersonAccessToken_Min_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_min_fields';
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Min_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly typeName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Mutation_Response = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Content_ElementByPersonAccessToken>;
+};
+
+/** Ordering options when selecting data from "content.ElementByPersonAccessToken". */
+export type Content_ElementByPersonAccessToken_Order_By = {
+  readonly accessToken?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly data?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isHidden?: Maybe<Order_By>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly layoutData?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly typeName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Content_ElementByPersonAccessToken_Prepend_Input = {
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "content.ElementByPersonAccessToken" */
+export enum Content_ElementByPersonAccessToken_Select_Column {
+  /** column name */
+  AccessToken = 'accessToken',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Data = 'data',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
+  ItemId = 'itemId',
+  /** column name */
+  LayoutData = 'layoutData',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  TypeName = 'typeName',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploadsRemaining = 'uploadsRemaining'
+}
+
+/** input type for updating data in table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Set_Input = {
+  readonly accessToken?: Maybe<Scalars['String']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly data?: Maybe<Scalars['jsonb']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_stddev_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Pop_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_stddev_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Samp_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_stddev_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_ElementByPersonAccessToken_Sum_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_sum_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Sum_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ElementByPersonAccessToken_Var_Pop_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_var_pop_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Var_Pop_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ElementByPersonAccessToken_Var_Samp_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_var_samp_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Var_Samp_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_ElementByPersonAccessToken_Variance_Fields = {
+  readonly __typename?: 'content_ElementByPersonAccessToken_variance_fields';
+  readonly uploadsRemaining?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Variance_Order_By = {
+  readonly uploadsRemaining?: Maybe<Order_By>;
+};
+
 /** columns and relationships of "content.ElementPermissionGrant" */
 export type Content_ElementPermissionGrant = {
   readonly __typename?: 'content_ElementPermissionGrant';
@@ -10265,6 +11012,215 @@ export type Content_ItemStats_AggregateArgs = {
   where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
 };
 
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken = {
+  readonly __typename?: 'content_ItemByPersonAccessToken';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  /** An array relationship */
+  readonly elements: ReadonlyArray<Content_ElementByPersonAccessToken>;
+  /** An aggregate relationship */
+  readonly elements_aggregate: Content_ElementByPersonAccessToken_Aggregate;
+  readonly id?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  readonly itemPeople: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+  /** An aggregate relationship */
+  readonly itemPeople_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenElementsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenElements_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenItemPeopleArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenItemPeople_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** aggregated selection of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate = {
+  readonly __typename?: 'content_ItemByPersonAccessToken_aggregate';
+  readonly aggregate?: Maybe<Content_ItemByPersonAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_ItemByPersonAccessToken>;
+};
+
+/** aggregate fields of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'content_ItemByPersonAccessToken_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Content_ItemByPersonAccessToken_Max_Fields>;
+  readonly min?: Maybe<Content_ItemByPersonAccessToken_Min_Fields>;
+};
+
+
+/** aggregate fields of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "content.ItemByPersonAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ItemByPersonAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Bool_Exp>>;
+  readonly chatId?: Maybe<Uuid_Comparison_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly elements?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+  readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+  readonly shortTitle?: Maybe<String_Comparison_Exp>;
+  readonly title?: Maybe<String_Comparison_Exp>;
+  readonly typeName?: Maybe<String_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Insert_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly elements?: Maybe<Content_ElementByPersonAccessToken_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Content_ItemByPersonAccessToken_Max_Fields = {
+  readonly __typename?: 'content_ItemByPersonAccessToken_max_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Content_ItemByPersonAccessToken_Min_Fields = {
+  readonly __typename?: 'content_ItemByPersonAccessToken_min_fields';
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Mutation_Response = {
+  readonly __typename?: 'content_ItemByPersonAccessToken_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Content_ItemByPersonAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input = {
+  readonly data: Content_ItemByPersonAccessToken_Insert_Input;
+};
+
+/** Ordering options when selecting data from "content.ItemByPersonAccessToken". */
+export type Content_ItemByPersonAccessToken_Order_By = {
+  readonly chatId?: Maybe<Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly created_at?: Maybe<Order_By>;
+  readonly elements_aggregate?: Maybe<Content_ElementByPersonAccessToken_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemPeople_aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Order_By>;
+  readonly originatingDataId?: Maybe<Order_By>;
+  readonly shortTitle?: Maybe<Order_By>;
+  readonly title?: Maybe<Order_By>;
+  readonly typeName?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** select columns of table "content.ItemByPersonAccessToken" */
+export enum Content_ItemByPersonAccessToken_Select_Column {
+  /** column name */
+  ChatId = 'chatId',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  OriginatingDataId = 'originatingDataId',
+  /** column name */
+  ShortTitle = 'shortTitle',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  TypeName = 'typeName',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Set_Input = {
+  readonly chatId?: Maybe<Scalars['uuid']>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly shortTitle?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly typeName?: Maybe<Scalars['String']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
 /** columns and relationships of "content.ItemExhibition" */
 export type Content_ItemExhibition = {
   readonly __typename?: 'content_ItemExhibition';
@@ -10622,6 +11578,280 @@ export type Content_ItemProgramPerson = {
   readonly personId: Scalars['uuid'];
   readonly priority?: Maybe<Scalars['Int']>;
   readonly roleName: Scalars['String'];
+};
+
+/** columns and relationships of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly item?: Maybe<Content_ItemByPersonAccessToken>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly person?: Maybe<Collection_ProgramPersonByAccessToken>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_aggregate';
+  readonly aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+};
+
+/** aggregate fields of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_aggregate_fields';
+  readonly avg?: Maybe<Content_ItemProgramPersonByAccessToken_Avg_Fields>;
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Content_ItemProgramPersonByAccessToken_Max_Fields>;
+  readonly min?: Maybe<Content_ItemProgramPersonByAccessToken_Min_Fields>;
+  readonly stddev?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Fields>;
+  readonly stddev_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Pop_Fields>;
+  readonly stddev_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Samp_Fields>;
+  readonly sum?: Maybe<Content_ItemProgramPersonByAccessToken_Sum_Fields>;
+  readonly var_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Pop_Fields>;
+  readonly var_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Samp_Fields>;
+  readonly variance?: Maybe<Content_ItemProgramPersonByAccessToken_Variance_Fields>;
+};
+
+
+/** aggregate fields of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_Order_By = {
+  readonly avg?: Maybe<Content_ItemProgramPersonByAccessToken_Avg_Order_By>;
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Content_ItemProgramPersonByAccessToken_Max_Order_By>;
+  readonly min?: Maybe<Content_ItemProgramPersonByAccessToken_Min_Order_By>;
+  readonly stddev?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Order_By>;
+  readonly stddev_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Pop_Order_By>;
+  readonly stddev_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Samp_Order_By>;
+  readonly sum?: Maybe<Content_ItemProgramPersonByAccessToken_Sum_Order_By>;
+  readonly var_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Pop_Order_By>;
+  readonly var_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Samp_Order_By>;
+  readonly variance?: Maybe<Content_ItemProgramPersonByAccessToken_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Content_ItemProgramPersonByAccessToken_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Content_ItemProgramPersonByAccessToken_Avg_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_avg_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Avg_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "content.ItemProgramPersonByAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ItemProgramPersonByAccessToken_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Bool_Exp>>;
+  readonly _not?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Bool_Exp>>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+  readonly itemId?: Maybe<Uuid_Comparison_Exp>;
+  readonly person?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+  readonly personId?: Maybe<Uuid_Comparison_Exp>;
+  readonly priority?: Maybe<Int_Comparison_Exp>;
+  readonly roleName?: Maybe<String_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Inc_Input = {
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Insert_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly person?: Maybe<Collection_ProgramPersonByAccessToken_Obj_Rel_Insert_Input>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Content_ItemProgramPersonByAccessToken_Max_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ItemProgramPersonByAccessToken_Min_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Mutation_Response = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+};
+
+/** Ordering options when selecting data from "content.ItemProgramPersonByAccessToken". */
+export type Content_ItemProgramPersonByAccessToken_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly item?: Maybe<Content_ItemByPersonAccessToken_Order_By>;
+  readonly itemId?: Maybe<Order_By>;
+  readonly person?: Maybe<Collection_ProgramPersonByAccessToken_Order_By>;
+  readonly personId?: Maybe<Order_By>;
+  readonly priority?: Maybe<Order_By>;
+  readonly roleName?: Maybe<Order_By>;
+};
+
+/** select columns of table "content.ItemProgramPersonByAccessToken" */
+export enum Content_ItemProgramPersonByAccessToken_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ItemId = 'itemId',
+  /** column name */
+  PersonId = 'personId',
+  /** column name */
+  Priority = 'priority',
+  /** column name */
+  RoleName = 'roleName'
+}
+
+/** input type for updating data in table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly itemId?: Maybe<Scalars['uuid']>;
+  readonly personId?: Maybe<Scalars['uuid']>;
+  readonly priority?: Maybe<Scalars['Int']>;
+  readonly roleName?: Maybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_stddev_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Pop_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_stddev_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Samp_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_stddev_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_ItemProgramPersonByAccessToken_Sum_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_sum_fields';
+  readonly priority?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Sum_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ItemProgramPersonByAccessToken_Var_Pop_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_var_pop_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Var_Pop_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ItemProgramPersonByAccessToken_Var_Samp_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_var_samp_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Var_Samp_Order_By = {
+  readonly priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_ItemProgramPersonByAccessToken_Variance_Fields = {
+  readonly __typename?: 'content_ItemProgramPersonByAccessToken_variance_fields';
+  readonly priority?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Variance_Order_By = {
+  readonly priority?: Maybe<Order_By>;
 };
 
 /** aggregated selection of "content.ItemProgramPerson" */
@@ -13894,6 +15124,10 @@ export type Mutation_Root = {
   readonly delete_collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
   /** delete data from the table: "collection.ProgramPerson" */
   readonly delete_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+  /** delete data from the table: "collection.ProgramPersonByAccessToken" */
+  readonly delete_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+  /** delete data from the table: "collection.ProgramPersonWithAccessToken" */
+  readonly delete_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
   /** delete single row from the table: "collection.ProgramPerson" */
   readonly delete_collection_ProgramPerson_by_pk?: Maybe<Collection_ProgramPerson>;
   /** delete data from the table: "collection.Tag" */
@@ -13926,6 +15160,8 @@ export type Mutation_Root = {
   readonly delete_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** delete data from the table: "content.Element" */
   readonly delete_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** delete data from the table: "content.ElementByPersonAccessToken" */
+  readonly delete_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
   /** delete data from the table: "content.ElementPermissionGrant" */
   readonly delete_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
   /** delete single row from the table: "content.ElementPermissionGrant" */
@@ -13938,12 +15174,16 @@ export type Mutation_Root = {
   readonly delete_content_Element_by_pk?: Maybe<Content_Element>;
   /** delete data from the table: "content.Item" */
   readonly delete_content_Item?: Maybe<Content_Item_Mutation_Response>;
+  /** delete data from the table: "content.ItemByPersonAccessToken" */
+  readonly delete_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
   /** delete data from the table: "content.ItemExhibition" */
   readonly delete_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
   /** delete single row from the table: "content.ItemExhibition" */
   readonly delete_content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
   /** delete data from the table: "content.ItemProgramPerson" */
   readonly delete_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+  /** delete data from the table: "content.ItemProgramPersonByAccessToken" */
+  readonly delete_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
   /** delete single row from the table: "content.ItemProgramPerson" */
   readonly delete_content_ItemProgramPerson_by_pk?: Maybe<Content_ItemProgramPerson>;
   /** delete data from the table: "content.ItemTag" */
@@ -14247,6 +15487,14 @@ export type Mutation_Root = {
   readonly insert_collection_Exhibition_one?: Maybe<Collection_Exhibition>;
   /** insert data into the table: "collection.ProgramPerson" */
   readonly insert_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+  /** insert data into the table: "collection.ProgramPersonByAccessToken" */
+  readonly insert_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+  /** insert a single row into the table: "collection.ProgramPersonByAccessToken" */
+  readonly insert_collection_ProgramPersonByAccessToken_one?: Maybe<Collection_ProgramPersonByAccessToken>;
+  /** insert data into the table: "collection.ProgramPersonWithAccessToken" */
+  readonly insert_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
+  /** insert a single row into the table: "collection.ProgramPersonWithAccessToken" */
+  readonly insert_collection_ProgramPersonWithAccessToken_one?: Maybe<Collection_ProgramPersonWithAccessToken>;
   /** insert a single row into the table: "collection.ProgramPerson" */
   readonly insert_collection_ProgramPerson_one?: Maybe<Collection_ProgramPerson>;
   /** insert data into the table: "collection.Tag" */
@@ -14279,6 +15527,10 @@ export type Mutation_Root = {
   readonly insert_conference_PrepareJob_one?: Maybe<Conference_PrepareJob>;
   /** insert data into the table: "content.Element" */
   readonly insert_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** insert data into the table: "content.ElementByPersonAccessToken" */
+  readonly insert_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
+  /** insert a single row into the table: "content.ElementByPersonAccessToken" */
+  readonly insert_content_ElementByPersonAccessToken_one?: Maybe<Content_ElementByPersonAccessToken>;
   /** insert data into the table: "content.ElementPermissionGrant" */
   readonly insert_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
   /** insert a single row into the table: "content.ElementPermissionGrant" */
@@ -14291,12 +15543,20 @@ export type Mutation_Root = {
   readonly insert_content_Element_one?: Maybe<Content_Element>;
   /** insert data into the table: "content.Item" */
   readonly insert_content_Item?: Maybe<Content_Item_Mutation_Response>;
+  /** insert data into the table: "content.ItemByPersonAccessToken" */
+  readonly insert_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
+  /** insert a single row into the table: "content.ItemByPersonAccessToken" */
+  readonly insert_content_ItemByPersonAccessToken_one?: Maybe<Content_ItemByPersonAccessToken>;
   /** insert data into the table: "content.ItemExhibition" */
   readonly insert_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
   /** insert a single row into the table: "content.ItemExhibition" */
   readonly insert_content_ItemExhibition_one?: Maybe<Content_ItemExhibition>;
   /** insert data into the table: "content.ItemProgramPerson" */
   readonly insert_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+  /** insert data into the table: "content.ItemProgramPersonByAccessToken" */
+  readonly insert_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
+  /** insert a single row into the table: "content.ItemProgramPersonByAccessToken" */
+  readonly insert_content_ItemProgramPersonByAccessToken_one?: Maybe<Content_ItemProgramPersonByAccessToken>;
   /** insert a single row into the table: "content.ItemProgramPerson" */
   readonly insert_content_ItemProgramPerson_one?: Maybe<Content_ItemProgramPerson>;
   /** insert data into the table: "content.ItemTag" */
@@ -14605,6 +15865,10 @@ export type Mutation_Root = {
   readonly update_collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
   /** update data of the table: "collection.ProgramPerson" */
   readonly update_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+  /** update data of the table: "collection.ProgramPersonByAccessToken" */
+  readonly update_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+  /** update data of the table: "collection.ProgramPersonWithAccessToken" */
+  readonly update_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
   /** update single row of the table: "collection.ProgramPerson" */
   readonly update_collection_ProgramPerson_by_pk?: Maybe<Collection_ProgramPerson>;
   /** update data of the table: "collection.Tag" */
@@ -14637,6 +15901,8 @@ export type Mutation_Root = {
   readonly update_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
   /** update data of the table: "content.Element" */
   readonly update_content_Element?: Maybe<Content_Element_Mutation_Response>;
+  /** update data of the table: "content.ElementByPersonAccessToken" */
+  readonly update_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
   /** update data of the table: "content.ElementPermissionGrant" */
   readonly update_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
   /** update single row of the table: "content.ElementPermissionGrant" */
@@ -14649,12 +15915,16 @@ export type Mutation_Root = {
   readonly update_content_Element_by_pk?: Maybe<Content_Element>;
   /** update data of the table: "content.Item" */
   readonly update_content_Item?: Maybe<Content_Item_Mutation_Response>;
+  /** update data of the table: "content.ItemByPersonAccessToken" */
+  readonly update_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
   /** update data of the table: "content.ItemExhibition" */
   readonly update_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
   /** update single row of the table: "content.ItemExhibition" */
   readonly update_content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
   /** update data of the table: "content.ItemProgramPerson" */
   readonly update_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+  /** update data of the table: "content.ItemProgramPersonByAccessToken" */
+  readonly update_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
   /** update single row of the table: "content.ItemProgramPerson" */
   readonly update_content_ItemProgramPerson_by_pk?: Maybe<Content_ItemProgramPerson>;
   /** update data of the table: "content.ItemTag" */
@@ -15132,6 +16402,18 @@ export type Mutation_RootDelete_Collection_ProgramPersonArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Collection_ProgramPersonByAccessTokenArgs = {
+  where: Collection_ProgramPersonByAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Collection_ProgramPersonWithAccessTokenArgs = {
+  where: Collection_ProgramPersonWithAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Collection_ProgramPerson_By_PkArgs = {
   id: Scalars['uuid'];
 };
@@ -15229,6 +16511,12 @@ export type Mutation_RootDelete_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ElementByPersonAccessTokenArgs = {
+  where: Content_ElementByPersonAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ElementPermissionGrantArgs = {
   where: Content_ElementPermissionGrant_Bool_Exp;
 };
@@ -15265,6 +16553,12 @@ export type Mutation_RootDelete_Content_ItemArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ItemByPersonAccessTokenArgs = {
+  where: Content_ItemByPersonAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ItemExhibitionArgs = {
   where: Content_ItemExhibition_Bool_Exp;
 };
@@ -15279,6 +16573,12 @@ export type Mutation_RootDelete_Content_ItemExhibition_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Content_ItemProgramPersonArgs = {
   where: Content_ItemProgramPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Content_ItemProgramPersonByAccessTokenArgs = {
+  where: Content_ItemProgramPersonByAccessToken_Bool_Exp;
 };
 
 
@@ -16233,6 +17533,30 @@ export type Mutation_RootInsert_Collection_ProgramPersonArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonByAccessTokenArgs = {
+  objects: ReadonlyArray<Collection_ProgramPersonByAccessToken_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonByAccessToken_OneArgs = {
+  object: Collection_ProgramPersonByAccessToken_Insert_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonWithAccessTokenArgs = {
+  objects: ReadonlyArray<Collection_ProgramPersonWithAccessToken_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonWithAccessToken_OneArgs = {
+  object: Collection_ProgramPersonWithAccessToken_Insert_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Collection_ProgramPerson_OneArgs = {
   object: Collection_ProgramPerson_Insert_Input;
   on_conflict?: Maybe<Collection_ProgramPerson_On_Conflict>;
@@ -16345,6 +17669,18 @@ export type Mutation_RootInsert_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ElementByPersonAccessTokenArgs = {
+  objects: ReadonlyArray<Content_ElementByPersonAccessToken_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ElementByPersonAccessToken_OneArgs = {
+  object: Content_ElementByPersonAccessToken_Insert_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ElementPermissionGrantArgs = {
   objects: ReadonlyArray<Content_ElementPermissionGrant_Insert_Input>;
   on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
@@ -16387,6 +17723,18 @@ export type Mutation_RootInsert_Content_ItemArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ItemByPersonAccessTokenArgs = {
+  objects: ReadonlyArray<Content_ItemByPersonAccessToken_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemByPersonAccessToken_OneArgs = {
+  object: Content_ItemByPersonAccessToken_Insert_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ItemExhibitionArgs = {
   objects: ReadonlyArray<Content_ItemExhibition_Insert_Input>;
   on_conflict?: Maybe<Content_ItemExhibition_On_Conflict>;
@@ -16404,6 +17752,18 @@ export type Mutation_RootInsert_Content_ItemExhibition_OneArgs = {
 export type Mutation_RootInsert_Content_ItemProgramPersonArgs = {
   objects: ReadonlyArray<Content_ItemProgramPerson_Insert_Input>;
   on_conflict?: Maybe<Content_ItemProgramPerson_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemProgramPersonByAccessTokenArgs = {
+  objects: ReadonlyArray<Content_ItemProgramPersonByAccessToken_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemProgramPersonByAccessToken_OneArgs = {
+  object: Content_ItemProgramPersonByAccessToken_Insert_Input;
 };
 
 
@@ -17569,6 +18929,20 @@ export type Mutation_RootUpdate_Collection_ProgramPersonArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Collection_ProgramPersonByAccessTokenArgs = {
+  _set?: Maybe<Collection_ProgramPersonByAccessToken_Set_Input>;
+  where: Collection_ProgramPersonByAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Collection_ProgramPersonWithAccessTokenArgs = {
+  _set?: Maybe<Collection_ProgramPersonWithAccessToken_Set_Input>;
+  where: Collection_ProgramPersonWithAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPerson_By_PkArgs = {
   _set?: Maybe<Collection_ProgramPerson_Set_Input>;
   pk_columns: Collection_ProgramPerson_Pk_Columns_Input;
@@ -17709,6 +19083,19 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ElementByPersonAccessTokenArgs = {
+  _append?: Maybe<Content_ElementByPersonAccessToken_Append_Input>;
+  _delete_at_path?: Maybe<Content_ElementByPersonAccessToken_Delete_At_Path_Input>;
+  _delete_elem?: Maybe<Content_ElementByPersonAccessToken_Delete_Elem_Input>;
+  _delete_key?: Maybe<Content_ElementByPersonAccessToken_Delete_Key_Input>;
+  _inc?: Maybe<Content_ElementByPersonAccessToken_Inc_Input>;
+  _prepend?: Maybe<Content_ElementByPersonAccessToken_Prepend_Input>;
+  _set?: Maybe<Content_ElementByPersonAccessToken_Set_Input>;
+  where: Content_ElementByPersonAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ElementPermissionGrantArgs = {
   _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
   where: Content_ElementPermissionGrant_Bool_Exp;
@@ -17757,6 +19144,13 @@ export type Mutation_RootUpdate_Content_ItemArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ItemByPersonAccessTokenArgs = {
+  _set?: Maybe<Content_ItemByPersonAccessToken_Set_Input>;
+  where: Content_ItemByPersonAccessToken_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ItemExhibitionArgs = {
   _append?: Maybe<Content_ItemExhibition_Append_Input>;
   _delete_at_path?: Maybe<Content_ItemExhibition_Delete_At_Path_Input>;
@@ -17787,6 +19181,14 @@ export type Mutation_RootUpdate_Content_ItemProgramPersonArgs = {
   _inc?: Maybe<Content_ItemProgramPerson_Inc_Input>;
   _set?: Maybe<Content_ItemProgramPerson_Set_Input>;
   where: Content_ItemProgramPerson_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_ItemProgramPersonByAccessTokenArgs = {
+  _inc?: Maybe<Content_ItemProgramPersonByAccessToken_Inc_Input>;
+  _set?: Maybe<Content_ItemProgramPersonByAccessToken_Set_Input>;
+  where: Content_ItemProgramPersonByAccessToken_Bool_Exp;
 };
 
 
@@ -20121,6 +21523,14 @@ export type Query_Root = {
   readonly collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
   /** fetch data from the table: "collection.ProgramPerson" */
   readonly collection_ProgramPerson: ReadonlyArray<Collection_ProgramPerson>;
+  /** fetch data from the table: "collection.ProgramPersonByAccessToken" */
+  readonly collection_ProgramPersonByAccessToken: ReadonlyArray<Collection_ProgramPersonByAccessToken>;
+  /** fetch aggregated fields from the table: "collection.ProgramPersonByAccessToken" */
+  readonly collection_ProgramPersonByAccessToken_aggregate: Collection_ProgramPersonByAccessToken_Aggregate;
+  /** fetch data from the table: "collection.ProgramPersonWithAccessToken" */
+  readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<Collection_ProgramPersonWithAccessToken>;
+  /** fetch aggregated fields from the table: "collection.ProgramPersonWithAccessToken" */
+  readonly collection_ProgramPersonWithAccessToken_aggregate: Collection_ProgramPersonWithAccessToken_Aggregate;
   /** fetch aggregated fields from the table: "collection.ProgramPerson" */
   readonly collection_ProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "collection.ProgramPerson" using primary key columns */
@@ -20177,6 +21587,10 @@ export type Query_Root = {
   readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
   /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
   readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+  /** fetch data from the table: "content.ElementByPersonAccessToken" */
+  readonly content_ElementByPersonAccessToken: ReadonlyArray<Content_ElementByPersonAccessToken>;
+  /** fetch aggregated fields from the table: "content.ElementByPersonAccessToken" */
+  readonly content_ElementByPersonAccessToken_aggregate: Content_ElementByPersonAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -20195,6 +21609,10 @@ export type Query_Root = {
   readonly content_Element_by_pk?: Maybe<Content_Element>;
   /** fetch data from the table: "content.Item" */
   readonly content_Item: ReadonlyArray<Content_Item>;
+  /** fetch data from the table: "content.ItemByPersonAccessToken" */
+  readonly content_ItemByPersonAccessToken: ReadonlyArray<Content_ItemByPersonAccessToken>;
+  /** fetch aggregated fields from the table: "content.ItemByPersonAccessToken" */
+  readonly content_ItemByPersonAccessToken_aggregate: Content_ItemByPersonAccessToken_Aggregate;
   /** fetch data from the table: "content.ItemExhibition" */
   readonly content_ItemExhibition: ReadonlyArray<Content_ItemExhibition>;
   /** fetch aggregated fields from the table: "content.ItemExhibition" */
@@ -20203,6 +21621,10 @@ export type Query_Root = {
   readonly content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
   /** fetch data from the table: "content.ItemProgramPerson" */
   readonly content_ItemProgramPerson: ReadonlyArray<Content_ItemProgramPerson>;
+  /** fetch data from the table: "content.ItemProgramPersonByAccessToken" */
+  readonly content_ItemProgramPersonByAccessToken: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+  /** fetch aggregated fields from the table: "content.ItemProgramPersonByAccessToken" */
+  readonly content_ItemProgramPersonByAccessToken_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
   /** fetch aggregated fields from the table: "content.ItemProgramPerson" */
   readonly content_ItemProgramPerson_aggregate: Content_ItemProgramPerson_Aggregate;
   /** fetch data from the table: "content.ItemProgramPerson" using primary key columns */
@@ -20233,6 +21655,7 @@ export type Query_Root = {
   readonly content_searchItems: ReadonlyArray<Content_Item>;
   /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
   readonly content_searchItems_aggregate: Content_Item_Aggregate;
+  readonly getProgramPersonAccessToken: MatchingPersonOutput;
   readonly getSlug: GetSlugOutput;
   readonly getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
   /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
@@ -21144,6 +22567,42 @@ export type Query_RootCollection_ProgramPersonArgs = {
 };
 
 
+export type Query_RootCollection_ProgramPersonByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootCollection_ProgramPersonByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootCollection_ProgramPersonWithAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootCollection_ProgramPersonWithAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+
 export type Query_RootCollection_ProgramPerson_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21367,6 +22826,24 @@ export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
 };
 
 
+export type Query_RootContent_ElementByPersonAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ElementByPersonAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
 export type Query_RootContent_ElementPermissionGrantArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21436,6 +22913,24 @@ export type Query_RootContent_ItemArgs = {
 };
 
 
+export type Query_RootContent_ItemByPersonAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ItemByPersonAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+
 export type Query_RootContent_ItemExhibitionArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ItemExhibition_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -21465,6 +22960,24 @@ export type Query_RootContent_ItemProgramPersonArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Order_By>>;
   where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ItemProgramPersonByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Query_RootContent_ItemProgramPersonByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
 };
 
 
@@ -21582,6 +23095,13 @@ export type Query_RootContent_SearchItems_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_Item_Order_By>>;
   where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+
+export type Query_RootGetProgramPersonAccessTokenArgs = {
+  elementAccessToken: Scalars['String'];
+  elementId: Scalars['uuid'];
+  uploaderEmail: Scalars['String'];
 };
 
 
@@ -29605,6 +31125,14 @@ export type Subscription_Root = {
   readonly collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
   /** fetch data from the table: "collection.ProgramPerson" */
   readonly collection_ProgramPerson: ReadonlyArray<Collection_ProgramPerson>;
+  /** fetch data from the table: "collection.ProgramPersonByAccessToken" */
+  readonly collection_ProgramPersonByAccessToken: ReadonlyArray<Collection_ProgramPersonByAccessToken>;
+  /** fetch aggregated fields from the table: "collection.ProgramPersonByAccessToken" */
+  readonly collection_ProgramPersonByAccessToken_aggregate: Collection_ProgramPersonByAccessToken_Aggregate;
+  /** fetch data from the table: "collection.ProgramPersonWithAccessToken" */
+  readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<Collection_ProgramPersonWithAccessToken>;
+  /** fetch aggregated fields from the table: "collection.ProgramPersonWithAccessToken" */
+  readonly collection_ProgramPersonWithAccessToken_aggregate: Collection_ProgramPersonWithAccessToken_Aggregate;
   /** fetch aggregated fields from the table: "collection.ProgramPerson" */
   readonly collection_ProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
   /** fetch data from the table: "collection.ProgramPerson" using primary key columns */
@@ -29661,6 +31189,10 @@ export type Subscription_Root = {
   readonly content_ElementByAccessToken: ReadonlyArray<Content_ElementByAccessToken>;
   /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
   readonly content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+  /** fetch data from the table: "content.ElementByPersonAccessToken" */
+  readonly content_ElementByPersonAccessToken: ReadonlyArray<Content_ElementByPersonAccessToken>;
+  /** fetch aggregated fields from the table: "content.ElementByPersonAccessToken" */
+  readonly content_ElementByPersonAccessToken_aggregate: Content_ElementByPersonAccessToken_Aggregate;
   /** fetch data from the table: "content.ElementPermissionGrant" */
   readonly content_ElementPermissionGrant: ReadonlyArray<Content_ElementPermissionGrant>;
   /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -29679,6 +31211,10 @@ export type Subscription_Root = {
   readonly content_Element_by_pk?: Maybe<Content_Element>;
   /** fetch data from the table: "content.Item" */
   readonly content_Item: ReadonlyArray<Content_Item>;
+  /** fetch data from the table: "content.ItemByPersonAccessToken" */
+  readonly content_ItemByPersonAccessToken: ReadonlyArray<Content_ItemByPersonAccessToken>;
+  /** fetch aggregated fields from the table: "content.ItemByPersonAccessToken" */
+  readonly content_ItemByPersonAccessToken_aggregate: Content_ItemByPersonAccessToken_Aggregate;
   /** fetch data from the table: "content.ItemExhibition" */
   readonly content_ItemExhibition: ReadonlyArray<Content_ItemExhibition>;
   /** fetch aggregated fields from the table: "content.ItemExhibition" */
@@ -29687,6 +31223,10 @@ export type Subscription_Root = {
   readonly content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
   /** fetch data from the table: "content.ItemProgramPerson" */
   readonly content_ItemProgramPerson: ReadonlyArray<Content_ItemProgramPerson>;
+  /** fetch data from the table: "content.ItemProgramPersonByAccessToken" */
+  readonly content_ItemProgramPersonByAccessToken: ReadonlyArray<Content_ItemProgramPersonByAccessToken>;
+  /** fetch aggregated fields from the table: "content.ItemProgramPersonByAccessToken" */
+  readonly content_ItemProgramPersonByAccessToken_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
   /** fetch aggregated fields from the table: "content.ItemProgramPerson" */
   readonly content_ItemProgramPerson_aggregate: Content_ItemProgramPerson_Aggregate;
   /** fetch data from the table: "content.ItemProgramPerson" using primary key columns */
@@ -30624,6 +32164,42 @@ export type Subscription_RootCollection_ProgramPersonArgs = {
 };
 
 
+export type Subscription_RootCollection_ProgramPersonByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootCollection_ProgramPersonByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootCollection_ProgramPersonWithAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootCollection_ProgramPersonWithAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Collection_ProgramPersonWithAccessToken_Order_By>>;
+  where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+
 export type Subscription_RootCollection_ProgramPerson_AggregateArgs = {
   distinct_on?: Maybe<ReadonlyArray<Collection_ProgramPerson_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30847,6 +32423,24 @@ export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
 };
 
 
+export type Subscription_RootContent_ElementByPersonAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ElementByPersonAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ElementByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+
 export type Subscription_RootContent_ElementPermissionGrantArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30916,6 +32510,24 @@ export type Subscription_RootContent_ItemArgs = {
 };
 
 
+export type Subscription_RootContent_ItemByPersonAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ItemByPersonAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemByPersonAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+
 export type Subscription_RootContent_ItemExhibitionArgs = {
   distinct_on?: Maybe<ReadonlyArray<Content_ItemExhibition_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30945,6 +32557,24 @@ export type Subscription_RootContent_ItemProgramPersonArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_ItemProgramPerson_Order_By>>;
   where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ItemProgramPersonByAccessTokenArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootContent_ItemProgramPersonByAccessToken_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Content_ItemProgramPersonByAccessToken_Order_By>>;
+  where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
 };
 
 
@@ -36679,12 +38309,14 @@ export type ManageProgramPeople_RegistrantFragment = { readonly __typename?: 're
 
 export type ManageProgramPeople_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> };
 
+export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = { readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any>, readonly accessToken?: Maybe<string> };
+
 export type ManageProgramPeople_SelectAllPeopleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ManageProgramPeople_SelectAllPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
+export type ManageProgramPeople_SelectAllPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any>, readonly accessToken?: Maybe<string> }> };
 
 export type ManageProgramPeople_SelectAllRegistrantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37311,12 +38943,44 @@ export type UpdateSubtitlesMutationVariables = Exact<{
 
 export type UpdateSubtitlesMutation = { readonly __typename?: 'mutation_root', readonly updateSubtitles?: Maybe<{ readonly __typename?: 'SubmitUpdatedSubtitlesOutput', readonly message: string, readonly success: boolean }> };
 
-export type GetElementQueryVariables = Exact<{
-  magicToken: Scalars['String'];
+export type Submissions_ListUploadersQueryVariables = Exact<{
+  elementId: Scalars['uuid'];
 }>;
 
 
-export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_ElementByAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ElementByAccessToken', readonly typeName?: Maybe<string>, readonly data?: Maybe<any>, readonly layoutData?: Maybe<any>, readonly name?: Maybe<string>, readonly id?: Maybe<any>, readonly itemTitle?: Maybe<string>, readonly uploadsRemaining?: Maybe<number> }> };
+export type Submissions_ListUploadersQuery = { readonly __typename?: 'query_root', readonly content_Uploader: ReadonlyArray<{ readonly __typename?: 'content_Uploader', readonly id: any, readonly name: string, readonly email: string }> };
+
+export type Submissions_GetProgramPersonAccessTokenQueryVariables = Exact<{
+  elementId: Scalars['uuid'];
+  uploaderEmail: Scalars['String'];
+  elementAccessToken: Scalars['String'];
+}>;
+
+
+export type Submissions_GetProgramPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly getProgramPersonAccessToken: { readonly __typename?: 'MatchingPersonOutput', readonly accessToken?: Maybe<string> } };
+
+export type ItemByPersonAccessTokenQueryVariables = Exact<{
+  accessToken: Scalars['String'];
+  itemId: Scalars['uuid'];
+}>;
+
+
+export type ItemByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPersonByAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string> }>, readonly content_ItemByPersonAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ItemByPersonAccessToken', readonly id?: Maybe<any>, readonly title?: Maybe<string>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_ElementByPersonAccessToken', readonly id?: Maybe<any>, readonly accessToken?: Maybe<string>, readonly name?: Maybe<string>, readonly data?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }> }> };
+
+export type ItemsByPersonAccessTokenQueryVariables = Exact<{
+  accessToken: Scalars['String'];
+}>;
+
+
+export type ItemsByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPersonByAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_ItemByPersonAccessToken', readonly id?: Maybe<any>, readonly title?: Maybe<string> }> }> }> };
+
+export type GetElementQueryVariables = Exact<{
+  accessToken: Scalars['String'];
+  elementId: Scalars['uuid'];
+}>;
+
+
+export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_ElementByPersonAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ElementByPersonAccessToken', readonly typeName?: Maybe<string>, readonly data?: Maybe<any>, readonly name?: Maybe<string>, readonly id?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly accessToken?: Maybe<string>, readonly item?: Maybe<{ readonly __typename?: 'content_ItemByPersonAccessToken', readonly title?: Maybe<string> }> }>, readonly collection_ProgramPersonByAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string> }> };
 
 export type SubmitUploadableElementMutationVariables = Exact<{
   elementData: Scalars['jsonb'];
@@ -38924,6 +40588,18 @@ export const ManageProgramPeople_ProgramPersonFragmentDoc = gql`
   email
   originatingDataId
   registrantId
+}
+    `;
+export const ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc = gql`
+    fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPersonWithAccessToken {
+  id
+  conferenceId
+  name
+  affiliation
+  email
+  originatingDataId
+  registrantId
+  accessToken
 }
     `;
 export const RoomParticipantWithRegistrantInfoFragmentDoc = gql`
@@ -46369,11 +48045,13 @@ export type UpdateGroupMutationResult = Apollo.MutationResult<UpdateGroupMutatio
 export type UpdateGroupMutationOptions = Apollo.BaseMutationOptions<UpdateGroupMutation, UpdateGroupMutationVariables>;
 export const ManageProgramPeople_SelectAllPeopleDocument = gql`
     query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
-  collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...ManageProgramPeople_ProgramPerson
+  collection_ProgramPersonWithAccessToken(
+    where: {conferenceId: {_eq: $conferenceId}}
+  ) {
+    ...ManageProgramPeople_ProgramPersonWithAccessToken
   }
 }
-    ${ManageProgramPeople_ProgramPersonFragmentDoc}`;
+    ${ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc}`;
 
 /**
  * __useManageProgramPeople_SelectAllPeopleQuery__
@@ -49210,16 +50888,191 @@ export function useUpdateSubtitlesMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateSubtitlesMutationHookResult = ReturnType<typeof useUpdateSubtitlesMutation>;
 export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitlesMutation>;
 export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
+export const Submissions_ListUploadersDocument = gql`
+    query Submissions_ListUploaders($elementId: uuid!) {
+  content_Uploader(where: {elementId: {_eq: $elementId}}) {
+    id
+    name
+    email
+  }
+}
+    `;
+
+/**
+ * __useSubmissions_ListUploadersQuery__
+ *
+ * To run a query within a React component, call `useSubmissions_ListUploadersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissions_ListUploadersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissions_ListUploadersQuery({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *   },
+ * });
+ */
+export function useSubmissions_ListUploadersQuery(baseOptions: Apollo.QueryHookOptions<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>(Submissions_ListUploadersDocument, options);
+      }
+export function useSubmissions_ListUploadersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>(Submissions_ListUploadersDocument, options);
+        }
+export type Submissions_ListUploadersQueryHookResult = ReturnType<typeof useSubmissions_ListUploadersQuery>;
+export type Submissions_ListUploadersLazyQueryHookResult = ReturnType<typeof useSubmissions_ListUploadersLazyQuery>;
+export type Submissions_ListUploadersQueryResult = Apollo.QueryResult<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>;
+export const Submissions_GetProgramPersonAccessTokenDocument = gql`
+    query Submissions_GetProgramPersonAccessToken($elementId: uuid!, $uploaderEmail: String!, $elementAccessToken: String!) {
+  getProgramPersonAccessToken(
+    elementId: $elementId
+    uploaderEmail: $uploaderEmail
+    elementAccessToken: $elementAccessToken
+  ) {
+    accessToken
+  }
+}
+    `;
+
+/**
+ * __useSubmissions_GetProgramPersonAccessTokenQuery__
+ *
+ * To run a query within a React component, call `useSubmissions_GetProgramPersonAccessTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubmissions_GetProgramPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubmissions_GetProgramPersonAccessTokenQuery({
+ *   variables: {
+ *      elementId: // value for 'elementId'
+ *      uploaderEmail: // value for 'uploaderEmail'
+ *      elementAccessToken: // value for 'elementAccessToken'
+ *   },
+ * });
+ */
+export function useSubmissions_GetProgramPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>(Submissions_GetProgramPersonAccessTokenDocument, options);
+      }
+export function useSubmissions_GetProgramPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>(Submissions_GetProgramPersonAccessTokenDocument, options);
+        }
+export type Submissions_GetProgramPersonAccessTokenQueryHookResult = ReturnType<typeof useSubmissions_GetProgramPersonAccessTokenQuery>;
+export type Submissions_GetProgramPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useSubmissions_GetProgramPersonAccessTokenLazyQuery>;
+export type Submissions_GetProgramPersonAccessTokenQueryResult = Apollo.QueryResult<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>;
+export const ItemByPersonAccessTokenDocument = gql`
+    query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
+  collection_ProgramPersonByAccessToken(where: {accessToken: {_eq: $accessToken}}) {
+    id
+    name
+  }
+  content_ItemByPersonAccessToken(where: {id: {_eq: $itemId}}) {
+    id
+    title
+    elements {
+      id
+      accessToken
+      name
+      data
+      uploadsRemaining
+    }
+  }
+}
+    `;
+
+/**
+ * __useItemByPersonAccessTokenQuery__
+ *
+ * To run a query within a React component, call `useItemByPersonAccessTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useItemByPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useItemByPersonAccessTokenQuery({
+ *   variables: {
+ *      accessToken: // value for 'accessToken'
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useItemByPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>(ItemByPersonAccessTokenDocument, options);
+      }
+export function useItemByPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>(ItemByPersonAccessTokenDocument, options);
+        }
+export type ItemByPersonAccessTokenQueryHookResult = ReturnType<typeof useItemByPersonAccessTokenQuery>;
+export type ItemByPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useItemByPersonAccessTokenLazyQuery>;
+export type ItemByPersonAccessTokenQueryResult = Apollo.QueryResult<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>;
+export const ItemsByPersonAccessTokenDocument = gql`
+    query ItemsByPersonAccessToken($accessToken: String!) {
+  collection_ProgramPersonByAccessToken(where: {accessToken: {_eq: $accessToken}}) {
+    id
+    name
+    itemPeople {
+      id
+      item {
+        id
+        title
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useItemsByPersonAccessTokenQuery__
+ *
+ * To run a query within a React component, call `useItemsByPersonAccessTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useItemsByPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useItemsByPersonAccessTokenQuery({
+ *   variables: {
+ *      accessToken: // value for 'accessToken'
+ *   },
+ * });
+ */
+export function useItemsByPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>(ItemsByPersonAccessTokenDocument, options);
+      }
+export function useItemsByPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>(ItemsByPersonAccessTokenDocument, options);
+        }
+export type ItemsByPersonAccessTokenQueryHookResult = ReturnType<typeof useItemsByPersonAccessTokenQuery>;
+export type ItemsByPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useItemsByPersonAccessTokenLazyQuery>;
+export type ItemsByPersonAccessTokenQueryResult = Apollo.QueryResult<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>;
 export const GetElementDocument = gql`
-    query GetElement($magicToken: String!) {
-  content_ElementByAccessToken(where: {accessToken: {_eq: $magicToken}}) {
+    query GetElement($accessToken: String!, $elementId: uuid!) {
+  content_ElementByPersonAccessToken(where: {id: {_eq: $elementId}}) {
     typeName
     data
-    layoutData
     name
     id
-    itemTitle
     uploadsRemaining
+    accessToken
+    item {
+      title
+    }
+  }
+  collection_ProgramPersonByAccessToken(where: {accessToken: {_eq: $accessToken}}) {
+    id
+    name
   }
 }
     `;
@@ -49236,7 +51089,8 @@ export const GetElementDocument = gql`
  * @example
  * const { data, loading, error } = useGetElementQuery({
  *   variables: {
- *      magicToken: // value for 'magicToken'
+ *      accessToken: // value for 'accessToken'
+ *      elementId: // value for 'elementId'
  *   },
  * });
  */

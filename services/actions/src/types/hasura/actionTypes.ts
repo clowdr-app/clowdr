@@ -305,3 +305,13 @@ type getSlugArgs = {
 type GetSlugOutput = {
     slug?: Maybe<string>;
 };
+
+type getProgramPersonAccessTokenArgs = {
+    elementId: uuid;
+    uploaderEmail: string;
+    elementAccessToken: string;
+};
+
+type MatchingPersonOutput = {
+    accessToken?: Maybe<string>;
+};

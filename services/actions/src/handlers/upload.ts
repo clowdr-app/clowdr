@@ -333,7 +333,7 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
     if (itemByToken.uploadCutoffTimestamp && itemByToken.uploadCutoffTimestamp < new Date()) {
         return {
             success: false,
-            message: "Upload deadline has passed",
+            message: "Submission deadline has passed",
         };
     }
 

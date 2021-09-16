@@ -11,7 +11,10 @@ import { LinkButton } from "./aspects/Chakra/LinkButton";
 import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
-import SubmitItemPage from "./aspects/Content/SubmitItemPage";
+import OldAccessFormatRedirectionPage from "./aspects/Content/OldAccessFormatRedirectionPage";
+import ViewItemPage from "./aspects/Content/Submissions/ViewItemPage";
+import ViewItemsPage from "./aspects/Content/Submissions/ViewItemsPage";
+import SubmitElementPage from "./aspects/Content/SubmitElementPage";
 import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
@@ -130,14 +133,56 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
             {/* A page for easy testing of the HLS video player */}
             <Route path="/video-player" component={VideoTestPage} />
 
+            {
+                <Route
+                    path="/upload/:id/:token"
+                    component={(
+                        props: RouteComponentProps<{
+                            token: string;
+                            id: string;
+                        }>
+                    ) => (
+                        <OldAccessFormatRedirectionPage
+                            magicToken={props.match.params.token}
+                            elementId={props.match.params.id}
+                        />
+                    )}
+                />
+            }
+
             <Route
-                path="/upload/:id/:token"
+                path="/submissions/:token/item/:itemId/element/:elementId"
                 component={(
                     props: RouteComponentProps<{
                         token: string;
-                        id: string;
+                        itemId: string;
+                        elementId: string;
                     }>
-                ) => <SubmitItemPage magicToken={props.match.params.token} />}
+                ) => (
+                    <SubmitElementPage
+                        magicToken={props.match.params.token}
+                        itemId={props.match.params.itemId}
+                        elementId={props.match.params.elementId}
+                    />
+                )}
+            />
+
+            <Route
+                path="/submissions/:token/item/:itemId"
+                component={(
+                    props: RouteComponentProps<{
+                        token: string;
+                        itemId: string;
+                    }>
+                ) => <ViewItemPage magicToken={props.match.params.token} itemId={props.match.params.itemId} />}
+            />
+            <Route
+                path="/submissions/:token"
+                component={(
+                    props: RouteComponentProps<{
+                        token: string;
+                    }>
+                ) => <ViewItemsPage magicToken={props.match.params.token} />}
             />
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />

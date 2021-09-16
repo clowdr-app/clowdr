@@ -1303,7 +1303,6 @@ export default function ManageContentV2(): JSX.Element {
             ) : (
                 <></>
             )}
-            <Text fontSize="sm">Managing sponsors has been merged with managing content.</Text>
             <HStack spacing={2}>
                 <ManageTagsModal
                     onClose={async () => {

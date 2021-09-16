@@ -1410,6 +1410,103 @@
               name: FlatUserPermission
 - table:
     schema: collection
+    name: ProgramPersonByAccessToken
+  array_relationships:
+  - name: itemPeople
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ItemProgramPersonByAccessToken
+        insertion_order: null
+        column_mapping:
+          id: personId
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - accessToken
+      - conferenceId
+      - id
+      - name
+      filter:
+        accessToken:
+          _eq: X-Hasura-Magic-Token
+  - role: user
+    permission:
+      columns:
+      - accessToken
+      - conferenceId
+      - id
+      - name
+      filter:
+        accessToken:
+          _eq: X-Hasura-Magic-Token
+- table:
+    schema: collection
+    name: ProgramPersonWithAccessToken
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
+  - name: registrant
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: Registrant
+        insertion_order: null
+        column_mapping:
+          registrantId: id
+  array_relationships:
+  - name: itemPeople
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ItemProgramPerson
+        insertion_order: null
+        column_mapping:
+          id: personId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - conferenceId
+      - name
+      - affiliation
+      - originatingDataId
+      - registrantId
+      - email
+      - accessToken
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+            _table:
+              schema: public
+              name: FlatUserPermission
+- table:
+    schema: collection
     name: Tag
   configuration:
     custom_root_fields: {}
@@ -2631,6 +2728,62 @@
           _eq: X-Hasura-Magic-Token
 - table:
     schema: content
+    name: ElementByPersonAccessToken
+  object_relationships:
+  - name: item
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ItemByPersonAccessToken
+        insertion_order: null
+        column_mapping:
+          itemId: id
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - accessToken
+      - conferenceId
+      - created_at
+      - data
+      - id
+      - isHidden
+      - itemId
+      - layoutData
+      - name
+      - typeName
+      - updated_at
+      - uploadsRemaining
+      filter:
+        item:
+          itemPeople:
+            person:
+              accessToken:
+                _eq: X-Hasura-Magic-Token
+  - role: user
+    permission:
+      columns:
+      - accessToken
+      - conferenceId
+      - created_at
+      - data
+      - id
+      - isHidden
+      - itemId
+      - layoutData
+      - name
+      - typeName
+      - updated_at
+      - uploadsRemaining
+      filter:
+        item:
+          itemPeople:
+            person:
+              accessToken:
+                _eq: X-Hasura-Magic-Token
+- table:
+    schema: content
     name: ElementPermissionGrant
   object_relationships:
   - name: conference
@@ -3082,6 +3235,59 @@
               name: FlatUserPermission
 - table:
     schema: content
+    name: ItemByPersonAccessToken
+  array_relationships:
+  - name: elements
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ElementByPersonAccessToken
+        insertion_order: null
+        column_mapping:
+          id: itemId
+  - name: itemPeople
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ItemProgramPersonByAccessToken
+        insertion_order: null
+        column_mapping:
+          id: itemId
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - shortTitle
+      - title
+      - typeName
+      - updated_at
+      filter:
+        itemPeople:
+          person:
+            accessToken:
+              _eq: X-Hasura-Magic-Token
+  - role: user
+    permission:
+      columns:
+      - conferenceId
+      - created_at
+      - id
+      - shortTitle
+      - title
+      - typeName
+      - updated_at
+      filter:
+        itemPeople:
+          person:
+            accessToken:
+              _eq: X-Hasura-Magic-Token
+- table:
+    schema: content
     name: ItemExhibition
   object_relationships:
   - name: conference
@@ -3380,6 +3586,55 @@
               name: FlatUserPermission
 - table:
     schema: content
+    name: ItemProgramPersonByAccessToken
+  object_relationships:
+  - name: item
+    using:
+      manual_configuration:
+        remote_table:
+          schema: content
+          name: ItemByPersonAccessToken
+        insertion_order: null
+        column_mapping:
+          itemId: id
+  - name: person
+    using:
+      manual_configuration:
+        remote_table:
+          schema: collection
+          name: ProgramPersonByAccessToken
+        insertion_order: null
+        column_mapping:
+          personId: id
+  select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - priority
+      - roleName
+      - conferenceId
+      - id
+      - itemId
+      - personId
+      filter:
+        person:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
+  - role: user
+    permission:
+      columns:
+      - id
+      - personId
+      - itemId
+      - priority
+      - roleName
+      - conferenceId
+      filter:
+        person:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
+- table:
+    schema: content
     name: ItemTag
   object_relationships:
   - name: item
@@ -3579,6 +3834,17 @@
       - name
       backend_only: false
   select_permissions:
+  - role: unauthenticated
+    permission:
+      columns:
+      - elementId
+      - email
+      - id
+      - name
+      filter:
+        element:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
   - role: user
     permission:
       columns:

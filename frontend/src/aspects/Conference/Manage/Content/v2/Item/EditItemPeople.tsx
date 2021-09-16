@@ -54,9 +54,13 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
     return (
         <VStack spacing={2} alignItems="flex-start" w="100%">
             <Text>Add or remove Program People associated with this item.</Text>
-            <Text fontSize="sm" pb={2}>
+            <Text fontSize="sm">
                 Please add people to the Program People table (optionally link them to their Registrant), then link them
                 to this item.
+            </Text>
+            <Text fontSize="sm" pb={2}>
+                People are also treated as uploaders of all elements within the item. All roles have access to upload
+                content.
             </Text>
             <ButtonGroup>
                 {itemPeopleIds ? <AddItemPerson itemId={itemId} existingPeopleIds={itemPeopleIds} /> : undefined}

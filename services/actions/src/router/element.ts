@@ -1,7 +1,7 @@
 import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { assertType } from "typescript-is";
-import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
+import { handleElementUpdated, handleGetProgramPersonAccessToken, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { ElementData, Payload } from "../types/hasura/event";
@@ -86,3 +86,25 @@ router.post("/getUploadAgreement", json(), async (req: Request, res: Response<Ge
         return res.status(500).json("Failed to retrieve agreement text");
     }
 });
+
+router.post(
+    "/getProgramPersonAccessToken",
+    json(),
+    async (req: Request, res: Response<MatchingPersonOutput | string>) => {
+        const params = req.body.input;
+        try {
+            assertType<getProgramPersonAccessTokenArgs>(params);
+        } catch (e) {
+            console.error(`${req.path}: Invalid request:`, req.body.input);
+            return res.status(500).json("Invalid request");
+        }
+
+        try {
+            const result = await handleGetProgramPersonAccessToken(params);
+            return res.status(200).json(result);
+        } catch (e) {
+            console.error(`${req.path}: Failed to get program person access token`, e);
+            return res.status(500).json("Failed to process finding a match");
+        }
+    }
+);

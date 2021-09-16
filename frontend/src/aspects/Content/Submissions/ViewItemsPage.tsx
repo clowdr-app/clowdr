@@ -93,7 +93,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
                                 {person.itemPeople.length ? (
                                     <>
                                         <Text>Please use the links below to navigate your submissions.</Text>
-                                        <List listStylePos="inside">
+                                        <List listStylePos="inside" spacing={2}>
                                             {person.itemPeople
                                                 .filter((x) => !!x.item)
                                                 .map((itemPerson) => (

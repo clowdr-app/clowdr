@@ -78,7 +78,7 @@ export default function OldAccessFormatRedirectionPage({
                             contact your conference organizers.
                         </Text>
                         {response.data?.content_Uploader.length ? (
-                            <List listStylePos="inside">
+                            <List listStylePos="inside" spacing={2}>
                                 {response.data.content_Uploader.map((uploader) => (
                                     <ListItem key={uploader.id}>
                                         <Button

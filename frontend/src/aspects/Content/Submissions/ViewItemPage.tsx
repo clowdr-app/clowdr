@@ -11,6 +11,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import * as R from "ramda";
 import React from "react";
 import { useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
@@ -34,6 +35,7 @@ gql`
                 name
                 data
                 uploadsRemaining
+                layoutData
             }
         }
     }
@@ -61,6 +63,9 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const item = itemResponse.data?.content_ItemByPersonAccessToken.length
         ? itemResponse.data.content_ItemByPersonAccessToken[0]
         : undefined;
+    const elements = item
+        ? R.sortWith([(x) => x.layoutData?.priority ?? 200, (x) => x.name ?? "<Unknown>"], item.elements)
+        : [];
     return (
         <Center pt={6} w="100%">
             {title}
@@ -99,10 +104,10 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                         ) : undefined}
                         {item ? (
                             <>
-                                {item.elements.length ? (
+                                {elements.length ? (
                                     <VStack spacing={20} alignItems="flex-start" w="100%">
                                         <Text>Please submit or review the content below.</Text>
-                                        {item.elements.map((element) => (
+                                        {elements.map((element) => (
                                             <VStack spacing={4} key={element.id} alignItems="flex-start" w="100%">
                                                 <Heading as="h3" fontSize="lg" textAlign="left">
                                                     {element.name}

@@ -23,7 +23,7 @@ gql`
         collection_ProgramPersonByAccessToken(where: { accessToken: { _eq: $accessToken } }) {
             id
             name
-            itemPeople {
+            itemPeople(order_by: { item: { title: asc } }) {
                 id
                 item {
                     id

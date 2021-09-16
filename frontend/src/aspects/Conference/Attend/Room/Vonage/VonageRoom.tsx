@@ -47,7 +47,7 @@ export function VonageRoom({
     isBackstageRoom,
     raiseHandPrejoinEventId,
     isRaiseHandWaiting,
-    requireMicrophone = false,
+    requireMicrophoneOrCamera = false,
     completeJoinRef,
     onLeave,
     onPermissionsProblem,
@@ -59,7 +59,7 @@ export function VonageRoom({
     isBackstageRoom: boolean;
     raiseHandPrejoinEventId: string | null;
     isRaiseHandWaiting?: boolean;
-    requireMicrophone?: boolean;
+    requireMicrophoneOrCamera?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
@@ -87,7 +87,7 @@ export function VonageRoom({
                         stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
                         isBackstageRoom={isBackstageRoom}
-                        requireMicrophone={requireMicrophone}
+                        requireMicrophoneOrCamera={requireMicrophoneOrCamera}
                         joinRoomButtonText={
                             isBackstageRoom
                                 ? raiseHandPrejoinEventId
@@ -184,7 +184,7 @@ function VonageRoomInner({
     isBackstageRoom,
     onRoomJoined,
     joinRoomButtonText,
-    requireMicrophone,
+    requireMicrophoneOrCamera,
     overrideJoining,
     beginJoin,
     cancelJoin,
@@ -196,7 +196,7 @@ function VonageRoomInner({
     stop: boolean;
     isBackstageRoom: boolean;
     joinRoomButtonText?: string;
-    requireMicrophone: boolean;
+    requireMicrophoneOrCamera: boolean;
     onRoomJoined?: (_joined: boolean) => void;
     overrideJoining?: boolean;
     beginJoin?: () => void;
@@ -208,6 +208,17 @@ function VonageRoomInner({
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
+    const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
+    const onRecordingStarted = useCallback(() => {
+        setIsRecordingActive(true);
+    }, []);
+    const onRecordingStopped = useCallback(() => {
+        setIsRecordingActive(false);
+    }, []);
+    useEffect(() => {
+        setIsRecordingActive(false);
+    }, [vonageSessionId]);
+
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
         useVonageComputedState({
@@ -215,6 +226,8 @@ function VonageRoomInner({
             vonageSessionId,
             overrideJoining,
             onRoomJoined,
+            onRecordingStarted,
+            onRecordingStopped,
             isBackstageRoom,
             beginJoin,
             cancelJoin,
@@ -715,8 +728,10 @@ function VonageRoomInner({
                     onCancelJoinRoom={cancelJoin}
                     joining={joining}
                     joinRoomButtonText={joinRoomButtonText}
-                    requireMicrophone={requireMicrophone}
+                    requireMicrophoneOrCamera={requireMicrophoneOrCamera}
                     onPermissionsProblem={onPermissionsProblem}
+                    isRecordingActive={isRecordingActive}
+                    isBackstage={isBackstageRoom}
                 />
             </Flex>
             <Box position="relative" mb={8} width="100%">

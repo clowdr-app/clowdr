@@ -1,6 +1,18 @@
 import { gql } from "@apollo/client";
-import { Spinner, Text, VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Button,
+    ButtonGroup,
+    Spinner,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import {
     RoomPage_RoomDetailsFragment,
@@ -12,10 +24,18 @@ import { useRealTime } from "../../../../Generic/useRealTime";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 
 gql`
+    mutation GetEventVonageToken($eventId: uuid!) {
+        joinEventVonageSession(eventId: $eventId) {
+            accessToken
+            isRecorded
+        }
+    }
+
     mutation GetRoomVonageToken($roomId: uuid!) {
         joinRoomVonageSession(roomId: $roomId) {
             accessToken
             sessionId
+            isRecorded
         }
     }
 
@@ -31,10 +51,12 @@ export function VideoChatVonageRoom({
     room,
     eventId,
     enable,
+    eventIsFuture,
 }: {
     room: RoomPage_RoomDetailsFragment;
     eventId: string | undefined;
     enable: boolean;
+    eventIsFuture: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
@@ -49,21 +71,61 @@ export function VideoChatVonageRoom({
         },
     });
 
-    const getAccessToken = useCallback(async () => {
-        console.log("Event Id", eventId);
-        if (eventId) {
-            const result = await getEventVonageToken();
-            if (!result.data?.joinEventVonageSession?.accessToken) {
-                throw new Error("No Vonage session ID");
+    const completeGetAccessToken = useRef<{ resolve: () => void; reject: (reason?: any) => void } | undefined>();
+
+    const getAccessToken = useCallback(() => {
+        return new Promise<string>((resolve, reject) => {
+            console.log("Event Id", eventId);
+            if (eventId) {
+                getEventVonageToken()
+                    .then((result) => {
+                        if (!result.data?.joinEventVonageSession?.accessToken) {
+                            throw new Error("No Vonage session ID");
+                        }
+                        const token = result.data.joinEventVonageSession.accessToken;
+
+                        if (result.data.joinEventVonageSession.isRecorded) {
+                            completeGetAccessToken.current = {
+                                resolve: () => {
+                                    completeGetAccessToken.current = undefined;
+                                    resolve(token);
+                                },
+                                reject: (reason) => {
+                                    completeGetAccessToken.current = undefined;
+                                    reject(reason);
+                                },
+                            };
+                        } else {
+                            resolve(token);
+                        }
+                    })
+                    .catch(reject);
+            } else {
+                getRoomVonageToken()
+                    .then((result) => {
+                        if (!result.data?.joinRoomVonageSession?.accessToken) {
+                            throw new Error("No Vonage session ID");
+                        }
+                        const token = result.data.joinRoomVonageSession.accessToken;
+
+                        if (result.data.joinRoomVonageSession.isRecorded) {
+                            completeGetAccessToken.current = {
+                                resolve: () => {
+                                    completeGetAccessToken.current = undefined;
+                                    resolve(token);
+                                },
+                                reject: (reason) => {
+                                    completeGetAccessToken.current = undefined;
+                                    reject(reason);
+                                },
+                            };
+                        } else {
+                            resolve(token);
+                        }
+                    })
+                    .catch(reject);
             }
-            return result.data?.joinEventVonageSession.accessToken;
-        } else {
-            const result = await getRoomVonageToken();
-            if (!result.data?.joinRoomVonageSession?.accessToken) {
-                throw new Error("No Vonage session ID");
-            }
-            return result.data?.joinRoomVonageSession.accessToken;
-        }
+        });
     }, [getRoomVonageToken, getEventVonageToken, eventId]);
 
     const [publicVonageSessionId, setPublicVonageSessionId] = useState<string | null | undefined>(
@@ -95,14 +157,63 @@ export function VideoChatVonageRoom({
         }
     }, [publicVonageSessionId, room.id, roomVonageSessionIdResponse, now]);
 
+    const recordingAlert_leastDestructiveRef = useRef<HTMLButtonElement | null>(null);
+
     return publicVonageSessionId && sharedRoomContext ? (
-        <portals.OutPortal
-            node={sharedRoomContext.vonagePortalNode}
-            vonageSessionId={publicVonageSessionId}
-            disable={!enable}
-            getAccessToken={getAccessToken}
-            isBackstageRoom={false}
-        />
+        <>
+            <portals.OutPortal
+                node={sharedRoomContext.vonagePortalNode}
+                vonageSessionId={publicVonageSessionId}
+                disable={!enable}
+                getAccessToken={getAccessToken}
+                isBackstageRoom={false}
+            />
+            <AlertDialog
+                isOpen={completeGetAccessToken.current !== undefined}
+                onClose={() => {
+                    // Empty
+                }}
+                leastDestructiveRef={recordingAlert_leastDestructiveRef}
+            >
+                <AlertDialogOverlay />
+                <AlertDialogContent>
+                    <AlertDialogHeader>Video is being recorded</AlertDialogHeader>
+                    <AlertDialogBody>
+                        <VStack spacing={4} alignItems="flex-start">
+                            <Text>
+                                The video-chat you are about to join{" "}
+                                {eventIsFuture ? "will be recorded when the event starts" : "is being recorded"}.
+                            </Text>
+                            <Text>
+                                By clicking Join below you consent to being recorded and for the recording to be owned
+                                and managed by the organizers of this conference.
+                            </Text>
+                            <Text>For further information, please speak to your conference organizers.</Text>
+                        </VStack>
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <ButtonGroup spacing={2}>
+                            <Button
+                                ref={recordingAlert_leastDestructiveRef}
+                                onClick={() => {
+                                    completeGetAccessToken.current?.reject("Declined to be recorded");
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    completeGetAccessToken.current?.resolve();
+                                }}
+                                colorScheme="purple"
+                            >
+                                Join
+                            </Button>
+                        </ButtonGroup>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     ) : (
         <VStack spacing={2} p={4}>
             <Text>Please wait while the video-chat initializes...</Text>

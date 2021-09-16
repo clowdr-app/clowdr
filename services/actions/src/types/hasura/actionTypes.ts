@@ -85,12 +85,14 @@ type UploaderSendSubmissionRequestResult = {
 
 type JoinEventVonageSessionOutput = {
     accessToken?: Maybe<string>;
+    isRecorded?: Maybe<boolean>;
 };
 
 type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<string>;
     accessToken?: Maybe<string>;
     message?: Maybe<string>;
+    isRecorded?: Maybe<boolean>;
 };
 
 type ProfilePhotoURLResponse = {

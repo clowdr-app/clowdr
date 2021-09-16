@@ -16,8 +16,10 @@ export function VonageRoomControlBar({
     joining,
     joinRoomButtonText = "Join Room",
     joiningRoomButtonText = "Waiting to be admitted",
-    requireMicrophone,
+    requireMicrophoneOrCamera,
     onPermissionsProblem,
+    isRecordingActive,
+    isBackstage,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
@@ -25,7 +27,9 @@ export function VonageRoomControlBar({
     joining: boolean;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
-    requireMicrophone: boolean;
+    requireMicrophoneOrCamera: boolean;
+    isRecordingActive: boolean;
+    isBackstage: boolean;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
@@ -338,7 +342,7 @@ export function VonageRoomControlBar({
                 <Button
                     isLoading={isOpening}
                     leftIcon={<SettingsIcon />}
-                    onClick={() => onOpen(true, !joining || !requireMicrophone)}
+                    onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
                     isDisabled={joining}
                     colorScheme="blue"
                 >
@@ -393,6 +397,15 @@ export function VonageRoomControlBar({
                         <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
                     </Tag>
                 )}
+                {vonage.state.type === StateType.Connected && !isBackstage ? (
+                    <Tag size="md" variant="outline" colorScheme="blue">
+                        {isRecordingActive ? (
+                            <TagLabel overflow="visible">Recording</TagLabel>
+                        ) : (
+                            <TagLabel overflow="visible">Not recording</TagLabel>
+                        )}
+                    </Tag>
+                ) : undefined}
                 {vonage.state.type === StateType.Connected ? (
                     <Button colorScheme="purple" onClick={onLeaveRoom}>
                         Leave Room
@@ -400,7 +413,11 @@ export function VonageRoomControlBar({
                 ) : (
                     <Tooltip
                         label={
-                            requireMicrophone && !state.microphoneIntendedEnabled ? "Microphone required" : undefined
+                            requireMicrophoneOrCamera &&
+                            !state.microphoneIntendedEnabled &&
+                            !state.cameraIntendedEnabled
+                                ? "Microphone or camera required"
+                                : undefined
                         }
                     >
                         <Box w="100%">
@@ -413,7 +430,12 @@ export function VonageRoomControlBar({
                                 variant="glowing"
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
-                                isDisabled={!joining && requireMicrophone && !state.microphoneIntendedEnabled}
+                                isDisabled={
+                                    !joining &&
+                                    requireMicrophoneOrCamera &&
+                                    !state.microphoneIntendedEnabled &&
+                                    !state.cameraIntendedEnabled
+                                }
                                 whiteSpace="normal"
                                 overflow="hidden"
                                 display="inline-flex"

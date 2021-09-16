@@ -723,7 +723,14 @@ function RoomInner({
                                     defaultVideoBackendName={defaultVideoBackend}
                                     roomDetails={roomDetails}
                                     enable={showDefaultVideoChatRoom}
-                                    eventId={currentRoomEvent?.id}
+                                    eventId={
+                                        currentRoomEvent?.id ??
+                                        (nextRoomEvent &&
+                                        nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
+                                            ? nextRoomEvent.id
+                                            : undefined)
+                                    }
+                                    eventIsFuture={!currentRoomEvent}
                                 />
                             </Box>
                             {contentEl}

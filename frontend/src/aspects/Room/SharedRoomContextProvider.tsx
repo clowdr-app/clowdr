@@ -53,7 +53,7 @@ export function SharedRoomContextProvider({
                     isBackstageRoom={false}
                     raiseHandPrejoinEventId={null}
                     isRaiseHandWaiting={undefined}
-                    requireMicrophone={false}
+                    requireMicrophoneOrCamera={false}
                     completeJoinRef={undefined}
                     onPermissionsProblem={onPermissionsProblem}
                 />

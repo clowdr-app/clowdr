@@ -192,12 +192,14 @@ type UploaderSendSubmissionRequestResult {
 
 type JoinEventVonageSessionOutput {
   accessToken : String
+  isRecorded : Boolean
 }
 
 type JoinRoomVonageSessionOutput {
   sessionId : String
   accessToken : String
   message : String
+  isRecorded : Boolean
 }
 
 type ProfilePhotoURLResponse {

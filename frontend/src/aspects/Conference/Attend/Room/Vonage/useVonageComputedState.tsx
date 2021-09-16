@@ -12,6 +12,8 @@ export function useVonageComputedState({
     vonageSessionId,
     overrideJoining,
     onRoomJoined,
+    onRecordingStarted,
+    onRecordingStopped,
     beginJoin,
     cancelJoin,
     completeJoinRef,
@@ -22,6 +24,8 @@ export function useVonageComputedState({
     vonageSessionId: string;
     overrideJoining?: boolean;
     onRoomJoined?: (_joined: boolean) => void;
+    onRecordingStarted?: () => void;
+    onRecordingStopped?: () => void;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
@@ -127,11 +131,13 @@ export function useVonageComputedState({
                     }
                 }
             } catch (e) {
-                console.error("Failed to join room", e);
-                toast({
-                    status: "error",
-                    description: "Cannot connect to room",
-                });
+                if (e !== "Declined to be recorded") {
+                    console.error("Failed to join room", e);
+                    toast({
+                        status: "error",
+                        description: "Cannot connect to room",
+                    });
+                }
             } finally {
                 setJoining(false);
             }
@@ -236,6 +242,12 @@ export function useVonageComputedState({
                             isClosable: true,
                             position: "top",
                         });
+                    },
+                    () => {
+                        onRecordingStarted?.();
+                    },
+                    () => {
+                        onRecordingStopped?.();
                     }
                 );
             } catch (e) {

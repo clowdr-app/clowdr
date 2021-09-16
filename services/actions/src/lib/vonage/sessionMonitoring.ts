@@ -1,7 +1,9 @@
+import { gql } from "@apollo/client/core";
 import { assertType } from "typescript-is";
 import {
     AddVonageRoomRecordingToUserListDocument,
     OngoingArchivableVideoRoomEventsDocument,
+    OngoingArchivableVideoRoomEventsWithRoomInfoDocument,
     OngoingBroadcastableVideoRoomEventsDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
@@ -9,11 +11,13 @@ import { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../typ
 import { callWithRetry } from "../../utils";
 import { getRoomByVonageSessionId } from "../room";
 import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";
+import Vonage from "./vonageClient";
 import {
     addEventParticipantStream,
     removeEventParticipantStream,
     startEventBroadcast,
     startRoomVonageArchiving,
+    stopRoomVonageArchiving,
 } from "./vonageTools";
 
 export async function startBroadcastIfOngoingEvent(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
@@ -130,6 +134,86 @@ export async function startArchiveIfOngoingEvent(payload: SessionMonitoringWebho
     }
 
     return true;
+}
+
+gql`
+    query OngoingArchivableVideoRoomEventsWithRoomInfo($time: timestamptz!, $sessionId: String!) {
+        schedule_Event(
+            where: {
+                room: { publicVonageSessionId: { _eq: $sessionId } }
+                intendedRoomModeName: { _eq: VIDEO_CHAT }
+                endTime: { _gt: $time }
+                startTime: { _lte: $time }
+            }
+        ) {
+            id
+            roomId
+        }
+        room_Room(where: { publicVonageSessionId: { _eq: $sessionId } }) {
+            id
+        }
+    }
+`;
+
+export async function stopArchiveIfNoOngoingEvent(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
+    try {
+        const streams = await callWithRetry(() => Vonage.listStreams(payload.sessionId));
+        if (!streams) {
+            console.error(
+                "Error: Unable to retrieve streams for Vonage session. Skipping stop archive check.",
+                payload.sessionId
+            );
+            return false;
+        }
+
+        if (streams.length > 0) {
+            return true;
+        }
+
+        const ongoingMatchingEvents = await apolloClient.query({
+            query: OngoingArchivableVideoRoomEventsWithRoomInfoDocument,
+            variables: {
+                sessionId: payload.sessionId,
+                time: new Date().toISOString(),
+            },
+        });
+
+        if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
+            console.error(
+                "Error while retrieving ongoing archivable events related to a Vonage session.",
+                payload.sessionId,
+                ongoingMatchingEvents.error,
+                ongoingMatchingEvents.errors
+            );
+            return false;
+        }
+
+        if (ongoingMatchingEvents.data.schedule_Event.length === 0) {
+            if (ongoingMatchingEvents.data.room_Room.length === 1) {
+                console.log(
+                    "No ongoing archivable events connected to this session. Stopping archiving.",
+                    payload.sessionId
+                );
+                await stopRoomVonageArchiving(ongoingMatchingEvents.data.room_Room[0].id, undefined);
+            } else {
+                console.error(
+                    "Error: Found multiple rooms for the same public Vonage session id! Can't stop archiving.",
+                    payload.sessionId
+                );
+                return false;
+            }
+        } else {
+            console.log(
+                "Ongoing archivable events connected to this session. Not stopping archiving.",
+                payload.sessionId
+            );
+        }
+
+        return true;
+    } catch (e) {
+        console.error("Error handling stopArchiveIfNoOngoingEvent", payload.sessionId, e);
+        return false;
+    }
 }
 
 export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {

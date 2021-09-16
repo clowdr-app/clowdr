@@ -1326,7 +1326,35 @@ function EditableScheduleTable(): JSX.Element {
                                     : "",
 
                                 "Tag Ids": event.eventTags.map((eventTag) => eventTag.tagId),
-                            }))
+                            })),
+                            {
+                                columns: [
+                                    "Conference Id",
+                                    "Event Id",
+                                    "Externally Sourced Data Id",
+                                    "Start",
+                                    "End",
+                                    "Duration (seconds)",
+                                    "Mode",
+                                    "Room Id",
+                                    "Room Name",
+                                    "Name",
+                                    "Content Id",
+                                    "Content Title",
+                                    "Exhibition Id",
+                                    "Exhibition Title",
+                                    "Shuffle Period Id",
+                                    "People",
+                                    "Registered People",
+                                    "Participate Link",
+                                    "Info link",
+                                    "Room Link",
+                                    "Content Link",
+                                    "Exhibition Link",
+                                    "Shuffle Link",
+                                    "Tag Ids",
+                                ],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });

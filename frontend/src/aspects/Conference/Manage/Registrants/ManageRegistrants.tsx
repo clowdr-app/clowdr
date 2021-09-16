@@ -805,7 +805,37 @@ export default function ManageRegistrants(): JSX.Element {
                                 }
 
                                 return result;
-                            })
+                            }),
+                            {
+                                columns: [
+                                    "Conference Id",
+                                    "Registrant Id",
+                                    "User Id",
+                                    "Name",
+                                    "Email",
+                                    "Invite code",
+                                    "Invite sent",
+                                    "Invite accepted",
+                                    "Group Ids",
+                                    "Group Names",
+                                    "Created At",
+                                    "Updated At",
+                                    "Profile Data Exportable",
+                                    "Has Been Edited",
+                                    "Badges",
+                                    "Affiliation",
+                                    "Country",
+                                    "Timezone UTC Offset",
+                                    "Bio (Markdown)",
+                                    "Website",
+                                    "GitHub",
+                                    "Twitter",
+                                    "Affiliation URL",
+                                    "Pronouns",
+                                    "Photo URL - 50px by 50px",
+                                    "Photo URL - 350px by 350px",
+                                ],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });

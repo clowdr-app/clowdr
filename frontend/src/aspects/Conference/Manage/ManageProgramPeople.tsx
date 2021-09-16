@@ -751,7 +751,19 @@ export default function ManageProgramPeople(): JSX.Element {
                                 Affiliation: person.affiliation ?? "",
                                 Email: person.email ?? "",
                                 AccessToken: person.accessToken ?? "",
-                            }))
+                            })),
+                            {
+                                columns: [
+                                    "Conference Id",
+                                    "Person Id",
+                                    "Registrant Id",
+                                    "Externally Sourced Data Id",
+                                    "Name",
+                                    "Affiliation",
+                                    "Email",
+                                    "AccessToken",
+                                ],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });

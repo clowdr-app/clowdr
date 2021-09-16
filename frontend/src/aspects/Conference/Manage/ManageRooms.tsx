@@ -1171,7 +1171,28 @@ function EditableRoomsCRUDTable() {
                                         ? "Yes"
                                         : "No"
                                     : "",
-                            }))
+                            })),
+                            {
+                                columns: [
+                                    "Conference Id",
+                                    "Room Id",
+                                    "Name",
+                                    "Is program room?",
+                                    "Priority",
+                                    "Privacy",
+                                    "Externally Sourced Data Id",
+                                    "Associated Content Id",
+                                    "Associated Event Id",
+                                    "Created At",
+                                    "Current Mode Name",
+                                    "Capacity",
+                                    "Chat - Id",
+                                    "Chat - Enable Auto Pin",
+                                    "Chat - Enable Mandatory Pin",
+                                    "Chat - Enable Auto Subscribe",
+                                    "Chat - Enable Mandatory Subscribe",
+                                ],
+                            }
                         );
 
                         const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });

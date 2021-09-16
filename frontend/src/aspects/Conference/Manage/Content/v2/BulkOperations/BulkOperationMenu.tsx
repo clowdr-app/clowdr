@@ -27,7 +27,7 @@ import { CombineVideosModal } from "./CombineVideosModal";
 import { LinkUnlinkPeopleModal } from "./LinkUnlinkPeopleModal";
 import { RemoveElementsModal } from "./RemoveElementsModal";
 import { SelectElementsModal } from "./SelectElementsModal";
-// import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
+import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
 import { UpdateExhibitionDescriptiveItemsModal } from "./UpdateExhibitionDescriptiveItemsModal";
 import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
 
@@ -92,19 +92,19 @@ export function BulkOperationMenu({
                 });
             },
         },
-        // {
-        //     label: "Synchronise uploaders from people",
-        //     value: "SYNCHRONISE_UPLOADERS",
-        //     operation: (items) => {
-        //         setActiveOperation({
-        //             operation: "SYNCHRONISE_UPLOADERS",
-        //             items: items,
-        //             step: "SELECT",
-        //             elementsByItem: [],
-        //             restrictToTypes: null,
-        //         });
-        //     },
-        // },
+        {
+            label: "Synchronise uploaders from people",
+            value: "SYNCHRONISE_UPLOADERS",
+            operation: (items) => {
+                setActiveOperation({
+                    operation: "SYNCHRONISE_UPLOADERS",
+                    items: items,
+                    step: "SELECT",
+                    elementsByItem: [],
+                    restrictToTypes: null,
+                });
+            },
+        },
         {
             label: "Update uploads remaining",
             value: "UPDATE_UPLOADS_REMAINING",
@@ -401,13 +401,13 @@ export function BulkOperationMenu({
                 }}
                 elementsByItem={activeOperation?.elementsByItem ?? []}
             />
-            {/* <SynchroniseUploadersModal
+            <SynchroniseUploadersModal
                 isOpen={activeOperation?.operation === "SYNCHRONISE_UPLOADERS" && activeOperation?.step === "ACT"}
                 onClose={() => {
                     setActiveOperation(null);
                 }}
                 elementsByItem={activeOperation?.elementsByItem ?? []}
-            /> */}
+            />
             <UpdateUploadsRemainingModal
                 isOpen={activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" && activeOperation?.step === "ACT"}
                 onClose={() => {

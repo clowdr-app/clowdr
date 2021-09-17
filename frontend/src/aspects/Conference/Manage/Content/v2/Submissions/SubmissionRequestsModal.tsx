@@ -188,7 +188,7 @@ export function SendSubmissionRequestsModalInner({
     >([
         { label: "Author", value: "AUTHOR" },
         { label: "Presenter", value: "PRESENTER" },
-        { label: "Discussant", value: "Discussant" },
+        { label: "Discussant", value: "DISCUSSANT" },
     ]);
     const { itemEls, personIds } = useMemo(() => {
         const itemEls: JSX.Element[] = [];

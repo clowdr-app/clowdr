@@ -81,7 +81,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
 
 gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageContent_ProgramPerson
         }
     }
@@ -143,10 +143,10 @@ function AddItemPersonBody({
 
     const sortedPeople = useMemo(
         () =>
-            peopleResponse.data?.collection_ProgramPerson
+            peopleResponse.data?.collection_ProgramPersonWithAccessToken
                 .filter((person) => !existingPeopleIds.includes(person.id))
-                .sort((x, y) => x.name.localeCompare(y.name)),
-        [existingPeopleIds, peopleResponse.data?.collection_ProgramPerson]
+                .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b))),
+        [existingPeopleIds, peopleResponse.data?.collection_ProgramPersonWithAccessToken]
     );
 
     const toast = useToast();
@@ -297,7 +297,7 @@ function ItemPersonsList({
                             ? 1
                             : x.roleName.toUpperCase().localeCompare(y.roleName.toUpperCase()),
                     (x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b),
-                    (x, y) => x.person.name.localeCompare(y.person.name),
+                    (x, y) => maybeCompare(x.person?.name, y.person?.name, (a, b) => a.localeCompare(b)),
                 ],
                 itemPeople
             ),
@@ -499,7 +499,7 @@ function ItemPersonsList({
                                 </ButtonGroup>
                                 <Tooltip
                                     label={
-                                        itemProgramPerson.person.registrantId
+                                        itemProgramPerson.person?.registrantId
                                             ? "Person is linked to registrant."
                                             : "Person is not linked to registrant."
                                     }
@@ -507,11 +507,11 @@ function ItemPersonsList({
                                     <FAIcon
                                         iconStyle="s"
                                         icon={
-                                            itemProgramPerson.person.registrantId
+                                            itemProgramPerson.person?.registrantId
                                                 ? "check-circle"
                                                 : "exclamation-triangle"
                                         }
-                                        color={itemProgramPerson.person.registrantId ? "purple.400" : "yellow.400"}
+                                        color={itemProgramPerson.person?.registrantId ? "purple.400" : "yellow.400"}
                                     />
                                 </Tooltip>
                                 <Flex
@@ -520,10 +520,10 @@ function ItemPersonsList({
                                     justifyContent="flex-start"
                                     alignItems="flex-start"
                                 >
-                                    <chakra.span mx={2}>{itemProgramPerson.person.name}</chakra.span>
+                                    <chakra.span mx={2}>{itemProgramPerson.person?.name}</chakra.span>
                                     <chakra.span ml={["0", "0", "auto"]} mr={2}>
                                         &lt;
-                                        {itemProgramPerson.person.email?.length
+                                        {itemProgramPerson.person?.email?.length
                                             ? itemProgramPerson.person.email
                                             : "No email"}
                                         &gt;

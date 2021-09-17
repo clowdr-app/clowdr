@@ -215,9 +215,18 @@ async function initSGMail(): Promise<
             const response = await apolloClient.query({
                 query: GetSendGridConfigDocument,
             });
-            assert(response.data.apiKey, "SendGrid API not configured");
-            assert(response.data.senderEmail, "SendGrid Sender not configured");
-            assert(response.data.replyTo, "SendGrid Reply-To not configured");
+            if (!response.data.apiKey) {
+                console.error("Unable to initialise SendGrid email. SendGrid API Key not configured");
+                return false;
+            }
+            if (!response.data.senderEmail) {
+                console.error("Unable to initialise SendGrid email. SendGrid Sender not configured");
+                return false;
+            }
+            if (!response.data.replyTo) {
+                console.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
+                return false;
+            }
 
             sgMail.setApiKey(response.data.apiKey.value);
             sgMailInitialised = {

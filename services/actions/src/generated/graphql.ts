@@ -6481,6 +6481,7 @@ export type Collection_ProgramPerson = {
   /** An object relationship */
   registrant?: Maybe<Registrant_Registrant>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount: Scalars['Int'];
 };
 
 
@@ -6715,6 +6716,7 @@ export type Collection_ProgramPersonWithAccessToken = {
   /** An object relationship */
   registrant?: Maybe<Registrant_Registrant>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 
@@ -6747,9 +6749,17 @@ export type Collection_ProgramPersonWithAccessToken_Aggregate = {
 /** aggregate fields of "collection.ProgramPersonWithAccessToken" */
 export type Collection_ProgramPersonWithAccessToken_Aggregate_Fields = {
   __typename?: 'collection_ProgramPersonWithAccessToken_aggregate_fields';
+  avg?: Maybe<Collection_ProgramPersonWithAccessToken_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Collection_ProgramPersonWithAccessToken_Max_Fields>;
   min?: Maybe<Collection_ProgramPersonWithAccessToken_Min_Fields>;
+  stddev?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Fields>;
+  stddev_pop?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Samp_Fields>;
+  sum?: Maybe<Collection_ProgramPersonWithAccessToken_Sum_Fields>;
+  var_pop?: Maybe<Collection_ProgramPersonWithAccessToken_Var_Pop_Fields>;
+  var_samp?: Maybe<Collection_ProgramPersonWithAccessToken_Var_Samp_Fields>;
+  variance?: Maybe<Collection_ProgramPersonWithAccessToken_Variance_Fields>;
 };
 
 
@@ -6757,6 +6767,12 @@ export type Collection_ProgramPersonWithAccessToken_Aggregate_Fields = {
 export type Collection_ProgramPersonWithAccessToken_Aggregate_FieldsCountArgs = {
   columns?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
   distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Collection_ProgramPersonWithAccessToken_Avg_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_avg_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
 };
 
 /** Boolean expression to filter rows from the table "collection.ProgramPersonWithAccessToken". All fields are combined with a logical 'AND'. */
@@ -6775,6 +6791,12 @@ export type Collection_ProgramPersonWithAccessToken_Bool_Exp = {
   originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   registrantId?: Maybe<Uuid_Comparison_Exp>;
+  submissionRequestsSentCount?: Maybe<Int_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Inc_Input = {
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** input type for inserting data into table "collection.ProgramPersonWithAccessToken" */
@@ -6790,6 +6812,7 @@ export type Collection_ProgramPersonWithAccessToken_Insert_Input = {
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate max on columns */
@@ -6803,6 +6826,7 @@ export type Collection_ProgramPersonWithAccessToken_Max_Fields = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate min on columns */
@@ -6816,6 +6840,7 @@ export type Collection_ProgramPersonWithAccessToken_Min_Fields = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** response of any mutation on the table "collection.ProgramPersonWithAccessToken" */
@@ -6825,6 +6850,11 @@ export type Collection_ProgramPersonWithAccessToken_Mutation_Response = {
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
   returning: Array<Collection_ProgramPersonWithAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Obj_Rel_Insert_Input = {
+  data: Collection_ProgramPersonWithAccessToken_Insert_Input;
 };
 
 /** Ordering options when selecting data from "collection.ProgramPersonWithAccessToken". */
@@ -6840,6 +6870,7 @@ export type Collection_ProgramPersonWithAccessToken_Order_By = {
   originatingDataId?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;
   registrantId?: Maybe<Order_By>;
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** select columns of table "collection.ProgramPersonWithAccessToken" */
@@ -6859,7 +6890,9 @@ export enum Collection_ProgramPersonWithAccessToken_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  RegistrantId = 'registrantId'
+  RegistrantId = 'registrantId',
+  /** column name */
+  SubmissionRequestsSentCount = 'submissionRequestsSentCount'
 }
 
 /** input type for updating data in table "collection.ProgramPersonWithAccessToken" */
@@ -6872,6 +6905,49 @@ export type Collection_ProgramPersonWithAccessToken_Set_Input = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_stddev_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Pop_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_stddev_pop_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Samp_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_stddev_samp_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Collection_ProgramPersonWithAccessToken_Sum_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_sum_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate var_pop on columns */
+export type Collection_ProgramPersonWithAccessToken_Var_Pop_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_var_pop_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Collection_ProgramPersonWithAccessToken_Var_Samp_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_var_samp_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Collection_ProgramPersonWithAccessToken_Variance_Fields = {
+  __typename?: 'collection_ProgramPersonWithAccessToken_variance_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
 };
 
 /** aggregated selection of "collection.ProgramPerson" */
@@ -6884,9 +6960,17 @@ export type Collection_ProgramPerson_Aggregate = {
 /** aggregate fields of "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate_Fields = {
   __typename?: 'collection_ProgramPerson_aggregate_fields';
+  avg?: Maybe<Collection_ProgramPerson_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Collection_ProgramPerson_Max_Fields>;
   min?: Maybe<Collection_ProgramPerson_Min_Fields>;
+  stddev?: Maybe<Collection_ProgramPerson_Stddev_Fields>;
+  stddev_pop?: Maybe<Collection_ProgramPerson_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Collection_ProgramPerson_Stddev_Samp_Fields>;
+  sum?: Maybe<Collection_ProgramPerson_Sum_Fields>;
+  var_pop?: Maybe<Collection_ProgramPerson_Var_Pop_Fields>;
+  var_samp?: Maybe<Collection_ProgramPerson_Var_Samp_Fields>;
+  variance?: Maybe<Collection_ProgramPerson_Variance_Fields>;
 };
 
 
@@ -6898,9 +6982,17 @@ export type Collection_ProgramPerson_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate_Order_By = {
+  avg?: Maybe<Collection_ProgramPerson_Avg_Order_By>;
   count?: Maybe<Order_By>;
   max?: Maybe<Collection_ProgramPerson_Max_Order_By>;
   min?: Maybe<Collection_ProgramPerson_Min_Order_By>;
+  stddev?: Maybe<Collection_ProgramPerson_Stddev_Order_By>;
+  stddev_pop?: Maybe<Collection_ProgramPerson_Stddev_Pop_Order_By>;
+  stddev_samp?: Maybe<Collection_ProgramPerson_Stddev_Samp_Order_By>;
+  sum?: Maybe<Collection_ProgramPerson_Sum_Order_By>;
+  var_pop?: Maybe<Collection_ProgramPerson_Var_Pop_Order_By>;
+  var_samp?: Maybe<Collection_ProgramPerson_Var_Samp_Order_By>;
+  variance?: Maybe<Collection_ProgramPerson_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "collection.ProgramPerson" */
@@ -6908,6 +7000,17 @@ export type Collection_ProgramPerson_Arr_Rel_Insert_Input = {
   data: Array<Collection_ProgramPerson_Insert_Input>;
   /** on conflict condition */
   on_conflict?: Maybe<Collection_ProgramPerson_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Collection_ProgramPerson_Avg_Fields = {
+  __typename?: 'collection_ProgramPerson_avg_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Avg_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "collection.ProgramPerson". All fields are combined with a logical 'AND'. */
@@ -6928,6 +7031,7 @@ export type Collection_ProgramPerson_Bool_Exp = {
   originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   registrantId?: Maybe<Uuid_Comparison_Exp>;
+  submissionRequestsSentCount?: Maybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "collection.ProgramPerson" */
@@ -6939,6 +7043,11 @@ export enum Collection_ProgramPerson_Constraint {
   /** unique or primary key constraint */
   CollectionProgramPersonAccessToken = 'collection_ProgramPerson_accessToken'
 }
+
+/** input type for incrementing numeric columns in table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Inc_Input = {
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
 
 /** input type for inserting data into table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Insert_Input = {
@@ -6955,6 +7064,7 @@ export type Collection_ProgramPerson_Insert_Input = {
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** aggregate max on columns */
@@ -6968,6 +7078,7 @@ export type Collection_ProgramPerson_Max_Fields = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** order by max() on columns of table "collection.ProgramPerson" */
@@ -6980,6 +7091,7 @@ export type Collection_ProgramPerson_Max_Order_By = {
   name?: Maybe<Order_By>;
   originatingDataId?: Maybe<Order_By>;
   registrantId?: Maybe<Order_By>;
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -6993,6 +7105,7 @@ export type Collection_ProgramPerson_Min_Fields = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
 };
 
 /** order by min() on columns of table "collection.ProgramPerson" */
@@ -7005,6 +7118,7 @@ export type Collection_ProgramPerson_Min_Order_By = {
   name?: Maybe<Order_By>;
   originatingDataId?: Maybe<Order_By>;
   registrantId?: Maybe<Order_By>;
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "collection.ProgramPerson" */
@@ -7045,6 +7159,7 @@ export type Collection_ProgramPerson_Order_By = {
   originatingDataId?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;
   registrantId?: Maybe<Order_By>;
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: collection_ProgramPerson */
@@ -7069,7 +7184,9 @@ export enum Collection_ProgramPerson_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  RegistrantId = 'registrantId'
+  RegistrantId = 'registrantId',
+  /** column name */
+  SubmissionRequestsSentCount = 'submissionRequestsSentCount'
 }
 
 /** input type for updating data in table "collection.ProgramPerson" */
@@ -7082,6 +7199,51 @@ export type Collection_ProgramPerson_Set_Input = {
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   registrantId?: Maybe<Scalars['uuid']>;
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Collection_ProgramPerson_Stddev_Fields = {
+  __typename?: 'collection_ProgramPerson_stddev_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Collection_ProgramPerson_Stddev_Pop_Fields = {
+  __typename?: 'collection_ProgramPerson_stddev_pop_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Pop_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Collection_ProgramPerson_Stddev_Samp_Fields = {
+  __typename?: 'collection_ProgramPerson_stddev_samp_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Samp_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Collection_ProgramPerson_Sum_Fields = {
+  __typename?: 'collection_ProgramPerson_sum_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Sum_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** update columns of table "collection.ProgramPerson" */
@@ -7101,8 +7263,43 @@ export enum Collection_ProgramPerson_Update_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
-  RegistrantId = 'registrantId'
+  RegistrantId = 'registrantId',
+  /** column name */
+  SubmissionRequestsSentCount = 'submissionRequestsSentCount'
 }
+
+/** aggregate var_pop on columns */
+export type Collection_ProgramPerson_Var_Pop_Fields = {
+  __typename?: 'collection_ProgramPerson_var_pop_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Var_Pop_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Collection_ProgramPerson_Var_Samp_Fields = {
+  __typename?: 'collection_ProgramPerson_var_samp_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Var_Samp_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Collection_ProgramPerson_Variance_Fields = {
+  __typename?: 'collection_ProgramPerson_variance_fields';
+  submissionRequestsSentCount?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Variance_Order_By = {
+  submissionRequestsSentCount?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "collection.Tag" */
 export type Collection_Tag = {
@@ -9290,6 +9487,8 @@ export type Content_Element = {
   conferenceId: Scalars['uuid'];
   createdAt: Scalars['timestamptz'];
   data: Scalars['jsonb'];
+  /** A computed field, executes function "content.elementHasBeenSubmitted" */
+  hasBeenSubmitted?: Maybe<Scalars['Boolean']>;
   id: Scalars['uuid'];
   isHidden: Scalars['Boolean'];
   /** An object relationship */
@@ -10470,6 +10669,7 @@ export type Content_Element_Bool_Exp = {
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   data?: Maybe<Jsonb_Comparison_Exp>;
+  hasBeenSubmitted?: Maybe<Boolean_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   isHidden?: Maybe<Boolean_Comparison_Exp>;
   item?: Maybe<Content_Item_Bool_Exp>;
@@ -10630,6 +10830,7 @@ export type Content_Element_Order_By = {
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   data?: Maybe<Order_By>;
+  hasBeenSubmitted?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   isHidden?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
@@ -10834,6 +11035,8 @@ export type Content_Item = {
   events: Array<Schedule_Event>;
   /** An aggregate relationship */
   events_aggregate: Schedule_Event_Aggregate;
+  /** A computed field, executes function "content.itemHasUnsubmittedElements" */
+  hasUnsubmittedElements?: Maybe<Scalars['Boolean']>;
   id: Scalars['uuid'];
   /** An array relationship */
   itemExhibitions: Array<Content_ItemExhibition>;
@@ -11567,6 +11770,8 @@ export type Content_ItemProgramPerson = {
   /** An object relationship */
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
+  /** A computed field, executes function "content.itemProgramPerson_HasSubmissionRequestBeenSent" */
+  hasSubmissionRequestBeenSent?: Maybe<Scalars['Boolean']>;
   id: Scalars['uuid'];
   /** An object relationship */
   item: Content_Item;
@@ -11574,6 +11779,8 @@ export type Content_ItemProgramPerson = {
   /** An object relationship */
   person: Collection_ProgramPerson;
   personId: Scalars['uuid'];
+  /** An object relationship */
+  personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken>;
   priority?: Maybe<Scalars['Int']>;
   roleName: Scalars['String'];
 };
@@ -11922,11 +12129,13 @@ export type Content_ItemProgramPerson_Bool_Exp = {
   _or?: Maybe<Array<Content_ItemProgramPerson_Bool_Exp>>;
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  hasSubmissionRequestBeenSent?: Maybe<Boolean_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   item?: Maybe<Content_Item_Bool_Exp>;
   itemId?: Maybe<Uuid_Comparison_Exp>;
   person?: Maybe<Collection_ProgramPerson_Bool_Exp>;
   personId?: Maybe<Uuid_Comparison_Exp>;
+  personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
   priority?: Maybe<Int_Comparison_Exp>;
   roleName?: Maybe<String_Comparison_Exp>;
 };
@@ -11953,6 +12162,7 @@ export type Content_ItemProgramPerson_Insert_Input = {
   itemId?: Maybe<Scalars['uuid']>;
   person?: Maybe<Collection_ProgramPerson_Obj_Rel_Insert_Input>;
   personId?: Maybe<Scalars['uuid']>;
+  personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Obj_Rel_Insert_Input>;
   priority?: Maybe<Scalars['Int']>;
   roleName?: Maybe<Scalars['String']>;
 };
@@ -12019,11 +12229,13 @@ export type Content_ItemProgramPerson_On_Conflict = {
 export type Content_ItemProgramPerson_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
+  hasSubmissionRequestBeenSent?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
   person?: Maybe<Collection_ProgramPerson_Order_By>;
   personId?: Maybe<Order_By>;
+  personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Order_By>;
   priority?: Maybe<Order_By>;
   roleName?: Maybe<Order_By>;
 };
@@ -12524,6 +12736,7 @@ export type Content_Item_Bool_Exp = {
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   elements?: Maybe<Content_Element_Bool_Exp>;
   events?: Maybe<Schedule_Event_Bool_Exp>;
+  hasUnsubmittedElements?: Maybe<Boolean_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   itemExhibitions?: Maybe<Content_ItemExhibition_Bool_Exp>;
   itemPeople?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
@@ -12655,6 +12868,7 @@ export type Content_Item_Order_By = {
   createdAt?: Maybe<Order_By>;
   elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+  hasUnsubmittedElements?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
   itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -14517,11 +14731,14 @@ export type Job_Queues_SubmissionRequestEmailJob = {
   created_at: Scalars['timestamptz'];
   emailTemplate?: Maybe<Scalars['jsonb']>;
   id: Scalars['uuid'];
+  /** An object relationship */
+  person?: Maybe<Collection_ProgramPerson>;
+  personId?: Maybe<Scalars['uuid']>;
   processed: Scalars['Boolean'];
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
-  uploader: Content_Uploader;
-  uploaderId: Scalars['uuid'];
+  uploader?: Maybe<Content_Uploader>;
+  uploaderId?: Maybe<Scalars['uuid']>;
 };
 
 
@@ -14565,6 +14782,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   emailTemplate?: Maybe<Jsonb_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  person?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+  personId?: Maybe<Uuid_Comparison_Exp>;
   processed?: Maybe<Boolean_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   uploader?: Maybe<Content_Uploader_Bool_Exp>;
@@ -14597,6 +14816,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
   emailTemplate?: Maybe<Scalars['jsonb']>;
   id?: Maybe<Scalars['uuid']>;
+  person?: Maybe<Collection_ProgramPerson_Obj_Rel_Insert_Input>;
+  personId?: Maybe<Scalars['uuid']>;
   processed?: Maybe<Scalars['Boolean']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   uploader?: Maybe<Content_Uploader_Obj_Rel_Insert_Input>;
@@ -14608,6 +14829,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Max_Fields = {
   __typename?: 'job_queues_SubmissionRequestEmailJob_max_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
+  personId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   uploaderId?: Maybe<Scalars['uuid']>;
 };
@@ -14617,6 +14839,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Min_Fields = {
   __typename?: 'job_queues_SubmissionRequestEmailJob_min_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
+  personId?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   uploaderId?: Maybe<Scalars['uuid']>;
 };
@@ -14642,6 +14865,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
   created_at?: Maybe<Order_By>;
   emailTemplate?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  person?: Maybe<Collection_ProgramPerson_Order_By>;
+  personId?: Maybe<Order_By>;
   processed?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
   uploader?: Maybe<Content_Uploader_Order_By>;
@@ -14667,6 +14892,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  PersonId = 'personId',
+  /** column name */
   Processed = 'processed',
   /** column name */
   UpdatedAt = 'updated_at',
@@ -14679,6 +14906,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
   emailTemplate?: Maybe<Scalars['jsonb']>;
   id?: Maybe<Scalars['uuid']>;
+  personId?: Maybe<Scalars['uuid']>;
   processed?: Maybe<Scalars['Boolean']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   uploaderId?: Maybe<Scalars['uuid']>;
@@ -14692,6 +14920,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
   EmailTemplate = 'emailTemplate',
   /** column name */
   Id = 'id',
+  /** column name */
+  PersonId = 'personId',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -18921,6 +19151,7 @@ export type Mutation_RootUpdate_Collection_Exhibition_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPersonArgs = {
+  _inc?: Maybe<Collection_ProgramPerson_Inc_Input>;
   _set?: Maybe<Collection_ProgramPerson_Set_Input>;
   where: Collection_ProgramPerson_Bool_Exp;
 };
@@ -18935,6 +19166,7 @@ export type Mutation_RootUpdate_Collection_ProgramPersonByAccessTokenArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPersonWithAccessTokenArgs = {
+  _inc?: Maybe<Collection_ProgramPersonWithAccessToken_Inc_Input>;
   _set?: Maybe<Collection_ProgramPersonWithAccessToken_Set_Input>;
   where: Collection_ProgramPersonWithAccessToken_Bool_Exp;
 };
@@ -18942,6 +19174,7 @@ export type Mutation_RootUpdate_Collection_ProgramPersonWithAccessTokenArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPerson_By_PkArgs = {
+  _inc?: Maybe<Collection_ProgramPerson_Inc_Input>;
   _set?: Maybe<Collection_ProgramPerson_Set_Input>;
   pk_columns: Collection_ProgramPerson_Pk_Columns_Input;
 };
@@ -37408,15 +37641,16 @@ export type UploaderPartsFragment = { __typename?: 'content_Uploader', id: any, 
 
 export type InsertSubmissionRequestEmailsMutationVariables = Exact<{
   uploaderIds: Array<Scalars['uuid']> | Scalars['uuid'];
+  personIds: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type InsertSubmissionRequestEmailsMutation = { __typename?: 'mutation_root', update_content_Uploader?: Maybe<{ __typename?: 'content_Uploader_mutation_response', affected_rows: number }> };
+export type InsertSubmissionRequestEmailsMutation = { __typename?: 'mutation_root', update_content_Uploader?: Maybe<{ __typename?: 'content_Uploader_mutation_response', affected_rows: number }>, update_collection_ProgramPerson?: Maybe<{ __typename?: 'collection_ProgramPerson_mutation_response', affected_rows: number }> };
 
 export type MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_SubmissionRequestEmailJob?: Maybe<{ __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response', returning: Array<{ __typename?: 'job_queues_SubmissionRequestEmailJob', id: any, emailTemplate?: Maybe<any>, uploader: { __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> } } }> }> };
+export type MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_SubmissionRequestEmailJob?: Maybe<{ __typename?: 'job_queues_SubmissionRequestEmailJob_mutation_response', returning: Array<{ __typename?: 'job_queues_SubmissionRequestEmailJob', id: any, emailTemplate?: Maybe<any>, uploader?: Maybe<{ __typename?: 'content_Uploader', id: any, email: string, emailsSentCount: number, name: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string }, element: { __typename?: 'content_Element', id: any, typeName: Content_ElementType_Enum, accessToken: string, name: string, uploadsRemaining?: Maybe<number>, isHidden: boolean, data: any, conference: { __typename?: 'conference_Conference', id: any, name: string }, item: { __typename?: 'content_Item', id: any, title: string }, permissionGrants: Array<{ __typename?: 'content_ElementPermissionGrant', id: any, permissionSetId: any, groupId?: Maybe<any>, entityId?: Maybe<any>, conferenceSlug: string }> } }>, person?: Maybe<{ __typename?: 'collection_ProgramPerson', id: any, name: string, email?: Maybe<string>, accessToken: string, conference: { __typename?: 'conference_Conference', id: any, name: string, shortName: string } }> }> }> };
 
 export type UnmarkSubmissionRequestEmailJobsMutationVariables = Exact<{
   ids: Array<Scalars['uuid']> | Scalars['uuid'];
@@ -37901,8 +38135,8 @@ export const SetShuffleRoomsEndedDocument = {"kind":"Document","definitions":[{"
 export const UploadableElementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UploadableElement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accessToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"accessToken"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accessToken"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UploadableElementFields"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"UPLOAD_CUTOFF_TIMESTAMP"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}},...UploadableElementFieldsFragmentDoc.definitions]} as unknown as DocumentNode<UploadableElementQuery, UploadableElementQueryVariables>;
 export const GetUploadersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUploaders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Uploader"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"elementId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}}]}}]}}]} as unknown as DocumentNode<GetUploadersQuery, GetUploadersQueryVariables>;
 export const SetUploadableElementUploadsRemainingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetUploadableElementUploadsRemaining"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadsRemaining"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_content_Element_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"uploadsRemaining"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadsRemaining"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SetUploadableElementUploadsRemainingMutation, SetUploadableElementUploadsRemainingMutationVariables>;
-export const InsertSubmissionRequestEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertSubmissionRequestEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploaderIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_content_Uploader"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploaderIds"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"emailsSentCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<InsertSubmissionRequestEmailsMutation, InsertSubmissionRequestEmailsMutationVariables>;
-export const MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnprocessedSubmissionRequestEmailJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_SubmissionRequestEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"emailTemplate"}},{"kind":"Field","name":{"kind":"Name","value":"uploader"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UploaderParts"}}]}}]}}]}}]}},...UploaderPartsFragmentDoc.definitions]} as unknown as DocumentNode<MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation, MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutationVariables>;
+export const InsertSubmissionRequestEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertSubmissionRequestEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploaderIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"personIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_content_Uploader"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploaderIds"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"emailsSentCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","name":{"kind":"Name","value":"update_collection_ProgramPerson"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"personIds"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"submissionRequestsSentCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<InsertSubmissionRequestEmailsMutation, InsertSubmissionRequestEmailsMutationVariables>;
+export const MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnprocessedSubmissionRequestEmailJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_SubmissionRequestEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"emailTemplate"}},{"kind":"Field","name":{"kind":"Name","value":"uploader"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UploaderParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"person"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"shortName"}}]}}]}}]}}]}}]}},...UploaderPartsFragmentDoc.definitions]} as unknown as DocumentNode<MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutation, MarkAndSelectUnprocessedSubmissionRequestEmailJobsMutationVariables>;
 export const UnmarkSubmissionRequestEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnmarkSubmissionRequestEmailJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_SubmissionRequestEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UnmarkSubmissionRequestEmailJobsMutation, UnmarkSubmissionRequestEmailJobsMutationVariables>;
 export const GetElementIdForVideoRenderJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetElementIdForVideoRenderJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VideoRenderJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"elementId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetElementIdForVideoRenderJobQuery, GetElementIdForVideoRenderJobQueryVariables>;
 export const SelectNewVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SelectNewVideoRenderJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VideoRenderJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"10"}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"NEW"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SelectNewVideoRenderJobsQuery, SelectNewVideoRenderJobsQueryVariables>;

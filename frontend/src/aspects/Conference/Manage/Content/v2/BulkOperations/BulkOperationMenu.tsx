@@ -23,7 +23,7 @@ import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermi
 import { AddElementsModal } from "./AddElementsModal";
 import { CombineVideosModal } from "./CombineVideosModal";
 import { SelectElementsModal } from "./SelectElementsModal";
-import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
+// import { SynchroniseUploadersModal } from "./SynchroniseUploadersModal";
 import { UpdateExhibitionDescriptiveItemsModal } from "./UpdateExhibitionDescriptiveItemsModal";
 import { UpdateLayoutModal } from "./UpdateLayoutModal";
 import { UpdateUploadsRemainingModal } from "./UpdateUploadsRemainingModal";
@@ -72,19 +72,19 @@ export function BulkOperationMenu({
                 });
             },
         },
-        {
-            label: "Synchronise uploaders",
-            value: "SYNCHRONISE_UPLOADERS",
-            operation: (items) => {
-                setActiveOperation({
-                    operation: "SYNCHRONISE_UPLOADERS",
-                    items: items,
-                    step: "SELECT",
-                    elementsByItem: [],
-                    restrictToTypes: null,
-                });
-            },
-        },
+        // {
+        //     label: "Synchronise uploaders",
+        //     value: "SYNCHRONISE_UPLOADERS",
+        //     operation: (items) => {
+        //         setActiveOperation({
+        //             operation: "SYNCHRONISE_UPLOADERS",
+        //             items: items,
+        //             step: "SELECT",
+        //             elementsByItem: [],
+        //             restrictToTypes: null,
+        //         });
+        //     },
+        // },
         {
             label: "Edit element uploads remaining",
             value: "UPDATE_UPLOADS_REMAINING",
@@ -315,7 +315,7 @@ export function BulkOperationMenu({
                 isOpen={
                     (activeOperation?.operation === "SECURITY" ||
                         activeOperation?.operation === "COMBINE_VIDEOS" ||
-                        activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
+                        // activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
                         activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" ||
                         activeOperation?.operation === "ELEMENTS_LAYOUT") &&
                     activeOperation?.step === "SELECT"
@@ -328,7 +328,7 @@ export function BulkOperationMenu({
                     if (
                         activeOperation?.operation === "SECURITY" ||
                         activeOperation?.operation === "COMBINE_VIDEOS" ||
-                        activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
+                        // activeOperation?.operation === "SYNCHRONISE_UPLOADERS" ||
                         activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" ||
                         activeOperation?.operation === "ELEMENTS_LAYOUT"
                     ) {
@@ -400,13 +400,13 @@ export function BulkOperationMenu({
                 }}
                 elementsByItem={activeOperation?.elementsByItem ?? []}
             />
-            <SynchroniseUploadersModal
+            {/* <SynchroniseUploadersModal
                 isOpen={activeOperation?.operation === "SYNCHRONISE_UPLOADERS" && activeOperation?.step === "ACT"}
                 onClose={() => {
                     setActiveOperation(null);
                 }}
                 elementsByItem={activeOperation?.elementsByItem ?? []}
-            />
+            /> */}
             <UpdateUploadsRemainingModal
                 isOpen={activeOperation?.operation === "UPDATE_UPLOADS_REMAINING" && activeOperation?.step === "ACT"}
                 onClose={() => {

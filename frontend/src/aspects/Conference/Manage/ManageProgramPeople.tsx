@@ -22,8 +22,6 @@ import Papa from "papaparse";
 import React, { LegacyRef, useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
-    ManageProgramPeople_ProgramPersonFragment,
-    ManageProgramPeople_ProgramPersonFragmentDoc,
     ManageProgramPeople_ProgramPersonWithAccessTokenFragment,
     ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
     ManageProgramPeople_RegistrantFragment,
@@ -71,16 +69,6 @@ gql`
         }
     }
 
-    fragment ManageProgramPeople_ProgramPerson on collection_ProgramPerson {
-        id
-        conferenceId
-        name
-        affiliation
-        email
-        originatingDataId
-        registrantId
-    }
-
     fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPersonWithAccessToken {
         id
         conferenceId
@@ -104,14 +92,14 @@ gql`
         }
     }
 
-    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPerson_insert_input!) {
-        insert_collection_ProgramPerson_one(object: $person) {
-            ...ManageProgramPeople_ProgramPerson
+    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPersonWithAccessToken_insert_input!) {
+        insert_collection_ProgramPersonWithAccessToken_one(object: $person) {
+            ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
 
     mutation ManageProgramPeople_DeleteProgramPersons($ids: [uuid!] = []) {
-        delete_collection_ProgramPerson(where: { id: { _in: $ids } }) {
+        delete_collection_ProgramPersonWithAccessToken(where: { id: { _in: $ids } }) {
             returning {
                 id
             }
@@ -125,20 +113,16 @@ gql`
         $email: String
         $registrantId: uuid
     ) {
-        update_collection_ProgramPerson_by_pk(
-            pk_columns: { id: $id }
+        update_collection_ProgramPersonWithAccessToken(
+            where: { id: { _eq: $id } }
             _set: { name: $name, affiliation: $affiliation, email: $email, registrantId: $registrantId }
         ) {
-            ...ManageProgramPeople_ProgramPerson
+            returning {
+                ...ManageProgramPeople_ProgramPersonWithAccessToken
+            }
         }
     }
 `;
-
-type ManageProgramPeople_ProgramPersonWithMaybeAccessToken = Omit<
-    ManageProgramPeople_ProgramPersonFragment &
-        Partial<Pick<ManageProgramPeople_ProgramPersonWithAccessTokenFragment, "accessToken">>,
-    "__typename"
->;
 
 export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
@@ -169,7 +153,7 @@ export default function ManageProgramPeople(): JSX.Element {
         /* EMPTY */
     });
 
-    const row: RowSpecification<ManageProgramPeople_ProgramPersonWithMaybeAccessToken> = useMemo(
+    const row: RowSpecification<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
             getKey: (record) => record.id,
             canSelect: (_record) => true,
@@ -187,7 +171,7 @@ export default function ManageProgramPeople(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>[] = useMemo(
+    const columns: ColumnSpecification<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>[] = useMemo(
         () => [
             {
                 id: "name",
@@ -196,7 +180,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     isInCreate,
                     onClick,
                     sortDir,
-                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>) {
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? (
                         <FormLabel>Name</FormLabel>
                     ) : (
@@ -209,11 +193,14 @@ export default function ManageProgramPeople(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.name = value;
                 },
-                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, filterValue: string) => {
+                filterFn: (
+                    rows: Array<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
+                    filterValue: string
+                ) => {
                     if (filterValue === "") {
                         return rows.filter((row) => (row.name ?? "") === "");
                     } else {
-                        return rows.filter((row) => row.name.toLowerCase().includes(filterValue.toLowerCase()));
+                        return rows.filter((row) => row.name?.toLowerCase().includes(filterValue.toLowerCase()));
                     }
                 },
                 filterEl: TextColumnFilter,
@@ -224,7 +211,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     onChange,
                     onBlur,
                     ref,
-                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, string | undefined>) {
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>, string | undefined>) {
                     const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
@@ -252,7 +239,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     isInCreate,
                     onClick,
                     sortDir,
-                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>) {
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? (
                         <FormLabel>Affiliation</FormLabel>
                     ) : (
@@ -265,7 +252,10 @@ export default function ManageProgramPeople(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.affiliation = value;
                 },
-                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, filterValue: string) => {
+                filterFn: (
+                    rows: Array<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
+                    filterValue: string
+                ) => {
                     if (filterValue === "") {
                         return rows.filter((row) => (row.affiliation ?? "") === "");
                     } else {
@@ -284,7 +274,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     onChange,
                     onBlur,
                     ref,
-                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, string | undefined>) {
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>, string | undefined>) {
                     const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
@@ -311,7 +301,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     isInCreate,
                     onClick,
                     sortDir,
-                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>) {
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? (
                         <FormLabel>Email</FormLabel>
                     ) : (
@@ -324,7 +314,10 @@ export default function ManageProgramPeople(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.email = value;
                 },
-                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, filterValue: string) => {
+                filterFn: (
+                    rows: Array<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
+                    filterValue: string
+                ) => {
                     if (filterValue === "") {
                         return rows.filter((row) => (row.email ?? "") === "");
                     } else {
@@ -341,7 +334,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     onChange,
                     onBlur,
                     ref,
-                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, string | undefined>) {
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>, string | undefined>) {
                     const { onCopy, hasCopied } = useClipboard(value ?? "");
                     return (
                         <Flex alignItems="center">
@@ -368,7 +361,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     isInCreate,
                     onClick,
                     sortDir,
-                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>) {
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? undefined : (
                         <Button size="xs" onClick={onClick}>
                             Access Token{sortDir !== null ? ` ${sortDir}` : undefined}
@@ -379,7 +372,10 @@ export default function ManageProgramPeople(): JSX.Element {
                 set: (record, value: string | undefined) => {
                     record.accessToken = value;
                 },
-                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, filterValue: string) => {
+                filterFn: (
+                    rows: Array<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
+                    filterValue: string
+                ) => {
                     if (filterValue === "") {
                         return rows.filter((row) => (row.accessToken ?? "") === "");
                     } else {
@@ -395,7 +391,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     maybeCompare(x, y, (a, b) => a.localeCompare(b)),
                 cell: function ProgramPersonCell({
                     value,
-                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, string | undefined>) {
+                }: CellProps<Partial<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>, string | undefined>) {
                     const { onCopy, hasCopied } = useClipboard(`${window.origin}/submissions/${value}` ?? "");
                     return (
                         <Flex alignItems="center">
@@ -416,7 +412,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     isInCreate,
                     onClick,
                     sortDir,
-                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>) {
+                }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? (
                         <FormLabel>Registrant</FormLabel>
                     ) : (
@@ -429,7 +425,10 @@ export default function ManageProgramPeople(): JSX.Element {
                 set: (record, value: ManageProgramPeople_RegistrantFragment | undefined) => {
                     record.registrantId = value?.id;
                 },
-                filterFn: (rows: Array<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>, filterValue: string) => {
+                filterFn: (
+                    rows: Array<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
+                    filterValue: string
+                ) => {
                     if (filterValue === "") {
                         return rows.filter((row) => !row.registrantId);
                     } else {
@@ -462,7 +461,7 @@ export default function ManageProgramPeople(): JSX.Element {
                     onBlur,
                     ref,
                 }: CellProps<
-                    Partial<ManageProgramPeople_ProgramPersonWithMaybeAccessToken>,
+                    Partial<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>,
                     ManageProgramPeople_RegistrantFragment | undefined
                 >) {
                     return (
@@ -503,7 +502,7 @@ export default function ManageProgramPeople(): JSX.Element {
     const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
     const [updateProgramPerson, updateProgramPersonResponse] = useManageProgramPeople_UpdateProgramPersonMutation();
 
-    const insert: Insert<ManageProgramPeople_ProgramPersonFragment> = useMemo(
+    const insert: Insert<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
             ongoing: insertProgramPersonResponse.loading,
             generateDefaults: () => {
@@ -513,7 +512,8 @@ export default function ManageProgramPeople(): JSX.Element {
                     conferenceId: conference.id,
                 };
             },
-            makeWhole: (d) => (d.name?.length ? (d as ManageProgramPeople_ProgramPersonFragment) : undefined),
+            makeWhole: (d) =>
+                d.name?.length ? (d as ManageProgramPeople_ProgramPersonWithAccessTokenFragment) : undefined,
             start: (record) => {
                 insertProgramPerson({
                     variables: {
@@ -527,17 +527,12 @@ export default function ManageProgramPeople(): JSX.Element {
                         },
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.insert_collection_ProgramPerson_one) {
-                            const data = _data.insert_collection_ProgramPerson_one;
+                        if (_data?.insert_collection_ProgramPersonWithAccessToken_one) {
+                            const data = _data.insert_collection_ProgramPersonWithAccessToken_one;
                             cache.writeFragment({
                                 data,
                                 fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
                                 fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                            });
-                            cache.writeFragment({
-                                data,
-                                fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
-                                fragmentName: "ManageProgramPeople_ProgramPerson",
                             });
                         }
                     },
@@ -558,17 +553,12 @@ export default function ManageProgramPeople(): JSX.Element {
                     email: record.email !== "" ? record.email ?? null : null,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.update_collection_ProgramPerson_by_pk) {
-                        const data = _data.update_collection_ProgramPerson_by_pk;
+                    if (_data?.update_collection_ProgramPersonWithAccessToken?.returning.length) {
+                        const data = _data.update_collection_ProgramPersonWithAccessToken.returning[0];
                         cache.writeFragment({
                             data,
                             fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
                             fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                        });
-                        cache.writeFragment({
-                            data,
-                            fragment: ManageProgramPeople_ProgramPersonFragmentDoc,
-                            fragmentName: "ManageProgramPeople_ProgramPerson",
                         });
                     }
                 },
@@ -577,7 +567,7 @@ export default function ManageProgramPeople(): JSX.Element {
         [updateProgramPerson]
     );
 
-    const update: Update<ManageProgramPeople_ProgramPersonWithMaybeAccessToken> = useMemo(
+    const update: Update<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
             ongoing: updateProgramPersonResponse.loading,
             start: startUpdate,
@@ -585,7 +575,7 @@ export default function ManageProgramPeople(): JSX.Element {
         [updateProgramPersonResponse.loading, startUpdate]
     );
 
-    const deleteP: Delete<ManageProgramPeople_ProgramPersonWithMaybeAccessToken> = useMemo(
+    const deleteP: Delete<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
             ongoing: deleteProgramPersonsResponse.loading,
             start: (keys) => {
@@ -594,18 +584,16 @@ export default function ManageProgramPeople(): JSX.Element {
                         ids: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_ProgramPerson) {
-                            const data = _data.delete_collection_ProgramPerson;
+                        if (_data?.delete_collection_ProgramPersonWithAccessToken) {
+                            const data = _data.delete_collection_ProgramPersonWithAccessToken;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
-                                    collection_ProgramPerson(existingRefs: Reference[] = [], { readField }) {
+                                    collection_ProgramPersonWithAccessToken(
+                                        existingRefs: Reference[] = [],
+                                        { readField }
+                                    ) {
                                         deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "ManageProgramPeople_ProgramPerson",
-                                                broadcast: true,
-                                            });
                                             cache.evict({
                                                 id: x.id,
                                                 fieldName: "ManageProgramPeople_ProgramPersonWithAccessToken",
@@ -738,9 +726,9 @@ export default function ManageProgramPeople(): JSX.Element {
                 render: function ExportPeople({
                     selectedData,
                 }: {
-                    selectedData: ManageProgramPeople_ProgramPersonWithMaybeAccessToken[];
+                    selectedData: ManageProgramPeople_ProgramPersonWithAccessTokenFragment[];
                 }) {
-                    function doExport(dataToExport: ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]) {
+                    function doExport(dataToExport: ManageProgramPeople_ProgramPersonWithAccessTokenFragment[]) {
                         const csvText = Papa.unparse(
                             dataToExport.map((person) => ({
                                 "Conference Id": person.conferenceId,
@@ -798,18 +786,14 @@ export default function ManageProgramPeople(): JSX.Element {
                                 <MenuList>
                                     <MenuItem
                                         onClick={() => {
-                                            doExport(data as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]);
+                                            doExport(data);
                                         }}
                                     >
                                         All
                                     </MenuItem>
                                     <MenuItem
                                         onClick={() => {
-                                            doExport(
-                                                data.filter(
-                                                    (a) => !!a.email
-                                                ) as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]
-                                            );
+                                            doExport(data.filter((a) => !!a.email));
                                         }}
                                     >
                                         <FAIcon iconStyle="s" icon="envelope" w="1em" textAlign="center" mr={2} />
@@ -817,11 +801,7 @@ export default function ManageProgramPeople(): JSX.Element {
                                     </MenuItem>
                                     <MenuItem
                                         onClick={() => {
-                                            doExport(
-                                                data.filter(
-                                                    (a) => !a.email
-                                                ) as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]
-                                            );
+                                            doExport(data.filter((a) => !a.email));
                                         }}
                                     >
                                         <FAIcon iconStyle="r" icon="envelope" w="1em" textAlign="center" mr={2} />
@@ -829,11 +809,7 @@ export default function ManageProgramPeople(): JSX.Element {
                                     </MenuItem>
                                     <MenuItem
                                         onClick={() => {
-                                            doExport(
-                                                data.filter(
-                                                    (a) => a.registrantId
-                                                ) as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]
-                                            );
+                                            doExport(data.filter((a) => a.registrantId));
                                         }}
                                     >
                                         <FAIcon iconStyle="s" icon="link" w="1em" textAlign="center" mr={2} />
@@ -841,11 +817,7 @@ export default function ManageProgramPeople(): JSX.Element {
                                     </MenuItem>
                                     <MenuItem
                                         onClick={() => {
-                                            doExport(
-                                                data.filter(
-                                                    (a) => !a.registrantId
-                                                ) as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[]
-                                            );
+                                            doExport(data.filter((a) => !a.registrantId));
                                         }}
                                     >
                                         <FAIcon iconStyle="s" icon="unlink" w="1em" textAlign="center" mr={2} />
@@ -903,9 +875,7 @@ export default function ManageProgramPeople(): JSX.Element {
             <CRUDTable
                 data={
                     !loadingAllProgramPersons &&
-                    (allProgramPersons?.collection_ProgramPersonWithAccessToken
-                        ? (data as ManageProgramPeople_ProgramPersonWithMaybeAccessToken[])
-                        : null)
+                    (allProgramPersons?.collection_ProgramPersonWithAccessToken ? data : null)
                 }
                 tableUniqueName="ManageConferenceProgramPeople"
                 row={row}

@@ -32,26 +32,33 @@ import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
-        content_Element(where: { itemId: { _in: $itemIds } }) {
+        content_Item(where: { id: { _in: $itemIds } }) {
+            ...SubmissionsReviewModal_Item
+        }
+    }
+
+    fragment SubmissionsReviewModal_Item on content_Item {
+        id
+        title
+        hasUnsubmittedElements
+        itemPeople {
+            id
+            person: personWithAccessToken {
+                id
+                name
+                submissionRequestsSentCount
+            }
+        }
+        elements {
             ...SubmissionsReviewModal_Element
         }
     }
 
     fragment SubmissionsReviewModal_Element on content_Element {
         id
-        itemId
         typeName
         name
         data
-        layoutData
-        uploadsRemaining
-        itemTitle
-        uploaders {
-            id
-            email
-            name
-            emailsSentCount
-        }
     }
 `;
 
@@ -73,40 +80,44 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const uploadableElementsResponse = useSubmissionsReviewModalDataQuery({
+    const itemsResponse = useSubmissionsReviewModalDataQuery({
         variables: {
             itemIds,
         },
+        fetchPolicy: "no-cache",
     });
-    const sortedUploadableElements = useMemo(
-        () =>
-            uploadableElementsResponse.data?.content_Element
-                ? R.sortBy((x) => x.itemTitle ?? "", uploadableElementsResponse.data.content_Element)
-                : [],
-        [uploadableElementsResponse.data?.content_Element]
+    const sortedItems = useMemo(
+        () => (itemsResponse.data?.content_Item ? R.sortBy((x) => x.title, itemsResponse.data.content_Item) : []),
+        [itemsResponse.data?.content_Item]
     );
 
-    const uploadableElementsNoUploaders = useMemo(
-        () => sortedUploadableElements.filter((x) => x.uploaders.length === 0 && !x.data?.length),
-        [sortedUploadableElements]
+    const itemsNoPeople = useMemo(
+        () => sortedItems.filter((x) => x.itemPeople.length === 0 && x.hasUnsubmittedElements),
+        [sortedItems]
     );
-    const uploadableElementsNoSentRequests = useMemo(
+    const itemsWithPeopleNotSentRequests = useMemo(
         () =>
-            sortedUploadableElements.filter(
-                (x) => x.uploaders.length !== 0 && x.uploaders.every((z) => z.emailsSentCount === 0) && !x.data?.length
+            sortedItems.filter(
+                (x) =>
+                    x.itemPeople.length !== 0 &&
+                    x.itemPeople.some((z) => !z.person?.submissionRequestsSentCount) &&
+                    x.hasUnsubmittedElements
             ),
-        [sortedUploadableElements]
+        [sortedItems]
     );
-    const uploadableElementsWithSendRequestsNoSubmissions = useMemo(
+    const itemsWithSendRequestsMissingSubmissions = useMemo(
         () =>
-            sortedUploadableElements.filter(
-                (x) => x.uploaders.length !== 0 && x.uploaders.some((z) => z.emailsSentCount !== 0) && !x.data?.length
+            sortedItems.filter(
+                (x) =>
+                    x.itemPeople.length !== 0 &&
+                    x.itemPeople.some((z) => z.person?.submissionRequestsSentCount) &&
+                    x.hasUnsubmittedElements
             ),
-        [sortedUploadableElements]
+        [sortedItems]
     );
-    const uploadableElementsWithSubmissions = useMemo(
-        () => sortedUploadableElements.filter((x) => !!x.data?.length),
-        [sortedUploadableElements]
+    const itemsWithSubmissions = useMemo(
+        () => sortedItems.filter((x) => !!x.elements.some((y) => y.data?.length)),
+        [sortedItems]
     );
 
     return (
@@ -118,23 +129,25 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
                     <AccordionItem>
                         <AccordionButton>
                             <AccordionIcon />
-                            No uploaders
+                            No people
                         </AccordionButton>
                         <AccordionPanel>
                             <UnorderedList>
-                                {Object.values(R.groupBy((x) => x.itemId, uploadableElementsNoUploaders)).map((x) => (
-                                    <ListItem key={x[0].itemId}>
-                                        <Text>{x[0].itemTitle}</Text>
+                                {itemsNoPeople.map((x) => (
+                                    <ListItem key={x.id}>
+                                        <Text>{x.title}</Text>
                                         <UnorderedList>
-                                            {x.map((y) => (
-                                                <ListItem key={y.id}>
-                                                    {y.name} ({y.typeName})
-                                                </ListItem>
-                                            ))}
+                                            {x.elements
+                                                .filter((y) => !y.data?.length)
+                                                .map((y) => (
+                                                    <ListItem key={y.id}>
+                                                        {y.name} ({y.typeName})
+                                                    </ListItem>
+                                                ))}
                                         </UnorderedList>
                                     </ListItem>
                                 ))}
-                                {uploadableElementsNoUploaders.length === 0 ? <ListItem>None</ListItem> : undefined}
+                                {itemsNoPeople.length === 0 ? <ListItem>None</ListItem> : undefined}
                             </UnorderedList>
                         </AccordionPanel>
                     </AccordionItem>
@@ -145,21 +158,21 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
                         </AccordionButton>
                         <AccordionPanel>
                             <UnorderedList>
-                                {Object.values(R.groupBy((x) => x.itemId, uploadableElementsNoSentRequests)).map(
-                                    (x) => (
-                                        <ListItem key={x[0].itemId}>
-                                            <Text>{x[0].itemTitle}</Text>
-                                            <UnorderedList>
-                                                {x.map((y) => (
+                                {itemsWithPeopleNotSentRequests.map((x) => (
+                                    <ListItem key={x.id}>
+                                        <Text>{x.title}</Text>
+                                        <UnorderedList>
+                                            {x.elements
+                                                .filter((y) => !y.data?.length)
+                                                .map((y) => (
                                                     <ListItem key={y.id}>
                                                         {y.name} ({y.typeName})
                                                     </ListItem>
                                                 ))}
-                                            </UnorderedList>
-                                        </ListItem>
-                                    )
-                                )}
-                                {uploadableElementsNoSentRequests.length === 0 ? <ListItem>None</ListItem> : undefined}
+                                        </UnorderedList>
+                                    </ListItem>
+                                ))}
+                                {itemsWithPeopleNotSentRequests.length === 0 ? <ListItem>None</ListItem> : undefined}
                             </UnorderedList>
                         </AccordionPanel>
                     </AccordionItem>
@@ -170,21 +183,21 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
                         </AccordionButton>
                         <AccordionPanel>
                             <UnorderedList>
-                                {Object.values(
-                                    R.groupBy((x) => x.itemId, uploadableElementsWithSendRequestsNoSubmissions)
-                                ).map((x) => (
-                                    <ListItem key={x[0].itemId}>
-                                        <Text>{x[0].itemTitle}</Text>
+                                {itemsWithSendRequestsMissingSubmissions.map((x) => (
+                                    <ListItem key={x.id}>
+                                        <Text>{x.title}</Text>
                                         <UnorderedList>
-                                            {x.map((y) => (
-                                                <ListItem key={y.id}>
-                                                    {y.name} ({y.typeName})
-                                                </ListItem>
-                                            ))}
+                                            {x.elements
+                                                .filter((y) => !y.data?.length)
+                                                .map((y) => (
+                                                    <ListItem key={y.id}>
+                                                        {y.name} ({y.typeName})
+                                                    </ListItem>
+                                                ))}
                                         </UnorderedList>
                                     </ListItem>
                                 ))}
-                                {uploadableElementsWithSendRequestsNoSubmissions.length === 0 ? (
+                                {itemsWithSendRequestsMissingSubmissions.length === 0 ? (
                                     <ListItem>None</ListItem>
                                 ) : undefined}
                             </UnorderedList>
@@ -206,29 +219,24 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
                                 w="100%"
                                 gap={2}
                             >
-                                {Object.values(R.groupBy((x) => x.itemId, uploadableElementsWithSubmissions)).reduce(
-                                    (accOuter, x) => [
-                                        ...accOuter,
-                                        ...x.map(
-                                            (y) => (
-                                                <GridItem key={y.id} maxW="500px" border="1px solid black">
-                                                    <VStack>
-                                                        <Heading as="h3" fontSize="md" p={1}>
-                                                            {y.itemTitle}
-                                                        </Heading>
-                                                        <Heading as="h4" fontSize="sm" fontWeight="normal" p={1}>
-                                                            {y.name} ({y.typeName})
-                                                        </Heading>
-                                                        <DeferredElement uploadableElement={y} />
-                                                    </VStack>
-                                                </GridItem>
-                                            ),
-                                            [] as JSX.Element[]
-                                        ),
-                                    ],
-                                    [] as JSX.Element[]
+                                {itemsWithSubmissions.flatMap((x) =>
+                                    x.elements
+                                        .filter((y) => y.data?.length)
+                                        .map((y) => (
+                                            <GridItem key={y.id} maxW="500px" border="1px solid black">
+                                                <VStack>
+                                                    <Heading as="h3" fontSize="md" p={1}>
+                                                        {x.title}
+                                                    </Heading>
+                                                    <Heading as="h4" fontSize="sm" fontWeight="normal" p={1}>
+                                                        {y.name} ({y.typeName})
+                                                    </Heading>
+                                                    <DeferredElement uploadableElement={y} />
+                                                </VStack>
+                                            </GridItem>
+                                        ))
                                 )}
-                                {uploadableElementsWithSubmissions.length === 0 ? <GridItem>None</GridItem> : undefined}
+                                {itemsWithSubmissions.length === 0 ? <GridItem>None</GridItem> : undefined}
                             </Grid>
                         </AccordionPanel>
                     </AccordionItem>

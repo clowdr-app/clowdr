@@ -33,13 +33,12 @@ import {
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import { Field, FieldProps, Form, Formik } from "formik";
-import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import {
     Conference_ConfigurationKey_Enum,
-    Content_ElementType_Enum,
+    Content_ItemType_Enum,
     SubmissionRequestsModal_ConferenceConfigurationFragment,
-    SubmissionRequestsModal_ElementFragment,
+    SubmissionRequestsModal_ItemFragment,
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
@@ -55,67 +54,11 @@ gql`
     }
 `;
 
-function generateElementTypeFriendlyName(type: Content_ElementType_Enum) {
-    switch (type) {
-        case Content_ElementType_Enum.Abstract:
-            return "Abstract";
-        case Content_ElementType_Enum.ContentGroupList:
-            return "Content group list";
-        case Content_ElementType_Enum.ImageFile:
-            return "Image file";
-        case Content_ElementType_Enum.ImageUrl:
-            return "Image URL";
-        case Content_ElementType_Enum.Link:
-            return "Link";
-        case Content_ElementType_Enum.LinkButton:
-            return "Link button";
-        case Content_ElementType_Enum.PaperFile:
-            return "Paper file";
-        case Content_ElementType_Enum.PaperLink:
-            return "Paper link";
-        case Content_ElementType_Enum.PaperUrl:
-            return "Paper URL";
-        case Content_ElementType_Enum.PosterFile:
-            return "Poster file";
-        case Content_ElementType_Enum.PosterUrl:
-            return "Poster URL";
-        case Content_ElementType_Enum.Text:
-            return "Text";
-        case Content_ElementType_Enum.VideoBroadcast:
-            return "Video for broadcast";
-        case Content_ElementType_Enum.VideoCountdown:
-            return "Video countdown";
-        case Content_ElementType_Enum.VideoFile:
-            return "Video file";
-        case Content_ElementType_Enum.VideoFiller:
-            return "Filler video";
-        case Content_ElementType_Enum.VideoLink:
-            return "Link to video";
-        case Content_ElementType_Enum.VideoPrepublish:
-            return "Video for pre-publication";
-        case Content_ElementType_Enum.VideoSponsorsFiller:
-            return "Sponsors filler video";
-        case Content_ElementType_Enum.VideoTitles:
-            return "Pre-roll titles video";
-        case Content_ElementType_Enum.VideoUrl:
-            return "Video URL";
-        case Content_ElementType_Enum.WholeSchedule:
-            return "Whole schedule";
-        case Content_ElementType_Enum.ExploreProgramButton:
-            return "Explore program button";
-        case Content_ElementType_Enum.ExploreScheduleButton:
-            return "Explore schedule button";
-        case Content_ElementType_Enum.Zoom:
-            return "Zoom";
-        case Content_ElementType_Enum.ActiveSocialRooms:
-            return "Active social rooms";
-        case Content_ElementType_Enum.LiveProgramRooms:
-            return "Live program rooms";
-        case Content_ElementType_Enum.Divider:
-            return "Horizontal divider";
-        case Content_ElementType_Enum.SponsorBooths:
-            return "Sponsor booths";
-    }
+function generateItemTypeFriendlyName(type: Content_ItemType_Enum): string {
+    return type
+        .split("_")
+        .map((x) => x[0] + x.substr(1).toLowerCase())
+        .reduce((acc, x) => `${acc} ${x}`);
 }
 
 gql`
@@ -123,8 +66,8 @@ gql`
         conference_Configuration(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ConfigureEmailTemplates_ConferenceConfiguration
         }
-        content_Element(where: { itemId: { _in: $itemIds } }) {
-            ...SubmissionRequestsModal_Element
+        content_Item(where: { id: { _in: $itemIds } }) {
+            ...SubmissionRequestsModal_Item
         }
     }
 
@@ -134,19 +77,16 @@ gql`
         value
     }
 
-    fragment SubmissionRequestsModal_Element on content_Element {
+    fragment SubmissionRequestsModal_Item on content_Item {
         id
-        itemId
-        itemTitle
+        title
         typeName
-        name
-        data
-        uploadsRemaining
-        uploaders {
+        hasUnsubmittedElements
+        itemPeople {
             id
-            email
-            name
-            emailsSentCount
+            personId
+            roleName
+            hasSubmissionRequestBeenSent
         }
     }
 `;
@@ -155,18 +95,18 @@ export function SendSubmissionRequestsModal({
     isOpen,
     onClose,
     itemIds,
-    uploaderIds,
+    personIds,
 }: {
     isOpen: boolean;
     onClose: () => void;
     itemIds: string[];
-    uploaderIds: string[] | null;
+    personIds: string[] | null;
 }): JSX.Element {
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
             {isOpen ? (
-                <SendSubmissionRequestsModalLazyInner onClose={onClose} itemIds={itemIds} uploaderIds={uploaderIds} />
+                <SendSubmissionRequestsModalLazyInner onClose={onClose} itemIds={itemIds} personIds={personIds} />
             ) : undefined}
         </Modal>
     );
@@ -175,11 +115,11 @@ export function SendSubmissionRequestsModal({
 function SendSubmissionRequestsModalLazyInner({
     onClose,
     itemIds,
-    uploaderIds,
+    personIds,
 }: {
     onClose: () => void;
     itemIds: string[];
-    uploaderIds: string[] | null;
+    personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
     const result = useSubmissionRequestsModalDataQuery({
@@ -187,16 +127,16 @@ function SendSubmissionRequestsModalLazyInner({
             conferenceId: conference.id,
             itemIds,
         },
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
     });
     return (
         <ApolloQueryWrapper queryResult={result} getter={(result) => result}>
             {({
                 conference_Configuration,
-                content_Element,
+                content_Item,
             }: {
                 conference_Configuration: readonly SubmissionRequestsModal_ConferenceConfigurationFragment[];
-                content_Element: readonly SubmissionRequestsModal_ElementFragment[];
+                content_Item: readonly SubmissionRequestsModal_ItemFragment[];
             }) => {
                 const conferenceConfiguration =
                     conference_Configuration.find(
@@ -214,9 +154,9 @@ function SendSubmissionRequestsModalLazyInner({
                 return (
                     <SendSubmissionRequestsModalInner
                         onClose={onClose}
-                        uploadableElements={content_Element}
+                        items={content_Item}
                         existingTemplate={existingTemplate}
-                        uploaderIds={uploaderIds}
+                        personIds={personIds}
                     />
                 );
             }}
@@ -226,85 +166,73 @@ function SendSubmissionRequestsModalLazyInner({
 
 export function SendSubmissionRequestsModalInner({
     onClose,
-    uploadableElements,
+    items,
     existingTemplate,
-    uploaderIds: filterToUploaderIds,
+    personIds: filterToPersonIds,
 }: {
     onClose: () => void;
-    uploadableElements: readonly SubmissionRequestsModal_ElementFragment[];
+    items: readonly SubmissionRequestsModal_ItemFragment[];
     existingTemplate: EmailTemplate_BaseConfig;
-    uploaderIds: string[] | null;
+    personIds: string[] | null;
 }): JSX.Element {
-    const types = useMemo(() => Object.values(Content_ElementType_Enum), []);
+    const types = useMemo(() => Object.values(Content_ItemType_Enum), []);
     const [selectedType, setSelectedType] = useState<string>();
     const [onlyUnsubmitted, setOnlyUnsubmitted] = useState<boolean>(true);
     const [onlyFirsts, setOnlyFirsts] = useState<boolean>(false);
-    const filteredUploadableElements = useMemo(
-        () =>
-            uploadableElements.filter((upElement) => {
-                const filteredUploaders =
-                    filterToUploaderIds === null
-                        ? upElement.uploaders
-                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
-                return (
-                    (!selectedType || upElement.typeName === selectedType) &&
-                    (!onlyUnsubmitted || !upElement.data?.length) &&
-                    filteredUploaders.length > 0 &&
-                    (upElement.uploadsRemaining ?? Number.POSITIVE_INFINITY) > 0
+    const { itemEls, personIds } = useMemo(() => {
+        const itemEls: JSX.Element[] = [];
+        const personIds = new Set<string>();
+
+        for (const item of items) {
+            const includedPeople =
+                filterToPersonIds === null
+                    ? item.itemPeople
+                    : item.itemPeople.filter((x) => filterToPersonIds.includes(x.personId));
+            const filteredPeople = onlyFirsts
+                ? includedPeople.filter((x) => !x.hasSubmissionRequestBeenSent)
+                : includedPeople;
+            if (
+                (!selectedType || item.typeName === selectedType) &&
+                (!onlyUnsubmitted || item.hasUnsubmittedElements) &&
+                filteredPeople.length > 0
+            ) {
+                itemEls.push(
+                    <ListItem key={item.id}>
+                        <HStack>
+                            <FAIcon icon="file" iconStyle="r" mr={2} />
+                            <VStack alignItems="flex-start" spacing={0}>
+                                <Text fontWeight="bold" fontSize="sm">
+                                    {item.title}
+                                </Text>
+                                <Text fontSize="sm">
+                                    {filteredPeople.length}
+                                    {filteredPeople.length > 1 ? " people" : " person"}
+                                </Text>
+                            </VStack>
+                        </HStack>
+                    </ListItem>
                 );
-            }),
-        [uploadableElements, onlyUnsubmitted, selectedType, filterToUploaderIds]
-    );
-    const uploadableElementsEl = useMemo(
+
+                filteredPeople.forEach((itemPerson) => personIds.add(itemPerson.personId));
+            }
+        }
+
+        return { itemEls, personIds: [...personIds] };
+    }, [items, filterToPersonIds, onlyFirsts, selectedType, onlyUnsubmitted]);
+
+    const itemsEl = useMemo(
         () => (
             <Box mt={4}>
-                {filteredUploadableElements.length === 0 ? (
-                    <Text>No matching files.</Text>
+                {itemEls.length === 0 ? (
+                    <Text>No matching items.</Text>
                 ) : (
                     <List spacing={2} maxH="40vh" overflowY="auto">
-                        {filteredUploadableElements.map((upElement) => {
-                            const filteredUploaders =
-                                filterToUploaderIds === null
-                                    ? upElement.uploaders
-                                    : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id));
-                            return (
-                                <ListItem key={upElement.id}>
-                                    <HStack>
-                                        <FAIcon icon="file" iconStyle="r" mr={2} />
-                                        <VStack alignItems="flex-start" spacing={0}>
-                                            <Text fontWeight="bold" fontSize="sm">
-                                                {upElement.itemTitle}
-                                            </Text>
-                                            <Text fontSize="sm">
-                                                {upElement.name} ({generateElementTypeFriendlyName(upElement.typeName)})
-                                                - {filteredUploaders.length} uploader
-                                                {filteredUploaders.length > 1 ? "s" : undefined}
-                                            </Text>
-                                        </VStack>
-                                    </HStack>
-                                </ListItem>
-                            );
-                        })}
+                        {itemEls}
                     </List>
                 )}
             </Box>
         ),
-        [filteredUploadableElements, filterToUploaderIds]
-    );
-
-    const uploaderIds = useMemo(
-        () =>
-            R.flatten(
-                filteredUploadableElements.map((upElement) =>
-                    (filterToUploaderIds === null
-                        ? upElement.uploaders
-                        : upElement.uploaders.filter((x) => filterToUploaderIds.includes(x.id))
-                    )
-                        .filter((x) => !onlyFirsts || x.emailsSentCount === 0)
-                        .map((x) => x.id)
-                )
-            ),
-        [filteredUploadableElements, onlyFirsts, filterToUploaderIds]
+        [itemEls]
     );
 
     const toast = useToast();
@@ -324,8 +252,8 @@ export function SendSubmissionRequestsModalInner({
                     try {
                         const result = await sendSubmissionRequests({
                             variables: {
-                                objs: uploaderIds.map((id) => ({
-                                    uploaderId: id,
+                                objs: personIds.map((id) => ({
+                                    personId: id,
                                     emailTemplate: {
                                         htmlBodyTemplate: values.htmlBodyTemplate,
                                         subjectTemplate: values.subjectTemplate,
@@ -340,7 +268,7 @@ export function SendSubmissionRequestsModalInner({
                         actions.resetForm();
                         onClose();
                         toast({
-                            title: "Requests sent",
+                            title: "Requests on their way",
                             duration: 3000,
                             isClosable: true,
                             status: "success",
@@ -361,9 +289,6 @@ export function SendSubmissionRequestsModalInner({
                         </ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <Text mb={4} fontSize="md">
-                                This will only send requests for elements with at least one upload attempt remaining.
-                            </Text>
                             <FormControl mb={4}>
                                 <FormLabel>Unsubmitted only?</FormLabel>
                                 <HStack>
@@ -375,7 +300,7 @@ export function SendSubmissionRequestsModalInner({
                                     <chakra.span>Yes</chakra.span>
                                 </HStack>
                                 <FormHelperText>
-                                    Send emails only for elements which have not yet been submitted.
+                                    Send emails only for items which have unsubmitted elements.
                                 </FormHelperText>
                             </FormControl>
                             <FormControl>
@@ -394,19 +319,20 @@ export function SendSubmissionRequestsModalInner({
                             </FormControl>
                             <Divider my={5} />
                             <FormControl>
-                                <FormLabel>File type</FormLabel>
+                                <FormLabel>Item Label</FormLabel>
                                 <Select
-                                    placeholder="Choose file type"
+                                    placeholder="Choose items with label"
                                     onChange={(event) => setSelectedType(event.target.value)}
                                 >
                                     {types.map((type) => (
                                         <option key={type} value={type}>
-                                            {generateElementTypeFriendlyName(type as Content_ElementType_Enum)}
+                                            {generateItemTypeFriendlyName(type)}
                                         </option>
                                     ))}
                                 </Select>
+                                <FormHelperText>Leave unselected to include all items.</FormHelperText>
                             </FormControl>
-                            {uploadableElementsEl}
+                            {itemsEl}
                             <Divider my={5} />
                             <Heading as="h4" textAlign="left" size="sm" mt={4}>
                                 Email template
@@ -455,11 +381,11 @@ export function SendSubmissionRequestsModalInner({
                             <Button
                                 type="submit"
                                 isLoading={isSubmitting}
-                                isDisabled={!isValid || uploaderIds.length === 0}
+                                isDisabled={!isValid || personIds.length === 0}
                                 mt={4}
                                 colorScheme="purple"
                             >
-                                Send {uploaderIds.length} emails ({filteredUploadableElements.length} elements)
+                                Send {personIds.length} emails ({itemEls.length} items)
                             </Button>
                         </ModalFooter>
                     </Form>

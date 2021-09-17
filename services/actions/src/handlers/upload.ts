@@ -512,8 +512,11 @@ gql`
         }
     }
 
-    mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!) {
+    mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!, $personIds: [uuid!]!) {
         update_content_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
+            affected_rows
+        }
+        update_collection_ProgramPerson(where: { id: { _in: $personIds } }, _inc: { submissionRequestsSentCount: 1 }) {
             affected_rows
         }
     }
@@ -597,6 +600,17 @@ gql`
                 uploader {
                     ...UploaderParts
                 }
+                person {
+                    id
+                    name
+                    email
+                    accessToken
+                    conference {
+                        id
+                        name
+                        shortName
+                    }
+                }
             }
         }
     }
@@ -608,6 +622,18 @@ gql`
     }
 `;
 
+function isNotUndefined<T>(x: T | undefined): x is T {
+    if (x === undefined) {
+        return false;
+    }
+    return true;
+}
+
+type SubmissionRequestEmail = { email: Email_Insert_Input; jobId: string } & (
+    | { uploaderId: string }
+    | { personId: string }
+);
+
 export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     const jobsToProcess = await apolloClient.mutate({
         mutation: MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
@@ -615,86 +641,132 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     });
     assert(jobsToProcess.data?.update_job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
 
-    const emails = new Map<string, { email: Email_Insert_Input; uploaderId: string; jobId: string }[]>();
+    const emails = new Map<string, SubmissionRequestEmail[]>();
     for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
-        const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
+        let result: SubmissionRequestEmail | undefined;
+        let conferenceId: string | undefined;
 
-        let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
-            job.uploader.conference.id,
-            Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
-        );
+        if (job.uploader) {
+            const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
+            const uploadLink = `{[FRONTEND_HOST]}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
+            const view: EmailView_SubmissionRequest = {
+                uploader: {
+                    name: job.uploader.name,
+                },
+                file: {
+                    name: job.uploader.element.name,
+                    typeName: contentTypeFriendlyName,
+                },
+                conference: {
+                    name: job.uploader.conference.name,
+                    shortName: job.uploader.conference.shortName,
+                },
+                item: {
+                    title: job.uploader.element.item.title,
+                },
+                uploadLink,
+            };
 
-        if (!isEmailTemplate_BaseConfig(emailTemplates)) {
-            emailTemplates = null;
-        }
+            const emailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
+                ? job.emailTemplate
+                : await getConferenceConfiguration<EmailTemplate_BaseConfig>(
+                      job.uploader.conference.id,
+                      Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
+                  );
 
-        const uploadLink = `{[FRONTEND_HOST]}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
+            const htmlBody = Mustache.render(
+                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
+                view
+            );
 
-        const view: EmailView_SubmissionRequest = {
-            uploader: {
-                name: job.uploader.name,
-            },
-            file: {
-                name: job.uploader.element.name,
-                typeName: contentTypeFriendlyName,
-            },
-            conference: {
-                name: job.uploader.conference.name,
-                shortName: job.uploader.conference.shortName,
-            },
-            item: {
-                title: job.uploader.element.item.title,
-            },
-            uploadLink,
-        };
+            const subject = Mustache.render(
+                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
+                view
+            );
 
-        const overrideEmailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
-            ? job.emailTemplate
-            : null;
-
-        const htmlBody = Mustache.render(
-            overrideEmailTemplate?.htmlBodyTemplate ??
-                emailTemplates?.htmlBodyTemplate ??
-                EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
-            view
-        );
-
-        const subject = Mustache.render(
-            overrideEmailTemplate?.subjectTemplate ??
-                emailTemplates?.subjectTemplate ??
-                EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
-            view
-        );
-
-        const htmlContents = `${htmlBody}
+            const htmlContents = `${htmlBody}
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
-        const newEmail: Email_Insert_Input = {
-            recipientName: job.uploader.name,
-            emailAddress: job.uploader.email,
-            htmlContents,
-            reason: "upload-request",
-            subject,
-        };
+            const newEmail: Email_Insert_Input = {
+                recipientName: job.uploader.name,
+                emailAddress: job.uploader.email,
+                htmlContents,
+                reason: "upload-request",
+                subject,
+            };
 
-        let arr = emails.get(job.uploader.conference.id);
-        if (!arr) {
-            arr = [];
-            emails.set(job.uploader.conference.id, arr);
+            result = { email: newEmail, uploaderId: job.uploader.id, jobId: job.id };
+        } else if (job.person) {
+            const uploadLink = `{[FRONTEND_HOST]}/submissions/${job.person.accessToken}`;
+
+            const view: EmailView_SubmissionRequest = {
+                person: {
+                    name: job.person.name,
+                },
+                conference: {
+                    name: job.person.conference.name,
+                    shortName: job.person.conference.shortName,
+                },
+                uploadLink,
+            };
+
+            const emailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
+                ? job.emailTemplate
+                : await getConferenceConfiguration<EmailTemplate_BaseConfig>(
+                      job.person.conference.id,
+                      Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
+                  );
+
+            const htmlBody = Mustache.render(
+                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
+                view
+            );
+
+            const subject = Mustache.render(
+                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
+                view
+            );
+
+            const htmlContents = `${htmlBody}
+<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+
+            const newEmail: Email_Insert_Input = {
+                recipientName: job.person.name,
+                emailAddress: job.person.email,
+                htmlContents,
+                reason: "upload-request",
+                subject,
+            };
+
+            result = { email: newEmail, personId: job.person.id, jobId: job.id };
         }
-        arr.push({ email: newEmail, uploaderId: job.uploader.id, jobId: job.id });
+
+        if (result && conferenceId) {
+            let arr = emails.get(conferenceId);
+            if (!arr) {
+                arr = [];
+                emails.set(conferenceId, arr);
+            }
+            arr.push(result);
+        }
     }
 
     emails.forEach(async (emailsRecords, conferenceId) => {
         try {
-            await insertEmails(
-                emailsRecords.map((x) => x.email),
-                conferenceId
-            );
+            const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
+            if (emailsToInsert.length > 0) {
+                await insertEmails(emailsToInsert, conferenceId);
+            }
+
             await apolloClient.mutate({
                 mutation: InsertSubmissionRequestEmailsDocument,
                 variables: {
-                    uploaderIds: emailsRecords.map((x) => x.uploaderId),
+                    uploaderIds: emailsRecords
+                        .map((x) => ("uploaderId" in x ? x.uploaderId : undefined))
+                        .filter(isNotUndefined),
+                    personIds: emailsRecords
+                        .map((x) => ("personId" in x ? x.personId : undefined))
+                        .filter(isNotUndefined),
                 },
             });
         } catch (e) {

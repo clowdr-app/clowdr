@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Container, Heading, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -9,23 +9,25 @@ import { ConfigureEmailTemplates } from "./ConfigureEmailTemplates";
 
 export default function ManageEmail(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Manage email settings for ${conference.shortName}`);
+    const title = useTitle(`Manage email templates for ${conference.shortName}`);
 
     return (
         <RequireAtLeastOnePermissionWrapper
             permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
-            <Box w="100%">
-                {title}
-                <Heading as="h1" size="xl">
-                    Manage {conference.shortName}
-                </Heading>
-                <Heading id="page-heading" as="h2" size="lg" fontStyle="italic">
-                    Email
-                </Heading>
-                <ConfigureEmailTemplates />
-            </Box>
+            {title}
+            <Container maxW="container.lg">
+                <VStack spacing={4} alignItems="flex-start" mt={6}>
+                    <Heading as="h1" size="xl">
+                        Email Templates
+                    </Heading>
+                    <Heading id="page-heading" as="h2" size="md">
+                        Manage {conference.shortName}
+                    </Heading>
+                    <ConfigureEmailTemplates />
+                </VStack>
+            </Container>
         </RequireAtLeastOnePermissionWrapper>
     );
 }

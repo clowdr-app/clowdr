@@ -271,9 +271,7 @@ gql`
                 title: "Landing page"
             }
         ) {
-            returning {
-                ...ItemElements_ItemData
-            }
+            affected_rows
         }
     }
 `;

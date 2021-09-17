@@ -1300,12 +1300,10 @@
     permission:
       columns:
       - affiliation
-      - registrantId
       - conferenceId
-      - email
       - id
       - name
-      - originatingDataId
+      - registrantId
       filter:
         conference:
           _and:
@@ -1325,12 +1323,10 @@
     permission:
       columns:
       - affiliation
-      - registrantId
       - conferenceId
-      - email
       - id
       - name
-      - originatingDataId
+      - registrantId
       filter:
         _and:
         - conference:
@@ -1474,18 +1470,102 @@
         insertion_order: null
         column_mapping:
           id: personId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+            _table:
+              schema: public
+              name: FlatUserPermission
+      columns:
+      - affiliation
+      - conferenceId
+      - email
+      - id
+      - name
+      - originatingDataId
+      - registrantId
+      backend_only: false
   select_permissions:
   - role: user
     permission:
       columns:
-      - id
-      - conferenceId
-      - name
+      - accessToken
       - affiliation
+      - conferenceId
+      - email
+      - id
+      - name
       - originatingDataId
       - registrantId
-      - email
+      - submissionRequestsSentCount
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+            _table:
+              schema: public
+              name: FlatUserPermission
+  update_permissions:
+  - role: user
+    permission:
+      columns:
       - accessToken
+      - affiliation
+      - email
+      - name
+      - originatingDataId
+      - registrantId
+      filter:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+            _table:
+              schema: public
+              name: FlatUserPermission
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
       filter:
         _and:
         - conference:
@@ -2364,6 +2444,11 @@
           schema: video
           name: YouTubeUpload
   computed_fields:
+  - name: hasBeenSubmitted
+    definition:
+      function:
+        schema: content
+        name: elementHasBeenSubmitted
   - name: itemTitle
     definition:
       function:
@@ -2427,6 +2512,7 @@
       - updated_at
       - uploadsRemaining
       computed_fields:
+      - hasBeenSubmitted
       - itemTitle
       filter:
         _and:
@@ -2516,6 +2602,7 @@
       - updated_at
       - uploadsRemaining
       computed_fields:
+      - hasBeenSubmitted
       - itemTitle
       - uploadersCount
       filter:
@@ -3086,6 +3173,12 @@
         table:
           schema: analytics
           name: ContentItemStats
+  computed_fields:
+  - name: hasUnsubmittedElements
+    definition:
+      function:
+        schema: content
+        name: itemHasUnsubmittedElements
   insert_permissions:
   - role: user
     permission:
@@ -3151,12 +3244,15 @@
       columns:
       - chatId
       - conferenceId
-      - typeName
+      - created_at
       - id
       - originatingDataId
       - shortTitle
       - title
+      - typeName
       - updated_at
+      computed_fields:
+      - hasUnsubmittedElements
       filter:
         _and:
         - conference:
@@ -3448,6 +3544,21 @@
   - name: person
     using:
       foreign_key_constraint_on: personId
+  - name: personWithAccessToken
+    using:
+      manual_configuration:
+        remote_table:
+          schema: collection
+          name: ProgramPersonWithAccessToken
+        insertion_order: null
+        column_mapping:
+          personId: id
+  computed_fields:
+  - name: hasSubmissionRequestBeenSent
+    definition:
+      function:
+        schema: content
+        name: itemProgramPerson_HasSubmissionRequestBeenSent
   insert_permissions:
   - role: user
     permission:
@@ -3510,6 +3621,8 @@
       - personId
       - priority
       - roleName
+      computed_fields:
+      - hasSubmissionRequestBeenSent
       filter:
         _and:
         - conference:
@@ -4209,6 +4322,9 @@
     schema: job_queues
     name: SubmissionRequestEmailJob
   object_relationships:
+  - name: person
+    using:
+      foreign_key_constraint_on: personId
   - name: uploader
     using:
       foreign_key_constraint_on: uploaderId
@@ -4216,26 +4332,46 @@
   - role: user
     permission:
       check:
-        uploader:
-          conference:
-            _or:
-            - createdBy:
-                _eq: X-Hasura-User-Id
-            - groups:
-                _and:
-                - enabled:
-                    _eq: true
-                - groupRoles:
-                    role:
-                      rolePermissions:
-                        permissionName:
-                          _eq: CONFERENCE_MANAGE_CONTENT
-                - groupRegistrants:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
+        _or:
+        - uploader:
+            conference:
+              _or:
+              - createdBy:
+                  _eq: X-Hasura-User-Id
+              - groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_CONTENT
+                  - groupRegistrants:
+                      registrant:
+                        userId:
+                          _eq: X-Hasura-User-Id
+        - person:
+            conference:
+              _or:
+              - createdBy:
+                  _eq: X-Hasura-User-Id
+              - groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MANAGE_CONTENT
+                  - groupRegistrants:
+                      registrant:
+                        userId:
+                          _eq: X-Hasura-User-Id
       columns:
       - emailTemplate
+      - personId
       - uploaderId
       backend_only: false
 - table:

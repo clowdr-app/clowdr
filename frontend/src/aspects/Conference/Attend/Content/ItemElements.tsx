@@ -46,7 +46,30 @@ gql`
                 name
             }
         }
-        elements(where: { isHidden: { _eq: false } }) {
+        elements(
+            where: {
+                isHidden: { _eq: false }
+                _or: [
+                    # Component types which never get submitted
+                    {
+                        typeName: {
+                            _in: [
+                                ACTIVE_SOCIAL_ROOMS
+                                CONTENT_GROUP_LIST
+                                DIVIDER
+                                EXPLORE_PROGRAM_BUTTON
+                                EXPLORE_SCHEDULE_BUTTON
+                                LIVE_PROGRAM_ROOMS
+                                SPONSOR_BOOTHS
+                                WHOLE_SCHEDULE
+                            ]
+                        }
+                    }
+                    # All other element types
+                    { hasBeenSubmitted: { _eq: true } }
+                ]
+            }
+        ) {
             ...ElementData
         }
         itemPeople(order_by: { priority: asc }) {

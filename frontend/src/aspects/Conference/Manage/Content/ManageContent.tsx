@@ -122,7 +122,7 @@ gql`
         conferenceId
     }
 
-    fragment ManageContent_ProgramPerson on collection_ProgramPerson {
+    fragment ManageContent_ProgramPerson on collection_ProgramPersonWithAccessToken {
         id
         name
         affiliation
@@ -135,7 +135,7 @@ gql`
         itemId
         priority
         roleName
-        person {
+        person: personWithAccessToken {
             ...ManageContent_ProgramPerson
         }
     }
@@ -811,15 +811,15 @@ export default function ManageContentV2(): JSX.Element {
         onClose: submissionsReview_OnClose,
     } = useDisclosure();
     const [sendSubmissionRequests_ItemIds, setSendSubmissionRequests_ItemIds] = useState<string[]>([]);
-    const [sendSubmissionRequests_UploaderIds, setSendSubmissionRequests_UploaderIds] = useState<string[] | null>(null);
+    const [sendSubmissionRequests_PersonIds, setSendSubmissionRequests_PersonIds] = useState<string[] | null>(null);
     const [submissionsReview_ItemIds, setSubmissionsReview_ItemIds] = useState<string[]>([]);
     const openSendSubmissionRequests = useCallback(
-        (itemId: string, uploaderIds: string[]) => {
+        (itemId: string, personIds: string[]) => {
             setSendSubmissionRequests_ItemIds([itemId]);
-            setSendSubmissionRequests_UploaderIds(uploaderIds);
+            setSendSubmissionRequests_PersonIds(personIds);
             sendSubmissionRequests_OnOpen();
         },
-        [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_UploaderIds]
+        [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_PersonIds]
     );
     const selectItemsForExport = useManageContent_SelectItemsForExportQuery({
         skip: true,
@@ -932,11 +932,11 @@ export default function ManageContentV2(): JSX.Element {
 
                                     People: item.itemPeople.map(
                                         (itemPerson) =>
-                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person.id} (${
+                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
                                                 itemPerson.roleName
-                                            }) [${itemPerson.person.name} (${
-                                                itemPerson.person.affiliation ?? "No affiliation"
-                                            }) <${itemPerson.person.email ?? "No email"}>]`
+                                            }) [${itemPerson.person?.name} (${
+                                                itemPerson.person?.affiliation ?? "No affiliation"
+                                            }) <${itemPerson.person?.email ?? "No email"}>]`
                                     ),
                                 };
 
@@ -1099,7 +1099,7 @@ export default function ManageContentV2(): JSX.Element {
                             <Button
                                 onClick={() => {
                                     setSendSubmissionRequests_ItemIds(items.map((x) => x.id));
-                                    setSendSubmissionRequests_UploaderIds(null);
+                                    setSendSubmissionRequests_PersonIds(null);
                                     sendSubmissionRequests_OnOpen();
                                 }}
                             >
@@ -1119,7 +1119,7 @@ export default function ManageContentV2(): JSX.Element {
                                     onClick={() => {
                                         if (allItems?.content_Item) {
                                             setSendSubmissionRequests_ItemIds(allItems.content_Item.map((x) => x.id));
-                                            setSendSubmissionRequests_UploaderIds(null);
+                                            setSendSubmissionRequests_PersonIds(null);
                                             sendSubmissionRequests_OnOpen();
                                         }
                                     }}
@@ -1142,7 +1142,7 @@ export default function ManageContentV2(): JSX.Element {
                                                                   )
                                                                   .map((x) => x.id)
                                                           );
-                                                          setSendSubmissionRequests_UploaderIds(null);
+                                                          setSendSubmissionRequests_PersonIds(null);
                                                           sendSubmissionRequests_OnOpen();
                                                       }
                                                   }}
@@ -1358,7 +1358,7 @@ export default function ManageContentV2(): JSX.Element {
                 isOpen={sendSubmissionRequests_IsOpen}
                 onClose={sendSubmissionRequests_OnClose}
                 itemIds={sendSubmissionRequests_ItemIds}
-                uploaderIds={sendSubmissionRequests_UploaderIds}
+                personIds={sendSubmissionRequests_PersonIds}
             />
             <SubmissionsReviewModal
                 isOpen={submissionsReview_IsOpen}

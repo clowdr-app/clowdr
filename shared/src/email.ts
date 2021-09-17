@@ -8,8 +8,8 @@ export type EmailTemplate_Defaults = {
  * The default template for the subtitles generated email.
  */
 export const EMAIL_TEMPLATE_SUBTITLES_GENERATED: EmailTemplate_Defaults = {
-    htmlBodyTemplate: `<p>Dear {{{uploader.name}}},</p>
-<p>We have automatically generated subtitles for your item <em>{{{file.name}}}</em> ({{{item.title}}}) at {{{conference.name}}}.</p>
+    htmlBodyTemplate: `<p>Dear {{{person.name}}},</p>
+<p>We have automatically generated subtitles for your content <em>{{{file.name}}}</em> ({{{item.title}}}) at {{{conference.name}}}.</p>
 <p>Automated subtitles aren't always accurate, so you can <a href="{{{uploadLink}}}">review and edit them here</a>.</p>
 <p>Thank you,<br/>
 The Midspace team
@@ -41,15 +41,14 @@ export interface EmailView_SubtitlesGenerated {
  * The default template for the submission request email.
  */
 export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
-    htmlBodyTemplate: `<p>Dear {{{uploader.name}}},</p>
+    htmlBodyTemplate: `<p>Dear {{{person.name}}},</p>
 <p>
     The organisers of {{{conference.name}}} are requesting that you or
-    your co-authors/co-presenters upload the following file: {{{file.name}}} for
-    "{{{item.title}}}".
+    your co-authors/co-presenters submit your content to Midspace.
 </p>
 <p>
     Please do not forward or share this email: anyone with the link contained
-    herein can use it to upload content to your conference item.
+    herein can use it to modify your submissions.
 </p>
 <p>
     Please <a href="{{{uploadLink}}}">submit your content on this page</a> by 23:59 UTC on DD MMMM.
@@ -66,21 +65,24 @@ export const EMAIL_TEMPLATE_SUBMISSION_REQUEST: EmailTemplate_Defaults = {
 <p>We hope you enjoy your conference,<br/>
 The Midspace team
 </p>`,
-    subjectTemplate: "{{{conference.shortName}}}: Submit your {{{file.name}}} for {{{item.title}}}",
+    subjectTemplate: "Submissions for {{{conference.shortName}}}",
 };
 
 /**
  * The view available when rendering the submission request email. Default template is {@link EMAIL_TEMPLATE_SUBMISSION_REQUEST}.
  */
 export interface EmailView_SubmissionRequest {
-    uploader: {
+    person?: {
         name: string;
     };
-    file: {
+    uploader?: {
+        name: string;
+    };
+    file?: {
         name: string;
         typeName: string;
     };
-    item: {
+    item?: {
         title: string;
     };
     conference: {

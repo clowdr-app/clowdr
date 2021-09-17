@@ -15,6 +15,7 @@ import {
     Spinner,
     Text,
     Textarea,
+    VStack,
 } from "@chakra-ui/react";
 import {
     EmailTemplate_BaseConfig,
@@ -148,39 +149,49 @@ export function ConfigureEmailTemplatesInner({
 
     return (
         <>
-            {updateConferenceConfigurationResponse.loading ? <Spinner /> : undefined}
-            <Accordion minW="50vw" allowToggle allowMultiple>
+            <Box minH="3ex" py={4}>
+                {updateConferenceConfigurationResponse.loading ? (
+                    <HStack spacing={2}>
+                        <Text>Saving</Text> <Spinner />
+                    </HStack>
+                ) : updateConferenceConfigurationResponse.data ? (
+                    updateConferenceConfigurationResponse.error ? (
+                        <Text>Error saving changes.</Text>
+                    ) : (
+                        <Text>Changes saved.</Text>
+                    )
+                ) : undefined}
+            </Box>
+            <Accordion w="100%" allowToggle allowMultiple reduceMotion>
                 <AccordionItem>
                     <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            <Heading as="h3" size="sm">
-                                Submission request email
-                            </Heading>
-                        </Box>
-                        <AccordionIcon />
+                        <AccordionIcon mr={2} />
+                        <Heading as="h3" size="sm" textAlign="left" fontWeight="normal">
+                            Submission request email
+                        </Heading>
                     </AccordionButton>
                     <AccordionPanel>
                         <EmailTemplateForm
                             templateConfig={emailTemplateConfig_SubmissionRequest}
                             templateDefaults={EMAIL_TEMPLATE_SUBMISSION_REQUEST}
                             update={update(Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest)}
+                            description="This email is sent to people when requesting submissions. You can also customise this email before each time you send out requests."
                         />
                     </AccordionPanel>
                 </AccordionItem>
                 <AccordionItem>
                     <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                            <Heading as="h3" size="sm">
-                                Subtitles notification email
-                            </Heading>
-                        </Box>
-                        <AccordionIcon />
+                        <AccordionIcon mr={2} />
+                        <Heading as="h3" size="sm" textAlign="left" fontWeight="normal">
+                            Subtitles notification email
+                        </Heading>
                     </AccordionButton>
                     <AccordionPanel>
                         <EmailTemplateForm
                             templateConfig={emailTemplateConfig_SubtitlesGenerated}
                             templateDefaults={EMAIL_TEMPLATE_SUBTITLES_GENERATED}
                             update={update(Conference_ConfigurationKey_Enum.EmailTemplateSubtitlesGenerated)}
+                            description="This email is sent to people automatically when subtitles have been generated for one of their items."
                         />
                     </AccordionPanel>
                 </AccordionItem>
@@ -193,10 +204,12 @@ function EmailTemplateForm({
     templateConfig,
     templateDefaults,
     update,
+    description,
 }: {
     templateConfig: EmailTemplate_BaseConfig | null;
     templateDefaults: EmailTemplate_Defaults;
     update: (_templateConfig: EmailTemplate_BaseConfig) => void;
+    description: string;
 }) {
     const [subjectTemplate, setSubjectTemplate] = useState<string | null>(null);
     const [htmlBodyTemplate, setHtmlBodyTemplate] = useState<string | null>(null);
@@ -219,22 +232,22 @@ function EmailTemplateForm({
     }, [templateConfig?.htmlBodyTemplate]);
 
     return (
-        <>
-            <HStack justifyContent="space-between" alignItems="center" my={4}>
-                <Text>
-                    This email is sent to uploaders automatically once subtitles have been generated for one of their
-                    items.
-                </Text>
-                {templateConfig?.htmlBodyTemplate || templateConfig?.subjectTemplate ? (
-                    <Button
-                        size="sm"
-                        aria-label="Reset email text and subject line to defaults"
-                        onClick={() => update({ subjectTemplate: null, htmlBodyTemplate: null })}
-                    >
-                        Reset to default
-                    </Button>
-                ) : undefined}
-            </HStack>
+        <VStack spacing={4} alignItems="flex-start">
+            <Text>{description}</Text>
+            {templateDefaults?.htmlBodyTemplate || templateDefaults?.subjectTemplate ? (
+                <Button
+                    colorScheme="purple"
+                    size="sm"
+                    aria-label="Reset email text and subject line to defaults"
+                    onClick={() => update({ subjectTemplate: null, htmlBodyTemplate: null })}
+                    isDisabled={
+                        templateDefaults.htmlBodyTemplate === htmlBodyTemplateValue &&
+                        templateDefaults.subjectTemplate === subjectTemplateValue
+                    }
+                >
+                    Reset to default
+                </Button>
+            ) : undefined}
             <FormControl>
                 <FormLabel>Subject</FormLabel>
                 <Input
@@ -268,6 +281,6 @@ function EmailTemplateForm({
                     }}
                 />
             </FormControl>
-        </>
+        </VStack>
     );
 }

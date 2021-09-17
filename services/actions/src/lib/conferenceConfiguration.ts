@@ -24,8 +24,12 @@ export async function getConferenceConfiguration<T = any>(
         },
     });
 
-    if (result.data?.conference_Configuration_by_pk && is<T>(result.data.conference_Configuration_by_pk)) {
-        return result.data.conference_Configuration_by_pk;
+    if (
+        result.data?.conference_Configuration_by_pk?.value !== undefined &&
+        result.data?.conference_Configuration_by_pk?.value !== null &&
+        is<T>(result.data.conference_Configuration_by_pk.value)
+    ) {
+        return result.data.conference_Configuration_by_pk.value;
     } else {
         return null;
     }

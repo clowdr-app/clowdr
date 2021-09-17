@@ -42,6 +42,7 @@ import {
     useInsertSubmissionRequestEmailJobsMutation,
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
+import MultiSelect from "../../../../../Chakra/MultiSelect";
 import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
@@ -179,6 +180,16 @@ export function SendSubmissionRequestsModalInner({
     const [selectedType, setSelectedType] = useState<string>();
     const [onlyUnsubmitted, setOnlyUnsubmitted] = useState<boolean>(true);
     const [onlyFirsts, setOnlyFirsts] = useState<boolean>(false);
+    const [roles, setRoles] = useState<
+        readonly {
+            label: string;
+            value: string;
+        }[]
+    >([
+        { label: "Author", value: "AUTHOR" },
+        { label: "Presenter", value: "PRESENTER" },
+        { label: "Discussant", value: "Discussant" },
+    ]);
     const { itemEls, personIds } = useMemo(() => {
         const itemEls: JSX.Element[] = [];
         const personIds = new Set<string>();
@@ -188,9 +199,9 @@ export function SendSubmissionRequestsModalInner({
                 filterToPersonIds === null
                     ? item.itemPeople
                     : item.itemPeople.filter((x) => filterToPersonIds.includes(x.personId));
-            const filteredPeople = onlyFirsts
-                ? includedPeople.filter((x) => !x.hasSubmissionRequestBeenSent)
-                : includedPeople;
+            const filteredPeople = (
+                onlyFirsts ? includedPeople.filter((x) => !x.hasSubmissionRequestBeenSent) : includedPeople
+            ).filter((x) => roles.some((role) => role.value === x.roleName.toUpperCase()));
             if (
                 (!selectedType || item.typeName === selectedType) &&
                 (!onlyUnsubmitted || item.hasUnsubmittedElements) &&
@@ -218,7 +229,7 @@ export function SendSubmissionRequestsModalInner({
         }
 
         return { itemEls, personIds: [...personIds] };
-    }, [items, filterToPersonIds, onlyFirsts, selectedType, onlyUnsubmitted]);
+    }, [items, filterToPersonIds, onlyFirsts, selectedType, onlyUnsubmitted, roles]);
 
     const itemsEl = useMemo(
         () => (
@@ -238,6 +249,31 @@ export function SendSubmissionRequestsModalInner({
     const toast = useToast();
 
     const [sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
+    const roleOptions = useMemo(
+        () => [
+            {
+                label: "Presenter",
+                value: "PRESENTER",
+            },
+            {
+                label: "Author",
+                value: "AUTHOR",
+            },
+            {
+                label: "Chair",
+                value: "CHAIR",
+            },
+            {
+                label: "Session Organizer",
+                value: "SESSION ORGANIZER",
+            },
+            {
+                label: "Discussant",
+                value: "DISCUSSANT",
+            },
+        ],
+        []
+    );
 
     return (
         <ModalContent>
@@ -316,6 +352,17 @@ export function SendSubmissionRequestsModalInner({
                                 <FormHelperText>
                                     Send emails only to people who have not already received one.
                                 </FormHelperText>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Roles</FormLabel>
+                                <MultiSelect
+                                    placeholder="Only email people with roles"
+                                    options={roleOptions}
+                                    value={roles}
+                                    isMulti
+                                    onChange={(options) => setRoles(options)}
+                                />
+                                <FormHelperText>Leave unselected to include all items.</FormHelperText>
                             </FormControl>
                             <Divider my={5} />
                             <FormControl>

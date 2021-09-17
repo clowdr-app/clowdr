@@ -17,6 +17,7 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Spinner,
     Text,
     UnorderedList,
     useDisclosure,
@@ -120,125 +121,117 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
         [sortedItems]
     );
 
+    const noPeopleList = useMemo(
+        () => (
+            <UnorderedList>
+                {itemsNoPeople.map((x) => (
+                    <ListItem key={x.id}>{x.title}</ListItem>
+                ))}
+                {itemsNoPeople.length === 0 ? <ListItem>None</ListItem> : undefined}
+            </UnorderedList>
+        ),
+        [itemsNoPeople]
+    );
+
+    const noRequestsList = useMemo(
+        () => (
+            <UnorderedList>
+                {itemsWithPeopleNotSentRequests.map((x) => (
+                    <ListItem key={x.id}>{x.title}</ListItem>
+                ))}
+                {itemsWithPeopleNotSentRequests.length === 0 ? <ListItem>None</ListItem> : undefined}
+            </UnorderedList>
+        ),
+        [itemsWithPeopleNotSentRequests]
+    );
+
+    const awaitingList = useMemo(
+        () => (
+            <UnorderedList>
+                {itemsWithSendRequestsMissingSubmissions.map((x) => (
+                    <ListItem key={x.id}>
+                        <Text>{x.title}</Text>
+                        <UnorderedList>
+                            {x.elements
+                                .filter((y) => !y.data?.length)
+                                .map((y) => (
+                                    <ListItem key={y.id}>
+                                        {y.name} ({y.typeName})
+                                    </ListItem>
+                                ))}
+                        </UnorderedList>
+                    </ListItem>
+                ))}
+                {itemsWithSendRequestsMissingSubmissions.length === 0 ? <ListItem>None</ListItem> : undefined}
+            </UnorderedList>
+        ),
+        [itemsWithSendRequestsMissingSubmissions]
+    );
+
+    const submittedGrid = useMemo(
+        () => (
+            <Grid
+                templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
+                w="100%"
+                gap={2}
+            >
+                {itemsWithSubmissions.flatMap((x) =>
+                    x.elements
+                        .filter((y) => y.data?.length)
+                        .map((y) => (
+                            <GridItem key={y.id} maxW="500px" border="1px solid black">
+                                <VStack>
+                                    <Heading as="h3" fontSize="md" p={1}>
+                                        {x.title}
+                                    </Heading>
+                                    <Heading as="h4" fontSize="sm" fontWeight="normal" p={1}>
+                                        {y.name} ({y.typeName})
+                                    </Heading>
+                                    <DeferredElement uploadableElement={y} />
+                                </VStack>
+                            </GridItem>
+                        ))
+                )}
+                {itemsWithSubmissions.length === 0 ? <GridItem>None</GridItem> : undefined}
+            </Grid>
+        ),
+        [itemsWithSubmissions]
+    );
+
     return (
         <ModalContent m={0}>
             <ModalHeader>Review submissions</ModalHeader>
             <ModalCloseButton />
             <ModalBody mb={4}>
-                <Accordion allowMultiple={false} allowToggle>
+                {itemsResponse.loading ? <Spinner /> : undefined}
+                <Accordion allowMultiple={false} allowToggle reduceMotion>
                     <AccordionItem>
                         <AccordionButton>
                             <AccordionIcon />
                             No people
                         </AccordionButton>
-                        <AccordionPanel>
-                            <UnorderedList>
-                                {itemsNoPeople.map((x) => (
-                                    <ListItem key={x.id}>
-                                        <Text>{x.title}</Text>
-                                        <UnorderedList>
-                                            {x.elements
-                                                .filter((y) => !y.data?.length)
-                                                .map((y) => (
-                                                    <ListItem key={y.id}>
-                                                        {y.name} ({y.typeName})
-                                                    </ListItem>
-                                                ))}
-                                        </UnorderedList>
-                                    </ListItem>
-                                ))}
-                                {itemsNoPeople.length === 0 ? <ListItem>None</ListItem> : undefined}
-                            </UnorderedList>
-                        </AccordionPanel>
+                        <AccordionPanel>{noPeopleList}</AccordionPanel>
                     </AccordionItem>
                     <AccordionItem>
                         <AccordionButton>
                             <AccordionIcon />
                             Submissions not yet requested
                         </AccordionButton>
-                        <AccordionPanel>
-                            <UnorderedList>
-                                {itemsWithPeopleNotSentRequests.map((x) => (
-                                    <ListItem key={x.id}>
-                                        <Text>{x.title}</Text>
-                                        <UnorderedList>
-                                            {x.elements
-                                                .filter((y) => !y.data?.length)
-                                                .map((y) => (
-                                                    <ListItem key={y.id}>
-                                                        {y.name} ({y.typeName})
-                                                    </ListItem>
-                                                ))}
-                                        </UnorderedList>
-                                    </ListItem>
-                                ))}
-                                {itemsWithPeopleNotSentRequests.length === 0 ? <ListItem>None</ListItem> : undefined}
-                            </UnorderedList>
-                        </AccordionPanel>
+                        <AccordionPanel>{noRequestsList}</AccordionPanel>
                     </AccordionItem>
                     <AccordionItem>
                         <AccordionButton>
                             <AccordionIcon />
                             Awaiting submission
                         </AccordionButton>
-                        <AccordionPanel>
-                            <UnorderedList>
-                                {itemsWithSendRequestsMissingSubmissions.map((x) => (
-                                    <ListItem key={x.id}>
-                                        <Text>{x.title}</Text>
-                                        <UnorderedList>
-                                            {x.elements
-                                                .filter((y) => !y.data?.length)
-                                                .map((y) => (
-                                                    <ListItem key={y.id}>
-                                                        {y.name} ({y.typeName})
-                                                    </ListItem>
-                                                ))}
-                                        </UnorderedList>
-                                    </ListItem>
-                                ))}
-                                {itemsWithSendRequestsMissingSubmissions.length === 0 ? (
-                                    <ListItem>None</ListItem>
-                                ) : undefined}
-                            </UnorderedList>
-                        </AccordionPanel>
+                        <AccordionPanel>{awaitingList}</AccordionPanel>
                     </AccordionItem>
                     <AccordionItem>
                         <AccordionButton>
                             <AccordionIcon />
                             Submission received
                         </AccordionButton>
-                        <AccordionPanel>
-                            <Grid
-                                templateColumns={[
-                                    "repeat(1, 1fr)",
-                                    "repeat(2, 1fr)",
-                                    "repeat(2, 1fr)",
-                                    "repeat(3, 1fr)",
-                                ]}
-                                w="100%"
-                                gap={2}
-                            >
-                                {itemsWithSubmissions.flatMap((x) =>
-                                    x.elements
-                                        .filter((y) => y.data?.length)
-                                        .map((y) => (
-                                            <GridItem key={y.id} maxW="500px" border="1px solid black">
-                                                <VStack>
-                                                    <Heading as="h3" fontSize="md" p={1}>
-                                                        {x.title}
-                                                    </Heading>
-                                                    <Heading as="h4" fontSize="sm" fontWeight="normal" p={1}>
-                                                        {y.name} ({y.typeName})
-                                                    </Heading>
-                                                    <DeferredElement uploadableElement={y} />
-                                                </VStack>
-                                            </GridItem>
-                                        ))
-                                )}
-                                {itemsWithSubmissions.length === 0 ? <GridItem>None</GridItem> : undefined}
-                            </Grid>
-                        </AccordionPanel>
+                        <AccordionPanel>{submittedGrid}</AccordionPanel>
                     </AccordionItem>
                 </Accordion>
             </ModalBody>

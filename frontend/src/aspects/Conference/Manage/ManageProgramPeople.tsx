@@ -364,7 +364,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 }: ColumnHeaderProps<ManageProgramPeople_ProgramPersonWithAccessTokenFragment>) {
                     return isInCreate ? undefined : (
                         <Button size="xs" onClick={onClick}>
-                            Access Token{sortDir !== null ? ` ${sortDir}` : undefined}
+                            Submissions Link{sortDir !== null ? ` ${sortDir}` : undefined}
                         </Button>
                     );
                 },
@@ -395,7 +395,9 @@ export default function ManageProgramPeople(): JSX.Element {
                     const { onCopy, hasCopied } = useClipboard(`${window.origin}/submissions/${value}` ?? "");
                     return (
                         <Flex alignItems="center">
-                            <Code mr={2}>{value ?? "<Refresh to view>"}</Code>
+                            <Code mr={2} fontSize="xs">
+                                {value ?? "<Refresh to view>"}
+                            </Code>
                             {value ? (
                                 <Button onClick={onCopy} size="xs" ml="auto" colorScheme="purple">
                                     <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} mr={1} />

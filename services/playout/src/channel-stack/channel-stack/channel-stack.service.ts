@@ -89,28 +89,36 @@ export class ChannelStackService {
             throw new Error(`Could not find stack ${stackName}`);
         }
 
-        function findOutput(key: string): string {
+        function findOutput(key: string): string | null {
             assert(description.Stacks);
             const value = description.Stacks[0].Outputs?.find((x) => x.OutputKey === key)?.OutputValue;
+            return value ?? null;
+        }
+
+        function findExpectedOutput(key: string): string {
+            const value = findOutput(key);
             assert(value, `Could not find output with key '${key}'`);
             return value;
         }
 
-        const rtmpAInputUri = findOutput("RtmpAInputUri");
-        const rtmpAInputId = findOutput("RtmpAInputId");
-        const rtmpBInputUri = findOutput("RtmpBInputUri");
-        const rtmpBInputId = findOutput("RtmpBInputId");
-        const mp4InputId = findOutput("Mp4InputId");
-        const loopingMp4InputId = findOutput("LoopingMp4InputId");
-        const mp4InputAttachmentName = findOutput("Mp4InputAttachmentName");
-        const loopingMp4InputAttachmentName = findOutput("LoopingMp4InputAttachmentName");
-        const rtmpAInputAttachmentName = findOutput("RtmpAInputAttachmentName");
-        const rtmpBInputAttachmentName = findOutput("RtmpBInputAttachmentName");
-        const mediaLiveChannelId = findOutput("MediaLiveChannelId");
-        const mediaPackageChannelId = findOutput("MediaPackageChannelId");
-        const cloudFrontDistributionId = findOutput("CloudFrontDistributionId");
-        const cloudFrontDomain = findOutput("CloudFrontDomain");
-        const endpointUri = findOutput("EndpointUri");
+        const rtmpAInputUri = findExpectedOutput("RtmpAInputUri");
+        const rtmpAInputId = findExpectedOutput("RtmpAInputId");
+        const rtmpBInputUri = findExpectedOutput("RtmpBInputUri");
+        const rtmpBInputId = findExpectedOutput("RtmpBInputId");
+        const mp4InputId = findExpectedOutput("Mp4InputId");
+        const loopingMp4InputId = findExpectedOutput("LoopingMp4InputId");
+        const mp4InputAttachmentName = findExpectedOutput("Mp4InputAttachmentName");
+        const loopingMp4InputAttachmentName = findExpectedOutput("LoopingMp4InputAttachmentName");
+        const rtmpAInputAttachmentName = findExpectedOutput("RtmpAInputAttachmentName");
+        const rtmpBInputAttachmentName = findExpectedOutput("RtmpBInputAttachmentName");
+        const mediaLiveChannelId = findExpectedOutput("MediaLiveChannelId");
+        const mediaPackageChannelId = findExpectedOutput("MediaPackageChannelId");
+        const cloudFrontDistributionId = findExpectedOutput("CloudFrontDistributionId");
+        const cloudFrontDomain = findExpectedOutput("CloudFrontDomain");
+        const endpointUri = findExpectedOutput("EndpointUri");
+        const rtmpOutputUri = findOutput("RtmpOutputUri");
+        const rtmpOutputStreamKey = findOutput("RtmpOutputStreamKey");
+        const rtmpOutputDestinationId = findOutput("RtmpOutputDestinationId");
 
         return {
             rtmpAInputUri,
@@ -128,6 +136,9 @@ export class ChannelStackService {
             cloudFrontDistributionId,
             cloudFrontDomain,
             endpointUri,
+            rtmpOutputUri,
+            rtmpOutputStreamKey,
+            rtmpOutputDestinationId,
         };
     }
 

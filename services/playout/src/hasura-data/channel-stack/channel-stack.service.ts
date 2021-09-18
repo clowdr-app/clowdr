@@ -99,6 +99,9 @@ export class ChannelStackDataService {
                 $loopingMp4InputAttachmentName: String!
                 $rtmpAInputAttachmentName: String!
                 $rtmpBInputAttachmentName: String!
+                $rtmpOutputUri: String
+                $rtmpOutputStreamKey: String
+                $rtmpOutputDestinationId: String
                 $conferenceId: uuid!
                 $channelStackCreateJobId: uuid!
                 $roomId: uuid!
@@ -122,6 +125,9 @@ export class ChannelStackDataService {
                         rtmpBInputAttachmentName: $rtmpBInputAttachmentName
                         conferenceId: $conferenceId
                         channelStackCreateJobId: $channelStackCreateJobId
+                        rtmpOutputUri: $rtmpOutputUri
+                        rtmpOutputStreamKey: $rtmpOutputStreamKey
+                        rtmpOutputDestinationId: $rtmpOutputDestinationId
                         roomId: $roomId
                     }
                 ) {
@@ -150,6 +156,9 @@ export class ChannelStackDataService {
                 rtmpBInputId: stackDescription.rtmpBInputId,
                 rtmpBInputUri: stackDescription.rtmpBInputUri,
                 rtmpBInputAttachmentName: stackDescription.rtmpBInputAttachmentName,
+                rtmpOutputUri: stackDescription.rtmpOutputUri,
+                rtmpOutputStreamKey: stackDescription.rtmpOutputStreamKey,
+                rtmpOutputDestinationId: stackDescription.rtmpOutputDestinationId,
                 roomId,
             },
         });

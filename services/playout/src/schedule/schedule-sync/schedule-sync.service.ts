@@ -623,6 +623,7 @@ export class ScheduleSyncService {
 
             const stoppedStates: (string | null)[] = [ChannelState.IDLE, ChannelState.STOPPING];
             if (stoppedStates.includes(channelState)) {
+                this.logger.debug({ room, channelState }, "Channel is idle or stopping. Starting channel.");
                 await this.mediaLiveService.startChannel(room.mediaLiveChannelId);
             }
 

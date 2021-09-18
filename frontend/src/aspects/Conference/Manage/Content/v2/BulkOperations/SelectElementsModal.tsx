@@ -49,7 +49,6 @@ gql`
         typeName
         itemId
         data
-        uploadersCount
     }
 
     query SEoUM_Infos($itemIds: [uuid!]!) {
@@ -208,26 +207,6 @@ function ModalInner({
         );
     }, [includeUploadedFilter]);
 
-    const [includeUploadersFilter, setIncludeUploadersFilter] = useState<string>("BOTH");
-    const includeUploaders = useMemo(() => {
-        return (
-            <FormControl>
-                <FormLabel>Only with uploaders?</FormLabel>
-                <Select
-                    value={includeUploadersFilter}
-                    onChange={(ev) => {
-                        setIncludeUploadersFilter(ev.target.value);
-                    }}
-                >
-                    <option value="BOTH">Elements with or without uploaders</option>
-                    <option value="WITH">Only elements with at least one uploader</option>
-                    <option value="WITHOUT">Only elements without any uploaders</option>
-                </Select>
-                <FormHelperText>Include elements that have at least one uploader.</FormHelperText>
-            </FormControl>
-        );
-    }, [includeUploadersFilter]);
-
     const elementTests = useMemo<Array<(element: SelectElements_ElementFragment) => boolean>>(() => {
         return [
             (x) => restrictToTypes === null || restrictToTypes.some((y) => y === x.typeName),
@@ -237,12 +216,8 @@ function ModalInner({
                 includeUploadedFilter === "BOTH" ||
                 (includeUploadedFilter === "WITH" && x.data?.length) ||
                 (includeUploadedFilter === "WITHOUT" && !x.data?.length),
-            (x) =>
-                includeUploadersFilter === "BOTH" ||
-                (includeUploadersFilter === "WITH" && x.uploadersCount) ||
-                (includeUploadersFilter === "WITHOUT" && !x.uploadersCount),
         ];
-    }, [includeUploadedFilter, includeUploadersFilter, nameFilter, restrictToTypes, typeFilter]);
+    }, [includeUploadedFilter, nameFilter, restrictToTypes, typeFilter]);
 
     const [filteredItems, setFilteredItems] = useState<SelectElements_ItemFragment[]>([]);
 
@@ -294,9 +269,7 @@ function ModalInner({
                         {item.elements.map((element) => (
                             <ListItem key={element.id}>
                                 {element.name}
-                                {` (${element.data?.length ? "Submitted" : "Not submitted"}; ${
-                                    element.uploadersCount ?? "Unknown number of"
-                                } uploaders)`}
+                                {` (${element.data?.length ? "Submitted" : "Not submitted"})`}
                             </ListItem>
                         ))}
                     </UnorderedList>
@@ -320,7 +293,6 @@ function ModalInner({
                             {nameSelect}
                             {typeSelect}
                             {includeUploaded}
-                            {includeUploaders}
                         </VStack>
                         <Divider m={0} h="unset" orientation="vertical" />
                         <VStack spacing={4} flex="1 1 48%">

@@ -114,7 +114,7 @@ function ModalInner({
                     <Alert status="error" mt={4}>
                         <AlertTitle>
                             <AlertIcon />
-                            Error synchronising uploaders
+                            Error updating uploads remaining
                         </AlertTitle>
                         <AlertDescription>{updateResponse.error.message}</AlertDescription>
                     </Alert>

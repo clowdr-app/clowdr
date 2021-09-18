@@ -81,12 +81,12 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
             ])
         ),
         people: new Map(
-            schedule.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
+            schedule.collection_ProgramPersonWithAccessToken.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
                     conferenceId: person.conferenceId,
-                    name: person.name,
+                    name: person.name ?? "<ERROR>",
                     affiliation: person.affiliation,
                     email: person.email,
                     originatingDataId: person.originatingDataId,

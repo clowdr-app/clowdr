@@ -7,7 +7,6 @@ import type {
     IntermediaryItemPersonDescriptor,
     IntermediaryPersonDescriptor,
     IntermediaryTagDescriptor,
-    IntermediaryUploaderDescriptor,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -17,13 +16,11 @@ import type {
     ItemExhibitionDescriptor,
     ItemPersonDescriptor,
     ProgramPersonDescriptor,
-    UploaderDescriptor,
 } from "../../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
 import {
     ChangeSummary,
     convertOriginatingData,
-    findExistingEmailItem,
     findExistingNamedItem,
     findExistingOriginatingData,
     findMatch,
@@ -43,7 +40,6 @@ import {
 
 type Context = {
     idMaps: {
-        Uploader: IdMap;
         Element: IdMap;
         ItemPerson: IdMap;
         ItemExhibition: IdMap;
@@ -60,86 +56,6 @@ type Context = {
     tags: TagDescriptor[];
     exhibitions: ExhibitionDescriptor[];
 };
-
-function findUploader(
-    ctx: Context,
-    elements: UploaderDescriptor[],
-    element: IntermediaryUploaderDescriptor | UploaderDescriptor
-): number | undefined {
-    return findExistingEmailItem("Uploader")(ctx, elements, element);
-}
-
-function mergeUploader(
-    context: Context,
-    element1: UploaderDescriptor,
-    element2: UploaderDescriptor
-): {
-    result: UploaderDescriptor;
-    changes: ChangeSummary[];
-} {
-    const changes: ChangeSummary[] = [];
-    const result = {} as UploaderDescriptor;
-
-    mergeIdInPlace("Uploader", context, changes, result, element1, element2, false);
-    mergeIsNewInPlace(context, result, element1, element2);
-    mergeFieldInPlace(context, changes, result, "name", element1, element2);
-    mergeFieldInPlace(context, changes, result, "email", element1, element2);
-
-    changes.push({
-        location: "Uploader",
-        type: "MERGE",
-        description: "Merged two matching uploaders.",
-        importData: [element1, element2],
-        newData: result,
-    });
-
-    return {
-        result,
-        changes,
-    };
-}
-
-function convertUploader(
-    elementId: string
-): (context: Context, element: IntermediaryUploaderDescriptor | UploaderDescriptor) => UploaderDescriptor {
-    return (_context, element) => {
-        const result = {
-            isNew: ("isNew" in element && element.isNew) || !element.id,
-            ...element,
-        } as UploaderDescriptor;
-
-        if ("emailsSentCount" in element) {
-            result.emailsSentCount = element.emailsSentCount;
-        } else {
-            result.emailsSentCount = 0;
-        }
-
-        result.elementId = elementId;
-
-        return result;
-    };
-}
-
-function mergeUploaders(elementId: string): (
-    context: Context,
-    elements1: UploaderDescriptor[],
-    elements2: (IntermediaryUploaderDescriptor | UploaderDescriptor)[]
-) => {
-    changes: ChangeSummary[];
-    result: UploaderDescriptor[];
-} {
-    return (context, elements1, elements2) => {
-        return mergeLists<Context, UploaderDescriptor, IntermediaryUploaderDescriptor>(
-            context,
-            "Uploader",
-            elements1,
-            elements2,
-            findUploader,
-            convertUploader(elementId),
-            mergeUploader
-        );
-    };
-}
 
 function mergeElement(
     context: Context,
@@ -204,7 +120,6 @@ function mergeElement(
             };
         }
     });
-    mergeFieldInPlace(context, changes, result, "uploaders", element1, element2, true, mergeUploaders(result.id));
 
     changes.push({
         location: "Element",
@@ -234,7 +149,6 @@ function convertElement(
         isHidden: element.isHidden,
         layoutData: "layoutData" in element ? element.layoutData : undefined,
         uploadsRemaining: element.uploadsRemaining,
-        uploaders: [],
     } as ElementDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, element);
@@ -891,7 +805,6 @@ function mergeData(
 
     const result: {
         idMaps: {
-            Uploader: IdMap;
             UploadableElement: IdMap;
             Element: IdMap;
             ItemPerson: IdMap;
@@ -910,7 +823,6 @@ function mergeData(
         exhibitions: ExhibitionDescriptor[];
     } = {
         idMaps: {
-            Uploader: new Map(),
             UploadableElement: new Map(),
             Element: new Map(),
             ItemPerson: new Map(),

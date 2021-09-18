@@ -26,12 +26,12 @@ export function convertContentToDescriptors(allContent: SelectAllContentQuery): 
             ])
         ),
         people: new Map(
-            allContent.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
+            allContent.collection_ProgramPersonWithAccessToken.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
                     conferenceId: person.conferenceId,
-                    name: person.name,
+                    name: person.name ?? "<ERROR>",
                     affiliation: person.affiliation,
                     email: person.email,
                     originatingDataId: person.originatingDataId,
@@ -80,13 +80,6 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             layoutData: item.layoutData,
             originatingDataId: item.originatingDataId,
             uploadsRemaining: item.uploadsRemaining,
-            uploaders: item.uploaders.map((uploader) => ({
-                id: uploader.id,
-                email: uploader.email,
-                emailsSentCount: uploader.emailsSentCount,
-                name: uploader.name,
-                elementId: uploader.elementId,
-            })),
         })),
         people: group.itemPeople.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,
@@ -125,13 +118,6 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
             typeName: item.typeName,
             originatingDataId: item.originatingDataId,
             uploadsRemaining: item.uploadsRemaining,
-            uploaders: item.uploaders.map((uploader) => ({
-                id: uploader.id,
-                email: uploader.email,
-                emailsSentCount: uploader.emailsSentCount,
-                name: uploader.name,
-                elementId: uploader.elementId,
-            })),
         })),
         people: group.people.map((groupPerson) => ({
             conferenceId: groupPerson.conferenceId,

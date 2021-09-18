@@ -63,7 +63,7 @@ export function EditElement({
     nextElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
     refetchElements: () => void;
     defaultOpenSecurity: boolean;
-    openSendSubmissionRequests: (uploaderIds: string[]) => void;
+    openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
         update: (cache, response) => {

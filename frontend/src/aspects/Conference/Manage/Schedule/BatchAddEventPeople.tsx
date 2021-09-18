@@ -61,6 +61,7 @@ import {
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 
@@ -72,7 +73,7 @@ gql`
         roleName
     }
 
-    fragment AddEventPeople_ProgramPerson on collection_ProgramPerson {
+    fragment AddEventPeople_ProgramPerson on collection_ProgramPersonWithAccessToken {
         id
         name
         affiliation
@@ -115,7 +116,7 @@ gql`
     }
 
     query AddEventPeople_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
             ...AddEventPeople_ProgramPerson
         }
     }
@@ -127,7 +128,7 @@ gql`
     }
 
     query AddEventPeople_SelectProgramPeople_ByRegistrant($registrantIds: [uuid!]!) {
-        collection_ProgramPerson(where: { registrantId: { _in: $registrantIds } }) {
+        collection_ProgramPersonWithAccessToken(where: { registrantId: { _in: $registrantIds } }) {
             ...AddEventPeople_ProgramPerson
         }
     }
@@ -144,8 +145,8 @@ gql`
         }
     }
 
-    mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPerson_insert_input!]!) {
-        insert_collection_ProgramPerson(objects: $objects) {
+    mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
+        insert_collection_ProgramPersonWithAccessToken(objects: $objects) {
             returning {
                 ...AddEventPeople_ProgramPerson
             }
@@ -352,8 +353,8 @@ function AddEventPeople_SingleProgramPersonPanel({
     const peopleOptions = useMemo(
         () =>
             selectProgramPeopleQuery.data
-                ? [...selectProgramPeopleQuery.data.collection_ProgramPerson]
-                      .sort((x, y) => x.name.localeCompare(y.name))
+                ? [...selectProgramPeopleQuery.data.collection_ProgramPersonWithAccessToken]
+                      .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b)))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
                               {x.name}
@@ -397,7 +398,7 @@ function AddEventPeople_SingleProgramPersonPanel({
 
         try {
             assert(selectProgramPeopleQuery.data);
-            const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPerson.find(
+            const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPersonWithAccessToken.find(
                 (x) => x.id === selectedPersonId
             );
             assert(selectedPerson);
@@ -875,7 +876,9 @@ export async function addRegistrantsToEvent(
     const personIds: string[] = [];
     const insertProgramPersons: Collection_ProgramPerson_Insert_Input[] = [];
     for (const registrantId of registrantIds) {
-        const personId = programPeople.data.collection_ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
+        const personId = programPeople.data.collection_ProgramPersonWithAccessToken.find(
+            (x) => x.registrantId === registrantId
+        )?.id;
         if (personId) {
             personIds.push(personId);
         } else {
@@ -897,11 +900,11 @@ export async function addRegistrantsToEvent(
                 objects: insertProgramPersons,
             },
             update: (cache, result) => {
-                if (result.data?.insert_collection_ProgramPerson) {
-                    const data = result.data.insert_collection_ProgramPerson;
+                if (result.data?.insert_collection_ProgramPersonWithAccessToken) {
+                    const data = result.data.insert_collection_ProgramPersonWithAccessToken;
                     cache.modify({
                         fields: {
-                            collection_ProgramPerson(existingRefs: Reference[] = []) {
+                            collection_ProgramPersonWithAccessToken(existingRefs: Reference[] = []) {
                                 const newRefs = data.returning.map((x) =>
                                     cache.writeFragment({
                                         data: x,
@@ -916,8 +919,11 @@ export async function addRegistrantsToEvent(
                 }
             },
         });
-        assert(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
-        personIds.push(...newPeople.data.insert_collection_ProgramPerson.returning.map((x) => x.id));
+        assert(
+            newPeople.data?.insert_collection_ProgramPersonWithAccessToken?.returning,
+            "Failed to insert content people"
+        );
+        personIds.push(...newPeople.data.insert_collection_ProgramPersonWithAccessToken.returning.map((x) => x.id));
     }
 
     const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];

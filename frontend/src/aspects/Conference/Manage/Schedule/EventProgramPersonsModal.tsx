@@ -283,7 +283,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
 
     const options = useMemo(() => {
         return [...programPeople]
-            .sort((x, y) => x.name.localeCompare(y.name))
+            .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b)))
             .map((person) => (
                 <option key={person.id} value={person.id}>
                     {person.name}
@@ -341,7 +341,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                 },
                 sort: (x: ProgramPersonInfoFragment | undefined, y: ProgramPersonInfoFragment | undefined) =>
                     x && y
-                        ? x.name.localeCompare(y.name) ||
+                        ? maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b)) ||
                           maybeCompare(x.affiliation, y.affiliation, (a, b) => a.localeCompare(b))
                         : x
                         ? 1

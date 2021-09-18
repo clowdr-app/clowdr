@@ -1280,7 +1280,7 @@ function EditableScheduleTable(): JSX.Element {
                                 "Shuffle Period Id": event.shufflePeriodId ?? "",
 
                                 People: event.eventPeople.map((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return `${eventPerson.personId} (${eventPerson.roleName}) [${
@@ -1292,7 +1292,7 @@ function EditableScheduleTable(): JSX.Element {
                                     }]`;
                                 }),
                                 "Registered People": event.eventPeople.flatMap((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return person?.registrantId
@@ -1445,7 +1445,7 @@ function EditableScheduleTable(): JSX.Element {
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
             wholeSchedule.data?.schedule_Event,
-            wholeSchedule.data?.collection_ProgramPerson,
+            wholeSchedule.data?.collection_ProgramPersonWithAccessToken,
         ]
     );
 
@@ -1501,7 +1501,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                programPeople={wholeSchedule.data?.collection_ProgramPerson ?? []}
+                programPeople={wholeSchedule.data?.collection_ProgramPersonWithAccessToken ?? []}
                 events={wholeSchedule.data?.schedule_Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}

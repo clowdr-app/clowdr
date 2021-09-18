@@ -10,9 +10,6 @@ import {
     Content_ItemExhibition_Insert_Input,
     Content_ItemProgramPerson_Insert_Input,
     Content_Item_Insert_Input,
-    Content_Uploader_Constraint,
-    Content_Uploader_Insert_Input,
-    Content_Uploader_Update_Column,
     useDeleteExhibitionsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteProgramPeopleMutation,
@@ -31,7 +28,6 @@ import {
     useUpdateItemMutation,
     useUpdatePersonMutation,
     useUpdateTagMutation,
-    useUpdateUploaderMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useConference } from "../../useConference";
@@ -44,19 +40,9 @@ import type {
     ItemExhibitionDescriptor,
     ItemPersonDescriptor,
     ProgramPersonDescriptor,
-    UploaderDescriptor,
 } from "./Types";
 
 gql`
-    fragment UploaderInfo on content_Uploader {
-        id
-        conferenceId
-        email
-        emailsSentCount
-        name
-        elementId
-    }
-
     fragment ElementInfo on content_Element {
         conferenceId
         itemId
@@ -68,9 +54,6 @@ gql`
         name
         originatingDataId
         uploadsRemaining
-        uploaders {
-            ...UploaderInfo
-        }
     }
 
     fragment OriginatingDataInfo on conference_OriginatingData {
@@ -80,7 +63,7 @@ gql`
         data
     }
 
-    fragment ProgramPersonInfo on collection_ProgramPerson {
+    fragment ProgramPersonInfo on collection_ProgramPersonWithAccessToken {
         id
         conferenceId
         name
@@ -160,7 +143,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _neq: SPONSOR } }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ProgramPersonInfo
         }
         conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -243,8 +226,8 @@ gql`
         }
     }
 
-    mutation InsertProgramPeople($newPeople: [collection_ProgramPerson_insert_input!]!) {
-        insert_collection_ProgramPerson(objects: $newPeople) {
+    mutation InsertProgramPeople($newPeople: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
+        insert_collection_ProgramPersonWithAccessToken(objects: $newPeople) {
             returning {
                 ...ProgramPersonInfo
             }
@@ -252,7 +235,7 @@ gql`
     }
 
     mutation DeleteProgramPeople($deletePersonIds: [uuid!]!) {
-        delete_collection_ProgramPerson(where: { id: { _in: $deletePersonIds } }) {
+        delete_collection_ProgramPersonWithAccessToken(where: { id: { _in: $deletePersonIds } }) {
             returning {
                 id
             }
@@ -271,8 +254,6 @@ gql`
         $deleteItemIds: [uuid!]!
         $deleteGroupTagIds: [uuid!]!
         $deleteGroupExhibitionIds: [uuid!]!
-        $newUploaders: [content_Uploader_insert_input!]!
-        $deleteUploaderIds: [uuid!]!
         $newGroupPeople: [content_ItemProgramPerson_insert_input!]!
         $deleteGroupPeopleIds: [uuid!]!
     ) {
@@ -289,11 +270,6 @@ gql`
         insert_content_ItemExhibition(objects: $newGroupExhibitions) {
             returning {
                 ...ItemExhibitionInfo
-            }
-        }
-        insert_content_Uploader(objects: $newUploaders) {
-            returning {
-                ...UploaderInfo
             }
         }
         insert_content_ItemProgramPerson(objects: $newGroupPeople) {
@@ -318,11 +294,6 @@ gql`
             }
         }
         delete_content_ItemExhibition(where: { id: { _in: $deleteGroupExhibitionIds } }) {
-            returning {
-                id
-            }
-        }
-        delete_content_Uploader(where: { id: { _in: $deleteUploaderIds } }) {
             returning {
                 id
             }
@@ -360,12 +331,6 @@ gql`
         }
     }
 
-    mutation UpdateUploader($id: uuid!, $email: String!, $name: String!) {
-        update_content_Uploader_by_pk(pk_columns: { id: $id }, _set: { email: $email, name: $name }) {
-            ...UploaderInfo
-        }
-    }
-
     mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int = null) {
         update_content_ItemProgramPerson_by_pk(
             pk_columns: { id: $id }
@@ -389,8 +354,8 @@ gql`
         $originatingDataId: uuid = null
         $registrantId: uuid = null
     ) {
-        update_collection_ProgramPerson_by_pk(
-            pk_columns: { id: $id }
+        update_collection_ProgramPersonWithAccessToken(
+            where: { id: { _eq: $id } }
             _set: {
                 name: $name
                 affiliation: $affiliation
@@ -399,7 +364,9 @@ gql`
                 registrantId: $registrantId
             }
         ) {
-            ...ProgramPersonInfo
+            returning {
+                ...ProgramPersonInfo
+            }
         }
     }
 
@@ -513,7 +480,6 @@ export function useSaveContentDiff():
     const [insertElementsMutation] = useInsertElementsMutation();
     const [updateItemMutation] = useUpdateItemMutation();
     const [updateElementMutation] = useUpdateElementMutation();
-    const [updateUploaderMutation] = useUpdateUploaderMutation();
     const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
     const [updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
@@ -872,21 +838,6 @@ export function useSaveContentDiff():
                                                     isHidden: item.isHidden,
                                                     originatingDataId: item.originatingDataId,
                                                     uploadsRemaining: item.uploadsRemaining,
-                                                    uploaders: {
-                                                        data: item.uploaders.map(
-                                                            (uploader): Content_Uploader_Insert_Input => ({
-                                                                conferenceId: conference.id,
-                                                                email: uploader.email,
-                                                                id: uploader.id,
-                                                                name: uploader.name,
-                                                            })
-                                                        ),
-                                                        on_conflict: {
-                                                            constraint:
-                                                                Content_Uploader_Constraint.UploaderElementIdEmailKey,
-                                                            update_columns: [Content_Uploader_Update_Column.Name],
-                                                        },
-                                                    },
                                                 };
                                                 return itemResult;
                                             }),
@@ -938,21 +889,6 @@ export function useSaveContentDiff():
                                         originatingDataId: item.originatingDataId,
                                         itemId: item.itemId,
                                         uploadsRemaining: item.uploadsRemaining,
-                                        uploaders: {
-                                            data:
-                                                item.uploaders?.data.map(
-                                                    (uploader): Content_Uploader_Insert_Input => ({
-                                                        conferenceId: conference.id,
-                                                        email: uploader.email,
-                                                        id: uploader.id,
-                                                        name: uploader.name,
-                                                    })
-                                                ) ?? [],
-                                            on_conflict: {
-                                                constraint: Content_Uploader_Constraint.UploaderElementIdEmailKey,
-                                                update_columns: [Content_Uploader_Update_Column.Name],
-                                            },
-                                        },
                                     })),
                                 },
                             });
@@ -987,10 +923,6 @@ export function useSaveContentDiff():
                             const newGroupTags = new Set<string>();
                             const deleteGroupTagKeys = new Set<string>();
 
-                            const newUploaders = new Map<string, UploaderDescriptor>();
-                            const updatedUploaders = new Map<string, UploaderDescriptor>();
-                            const deleteUploaderKeys = new Set<string>();
-
                             const newGroupPersons = new Map<string, ItemPersonDescriptor>();
                             const updatedGroupPersons = new Map<string, ItemPersonDescriptor>();
                             const deleteGroupPersonKeys = new Set<string>();
@@ -1007,31 +939,11 @@ export function useSaveContentDiff():
                                     newItems.set(item.id, item);
                                 } else {
                                     updatedItems.set(item.id, item);
-
-                                    for (const uploader of item.uploaders) {
-                                        if (uploader.isNew) {
-                                            newUploaders.set(uploader.id, { ...uploader, elementId: item.id });
-                                        } else {
-                                            updatedUploaders.set(uploader.id, {
-                                                ...uploader,
-                                                elementId: item.id,
-                                            });
-                                        }
-                                    }
                                 }
                             }
                             for (const existingItem of existingGroup.elements) {
                                 if (!updatedItems.has(existingItem.id)) {
                                     deleteItemKeys.add(existingItem.id);
-                                }
-
-                                for (const existingUploader of existingItem.uploaders) {
-                                    if (
-                                        !updatedUploaders.has(existingUploader.id) &&
-                                        !newUploaders.has(existingUploader.id)
-                                    ) {
-                                        deleteUploaderKeys.add(existingUploader.id);
-                                    }
                                 }
                             }
 
@@ -1091,20 +1003,6 @@ export function useSaveContentDiff():
                                 );
                             }
 
-                            if (updatedUploaders.size > 0) {
-                                await Promise.all(
-                                    Array.from(updatedUploaders.values()).map(async (uploader) => {
-                                        await updateUploaderMutation({
-                                            variables: {
-                                                id: uploader.id,
-                                                name: uploader.name,
-                                                email: uploader.email,
-                                            },
-                                        });
-                                    })
-                                );
-                            }
-
                             if (updatedGroupPersons.size > 0) {
                                 await Promise.all(
                                     Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
@@ -1138,7 +1036,6 @@ export function useSaveContentDiff():
                                     typeName: group.typeName,
                                     deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
                                     deleteItemIds: Array.from(deleteItemKeys.values()),
-                                    deleteUploaderIds: Array.from(deleteUploaderKeys.values()),
                                     deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
                                     deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
                                     groupId: group.id,
@@ -1157,23 +1054,6 @@ export function useSaveContentDiff():
                                         name: item.name,
                                         originatingDataId: item.originatingDataId,
                                         uploadsRemaining: item.uploadsRemaining,
-                                        uploaders: {
-                                            data: item.uploaders.map(
-                                                (uploader): Content_Uploader_Insert_Input => ({
-                                                    id: uploader.id,
-                                                    email: uploader.email,
-                                                    name: uploader.name,
-                                                    conferenceId: conference.id,
-                                                })
-                                            ),
-                                        },
-                                    })),
-                                    newUploaders: Array.from(newUploaders.values()).map((uploader) => ({
-                                        conferenceId: conference.id,
-                                        email: uploader.email,
-                                        id: uploader.id,
-                                        name: uploader.name,
-                                        elementId: uploader.elementId,
                                     })),
                                     newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
                                         conferenceId: conference.id,

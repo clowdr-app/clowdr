@@ -238,24 +238,12 @@ const presetJSONata_HotCRPQuery_POPL2021 = `
                 "name": "Pre-published video",
                 "originatingDataSourceId": $string(pid),
                 "uploadsRemaining": 3,
-                "uploaders": [
-                    contacts.{
-                        "email": email,
-                        "name": first & ' ' & last
-                    }
-                ]
             },
             {
                 "typeName": "VIDEO_BROADCAST",
                 "name": "Livestream broadcast video",
                 "originatingDataSourceId": $string(pid),
                 "uploadsRemaining": 3,
-                "uploaders": [
-                    contacts.{
-                        "email": email,
-                        "name": first & ' ' & last
-                    }
-                ]
             }
         ]
     },

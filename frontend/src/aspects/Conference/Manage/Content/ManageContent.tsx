@@ -176,12 +176,6 @@ gql`
         }
         elements {
             ...ManageContent_Element
-            uploaders {
-                id
-                email
-                name
-                emailsSentCount
-            }
         }
     }
 
@@ -956,10 +950,6 @@ export default function ManageContentV2(): JSX.Element {
                                     result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
                                     result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
                                     result[`${baseName}: Updated At`] = element.updatedAt;
-                                    result[`${baseName}: Uploaders`] = element.uploaders.map(
-                                        (uploader) =>
-                                            `${uploader.name} <${uploader.email}> (Emails sent: ${uploader.emailsSentCount})`
-                                    );
                                 }
 
                                 return result;

@@ -111,7 +111,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ProgramPersonInfo
         }
     }

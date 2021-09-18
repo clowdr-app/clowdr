@@ -36,7 +36,7 @@ export function EditElements({
     refetchElements: () => void;
     defaultOpenSecurityForId?: string;
     itemType: Content_ItemType_Enum;
-    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
+    openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 } & Partial<ManageContent_ItemSecondaryFragment> & {
         elements: readonly ManageContent_ElementFragment[];
     }): JSX.Element {
@@ -147,7 +147,7 @@ export function EditElements({
                     nextElement={sortedElements[idx + 1]}
                     refetchElements={refetchElements}
                     defaultOpenSecurity={item.id === defaultOpenSecurityForId}
-                    openSendSubmissionRequests={(uploaderIds) => openSendSubmissionRequests(itemId, uploaderIds)}
+                    openSendSubmissionRequests={(personIds) => openSendSubmissionRequests(itemId, personIds)}
                 />
             ))}
         </Accordion>

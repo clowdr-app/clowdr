@@ -47,7 +47,7 @@ export function SecondaryEditor({
     itemType: Content_ItemType_Enum;
     isOpen: boolean;
     onClose: () => void;
-    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
+    openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
     const { onCopy: onCopyItemId, hasCopied: hasCopiedItemId } = useClipboard(itemId ?? "");
 
@@ -105,7 +105,7 @@ function SecondaryEditorInner({
 }: {
     itemId: string;
     itemType: Content_ItemType_Enum;
-    openSendSubmissionRequests: (itemId: string, uploaderIds: string[]) => void;
+    openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
     const itemResponse = useManageContent_SelectItemQuery({

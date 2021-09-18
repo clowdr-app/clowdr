@@ -43,7 +43,7 @@ import { useConference } from "../../useConference";
 
 gql`
     query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
-        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
+        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPersonWithAccessToken(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -58,7 +58,7 @@ gql`
             email
         }
 
-        requiredProgramPeopleNotRegistered: collection_ProgramPerson(
+        requiredProgramPeopleNotRegistered: collection_ProgramPersonWithAccessToken(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -460,7 +460,7 @@ export default function ChecklistPage(): JSX.Element {
                 </Text>
                 <ExpandableList
                     items={checklistResponse.data?.requiredProgramPeopleNotLinkedToRegistrant}
-                    sortBy={(x) => x.name}
+                    sortBy={(x) => x.name ?? "<ERROR>"}
                 >
                     {(x) => (
                         <>
@@ -489,7 +489,7 @@ export default function ChecklistPage(): JSX.Element {
                 </Text>
                 <ExpandableList
                     items={checklistResponse.data?.requiredProgramPeopleNotRegistered}
-                    sortBy={(x) => x.name}
+                    sortBy={(x) => x.name ?? "<ERROR>"}
                 >
                     {(x) => (
                         <>

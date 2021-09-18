@@ -1461,6 +1461,15 @@
         column_mapping:
           registrantId: id
   array_relationships:
+  - name: eventPeople
+    using:
+      manual_configuration:
+        remote_table:
+          schema: schedule
+          name: EventProgramPerson
+        insertion_order: null
+        column_mapping:
+          id: personId
   - name: itemPeople
     using:
       manual_configuration:
@@ -3918,34 +3927,6 @@
   - name: element
     using:
       foreign_key_constraint_on: elementId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-      columns:
-      - conferenceId
-      - elementId
-      - email
-      - id
-      - name
-      backend_only: false
   select_permissions:
   - role: unauthenticated
     permission:
@@ -3969,53 +3950,6 @@
       - id
       - name
       - updated_at
-      filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - email
-      - emailsSentCount
-      - name
-      filter:
-        conference:
-          groups:
-            _and:
-            - enabled:
-                _eq: true
-            - groupRoles:
-                role:
-                  rolePermissions:
-                    permissionName:
-                      _eq: CONFERENCE_MANAGE_CONTENT
-            - _or:
-              - includeUnauthenticated:
-                  _eq: true
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
       filter:
         conference:
           groups:

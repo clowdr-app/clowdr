@@ -506,11 +506,7 @@ function ItemPersonsList({
                                 >
                                     <FAIcon
                                         iconStyle="s"
-                                        icon={
-                                            itemProgramPerson.person?.registrantId
-                                                ? "check-circle"
-                                                : "exclamation-triangle"
-                                        }
+                                        icon={itemProgramPerson.person?.registrantId ? "link" : "unlink"}
                                         color={itemProgramPerson.person?.registrantId ? "purple.400" : "yellow.400"}
                                     />
                                 </Tooltip>

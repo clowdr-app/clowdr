@@ -7,14 +7,14 @@ import {
     ManageContent_ElementFragmentDoc,
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";
-import { EditUploaders } from "./EditUploaders";
+import { EditUploadsRemaining } from "./EditUploadsRemaining";
 import { ElementBaseTemplates } from "./Kinds/Templates";
 import type { ContentDescriptor } from "./Kinds/Types";
 import { LayoutEditor } from "./LayoutEditor";
 
 export function EditElementInner(props: {
     element: ManageContent_ElementFragment;
-    openSendSubmissionRequests: (uploaderIds: string[]) => void;
+    openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
     const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
         update: (cache, { data: _data }) => {
@@ -99,8 +99,7 @@ export function EditElementInner(props: {
                 </Alert>
             ) : undefined}
             <Text fontSize="sm">Type: {readableTypeName}</Text>
-            <EditUploaders
-                openSendSubmissionRequests={props.openSendSubmissionRequests}
+            <EditUploadsRemaining
                 elementId={props.element.id}
                 uploadsRemaining={props.element.uploadsRemaining ?? null}
                 updateUploadableElement={updateElement}

@@ -23,18 +23,7 @@ export type ElementDescriptor = {
     name: string;
     data: ElementDataBlob;
     originatingDataId?: string;
-    uploaders: UploaderDescriptor[];
     uploadsRemaining?: number | null;
-};
-
-export type UploaderDescriptor = {
-    isNew?: boolean;
-
-    id: string;
-    email: string;
-    emailsSentCount: number;
-    name: string;
-    elementId: string;
 };
 
 export type ProgramPersonDescriptor = {

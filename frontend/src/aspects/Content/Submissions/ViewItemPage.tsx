@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React from "react";
-import { useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
+import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
 import FAIcon from "../../Icons/FAIcon";
@@ -32,6 +32,7 @@ gql`
             elements {
                 id
                 accessToken
+                typeName
                 name
                 data
                 uploadsRemaining
@@ -125,6 +126,25 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                                                         </LinkButton>
                                                         <Text fontSize="sm">
                                                             {element.uploadsRemaining} submission attempts remaining.
+                                                        </Text>
+                                                    </HStack>
+                                                ) : element.typeName === Content_ElementType_Enum.VideoBroadcast ||
+                                                  element.typeName === Content_ElementType_Enum.VideoCountdown ||
+                                                  element.typeName === Content_ElementType_Enum.VideoFile ||
+                                                  element.typeName === Content_ElementType_Enum.VideoFiller ||
+                                                  element.typeName === Content_ElementType_Enum.VideoPrepublish ||
+                                                  element.typeName === Content_ElementType_Enum.VideoSponsorsFiller ||
+                                                  element.typeName === Content_ElementType_Enum.VideoTitles ? (
+                                                    <HStack spacing={4}>
+                                                        <LinkButton
+                                                            colorScheme="purple"
+                                                            size="sm"
+                                                            to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
+                                                        >
+                                                            Edit subtitles
+                                                        </LinkButton>
+                                                        <Text fontSize="sm">
+                                                            This video cannot be resubmitted but you can edit subtitles.
                                                         </Text>
                                                     </HStack>
                                                 ) : (

@@ -41168,7 +41168,7 @@ export type ItemByPersonAccessTokenQueryVariables = Exact<{
 }>;
 
 
-export type ItemByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPersonByAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string> }>, readonly content_ItemByPersonAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ItemByPersonAccessToken', readonly id?: Maybe<any>, readonly title?: Maybe<string>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_ElementByPersonAccessToken', readonly id?: Maybe<any>, readonly accessToken?: Maybe<string>, readonly name?: Maybe<string>, readonly data?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly layoutData?: Maybe<any> }> }> };
+export type ItemByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPersonByAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonByAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string> }>, readonly content_ItemByPersonAccessToken: ReadonlyArray<{ readonly __typename?: 'content_ItemByPersonAccessToken', readonly id?: Maybe<any>, readonly title?: Maybe<string>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_ElementByPersonAccessToken', readonly id?: Maybe<any>, readonly accessToken?: Maybe<string>, readonly typeName?: Maybe<string>, readonly name?: Maybe<string>, readonly data?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly layoutData?: Maybe<any> }> }> };
 
 export type ItemsByPersonAccessTokenQueryVariables = Exact<{
   accessToken: Scalars['String'];
@@ -53289,6 +53289,7 @@ export const ItemByPersonAccessTokenDocument = gql`
     elements {
       id
       accessToken
+      typeName
       name
       data
       uploadsRemaining

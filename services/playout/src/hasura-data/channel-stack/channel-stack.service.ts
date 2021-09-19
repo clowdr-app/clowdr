@@ -6,11 +6,13 @@ import * as R from "ramda";
 import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
     ChannelStack_CreateChannelStackDeleteJobDocument,
+    ChannelStack_CreateChannelStackUpdateJobDocument,
     ChannelStack_DeleteDocument,
     ChannelStack_DetachDocument,
     ChannelStack_GetChannelStackCloudFormationStackArnDocument,
     ChannelStack_GetChannelStacksDocument,
     ChannelStack_GetFirstSyncableEventDocument,
+    ChannelStack_UpdateJob_GetChannelStackDocument,
     CreateChannelStackDocument,
     FindChannelStacksByStackArnDocument,
     GetChannelStackByRoomDocument,
@@ -99,6 +101,9 @@ export class ChannelStackDataService {
                 $loopingMp4InputAttachmentName: String!
                 $rtmpAInputAttachmentName: String!
                 $rtmpBInputAttachmentName: String!
+                $rtmpOutputUri: String
+                $rtmpOutputStreamKey: String
+                $rtmpOutputDestinationId: String
                 $conferenceId: uuid!
                 $channelStackCreateJobId: uuid!
                 $roomId: uuid!
@@ -122,6 +127,9 @@ export class ChannelStackDataService {
                         rtmpBInputAttachmentName: $rtmpBInputAttachmentName
                         conferenceId: $conferenceId
                         channelStackCreateJobId: $channelStackCreateJobId
+                        rtmpOutputUri: $rtmpOutputUri
+                        rtmpOutputStreamKey: $rtmpOutputStreamKey
+                        rtmpOutputDestinationId: $rtmpOutputDestinationId
                         roomId: $roomId
                     }
                 ) {
@@ -150,6 +158,9 @@ export class ChannelStackDataService {
                 rtmpBInputId: stackDescription.rtmpBInputId,
                 rtmpBInputUri: stackDescription.rtmpBInputUri,
                 rtmpBInputAttachmentName: stackDescription.rtmpBInputAttachmentName,
+                rtmpOutputUri: stackDescription.rtmpOutputUri,
+                rtmpOutputStreamKey: stackDescription.rtmpOutputStreamKey,
+                rtmpOutputDestinationId: stackDescription.rtmpOutputDestinationId,
                 roomId,
             },
         });
@@ -232,6 +243,93 @@ export class ChannelStackDataService {
             mutation: ChannelStack_DetachDocument,
             variables: {
                 id: channelStackId,
+            },
+        });
+    }
+
+    public async createChannelStackUpdateJob(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
+        gql`
+            query ChannelStack_UpdateJob_GetChannelStack($channelStackId: uuid!) {
+                video_ChannelStack_by_pk(id: $channelStackId) {
+                    id
+                    cloudFormationStackArn
+                    rtmpOutputUri
+                    rtmpOutputStreamKey
+                    rtmpOutputDestinationId
+                    room {
+                        id
+                        rtmpOutput {
+                            id
+                            url
+                            streamKey
+                        }
+                    }
+                }
+            }
+
+            mutation ChannelStack_CreateChannelStackUpdateJob(
+                $channelStackId: uuid!
+                $cloudFormationStackArn: String!
+                $mediaLiveChannelId: String!
+                $oldRtmpOutputUri: String
+                $oldRtmpOutputStreamKey: String
+                $oldRtmpOutputDestinationId: String
+                $newRtmpOutputUri: String
+                $newRtmpOutputStreamKey: String
+            ) {
+                insert_job_queues_ChannelStackUpdateJob_one(
+                    object: {
+                        channelStackId: $channelStackId
+                        cloudFormationStackArn: $cloudFormationStackArn
+                        jobStatusName: NEW
+                        mediaLiveChannelId: $mediaLiveChannelId
+                        oldRtmpOutputUri: $oldRtmpOutputUri
+                        oldRtmpOutputStreamKey: $oldRtmpOutputStreamKey
+                        oldRtmpOutputDestinationId: $oldRtmpOutputDestinationId
+                        newRtmpOutputUri: $newRtmpOutputUri
+                        newRtmpOutputStreamKey: $newRtmpOutputStreamKey
+                    }
+                ) {
+                    id
+                }
+            }
+        `;
+
+        const result = await this.graphQlService.apolloClient.query({
+            query: ChannelStack_UpdateJob_GetChannelStackDocument,
+            variables: {
+                channelStackId,
+            },
+        });
+
+        if (!result.data.video_ChannelStack_by_pk) {
+            this.logger.warn({ channelStackId }, "Could not find channel stack to be updated");
+            return;
+        }
+
+        if (!result.data.video_ChannelStack_by_pk.cloudFormationStackArn) {
+            this.logger.warn(
+                { channelStackId },
+                "Found channel stack to be updated, but it does not have a CloudFormation stack Arn"
+            );
+            return;
+        }
+
+        this.logger.info(
+            { channelStackId, cloudFormationStackArn: result.data.video_ChannelStack_by_pk.cloudFormationStackArn },
+            "Creating channel stack update job"
+        );
+        await this.graphQlService.apolloClient.mutate({
+            mutation: ChannelStack_CreateChannelStackUpdateJobDocument,
+            variables: {
+                cloudFormationStackArn: result.data.video_ChannelStack_by_pk.cloudFormationStackArn,
+                mediaLiveChannelId,
+                channelStackId,
+                oldRtmpOutputUri: result.data.video_ChannelStack_by_pk.rtmpOutputUri,
+                oldRtmpOutputStreamKey: result.data.video_ChannelStack_by_pk.rtmpOutputStreamKey,
+                oldRtmpOutputDestinationId: result.data.video_ChannelStack_by_pk.rtmpOutputDestinationId,
+                newRtmpOutputUri: result.data.video_ChannelStack_by_pk.room?.rtmpOutput?.url ?? null,
+                newRtmpOutputStreamKey: result.data.video_ChannelStack_by_pk.room?.rtmpOutput?.streamKey ?? null,
             },
         });
     }

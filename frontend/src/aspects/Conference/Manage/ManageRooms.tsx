@@ -51,6 +51,7 @@ import {
     Room_PersonRole_Enum,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
+    useGetIsExternalRtmpBroadcastEnabledQuery,
     useInsertRoomPeopleMutation,
     useManageRooms_SelectGroupRegistrantsQuery,
     useManageRooms_SelectGroupsQuery,
@@ -81,6 +82,7 @@ import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../useConference";
+import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";
 
 gql`
     fragment RoomParticipantWithRegistrantInfo on room_Participant {
@@ -225,16 +227,26 @@ gql`
             }
         }
     }
+
+    query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
+            conferenceId
+            key
+            value
+        }
+    }
 `;
 
 function RoomSecondaryEditor({
     room,
     isSecondaryPanelOpen,
     onSecondaryPanelClose,
+    externalRtmpBroadcastEnabled,
 }: {
     room: RoomWithParticipantInfoFragment | null;
     isSecondaryPanelOpen: boolean;
     onSecondaryPanelClose: () => void;
+    externalRtmpBroadcastEnabled: boolean;
 }): JSX.Element {
     const conference = useConference();
     const groups = useManageRooms_SelectGroupsQuery({
@@ -432,9 +444,7 @@ function RoomSecondaryEditor({
                                         </AccordionItem>
                                     ) : undefined}
 
-                                    {room &&
-                                    people.data &&
-                                    room.managementModeName !== Room_ManagementMode_Enum.Public ? (
+                                    {people.data && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
                                             <AccordionButton>
                                                 <Box flex="1" textAlign="left">
@@ -457,6 +467,26 @@ function RoomSecondaryEditor({
                                             </AccordionPanel>
                                         </AccordionItem>
                                     ) : undefined}
+
+                                    {externalRtmpBroadcastEnabled ? (
+                                        <AccordionItem>
+                                            {({ isExpanded }) => (
+                                                <>
+                                                    <AccordionButton>
+                                                        <Box flex="1" textAlign="left">
+                                                            External broadcast (RTMP output)
+                                                        </Box>
+                                                        <AccordionIcon />
+                                                    </AccordionButton>
+                                                    <AccordionPanel>
+                                                        {isExpanded ? (
+                                                            <ExternalRtmpBroadcastEditor roomId={room.id} />
+                                                        ) : undefined}
+                                                    </AccordionPanel>
+                                                </>
+                                            )}
+                                        </AccordionItem>
+                                    ) : undefined}
                                 </Accordion>
                             </>
                         ) : (
@@ -474,6 +504,14 @@ function EditableRoomsCRUDTable() {
     const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
     const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
     const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
+
+    const externalRtmpBroadcastEnabledResponse = useGetIsExternalRtmpBroadcastEnabledQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    const externalRtmpBroadcastEnabled =
+        externalRtmpBroadcastEnabledResponse.data?.conference_Configuration_by_pk?.value === true;
 
     const items = useManageRooms_SelectItemsQuery({
         variables: {
@@ -732,27 +770,6 @@ function EditableRoomsCRUDTable() {
                             </NumberInputStepper>
                         </NumberInput>
                     );
-                },
-            },
-            {
-                id: "mode",
-                header: function ModeHeader({
-                    isInCreate,
-                    onClick,
-                    sortDir,
-                }: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
-                    return isInCreate ? undefined : (
-                        <Button size="xs" onClick={onClick}>
-                            Current mode{sortDir !== null ? ` ${sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.currentModeName,
-                sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
-                filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
-                cell: function Cell({ value }: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-                    return <Text>{value}</Text>;
                 },
             },
             {
@@ -1457,6 +1474,7 @@ function EditableRoomsCRUDTable() {
                 room={editingRoom}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}
                 onSecondaryPanelClose={onSecondaryPanelClose}
+                externalRtmpBroadcastEnabled={externalRtmpBroadcastEnabled}
             />
         </>
     );

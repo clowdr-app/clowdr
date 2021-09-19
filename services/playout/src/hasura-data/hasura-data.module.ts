@@ -2,6 +2,7 @@ import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "
 import { HASURA_MODULE_OPTIONS } from "../constants";
 import { ChannelStackCreateJobService } from "./channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStackDeleteJobService } from "./channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackUpdateJobService } from "./channel-stack-update-job/channel-stack-update-job.service";
 import { ChannelStackDataService } from "./channel-stack/channel-stack.service";
 import { ConferenceConfigurationService } from "./conference-configuration/conference-configuration.service";
 import { ContentElementDataService } from "./content/content-element.service";
@@ -21,6 +22,7 @@ export type HasuraDataModuleOptions = {
         GraphQlService,
         ChannelStackDataService,
         ChannelStackCreateJobService,
+        ChannelStackUpdateJobService,
         ChannelStackDeleteJobService,
         LocalScheduleService,
         ConferenceConfigurationService,
@@ -31,6 +33,7 @@ export type HasuraDataModuleOptions = {
         GraphQlService,
         ChannelStackDataService,
         ChannelStackCreateJobService,
+        ChannelStackUpdateJobService,
         ChannelStackDeleteJobService,
         LocalScheduleService,
         ConferenceConfigurationService,

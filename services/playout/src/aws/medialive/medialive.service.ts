@@ -4,12 +4,15 @@ import {
     ChannelSummary,
     DescribeChannelCommand,
     DescribeChannelResponse,
+    EncoderSettings,
     MediaLive,
+    OutputDestination,
     paginateDescribeSchedule,
     paginateListChannels,
     ScheduleAction,
     StartChannelCommand,
     StopChannelCommand,
+    UpdateChannelCommand,
 } from "@aws-sdk/client-medialive";
 import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
@@ -110,5 +113,18 @@ export class MediaLiveService {
         const command = new DescribeChannelCommand({ ChannelId: channelId });
         const result = await this._mediaLive.send(command);
         return result;
+    }
+
+    public async updateChannel(
+        channelId: string,
+        encoderSettings: EncoderSettings,
+        destinations: OutputDestination[]
+    ): Promise<void> {
+        const command = new UpdateChannelCommand({
+            ChannelId: channelId,
+            Destinations: destinations,
+            EncoderSettings: encoderSettings,
+        });
+        await this._mediaLive.send(command);
     }
 }

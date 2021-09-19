@@ -729,6 +729,11 @@ export type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<Scalars["String"]>;
 };
 
+export type MatchingPersonOutput = {
+    __typename?: "MatchingPersonOutput";
+    accessToken?: Maybe<Scalars["String"]>;
+};
+
 export type NotifyEventEnded = {
     __typename?: "NotifyEventEnded";
     ok: Scalars["Boolean"];
@@ -6003,6 +6008,9 @@ export type Collection_Exhibition = {
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
     created_at: Scalars["timestamptz"];
+    /** An object relationship */
+    descriptiveItem?: Maybe<Content_Item>;
+    descriptiveItemId?: Maybe<Scalars["uuid"]>;
     id: Scalars["uuid"];
     isHidden: Scalars["Boolean"];
     /** An array relationship */
@@ -6103,6 +6111,8 @@ export type Collection_Exhibition_Bool_Exp = {
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    descriptiveItem?: Maybe<Content_Item_Bool_Exp>;
+    descriptiveItemId?: Maybe<Uuid_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     isHidden?: Maybe<Boolean_Comparison_Exp>;
     items?: Maybe<Content_ItemExhibition_Bool_Exp>;
@@ -6130,6 +6140,8 @@ export type Collection_Exhibition_Insert_Input = {
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
+    descriptiveItem?: Maybe<Content_Item_Obj_Rel_Insert_Input>;
+    descriptiveItemId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     isHidden?: Maybe<Scalars["Boolean"]>;
     items?: Maybe<Content_ItemExhibition_Arr_Rel_Insert_Input>;
@@ -6144,6 +6156,7 @@ export type Collection_Exhibition_Max_Fields = {
     colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
+    descriptiveItemId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     priority?: Maybe<Scalars["Int"]>;
@@ -6155,6 +6168,7 @@ export type Collection_Exhibition_Max_Order_By = {
     colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
+    descriptiveItemId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     priority?: Maybe<Order_By>;
@@ -6167,6 +6181,7 @@ export type Collection_Exhibition_Min_Fields = {
     colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
+    descriptiveItemId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     name?: Maybe<Scalars["String"]>;
     priority?: Maybe<Scalars["Int"]>;
@@ -6178,6 +6193,7 @@ export type Collection_Exhibition_Min_Order_By = {
     colour?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
+    descriptiveItemId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     name?: Maybe<Order_By>;
     priority?: Maybe<Order_By>;
@@ -6213,6 +6229,8 @@ export type Collection_Exhibition_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
     created_at?: Maybe<Order_By>;
+    descriptiveItem?: Maybe<Content_Item_Order_By>;
+    descriptiveItemId?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     isHidden?: Maybe<Order_By>;
     items_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
@@ -6235,6 +6253,8 @@ export enum Collection_Exhibition_Select_Column {
     /** column name */
     CreatedAt = "created_at",
     /** column name */
+    DescriptiveItemId = "descriptiveItemId",
+    /** column name */
     Id = "id",
     /** column name */
     IsHidden = "isHidden",
@@ -6251,6 +6271,7 @@ export type Collection_Exhibition_Set_Input = {
     colour?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     created_at?: Maybe<Scalars["timestamptz"]>;
+    descriptiveItemId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
     isHidden?: Maybe<Scalars["Boolean"]>;
     name?: Maybe<Scalars["String"]>;
@@ -6311,6 +6332,8 @@ export enum Collection_Exhibition_Update_Column {
     /** column name */
     CreatedAt = "created_at",
     /** column name */
+    DescriptiveItemId = "descriptiveItemId",
+    /** column name */
     Id = "id",
     /** column name */
     IsHidden = "isHidden",
@@ -6358,6 +6381,7 @@ export type Collection_Exhibition_Variance_Order_By = {
 /** columns and relationships of "collection.ProgramPerson" */
 export type Collection_ProgramPerson = {
     __typename?: "collection_ProgramPerson";
+    accessToken: Scalars["String"];
     affiliation?: Maybe<Scalars["String"]>;
     /** An object relationship */
     conference: Conference_Conference;
@@ -6379,6 +6403,7 @@ export type Collection_ProgramPerson = {
     /** An object relationship */
     registrant?: Maybe<Registrant_Registrant>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount: Scalars["Int"];
 };
 
 /** columns and relationships of "collection.ProgramPerson" */
@@ -6417,6 +6442,451 @@ export type Collection_ProgramPersonItemPeople_AggregateArgs = {
     where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
 };
 
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken = {
+    __typename?: "collection_ProgramPersonByAccessToken";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    itemPeople: Array<Content_ItemProgramPersonByAccessToken>;
+    /** An aggregate relationship */
+    itemPeople_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+};
+
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessTokenItemPeopleArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** columns and relationships of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessTokenItemPeople_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** aggregated selection of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate = {
+    __typename?: "collection_ProgramPersonByAccessToken_aggregate";
+    aggregate?: Maybe<Collection_ProgramPersonByAccessToken_Aggregate_Fields>;
+    nodes: Array<Collection_ProgramPersonByAccessToken>;
+};
+
+/** aggregate fields of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate_Fields = {
+    __typename?: "collection_ProgramPersonByAccessToken_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Collection_ProgramPersonByAccessToken_Max_Fields>;
+    min?: Maybe<Collection_ProgramPersonByAccessToken_Min_Fields>;
+};
+
+/** aggregate fields of "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Collection_ProgramPersonByAccessToken_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "collection.ProgramPersonByAccessToken". All fields are combined with a logical 'AND'. */
+export type Collection_ProgramPersonByAccessToken_Bool_Exp = {
+    _and?: Maybe<Array<Collection_ProgramPersonByAccessToken_Bool_Exp>>;
+    _not?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+    _or?: Maybe<Array<Collection_ProgramPersonByAccessToken_Bool_Exp>>;
+    accessToken?: Maybe<String_Comparison_Exp>;
+    affiliation?: Maybe<String_Comparison_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    email?: Maybe<String_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+    name?: Maybe<String_Comparison_Exp>;
+    originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    registrantId?: Maybe<Uuid_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Insert_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+};
+
+/** aggregate max on columns */
+export type Collection_ProgramPersonByAccessToken_Max_Fields = {
+    __typename?: "collection_ProgramPersonByAccessToken_max_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+};
+
+/** aggregate min on columns */
+export type Collection_ProgramPersonByAccessToken_Min_Fields = {
+    __typename?: "collection_ProgramPersonByAccessToken_min_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+};
+
+/** response of any mutation on the table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Mutation_Response = {
+    __typename?: "collection_ProgramPersonByAccessToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Collection_ProgramPersonByAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Obj_Rel_Insert_Input = {
+    data: Collection_ProgramPersonByAccessToken_Insert_Input;
+};
+
+/** Ordering options when selecting data from "collection.ProgramPersonByAccessToken". */
+export type Collection_ProgramPersonByAccessToken_Order_By = {
+    accessToken?: Maybe<Order_By>;
+    affiliation?: Maybe<Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    email?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemPeople_aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Order_By>;
+    name?: Maybe<Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    registrantId?: Maybe<Order_By>;
+};
+
+/** select columns of table "collection.ProgramPersonByAccessToken" */
+export enum Collection_ProgramPersonByAccessToken_Select_Column {
+    /** column name */
+    AccessToken = "accessToken",
+    /** column name */
+    Affiliation = "affiliation",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    Email = "email",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    OriginatingDataId = "originatingDataId",
+    /** column name */
+    RegistrantId = "registrantId",
+}
+
+/** input type for updating data in table "collection.ProgramPersonByAccessToken" */
+export type Collection_ProgramPersonByAccessToken_Set_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken = {
+    __typename?: "collection_ProgramPersonWithAccessToken";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    conference?: Maybe<Conference_Conference>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    /** An array relationship */
+    eventPeople: Array<Schedule_EventProgramPerson>;
+    /** An aggregate relationship */
+    eventPeople_aggregate: Schedule_EventProgramPerson_Aggregate;
+    id?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    itemPeople: Array<Content_ItemProgramPerson>;
+    /** An aggregate relationship */
+    itemPeople_aggregate: Content_ItemProgramPerson_Aggregate;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    registrant?: Maybe<Registrant_Registrant>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenEventPeopleArgs = {
+    distinct_on?: Maybe<Array<Schedule_EventProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_EventProgramPerson_Order_By>>;
+    where?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenEventPeople_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_EventProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_EventProgramPerson_Order_By>>;
+    where?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenItemPeopleArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPerson_Order_By>>;
+    where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+/** columns and relationships of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessTokenItemPeople_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPerson_Order_By>>;
+    where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+/** aggregated selection of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate = {
+    __typename?: "collection_ProgramPersonWithAccessToken_aggregate";
+    aggregate?: Maybe<Collection_ProgramPersonWithAccessToken_Aggregate_Fields>;
+    nodes: Array<Collection_ProgramPersonWithAccessToken>;
+};
+
+/** aggregate fields of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_aggregate_fields";
+    avg?: Maybe<Collection_ProgramPersonWithAccessToken_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Collection_ProgramPersonWithAccessToken_Max_Fields>;
+    min?: Maybe<Collection_ProgramPersonWithAccessToken_Min_Fields>;
+    stddev?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Fields>;
+    stddev_pop?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Collection_ProgramPersonWithAccessToken_Stddev_Samp_Fields>;
+    sum?: Maybe<Collection_ProgramPersonWithAccessToken_Sum_Fields>;
+    var_pop?: Maybe<Collection_ProgramPersonWithAccessToken_Var_Pop_Fields>;
+    var_samp?: Maybe<Collection_ProgramPersonWithAccessToken_Var_Samp_Fields>;
+    variance?: Maybe<Collection_ProgramPersonWithAccessToken_Variance_Fields>;
+};
+
+/** aggregate fields of "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** aggregate avg on columns */
+export type Collection_ProgramPersonWithAccessToken_Avg_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_avg_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** Boolean expression to filter rows from the table "collection.ProgramPersonWithAccessToken". All fields are combined with a logical 'AND'. */
+export type Collection_ProgramPersonWithAccessToken_Bool_Exp = {
+    _and?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Bool_Exp>>;
+    _not?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+    _or?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Bool_Exp>>;
+    accessToken?: Maybe<String_Comparison_Exp>;
+    affiliation?: Maybe<String_Comparison_Exp>;
+    conference?: Maybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    email?: Maybe<String_Comparison_Exp>;
+    eventPeople?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    itemPeople?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+    name?: Maybe<String_Comparison_Exp>;
+    originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+    registrantId?: Maybe<Uuid_Comparison_Exp>;
+    submissionRequestsSentCount?: Maybe<Int_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Inc_Input = {
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Insert_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    eventPeople?: Maybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemPeople?: Maybe<Content_ItemProgramPerson_Arr_Rel_Insert_Input>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate max on columns */
+export type Collection_ProgramPersonWithAccessToken_Max_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_max_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate min on columns */
+export type Collection_ProgramPersonWithAccessToken_Min_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_min_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** response of any mutation on the table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Mutation_Response = {
+    __typename?: "collection_ProgramPersonWithAccessToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Collection_ProgramPersonWithAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Obj_Rel_Insert_Input = {
+    data: Collection_ProgramPersonWithAccessToken_Insert_Input;
+};
+
+/** Ordering options when selecting data from "collection.ProgramPersonWithAccessToken". */
+export type Collection_ProgramPersonWithAccessToken_Order_By = {
+    accessToken?: Maybe<Order_By>;
+    affiliation?: Maybe<Order_By>;
+    conference?: Maybe<Conference_Conference_Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    email?: Maybe<Order_By>;
+    eventPeople_aggregate?: Maybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
+    id?: Maybe<Order_By>;
+    itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
+    name?: Maybe<Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    registrant?: Maybe<Registrant_Registrant_Order_By>;
+    registrantId?: Maybe<Order_By>;
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** select columns of table "collection.ProgramPersonWithAccessToken" */
+export enum Collection_ProgramPersonWithAccessToken_Select_Column {
+    /** column name */
+    AccessToken = "accessToken",
+    /** column name */
+    Affiliation = "affiliation",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    Email = "email",
+    /** column name */
+    Id = "id",
+    /** column name */
+    Name = "name",
+    /** column name */
+    OriginatingDataId = "originatingDataId",
+    /** column name */
+    RegistrantId = "registrantId",
+    /** column name */
+    SubmissionRequestsSentCount = "submissionRequestsSentCount",
+}
+
+/** input type for updating data in table "collection.ProgramPersonWithAccessToken" */
+export type Collection_ProgramPersonWithAccessToken_Set_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    affiliation?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    email?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate stddev on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_stddev_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Pop_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_stddev_pop_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Collection_ProgramPersonWithAccessToken_Stddev_Samp_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_stddev_samp_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate sum on columns */
+export type Collection_ProgramPersonWithAccessToken_Sum_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_sum_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate var_pop on columns */
+export type Collection_ProgramPersonWithAccessToken_Var_Pop_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_var_pop_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate var_samp on columns */
+export type Collection_ProgramPersonWithAccessToken_Var_Samp_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_var_samp_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** aggregate variance on columns */
+export type Collection_ProgramPersonWithAccessToken_Variance_Fields = {
+    __typename?: "collection_ProgramPersonWithAccessToken_variance_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
 /** aggregated selection of "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate = {
     __typename?: "collection_ProgramPerson_aggregate";
@@ -6427,9 +6897,17 @@ export type Collection_ProgramPerson_Aggregate = {
 /** aggregate fields of "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate_Fields = {
     __typename?: "collection_ProgramPerson_aggregate_fields";
+    avg?: Maybe<Collection_ProgramPerson_Avg_Fields>;
     count: Scalars["Int"];
     max?: Maybe<Collection_ProgramPerson_Max_Fields>;
     min?: Maybe<Collection_ProgramPerson_Min_Fields>;
+    stddev?: Maybe<Collection_ProgramPerson_Stddev_Fields>;
+    stddev_pop?: Maybe<Collection_ProgramPerson_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Collection_ProgramPerson_Stddev_Samp_Fields>;
+    sum?: Maybe<Collection_ProgramPerson_Sum_Fields>;
+    var_pop?: Maybe<Collection_ProgramPerson_Var_Pop_Fields>;
+    var_samp?: Maybe<Collection_ProgramPerson_Var_Samp_Fields>;
+    variance?: Maybe<Collection_ProgramPerson_Variance_Fields>;
 };
 
 /** aggregate fields of "collection.ProgramPerson" */
@@ -6440,9 +6918,17 @@ export type Collection_ProgramPerson_Aggregate_FieldsCountArgs = {
 
 /** order by aggregate values of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Aggregate_Order_By = {
+    avg?: Maybe<Collection_ProgramPerson_Avg_Order_By>;
     count?: Maybe<Order_By>;
     max?: Maybe<Collection_ProgramPerson_Max_Order_By>;
     min?: Maybe<Collection_ProgramPerson_Min_Order_By>;
+    stddev?: Maybe<Collection_ProgramPerson_Stddev_Order_By>;
+    stddev_pop?: Maybe<Collection_ProgramPerson_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Collection_ProgramPerson_Stddev_Samp_Order_By>;
+    sum?: Maybe<Collection_ProgramPerson_Sum_Order_By>;
+    var_pop?: Maybe<Collection_ProgramPerson_Var_Pop_Order_By>;
+    var_samp?: Maybe<Collection_ProgramPerson_Var_Samp_Order_By>;
+    variance?: Maybe<Collection_ProgramPerson_Variance_Order_By>;
 };
 
 /** input type for inserting array relation for remote table "collection.ProgramPerson" */
@@ -6452,11 +6938,23 @@ export type Collection_ProgramPerson_Arr_Rel_Insert_Input = {
     on_conflict?: Maybe<Collection_ProgramPerson_On_Conflict>;
 };
 
+/** aggregate avg on columns */
+export type Collection_ProgramPerson_Avg_Fields = {
+    __typename?: "collection_ProgramPerson_avg_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Avg_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "collection.ProgramPerson". All fields are combined with a logical 'AND'. */
 export type Collection_ProgramPerson_Bool_Exp = {
     _and?: Maybe<Array<Collection_ProgramPerson_Bool_Exp>>;
     _not?: Maybe<Collection_ProgramPerson_Bool_Exp>;
     _or?: Maybe<Array<Collection_ProgramPerson_Bool_Exp>>;
+    accessToken?: Maybe<String_Comparison_Exp>;
     affiliation?: Maybe<String_Comparison_Exp>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
@@ -6469,6 +6967,7 @@ export type Collection_ProgramPerson_Bool_Exp = {
     originatingDataId?: Maybe<Uuid_Comparison_Exp>;
     registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: Maybe<Uuid_Comparison_Exp>;
+    submissionRequestsSentCount?: Maybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "collection.ProgramPerson" */
@@ -6477,10 +6976,18 @@ export enum Collection_ProgramPerson_Constraint {
     ProgramPersonConferenceIdNameAffiliationKey = "ProgramPerson_conferenceId_name_affiliation_key",
     /** unique or primary key constraint */
     ProgramPersonPkey = "ProgramPerson_pkey",
+    /** unique or primary key constraint */
+    CollectionProgramPersonAccessToken = "collection_ProgramPerson_accessToken",
 }
+
+/** input type for incrementing numeric columns in table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Inc_Input = {
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
 
 /** input type for inserting data into table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Insert_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
     affiliation?: Maybe<Scalars["String"]>;
     conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
     conferenceId?: Maybe<Scalars["uuid"]>;
@@ -6493,11 +7000,13 @@ export type Collection_ProgramPerson_Insert_Input = {
     originatingDataId?: Maybe<Scalars["uuid"]>;
     registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
 };
 
 /** aggregate max on columns */
 export type Collection_ProgramPerson_Max_Fields = {
     __typename?: "collection_ProgramPerson_max_fields";
+    accessToken?: Maybe<Scalars["String"]>;
     affiliation?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
@@ -6505,10 +7014,12 @@ export type Collection_ProgramPerson_Max_Fields = {
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
 };
 
 /** order by max() on columns of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Max_Order_By = {
+    accessToken?: Maybe<Order_By>;
     affiliation?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     email?: Maybe<Order_By>;
@@ -6516,11 +7027,13 @@ export type Collection_ProgramPerson_Max_Order_By = {
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     registrantId?: Maybe<Order_By>;
+    submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Collection_ProgramPerson_Min_Fields = {
     __typename?: "collection_ProgramPerson_min_fields";
+    accessToken?: Maybe<Scalars["String"]>;
     affiliation?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
@@ -6528,10 +7041,12 @@ export type Collection_ProgramPerson_Min_Fields = {
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
 };
 
 /** order by min() on columns of table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Min_Order_By = {
+    accessToken?: Maybe<Order_By>;
     affiliation?: Maybe<Order_By>;
     conferenceId?: Maybe<Order_By>;
     email?: Maybe<Order_By>;
@@ -6539,6 +7054,7 @@ export type Collection_ProgramPerson_Min_Order_By = {
     name?: Maybe<Order_By>;
     originatingDataId?: Maybe<Order_By>;
     registrantId?: Maybe<Order_By>;
+    submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "collection.ProgramPerson" */
@@ -6566,6 +7082,7 @@ export type Collection_ProgramPerson_On_Conflict = {
 
 /** Ordering options when selecting data from "collection.ProgramPerson". */
 export type Collection_ProgramPerson_Order_By = {
+    accessToken?: Maybe<Order_By>;
     affiliation?: Maybe<Order_By>;
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
@@ -6578,6 +7095,7 @@ export type Collection_ProgramPerson_Order_By = {
     originatingDataId?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;
     registrantId?: Maybe<Order_By>;
+    submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: collection_ProgramPerson */
@@ -6588,6 +7106,8 @@ export type Collection_ProgramPerson_Pk_Columns_Input = {
 /** select columns of table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Select_Column {
     /** column name */
+    AccessToken = "accessToken",
+    /** column name */
     Affiliation = "affiliation",
     /** column name */
     ConferenceId = "conferenceId",
@@ -6601,10 +7121,13 @@ export enum Collection_ProgramPerson_Select_Column {
     OriginatingDataId = "originatingDataId",
     /** column name */
     RegistrantId = "registrantId",
+    /** column name */
+    SubmissionRequestsSentCount = "submissionRequestsSentCount",
 }
 
 /** input type for updating data in table "collection.ProgramPerson" */
 export type Collection_ProgramPerson_Set_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
     affiliation?: Maybe<Scalars["String"]>;
     conferenceId?: Maybe<Scalars["uuid"]>;
     email?: Maybe<Scalars["String"]>;
@@ -6612,10 +7135,57 @@ export type Collection_ProgramPerson_Set_Input = {
     name?: Maybe<Scalars["String"]>;
     originatingDataId?: Maybe<Scalars["uuid"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate stddev on columns */
+export type Collection_ProgramPerson_Stddev_Fields = {
+    __typename?: "collection_ProgramPerson_stddev_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Collection_ProgramPerson_Stddev_Pop_Fields = {
+    __typename?: "collection_ProgramPerson_stddev_pop_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Pop_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Collection_ProgramPerson_Stddev_Samp_Fields = {
+    __typename?: "collection_ProgramPerson_stddev_samp_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Stddev_Samp_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Collection_ProgramPerson_Sum_Fields = {
+    __typename?: "collection_ProgramPerson_sum_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Sum_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
 };
 
 /** update columns of table "collection.ProgramPerson" */
 export enum Collection_ProgramPerson_Update_Column {
+    /** column name */
+    AccessToken = "accessToken",
     /** column name */
     Affiliation = "affiliation",
     /** column name */
@@ -6630,7 +7200,42 @@ export enum Collection_ProgramPerson_Update_Column {
     OriginatingDataId = "originatingDataId",
     /** column name */
     RegistrantId = "registrantId",
+    /** column name */
+    SubmissionRequestsSentCount = "submissionRequestsSentCount",
 }
+
+/** aggregate var_pop on columns */
+export type Collection_ProgramPerson_Var_Pop_Fields = {
+    __typename?: "collection_ProgramPerson_var_pop_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Var_Pop_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Collection_ProgramPerson_Var_Samp_Fields = {
+    __typename?: "collection_ProgramPerson_var_samp_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Var_Samp_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Collection_ProgramPerson_Variance_Fields = {
+    __typename?: "collection_ProgramPerson_variance_fields";
+    submissionRequestsSentCount?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "collection.ProgramPerson" */
+export type Collection_ProgramPerson_Variance_Order_By = {
+    submissionRequestsSentCount?: Maybe<Order_By>;
+};
 
 /** columns and relationships of "collection.Tag" */
 export type Collection_Tag = {
@@ -7022,6 +7627,11 @@ export type Collection_Tag_Variance_Fields = {
 /** order by variance() on columns of table "collection.Tag" */
 export type Collection_Tag_Variance_Order_By = {
     priority?: Maybe<Order_By>;
+};
+
+export type Collection_SearchProgramPerson_Args = {
+    conferenceid?: Maybe<Scalars["uuid"]>;
+    search?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7685,8 +8295,14 @@ export enum Conference_ConfigurationKey_Enum {
     BackgroundVideos = "BACKGROUND_VIDEOS",
     /** A string representing the app version. Changing this causes the user's browsers to refresh. */
     ClowdrAppVersion = "CLOWDR_APP_VERSION",
+    /** Boolean. Disable the "Events around this content" section of the Item pages. */
+    DisableNearbyEvents = "DISABLE_NEARBY_EVENTS",
     EmailTemplateSubmissionRequest = "EMAIL_TEMPLATE_SUBMISSION_REQUEST",
     EmailTemplateSubtitlesGenerated = "EMAIL_TEMPLATE_SUBTITLES_GENERATED",
+    /** Boolean. Whether to enable the backstage stream preview or not. */
+    EnableBackstageStreamPreview = "ENABLE_BACKSTAGE_STREAM_PREVIEW",
+    /** Boolean. Whether to enable the External RTMP Broadcast feature. */
+    EnableExternalRtmpBroadcast = "ENABLE_EXTERNAL_RTMP_BROADCAST",
     /** List of S3 URLs. */
     FillerVideos = "FILLER_VIDEOS",
     /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
@@ -7697,6 +8313,8 @@ export enum Conference_ConfigurationKey_Enum {
     RegistrationUrl = "REGISTRATION_URL",
     /** Select different versions of the schedule view. */
     ScheduleViewVersion = "SCHEDULE_VIEW_VERSION",
+    /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
+    SponsorsLabel = "SPONSORS_LABEL",
     /** A string representing a valid email address for contacting the conference organisers. */
     SupportAddress = "SUPPORT_ADDRESS",
     /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
@@ -8752,6 +9370,8 @@ export type Content_Element = {
     conferenceId: Scalars["uuid"];
     createdAt: Scalars["timestamptz"];
     data: Scalars["jsonb"];
+    /** A computed field, executes function "content.elementHasBeenSubmitted" */
+    hasBeenSubmitted?: Maybe<Scalars["Boolean"]>;
     id: Scalars["uuid"];
     isHidden: Scalars["Boolean"];
     /** An object relationship */
@@ -8780,6 +9400,8 @@ export type Content_Element = {
     updatedAt: Scalars["timestamptz"];
     /** An array relationship */
     uploaders: Array<Content_Uploader>;
+    /** A computed field, executes function "content.countUploaders" */
+    uploadersCount?: Maybe<Scalars["bigint"]>;
     /** An aggregate relationship */
     uploaders_aggregate: Content_Uploader_Aggregate;
     uploadsRemaining?: Maybe<Scalars["Int"]>;
@@ -9038,6 +9660,379 @@ export type Content_ElementByAccessToken_Var_Samp_Fields = {
 export type Content_ElementByAccessToken_Variance_Fields = {
     __typename?: "content_ElementByAccessToken_variance_fields";
     uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken = {
+    __typename?: "content_ElementByPersonAccessToken";
+    accessToken?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    data?: Maybe<Scalars["jsonb"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isHidden?: Maybe<Scalars["Boolean"]>;
+    /** An object relationship */
+    item?: Maybe<Content_ItemByPersonAccessToken>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    layoutData?: Maybe<Scalars["jsonb"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessTokenDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** columns and relationships of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessTokenLayoutDataArgs = {
+    path?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate = {
+    __typename?: "content_ElementByPersonAccessToken_aggregate";
+    aggregate?: Maybe<Content_ElementByPersonAccessToken_Aggregate_Fields>;
+    nodes: Array<Content_ElementByPersonAccessToken>;
+};
+
+/** aggregate fields of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_aggregate_fields";
+    avg?: Maybe<Content_ElementByPersonAccessToken_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Content_ElementByPersonAccessToken_Max_Fields>;
+    min?: Maybe<Content_ElementByPersonAccessToken_Min_Fields>;
+    stddev?: Maybe<Content_ElementByPersonAccessToken_Stddev_Fields>;
+    stddev_pop?: Maybe<Content_ElementByPersonAccessToken_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Content_ElementByPersonAccessToken_Stddev_Samp_Fields>;
+    sum?: Maybe<Content_ElementByPersonAccessToken_Sum_Fields>;
+    var_pop?: Maybe<Content_ElementByPersonAccessToken_Var_Pop_Fields>;
+    var_samp?: Maybe<Content_ElementByPersonAccessToken_Var_Samp_Fields>;
+    variance?: Maybe<Content_ElementByPersonAccessToken_Variance_Fields>;
+};
+
+/** aggregate fields of "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Aggregate_Order_By = {
+    avg?: Maybe<Content_ElementByPersonAccessToken_Avg_Order_By>;
+    count?: Maybe<Order_By>;
+    max?: Maybe<Content_ElementByPersonAccessToken_Max_Order_By>;
+    min?: Maybe<Content_ElementByPersonAccessToken_Min_Order_By>;
+    stddev?: Maybe<Content_ElementByPersonAccessToken_Stddev_Order_By>;
+    stddev_pop?: Maybe<Content_ElementByPersonAccessToken_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Content_ElementByPersonAccessToken_Stddev_Samp_Order_By>;
+    sum?: Maybe<Content_ElementByPersonAccessToken_Sum_Order_By>;
+    var_pop?: Maybe<Content_ElementByPersonAccessToken_Var_Pop_Order_By>;
+    var_samp?: Maybe<Content_ElementByPersonAccessToken_Var_Samp_Order_By>;
+    variance?: Maybe<Content_ElementByPersonAccessToken_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Content_ElementByPersonAccessToken_Append_Input = {
+    data?: Maybe<Scalars["jsonb"]>;
+    layoutData?: Maybe<Scalars["jsonb"]>;
+};
+
+/** input type for inserting array relation for remote table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Arr_Rel_Insert_Input = {
+    data: Array<Content_ElementByPersonAccessToken_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Content_ElementByPersonAccessToken_Avg_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_avg_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Avg_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "content.ElementByPersonAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ElementByPersonAccessToken_Bool_Exp = {
+    _and?: Maybe<Array<Content_ElementByPersonAccessToken_Bool_Exp>>;
+    _not?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+    _or?: Maybe<Array<Content_ElementByPersonAccessToken_Bool_Exp>>;
+    accessToken?: Maybe<String_Comparison_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    data?: Maybe<Jsonb_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    isHidden?: Maybe<Boolean_Comparison_Exp>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+    itemId?: Maybe<Uuid_Comparison_Exp>;
+    layoutData?: Maybe<Jsonb_Comparison_Exp>;
+    name?: Maybe<String_Comparison_Exp>;
+    originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    typeName?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    uploadsRemaining?: Maybe<Int_Comparison_Exp>;
+};
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Content_ElementByPersonAccessToken_Delete_At_Path_Input = {
+    data?: Maybe<Array<Scalars["String"]>>;
+    layoutData?: Maybe<Array<Scalars["String"]>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Content_ElementByPersonAccessToken_Delete_Elem_Input = {
+    data?: Maybe<Scalars["Int"]>;
+    layoutData?: Maybe<Scalars["Int"]>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Content_ElementByPersonAccessToken_Delete_Key_Input = {
+    data?: Maybe<Scalars["String"]>;
+    layoutData?: Maybe<Scalars["String"]>;
+};
+
+/** input type for incrementing numeric columns in table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Inc_Input = {
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Insert_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    data?: Maybe<Scalars["jsonb"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isHidden?: Maybe<Scalars["Boolean"]>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    layoutData?: Maybe<Scalars["jsonb"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate max on columns */
+export type Content_ElementByPersonAccessToken_Max_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_max_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** order by max() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Max_Order_By = {
+    accessToken?: Maybe<Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    typeName?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ElementByPersonAccessToken_Min_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_min_fields";
+    accessToken?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** order by min() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Min_Order_By = {
+    accessToken?: Maybe<Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    typeName?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Mutation_Response = {
+    __typename?: "content_ElementByPersonAccessToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Content_ElementByPersonAccessToken>;
+};
+
+/** Ordering options when selecting data from "content.ElementByPersonAccessToken". */
+export type Content_ElementByPersonAccessToken_Order_By = {
+    accessToken?: Maybe<Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    data?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    isHidden?: Maybe<Order_By>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Order_By>;
+    itemId?: Maybe<Order_By>;
+    layoutData?: Maybe<Order_By>;
+    name?: Maybe<Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    typeName?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Content_ElementByPersonAccessToken_Prepend_Input = {
+    data?: Maybe<Scalars["jsonb"]>;
+    layoutData?: Maybe<Scalars["jsonb"]>;
+};
+
+/** select columns of table "content.ElementByPersonAccessToken" */
+export enum Content_ElementByPersonAccessToken_Select_Column {
+    /** column name */
+    AccessToken = "accessToken",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Data = "data",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IsHidden = "isHidden",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    LayoutData = "layoutData",
+    /** column name */
+    Name = "name",
+    /** column name */
+    OriginatingDataId = "originatingDataId",
+    /** column name */
+    TypeName = "typeName",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    UploadsRemaining = "uploadsRemaining",
+}
+
+/** input type for updating data in table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Set_Input = {
+    accessToken?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    data?: Maybe<Scalars["jsonb"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isHidden?: Maybe<Scalars["Boolean"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    layoutData?: Maybe<Scalars["jsonb"]>;
+    name?: Maybe<Scalars["String"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** aggregate stddev on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_stddev_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Pop_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_stddev_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Pop_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ElementByPersonAccessToken_Stddev_Samp_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_stddev_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Stddev_Samp_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_ElementByPersonAccessToken_Sum_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_sum_fields";
+    uploadsRemaining?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Sum_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ElementByPersonAccessToken_Var_Pop_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_var_pop_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Var_Pop_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ElementByPersonAccessToken_Var_Samp_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_var_samp_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Var_Samp_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_ElementByPersonAccessToken_Variance_Fields = {
+    __typename?: "content_ElementByPersonAccessToken_variance_fields";
+    uploadsRemaining?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "content.ElementByPersonAccessToken" */
+export type Content_ElementByPersonAccessToken_Variance_Order_By = {
+    uploadsRemaining?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "content.ElementPermissionGrant" */
@@ -9538,6 +10533,7 @@ export type Content_Element_Bool_Exp = {
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     data?: Maybe<Jsonb_Comparison_Exp>;
+    hasBeenSubmitted?: Maybe<Boolean_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     isHidden?: Maybe<Boolean_Comparison_Exp>;
     item?: Maybe<Content_Item_Bool_Exp>;
@@ -9554,6 +10550,7 @@ export type Content_Element_Bool_Exp = {
     typeName?: Maybe<Content_ElementType_Enum_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
     uploaders?: Maybe<Content_Uploader_Bool_Exp>;
+    uploadersCount?: Maybe<Bigint_Comparison_Exp>;
     uploadsRemaining?: Maybe<Int_Comparison_Exp>;
     youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
@@ -9697,6 +10694,7 @@ export type Content_Element_Order_By = {
     conferenceId?: Maybe<Order_By>;
     createdAt?: Maybe<Order_By>;
     data?: Maybe<Order_By>;
+    hasBeenSubmitted?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     isHidden?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
@@ -9712,6 +10710,7 @@ export type Content_Element_Order_By = {
     type?: Maybe<Content_ElementType_Order_By>;
     typeName?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
+    uploadersCount?: Maybe<Order_By>;
     uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
     uploadsRemaining?: Maybe<Order_By>;
     youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
@@ -9900,6 +10899,8 @@ export type Content_Item = {
     events: Array<Schedule_Event>;
     /** An aggregate relationship */
     events_aggregate: Schedule_Event_Aggregate;
+    /** A computed field, executes function "content.itemHasUnsubmittedElements" */
+    hasUnsubmittedElements?: Maybe<Scalars["Boolean"]>;
     id: Scalars["uuid"];
     /** An array relationship */
     itemExhibitions: Array<Content_ItemExhibition>;
@@ -10060,6 +11061,210 @@ export type Content_ItemStats_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_ContentItemStats_Order_By>>;
     where?: Maybe<Analytics_ContentItemStats_Bool_Exp>;
+};
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken = {
+    __typename?: "content_ItemByPersonAccessToken";
+    chatId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    /** An array relationship */
+    elements: Array<Content_ElementByPersonAccessToken>;
+    /** An aggregate relationship */
+    elements_aggregate: Content_ElementByPersonAccessToken_Aggregate;
+    id?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    itemPeople: Array<Content_ItemProgramPersonByAccessToken>;
+    /** An aggregate relationship */
+    itemPeople_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    shortTitle?: Maybe<Scalars["String"]>;
+    title?: Maybe<Scalars["String"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenElementsArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenElements_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenItemPeopleArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** columns and relationships of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessTokenItemPeople_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+/** aggregated selection of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate = {
+    __typename?: "content_ItemByPersonAccessToken_aggregate";
+    aggregate?: Maybe<Content_ItemByPersonAccessToken_Aggregate_Fields>;
+    nodes: Array<Content_ItemByPersonAccessToken>;
+};
+
+/** aggregate fields of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate_Fields = {
+    __typename?: "content_ItemByPersonAccessToken_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Content_ItemByPersonAccessToken_Max_Fields>;
+    min?: Maybe<Content_ItemByPersonAccessToken_Min_Fields>;
+};
+
+/** aggregate fields of "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Content_ItemByPersonAccessToken_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "content.ItemByPersonAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ItemByPersonAccessToken_Bool_Exp = {
+    _and?: Maybe<Array<Content_ItemByPersonAccessToken_Bool_Exp>>;
+    _not?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+    _or?: Maybe<Array<Content_ItemByPersonAccessToken_Bool_Exp>>;
+    chatId?: Maybe<Uuid_Comparison_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    elements?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+    originatingDataId?: Maybe<Uuid_Comparison_Exp>;
+    shortTitle?: Maybe<String_Comparison_Exp>;
+    title?: Maybe<String_Comparison_Exp>;
+    typeName?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Insert_Input = {
+    chatId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    elements?: Maybe<Content_ElementByPersonAccessToken_Arr_Rel_Insert_Input>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemPeople?: Maybe<Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    shortTitle?: Maybe<Scalars["String"]>;
+    title?: Maybe<Scalars["String"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Content_ItemByPersonAccessToken_Max_Fields = {
+    __typename?: "content_ItemByPersonAccessToken_max_fields";
+    chatId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    shortTitle?: Maybe<Scalars["String"]>;
+    title?: Maybe<Scalars["String"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Content_ItemByPersonAccessToken_Min_Fields = {
+    __typename?: "content_ItemByPersonAccessToken_min_fields";
+    chatId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    shortTitle?: Maybe<Scalars["String"]>;
+    title?: Maybe<Scalars["String"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Mutation_Response = {
+    __typename?: "content_ItemByPersonAccessToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Content_ItemByPersonAccessToken>;
+};
+
+/** input type for inserting object relation for remote table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input = {
+    data: Content_ItemByPersonAccessToken_Insert_Input;
+};
+
+/** Ordering options when selecting data from "content.ItemByPersonAccessToken". */
+export type Content_ItemByPersonAccessToken_Order_By = {
+    chatId?: Maybe<Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    elements_aggregate?: Maybe<Content_ElementByPersonAccessToken_Aggregate_Order_By>;
+    id?: Maybe<Order_By>;
+    itemPeople_aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Order_By>;
+    originatingDataId?: Maybe<Order_By>;
+    shortTitle?: Maybe<Order_By>;
+    title?: Maybe<Order_By>;
+    typeName?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** select columns of table "content.ItemByPersonAccessToken" */
+export enum Content_ItemByPersonAccessToken_Select_Column {
+    /** column name */
+    ChatId = "chatId",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    OriginatingDataId = "originatingDataId",
+    /** column name */
+    ShortTitle = "shortTitle",
+    /** column name */
+    Title = "title",
+    /** column name */
+    TypeName = "typeName",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "content.ItemByPersonAccessToken" */
+export type Content_ItemByPersonAccessToken_Set_Input = {
+    chatId?: Maybe<Scalars["uuid"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    originatingDataId?: Maybe<Scalars["uuid"]>;
+    shortTitle?: Maybe<Scalars["String"]>;
+    title?: Maybe<Scalars["String"]>;
+    typeName?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** columns and relationships of "content.ItemExhibition" */
@@ -10408,6 +11613,8 @@ export type Content_ItemProgramPerson = {
     /** An object relationship */
     conference: Conference_Conference;
     conferenceId: Scalars["uuid"];
+    /** A computed field, executes function "content.itemProgramPerson_HasSubmissionRequestBeenSent" */
+    hasSubmissionRequestBeenSent?: Maybe<Scalars["Boolean"]>;
     id: Scalars["uuid"];
     /** An object relationship */
     item: Content_Item;
@@ -10415,8 +11622,283 @@ export type Content_ItemProgramPerson = {
     /** An object relationship */
     person: Collection_ProgramPerson;
     personId: Scalars["uuid"];
+    /** An object relationship */
+    personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken>;
     priority?: Maybe<Scalars["Int"]>;
     roleName: Scalars["String"];
+};
+
+/** columns and relationships of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken = {
+    __typename?: "content_ItemProgramPersonByAccessToken";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    item?: Maybe<Content_ItemByPersonAccessToken>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    person?: Maybe<Collection_ProgramPersonByAccessToken>;
+    personId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    roleName?: Maybe<Scalars["String"]>;
+};
+
+/** aggregated selection of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate = {
+    __typename?: "content_ItemProgramPersonByAccessToken_aggregate";
+    aggregate?: Maybe<Content_ItemProgramPersonByAccessToken_Aggregate_Fields>;
+    nodes: Array<Content_ItemProgramPersonByAccessToken>;
+};
+
+/** aggregate fields of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_aggregate_fields";
+    avg?: Maybe<Content_ItemProgramPersonByAccessToken_Avg_Fields>;
+    count: Scalars["Int"];
+    max?: Maybe<Content_ItemProgramPersonByAccessToken_Max_Fields>;
+    min?: Maybe<Content_ItemProgramPersonByAccessToken_Min_Fields>;
+    stddev?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Fields>;
+    stddev_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Pop_Fields>;
+    stddev_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Samp_Fields>;
+    sum?: Maybe<Content_ItemProgramPersonByAccessToken_Sum_Fields>;
+    var_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Pop_Fields>;
+    var_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Samp_Fields>;
+    variance?: Maybe<Content_ItemProgramPersonByAccessToken_Variance_Fields>;
+};
+
+/** aggregate fields of "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Aggregate_Order_By = {
+    avg?: Maybe<Content_ItemProgramPersonByAccessToken_Avg_Order_By>;
+    count?: Maybe<Order_By>;
+    max?: Maybe<Content_ItemProgramPersonByAccessToken_Max_Order_By>;
+    min?: Maybe<Content_ItemProgramPersonByAccessToken_Min_Order_By>;
+    stddev?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Order_By>;
+    stddev_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Pop_Order_By>;
+    stddev_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Stddev_Samp_Order_By>;
+    sum?: Maybe<Content_ItemProgramPersonByAccessToken_Sum_Order_By>;
+    var_pop?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Pop_Order_By>;
+    var_samp?: Maybe<Content_ItemProgramPersonByAccessToken_Var_Samp_Order_By>;
+    variance?: Maybe<Content_ItemProgramPersonByAccessToken_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Arr_Rel_Insert_Input = {
+    data: Array<Content_ItemProgramPersonByAccessToken_Insert_Input>;
+};
+
+/** aggregate avg on columns */
+export type Content_ItemProgramPersonByAccessToken_Avg_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_avg_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by avg() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Avg_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "content.ItemProgramPersonByAccessToken". All fields are combined with a logical 'AND'. */
+export type Content_ItemProgramPersonByAccessToken_Bool_Exp = {
+    _and?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Bool_Exp>>;
+    _not?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+    _or?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Bool_Exp>>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+    itemId?: Maybe<Uuid_Comparison_Exp>;
+    person?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+    personId?: Maybe<Uuid_Comparison_Exp>;
+    priority?: Maybe<Int_Comparison_Exp>;
+    roleName?: Maybe<String_Comparison_Exp>;
+};
+
+/** input type for incrementing numeric columns in table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Inc_Input = {
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** input type for inserting data into table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Insert_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Obj_Rel_Insert_Input>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    person?: Maybe<Collection_ProgramPersonByAccessToken_Obj_Rel_Insert_Input>;
+    personId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    roleName?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Content_ItemProgramPersonByAccessToken_Max_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_max_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    roleName?: Maybe<Scalars["String"]>;
+};
+
+/** order by max() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Max_Order_By = {
+    conferenceId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    personId?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+    roleName?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Content_ItemProgramPersonByAccessToken_Min_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_min_fields";
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    roleName?: Maybe<Scalars["String"]>;
+};
+
+/** order by min() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Min_Order_By = {
+    conferenceId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    itemId?: Maybe<Order_By>;
+    personId?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+    roleName?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Mutation_Response = {
+    __typename?: "content_ItemProgramPersonByAccessToken_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Content_ItemProgramPersonByAccessToken>;
+};
+
+/** Ordering options when selecting data from "content.ItemProgramPersonByAccessToken". */
+export type Content_ItemProgramPersonByAccessToken_Order_By = {
+    conferenceId?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    item?: Maybe<Content_ItemByPersonAccessToken_Order_By>;
+    itemId?: Maybe<Order_By>;
+    person?: Maybe<Collection_ProgramPersonByAccessToken_Order_By>;
+    personId?: Maybe<Order_By>;
+    priority?: Maybe<Order_By>;
+    roleName?: Maybe<Order_By>;
+};
+
+/** select columns of table "content.ItemProgramPersonByAccessToken" */
+export enum Content_ItemProgramPersonByAccessToken_Select_Column {
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    Id = "id",
+    /** column name */
+    ItemId = "itemId",
+    /** column name */
+    PersonId = "personId",
+    /** column name */
+    Priority = "priority",
+    /** column name */
+    RoleName = "roleName",
+}
+
+/** input type for updating data in table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Set_Input = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    itemId?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
+    priority?: Maybe<Scalars["Int"]>;
+    roleName?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate stddev on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_stddev_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Pop_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_stddev_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_pop() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Pop_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Samp_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_stddev_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by stddev_samp() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Stddev_Samp_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Content_ItemProgramPersonByAccessToken_Sum_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_sum_fields";
+    priority?: Maybe<Scalars["Int"]>;
+};
+
+/** order by sum() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Sum_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Content_ItemProgramPersonByAccessToken_Var_Pop_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_var_pop_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_pop() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Var_Pop_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Content_ItemProgramPersonByAccessToken_Var_Samp_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_var_samp_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by var_samp() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Var_Samp_Order_By = {
+    priority?: Maybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Content_ItemProgramPersonByAccessToken_Variance_Fields = {
+    __typename?: "content_ItemProgramPersonByAccessToken_variance_fields";
+    priority?: Maybe<Scalars["Float"]>;
+};
+
+/** order by variance() on columns of table "content.ItemProgramPersonByAccessToken" */
+export type Content_ItemProgramPersonByAccessToken_Variance_Order_By = {
+    priority?: Maybe<Order_By>;
 };
 
 /** aggregated selection of "content.ItemProgramPerson" */
@@ -10488,11 +11970,13 @@ export type Content_ItemProgramPerson_Bool_Exp = {
     _or?: Maybe<Array<Content_ItemProgramPerson_Bool_Exp>>;
     conference?: Maybe<Conference_Conference_Bool_Exp>;
     conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    hasSubmissionRequestBeenSent?: Maybe<Boolean_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     item?: Maybe<Content_Item_Bool_Exp>;
     itemId?: Maybe<Uuid_Comparison_Exp>;
     person?: Maybe<Collection_ProgramPerson_Bool_Exp>;
     personId?: Maybe<Uuid_Comparison_Exp>;
+    personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
     priority?: Maybe<Int_Comparison_Exp>;
     roleName?: Maybe<String_Comparison_Exp>;
 };
@@ -10519,6 +12003,7 @@ export type Content_ItemProgramPerson_Insert_Input = {
     itemId?: Maybe<Scalars["uuid"]>;
     person?: Maybe<Collection_ProgramPerson_Obj_Rel_Insert_Input>;
     personId?: Maybe<Scalars["uuid"]>;
+    personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Obj_Rel_Insert_Input>;
     priority?: Maybe<Scalars["Int"]>;
     roleName?: Maybe<Scalars["String"]>;
 };
@@ -10585,11 +12070,13 @@ export type Content_ItemProgramPerson_On_Conflict = {
 export type Content_ItemProgramPerson_Order_By = {
     conference?: Maybe<Conference_Conference_Order_By>;
     conferenceId?: Maybe<Order_By>;
+    hasSubmissionRequestBeenSent?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     item?: Maybe<Content_Item_Order_By>;
     itemId?: Maybe<Order_By>;
     person?: Maybe<Collection_ProgramPerson_Order_By>;
     personId?: Maybe<Order_By>;
+    personWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Order_By>;
     priority?: Maybe<Order_By>;
     roleName?: Maybe<Order_By>;
 };
@@ -11087,6 +12574,7 @@ export type Content_Item_Bool_Exp = {
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     elements?: Maybe<Content_Element_Bool_Exp>;
     events?: Maybe<Schedule_Event_Bool_Exp>;
+    hasUnsubmittedElements?: Maybe<Boolean_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     itemExhibitions?: Maybe<Content_ItemExhibition_Bool_Exp>;
     itemPeople?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
@@ -11218,6 +12706,7 @@ export type Content_Item_Order_By = {
     createdAt?: Maybe<Order_By>;
     elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
     events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+    hasUnsubmittedElements?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
     itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -11641,6 +13130,11 @@ export type Content_Uploader_Variance_Order_By = {
     emailsSentCount?: Maybe<Order_By>;
 };
 
+export type Content_SearchItems_Args = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    search?: Maybe<Scalars["String"]>;
+};
+
 /** columns and relationships of "job_queues.ChannelStackCreateJob" */
 export type Job_Queues_ChannelStackCreateJob = {
     __typename?: "job_queues_ChannelStackCreateJob";
@@ -12040,6 +13534,288 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
     Message = "message",
     /** column name */
     UpdatedAt = "updatedAt",
+}
+
+/** columns and relationships of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob = {
+    __typename?: "job_queues_ChannelStackUpdateJob";
+    /** An object relationship */
+    channelStack: Video_ChannelStack;
+    channelStackId: Scalars["uuid"];
+    cloudFormationStackArn: Scalars["String"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    jobStatusName: Video_JobStatus_Enum;
+    mediaLiveChannelId: Scalars["String"];
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate = {
+    __typename?: "job_queues_ChannelStackUpdateJob_aggregate";
+    aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Fields>;
+    min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Fields>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Order_By>;
+    min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input = {
+    data: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackUpdateJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackUpdateJob_Bool_Exp = {
+    _and?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+    _not?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+    _or?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+    channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
+    channelStackId?: Maybe<Uuid_Comparison_Exp>;
+    cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum_Comparison_Exp>;
+    mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+    message?: Maybe<String_Comparison_Exp>;
+    newRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    newRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Constraint {
+    /** unique or primary key constraint */
+    ChannelStackUpdateJobPkey = "ChannelStackUpdateJob_pkey",
+}
+
+/** input type for inserting data into table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Insert_Input = {
+    channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ChannelStackUpdateJob_Max_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_max_fields";
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Max_Order_By = {
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ChannelStackUpdateJob_Min_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_min_fields";
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Min_Order_By = {
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Mutation_Response = {
+    __typename?: "job_queues_ChannelStackUpdateJob_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** on conflict condition type for table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_On_Conflict = {
+    constraint: Job_Queues_ChannelStackUpdateJob_Constraint;
+    update_columns?: Array<Job_Queues_ChannelStackUpdateJob_Update_Column>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ChannelStackUpdateJob". */
+export type Job_Queues_ChannelStackUpdateJob_Order_By = {
+    channelStack?: Maybe<Video_ChannelStack_Order_By>;
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    jobStatusName?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ChannelStackUpdateJob */
+export type Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Select_Column {
+    /** column name */
+    ChannelStackId = "channelStackId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
+    /** column name */
+    NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
+    /** column name */
+    OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
+    /** column name */
+    OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Set_Input = {
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Update_Column {
+    /** column name */
+    ChannelStackId = "channelStackId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
+    /** column name */
+    NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
+    /** column name */
+    OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
+    /** column name */
+    OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    UpdatedAt = "updated_at",
 }
 
 /** columns and relationships of "job_queues.CombineVideosJob" */
@@ -13064,11 +14840,14 @@ export type Job_Queues_SubmissionRequestEmailJob = {
     created_at: Scalars["timestamptz"];
     emailTemplate?: Maybe<Scalars["jsonb"]>;
     id: Scalars["uuid"];
+    /** An object relationship */
+    person?: Maybe<Collection_ProgramPerson>;
+    personId?: Maybe<Scalars["uuid"]>;
     processed: Scalars["Boolean"];
     updated_at: Scalars["timestamptz"];
     /** An object relationship */
-    uploader: Content_Uploader;
-    uploaderId: Scalars["uuid"];
+    uploader?: Maybe<Content_Uploader>;
+    uploaderId?: Maybe<Scalars["uuid"]>;
 };
 
 /** columns and relationships of "job_queues.SubmissionRequestEmailJob" */
@@ -13110,6 +14889,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Bool_Exp = {
     created_at?: Maybe<Timestamptz_Comparison_Exp>;
     emailTemplate?: Maybe<Jsonb_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
+    person?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+    personId?: Maybe<Uuid_Comparison_Exp>;
     processed?: Maybe<Boolean_Comparison_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
     uploader?: Maybe<Content_Uploader_Bool_Exp>;
@@ -13142,6 +14923,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Insert_Input = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     emailTemplate?: Maybe<Scalars["jsonb"]>;
     id?: Maybe<Scalars["uuid"]>;
+    person?: Maybe<Collection_ProgramPerson_Obj_Rel_Insert_Input>;
+    personId?: Maybe<Scalars["uuid"]>;
     processed?: Maybe<Scalars["Boolean"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
     uploader?: Maybe<Content_Uploader_Obj_Rel_Insert_Input>;
@@ -13153,6 +14936,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Max_Fields = {
     __typename?: "job_queues_SubmissionRequestEmailJob_max_fields";
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
     uploaderId?: Maybe<Scalars["uuid"]>;
 };
@@ -13162,6 +14946,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Min_Fields = {
     __typename?: "job_queues_SubmissionRequestEmailJob_min_fields";
     created_at?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
     uploaderId?: Maybe<Scalars["uuid"]>;
 };
@@ -13187,6 +14972,8 @@ export type Job_Queues_SubmissionRequestEmailJob_Order_By = {
     created_at?: Maybe<Order_By>;
     emailTemplate?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
+    person?: Maybe<Collection_ProgramPerson_Order_By>;
+    personId?: Maybe<Order_By>;
     processed?: Maybe<Order_By>;
     updated_at?: Maybe<Order_By>;
     uploader?: Maybe<Content_Uploader_Order_By>;
@@ -13212,6 +14999,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Select_Column {
     /** column name */
     Id = "id",
     /** column name */
+    PersonId = "personId",
+    /** column name */
     Processed = "processed",
     /** column name */
     UpdatedAt = "updated_at",
@@ -13224,6 +15013,7 @@ export type Job_Queues_SubmissionRequestEmailJob_Set_Input = {
     created_at?: Maybe<Scalars["timestamptz"]>;
     emailTemplate?: Maybe<Scalars["jsonb"]>;
     id?: Maybe<Scalars["uuid"]>;
+    personId?: Maybe<Scalars["uuid"]>;
     processed?: Maybe<Scalars["Boolean"]>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
     uploaderId?: Maybe<Scalars["uuid"]>;
@@ -13237,6 +15027,8 @@ export enum Job_Queues_SubmissionRequestEmailJob_Update_Column {
     EmailTemplate = "emailTemplate",
     /** column name */
     Id = "id",
+    /** column name */
+    PersonId = "personId",
     /** column name */
     Processed = "processed",
     /** column name */
@@ -13665,6 +15457,10 @@ export type Mutation_Root = {
     delete_collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
     /** delete data from the table: "collection.ProgramPerson" */
     delete_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+    /** delete data from the table: "collection.ProgramPersonByAccessToken" */
+    delete_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+    /** delete data from the table: "collection.ProgramPersonWithAccessToken" */
+    delete_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
     /** delete single row from the table: "collection.ProgramPerson" */
     delete_collection_ProgramPerson_by_pk?: Maybe<Collection_ProgramPerson>;
     /** delete data from the table: "collection.Tag" */
@@ -13697,6 +15493,8 @@ export type Mutation_Root = {
     delete_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
     /** delete data from the table: "content.Element" */
     delete_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** delete data from the table: "content.ElementByPersonAccessToken" */
+    delete_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
     /** delete data from the table: "content.ElementPermissionGrant" */
     delete_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
     /** delete single row from the table: "content.ElementPermissionGrant" */
@@ -13709,12 +15507,16 @@ export type Mutation_Root = {
     delete_content_Element_by_pk?: Maybe<Content_Element>;
     /** delete data from the table: "content.Item" */
     delete_content_Item?: Maybe<Content_Item_Mutation_Response>;
+    /** delete data from the table: "content.ItemByPersonAccessToken" */
+    delete_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
     /** delete data from the table: "content.ItemExhibition" */
     delete_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
     /** delete single row from the table: "content.ItemExhibition" */
     delete_content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
     /** delete data from the table: "content.ItemProgramPerson" */
     delete_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+    /** delete data from the table: "content.ItemProgramPersonByAccessToken" */
+    delete_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
     /** delete single row from the table: "content.ItemProgramPerson" */
     delete_content_ItemProgramPerson_by_pk?: Maybe<Content_ItemProgramPerson>;
     /** delete data from the table: "content.ItemTag" */
@@ -13739,6 +15541,10 @@ export type Mutation_Root = {
     delete_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.ChannelStackDeleteJob" */
     delete_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** delete data from the table: "job_queues.ChannelStackUpdateJob" */
+    delete_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ChannelStackUpdateJob" */
+    delete_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** delete data from the table: "job_queues.CombineVideosJob" */
     delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -13915,6 +15721,10 @@ export type Mutation_Root = {
     delete_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** delete single row from the table: "video.MediaLiveChannelStatus" */
     delete_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** delete data from the table: "video.RoomRtmpOutput" */
+    delete_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+    /** delete single row from the table: "video.RoomRtmpOutput" */
+    delete_video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
     /** delete data from the table: "video.RtmpInput" */
     delete_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
     /** delete single row from the table: "video.RtmpInput" */
@@ -14018,6 +15828,14 @@ export type Mutation_Root = {
     insert_collection_Exhibition_one?: Maybe<Collection_Exhibition>;
     /** insert data into the table: "collection.ProgramPerson" */
     insert_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+    /** insert data into the table: "collection.ProgramPersonByAccessToken" */
+    insert_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+    /** insert a single row into the table: "collection.ProgramPersonByAccessToken" */
+    insert_collection_ProgramPersonByAccessToken_one?: Maybe<Collection_ProgramPersonByAccessToken>;
+    /** insert data into the table: "collection.ProgramPersonWithAccessToken" */
+    insert_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
+    /** insert a single row into the table: "collection.ProgramPersonWithAccessToken" */
+    insert_collection_ProgramPersonWithAccessToken_one?: Maybe<Collection_ProgramPersonWithAccessToken>;
     /** insert a single row into the table: "collection.ProgramPerson" */
     insert_collection_ProgramPerson_one?: Maybe<Collection_ProgramPerson>;
     /** insert data into the table: "collection.Tag" */
@@ -14050,6 +15868,10 @@ export type Mutation_Root = {
     insert_conference_PrepareJob_one?: Maybe<Conference_PrepareJob>;
     /** insert data into the table: "content.Element" */
     insert_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** insert data into the table: "content.ElementByPersonAccessToken" */
+    insert_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
+    /** insert a single row into the table: "content.ElementByPersonAccessToken" */
+    insert_content_ElementByPersonAccessToken_one?: Maybe<Content_ElementByPersonAccessToken>;
     /** insert data into the table: "content.ElementPermissionGrant" */
     insert_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
     /** insert a single row into the table: "content.ElementPermissionGrant" */
@@ -14062,12 +15884,20 @@ export type Mutation_Root = {
     insert_content_Element_one?: Maybe<Content_Element>;
     /** insert data into the table: "content.Item" */
     insert_content_Item?: Maybe<Content_Item_Mutation_Response>;
+    /** insert data into the table: "content.ItemByPersonAccessToken" */
+    insert_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
+    /** insert a single row into the table: "content.ItemByPersonAccessToken" */
+    insert_content_ItemByPersonAccessToken_one?: Maybe<Content_ItemByPersonAccessToken>;
     /** insert data into the table: "content.ItemExhibition" */
     insert_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
     /** insert a single row into the table: "content.ItemExhibition" */
     insert_content_ItemExhibition_one?: Maybe<Content_ItemExhibition>;
     /** insert data into the table: "content.ItemProgramPerson" */
     insert_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+    /** insert data into the table: "content.ItemProgramPersonByAccessToken" */
+    insert_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
+    /** insert a single row into the table: "content.ItemProgramPersonByAccessToken" */
+    insert_content_ItemProgramPersonByAccessToken_one?: Maybe<Content_ItemProgramPersonByAccessToken>;
     /** insert a single row into the table: "content.ItemProgramPerson" */
     insert_content_ItemProgramPerson_one?: Maybe<Content_ItemProgramPerson>;
     /** insert data into the table: "content.ItemTag" */
@@ -14092,6 +15922,10 @@ export type Mutation_Root = {
     insert_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.ChannelStackDeleteJob" */
     insert_job_queues_ChannelStackDeleteJob_one?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** insert data into the table: "job_queues.ChannelStackUpdateJob" */
+    insert_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ChannelStackUpdateJob" */
+    insert_job_queues_ChannelStackUpdateJob_one?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** insert data into the table: "job_queues.CombineVideosJob" */
     insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -14268,6 +16102,10 @@ export type Mutation_Root = {
     insert_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** insert a single row into the table: "video.MediaLiveChannelStatus" */
     insert_video_MediaLiveChannelStatus_one?: Maybe<Video_MediaLiveChannelStatus>;
+    /** insert data into the table: "video.RoomRtmpOutput" */
+    insert_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+    /** insert a single row into the table: "video.RoomRtmpOutput" */
+    insert_video_RoomRtmpOutput_one?: Maybe<Video_RoomRtmpOutput>;
     /** insert data into the table: "video.RtmpInput" */
     insert_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
     /** insert a single row into the table: "video.RtmpInput" */
@@ -14376,6 +16214,10 @@ export type Mutation_Root = {
     update_collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
     /** update data of the table: "collection.ProgramPerson" */
     update_collection_ProgramPerson?: Maybe<Collection_ProgramPerson_Mutation_Response>;
+    /** update data of the table: "collection.ProgramPersonByAccessToken" */
+    update_collection_ProgramPersonByAccessToken?: Maybe<Collection_ProgramPersonByAccessToken_Mutation_Response>;
+    /** update data of the table: "collection.ProgramPersonWithAccessToken" */
+    update_collection_ProgramPersonWithAccessToken?: Maybe<Collection_ProgramPersonWithAccessToken_Mutation_Response>;
     /** update single row of the table: "collection.ProgramPerson" */
     update_collection_ProgramPerson_by_pk?: Maybe<Collection_ProgramPerson>;
     /** update data of the table: "collection.Tag" */
@@ -14408,6 +16250,8 @@ export type Mutation_Root = {
     update_conference_PrepareJob_by_pk?: Maybe<Conference_PrepareJob>;
     /** update data of the table: "content.Element" */
     update_content_Element?: Maybe<Content_Element_Mutation_Response>;
+    /** update data of the table: "content.ElementByPersonAccessToken" */
+    update_content_ElementByPersonAccessToken?: Maybe<Content_ElementByPersonAccessToken_Mutation_Response>;
     /** update data of the table: "content.ElementPermissionGrant" */
     update_content_ElementPermissionGrant?: Maybe<Content_ElementPermissionGrant_Mutation_Response>;
     /** update single row of the table: "content.ElementPermissionGrant" */
@@ -14420,12 +16264,16 @@ export type Mutation_Root = {
     update_content_Element_by_pk?: Maybe<Content_Element>;
     /** update data of the table: "content.Item" */
     update_content_Item?: Maybe<Content_Item_Mutation_Response>;
+    /** update data of the table: "content.ItemByPersonAccessToken" */
+    update_content_ItemByPersonAccessToken?: Maybe<Content_ItemByPersonAccessToken_Mutation_Response>;
     /** update data of the table: "content.ItemExhibition" */
     update_content_ItemExhibition?: Maybe<Content_ItemExhibition_Mutation_Response>;
     /** update single row of the table: "content.ItemExhibition" */
     update_content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
     /** update data of the table: "content.ItemProgramPerson" */
     update_content_ItemProgramPerson?: Maybe<Content_ItemProgramPerson_Mutation_Response>;
+    /** update data of the table: "content.ItemProgramPersonByAccessToken" */
+    update_content_ItemProgramPersonByAccessToken?: Maybe<Content_ItemProgramPersonByAccessToken_Mutation_Response>;
     /** update single row of the table: "content.ItemProgramPerson" */
     update_content_ItemProgramPerson_by_pk?: Maybe<Content_ItemProgramPerson>;
     /** update data of the table: "content.ItemTag" */
@@ -14450,6 +16298,10 @@ export type Mutation_Root = {
     update_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** update single row of the table: "job_queues.ChannelStackDeleteJob" */
     update_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** update data of the table: "job_queues.ChannelStackUpdateJob" */
+    update_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** update single row of the table: "job_queues.ChannelStackUpdateJob" */
+    update_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** update data of the table: "job_queues.CombineVideosJob" */
     update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -14626,6 +16478,10 @@ export type Mutation_Root = {
     update_video_MediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Mutation_Response>;
     /** update single row of the table: "video.MediaLiveChannelStatus" */
     update_video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** update data of the table: "video.RoomRtmpOutput" */
+    update_video_RoomRtmpOutput?: Maybe<Video_RoomRtmpOutput_Mutation_Response>;
+    /** update single row of the table: "video.RoomRtmpOutput" */
+    update_video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
     /** update data of the table: "video.RtmpInput" */
     update_video_RtmpInput?: Maybe<Video_RtmpInput_Mutation_Response>;
     /** update single row of the table: "video.RtmpInput" */
@@ -14860,6 +16716,16 @@ export type Mutation_RootDelete_Collection_ProgramPersonArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Collection_ProgramPersonByAccessTokenArgs = {
+    where: Collection_ProgramPersonByAccessToken_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Collection_ProgramPersonWithAccessTokenArgs = {
+    where: Collection_ProgramPersonWithAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Collection_ProgramPerson_By_PkArgs = {
     id: Scalars["uuid"];
 };
@@ -14941,6 +16807,11 @@ export type Mutation_RootDelete_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ElementByPersonAccessTokenArgs = {
+    where: Content_ElementByPersonAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ElementPermissionGrantArgs = {
     where: Content_ElementPermissionGrant_Bool_Exp;
 };
@@ -14971,6 +16842,11 @@ export type Mutation_RootDelete_Content_ItemArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Content_ItemByPersonAccessTokenArgs = {
+    where: Content_ItemByPersonAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Content_ItemExhibitionArgs = {
     where: Content_ItemExhibition_Bool_Exp;
 };
@@ -14983,6 +16859,11 @@ export type Mutation_RootDelete_Content_ItemExhibition_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Content_ItemProgramPersonArgs = {
     where: Content_ItemProgramPerson_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Content_ItemProgramPersonByAccessTokenArgs = {
+    where: Content_ItemProgramPersonByAccessToken_Bool_Exp;
 };
 
 /** mutation root */
@@ -15042,6 +16923,16 @@ export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJobArgs = {
+    where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -15486,6 +17377,16 @@ export type Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpOutputArgs = {
+    where: Video_RoomRtmpOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_RoomRtmpOutput_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Video_RtmpInputArgs = {
     where: Video_RtmpInput_Bool_Exp;
 };
@@ -15784,6 +17685,26 @@ export type Mutation_RootInsert_Collection_ProgramPersonArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonByAccessTokenArgs = {
+    objects: Array<Collection_ProgramPersonByAccessToken_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonByAccessToken_OneArgs = {
+    object: Collection_ProgramPersonByAccessToken_Insert_Input;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonWithAccessTokenArgs = {
+    objects: Array<Collection_ProgramPersonWithAccessToken_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Collection_ProgramPersonWithAccessToken_OneArgs = {
+    object: Collection_ProgramPersonWithAccessToken_Insert_Input;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Collection_ProgramPerson_OneArgs = {
     object: Collection_ProgramPerson_Insert_Input;
     on_conflict?: Maybe<Collection_ProgramPerson_On_Conflict>;
@@ -15880,6 +17801,16 @@ export type Mutation_RootInsert_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ElementByPersonAccessTokenArgs = {
+    objects: Array<Content_ElementByPersonAccessToken_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ElementByPersonAccessToken_OneArgs = {
+    object: Content_ElementByPersonAccessToken_Insert_Input;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ElementPermissionGrantArgs = {
     objects: Array<Content_ElementPermissionGrant_Insert_Input>;
     on_conflict?: Maybe<Content_ElementPermissionGrant_On_Conflict>;
@@ -15916,6 +17847,16 @@ export type Mutation_RootInsert_Content_ItemArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Content_ItemByPersonAccessTokenArgs = {
+    objects: Array<Content_ItemByPersonAccessToken_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemByPersonAccessToken_OneArgs = {
+    object: Content_ItemByPersonAccessToken_Insert_Input;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Content_ItemExhibitionArgs = {
     objects: Array<Content_ItemExhibition_Insert_Input>;
     on_conflict?: Maybe<Content_ItemExhibition_On_Conflict>;
@@ -15931,6 +17872,16 @@ export type Mutation_RootInsert_Content_ItemExhibition_OneArgs = {
 export type Mutation_RootInsert_Content_ItemProgramPersonArgs = {
     objects: Array<Content_ItemProgramPerson_Insert_Input>;
     on_conflict?: Maybe<Content_ItemProgramPerson_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemProgramPersonByAccessTokenArgs = {
+    objects: Array<Content_ItemProgramPersonByAccessToken_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Content_ItemProgramPersonByAccessToken_OneArgs = {
+    object: Content_ItemProgramPersonByAccessToken_Insert_Input;
 };
 
 /** mutation root */
@@ -16003,6 +17954,18 @@ export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJobArgs = {
 export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJob_OneArgs = {
     object: Job_Queues_ChannelStackDeleteJob_Insert_Input;
     on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJobArgs = {
+    objects: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJob_OneArgs = {
+    object: Job_Queues_ChannelStackUpdateJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -16534,6 +18497,18 @@ export type Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpOutputArgs = {
+    objects: Array<Video_RoomRtmpOutput_Insert_Input>;
+    on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_RoomRtmpOutput_OneArgs = {
+    object: Video_RoomRtmpOutput_Insert_Input;
+    on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Video_RtmpInputArgs = {
     objects: Array<Video_RtmpInput_Insert_Input>;
     on_conflict?: Maybe<Video_RtmpInput_On_Conflict>;
@@ -16931,12 +18906,27 @@ export type Mutation_RootUpdate_Collection_Exhibition_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPersonArgs = {
+    _inc?: Maybe<Collection_ProgramPerson_Inc_Input>;
     _set?: Maybe<Collection_ProgramPerson_Set_Input>;
     where: Collection_ProgramPerson_Bool_Exp;
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Collection_ProgramPersonByAccessTokenArgs = {
+    _set?: Maybe<Collection_ProgramPersonByAccessToken_Set_Input>;
+    where: Collection_ProgramPersonByAccessToken_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Collection_ProgramPersonWithAccessTokenArgs = {
+    _inc?: Maybe<Collection_ProgramPersonWithAccessToken_Inc_Input>;
+    _set?: Maybe<Collection_ProgramPersonWithAccessToken_Set_Input>;
+    where: Collection_ProgramPersonWithAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Collection_ProgramPerson_By_PkArgs = {
+    _inc?: Maybe<Collection_ProgramPerson_Inc_Input>;
     _set?: Maybe<Collection_ProgramPerson_Set_Input>;
     pk_columns: Collection_ProgramPerson_Pk_Columns_Input;
 };
@@ -17060,6 +19050,18 @@ export type Mutation_RootUpdate_Content_ElementArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ElementByPersonAccessTokenArgs = {
+    _append?: Maybe<Content_ElementByPersonAccessToken_Append_Input>;
+    _delete_at_path?: Maybe<Content_ElementByPersonAccessToken_Delete_At_Path_Input>;
+    _delete_elem?: Maybe<Content_ElementByPersonAccessToken_Delete_Elem_Input>;
+    _delete_key?: Maybe<Content_ElementByPersonAccessToken_Delete_Key_Input>;
+    _inc?: Maybe<Content_ElementByPersonAccessToken_Inc_Input>;
+    _prepend?: Maybe<Content_ElementByPersonAccessToken_Prepend_Input>;
+    _set?: Maybe<Content_ElementByPersonAccessToken_Set_Input>;
+    where: Content_ElementByPersonAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ElementPermissionGrantArgs = {
     _set?: Maybe<Content_ElementPermissionGrant_Set_Input>;
     where: Content_ElementPermissionGrant_Bool_Exp;
@@ -17102,6 +19104,12 @@ export type Mutation_RootUpdate_Content_ItemArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Content_ItemByPersonAccessTokenArgs = {
+    _set?: Maybe<Content_ItemByPersonAccessToken_Set_Input>;
+    where: Content_ItemByPersonAccessToken_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Content_ItemExhibitionArgs = {
     _append?: Maybe<Content_ItemExhibition_Append_Input>;
     _delete_at_path?: Maybe<Content_ItemExhibition_Delete_At_Path_Input>;
@@ -17130,6 +19138,13 @@ export type Mutation_RootUpdate_Content_ItemProgramPersonArgs = {
     _inc?: Maybe<Content_ItemProgramPerson_Inc_Input>;
     _set?: Maybe<Content_ItemProgramPerson_Set_Input>;
     where: Content_ItemProgramPerson_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Content_ItemProgramPersonByAccessTokenArgs = {
+    _inc?: Maybe<Content_ItemProgramPersonByAccessToken_Inc_Input>;
+    _set?: Maybe<Content_ItemProgramPersonByAccessToken_Set_Input>;
+    where: Content_ItemProgramPersonByAccessToken_Bool_Exp;
 };
 
 /** mutation root */
@@ -17205,6 +19220,18 @@ export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJobArgs = {
 export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
     _set?: Maybe<Job_Queues_ChannelStackDeleteJob_Set_Input>;
     pk_columns: Job_Queues_ChannelStackDeleteJob_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJobArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+    where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+    pk_columns: Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -17861,6 +19888,18 @@ export type Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs = {
     _inc?: Maybe<Video_MediaLiveChannelStatus_Inc_Input>;
     _set?: Maybe<Video_MediaLiveChannelStatus_Set_Input>;
     pk_columns: Video_MediaLiveChannelStatus_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpOutputArgs = {
+    _set?: Maybe<Video_RoomRtmpOutput_Set_Input>;
+    where: Video_RoomRtmpOutput_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_RoomRtmpOutput_By_PkArgs = {
+    _set?: Maybe<Video_RoomRtmpOutput_Set_Input>;
+    pk_columns: Video_RoomRtmpOutput_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -19339,6 +21378,14 @@ export type Query_Root = {
     collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
     /** fetch data from the table: "collection.ProgramPerson" */
     collection_ProgramPerson: Array<Collection_ProgramPerson>;
+    /** fetch data from the table: "collection.ProgramPersonByAccessToken" */
+    collection_ProgramPersonByAccessToken: Array<Collection_ProgramPersonByAccessToken>;
+    /** fetch aggregated fields from the table: "collection.ProgramPersonByAccessToken" */
+    collection_ProgramPersonByAccessToken_aggregate: Collection_ProgramPersonByAccessToken_Aggregate;
+    /** fetch data from the table: "collection.ProgramPersonWithAccessToken" */
+    collection_ProgramPersonWithAccessToken: Array<Collection_ProgramPersonWithAccessToken>;
+    /** fetch aggregated fields from the table: "collection.ProgramPersonWithAccessToken" */
+    collection_ProgramPersonWithAccessToken_aggregate: Collection_ProgramPersonWithAccessToken_Aggregate;
     /** fetch aggregated fields from the table: "collection.ProgramPerson" */
     collection_ProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
     /** fetch data from the table: "collection.ProgramPerson" using primary key columns */
@@ -19349,6 +21396,10 @@ export type Query_Root = {
     collection_Tag_aggregate: Collection_Tag_Aggregate;
     /** fetch data from the table: "collection.Tag" using primary key columns */
     collection_Tag_by_pk?: Maybe<Collection_Tag>;
+    /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+    collection_searchProgramPerson: Array<Collection_ProgramPerson>;
+    /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+    collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
     /** fetch data from the table: "conference.Conference" */
     conference_Conference: Array<Conference_Conference>;
     /** fetch aggregated fields from the table: "conference.Conference" */
@@ -19391,6 +21442,10 @@ export type Query_Root = {
     content_ElementByAccessToken: Array<Content_ElementByAccessToken>;
     /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
     content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+    /** fetch data from the table: "content.ElementByPersonAccessToken" */
+    content_ElementByPersonAccessToken: Array<Content_ElementByPersonAccessToken>;
+    /** fetch aggregated fields from the table: "content.ElementByPersonAccessToken" */
+    content_ElementByPersonAccessToken_aggregate: Content_ElementByPersonAccessToken_Aggregate;
     /** fetch data from the table: "content.ElementPermissionGrant" */
     content_ElementPermissionGrant: Array<Content_ElementPermissionGrant>;
     /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -19409,6 +21464,10 @@ export type Query_Root = {
     content_Element_by_pk?: Maybe<Content_Element>;
     /** fetch data from the table: "content.Item" */
     content_Item: Array<Content_Item>;
+    /** fetch data from the table: "content.ItemByPersonAccessToken" */
+    content_ItemByPersonAccessToken: Array<Content_ItemByPersonAccessToken>;
+    /** fetch aggregated fields from the table: "content.ItemByPersonAccessToken" */
+    content_ItemByPersonAccessToken_aggregate: Content_ItemByPersonAccessToken_Aggregate;
     /** fetch data from the table: "content.ItemExhibition" */
     content_ItemExhibition: Array<Content_ItemExhibition>;
     /** fetch aggregated fields from the table: "content.ItemExhibition" */
@@ -19417,6 +21476,10 @@ export type Query_Root = {
     content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
     /** fetch data from the table: "content.ItemProgramPerson" */
     content_ItemProgramPerson: Array<Content_ItemProgramPerson>;
+    /** fetch data from the table: "content.ItemProgramPersonByAccessToken" */
+    content_ItemProgramPersonByAccessToken: Array<Content_ItemProgramPersonByAccessToken>;
+    /** fetch aggregated fields from the table: "content.ItemProgramPersonByAccessToken" */
+    content_ItemProgramPersonByAccessToken_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
     /** fetch aggregated fields from the table: "content.ItemProgramPerson" */
     content_ItemProgramPerson_aggregate: Content_ItemProgramPerson_Aggregate;
     /** fetch data from the table: "content.ItemProgramPerson" using primary key columns */
@@ -19443,6 +21506,11 @@ export type Query_Root = {
     content_Uploader_aggregate: Content_Uploader_Aggregate;
     /** fetch data from the table: "content.Uploader" using primary key columns */
     content_Uploader_by_pk?: Maybe<Content_Uploader>;
+    /** execute function "content.searchItems" which returns "content.Item" */
+    content_searchItems: Array<Content_Item>;
+    /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+    content_searchItems_aggregate: Content_Item_Aggregate;
+    getProgramPersonAccessToken: MatchingPersonOutput;
     getSlug: GetSlugOutput;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
     /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
@@ -19457,6 +21525,12 @@ export type Query_Root = {
     job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
     job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+    job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -19680,6 +21754,10 @@ export type Query_Root = {
     schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
     /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
     schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+    schedule_searchEvents: Array<Schedule_Event>;
+    /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+    schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -19735,6 +21813,12 @@ export type Query_Root = {
     video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpOutput" */
+    video_RoomRtmpOutput: Array<Video_RoomRtmpOutput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
+    video_RoomRtmpOutput_aggregate: Video_RoomRtmpOutput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpOutput" using primary key columns */
+    video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
     /** fetch data from the table: "video.RtmpInput" */
     video_RtmpInput: Array<Video_RtmpInput>;
     /** fetch aggregated fields from the table: "video.RtmpInput" */
@@ -20276,6 +22360,38 @@ export type Query_RootCollection_ProgramPersonArgs = {
     where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
 };
 
+export type Query_RootCollection_ProgramPersonByAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Query_RootCollection_ProgramPersonByAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Query_RootCollection_ProgramPersonWithAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+export type Query_RootCollection_ProgramPersonWithAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
 export type Query_RootCollection_ProgramPerson_AggregateArgs = {
     distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -20306,6 +22422,24 @@ export type Query_RootCollection_Tag_AggregateArgs = {
 
 export type Query_RootCollection_Tag_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Query_RootCollection_SearchProgramPersonArgs = {
+    args: Collection_SearchProgramPerson_Args;
+    distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+    where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+export type Query_RootCollection_SearchProgramPerson_AggregateArgs = {
+    args: Collection_SearchProgramPerson_Args;
+    distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+    where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
 };
 
 export type Query_RootConference_ConferenceArgs = {
@@ -20453,6 +22587,22 @@ export type Query_RootContent_ElementByAccessToken_AggregateArgs = {
     where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
+export type Query_RootContent_ElementByPersonAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+export type Query_RootContent_ElementByPersonAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
 export type Query_RootContent_ElementPermissionGrantArgs = {
     distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -20513,6 +22663,22 @@ export type Query_RootContent_ItemArgs = {
     where?: Maybe<Content_Item_Bool_Exp>;
 };
 
+export type Query_RootContent_ItemByPersonAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ItemByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+export type Query_RootContent_ItemByPersonAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
 export type Query_RootContent_ItemExhibitionArgs = {
     distinct_on?: Maybe<Array<Content_ItemExhibition_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -20539,6 +22705,22 @@ export type Query_RootContent_ItemProgramPersonArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Content_ItemProgramPerson_Order_By>>;
     where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+export type Query_RootContent_ItemProgramPersonByAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Query_RootContent_ItemProgramPersonByAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
 };
 
 export type Query_RootContent_ItemProgramPerson_AggregateArgs = {
@@ -20625,6 +22807,30 @@ export type Query_RootContent_Uploader_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Query_RootContent_SearchItemsArgs = {
+    args: Content_SearchItems_Args;
+    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Item_Order_By>>;
+    where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+export type Query_RootContent_SearchItems_AggregateArgs = {
+    args: Content_SearchItems_Args;
+    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Item_Order_By>>;
+    where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+export type Query_RootGetProgramPersonAccessTokenArgs = {
+    elementAccessToken: Scalars["String"];
+    elementId: Scalars["uuid"];
+    uploaderEmail: Scalars["String"];
+};
+
 export type Query_RootGetSlugArgs = {
     url: Scalars["String"];
 };
@@ -20670,6 +22876,26 @@ export type Query_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
 };
 
 export type Query_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -21421,6 +23647,24 @@ export type Query_RootSchedule_StarredEvent_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Query_RootSchedule_SearchEventsArgs = {
+    args: Schedule_SearchEvents_Args;
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Query_RootSchedule_SearchEvents_AggregateArgs = {
+    args: Schedule_SearchEvents_Args;
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
 export type Query_RootSystem_ConfigurationArgs = {
     distinct_on?: Maybe<Array<System_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -21598,6 +23842,26 @@ export type Query_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Query_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_RoomRtmpOutputArgs = {
+    distinct_on?: Maybe<Array<Video_RoomRtmpOutput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RoomRtmpOutput_Order_By>>;
+    where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpOutput_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_RoomRtmpOutput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RoomRtmpOutput_Order_By>>;
+    where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+export type Query_RootVideo_RoomRtmpOutput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -24296,6 +26560,8 @@ export type Room_Room = {
     roomPeople: Array<Room_RoomPerson>;
     /** An aggregate relationship */
     roomPeople_aggregate: Room_RoomPerson_Aggregate;
+    /** An object relationship */
+    rtmpOutput?: Maybe<Video_RoomRtmpOutput>;
     /** An array relationship */
     shuffleRooms: Array<Room_ShuffleRoom>;
     /** An aggregate relationship */
@@ -24736,6 +27002,7 @@ export type Room_Room_Bool_Exp = {
     priority?: Maybe<Int_Comparison_Exp>;
     publicVonageSessionId?: Maybe<String_Comparison_Exp>;
     roomPeople?: Maybe<Room_RoomPerson_Bool_Exp>;
+    rtmpOutput?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
     shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
     stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -24787,6 +27054,7 @@ export type Room_Room_Insert_Input = {
     priority?: Maybe<Scalars["Int"]>;
     publicVonageSessionId?: Maybe<Scalars["String"]>;
     roomPeople?: Maybe<Room_RoomPerson_Arr_Rel_Insert_Input>;
+    rtmpOutput?: Maybe<Video_RoomRtmpOutput_Obj_Rel_Insert_Input>;
     shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
     stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
@@ -24918,6 +27186,7 @@ export type Room_Room_Order_By = {
     priority?: Maybe<Order_By>;
     publicVonageSessionId?: Maybe<Order_By>;
     roomPeople_aggregate?: Maybe<Room_RoomPerson_Aggregate_Order_By>;
+    rtmpOutput?: Maybe<Video_RoomRtmpOutput_Order_By>;
     shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
     stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
     updated_at?: Maybe<Order_By>;
@@ -28234,6 +30503,11 @@ export enum Schedule_StarredEvent_Update_Column {
     UpdatedAt = "updated_at",
 }
 
+export type Schedule_SearchEvents_Args = {
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    search?: Maybe<Scalars["String"]>;
+};
+
 export type Subscription_Root = {
     __typename?: "subscription_root";
     /** fetch data from the table: "Email" */
@@ -28382,6 +30656,14 @@ export type Subscription_Root = {
     collection_Exhibition_by_pk?: Maybe<Collection_Exhibition>;
     /** fetch data from the table: "collection.ProgramPerson" */
     collection_ProgramPerson: Array<Collection_ProgramPerson>;
+    /** fetch data from the table: "collection.ProgramPersonByAccessToken" */
+    collection_ProgramPersonByAccessToken: Array<Collection_ProgramPersonByAccessToken>;
+    /** fetch aggregated fields from the table: "collection.ProgramPersonByAccessToken" */
+    collection_ProgramPersonByAccessToken_aggregate: Collection_ProgramPersonByAccessToken_Aggregate;
+    /** fetch data from the table: "collection.ProgramPersonWithAccessToken" */
+    collection_ProgramPersonWithAccessToken: Array<Collection_ProgramPersonWithAccessToken>;
+    /** fetch aggregated fields from the table: "collection.ProgramPersonWithAccessToken" */
+    collection_ProgramPersonWithAccessToken_aggregate: Collection_ProgramPersonWithAccessToken_Aggregate;
     /** fetch aggregated fields from the table: "collection.ProgramPerson" */
     collection_ProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
     /** fetch data from the table: "collection.ProgramPerson" using primary key columns */
@@ -28392,6 +30674,10 @@ export type Subscription_Root = {
     collection_Tag_aggregate: Collection_Tag_Aggregate;
     /** fetch data from the table: "collection.Tag" using primary key columns */
     collection_Tag_by_pk?: Maybe<Collection_Tag>;
+    /** execute function "collection.searchProgramPerson" which returns "collection.ProgramPerson" */
+    collection_searchProgramPerson: Array<Collection_ProgramPerson>;
+    /** execute function "collection.searchProgramPerson" and query aggregates on result of table type "collection.ProgramPerson" */
+    collection_searchProgramPerson_aggregate: Collection_ProgramPerson_Aggregate;
     /** fetch data from the table: "conference.Conference" */
     conference_Conference: Array<Conference_Conference>;
     /** fetch aggregated fields from the table: "conference.Conference" */
@@ -28434,6 +30720,10 @@ export type Subscription_Root = {
     content_ElementByAccessToken: Array<Content_ElementByAccessToken>;
     /** fetch aggregated fields from the table: "content.ElementByAccessToken" */
     content_ElementByAccessToken_aggregate: Content_ElementByAccessToken_Aggregate;
+    /** fetch data from the table: "content.ElementByPersonAccessToken" */
+    content_ElementByPersonAccessToken: Array<Content_ElementByPersonAccessToken>;
+    /** fetch aggregated fields from the table: "content.ElementByPersonAccessToken" */
+    content_ElementByPersonAccessToken_aggregate: Content_ElementByPersonAccessToken_Aggregate;
     /** fetch data from the table: "content.ElementPermissionGrant" */
     content_ElementPermissionGrant: Array<Content_ElementPermissionGrant>;
     /** fetch aggregated fields from the table: "content.ElementPermissionGrant" */
@@ -28452,6 +30742,10 @@ export type Subscription_Root = {
     content_Element_by_pk?: Maybe<Content_Element>;
     /** fetch data from the table: "content.Item" */
     content_Item: Array<Content_Item>;
+    /** fetch data from the table: "content.ItemByPersonAccessToken" */
+    content_ItemByPersonAccessToken: Array<Content_ItemByPersonAccessToken>;
+    /** fetch aggregated fields from the table: "content.ItemByPersonAccessToken" */
+    content_ItemByPersonAccessToken_aggregate: Content_ItemByPersonAccessToken_Aggregate;
     /** fetch data from the table: "content.ItemExhibition" */
     content_ItemExhibition: Array<Content_ItemExhibition>;
     /** fetch aggregated fields from the table: "content.ItemExhibition" */
@@ -28460,6 +30754,10 @@ export type Subscription_Root = {
     content_ItemExhibition_by_pk?: Maybe<Content_ItemExhibition>;
     /** fetch data from the table: "content.ItemProgramPerson" */
     content_ItemProgramPerson: Array<Content_ItemProgramPerson>;
+    /** fetch data from the table: "content.ItemProgramPersonByAccessToken" */
+    content_ItemProgramPersonByAccessToken: Array<Content_ItemProgramPersonByAccessToken>;
+    /** fetch aggregated fields from the table: "content.ItemProgramPersonByAccessToken" */
+    content_ItemProgramPersonByAccessToken_aggregate: Content_ItemProgramPersonByAccessToken_Aggregate;
     /** fetch aggregated fields from the table: "content.ItemProgramPerson" */
     content_ItemProgramPerson_aggregate: Content_ItemProgramPerson_Aggregate;
     /** fetch data from the table: "content.ItemProgramPerson" using primary key columns */
@@ -28486,6 +30784,10 @@ export type Subscription_Root = {
     content_Uploader_aggregate: Content_Uploader_Aggregate;
     /** fetch data from the table: "content.Uploader" using primary key columns */
     content_Uploader_by_pk?: Maybe<Content_Uploader>;
+    /** execute function "content.searchItems" which returns "content.Item" */
+    content_searchItems: Array<Content_Item>;
+    /** execute function "content.searchItems" and query aggregates on result of table type "content.Item" */
+    content_searchItems_aggregate: Content_Item_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackCreateJob" */
     job_queues_ChannelStackCreateJob: Array<Job_Queues_ChannelStackCreateJob>;
     /** fetch aggregated fields from the table: "job_queues.ChannelStackCreateJob" */
@@ -28498,6 +30800,12 @@ export type Subscription_Root = {
     job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
     job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+    job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -28720,6 +31028,10 @@ export type Subscription_Root = {
     schedule_StarredEvent_aggregate: Schedule_StarredEvent_Aggregate;
     /** fetch data from the table: "schedule.StarredEvent" using primary key columns */
     schedule_StarredEvent_by_pk?: Maybe<Schedule_StarredEvent>;
+    /** execute function "schedule.searchEvents" which returns "schedule.Event" */
+    schedule_searchEvents: Array<Schedule_Event>;
+    /** execute function "schedule.searchEvents" and query aggregates on result of table type "schedule.Event" */
+    schedule_searchEvents_aggregate: Schedule_Event_Aggregate;
     /** fetch data from the table: "system.Configuration" */
     system_Configuration: Array<System_Configuration>;
     /** fetch data from the table: "system.ConfigurationKey" */
@@ -28774,6 +31086,12 @@ export type Subscription_Root = {
     video_MediaLiveChannelStatus_aggregate: Video_MediaLiveChannelStatus_Aggregate;
     /** fetch data from the table: "video.MediaLiveChannelStatus" using primary key columns */
     video_MediaLiveChannelStatus_by_pk?: Maybe<Video_MediaLiveChannelStatus>;
+    /** fetch data from the table: "video.RoomRtmpOutput" */
+    video_RoomRtmpOutput: Array<Video_RoomRtmpOutput>;
+    /** fetch aggregated fields from the table: "video.RoomRtmpOutput" */
+    video_RoomRtmpOutput_aggregate: Video_RoomRtmpOutput_Aggregate;
+    /** fetch data from the table: "video.RoomRtmpOutput" using primary key columns */
+    video_RoomRtmpOutput_by_pk?: Maybe<Video_RoomRtmpOutput>;
     /** fetch data from the table: "video.RtmpInput" */
     video_RtmpInput: Array<Video_RtmpInput>;
     /** fetch aggregated fields from the table: "video.RtmpInput" */
@@ -29315,6 +31633,38 @@ export type Subscription_RootCollection_ProgramPersonArgs = {
     where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
 };
 
+export type Subscription_RootCollection_ProgramPersonByAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootCollection_ProgramPersonByAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootCollection_ProgramPersonWithAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootCollection_ProgramPersonWithAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPersonWithAccessToken_Order_By>>;
+    where?: Maybe<Collection_ProgramPersonWithAccessToken_Bool_Exp>;
+};
+
 export type Subscription_RootCollection_ProgramPerson_AggregateArgs = {
     distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29345,6 +31695,24 @@ export type Subscription_RootCollection_Tag_AggregateArgs = {
 
 export type Subscription_RootCollection_Tag_By_PkArgs = {
     id: Scalars["uuid"];
+};
+
+export type Subscription_RootCollection_SearchProgramPersonArgs = {
+    args: Collection_SearchProgramPerson_Args;
+    distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+    where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
+};
+
+export type Subscription_RootCollection_SearchProgramPerson_AggregateArgs = {
+    args: Collection_SearchProgramPerson_Args;
+    distinct_on?: Maybe<Array<Collection_ProgramPerson_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Collection_ProgramPerson_Order_By>>;
+    where?: Maybe<Collection_ProgramPerson_Bool_Exp>;
 };
 
 export type Subscription_RootConference_ConferenceArgs = {
@@ -29492,6 +31860,22 @@ export type Subscription_RootContent_ElementByAccessToken_AggregateArgs = {
     where?: Maybe<Content_ElementByAccessToken_Bool_Exp>;
 };
 
+export type Subscription_RootContent_ElementByPersonAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ElementByPersonAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ElementByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ElementByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ElementByPersonAccessToken_Bool_Exp>;
+};
+
 export type Subscription_RootContent_ElementPermissionGrantArgs = {
     distinct_on?: Maybe<Array<Content_ElementPermissionGrant_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29552,6 +31936,22 @@ export type Subscription_RootContent_ItemArgs = {
     where?: Maybe<Content_Item_Bool_Exp>;
 };
 
+export type Subscription_RootContent_ItemByPersonAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ItemByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ItemByPersonAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemByPersonAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemByPersonAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemByPersonAccessToken_Bool_Exp>;
+};
+
 export type Subscription_RootContent_ItemExhibitionArgs = {
     distinct_on?: Maybe<Array<Content_ItemExhibition_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29578,6 +31978,22 @@ export type Subscription_RootContent_ItemProgramPersonArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Content_ItemProgramPerson_Order_By>>;
     where?: Maybe<Content_ItemProgramPerson_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ItemProgramPersonByAccessTokenArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
+};
+
+export type Subscription_RootContent_ItemProgramPersonByAccessToken_AggregateArgs = {
+    distinct_on?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_ItemProgramPersonByAccessToken_Order_By>>;
+    where?: Maybe<Content_ItemProgramPersonByAccessToken_Bool_Exp>;
 };
 
 export type Subscription_RootContent_ItemProgramPerson_AggregateArgs = {
@@ -29664,6 +32080,24 @@ export type Subscription_RootContent_Uploader_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootContent_SearchItemsArgs = {
+    args: Content_SearchItems_Args;
+    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Item_Order_By>>;
+    where?: Maybe<Content_Item_Bool_Exp>;
+};
+
+export type Subscription_RootContent_SearchItems_AggregateArgs = {
+    args: Content_SearchItems_Args;
+    distinct_on?: Maybe<Array<Content_Item_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Content_Item_Order_By>>;
+    where?: Maybe<Content_Item_Bool_Exp>;
+};
+
 export type Subscription_RootJob_Queues_ChannelStackCreateJobArgs = {
     distinct_on?: Maybe<Array<Job_Queues_ChannelStackCreateJob_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -29701,6 +32135,26 @@ export type Subscription_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
 };
 
 export type Subscription_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -30452,6 +32906,24 @@ export type Subscription_RootSchedule_StarredEvent_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootSchedule_SearchEventsArgs = {
+    args: Schedule_SearchEvents_Args;
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+export type Subscription_RootSchedule_SearchEvents_AggregateArgs = {
+    args: Schedule_SearchEvents_Args;
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
 export type Subscription_RootSystem_ConfigurationArgs = {
     distinct_on?: Maybe<Array<System_Configuration_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -30629,6 +33101,26 @@ export type Subscription_RootVideo_MediaLiveChannelStatus_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_MediaLiveChannelStatus_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_RoomRtmpOutputArgs = {
+    distinct_on?: Maybe<Array<Video_RoomRtmpOutput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RoomRtmpOutput_Order_By>>;
+    where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpOutput_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_RoomRtmpOutput_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_RoomRtmpOutput_Order_By>>;
+    where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_RoomRtmpOutput_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -31062,6 +33554,10 @@ export type Video_ChannelStack = {
     /** An object relationship */
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob>;
     channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    channelStackUpdateJobs: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** An aggregate relationship */
+    channelStackUpdateJobs_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
     cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId: Scalars["String"];
     cloudFrontDomain: Scalars["String"];
@@ -31087,7 +33583,28 @@ export type Video_ChannelStack = {
     rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
     rtmpBInputId?: Maybe<Scalars["String"]>;
     rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
     updatedAt: Scalars["timestamptz"];
+};
+
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobsArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobs_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
 };
 
 /** aggregated selection of "video.ChannelStack" */
@@ -31118,6 +33635,7 @@ export type Video_ChannelStack_Bool_Exp = {
     _or?: Maybe<Array<Video_ChannelStack_Bool_Exp>>;
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
     channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
     cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
     cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
     cloudFrontDomain?: Maybe<String_Comparison_Exp>;
@@ -31140,6 +33658,9 @@ export type Video_ChannelStack_Bool_Exp = {
     rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
     rtmpBInputId?: Maybe<String_Comparison_Exp>;
     rtmpBInputUri?: Maybe<String_Comparison_Exp>;
+    rtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+    rtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    rtmpOutputUri?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -31155,6 +33676,7 @@ export enum Video_ChannelStack_Constraint {
 export type Video_ChannelStack_Insert_Input = {
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input>;
     channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input>;
     cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
@@ -31177,6 +33699,9 @@ export type Video_ChannelStack_Insert_Input = {
     rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
     rtmpBInputId?: Maybe<Scalars["String"]>;
     rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -31203,6 +33728,9 @@ export type Video_ChannelStack_Max_Fields = {
     rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
     rtmpBInputId?: Maybe<Scalars["String"]>;
     rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -31229,6 +33757,9 @@ export type Video_ChannelStack_Min_Fields = {
     rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
     rtmpBInputId?: Maybe<Scalars["String"]>;
     rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -31259,6 +33790,7 @@ export type Video_ChannelStack_On_Conflict = {
 export type Video_ChannelStack_Order_By = {
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Order_By>;
     channelStackCreateJobId?: Maybe<Order_By>;
+    channelStackUpdateJobs_aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By>;
     cloudFormationStackArn?: Maybe<Order_By>;
     cloudFrontDistributionId?: Maybe<Order_By>;
     cloudFrontDomain?: Maybe<Order_By>;
@@ -31281,6 +33813,9 @@ export type Video_ChannelStack_Order_By = {
     rtmpBInputAttachmentName?: Maybe<Order_By>;
     rtmpBInputId?: Maybe<Order_By>;
     rtmpBInputUri?: Maybe<Order_By>;
+    rtmpOutputDestinationId?: Maybe<Order_By>;
+    rtmpOutputStreamKey?: Maybe<Order_By>;
+    rtmpOutputUri?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -31332,6 +33867,12 @@ export enum Video_ChannelStack_Select_Column {
     /** column name */
     RtmpBInputUri = "rtmpBInputUri",
     /** column name */
+    RtmpOutputDestinationId = "rtmpOutputDestinationId",
+    /** column name */
+    RtmpOutputStreamKey = "rtmpOutputStreamKey",
+    /** column name */
+    RtmpOutputUri = "rtmpOutputUri",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -31357,6 +33898,9 @@ export type Video_ChannelStack_Set_Input = {
     rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
     rtmpBInputId?: Maybe<Scalars["String"]>;
     rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -31402,6 +33946,12 @@ export enum Video_ChannelStack_Update_Column {
     RtmpBInputId = "rtmpBInputId",
     /** column name */
     RtmpBInputUri = "rtmpBInputUri",
+    /** column name */
+    RtmpOutputDestinationId = "rtmpOutputDestinationId",
+    /** column name */
+    RtmpOutputStreamKey = "rtmpOutputStreamKey",
+    /** column name */
+    RtmpOutputUri = "rtmpOutputUri",
     /** column name */
     UpdatedAt = "updatedAt",
 }
@@ -32365,6 +34915,7 @@ export type Video_MediaLiveChannelStatus = {
     createdAt: Scalars["timestamptz"];
     id: Scalars["uuid"];
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
 };
 
@@ -32417,6 +34968,7 @@ export type Video_MediaLiveChannelStatus_Bool_Exp = {
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     pipelinesRunningCount?: Maybe<Numeric_Comparison_Exp>;
+    state?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -32444,6 +34996,7 @@ export type Video_MediaLiveChannelStatus_Insert_Input = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -32457,6 +35010,7 @@ export type Video_MediaLiveChannelStatus_Max_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -32470,6 +35024,7 @@ export type Video_MediaLiveChannelStatus_Min_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -32507,6 +35062,7 @@ export type Video_MediaLiveChannelStatus_Order_By = {
     createdAt?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     pipelinesRunningCount?: Maybe<Order_By>;
+    state?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -32532,6 +35088,8 @@ export enum Video_MediaLiveChannelStatus_Select_Column {
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
     /** column name */
+    State = "state",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -32544,6 +35102,7 @@ export type Video_MediaLiveChannelStatus_Set_Input = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -32588,6 +35147,8 @@ export enum Video_MediaLiveChannelStatus_Update_Column {
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
     /** column name */
+    State = "state",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -32608,6 +35169,181 @@ export type Video_MediaLiveChannelStatus_Variance_Fields = {
     __typename?: "video_MediaLiveChannelStatus_variance_fields";
     pipelinesRunningCount?: Maybe<Scalars["Float"]>;
 };
+
+/**
+ * Enables broadcasting of a live-stream from a room to an RTMP-capable service, such as YouTube.
+ *
+ *
+ * columns and relationships of "video.RoomRtmpOutput"
+ */
+export type Video_RoomRtmpOutput = {
+    __typename?: "video_RoomRtmpOutput";
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    /** An object relationship */
+    room: Room_Room;
+    roomId: Scalars["uuid"];
+    streamKey: Scalars["String"];
+    updated_at: Scalars["timestamptz"];
+    url: Scalars["String"];
+};
+
+/** aggregated selection of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate = {
+    __typename?: "video_RoomRtmpOutput_aggregate";
+    aggregate?: Maybe<Video_RoomRtmpOutput_Aggregate_Fields>;
+    nodes: Array<Video_RoomRtmpOutput>;
+};
+
+/** aggregate fields of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate_Fields = {
+    __typename?: "video_RoomRtmpOutput_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_RoomRtmpOutput_Max_Fields>;
+    min?: Maybe<Video_RoomRtmpOutput_Min_Fields>;
+};
+
+/** aggregate fields of "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Video_RoomRtmpOutput_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.RoomRtmpOutput". All fields are combined with a logical 'AND'. */
+export type Video_RoomRtmpOutput_Bool_Exp = {
+    _and?: Maybe<Array<Video_RoomRtmpOutput_Bool_Exp>>;
+    _not?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+    _or?: Maybe<Array<Video_RoomRtmpOutput_Bool_Exp>>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    room?: Maybe<Room_Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+    streamKey?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    url?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Constraint {
+    /** unique or primary key constraint */
+    EventRtmpOutputPkey = "EventRtmpOutput_pkey",
+    /** unique or primary key constraint */
+    RoomRtmpOutputRoomIdKey = "RoomRtmpOutput_roomId_key",
+}
+
+/** input type for inserting data into table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Insert_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    streamKey?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    url?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Video_RoomRtmpOutput_Max_Fields = {
+    __typename?: "video_RoomRtmpOutput_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    streamKey?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    url?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate min on columns */
+export type Video_RoomRtmpOutput_Min_Fields = {
+    __typename?: "video_RoomRtmpOutput_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    streamKey?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    url?: Maybe<Scalars["String"]>;
+};
+
+/** response of any mutation on the table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Mutation_Response = {
+    __typename?: "video_RoomRtmpOutput_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_RoomRtmpOutput>;
+};
+
+/** input type for inserting object relation for remote table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Obj_Rel_Insert_Input = {
+    data: Video_RoomRtmpOutput_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Video_RoomRtmpOutput_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_On_Conflict = {
+    constraint: Video_RoomRtmpOutput_Constraint;
+    update_columns?: Array<Video_RoomRtmpOutput_Update_Column>;
+    where?: Maybe<Video_RoomRtmpOutput_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.RoomRtmpOutput". */
+export type Video_RoomRtmpOutput_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    room?: Maybe<Room_Room_Order_By>;
+    roomId?: Maybe<Order_By>;
+    streamKey?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    url?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_RoomRtmpOutput */
+export type Video_RoomRtmpOutput_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    StreamKey = "streamKey",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Url = "url",
+}
+
+/** input type for updating data in table "video.RoomRtmpOutput" */
+export type Video_RoomRtmpOutput_Set_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    streamKey?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    url?: Maybe<Scalars["String"]>;
+};
+
+/** update columns of table "video.RoomRtmpOutput" */
+export enum Video_RoomRtmpOutput_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    StreamKey = "streamKey",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    Url = "url",
+}
 
 /** columns and relationships of "video.RtmpInput" */
 export type Video_RtmpInput = {
@@ -33571,9 +36307,10 @@ export type GetRoomsNeedingChannelStackQueryVariables = Exact<{
 
 export type GetRoomsNeedingChannelStackQuery = { __typename?: "query_root" } & {
     room_Room: Array<
-        { __typename?: "room_Room" } & Pick<Room_Room, "conferenceId"> & {
-                roomId: Room_Room["id"];
-                roomName: Room_Room["name"];
+        { __typename?: "room_Room" } & Pick<Room_Room, "id" | "conferenceId" | "name"> & {
+                rtmpOutput?: Maybe<
+                    { __typename?: "video_RoomRtmpOutput" } & Pick<Video_RoomRtmpOutput, "id" | "url" | "streamKey">
+                >;
             }
     >;
 };
@@ -33588,6 +36325,33 @@ export type GetObsoleteChannelStacksQuery = { __typename?: "query_root" } & {
             Video_ChannelStack,
             "cloudFormationStackArn" | "mediaLiveChannelId"
         > & { channelStackId: Video_ChannelStack["id"] }
+    >;
+};
+
+export type GetChannelStacksThatMightNeedUpdateQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetChannelStacksThatMightNeedUpdateQuery = { __typename?: "query_root" } & {
+    video_ChannelStack: Array<
+        { __typename?: "video_ChannelStack" } & Pick<
+            Video_ChannelStack,
+            | "id"
+            | "cloudFormationStackArn"
+            | "mediaLiveChannelId"
+            | "rtmpOutputUri"
+            | "rtmpOutputStreamKey"
+            | "rtmpOutputDestinationId"
+        > & {
+                room?: Maybe<
+                    { __typename?: "room_Room" } & Pick<Room_Room, "id"> & {
+                            rtmpOutput?: Maybe<
+                                { __typename?: "video_RoomRtmpOutput" } & Pick<
+                                    Video_RoomRtmpOutput,
+                                    "id" | "url" | "streamKey"
+                                >
+                            >;
+                        }
+                >;
+            }
     >;
 };
 
@@ -33715,6 +36479,84 @@ export type ChannelStack_CompleteChannelStackDeleteJobMutation = { __typename?: 
     >;
 };
 
+export type ChannelStackSync_GetChannelStackUpdateJobsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ChannelStackSync_GetChannelStackUpdateJobsQuery = { __typename?: "query_root" } & {
+    job_queues_ChannelStackUpdateJob: Array<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<
+            Job_Queues_ChannelStackUpdateJob,
+            | "id"
+            | "channelStackId"
+            | "mediaLiveChannelId"
+            | "cloudFormationStackArn"
+            | "oldRtmpOutputUri"
+            | "oldRtmpOutputStreamKey"
+            | "oldRtmpOutputDestinationId"
+            | "newRtmpOutputUri"
+            | "newRtmpOutputStreamKey"
+        >
+    >;
+};
+
+export type ChannelStackSync_GetStuckChannelStackUpdateJobsQueryVariables = Exact<{
+    cutoff: Scalars["timestamptz"];
+}>;
+
+export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = { __typename?: "query_root" } & {
+    job_queues_ChannelStackUpdateJob: Array<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<
+            Job_Queues_ChannelStackUpdateJob,
+            "id" | "channelStackId" | "mediaLiveChannelId" | "cloudFormationStackArn"
+        >
+    >;
+};
+
+export type ChannelStack_UpdateChannelStackMutationVariables = Exact<{
+    mediaLiveChannelId: Scalars["String"];
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_UpdateChannelStackMutation = { __typename?: "mutation_root" } & {
+    update_video_ChannelStack?: Maybe<
+        { __typename?: "video_ChannelStack_mutation_response" } & Pick<
+            Video_ChannelStack_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
+export type ChannelStack_SetChannelStackUpdateJobStatusMutationVariables = Exact<{
+    cloudFormationStackArn: Scalars["String"];
+    status: Video_JobStatus_Enum;
+    message?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_SetChannelStackUpdateJobStatusMutation = { __typename?: "mutation_root" } & {
+    update_job_queues_ChannelStackUpdateJob?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response" } & Pick<
+            Job_Queues_ChannelStackUpdateJob_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
+export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables = Exact<{
+    mediaLiveChannelId: Scalars["String"];
+    status: Video_JobStatus_Enum;
+    message?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation = { __typename?: "mutation_root" } & {
+    update_job_queues_ChannelStackUpdateJob?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response" } & Pick<
+            Job_Queues_ChannelStackUpdateJob_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
 export type GetChannelStackByRoomQueryVariables = Exact<{
     roomId: Scalars["uuid"];
 }>;
@@ -33753,6 +36595,9 @@ export type CreateChannelStackMutationVariables = Exact<{
     loopingMp4InputAttachmentName: Scalars["String"];
     rtmpAInputAttachmentName: Scalars["String"];
     rtmpBInputAttachmentName: Scalars["String"];
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
     conferenceId: Scalars["uuid"];
     channelStackCreateJobId: Scalars["uuid"];
     roomId: Scalars["uuid"];
@@ -33786,6 +36631,47 @@ export type ChannelStack_DetachMutationVariables = Exact<{
 
 export type ChannelStack_DetachMutation = { __typename?: "mutation_root" } & {
     update_video_ChannelStack_by_pk?: Maybe<{ __typename?: "video_ChannelStack" } & Pick<Video_ChannelStack, "id">>;
+};
+
+export type ChannelStack_UpdateJob_GetChannelStackQueryVariables = Exact<{
+    channelStackId: Scalars["uuid"];
+}>;
+
+export type ChannelStack_UpdateJob_GetChannelStackQuery = { __typename?: "query_root" } & {
+    video_ChannelStack_by_pk?: Maybe<
+        { __typename?: "video_ChannelStack" } & Pick<
+            Video_ChannelStack,
+            "id" | "cloudFormationStackArn" | "rtmpOutputUri" | "rtmpOutputStreamKey" | "rtmpOutputDestinationId"
+        > & {
+                room?: Maybe<
+                    { __typename?: "room_Room" } & Pick<Room_Room, "id"> & {
+                            rtmpOutput?: Maybe<
+                                { __typename?: "video_RoomRtmpOutput" } & Pick<
+                                    Video_RoomRtmpOutput,
+                                    "id" | "url" | "streamKey"
+                                >
+                            >;
+                        }
+                >;
+            }
+    >;
+};
+
+export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
+    channelStackId: Scalars["uuid"];
+    cloudFormationStackArn: Scalars["String"];
+    mediaLiveChannelId: Scalars["String"];
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_CreateChannelStackUpdateJobMutation = { __typename?: "mutation_root" } & {
+    insert_job_queues_ChannelStackUpdateJob_one?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<Job_Queues_ChannelStackUpdateJob, "id">
+    >;
 };
 
 export type ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables = Exact<{
@@ -34438,16 +37324,20 @@ export const GetRoomsNeedingChannelStackDocument = {
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "Field",
-                                    alias: { kind: "Name", value: "roomId" },
-                                    name: { kind: "Name", value: "id" },
-                                },
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
                                 { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
                                 {
                                     kind: "Field",
-                                    alias: { kind: "Name", value: "roomName" },
-                                    name: { kind: "Name", value: "name" },
+                                    name: { kind: "Name", value: "rtmpOutput" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "url" } },
+                                            { kind: "Field", name: { kind: "Name", value: "streamKey" } },
+                                        ],
+                                    },
                                 },
                             ],
                         },
@@ -34634,6 +37524,210 @@ export const GetObsoleteChannelStacksDocument = {
         },
     ],
 } as unknown as DocumentNode<GetObsoleteChannelStacksQuery, GetObsoleteChannelStacksQueryVariables>;
+export const GetChannelStacksThatMightNeedUpdateDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChannelStacksThatMightNeedUpdate" },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "video_ChannelStack" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: {
+                                                                    kind: "Name",
+                                                                    value: "channelStackCreateJobId",
+                                                                },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_is_null" },
+                                                                            value: {
+                                                                                kind: "BooleanValue",
+                                                                                value: true,
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "channelStackCreateJob" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: {
+                                                                                kind: "Name",
+                                                                                value: "jobStatusName",
+                                                                            },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "_nin",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ListValue",
+                                                                                            values: [
+                                                                                                {
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "NEW",
+                                                                                                },
+                                                                                                {
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "IN_PROGRESS",
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_is_null" },
+                                                        value: { kind: "BooleanValue", value: false },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_not" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "channelStackUpdateJobs" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "jobStatusName" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "ListValue",
+                                                                                    values: [
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "NEW",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "IN_PROGRESS",
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpOutput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "url" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "streamKey" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    GetChannelStacksThatMightNeedUpdateQuery,
+    GetChannelStacksThatMightNeedUpdateQueryVariables
+>;
 export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument = {
     kind: "Document",
     definitions: [
@@ -34695,6 +37789,7 @@ export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument = {
                                                     { kind: "EnumValue", value: "activeInputAttachmentName" },
                                                     { kind: "EnumValue", value: "activeInputSwitchActionName" },
                                                     { kind: "EnumValue", value: "pipelinesRunningCount" },
+                                                    { kind: "EnumValue", value: "state" },
                                                 ],
                                             },
                                         },
@@ -35339,6 +38434,479 @@ export const ChannelStack_CompleteChannelStackDeleteJobDocument = {
     ChannelStack_CompleteChannelStackDeleteJobMutation,
     ChannelStack_CompleteChannelStackDeleteJobMutationVariables
 >;
+export const ChannelStackSync_GetChannelStackUpdateJobsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStackSync_GetChannelStackUpdateJobs" },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "NEW" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "channelStackId" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputDestinationId" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStackSync_GetChannelStackUpdateJobsQuery,
+    ChannelStackSync_GetChannelStackUpdateJobsQueryVariables
+>;
+export const ChannelStackSync_GetStuckChannelStackUpdateJobsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStackSync_GetStuckChannelStackUpdateJobs" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cutoff" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "updated_at" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_lt" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "cutoff" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "channelStackId" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStackSync_GetStuckChannelStackUpdateJobsQuery,
+    ChannelStackSync_GetStuckChannelStackUpdateJobsQueryVariables
+>;
+export const ChannelStack_UpdateChannelStackDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_UpdateChannelStack" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_video_ChannelStack" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputDestinationId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputDestinationId" },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<ChannelStack_UpdateChannelStackMutation, ChannelStack_UpdateChannelStackMutationVariables>;
+export const ChannelStack_SetChannelStackUpdateJobStatusDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_SetChannelStackUpdateJobStatus" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "video_JobStatus_enum" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "ListValue",
+                                                            values: [
+                                                                { kind: "EnumValue", value: "NEW" },
+                                                                { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "message" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_SetChannelStackUpdateJobStatusMutation,
+    ChannelStack_SetChannelStackUpdateJobStatusMutationVariables
+>;
+export const ChannelStack_SetChannelStackUpdateJobStatusByMlciDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_SetChannelStackUpdateJobStatusByMLCI" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "video_JobStatus_enum" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "ListValue",
+                                                            values: [
+                                                                { kind: "EnumValue", value: "NEW" },
+                                                                { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "message" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation,
+    ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables
+>;
 export const GetChannelStackByRoomDocument = {
     kind: "Document",
     definitions: [
@@ -35488,6 +39056,21 @@ export const CreateChannelStackDocument = {
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
                     type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
@@ -35628,6 +39211,27 @@ export const CreateChannelStackDocument = {
                                             value: {
                                                 kind: "Variable",
                                                 name: { kind: "Name", value: "channelStackCreateJobId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputDestinationId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputDestinationId" },
                                             },
                                         },
                                         {
@@ -35807,6 +39411,222 @@ export const ChannelStack_DetachDocument = {
         },
     ],
 } as unknown as DocumentNode<ChannelStack_DetachMutation, ChannelStack_DetachMutationVariables>;
+export const ChannelStack_UpdateJob_GetChannelStackDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStack_UpdateJob_GetChannelStack" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "video_ChannelStack_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpOutput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "url" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "streamKey" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_UpdateJob_GetChannelStackQuery,
+    ChannelStack_UpdateJob_GetChannelStackQueryVariables
+>;
+export const ChannelStack_CreateChannelStackUpdateJobDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_CreateChannelStackUpdateJob" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputDestinationId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_job_queues_ChannelStackUpdateJob_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "channelStackId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "channelStackId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "EnumValue", value: "NEW" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputUri" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputUri" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputDestinationId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputDestinationId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpOutputUri" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpOutputUri" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpOutputStreamKey" },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_CreateChannelStackUpdateJobMutation,
+    ChannelStack_CreateChannelStackUpdateJobMutationVariables
+>;
 export const ChannelStack_GetChannelStackCloudFormationStackArnDocument = {
     kind: "Document",
     definitions: [
@@ -37047,7 +40867,7 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_or" },
+                                                        name: { kind: "Name", value: "_and" },
                                                         value: {
                                                             kind: "ListValue",
                                                             values: [
@@ -37060,20 +40880,6 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                             value: {
                                                                                 kind: "ObjectValue",
                                                                                 fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "_gte",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "Variable",
-                                                                                            name: {
-                                                                                                kind: "Name",
-                                                                                                value: "from",
-                                                                                            },
-                                                                                        },
-                                                                                    },
                                                                                     {
                                                                                         kind: "ObjectField",
                                                                                         name: {
@@ -37116,20 +40922,6 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                                             },
                                                                                         },
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "_lte",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "Variable",
-                                                                                            name: {
-                                                                                                kind: "Name",
-                                                                                                value: "to",
-                                                                                            },
-                                                                                        },
-                                                                                    },
                                                                                 ],
                                                                             },
                                                                         },
@@ -37155,6 +40947,68 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                             {
                                                                                 kind: "EnumValue",
                                                                                 value: "PRESENTATION",
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_not" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "channelStack" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: {
+                                                                        kind: "Name",
+                                                                        value: "channelStackUpdateJobs",
+                                                                    },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: {
+                                                                                    kind: "Name",
+                                                                                    value: "jobStatusName",
+                                                                                },
+                                                                                value: {
+                                                                                    kind: "ObjectValue",
+                                                                                    fields: [
+                                                                                        {
+                                                                                            kind: "ObjectField",
+                                                                                            name: {
+                                                                                                kind: "Name",
+                                                                                                value: "_in",
+                                                                                            },
+                                                                                            value: {
+                                                                                                kind: "ListValue",
+                                                                                                values: [
+                                                                                                    {
+                                                                                                        kind: "EnumValue",
+                                                                                                        value: "NEW",
+                                                                                                    },
+                                                                                                    {
+                                                                                                        kind: "EnumValue",
+                                                                                                        value: "IN_PROGRESS",
+                                                                                                    },
+                                                                                                ],
+                                                                                            },
+                                                                                        },
+                                                                                    ],
+                                                                                },
                                                                             },
                                                                         ],
                                                                     },
@@ -37230,7 +41084,7 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                     fields: [
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "_and" },
+                                            name: { kind: "Name", value: "_or" },
                                             value: {
                                                 kind: "ListValue",
                                                 values: [
@@ -37239,205 +41093,247 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                         fields: [
                                                             {
                                                                 kind: "ObjectField",
-                                                                name: { kind: "Name", value: "_not" },
+                                                                name: { kind: "Name", value: "_and" },
                                                                 value: {
-                                                                    kind: "ObjectValue",
-                                                                    fields: [
+                                                                    kind: "ListValue",
+                                                                    values: [
                                                                         {
-                                                                            kind: "ObjectField",
-                                                                            name: { kind: "Name", value: "events" },
-                                                                            value: {
-                                                                                kind: "ObjectValue",
-                                                                                fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "startTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_gte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
-                                                                                                        },
-                                                                                                    },
-                                                                                                },
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_lte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "to",
-                                                                                                        },
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "_not",
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "intendedRoomModeName",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_in",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ListValue",
-                                                                                                        values: [
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRERECORDED",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "Q_AND_A",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRESENTATION",
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [
+                                                                                            {
+                                                                                                kind: "ObjectField",
+                                                                                                name: {
+                                                                                                    kind: "Name",
+                                                                                                    value: "events",
                                                                                                 },
-                                                                                            ],
-                                                                                        },
+                                                                                                value: {
+                                                                                                    kind: "ObjectValue",
+                                                                                                    fields: [
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "startTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_gte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_lte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "to",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "intendedRoomModeName",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_in",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "ListValue",
+                                                                                                                            values: [
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRERECORDED",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "Q_AND_A",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                },
+                                                                                                                            ],
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            },
+                                                                                        ],
                                                                                     },
-                                                                                ],
-                                                                            },
+                                                                                },
+                                                                            ],
                                                                         },
-                                                                    ],
-                                                                },
-                                                            },
-                                                        ],
-                                                    },
-                                                    {
-                                                        kind: "ObjectValue",
-                                                        fields: [
-                                                            {
-                                                                kind: "ObjectField",
-                                                                name: { kind: "Name", value: "_not" },
-                                                                value: {
-                                                                    kind: "ObjectValue",
-                                                                    fields: [
                                                                         {
-                                                                            kind: "ObjectField",
-                                                                            name: { kind: "Name", value: "events" },
-                                                                            value: {
-                                                                                kind: "ObjectValue",
-                                                                                fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "startTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_lte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "_not",
+                                                                                    },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [
+                                                                                            {
+                                                                                                kind: "ObjectField",
+                                                                                                name: {
+                                                                                                    kind: "Name",
+                                                                                                    value: "events",
+                                                                                                },
+                                                                                                value: {
+                                                                                                    kind: "ObjectValue",
+                                                                                                    fields: [
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "startTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_lte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
                                                                                                         },
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "endTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_gte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "endTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_gte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
                                                                                                         },
-                                                                                                    },
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "intendedRoomModeName",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_in",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "ListValue",
+                                                                                                                            values: [
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRERECORDED",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "Q_AND_A",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                },
+                                                                                                                            ],
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    ],
                                                                                                 },
-                                                                                            ],
-                                                                                        },
+                                                                                            },
+                                                                                        ],
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "intendedRoomModeName",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_in",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ListValue",
-                                                                                                        values: [
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRERECORDED",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "Q_AND_A",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRESENTATION",
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "channelStack",
                                                                                     },
-                                                                                ],
-                                                                            },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [],
+                                                                                    },
+                                                                                },
+                                                                            ],
                                                                         },
                                                                     ],
                                                                 },
@@ -37450,7 +41346,55 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                             {
                                                                 kind: "ObjectField",
                                                                 name: { kind: "Name", value: "channelStack" },
-                                                                value: { kind: "ObjectValue", fields: [] },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: {
+                                                                                kind: "Name",
+                                                                                value: "channelStackUpdateJobs",
+                                                                            },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "jobStatusName",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ObjectValue",
+                                                                                            fields: [
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "_in",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "ListValue",
+                                                                                                        values: [
+                                                                                                            {
+                                                                                                                kind: "EnumValue",
+                                                                                                                value: "NEW",
+                                                                                                            },
+                                                                                                            {
+                                                                                                                kind: "EnumValue",
+                                                                                                                value: "IN_PROGRESS",
+                                                                                                            },
+                                                                                                        ],
+                                                                                                    },
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
                                                             },
                                                         ],
                                                     },

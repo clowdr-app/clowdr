@@ -4,7 +4,11 @@ import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
 import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
-import { GetObsoleteChannelStacksDocument, GetRoomsNeedingChannelStackDocument } from "../../generated/graphql";
+import {
+    GetChannelStacksThatMightNeedUpdateDocument,
+    GetObsoleteChannelStacksDocument,
+    GetRoomsNeedingChannelStackDocument,
+} from "../../generated/graphql";
 import { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
 import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
 import { shortId } from "../../utils/id";
@@ -44,13 +48,26 @@ export class ChannelStackSyncService {
             } catch (e) {
                 this.logger.error(e, "Failure while polling potentially-stuck channel stack create jobs");
             }
+            try {
+                await this.ensureChannelStacksUpdated();
+            } catch (e) {
+                this.logger.error(e, "Failure while ensuring channel stacks updated");
+            }
             this.syncInProgress = false;
         } else {
             this.logger.info("Channel sync already in progress, skipping");
         }
     }
 
-    public async getRoomsNeedingChannelStack(): Promise<{ roomId: string; roomName: string; conferenceId: string }[]> {
+    public async getRoomsNeedingChannelStack(): Promise<
+        {
+            roomId: string;
+            roomName: string;
+            conferenceId: string;
+            rtmpOutputUrl: string | undefined;
+            rtmpOutputStreamKey: string | undefined;
+        }[]
+    > {
         const now = new Date();
         const future = add(now, { hours: 1 });
 
@@ -73,9 +90,14 @@ export class ChannelStackSyncService {
                         }
                     }
                 ) {
-                    roomId: id
+                    id
                     conferenceId
-                    roomName: name
+                    name
+                    rtmpOutput {
+                        id
+                        url
+                        streamKey
+                    }
                 }
             }
         `;
@@ -88,7 +110,13 @@ export class ChannelStackSyncService {
             },
         });
 
-        return result.data.room_Room;
+        return result.data.room_Room.map((room) => ({
+            conferenceId: room.conferenceId,
+            roomId: room.id,
+            roomName: room.name,
+            rtmpOutputUrl: room.rtmpOutput?.url,
+            rtmpOutputStreamKey: room.rtmpOutput?.streamKey,
+        }));
     }
 
     public async getObsoleteChannelStacks(): Promise<
@@ -162,7 +190,9 @@ export class ChannelStackSyncService {
                     roomNeedingChannelStack.roomId,
                     roomNeedingChannelStack.roomName,
                     roomNeedingChannelStack.conferenceId,
-                    stackLogicalResourceId
+                    stackLogicalResourceId,
+                    roomNeedingChannelStack.rtmpOutputUrl,
+                    roomNeedingChannelStack.rtmpOutputStreamKey
                 )
                 .catch(async (e) => {
                     this.logger.error(
@@ -209,18 +239,93 @@ export class ChannelStackSyncService {
 
         for (const oldJob of oldJobs) {
             try {
-                this.logger.info({ oldJob }, "Polling status of a potentially stuck channel stack create job");
+                this.logger.info({ oldJob }, "Polling status of a potentially stuck channel stack");
                 const stack = await this.cloudFormationService.getStackStatus(oldJob.stackLogicalResourceId);
                 if (!stack) {
-                    this.logger.warn({ oldJob }, "Could not retrieve status of a channel stack create job");
+                    this.logger.warn({ oldJob }, "Could not retrieve status of a channel stack");
                 } else if (
                     [StackStatus.CREATE_COMPLETE as string, StackStatus.UPDATE_COMPLETE].includes(stack.stackStatus)
                 ) {
                     await this.channelsService.handleCompletedChannelStack(oldJob.stackLogicalResourceId, stack.arn);
                 }
             } catch (e) {
-                this.logger.error({ err: e, oldJob }, "Failed to poll status of stuck channel stack create job");
+                this.logger.error({ err: e, oldJob }, "Failed to poll status of stuck channel stack");
             }
         }
+    }
+
+    public async getChannelStacksNeedingUpdate(): Promise<
+        { channelStackId: string; cloudFormationStackArn?: string | null; mediaLiveChannelId: string }[]
+    > {
+        gql`
+            query GetChannelStacksThatMightNeedUpdate {
+                video_ChannelStack(
+                    where: {
+                        _or: [
+                            { channelStackCreateJobId: { _is_null: true } }
+                            { channelStackCreateJob: { jobStatusName: { _nin: [NEW, IN_PROGRESS] } } }
+                        ]
+                        roomId: { _is_null: false }
+                        _not: { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } }
+                    }
+                ) {
+                    id
+                    cloudFormationStackArn
+                    mediaLiveChannelId
+                    rtmpOutputUri
+                    rtmpOutputStreamKey
+                    rtmpOutputDestinationId
+                    room {
+                        id
+                        rtmpOutput {
+                            id
+                            url
+                            streamKey
+                        }
+                    }
+                }
+            }
+        `;
+
+        const response = await this.graphQlService.apolloClient.query({
+            query: GetChannelStacksThatMightNeedUpdateDocument,
+        });
+
+        return response.data.video_ChannelStack
+            .filter(
+                (stack) =>
+                    stack.room &&
+                    (stack.rtmpOutputUri != stack.room.rtmpOutput?.url ||
+                        stack.rtmpOutputStreamKey != stack.room.rtmpOutput?.streamKey)
+            )
+            .map((stack) => ({
+                channelStackId: stack.id,
+                mediaLiveChannelId: stack.mediaLiveChannelId,
+                cloudFormationStackArn: stack.cloudFormationStackArn,
+            }));
+    }
+
+    public async ensureChannelStacksUpdated(): Promise<void> {
+        this.logger.info("Ensuring channel stacks are updated");
+
+        const channelStacksToUpdate = await this.getChannelStacksNeedingUpdate();
+
+        if (channelStacksToUpdate.length > 0) {
+            this.logger.info({ channelStacks: channelStacksToUpdate }, "Found channels stacks needing an update");
+        }
+
+        for (const channelStackToUpdate of channelStacksToUpdate) {
+            try {
+                this.logger.info({ channelStackToUpdate }, "Updating channel stack");
+                await this.channelsService.startChannelStackUpdate(
+                    channelStackToUpdate.channelStackId,
+                    channelStackToUpdate.mediaLiveChannelId
+                );
+            } catch (e) {
+                this.logger.error({ channelStackToUpdate, err: e }, "Failed to update channel stack");
+            }
+        }
+
+        await this.channelsService.processChannelStackUpdateJobs();
     }
 }

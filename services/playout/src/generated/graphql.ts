@@ -13536,6 +13536,288 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
     UpdatedAt = "updatedAt",
 }
 
+/** columns and relationships of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob = {
+    __typename?: "job_queues_ChannelStackUpdateJob";
+    /** An object relationship */
+    channelStack: Video_ChannelStack;
+    channelStackId: Scalars["uuid"];
+    cloudFormationStackArn: Scalars["String"];
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    jobStatusName: Video_JobStatus_Enum;
+    mediaLiveChannelId: Scalars["String"];
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate = {
+    __typename?: "job_queues_ChannelStackUpdateJob_aggregate";
+    aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Fields>;
+    nodes: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Fields>;
+    min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Fields>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Order_By>;
+    min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input = {
+    data: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackUpdateJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackUpdateJob_Bool_Exp = {
+    _and?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+    _not?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+    _or?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+    channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
+    channelStackId?: Maybe<Uuid_Comparison_Exp>;
+    cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum_Comparison_Exp>;
+    mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+    message?: Maybe<String_Comparison_Exp>;
+    newRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    newRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    oldRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Constraint {
+    /** unique or primary key constraint */
+    ChannelStackUpdateJobPkey = "ChannelStackUpdateJob_pkey",
+}
+
+/** input type for inserting data into table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Insert_Input = {
+    channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ChannelStackUpdateJob_Max_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_max_fields";
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Max_Order_By = {
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ChannelStackUpdateJob_Min_Fields = {
+    __typename?: "job_queues_ChannelStackUpdateJob_min_fields";
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Min_Order_By = {
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Mutation_Response = {
+    __typename?: "job_queues_ChannelStackUpdateJob_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** on conflict condition type for table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_On_Conflict = {
+    constraint: Job_Queues_ChannelStackUpdateJob_Constraint;
+    update_columns?: Array<Job_Queues_ChannelStackUpdateJob_Update_Column>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ChannelStackUpdateJob". */
+export type Job_Queues_ChannelStackUpdateJob_Order_By = {
+    channelStack?: Maybe<Video_ChannelStack_Order_By>;
+    channelStackId?: Maybe<Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    jobStatusName?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    message?: Maybe<Order_By>;
+    newRtmpOutputStreamKey?: Maybe<Order_By>;
+    newRtmpOutputUri?: Maybe<Order_By>;
+    oldRtmpOutputDestinationId?: Maybe<Order_By>;
+    oldRtmpOutputStreamKey?: Maybe<Order_By>;
+    oldRtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ChannelStackUpdateJob */
+export type Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Select_Column {
+    /** column name */
+    ChannelStackId = "channelStackId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
+    /** column name */
+    NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
+    /** column name */
+    OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
+    /** column name */
+    OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Set_Input = {
+    channelStackId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    jobStatusName?: Maybe<Video_JobStatus_Enum>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    message?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Update_Column {
+    /** column name */
+    ChannelStackId = "channelStackId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    JobStatusName = "jobStatusName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    Message = "message",
+    /** column name */
+    NewRtmpOutputStreamKey = "newRtmpOutputStreamKey",
+    /** column name */
+    NewRtmpOutputUri = "newRtmpOutputUri",
+    /** column name */
+    OldRtmpOutputDestinationId = "oldRtmpOutputDestinationId",
+    /** column name */
+    OldRtmpOutputStreamKey = "oldRtmpOutputStreamKey",
+    /** column name */
+    OldRtmpOutputUri = "oldRtmpOutputUri",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
 /** columns and relationships of "job_queues.CombineVideosJob" */
 export type Job_Queues_CombineVideosJob = {
     __typename?: "job_queues_CombineVideosJob";
@@ -15259,6 +15541,10 @@ export type Mutation_Root = {
     delete_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.ChannelStackDeleteJob" */
     delete_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** delete data from the table: "job_queues.ChannelStackUpdateJob" */
+    delete_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** delete single row from the table: "job_queues.ChannelStackUpdateJob" */
+    delete_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** delete data from the table: "job_queues.CombineVideosJob" */
     delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -15636,6 +15922,10 @@ export type Mutation_Root = {
     insert_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.ChannelStackDeleteJob" */
     insert_job_queues_ChannelStackDeleteJob_one?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** insert data into the table: "job_queues.ChannelStackUpdateJob" */
+    insert_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** insert a single row into the table: "job_queues.ChannelStackUpdateJob" */
+    insert_job_queues_ChannelStackUpdateJob_one?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** insert data into the table: "job_queues.CombineVideosJob" */
     insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -16008,6 +16298,10 @@ export type Mutation_Root = {
     update_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
     /** update single row of the table: "job_queues.ChannelStackDeleteJob" */
     update_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** update data of the table: "job_queues.ChannelStackUpdateJob" */
+    update_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+    /** update single row of the table: "job_queues.ChannelStackUpdateJob" */
+    update_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** update data of the table: "job_queues.CombineVideosJob" */
     update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
     /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -16629,6 +16923,16 @@ export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJobArgs = {
+    where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -17650,6 +17954,18 @@ export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJobArgs = {
 export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJob_OneArgs = {
     object: Job_Queues_ChannelStackDeleteJob_Insert_Input;
     on_conflict?: Maybe<Job_Queues_ChannelStackDeleteJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJobArgs = {
+    objects: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJob_OneArgs = {
+    object: Job_Queues_ChannelStackUpdateJob_Insert_Input;
+    on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
 };
 
 /** mutation root */
@@ -18904,6 +19220,18 @@ export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJobArgs = {
 export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
     _set?: Maybe<Job_Queues_ChannelStackDeleteJob_Set_Input>;
     pk_columns: Job_Queues_ChannelStackDeleteJob_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJobArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+    where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
+    _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+    pk_columns: Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -21197,6 +21525,12 @@ export type Query_Root = {
     job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
     job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+    job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -22542,6 +22876,26 @@ export type Query_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
 };
 
 export type Query_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -30446,6 +30800,12 @@ export type Subscription_Root = {
     job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
     /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
     job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+    job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+    /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+    job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
     /** fetch data from the table: "job_queues.CombineVideosJob" */
     job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
     /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -31775,6 +32135,26 @@ export type Subscription_RootJob_Queues_ChannelStackDeleteJob_AggregateArgs = {
 };
 
 export type Subscription_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJobArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -33174,6 +33554,10 @@ export type Video_ChannelStack = {
     /** An object relationship */
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob>;
     channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    channelStackUpdateJobs: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** An aggregate relationship */
+    channelStackUpdateJobs_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
     cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId: Scalars["String"];
     cloudFrontDomain: Scalars["String"];
@@ -33205,6 +33589,24 @@ export type Video_ChannelStack = {
     updatedAt: Scalars["timestamptz"];
 };
 
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobsArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobs_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
 /** aggregated selection of "video.ChannelStack" */
 export type Video_ChannelStack_Aggregate = {
     __typename?: "video_ChannelStack_aggregate";
@@ -33233,6 +33635,7 @@ export type Video_ChannelStack_Bool_Exp = {
     _or?: Maybe<Array<Video_ChannelStack_Bool_Exp>>;
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
     channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
     cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
     cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
     cloudFrontDomain?: Maybe<String_Comparison_Exp>;
@@ -33273,6 +33676,7 @@ export enum Video_ChannelStack_Constraint {
 export type Video_ChannelStack_Insert_Input = {
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input>;
     channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input>;
     cloudFormationStackArn?: Maybe<Scalars["String"]>;
     cloudFrontDistributionId?: Maybe<Scalars["String"]>;
     cloudFrontDomain?: Maybe<Scalars["String"]>;
@@ -33386,6 +33790,7 @@ export type Video_ChannelStack_On_Conflict = {
 export type Video_ChannelStack_Order_By = {
     channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Order_By>;
     channelStackCreateJobId?: Maybe<Order_By>;
+    channelStackUpdateJobs_aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By>;
     cloudFormationStackArn?: Maybe<Order_By>;
     cloudFrontDistributionId?: Maybe<Order_By>;
     cloudFrontDomain?: Maybe<Order_By>;
@@ -34510,6 +34915,7 @@ export type Video_MediaLiveChannelStatus = {
     createdAt: Scalars["timestamptz"];
     id: Scalars["uuid"];
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state: Scalars["String"];
     updatedAt: Scalars["timestamptz"];
 };
 
@@ -34562,6 +34968,7 @@ export type Video_MediaLiveChannelStatus_Bool_Exp = {
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
     pipelinesRunningCount?: Maybe<Numeric_Comparison_Exp>;
+    state?: Maybe<String_Comparison_Exp>;
     updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -34589,6 +34996,7 @@ export type Video_MediaLiveChannelStatus_Insert_Input = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34602,6 +35010,7 @@ export type Video_MediaLiveChannelStatus_Max_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34615,6 +35024,7 @@ export type Video_MediaLiveChannelStatus_Min_Fields = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34652,6 +35062,7 @@ export type Video_MediaLiveChannelStatus_Order_By = {
     createdAt?: Maybe<Order_By>;
     id?: Maybe<Order_By>;
     pipelinesRunningCount?: Maybe<Order_By>;
+    state?: Maybe<Order_By>;
     updatedAt?: Maybe<Order_By>;
 };
 
@@ -34677,6 +35088,8 @@ export enum Video_MediaLiveChannelStatus_Select_Column {
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
     /** column name */
+    State = "state",
+    /** column name */
     UpdatedAt = "updatedAt",
 }
 
@@ -34689,6 +35102,7 @@ export type Video_MediaLiveChannelStatus_Set_Input = {
     createdAt?: Maybe<Scalars["timestamptz"]>;
     id?: Maybe<Scalars["uuid"]>;
     pipelinesRunningCount?: Maybe<Scalars["numeric"]>;
+    state?: Maybe<Scalars["String"]>;
     updatedAt?: Maybe<Scalars["timestamptz"]>;
 };
 
@@ -34732,6 +35146,8 @@ export enum Video_MediaLiveChannelStatus_Update_Column {
     Id = "id",
     /** column name */
     PipelinesRunningCount = "pipelinesRunningCount",
+    /** column name */
+    State = "state",
     /** column name */
     UpdatedAt = "updatedAt",
 }
@@ -35912,6 +36328,33 @@ export type GetObsoleteChannelStacksQuery = { __typename?: "query_root" } & {
     >;
 };
 
+export type GetChannelStacksThatMightNeedUpdateQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetChannelStacksThatMightNeedUpdateQuery = { __typename?: "query_root" } & {
+    video_ChannelStack: Array<
+        { __typename?: "video_ChannelStack" } & Pick<
+            Video_ChannelStack,
+            | "id"
+            | "cloudFormationStackArn"
+            | "mediaLiveChannelId"
+            | "rtmpOutputUri"
+            | "rtmpOutputStreamKey"
+            | "rtmpOutputDestinationId"
+        > & {
+                room?: Maybe<
+                    { __typename?: "room_Room" } & Pick<Room_Room, "id"> & {
+                            rtmpOutput?: Maybe<
+                                { __typename?: "video_RoomRtmpOutput" } & Pick<
+                                    Video_RoomRtmpOutput,
+                                    "id" | "url" | "streamKey"
+                                >
+                            >;
+                        }
+                >;
+            }
+    >;
+};
+
 export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutationVariables = Exact<{
     objects: Array<Video_MediaLiveChannelStatus_Insert_Input> | Video_MediaLiveChannelStatus_Insert_Input;
 }>;
@@ -36036,6 +36479,84 @@ export type ChannelStack_CompleteChannelStackDeleteJobMutation = { __typename?: 
     >;
 };
 
+export type ChannelStackSync_GetChannelStackUpdateJobsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ChannelStackSync_GetChannelStackUpdateJobsQuery = { __typename?: "query_root" } & {
+    job_queues_ChannelStackUpdateJob: Array<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<
+            Job_Queues_ChannelStackUpdateJob,
+            | "id"
+            | "channelStackId"
+            | "mediaLiveChannelId"
+            | "cloudFormationStackArn"
+            | "oldRtmpOutputUri"
+            | "oldRtmpOutputStreamKey"
+            | "oldRtmpOutputDestinationId"
+            | "newRtmpOutputUri"
+            | "newRtmpOutputStreamKey"
+        >
+    >;
+};
+
+export type ChannelStackSync_GetStuckChannelStackUpdateJobsQueryVariables = Exact<{
+    cutoff: Scalars["timestamptz"];
+}>;
+
+export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = { __typename?: "query_root" } & {
+    job_queues_ChannelStackUpdateJob: Array<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<
+            Job_Queues_ChannelStackUpdateJob,
+            "id" | "channelStackId" | "mediaLiveChannelId" | "cloudFormationStackArn"
+        >
+    >;
+};
+
+export type ChannelStack_UpdateChannelStackMutationVariables = Exact<{
+    mediaLiveChannelId: Scalars["String"];
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_UpdateChannelStackMutation = { __typename?: "mutation_root" } & {
+    update_video_ChannelStack?: Maybe<
+        { __typename?: "video_ChannelStack_mutation_response" } & Pick<
+            Video_ChannelStack_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
+export type ChannelStack_SetChannelStackUpdateJobStatusMutationVariables = Exact<{
+    cloudFormationStackArn: Scalars["String"];
+    status: Video_JobStatus_Enum;
+    message?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_SetChannelStackUpdateJobStatusMutation = { __typename?: "mutation_root" } & {
+    update_job_queues_ChannelStackUpdateJob?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response" } & Pick<
+            Job_Queues_ChannelStackUpdateJob_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
+export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables = Exact<{
+    mediaLiveChannelId: Scalars["String"];
+    status: Video_JobStatus_Enum;
+    message?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation = { __typename?: "mutation_root" } & {
+    update_job_queues_ChannelStackUpdateJob?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob_mutation_response" } & Pick<
+            Job_Queues_ChannelStackUpdateJob_Mutation_Response,
+            "affected_rows"
+        >
+    >;
+};
+
 export type GetChannelStackByRoomQueryVariables = Exact<{
     roomId: Scalars["uuid"];
 }>;
@@ -36110,6 +36631,47 @@ export type ChannelStack_DetachMutationVariables = Exact<{
 
 export type ChannelStack_DetachMutation = { __typename?: "mutation_root" } & {
     update_video_ChannelStack_by_pk?: Maybe<{ __typename?: "video_ChannelStack" } & Pick<Video_ChannelStack, "id">>;
+};
+
+export type ChannelStack_UpdateJob_GetChannelStackQueryVariables = Exact<{
+    channelStackId: Scalars["uuid"];
+}>;
+
+export type ChannelStack_UpdateJob_GetChannelStackQuery = { __typename?: "query_root" } & {
+    video_ChannelStack_by_pk?: Maybe<
+        { __typename?: "video_ChannelStack" } & Pick<
+            Video_ChannelStack,
+            "id" | "cloudFormationStackArn" | "rtmpOutputUri" | "rtmpOutputStreamKey" | "rtmpOutputDestinationId"
+        > & {
+                room?: Maybe<
+                    { __typename?: "room_Room" } & Pick<Room_Room, "id"> & {
+                            rtmpOutput?: Maybe<
+                                { __typename?: "video_RoomRtmpOutput" } & Pick<
+                                    Video_RoomRtmpOutput,
+                                    "id" | "url" | "streamKey"
+                                >
+                            >;
+                        }
+                >;
+            }
+    >;
+};
+
+export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
+    channelStackId: Scalars["uuid"];
+    cloudFormationStackArn: Scalars["String"];
+    mediaLiveChannelId: Scalars["String"];
+    oldRtmpOutputUri?: Maybe<Scalars["String"]>;
+    oldRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    oldRtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    newRtmpOutputUri?: Maybe<Scalars["String"]>;
+    newRtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+}>;
+
+export type ChannelStack_CreateChannelStackUpdateJobMutation = { __typename?: "mutation_root" } & {
+    insert_job_queues_ChannelStackUpdateJob_one?: Maybe<
+        { __typename?: "job_queues_ChannelStackUpdateJob" } & Pick<Job_Queues_ChannelStackUpdateJob, "id">
+    >;
 };
 
 export type ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables = Exact<{
@@ -36962,6 +37524,210 @@ export const GetObsoleteChannelStacksDocument = {
         },
     ],
 } as unknown as DocumentNode<GetObsoleteChannelStacksQuery, GetObsoleteChannelStacksQueryVariables>;
+export const GetChannelStacksThatMightNeedUpdateDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChannelStacksThatMightNeedUpdate" },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "video_ChannelStack" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_or" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: {
+                                                                    kind: "Name",
+                                                                    value: "channelStackCreateJobId",
+                                                                },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: { kind: "Name", value: "_is_null" },
+                                                                            value: {
+                                                                                kind: "BooleanValue",
+                                                                                value: true,
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        kind: "ObjectValue",
+                                                        fields: [
+                                                            {
+                                                                kind: "ObjectField",
+                                                                name: { kind: "Name", value: "channelStackCreateJob" },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: {
+                                                                                kind: "Name",
+                                                                                value: "jobStatusName",
+                                                                            },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "_nin",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ListValue",
+                                                                                            values: [
+                                                                                                {
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "NEW",
+                                                                                                },
+                                                                                                {
+                                                                                                    kind: "EnumValue",
+                                                                                                    value: "IN_PROGRESS",
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_is_null" },
+                                                        value: { kind: "BooleanValue", value: false },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_not" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "channelStackUpdateJobs" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "jobStatusName" },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: { kind: "Name", value: "_in" },
+                                                                                value: {
+                                                                                    kind: "ListValue",
+                                                                                    values: [
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "NEW",
+                                                                                        },
+                                                                                        {
+                                                                                            kind: "EnumValue",
+                                                                                            value: "IN_PROGRESS",
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpOutput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "url" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "streamKey" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    GetChannelStacksThatMightNeedUpdateQuery,
+    GetChannelStacksThatMightNeedUpdateQueryVariables
+>;
 export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument = {
     kind: "Document",
     definitions: [
@@ -37023,6 +37789,7 @@ export const ChannelStatus_UpdatedMediaLiveChannelStatusesDocument = {
                                                     { kind: "EnumValue", value: "activeInputAttachmentName" },
                                                     { kind: "EnumValue", value: "activeInputSwitchActionName" },
                                                     { kind: "EnumValue", value: "pipelinesRunningCount" },
+                                                    { kind: "EnumValue", value: "state" },
                                                 ],
                                             },
                                         },
@@ -37667,6 +38434,479 @@ export const ChannelStack_CompleteChannelStackDeleteJobDocument = {
     ChannelStack_CompleteChannelStackDeleteJobMutation,
     ChannelStack_CompleteChannelStackDeleteJobMutationVariables
 >;
+export const ChannelStackSync_GetChannelStackUpdateJobsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStackSync_GetChannelStackUpdateJobs" },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "NEW" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "channelStackId" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "oldRtmpOutputDestinationId" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStackSync_GetChannelStackUpdateJobsQuery,
+    ChannelStackSync_GetChannelStackUpdateJobsQueryVariables
+>;
+export const ChannelStackSync_GetStuckChannelStackUpdateJobsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStackSync_GetStuckChannelStackUpdateJobs" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cutoff" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "updated_at" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_lt" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "cutoff" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "channelStackId" } },
+                                { kind: "Field", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStackSync_GetStuckChannelStackUpdateJobsQuery,
+    ChannelStackSync_GetStuckChannelStackUpdateJobsQueryVariables
+>;
+export const ChannelStack_UpdateChannelStackDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_UpdateChannelStack" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_video_ChannelStack" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputUri" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "rtmpOutputDestinationId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "rtmpOutputDestinationId" },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<ChannelStack_UpdateChannelStackMutation, ChannelStack_UpdateChannelStackMutationVariables>;
+export const ChannelStack_SetChannelStackUpdateJobStatusDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_SetChannelStackUpdateJobStatus" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "video_JobStatus_enum" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "ListValue",
+                                                            values: [
+                                                                { kind: "EnumValue", value: "NEW" },
+                                                                { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "message" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_SetChannelStackUpdateJobStatusMutation,
+    ChannelStack_SetChannelStackUpdateJobStatusMutationVariables
+>;
+export const ChannelStack_SetChannelStackUpdateJobStatusByMlciDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_SetChannelStackUpdateJobStatusByMLCI" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "video_JobStatus_enum" } },
+                    },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "update_job_queues_ChannelStackUpdateJob" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_in" },
+                                                        value: {
+                                                            kind: "ListValue",
+                                                            values: [
+                                                                { kind: "EnumValue", value: "NEW" },
+                                                                { kind: "EnumValue", value: "IN_PROGRESS" },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "_set" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "status" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "message" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "message" } },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "affected_rows" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation,
+    ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables
+>;
 export const GetChannelStackByRoomDocument = {
     kind: "Document",
     definitions: [
@@ -38171,6 +39411,222 @@ export const ChannelStack_DetachDocument = {
         },
     ],
 } as unknown as DocumentNode<ChannelStack_DetachMutation, ChannelStack_DetachMutationVariables>;
+export const ChannelStack_UpdateJob_GetChannelStackDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "ChannelStack_UpdateJob_GetChannelStack" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "video_ChannelStack_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputUri" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputStreamKey" } },
+                                { kind: "Field", name: { kind: "Name", value: "rtmpOutputDestinationId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "room" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "rtmpOutput" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "id" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "url" } },
+                                                        { kind: "Field", name: { kind: "Name", value: "streamKey" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_UpdateJob_GetChannelStackQuery,
+    ChannelStack_UpdateJob_GetChannelStackQueryVariables
+>;
+export const ChannelStack_CreateChannelStackUpdateJobDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "ChannelStack_CreateChannelStackUpdateJob" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "channelStackId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cloudFormationStackArn" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "mediaLiveChannelId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "oldRtmpOutputDestinationId" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpOutputUri" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "newRtmpOutputStreamKey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_job_queues_ChannelStackUpdateJob_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "channelStackId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "channelStackId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "cloudFormationStackArn" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "jobStatusName" },
+                                            value: { kind: "EnumValue", value: "NEW" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "mediaLiveChannelId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputUri" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputUri" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputStreamKey" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "oldRtmpOutputDestinationId" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "oldRtmpOutputDestinationId" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpOutputUri" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpOutputUri" },
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "newRtmpOutputStreamKey" },
+                                            value: {
+                                                kind: "Variable",
+                                                name: { kind: "Name", value: "newRtmpOutputStreamKey" },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    ChannelStack_CreateChannelStackUpdateJobMutation,
+    ChannelStack_CreateChannelStackUpdateJobMutationVariables
+>;
 export const ChannelStack_GetChannelStackCloudFormationStackArnDocument = {
     kind: "Document",
     definitions: [
@@ -39411,7 +40867,7 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                 fields: [
                                                     {
                                                         kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_or" },
+                                                        name: { kind: "Name", value: "_and" },
                                                         value: {
                                                             kind: "ListValue",
                                                             values: [
@@ -39424,20 +40880,6 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                             value: {
                                                                                 kind: "ObjectValue",
                                                                                 fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "_gte",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "Variable",
-                                                                                            name: {
-                                                                                                kind: "Name",
-                                                                                                value: "from",
-                                                                                            },
-                                                                                        },
-                                                                                    },
                                                                                     {
                                                                                         kind: "ObjectField",
                                                                                         name: {
@@ -39480,20 +40922,6 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                                             },
                                                                                         },
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "_lte",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "Variable",
-                                                                                            name: {
-                                                                                                kind: "Name",
-                                                                                                value: "to",
-                                                                                            },
-                                                                                        },
-                                                                                    },
                                                                                 ],
                                                                             },
                                                                         },
@@ -39519,6 +40947,68 @@ export const LocalSchedule_GetRoomsWithEventsStartingDocument = {
                                                                             {
                                                                                 kind: "EnumValue",
                                                                                 value: "PRESENTATION",
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "_not" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "channelStack" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: {
+                                                                        kind: "Name",
+                                                                        value: "channelStackUpdateJobs",
+                                                                    },
+                                                                    value: {
+                                                                        kind: "ObjectValue",
+                                                                        fields: [
+                                                                            {
+                                                                                kind: "ObjectField",
+                                                                                name: {
+                                                                                    kind: "Name",
+                                                                                    value: "jobStatusName",
+                                                                                },
+                                                                                value: {
+                                                                                    kind: "ObjectValue",
+                                                                                    fields: [
+                                                                                        {
+                                                                                            kind: "ObjectField",
+                                                                                            name: {
+                                                                                                kind: "Name",
+                                                                                                value: "_in",
+                                                                                            },
+                                                                                            value: {
+                                                                                                kind: "ListValue",
+                                                                                                values: [
+                                                                                                    {
+                                                                                                        kind: "EnumValue",
+                                                                                                        value: "NEW",
+                                                                                                    },
+                                                                                                    {
+                                                                                                        kind: "EnumValue",
+                                                                                                        value: "IN_PROGRESS",
+                                                                                                    },
+                                                                                                ],
+                                                                                            },
+                                                                                        },
+                                                                                    ],
+                                                                                },
                                                                             },
                                                                         ],
                                                                     },
@@ -39594,7 +41084,7 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                     fields: [
                                         {
                                             kind: "ObjectField",
-                                            name: { kind: "Name", value: "_and" },
+                                            name: { kind: "Name", value: "_or" },
                                             value: {
                                                 kind: "ListValue",
                                                 values: [
@@ -39603,205 +41093,247 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                         fields: [
                                                             {
                                                                 kind: "ObjectField",
-                                                                name: { kind: "Name", value: "_not" },
+                                                                name: { kind: "Name", value: "_and" },
                                                                 value: {
-                                                                    kind: "ObjectValue",
-                                                                    fields: [
+                                                                    kind: "ListValue",
+                                                                    values: [
                                                                         {
-                                                                            kind: "ObjectField",
-                                                                            name: { kind: "Name", value: "events" },
-                                                                            value: {
-                                                                                kind: "ObjectValue",
-                                                                                fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "startTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_gte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
-                                                                                                        },
-                                                                                                    },
-                                                                                                },
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_lte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "to",
-                                                                                                        },
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "_not",
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "intendedRoomModeName",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_in",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ListValue",
-                                                                                                        values: [
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRERECORDED",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "Q_AND_A",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRESENTATION",
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [
+                                                                                            {
+                                                                                                kind: "ObjectField",
+                                                                                                name: {
+                                                                                                    kind: "Name",
+                                                                                                    value: "events",
                                                                                                 },
-                                                                                            ],
-                                                                                        },
+                                                                                                value: {
+                                                                                                    kind: "ObjectValue",
+                                                                                                    fields: [
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "startTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_gte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_lte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "to",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "intendedRoomModeName",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_in",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "ListValue",
+                                                                                                                            values: [
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRERECORDED",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "Q_AND_A",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                },
+                                                                                                                            ],
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            },
+                                                                                        ],
                                                                                     },
-                                                                                ],
-                                                                            },
+                                                                                },
+                                                                            ],
                                                                         },
-                                                                    ],
-                                                                },
-                                                            },
-                                                        ],
-                                                    },
-                                                    {
-                                                        kind: "ObjectValue",
-                                                        fields: [
-                                                            {
-                                                                kind: "ObjectField",
-                                                                name: { kind: "Name", value: "_not" },
-                                                                value: {
-                                                                    kind: "ObjectValue",
-                                                                    fields: [
                                                                         {
-                                                                            kind: "ObjectField",
-                                                                            name: { kind: "Name", value: "events" },
-                                                                            value: {
-                                                                                kind: "ObjectValue",
-                                                                                fields: [
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "startTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_lte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "_not",
+                                                                                    },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [
+                                                                                            {
+                                                                                                kind: "ObjectField",
+                                                                                                name: {
+                                                                                                    kind: "Name",
+                                                                                                    value: "events",
+                                                                                                },
+                                                                                                value: {
+                                                                                                    kind: "ObjectValue",
+                                                                                                    fields: [
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "startTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_lte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
                                                                                                         },
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "endTime",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_gte",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "Variable",
-                                                                                                        name: {
-                                                                                                            kind: "Name",
-                                                                                                            value: "from",
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "endTime",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_gte",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "Variable",
+                                                                                                                            name: {
+                                                                                                                                kind: "Name",
+                                                                                                                                value: "from",
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
                                                                                                         },
-                                                                                                    },
+                                                                                                        {
+                                                                                                            kind: "ObjectField",
+                                                                                                            name: {
+                                                                                                                kind: "Name",
+                                                                                                                value: "intendedRoomModeName",
+                                                                                                            },
+                                                                                                            value: {
+                                                                                                                kind: "ObjectValue",
+                                                                                                                fields: [
+                                                                                                                    {
+                                                                                                                        kind: "ObjectField",
+                                                                                                                        name: {
+                                                                                                                            kind: "Name",
+                                                                                                                            value: "_in",
+                                                                                                                        },
+                                                                                                                        value: {
+                                                                                                                            kind: "ListValue",
+                                                                                                                            values: [
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRERECORDED",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "Q_AND_A",
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    kind: "EnumValue",
+                                                                                                                                    value: "PRESENTATION",
+                                                                                                                                },
+                                                                                                                            ],
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    ],
                                                                                                 },
-                                                                                            ],
-                                                                                        },
+                                                                                            },
+                                                                                        ],
                                                                                     },
-                                                                                    {
-                                                                                        kind: "ObjectField",
-                                                                                        name: {
-                                                                                            kind: "Name",
-                                                                                            value: "intendedRoomModeName",
-                                                                                        },
-                                                                                        value: {
-                                                                                            kind: "ObjectValue",
-                                                                                            fields: [
-                                                                                                {
-                                                                                                    kind: "ObjectField",
-                                                                                                    name: {
-                                                                                                        kind: "Name",
-                                                                                                        value: "_in",
-                                                                                                    },
-                                                                                                    value: {
-                                                                                                        kind: "ListValue",
-                                                                                                        values: [
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRERECORDED",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "Q_AND_A",
-                                                                                                            },
-                                                                                                            {
-                                                                                                                kind: "EnumValue",
-                                                                                                                value: "PRESENTATION",
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                },
-                                                                                            ],
-                                                                                        },
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            kind: "ObjectValue",
+                                                                            fields: [
+                                                                                {
+                                                                                    kind: "ObjectField",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "channelStack",
                                                                                     },
-                                                                                ],
-                                                                            },
+                                                                                    value: {
+                                                                                        kind: "ObjectValue",
+                                                                                        fields: [],
+                                                                                    },
+                                                                                },
+                                                                            ],
                                                                         },
                                                                     ],
                                                                 },
@@ -39814,7 +41346,55 @@ export const LocalSchedule_GetRoomsWithoutEventsDocument = {
                                                             {
                                                                 kind: "ObjectField",
                                                                 name: { kind: "Name", value: "channelStack" },
-                                                                value: { kind: "ObjectValue", fields: [] },
+                                                                value: {
+                                                                    kind: "ObjectValue",
+                                                                    fields: [
+                                                                        {
+                                                                            kind: "ObjectField",
+                                                                            name: {
+                                                                                kind: "Name",
+                                                                                value: "channelStackUpdateJobs",
+                                                                            },
+                                                                            value: {
+                                                                                kind: "ObjectValue",
+                                                                                fields: [
+                                                                                    {
+                                                                                        kind: "ObjectField",
+                                                                                        name: {
+                                                                                            kind: "Name",
+                                                                                            value: "jobStatusName",
+                                                                                        },
+                                                                                        value: {
+                                                                                            kind: "ObjectValue",
+                                                                                            fields: [
+                                                                                                {
+                                                                                                    kind: "ObjectField",
+                                                                                                    name: {
+                                                                                                        kind: "Name",
+                                                                                                        value: "_in",
+                                                                                                    },
+                                                                                                    value: {
+                                                                                                        kind: "ListValue",
+                                                                                                        values: [
+                                                                                                            {
+                                                                                                                kind: "EnumValue",
+                                                                                                                value: "NEW",
+                                                                                                            },
+                                                                                                            {
+                                                                                                                kind: "EnumValue",
+                                                                                                                value: "IN_PROGRESS",
+                                                                                                            },
+                                                                                                        ],
+                                                                                                    },
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
                                                             },
                                                         ],
                                                     },

@@ -773,27 +773,6 @@ function EditableRoomsCRUDTable() {
                 },
             },
             {
-                id: "mode",
-                header: function ModeHeader({
-                    isInCreate,
-                    onClick,
-                    sortDir,
-                }: ColumnHeaderProps<RoomWithParticipantInfoFragment>) {
-                    return isInCreate ? undefined : (
-                        <Button size="xs" onClick={onClick}>
-                            Current mode{sortDir !== null ? ` ${sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.currentModeName,
-                sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows, v: Room_Mode_Enum) => rows.filter((r) => r.currentModeName === v),
-                filterEl: SelectColumnFilter(Object.values(Room_Mode_Enum)),
-                cell: function Cell({ value }: CellProps<Partial<RoomWithParticipantInfoFragment>>) {
-                    return <Text>{value}</Text>;
-                },
-            },
-            {
                 id: "privacy",
                 header: function ModeHeader({
                     isInCreate,

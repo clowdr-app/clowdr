@@ -36,6 +36,7 @@ export class ChannelStatusService {
                                 activeInputAttachmentName
                                 activeInputSwitchActionName
                                 pipelinesRunningCount
+                                state
                             ]
                         }
                     ) {
@@ -55,6 +56,7 @@ export class ChannelStatusService {
                         pipelinesRunningCount: channelStack.channel.PipelinesRunningCount ?? null,
                         channelStackId: channelStack.channelStackId,
                         conferenceId: channelStack.conferenceId,
+                        state: channelStack.channel.State,
                     })),
                 },
             });

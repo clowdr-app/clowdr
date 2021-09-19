@@ -43,6 +43,7 @@ import {
     InputResolution,
     InputSourceEndBehavior,
     TimecodeConfigSource,
+    VideoCodecSettings,
     VideoDescriptionRespondToAfd,
     VideoDescriptionScalingBehavior,
 } from "@aws-sdk/client-medialive";
@@ -81,6 +82,14 @@ export interface ChannelStackProps extends cdk.StackProps {
     mediaLiveServiceRoleArn: string;
     awsContentBucketId: string;
     generateId(): string;
+}
+
+export interface RtmpOutputIdentifiers {
+    rtmpOutputUrl: string;
+    rtmpOutputStreamKey: string;
+
+    rtmpOutputGroupName: string;
+    rtmpOutputDestinationId: string;
 }
 
 const defaultH264Settings: Partial<medialive.CfnChannel.H264SettingsProperty> = {
@@ -123,6 +132,12 @@ const defaultAacSettings: Partial<medialive.CfnChannel.AacSettingsProperty> = {
     rateControlMode: AacRateControlMode.VBR,
     sampleRate: 48000,
 };
+
+export const output1080p30HQName = "1080p30HQ";
+export const output1080p30Name = "1080p30";
+export const output720p30Name = "720p30";
+export const output480p30Name = "480p30";
+export const outputCaptionsName = "captions";
 
 export class ChannelStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: ChannelStackProps) {
@@ -209,21 +224,25 @@ export class ChannelStack extends cdk.Stack {
             value: originEndpoint.attrUrl,
         });
 
-        if (props.rtmpOutputUrl) {
+        new cdk.CfnOutput(this, "MediaPackageOutputGroupName", {
+            value: mediaLiveChannel.mediaPackageOutputGroupName,
+        });
+
+        if (mediaLiveChannel.rtmpOutput) {
             new cdk.CfnOutput(this, "RtmpOutputUri", {
-                value: props.rtmpOutputUrl,
+                value: mediaLiveChannel.rtmpOutput.rtmpOutputUrl,
             });
-        }
 
-        if (props.rtmpOutputStreamKey) {
             new cdk.CfnOutput(this, "RtmpOutputStreamKey", {
-                value: props.rtmpOutputStreamKey,
+                value: mediaLiveChannel.rtmpOutput.rtmpOutputStreamKey,
             });
-        }
 
-        if (mediaLiveChannel.rtmpOutputDestinationId) {
             new cdk.CfnOutput(this, "RtmpOutputDestinationId", {
-                value: mediaLiveChannel.rtmpOutputDestinationId,
+                value: mediaLiveChannel.rtmpOutput.rtmpOutputDestinationId,
+            });
+
+            new cdk.CfnOutput(this, "RtmpOutputGroupName", {
+                value: mediaLiveChannel.rtmpOutput.rtmpOutputGroupName,
             });
         }
     }
@@ -242,58 +261,75 @@ export class ChannelStack extends cdk.Stack {
         rtmpBInputAttachmentName: string;
         mp4InputAttachmentName: string;
         loopingMp4InputAttachmentName: string;
-        rtmpOutputDestinationId: string | null;
+        rtmpOutput: RtmpOutputIdentifiers | null;
+        mediaPackageOutputGroupName: string;
     } {
         const generateId = props.generateId;
 
-        const captionSelector = this.createCaptionSelector(generateId);
-        const captionDescription = this.createCaptionDescription(captionSelector.name, generateId);
+        const captionSelector = ChannelStack.createCaptionSelector(generateId());
+        const captionDescription = ChannelStack.createCaptionDescription(captionSelector.name, generateId());
 
-        const rtmpAInputAttachment = this.createInputAttachment_RTMP_A(generateId, rtmpAInputId, captionSelector);
-        const rtmpBInputAttachment = this.createInputAttachment_RTMP_B(generateId, rtmpBInputId, captionSelector);
-        const mp4InputAttachment = this.createInputAttachment_MP4(generateId, mp4InputId, captionSelector);
-        const loopingMp4InputAttachment = this.createInputAttachment_LoopingMP4(
-            generateId,
+        const rtmpAInputAttachment = ChannelStack.createInputAttachment_RTMP_A(
+            `${generateId()}-rtmpA`,
+            rtmpAInputId,
+            captionSelector
+        );
+        const rtmpBInputAttachment = ChannelStack.createInputAttachment_RTMP_B(
+            `${generateId()}-rtmpB`,
+            rtmpBInputId,
+            captionSelector
+        );
+        const mp4InputAttachment = ChannelStack.createInputAttachment_MP4(
+            `${generateId()}-mp4`,
+            mp4InputId,
+            captionSelector
+        );
+        const loopingMp4InputAttachment = ChannelStack.createInputAttachment_LoopingMP4(
+            `${generateId()}-looping`,
             loopingMp4InputId,
             captionSelector
         );
 
-        const video1080p30Description = this.createVideoDescription_1080p30(generateId);
-        const video720p30Description = this.createVideoDescription_720p30(generateId);
-        const video480p30Description = this.createVideoDescription_480p30(generateId);
+        const video1080p30Description = ChannelStack.createVideoDescription_1080p30(generateId());
+        const video720p30Description = ChannelStack.createVideoDescription_720p30(generateId());
+        const video480p30Description = ChannelStack.createVideoDescription_480p30(generateId());
         const videoDescriptions: Array<medialive.CfnChannel.VideoDescriptionProperty> = [
             video1080p30Description,
             video720p30Description,
             video480p30Description,
         ];
 
-        const audioHQDescription = this.createAudioDescription_HQ(generateId);
-        const audioLQDescription = this.createAudioDescription_LQ(generateId);
+        const audioHQDescription = ChannelStack.createAudioDescription_HQ(generateId() + "-HQ");
+        const audioLQDescription = ChannelStack.createAudioDescription_LQ(generateId() + "-LQ");
         const audioDescriptions: Array<medialive.CfnChannel.AudioDescriptionProperty> = [
             audioHQDescription,
             audioLQDescription,
         ];
 
-        const mediaPackageDestination: medialive.CfnChannel.OutputDestinationProperty & { id: string } =
-            this.createDestination_MediaPackage(generateId, mediaPackageChannelId);
+        const mediaPackageDestination = ChannelStack.createDestination_MediaPackage(
+            generateId(),
+            mediaPackageChannelId
+        );
         const destinations: Array<medialive.CfnChannel.OutputDestinationProperty> = [mediaPackageDestination];
 
-        const outputGroups: Array<medialive.CfnChannel.OutputGroupProperty> = [
-            this.createOutputGroup_MediaPackage(
-                generateId,
-                video1080p30Description,
-                audioHQDescription,
-                video720p30Description,
-                video480p30Description,
-                audioLQDescription,
-                captionDescription,
-                mediaPackageDestination
-            ),
-        ];
+        const mediaPackageOutputGroup = ChannelStack.createOutputGroup_MediaPackage(
+            `${generateId()}-MediaPackage`,
+            video1080p30Description,
+            audioHQDescription,
+            video720p30Description,
+            video480p30Description,
+            audioLQDescription,
+            captionDescription,
+            mediaPackageDestination
+        );
+        const outputGroups: Array<medialive.CfnChannel.OutputGroupProperty> = [mediaPackageOutputGroup];
 
-        const rtmpOutputDestinationId = this.createOutput_ExternalRTMP(
-            props,
-            generateId,
+        const rtmpOutput = ChannelStack.createOutput_ExternalRTMP(
+            props.rtmpOutputUrl,
+            props.rtmpOutputStreamKey,
+            `${generateId()}-ExternalRTMP`,
+            `${generateId()}-ExternalRTMP`,
+            generateId(),
             videoDescriptions,
             outputGroups,
             audioHQDescription,
@@ -316,25 +352,12 @@ export class ChannelStack extends cdk.Stack {
                 loopingMp4InputAttachment,
             ],
             roleArn: props.mediaLiveServiceRoleArn,
-            encoderSettings: {
-                featureActivations: {
-                    inputPrepareScheduleActions: FeatureActivationsInputPrepareScheduleActions.ENABLED,
-                },
-                globalConfiguration: {
-                    inputEndAction: GlobalConfigurationInputEndAction.NONE,
-                    inputLossBehavior: {
-                        blackFrameMsec: 10000,
-                        inputLossImageColor: "333333",
-                        // todo: inputloss image slate
-                        repeatFrameMsec: 1000,
-                    },
-                },
+            encoderSettings: ChannelStack.createEncoderSettings(
                 audioDescriptions,
                 outputGroups,
-                timecodeConfig: { source: TimecodeConfigSource.SYSTEMCLOCK },
                 videoDescriptions,
-                captionDescriptions: [captionDescription],
-            },
+                captionDescription
+            ),
             inputSpecification: {
                 codec: InputCodec.AVC,
                 resolution: InputResolution.HD,
@@ -349,7 +372,35 @@ export class ChannelStack extends cdk.Stack {
             rtmpBInputAttachmentName: rtmpBInputAttachment.inputAttachmentName,
             mp4InputAttachmentName: mp4InputAttachment.inputAttachmentName,
             loopingMp4InputAttachmentName: loopingMp4InputAttachment.inputAttachmentName,
-            rtmpOutputDestinationId,
+            rtmpOutput,
+            mediaPackageOutputGroupName: mediaPackageOutputGroup.name,
+        };
+    }
+
+    public static createEncoderSettings(
+        audioDescriptions: medialive.CfnChannel.AudioDescriptionProperty[],
+        outputGroups: medialive.CfnChannel.OutputGroupProperty[],
+        videoDescriptions: medialive.CfnChannel.VideoDescriptionProperty[],
+        captionDescription: medialive.CfnChannel.CaptionDescriptionProperty & { name: string }
+    ): cdk.IResolvable | medialive.CfnChannel.EncoderSettingsProperty | undefined {
+        return {
+            featureActivations: {
+                inputPrepareScheduleActions: FeatureActivationsInputPrepareScheduleActions.ENABLED,
+            },
+            globalConfiguration: {
+                inputEndAction: GlobalConfigurationInputEndAction.NONE,
+                inputLossBehavior: {
+                    blackFrameMsec: 10000,
+                    inputLossImageColor: "333333",
+                    // todo: inputloss image slate
+                    repeatFrameMsec: 1000,
+                },
+            },
+            audioDescriptions,
+            outputGroups,
+            timecodeConfig: { source: TimecodeConfigSource.SYSTEMCLOCK },
+            videoDescriptions,
+            captionDescriptions: [captionDescription],
         };
     }
 
@@ -484,13 +535,13 @@ export class ChannelStack extends cdk.Stack {
         });
     }
 
-    private createInputAttachment_LoopingMP4(
-        generateId: () => string,
+    private static createInputAttachment_LoopingMP4(
+        inputAttachmentName: string,
         loopingMp4InputId: string,
         captionSelector: medialive.CfnChannel.CaptionSelectorProperty & { name: string }
     ): medialive.CfnChannel.InputAttachmentProperty & { inputAttachmentName: string } {
         return {
-            inputAttachmentName: `${generateId()}-looping`,
+            inputAttachmentName,
             inputId: loopingMp4InputId,
             inputSettings: {
                 sourceEndBehavior: InputSourceEndBehavior.LOOP,
@@ -511,13 +562,13 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createInputAttachment_MP4(
-        generateId: () => string,
+    private static createInputAttachment_MP4(
+        inputAttachmentName: string,
         mp4InputId: string,
         captionSelector: medialive.CfnChannel.CaptionSelectorProperty & { name: string }
     ): medialive.CfnChannel.InputAttachmentProperty & { inputAttachmentName: string } {
         return {
-            inputAttachmentName: `${generateId()}-mp4`,
+            inputAttachmentName,
             inputId: mp4InputId,
             inputSettings: {
                 captionSelectors: [
@@ -537,13 +588,13 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createInputAttachment_RTMP_B(
-        generateId: () => string,
+    private static createInputAttachment_RTMP_B(
+        inputAttachmentName: string,
         rtmpBInputId: string,
         captionSelector: medialive.CfnChannel.CaptionSelectorProperty & { name: string }
     ): medialive.CfnChannel.InputAttachmentProperty & { inputAttachmentName: string } {
         return {
-            inputAttachmentName: `${generateId()}-rtmpB`,
+            inputAttachmentName,
             inputId: rtmpBInputId,
             inputSettings: {
                 captionSelectors: [
@@ -563,13 +614,13 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createInputAttachment_RTMP_A(
-        generateId: () => string,
+    private static createInputAttachment_RTMP_A(
+        inputAttachmentName: string,
         rtmpAInputId: string,
         captionSelector: medialive.CfnChannel.CaptionSelectorProperty & { name: string }
     ): medialive.CfnChannel.InputAttachmentProperty & { inputAttachmentName: string } {
         return {
-            inputAttachmentName: `${generateId()}-rtmpA`,
+            inputAttachmentName,
             inputId: rtmpAInputId,
             inputSettings: {
                 captionSelectors: [captionSelector],
@@ -577,13 +628,13 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createCaptionDescription(
+    private static createCaptionDescription(
         captionSelectorName: string,
-        generateId: () => string
+        name: string
     ): medialive.CfnChannel.CaptionDescriptionProperty & { name: string } {
         return {
             captionSelectorName: captionSelectorName,
-            name: generateId(),
+            name,
             destinationSettings: {
                 webvttDestinationSettings: {},
             },
@@ -592,11 +643,11 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createCaptionSelector(
-        generateId: () => string
+    private static createCaptionSelector(
+        name: string
     ): medialive.CfnChannel.CaptionSelectorProperty & { name: string } {
         return {
-            name: generateId(),
+            name,
             languageCode: "eng",
             selectorSettings: {
                 embeddedSourceSettings: {
@@ -608,8 +659,8 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createAudioDescription_LQ(
-        generateId: () => string
+    private static createAudioDescription_LQ(
+        name: string
     ): medialive.CfnChannel.AudioDescriptionProperty & { name: string } {
         return {
             codecSettings: {
@@ -620,13 +671,13 @@ export class ChannelStack extends cdk.Stack {
             },
             audioTypeControl: AudioDescriptionAudioTypeControl.FOLLOW_INPUT,
             languageCodeControl: AudioDescriptionAudioTypeControl.FOLLOW_INPUT,
-            name: generateId(),
+            name,
             audioSelectorName: undefined,
         };
     }
 
-    private createAudioDescription_HQ(
-        generateId: () => string
+    private static createAudioDescription_HQ(
+        name: string
     ): medialive.CfnChannel.AudioDescriptionProperty & { name: string } {
         return {
             codecSettings: {
@@ -637,14 +688,15 @@ export class ChannelStack extends cdk.Stack {
             },
             audioTypeControl: AudioDescriptionAudioTypeControl.FOLLOW_INPUT,
             languageCodeControl: AudioDescriptionAudioTypeControl.FOLLOW_INPUT,
-            name: generateId(),
+            name,
             audioSelectorName: undefined,
         };
     }
 
-    private createVideoDescription_1080p30HQ(
-        generateId: () => string
-    ): medialive.CfnChannel.VideoDescriptionProperty & { name: string } {
+    public static createVideoDescription_1080p30HQ(name: string): medialive.CfnChannel.VideoDescriptionProperty & {
+        name: string;
+        codecSettings: VideoCodecSettings;
+    } {
         return {
             codecSettings: {
                 h264Settings: {
@@ -655,7 +707,7 @@ export class ChannelStack extends cdk.Stack {
                 },
             },
             height: 1080,
-            name: generateId(),
+            name,
             respondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
             sharpness: 50,
             scalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
@@ -663,8 +715,8 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createVideoDescription_1080p30(
-        generateId: () => string
+    private static createVideoDescription_1080p30(
+        name: string
     ): medialive.CfnChannel.VideoDescriptionProperty & { name: string } {
         return {
             codecSettings: {
@@ -676,7 +728,7 @@ export class ChannelStack extends cdk.Stack {
                 },
             },
             height: 1080,
-            name: generateId(),
+            name,
             respondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
             sharpness: 50,
             scalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
@@ -684,8 +736,8 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createVideoDescription_720p30(
-        generateId: () => string
+    private static createVideoDescription_720p30(
+        name: string
     ): medialive.CfnChannel.VideoDescriptionProperty & { name: string } {
         return {
             codecSettings: {
@@ -697,7 +749,7 @@ export class ChannelStack extends cdk.Stack {
                 },
             },
             height: 720,
-            name: generateId(),
+            name,
             respondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
             sharpness: 50,
             scalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
@@ -705,8 +757,8 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createVideoDescription_480p30(
-        generateId: () => string
+    private static createVideoDescription_480p30(
+        name: string
     ): medialive.CfnChannel.VideoDescriptionProperty & { name: string } {
         return {
             codecSettings: {
@@ -718,7 +770,7 @@ export class ChannelStack extends cdk.Stack {
                 },
             },
             height: 480,
-            name: generateId(),
+            name,
             respondToAfd: VideoDescriptionRespondToAfd.PASSTHROUGH,
             sharpness: 50,
             scalingBehavior: VideoDescriptionScalingBehavior.DEFAULT,
@@ -726,8 +778,8 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createOutputGroup_MediaPackage(
-        generateId: () => string,
+    public static createOutputGroup_MediaPackage(
+        name: string,
         video1080p30Description: medialive.CfnChannel.VideoDescriptionProperty & { name: string },
         audioHQDescription: medialive.CfnChannel.AudioDescriptionProperty & { name: string },
         video720p30Description: medialive.CfnChannel.VideoDescriptionProperty & { name: string },
@@ -735,12 +787,12 @@ export class ChannelStack extends cdk.Stack {
         audioLQDescription: medialive.CfnChannel.AudioDescriptionProperty & { name: string },
         captionDescription: medialive.CfnChannel.CaptionDescriptionProperty & { name: string },
         mediaPackageDestination: medialive.CfnChannel.OutputDestinationProperty & { id: string }
-    ): medialive.CfnChannel.OutputGroupProperty {
+    ): medialive.CfnChannel.OutputGroupProperty & { name: string } {
         return {
-            name: generateId() + "-MediaPackage",
+            name,
             outputs: [
                 {
-                    outputName: "1080p30",
+                    outputName: output1080p30Name,
                     videoDescriptionName: video1080p30Description.name,
                     audioDescriptionNames: [audioHQDescription.name],
                     outputSettings: {
@@ -748,7 +800,7 @@ export class ChannelStack extends cdk.Stack {
                     },
                 },
                 {
-                    outputName: "720p30",
+                    outputName: output720p30Name,
                     videoDescriptionName: video720p30Description.name,
                     audioDescriptionNames: [audioHQDescription.name],
                     outputSettings: {
@@ -756,7 +808,7 @@ export class ChannelStack extends cdk.Stack {
                     },
                 },
                 {
-                    outputName: "480p30",
+                    outputName: output480p30Name,
                     videoDescriptionName: video480p30Description.name,
                     audioDescriptionNames: [audioLQDescription.name],
                     outputSettings: {
@@ -764,7 +816,7 @@ export class ChannelStack extends cdk.Stack {
                     },
                 },
                 {
-                    outputName: "captions",
+                    outputName: outputCaptionsName,
                     captionDescriptionNames: [captionDescription.name],
                     outputSettings: {
                         mediaPackageOutputSettings: {},
@@ -781,12 +833,15 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createOutputGroup_ExternalRTMP(
-        generateId: () => string,
+    public static createOutputGroup_ExternalRTMP(
+        name: string,
         rtmpOutputDestinationId: string,
-        video1080p30HQ: string,
+        video1080p30HQDescriptionId: string,
         audioHQDescriptorName: string
-    ): medialive.CfnChannel.OutputGroupProperty {
+    ): medialive.CfnChannel.OutputGroupProperty & {
+        outputGroupSettings: medialive.CfnChannel.OutputGroupSettingsProperty;
+        outputs: Array<medialive.CfnChannel.OutputProperty>;
+    } {
         return {
             outputGroupSettings: {
                 rtmpGroupSettings: {
@@ -799,7 +854,7 @@ export class ChannelStack extends cdk.Stack {
                     adMarkers: [],
                 },
             },
-            name: generateId() + "-ExternalRTMP",
+            name,
             outputs: [
                 {
                     outputSettings: {
@@ -812,8 +867,8 @@ export class ChannelStack extends cdk.Stack {
                             certificateMode: "VERIFY_AUTHENTICITY",
                         },
                     },
-                    outputName: rtmpOutputDestinationId,
-                    videoDescriptionName: video1080p30HQ,
+                    outputName: output1080p30HQName,
+                    videoDescriptionName: video1080p30HQDescriptionId,
                     audioDescriptionNames: [audioHQDescriptorName],
                     captionDescriptionNames: [],
                 },
@@ -821,23 +876,25 @@ export class ChannelStack extends cdk.Stack {
         };
     }
 
-    private createOutput_ExternalRTMP(
-        props: ChannelStackProps,
-        generateId: () => string,
+    public static createOutput_ExternalRTMP(
+        rtmpOutputUrl: string | null | undefined,
+        rtmpOutputStreamKey: string | null | undefined,
+        rtmpOutputGroupName: string,
+        rtmpOutputDestinationId: string,
+        video1080p30HQDescriptionId: string,
         videoDescriptions: medialive.CfnChannel.VideoDescriptionProperty[],
         outputGroups: medialive.CfnChannel.OutputGroupProperty[],
         audioHQDescription: medialive.CfnChannel.AudioDescriptionProperty & { name: string },
         destinations: medialive.CfnChannel.OutputDestinationProperty[]
-    ) {
-        if (props.rtmpOutputUrl && props.rtmpOutputStreamKey) {
-            const rtmpOutputDestinationId = generateId();
-
-            const video1080p30HQDescription = this.createVideoDescription_1080p30HQ(generateId);
+    ): RtmpOutputIdentifiers | null {
+        if (rtmpOutputUrl && rtmpOutputStreamKey) {
+            const video1080p30HQDescription =
+                ChannelStack.createVideoDescription_1080p30HQ(video1080p30HQDescriptionId);
             videoDescriptions.push(video1080p30HQDescription);
 
             outputGroups.push(
-                this.createOutputGroup_ExternalRTMP(
-                    generateId,
+                ChannelStack.createOutputGroup_ExternalRTMP(
+                    rtmpOutputGroupName,
                     rtmpOutputDestinationId,
                     video1080p30HQDescription.name,
                     audioHQDescription.name
@@ -845,31 +902,32 @@ export class ChannelStack extends cdk.Stack {
             );
 
             destinations.push(
-                this.createDestination_ExernalRTMP(
-                    rtmpOutputDestinationId,
-                    props.rtmpOutputUrl,
-                    props.rtmpOutputStreamKey
-                )
+                ChannelStack.createDestination_ExernalRTMP(rtmpOutputDestinationId, rtmpOutputUrl, rtmpOutputStreamKey)
             );
 
-            return rtmpOutputDestinationId;
+            return {
+                rtmpOutputUrl,
+                rtmpOutputStreamKey,
+                rtmpOutputGroupName,
+                rtmpOutputDestinationId,
+            };
         }
 
         return null;
     }
 
-    private createDestination_MediaPackage(
-        generateId: () => string,
+    private static createDestination_MediaPackage(
+        id: string,
         mediaPackageChannelId: string
     ): medialive.CfnChannel.OutputDestinationProperty & { id: string } {
         return {
-            id: generateId(),
+            id,
             settings: [],
             mediaPackageSettings: [{ channelId: mediaPackageChannelId }],
         };
     }
 
-    private createDestination_ExernalRTMP(
+    public static createDestination_ExernalRTMP(
         rtmpOutputDestinationId: string,
         url: string,
         streamName: string

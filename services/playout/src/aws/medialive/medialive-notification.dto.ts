@@ -76,6 +76,32 @@ export class ChannelAlert extends NotificationBase {
     "detail-type": "MediaLive Channel Alert";
 }
 
+export class ChannelUpdateChannelData {
+    @IsString()
+    arn: string;
+    @IsArray()
+    destinations: Array<any>;
+}
+
+export class ChannelUpdateResponseElements {
+    @ValidateNested()
+    channel: ChannelUpdateChannelData;
+}
+
+export class ChannelUpdateDetail {
+    @IsString()
+    eventName: string;
+    @ValidateNested()
+    responseElements: ChannelUpdateResponseElements;
+}
+
+export class ChannelUpdate extends NotificationBase {
+    @Equals("AWS API Call via CloudTrail")
+    "detail-type": "AWS API Call via CloudTrail";
+    @ValidateNested()
+    detail: ChannelUpdateDetail;
+}
+
 export class MediaLiveNotification {
     @Equals("notification")
     type: "notification";
@@ -88,9 +114,10 @@ export class MediaLiveNotification {
                 { value: ChannelStateChange, name: "MediaLive Channel State Change" },
                 { value: ChannelInputChange, name: "MediaLive Channel Input Change" },
                 { value: ChannelAlert, name: "MediaLive Channel Alert" },
+                { value: ChannelUpdate, name: "AWS API Call via CloudTrail" },
             ],
         },
     })
     @IsNotEmptyObject()
-    notification: ChannelStateChange | ChannelInputChange | ChannelAlert;
+    notification: ChannelUpdate | ChannelStateChange | ChannelInputChange | ChannelAlert;
 }

@@ -3991,6 +3991,45 @@
       created_at: createdAt
 - table:
     schema: job_queues
+    name: ChannelStackUpdateJob
+  object_relationships:
+  - name: channelStack
+    using:
+      foreign_key_constraint_on: channelStackId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - channelStackId
+      - created_at
+      - id
+      - jobStatusName
+      - message
+      - updated_at
+      filter:
+        channelStack:
+          conference:
+            groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_VIEW
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_SCHEDULE
+              - _or:
+                - includeUnauthenticated:
+                    _eq: true
+                - groupRegistrants:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+- table:
+    schema: job_queues
     name: CombineVideosJob
   object_relationships:
   - name: conference
@@ -6271,6 +6310,15 @@
         insertion_order: null
         column_mapping:
           id: roomId
+  - name: channelStackWithStreamKey
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: ChannelStackWithStreamKey
+        insertion_order: null
+        column_mapping:
+          id: roomId
   - name: chat
     using:
       foreign_key_constraint_on: chatId
@@ -8236,6 +8284,16 @@
   - name: room
     using:
       foreign_key_constraint_on: roomId
+  array_relationships:
+  - name: channelStackUpdateJobs
+    using:
+      manual_configuration:
+        remote_table:
+          schema: job_queues
+          name: ChannelStackUpdateJob
+        insertion_order: null
+        column_mapping:
+          id: channelStackId
   select_permissions:
   - role: user
     permission:
@@ -8246,27 +8304,87 @@
       - id
       - roomId
       filter:
-        _or:
-        - conference:
-            groups:
-              _and:
-              - enabled:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    _or:
+                    - permissionName:
+                        _eq: CONFERENCE_VIEW
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_SCHEDULE
+            - _or:
+              - includeUnauthenticated:
                   _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_VIEW
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_SCHEDULE
-              - _or:
-                - includeUnauthenticated:
-                    _eq: true
-                - groupRegistrants:
-                    registrant:
-                      userId:
-                        _eq: X-Hasura-User-Id
+              - groupRegistrants:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+- table:
+    schema: video
+    name: ChannelStackWithStreamKey
+  object_relationships:
+  - name: conference
+    using:
+      manual_configuration:
+        remote_table:
+          schema: conference
+          name: Conference
+        insertion_order: null
+        column_mapping:
+          conferenceId: id
+  - name: mediaLiveChannelStatus
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: MediaLiveChannelStatus
+        insertion_order: null
+        column_mapping:
+          id: channelStackId
+  array_relationships:
+  - name: channelStackUpdateJobs
+    using:
+      manual_configuration:
+        remote_table:
+          schema: job_queues
+          name: ChannelStackUpdateJob
+        insertion_order: null
+        column_mapping:
+          id: channelStackId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - cloudFrontDomain
+      - conferenceId
+      - created_at
+      - endpointUri
+      - id
+      - roomId
+      - rtmpOutputDestinationId
+      - rtmpOutputStreamKey
+      - rtmpOutputUri
+      - updated_at
+      filter:
+        conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_SCHEDULE
+            - groupRegistrants:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
 - table:
     schema: video
     name: EventParticipantStream
@@ -8659,6 +8777,7 @@
       - created_at
       - id
       - pipelinesRunningCount
+      - state
       - updated_at
       filter:
         conference:
@@ -8671,10 +8790,11 @@
                 - user_id:
                     _eq: X-Hasura-User-Id
                 - slug:
-                    _eq: X-Hasura-User-Id
+                    _eq: X-Hasura-Conference-Slug
                 - permission_name:
                     _in:
                     - CONFERENCE_VIEW_ATTENDEES
+                    - CONFERENCE_MANAGE_SCHEDULE
               _table:
                 schema: public
                 name: FlatUserPermission

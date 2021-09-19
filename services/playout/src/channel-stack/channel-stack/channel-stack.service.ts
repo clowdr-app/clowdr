@@ -14,9 +14,36 @@ import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Video_JobStatus_Enum } from "../../generated/graphql";
 import { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
 import { ChannelStackDeleteJobService } from "../../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackUpdateJobService } from "../../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
 import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { shortId } from "../../utils/id";
 import { ChannelStack, ChannelStackDescription, ChannelStackProps } from "./channelStack";
+
+function transformKeyNames(value: any): any {
+    let result: any = {};
+
+    if (value && value instanceof Array) {
+        result = [];
+        for (const item of value) {
+            result.push(transformKeyNames(item));
+        }
+    } else if (typeof value === "object") {
+        for (const key in value) {
+            if (key in value) {
+                const innerValue = transformKeyNames(value[key]);
+                if (typeof key === "string") {
+                    result[key[0].toUpperCase() + key.slice(1)] = innerValue;
+                } else {
+                    result[key] = innerValue;
+                }
+            }
+        }
+    } else {
+        result = value;
+    }
+
+    return result;
+}
 
 @Injectable()
 export class ChannelStackService {
@@ -27,6 +54,7 @@ export class ChannelStackService {
         private awsService: AwsService,
         private cloudFormationService: CloudFormationService,
         private channelStackCreateJobService: ChannelStackCreateJobService,
+        private channelStackUpdateJobService: ChannelStackUpdateJobService,
         private channelStackDeleteJobService: ChannelStackDeleteJobService,
         private channelStackDataService: ChannelStackDataService,
         private mediaLiveService: MediaLiveService
@@ -197,6 +225,15 @@ export class ChannelStackService {
     }
 
     /**
+     * @summary Creates the job to update the channel CloudFormation stack.
+     */
+    public async startChannelStackUpdate(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
+        this.logger.info({ channelStackId }, "Update channel stack");
+
+        await this.channelStackDataService.createChannelStackUpdateJob(channelStackId, mediaLiveChannelId);
+    }
+
+    /**
      * @summary Creates the job to delete the channel CloudFormation stack and deletes the ChannelStack record.
      */
     public async startChannelStackDeletion(channelStackId: string, mediaLiveChannelId: string): Promise<void> {
@@ -204,6 +241,199 @@ export class ChannelStackService {
 
         await this.channelStackDataService.createChannelStackDeleteJob(channelStackId, mediaLiveChannelId);
         await this.channelStackDataService.deleteChannelStackRecord(channelStackId);
+    }
+
+    /**
+     * Actually start updating the channel stack. Will not start updating if the MediaLive channel is still running.
+     */
+    async updateChannelStack(
+        cloudFormationStackArn: string,
+        mediaLiveChannelId: string,
+        newRtmpOutputUri: string | null,
+        newRtmpOutputStreamKey: string | null
+    ): Promise<{
+        newRtmpOutputUri: string;
+        newRtmpOutputStreamKey: string;
+        newRtmpOutputDestinationId: string;
+    } | null> {
+        let channelState: string | null = null;
+        try {
+            channelState = await this.mediaLiveService.getChannelState(mediaLiveChannelId);
+        } catch (err) {
+            this.logger.warn(
+                { err, mediaLiveChannelId, cloudFormationStackArn },
+                "Couldn't get MediaLive channel state. Attempting to continue with update."
+            );
+        }
+        try {
+            if (channelState && [ChannelState.RUNNING.toString(), ChannelState.STARTING].includes(channelState)) {
+                await this.mediaLiveService.stopChannel(mediaLiveChannelId);
+                throw new Error(
+                    "MediaLive channel is still running. Stopping the channel, but can't start updating yet."
+                );
+            }
+        } catch (err) {
+            this.logger.warn({ err, mediaLiveChannelId }, "Failed to ensure channel stack stopped before update");
+            throw new Error("Couldn't ensure that MediaLive channel was stopped.");
+        }
+
+        const arn = parseArn(cloudFormationStackArn);
+        const stackName = arn.resourceId?.split("/")[0];
+        let description: DescribeStacksCommandOutput;
+        try {
+            description = await this.cloudFormationService.cloudFormation.describeStacks({
+                StackName: stackName,
+            });
+        } catch (err) {
+            this.logger.error({ stackName, err }, "Failed to get channel stack description");
+            throw err;
+        }
+
+        if (!description.Stacks || description.Stacks.length === 0) {
+            this.logger.error({ cloudFormationStackArn, mediaLiveChannelId }, "No channel stack found, skipping");
+            throw new Error("Channel stack does not exist");
+        } else if (
+            description.Stacks[0].StackStatus &&
+            [StackStatus.DELETE_COMPLETE as string, StackStatus.DELETE_IN_PROGRESS].includes(
+                description.Stacks[0].StackStatus
+            )
+        ) {
+            this.logger.info(
+                { cloudFormationStackArn, mediaLiveChannelId },
+                "Channel stack deletion has started, skipping"
+            );
+            return null;
+        } else if (
+            description.Stacks[0].StackStatus &&
+            [
+                StackStatus.UPDATE_IN_PROGRESS as string,
+                StackStatus.UPDATE_ROLLBACK_IN_PROGRESS,
+                StackStatus.UPDATE_COMPLETE_CLEANUP_IN_PROGRESS,
+            ].includes(description.Stacks[0].StackStatus)
+        ) {
+            this.logger.info(
+                { cloudFormationStackArn, mediaLiveChannelId },
+                "A channel stack update is ongoing, skipping"
+            );
+            return null;
+        } else if (
+            description.Stacks[0].StackStatus &&
+            [StackStatus.CREATE_IN_PROGRESS as string].includes(description.Stacks[0].StackStatus)
+        ) {
+            this.logger.info(
+                { cloudFormationStackArn, mediaLiveChannelId },
+                "Channel stack is still being created, skipping"
+            );
+            return null;
+        } else {
+            this.logger.info({ cloudFormationStackArn, mediaLiveChannelId }, "Starting channel stack update");
+            try {
+                const channelDescription = await this.mediaLiveService.describeChannel(mediaLiveChannelId);
+
+                if (!channelDescription.EncoderSettings) {
+                    throw new Error("Channel description does not include encoder settings");
+                }
+                if (!channelDescription.EncoderSettings.VideoDescriptions) {
+                    throw new Error("Channel description does not include encoder settings: video descriptions");
+                }
+                if (!channelDescription.EncoderSettings.AudioDescriptions) {
+                    throw new Error("Channel description does not include encoder settings: audio descriptions");
+                }
+                if (!channelDescription.EncoderSettings.OutputGroups) {
+                    throw new Error("Channel description does not include encoder settings: output groups");
+                }
+                if (!channelDescription.Destinations) {
+                    throw new Error("Channel description does not include destinations");
+                }
+
+                const hasExternalRTMP = channelDescription.EncoderSettings.OutputGroups.some((desc) =>
+                    desc.Name?.endsWith("-ExternalRTMP")
+                );
+
+                let rtmpOutputDestinationId: string | null = null;
+                if (!hasExternalRTMP) {
+                    if (newRtmpOutputUri && newRtmpOutputStreamKey) {
+                        const video1080p30HQDescription = ChannelStack.createVideoDescription_1080p30HQ(shortId());
+                        channelDescription.EncoderSettings.VideoDescriptions.push(
+                            transformKeyNames(video1080p30HQDescription)
+                        );
+
+                        const audioHQDescriptionName = channelDescription.EncoderSettings.AudioDescriptions.find((x) =>
+                            x.Name?.endsWith("-HQ")
+                        )?.Name;
+                        assert(audioHQDescriptionName, "Could not find HQ Audio Description Name");
+
+                        rtmpOutputDestinationId = `${shortId()}-ExternalRTMP`;
+                        const outputDescription = ChannelStack.createOutputGroup_ExternalRTMP(
+                            `${shortId()}-ExternalRTMP`,
+                            rtmpOutputDestinationId,
+                            video1080p30HQDescription.name,
+                            audioHQDescriptionName
+                        );
+                        channelDescription.EncoderSettings.OutputGroups.push(transformKeyNames(outputDescription));
+                    }
+                } else if (!(newRtmpOutputUri && newRtmpOutputStreamKey)) {
+                    channelDescription.EncoderSettings.VideoDescriptions =
+                        channelDescription.EncoderSettings.VideoDescriptions.filter(
+                            (x) => x.CodecSettings?.H264Settings?.QvbrQualityLevel !== 8
+                        );
+
+                    channelDescription.EncoderSettings.OutputGroups =
+                        channelDescription.EncoderSettings.OutputGroups.filter(
+                            (x) => !x.Name?.endsWith("-ExternalRTMP")
+                        );
+                }
+
+                const existingRtmpOutputDestinationId = channelDescription.Destinations.find((x) =>
+                    x.Id?.endsWith("-ExternalRTMP")
+                )?.Id;
+                if (hasExternalRTMP) {
+                    if (newRtmpOutputUri && newRtmpOutputStreamKey) {
+                        channelDescription.Destinations.forEach((destination) => {
+                            if (destination.Id === existingRtmpOutputDestinationId) {
+                                if (!destination.Settings?.length) {
+                                    throw new Error("Existing RTMP Destination data does not include the Settings");
+                                }
+                                destination.Settings[0].Url = newRtmpOutputUri;
+                                destination.Settings[0].StreamName = newRtmpOutputStreamKey;
+                            }
+                        });
+                    } else {
+                        channelDescription.Destinations = channelDescription.Destinations.filter(
+                            (x) => x.Id !== existingRtmpOutputDestinationId
+                        );
+                    }
+                } else {
+                    if (newRtmpOutputUri && newRtmpOutputStreamKey) {
+                        assert(rtmpOutputDestinationId, "RTMP Output Destination Id not created.");
+
+                        const destination = ChannelStack.createDestination_ExernalRTMP(
+                            rtmpOutputDestinationId,
+                            newRtmpOutputUri,
+                            newRtmpOutputStreamKey
+                        );
+                        channelDescription.Destinations.push(transformKeyNames(destination));
+                    }
+                }
+
+                await this.mediaLiveService.updateChannel(
+                    mediaLiveChannelId,
+                    channelDescription.EncoderSettings,
+                    channelDescription.Destinations
+                );
+
+                return newRtmpOutputUri && newRtmpOutputStreamKey && rtmpOutputDestinationId
+                    ? {
+                          newRtmpOutputDestinationId: rtmpOutputDestinationId,
+                          newRtmpOutputStreamKey,
+                          newRtmpOutputUri,
+                      }
+                    : null;
+            } catch (err) {
+                this.logger.error({ stackName, err }, "Failed to trigger channel stack update");
+                throw err;
+            }
+        }
     }
 
     /**
@@ -268,6 +498,43 @@ export class ChannelStackService {
                 throw err;
             }
             return;
+        }
+    }
+
+    public async processChannelStackUpdateJobs(): Promise<void> {
+        const newJobs = await this.channelStackUpdateJobService.getNewChannelStackUpdateJobs();
+
+        for (const job of newJobs) {
+            try {
+                await this.updateChannelStack(
+                    job.cloudFormationStackArn,
+                    job.mediaLiveChannelId,
+                    job.newRtmpOutputUri,
+                    job.newRtmpOutputStreamKey
+                );
+                await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
+                    job.cloudFormationStackArn,
+                    Video_JobStatus_Enum.InProgress,
+                    null
+                );
+            } catch (err) {
+                this.logger.error({ err }, "Failed to process new channel stack update job");
+            }
+        }
+
+        const oldJobs = await this.channelStackUpdateJobService.getStuckChannelStackUpdateJobs();
+
+        for (const job of oldJobs) {
+            try {
+                this.logger.error({ job }, "Channel stack update job seems to be stuck, marking it as failed");
+                await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
+                    job.cloudFormationStackArn,
+                    Video_JobStatus_Enum.Failed,
+                    "Job got stuck"
+                );
+            } catch (err) {
+                this.logger.error({ err }, "Failed to update stuck channel stack update job");
+            }
         }
     }
 

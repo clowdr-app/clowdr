@@ -249,7 +249,7 @@ export class LocalScheduleService {
 
     public async getRoomsWithCurrentOrUpcomingEvents(): Promise<Room[]> {
         const now = new Date();
-        const from = now.toISOString();
+        const from = addMinutes(now, 2).toISOString();
         const to = addMinutes(now, 30).toISOString();
 
         gql`
@@ -257,8 +257,11 @@ export class LocalScheduleService {
                 room_Room(
                     where: {
                         events: {
-                            _or: [{ startTime: { _gte: $from, _lte: $to } }, { endTime: { _gte: $from, _lte: $to } }]
+                            _and: [{ startTime: { _lte: $to } }, { endTime: { _gte: $from } }]
                             intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                        }
+                        _not: {
+                            channelStack: { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } }
                         }
                     }
                 ) {
@@ -297,25 +300,30 @@ export class LocalScheduleService {
             query LocalSchedule_GetRoomsWithoutEvents($from: timestamptz, $to: timestamptz) {
                 room_Room(
                     where: {
-                        _and: [
+                        _or: [
                             {
-                                _not: {
-                                    events: {
-                                        startTime: { _gte: $from, _lte: $to }
-                                        intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                _and: [
+                                    {
+                                        _not: {
+                                            events: {
+                                                startTime: { _gte: $from, _lte: $to }
+                                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                            {
-                                _not: {
-                                    events: {
-                                        startTime: { _lte: $from }
-                                        endTime: { _gte: $from }
-                                        intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                    {
+                                        _not: {
+                                            events: {
+                                                startTime: { _lte: $from }
+                                                endTime: { _gte: $from }
+                                                intendedRoomModeName: { _in: [PRERECORDED, Q_AND_A, PRESENTATION] }
+                                            }
+                                        }
                                     }
-                                }
+                                    { channelStack: {} }
+                                ]
                             }
-                            { channelStack: {} }
+                            { channelStack: { channelStackUpdateJobs: { jobStatusName: { _in: [NEW, IN_PROGRESS] } } } }
                         ]
                     }
                 ) {

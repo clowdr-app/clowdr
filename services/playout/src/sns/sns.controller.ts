@@ -10,6 +10,7 @@ import { MediaLiveNotification } from "../aws/medialive/medialive-notification.d
 import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { Video_JobStatus_Enum } from "../generated/graphql";
 import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
 import { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
 import { SNSNotificationDto } from "./sns-notification.dto";
 
@@ -21,6 +22,7 @@ export class SnsController {
         @Logger() requestLogger: Bunyan,
         private cloudFormationService: CloudFormationService,
         private channelsService: ChannelStackService,
+        private channelStackUpdateJobService: ChannelStackUpdateJobService,
         private channelStackDeleteJobService: ChannelStackDeleteJobService,
         private scheduleSyncService: ScheduleSyncService
     ) {
@@ -48,27 +50,84 @@ export class SnsController {
                 return;
             }
 
-            if (
-                mediaLiveNotification.notification["detail-type"] === "MediaLive Channel State Change" &&
-                mediaLiveNotification.notification.detail.state === "RUNNING"
-            ) {
-                const { resourceId: mediaLiveChannelId } = parseArn(
-                    mediaLiveNotification.notification.detail.channel_arn
-                );
+            this.logger.debug({ mediaLiveNotification }, "Media Live Notification");
 
-                if (!mediaLiveChannelId) {
-                    this.logger.error(
-                        { mediaLiveChannelArn: mediaLiveNotification.notification.detail.channel_arn },
-                        "Could not parse MediaLive channel resource ID from ARN"
-                    );
-                    return;
+            if (mediaLiveNotification.notification["detail-type"] === "AWS API Call via CloudTrail") {
+                if (mediaLiveNotification.notification.detail.eventName === "UpdateChannel") {
+                    try {
+                        if (mediaLiveNotification.notification.detail.responseElements?.channel?.arn) {
+                            const { resourceId: mediaLiveChannelId } = parseArn(
+                                mediaLiveNotification.notification.detail.responseElements?.channel?.arn
+                            );
+
+                            if (mediaLiveChannelId) {
+                                const destinations =
+                                    mediaLiveNotification.notification.detail.responseElements?.channel?.destinations;
+                                if (destinations) {
+                                    let rtmpOutputUri: string | null = null;
+                                    let rtmpOutputStreamKey: string | null = null;
+                                    const rtmpOutputDestination = destinations.find((x) =>
+                                        x.id?.endsWith("-ExternalRTMP")
+                                    );
+                                    if (
+                                        rtmpOutputDestination &&
+                                        rtmpOutputDestination.settings &&
+                                        rtmpOutputDestination.settings instanceof Array &&
+                                        rtmpOutputDestination.settings.length &&
+                                        rtmpOutputDestination.settings[0].url &&
+                                        rtmpOutputDestination.settings[0].streamName
+                                    ) {
+                                        rtmpOutputUri = rtmpOutputDestination.settings[0].url;
+                                        rtmpOutputStreamKey = rtmpOutputDestination.settings[0].streamName;
+                                    }
+
+                                    await this.channelStackUpdateJobService.setUpdatedChannelConfiguration(
+                                        mediaLiveChannelId,
+                                        rtmpOutputUri,
+                                        rtmpOutputStreamKey,
+                                        rtmpOutputDestination?.id ?? null
+                                    );
+                                    await this.channelStackUpdateJobService.setStatusChannelStackUpdateJobByMediaLiveChannelId(
+                                        mediaLiveChannelId,
+                                        Video_JobStatus_Enum.Completed,
+                                        null
+                                    );
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        this.logger.error(
+                            {
+                                err,
+                                message,
+                            },
+                            "Failed to handle update of channel stack"
+                        );
+                    }
                 }
+            } else if (mediaLiveNotification.notification["detail-type"] === "MediaLive Channel State Change") {
+                if (mediaLiveNotification.notification.detail.state === "RUNNING") {
+                    const { resourceId: mediaLiveChannelId } = parseArn(
+                        mediaLiveNotification.notification.detail.channel_arn
+                    );
 
-                this.logger.info({ mediaLiveChannelId }, "Received notification that MediaLive channel has started");
-                try {
-                    await this.scheduleSyncService.syncChannelOnStartup(mediaLiveChannelId);
-                } catch (err) {
-                    this.logger.error({ err, mediaLiveChannelId }, "Could not sync channel on startup");
+                    if (!mediaLiveChannelId) {
+                        this.logger.error(
+                            { mediaLiveChannelArn: mediaLiveNotification.notification.detail.channel_arn },
+                            "Could not parse MediaLive channel resource ID from ARN"
+                        );
+                        return;
+                    }
+
+                    this.logger.info(
+                        { mediaLiveChannelId },
+                        "Received notification that MediaLive channel has started"
+                    );
+                    try {
+                        await this.scheduleSyncService.syncChannelOnStartup(mediaLiveChannelId);
+                    } catch (err) {
+                        this.logger.error({ err, mediaLiveChannelId }, "Could not sync channel on startup");
+                    }
                 }
             }
         }

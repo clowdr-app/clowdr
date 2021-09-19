@@ -114,6 +114,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
         async (url: string, key: string) => {
             try {
                 if (
+                    !channelStack ||
                     channelStatus?.state === "IDLE" ||
                     confirm("This will stop the ongoing live-stream in this room. Are you sure you wish to continue?")
                 ) {
@@ -220,7 +221,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                         <Text pl={4} fontSize="sm">
                             <chakra.span fontStyle="italic">Status updated at:&nbsp;&nbsp;</chakra.span>
                             <chakra.span>
-                                {!channelStatus?.updatedAt
+                                {channelStatus?.updatedAt
                                     ? new Date(channelStatus.updatedAt).toLocaleString() + " (local time)"
                                     : "UNKNOWN"}
                             </chakra.span>

@@ -5,6 +5,38 @@ import { Content_ElementType_Enum, ElementDataFragment } from "../../../../../ge
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { Element } from "../Element/Element";
 
+export const contentSortOrder = [
+    Content_ElementType_Enum.VideoBroadcast,
+    Content_ElementType_Enum.VideoCountdown,
+    Content_ElementType_Enum.VideoFile,
+    Content_ElementType_Enum.VideoFiller,
+    Content_ElementType_Enum.VideoLink,
+    Content_ElementType_Enum.VideoPrepublish,
+    Content_ElementType_Enum.VideoSponsorsFiller,
+    Content_ElementType_Enum.VideoTitles,
+    Content_ElementType_Enum.Abstract,
+    Content_ElementType_Enum.VideoUrl,
+    Content_ElementType_Enum.LiveProgramRooms,
+    Content_ElementType_Enum.ActiveSocialRooms,
+    Content_ElementType_Enum.Divider,
+    Content_ElementType_Enum.SponsorBooths,
+    Content_ElementType_Enum.Text,
+    Content_ElementType_Enum.PaperFile,
+    Content_ElementType_Enum.PaperLink,
+    Content_ElementType_Enum.PaperUrl,
+    Content_ElementType_Enum.PosterFile,
+    Content_ElementType_Enum.PosterUrl,
+    Content_ElementType_Enum.ImageFile,
+    Content_ElementType_Enum.ImageUrl,
+    Content_ElementType_Enum.Link,
+    Content_ElementType_Enum.LinkButton,
+    Content_ElementType_Enum.Zoom,
+    Content_ElementType_Enum.ContentGroupList,
+    Content_ElementType_Enum.WholeSchedule,
+    Content_ElementType_Enum.ExploreProgramButton,
+    Content_ElementType_Enum.ExploreScheduleButton,
+];
+
 export default function ElementsGridLayout({
     elements,
     textJustification = "flex-start",
@@ -13,38 +45,6 @@ export default function ElementsGridLayout({
     textJustification?: "flex-start" | "center";
 }): JSX.Element {
     const els = useMemo(() => {
-        const contentSortOrder = [
-            Content_ElementType_Enum.Abstract,
-            Content_ElementType_Enum.VideoUrl,
-            Content_ElementType_Enum.LiveProgramRooms,
-            Content_ElementType_Enum.ActiveSocialRooms,
-            Content_ElementType_Enum.Divider,
-            Content_ElementType_Enum.SponsorBooths,
-            Content_ElementType_Enum.Text,
-            Content_ElementType_Enum.PaperFile,
-            Content_ElementType_Enum.PaperLink,
-            Content_ElementType_Enum.PaperUrl,
-            Content_ElementType_Enum.PosterFile,
-            Content_ElementType_Enum.PosterUrl,
-            Content_ElementType_Enum.ImageFile,
-            Content_ElementType_Enum.ImageUrl,
-            Content_ElementType_Enum.Link,
-            Content_ElementType_Enum.LinkButton,
-            Content_ElementType_Enum.VideoBroadcast,
-            Content_ElementType_Enum.VideoCountdown,
-            Content_ElementType_Enum.VideoFile,
-            Content_ElementType_Enum.VideoFiller,
-            Content_ElementType_Enum.VideoLink,
-            Content_ElementType_Enum.VideoPrepublish,
-            Content_ElementType_Enum.VideoSponsorsFiller,
-            Content_ElementType_Enum.VideoTitles,
-            Content_ElementType_Enum.Zoom,
-            Content_ElementType_Enum.ContentGroupList,
-            Content_ElementType_Enum.WholeSchedule,
-            Content_ElementType_Enum.ExploreProgramButton,
-            Content_ElementType_Enum.ExploreScheduleButton,
-        ];
-
         return [...elements]
             .filter((element) => {
                 const layoutBlob = element.layoutData as LayoutDataBlob | undefined;

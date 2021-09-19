@@ -11,12 +11,15 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import * as R from "ramda";
 import React from "react";
 import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
+import { contentSortOrder } from "../../Conference/Attend/Content/Element/ElementsGridLayout";
 import FAIcon from "../../Icons/FAIcon";
+import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
 import RenderElement from "../Elements/RenderElement";
 
@@ -65,7 +68,23 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
         ? itemResponse.data.content_ItemByPersonAccessToken[0]
         : undefined;
     const elements = item
-        ? R.sortWith([(x) => x.layoutData?.priority ?? 200, (x) => x.name ?? "<Unknown>"], item.elements)
+        ? R.sortWith(
+              [
+                  (x, y) =>
+                      maybeCompare<Content_ElementType_Enum>(
+                          x.typeName as Content_ElementType_Enum | null | undefined,
+                          y.typeName as Content_ElementType_Enum | null | undefined,
+                          (a, b) => contentSortOrder.indexOf(a) - contentSortOrder.indexOf(b)
+                      ),
+                  (x, y) =>
+                      maybeCompare(
+                          (x.layoutData as LayoutDataBlob | undefined)?.priority,
+                          (y.layoutData as LayoutDataBlob | undefined)?.priority,
+                          (a, b) => a - b
+                      ),
+              ],
+              item.elements
+          )
         : [];
     return (
         <Center pt={6} w="100%">

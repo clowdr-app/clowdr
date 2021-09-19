@@ -105,6 +105,13 @@ type Mutation {
 }
 
 type Mutation {
+  toggleVonageRecordingState (
+    recordingActive: Boolean!
+    vonageSessionId: String!
+  ): ToggleVonageRecordingStateOutput
+}
+
+type Mutation {
   updateProfilePhoto (
     registrantId: uuid!
     s3URL: String
@@ -192,12 +199,14 @@ type UploaderSendSubmissionRequestResult {
 
 type JoinEventVonageSessionOutput {
   accessToken : String
+  isRecorded : Boolean
 }
 
 type JoinRoomVonageSessionOutput {
   sessionId : String
   accessToken : String
   message : String
+  isRecorded : Boolean
 }
 
 type ProfilePhotoURLResponse {
@@ -297,5 +306,10 @@ type GetSlugOutput {
 
 type MatchingPersonOutput {
   accessToken : String
+}
+
+type ToggleVonageRecordingStateOutput {
+  allowed : Boolean!
+  recordingState : Boolean!
 }
 

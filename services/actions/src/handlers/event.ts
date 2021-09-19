@@ -23,7 +23,12 @@ import {
 import { sendFailureEmail } from "../lib/logging/failureEmails";
 import { createItemVideoChatRoom } from "../lib/room";
 import Vonage from "../lib/vonage/vonageClient";
-import { startEventBroadcast, stopEventBroadcasts } from "../lib/vonage/vonageTools";
+import {
+    startEventBroadcast,
+    startRoomVonageArchiving,
+    stopEventBroadcasts,
+    stopRoomVonageArchiving,
+} from "../lib/vonage/vonageTools";
 import { EventData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
@@ -234,6 +239,8 @@ gql`
             endTime
             conferenceId
             intendedRoomModeName
+            roomId
+            enableRecording
             eventVonageSession {
                 id
                 sessionId
@@ -278,27 +285,32 @@ export async function handleEventStartNotification(
         const preloadMillis = 10000;
         const waitForMillis = Math.max(startTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
+        const roomId = result.data.schedule_Event_by_pk.roomId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
-        setTimeout(async () => {
-            if (![Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
-                // No RTMP broadcast to be started
-                return;
+        setTimeout(() => {
+            if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
+                startEventBroadcast(eventId).catch((e) => {
+                    console.error("Failed to start event broadcast", { eventId, e });
+                });
+            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
+                startRoomVonageArchiving(roomId, eventId).catch((e) => {
+                    console.error("Failed to start event archiving", {
+                        roomId,
+                        eventId,
+                        e,
+                    });
+                });
             }
-
-            await startEventBroadcast(eventId);
         }, waitForMillis);
 
-        setTimeout(async () => {
-            try {
-                await insertChatDuplicationMarkers(eventId, true);
-            } catch (e) {
-                console.error("Failed to insert chat duplication start markers", eventId, e);
-            }
+        setTimeout(() => {
+            insertChatDuplicationMarkers(eventId, true).catch((e) => {
+                console.error("Failed to insert chat duplication start markers", { eventId, e });
+            });
         }, startTimeMillis - nowMillis + 500);
 
         // Used to skip creating duplicate rooms by accident
-        // (I don't trust Apollo cache!)
         const itemsCreatedRoomsFor: string[] = [];
         for (const continuation of result.data.schedule_Event_by_pk.continuations) {
             if (is<ContinuationTo>(continuation.to)) {
@@ -392,13 +404,19 @@ export async function handleEventEndNotification(
         const preloadMillis = 1000;
         const waitForMillis = Math.max(endTimeMillis - nowMillis - preloadMillis, 0);
         const eventId = result.data.schedule_Event_by_pk.id;
+        const roomId = result.data.schedule_Event_by_pk.roomId;
+        const enableRecording = result.data.schedule_Event_by_pk.enableRecording;
         const conferenceId = result.data.schedule_Event_by_pk.conferenceId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
 
         setTimeout(() => {
-            if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
+            if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
                 stopEventBroadcasts(eventId).catch((e) => {
                     console.error("Failed to stop event broadcasts", { eventId, e });
+                });
+            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && enableRecording) {
+                stopRoomVonageArchiving(roomId, eventId).catch((e) => {
+                    console.error("Failed to stop event archiving", { eventId, e });
                 });
             }
 
@@ -413,15 +431,19 @@ export async function handleEventEndNotification(
             });
         }, endTimeMillis - nowMillis - 500);
 
-        const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
-
-        setTimeout(() => {
-            if ([Room_Mode_Enum.Presentation, Room_Mode_Enum.QAndA].includes(intendedRoomModeName)) {
-                createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
-                    console.error("Failed to create MediaPackage harvest job", { eventId, e });
-                });
-            }
-        }, harvestJobWaitForMillis);
+        if (enableRecording) {
+            const harvestJobWaitForMillis = Math.max(endTimeMillis - nowMillis + 5000, 0);
+            setTimeout(() => {
+                if (
+                    intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                    intendedRoomModeName === Room_Mode_Enum.QAndA
+                ) {
+                    createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
+                        console.error("Failed to create MediaPackage harvest job", { eventId, e });
+                    });
+                }
+            }, harvestJobWaitForMillis);
+        }
     } else {
         console.log("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
     }

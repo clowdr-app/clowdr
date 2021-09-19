@@ -120,6 +120,15 @@ Whenever your public URLs change, you will need to do the following:
    (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
    into the Vonage Session Monitoring URL. You can find this in the _Project
    Settings_ for your Vonage Video API project.
+1. You will also need to set the actions URL
+   (`http://<actions-domain>/vonage/archiveMonitoring/<VONAGE_WEBHOOK_SECRET>`)
+   into the Vonage Archive Monitoring URL. You can find this in the _Project
+   Settings_ for your Vonage Video API project.
+
+   When configuring this, you should also input your S3 access key/secret so
+   that Vonage can store the recording in S3. Without this recordings will only
+   be stored temporarily in Vonage and won't be accessible from the app.
+
 1. Reconfigure any local environment variables that point at the URL or
    domain of the frontend, actions service or Hasura service.
 
@@ -573,7 +582,7 @@ If you alter environment config, Docker Compose config, etc., then all tasks mus
 When you log into Clowdr for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Clowdr UI. To create a demo code:
 
 1. Go to the _Data_ tab in the Hasura console.
-2. Open the _conference > DemoCode_ table. 
+2. Open the _conference > DemoCode_ table.
 3. Open the _Insert Row_ tab. Ensure that `id` is set to _Default_ and click _Save_. There is no need to enter any values manually.
 4. A demo code has now been created. Open the _Browse Rows_ tab and find the new row in the table.
 5. Copy the `id` column of the new row. This is your demo code - you can use it to create a conference in the Clowdr UI.

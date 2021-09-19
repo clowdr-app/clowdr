@@ -162,7 +162,17 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                 });
             }
         },
-        [channelStatus?.state, rtmpOutput, rtmpOutputResponse, doDelete, doUpdate, doInsert, roomId, toast]
+        [
+            channelStack,
+            channelStatus?.state,
+            rtmpOutput,
+            rtmpOutputResponse,
+            doDelete,
+            doUpdate,
+            doInsert,
+            roomId,
+            toast,
+        ]
     );
 
     return rtmpOutputResponse.loading && !rtmpOutputResponse.data ? (

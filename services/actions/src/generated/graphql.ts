@@ -717,6 +717,7 @@ export type Int_Comparison_Exp = {
 export type JoinEventVonageSessionOutput = {
   __typename?: 'JoinEventVonageSessionOutput';
   accessToken?: Maybe<Scalars['String']>;
+  isRecorded?: Maybe<Scalars['Boolean']>;
 };
 
 export type JoinRoomChimeSessionOutput = {
@@ -729,6 +730,7 @@ export type JoinRoomChimeSessionOutput = {
 export type JoinRoomVonageSessionOutput = {
   __typename?: 'JoinRoomVonageSessionOutput';
   accessToken?: Maybe<Scalars['String']>;
+  isRecorded?: Maybe<Scalars['Boolean']>;
   message?: Maybe<Scalars['String']>;
   sessionId?: Maybe<Scalars['String']>;
 };
@@ -1011,6 +1013,12 @@ export type SubmitUploadableElementOutput = {
   __typename?: 'SubmitUploadableElementOutput';
   message: Scalars['String'];
   success: Scalars['Boolean'];
+};
+
+export type ToggleVonageRecordingStateOutput = {
+  __typename?: 'ToggleVonageRecordingStateOutput';
+  allowed: Scalars['Boolean'];
+  recordingState: Scalars['Boolean'];
 };
 
 export type UpdateProfilePhotoResponse = {
@@ -13730,6 +13738,289 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
   UpdatedAt = 'updatedAt'
 }
 
+/** columns and relationships of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob = {
+  __typename?: 'job_queues_ChannelStackUpdateJob';
+  /** An object relationship */
+  channelStack: Video_ChannelStack;
+  channelStackId: Scalars['uuid'];
+  cloudFormationStackArn: Scalars['String'];
+  created_at: Scalars['timestamptz'];
+  id: Scalars['uuid'];
+  jobStatusName: Video_JobStatus_Enum;
+  mediaLiveChannelId: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
+  newRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  newRtmpOutputUri?: Maybe<Scalars['String']>;
+  oldRtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  oldRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  oldRtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate = {
+  __typename?: 'job_queues_ChannelStackUpdateJob_aggregate';
+  aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Fields>;
+  nodes: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Fields = {
+  __typename?: 'job_queues_ChannelStackUpdateJob_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Fields>;
+  min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Fields>;
+};
+
+
+/** aggregate fields of "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Job_Queues_ChannelStackUpdateJob_Max_Order_By>;
+  min?: Maybe<Job_Queues_ChannelStackUpdateJob_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input = {
+  data: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "job_queues.ChannelStackUpdateJob". All fields are combined with a logical 'AND'. */
+export type Job_Queues_ChannelStackUpdateJob_Bool_Exp = {
+  _and?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+  _not?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+  _or?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Bool_Exp>>;
+  channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
+  channelStackId?: Maybe<Uuid_Comparison_Exp>;
+  cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+  created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  jobStatusName?: Maybe<Video_JobStatus_Enum_Comparison_Exp>;
+  mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+  message?: Maybe<String_Comparison_Exp>;
+  newRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+  newRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+  oldRtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+  oldRtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+  oldRtmpOutputUri?: Maybe<String_Comparison_Exp>;
+  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Constraint {
+  /** unique or primary key constraint */
+  ChannelStackUpdateJobPkey = 'ChannelStackUpdateJob_pkey'
+}
+
+/** input type for inserting data into table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Insert_Input = {
+  channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
+  channelStackId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  jobStatusName?: Maybe<Video_JobStatus_Enum>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  newRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  newRtmpOutputUri?: Maybe<Scalars['String']>;
+  oldRtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  oldRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  oldRtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Job_Queues_ChannelStackUpdateJob_Max_Fields = {
+  __typename?: 'job_queues_ChannelStackUpdateJob_max_fields';
+  channelStackId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  newRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  newRtmpOutputUri?: Maybe<Scalars['String']>;
+  oldRtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  oldRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  oldRtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Max_Order_By = {
+  channelStackId?: Maybe<Order_By>;
+  cloudFormationStackArn?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  mediaLiveChannelId?: Maybe<Order_By>;
+  message?: Maybe<Order_By>;
+  newRtmpOutputStreamKey?: Maybe<Order_By>;
+  newRtmpOutputUri?: Maybe<Order_By>;
+  oldRtmpOutputDestinationId?: Maybe<Order_By>;
+  oldRtmpOutputStreamKey?: Maybe<Order_By>;
+  oldRtmpOutputUri?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Job_Queues_ChannelStackUpdateJob_Min_Fields = {
+  __typename?: 'job_queues_ChannelStackUpdateJob_min_fields';
+  channelStackId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  newRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  newRtmpOutputUri?: Maybe<Scalars['String']>;
+  oldRtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  oldRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  oldRtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Min_Order_By = {
+  channelStackId?: Maybe<Order_By>;
+  cloudFormationStackArn?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  mediaLiveChannelId?: Maybe<Order_By>;
+  message?: Maybe<Order_By>;
+  newRtmpOutputStreamKey?: Maybe<Order_By>;
+  newRtmpOutputUri?: Maybe<Order_By>;
+  oldRtmpOutputDestinationId?: Maybe<Order_By>;
+  oldRtmpOutputStreamKey?: Maybe<Order_By>;
+  oldRtmpOutputUri?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Mutation_Response = {
+  __typename?: 'job_queues_ChannelStackUpdateJob_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Job_Queues_ChannelStackUpdateJob>;
+};
+
+/** on conflict condition type for table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_On_Conflict = {
+  constraint: Job_Queues_ChannelStackUpdateJob_Constraint;
+  update_columns?: Array<Job_Queues_ChannelStackUpdateJob_Update_Column>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "job_queues.ChannelStackUpdateJob". */
+export type Job_Queues_ChannelStackUpdateJob_Order_By = {
+  channelStack?: Maybe<Video_ChannelStack_Order_By>;
+  channelStackId?: Maybe<Order_By>;
+  cloudFormationStackArn?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  jobStatusName?: Maybe<Order_By>;
+  mediaLiveChannelId?: Maybe<Order_By>;
+  message?: Maybe<Order_By>;
+  newRtmpOutputStreamKey?: Maybe<Order_By>;
+  newRtmpOutputUri?: Maybe<Order_By>;
+  oldRtmpOutputDestinationId?: Maybe<Order_By>;
+  oldRtmpOutputStreamKey?: Maybe<Order_By>;
+  oldRtmpOutputUri?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: job_queues_ChannelStackUpdateJob */
+export type Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Select_Column {
+  /** column name */
+  ChannelStackId = 'channelStackId',
+  /** column name */
+  CloudFormationStackArn = 'cloudFormationStackArn',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  NewRtmpOutputStreamKey = 'newRtmpOutputStreamKey',
+  /** column name */
+  NewRtmpOutputUri = 'newRtmpOutputUri',
+  /** column name */
+  OldRtmpOutputDestinationId = 'oldRtmpOutputDestinationId',
+  /** column name */
+  OldRtmpOutputStreamKey = 'oldRtmpOutputStreamKey',
+  /** column name */
+  OldRtmpOutputUri = 'oldRtmpOutputUri',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "job_queues.ChannelStackUpdateJob" */
+export type Job_Queues_ChannelStackUpdateJob_Set_Input = {
+  channelStackId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  jobStatusName?: Maybe<Video_JobStatus_Enum>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  newRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  newRtmpOutputUri?: Maybe<Scalars['String']>;
+  oldRtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  oldRtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  oldRtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "job_queues.ChannelStackUpdateJob" */
+export enum Job_Queues_ChannelStackUpdateJob_Update_Column {
+  /** column name */
+  ChannelStackId = 'channelStackId',
+  /** column name */
+  CloudFormationStackArn = 'cloudFormationStackArn',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  JobStatusName = 'jobStatusName',
+  /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  NewRtmpOutputStreamKey = 'newRtmpOutputStreamKey',
+  /** column name */
+  NewRtmpOutputUri = 'newRtmpOutputUri',
+  /** column name */
+  OldRtmpOutputDestinationId = 'oldRtmpOutputDestinationId',
+  /** column name */
+  OldRtmpOutputStreamKey = 'oldRtmpOutputStreamKey',
+  /** column name */
+  OldRtmpOutputUri = 'oldRtmpOutputUri',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "job_queues.CombineVideosJob" */
 export type Job_Queues_CombineVideosJob = {
   __typename?: 'job_queues_CombineVideosJob';
@@ -15465,6 +15756,10 @@ export type Mutation_Root = {
   delete_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.ChannelStackDeleteJob" */
   delete_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+  /** delete data from the table: "job_queues.ChannelStackUpdateJob" */
+  delete_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+  /** delete single row from the table: "job_queues.ChannelStackUpdateJob" */
+  delete_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
   /** delete data from the table: "job_queues.CombineVideosJob" */
   delete_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** delete single row from the table: "job_queues.CombineVideosJob" */
@@ -15533,6 +15828,10 @@ export type Mutation_Root = {
   delete_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** delete single row from the table: "registrant.Registrant" */
   delete_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** delete data from the table: "registrant.SavedVonageRoomRecording" */
+  delete_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** delete single row from the table: "registrant.SavedVonageRoomRecording" */
+  delete_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** delete data from the table: "room.Backend" */
   delete_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** delete single row from the table: "room.Backend" */
@@ -15615,6 +15914,8 @@ export type Mutation_Root = {
   delete_system_Configuration_by_pk?: Maybe<System_Configuration>;
   /** delete data from the table: "video.ChannelStack" */
   delete_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+  /** delete data from the table: "video.ChannelStackWithStreamKey" */
+  delete_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
   /** delete single row from the table: "video.ChannelStack" */
   delete_video_ChannelStack_by_pk?: Maybe<Video_ChannelStack>;
   /** delete data from the table: "video.EventParticipantStream" */
@@ -15657,6 +15958,10 @@ export type Mutation_Root = {
   delete_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "video.VideoRenderJob" */
   delete_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** delete data from the table: "video.VonageRoomRecording" */
+  delete_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** delete single row from the table: "video.VonageRoomRecording" */
+  delete_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** delete data from the table: "video.YouTubeUpload" */
   delete_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** delete single row from the table: "video.YouTubeUpload" */
@@ -15842,6 +16147,10 @@ export type Mutation_Root = {
   insert_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.ChannelStackDeleteJob" */
   insert_job_queues_ChannelStackDeleteJob_one?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+  /** insert data into the table: "job_queues.ChannelStackUpdateJob" */
+  insert_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+  /** insert a single row into the table: "job_queues.ChannelStackUpdateJob" */
+  insert_job_queues_ChannelStackUpdateJob_one?: Maybe<Job_Queues_ChannelStackUpdateJob>;
   /** insert data into the table: "job_queues.CombineVideosJob" */
   insert_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** insert a single row into the table: "job_queues.CombineVideosJob" */
@@ -15910,6 +16219,10 @@ export type Mutation_Root = {
   insert_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** insert a single row into the table: "registrant.Registrant" */
   insert_registrant_Registrant_one?: Maybe<Registrant_Registrant>;
+  /** insert data into the table: "registrant.SavedVonageRoomRecording" */
+  insert_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** insert a single row into the table: "registrant.SavedVonageRoomRecording" */
+  insert_registrant_SavedVonageRoomRecording_one?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** insert data into the table: "room.Backend" */
   insert_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** insert a single row into the table: "room.Backend" */
@@ -15992,6 +16305,10 @@ export type Mutation_Root = {
   insert_system_Configuration_one?: Maybe<System_Configuration>;
   /** insert data into the table: "video.ChannelStack" */
   insert_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+  /** insert data into the table: "video.ChannelStackWithStreamKey" */
+  insert_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
+  /** insert a single row into the table: "video.ChannelStackWithStreamKey" */
+  insert_video_ChannelStackWithStreamKey_one?: Maybe<Video_ChannelStackWithStreamKey>;
   /** insert a single row into the table: "video.ChannelStack" */
   insert_video_ChannelStack_one?: Maybe<Video_ChannelStack>;
   /** insert data into the table: "video.EventParticipantStream" */
@@ -16034,6 +16351,10 @@ export type Mutation_Root = {
   insert_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "video.VideoRenderJob" */
   insert_video_VideoRenderJob_one?: Maybe<Video_VideoRenderJob>;
+  /** insert data into the table: "video.VonageRoomRecording" */
+  insert_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** insert a single row into the table: "video.VonageRoomRecording" */
+  insert_video_VonageRoomRecording_one?: Maybe<Video_VonageRoomRecording>;
   /** insert data into the table: "video.YouTubeUpload" */
   insert_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** insert a single row into the table: "video.YouTubeUpload" */
@@ -16048,6 +16369,7 @@ export type Mutation_Root = {
   stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
+  toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
   updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Email" */
@@ -16214,6 +16536,10 @@ export type Mutation_Root = {
   update_job_queues_ChannelStackDeleteJob?: Maybe<Job_Queues_ChannelStackDeleteJob_Mutation_Response>;
   /** update single row of the table: "job_queues.ChannelStackDeleteJob" */
   update_job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+  /** update data of the table: "job_queues.ChannelStackUpdateJob" */
+  update_job_queues_ChannelStackUpdateJob?: Maybe<Job_Queues_ChannelStackUpdateJob_Mutation_Response>;
+  /** update single row of the table: "job_queues.ChannelStackUpdateJob" */
+  update_job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
   /** update data of the table: "job_queues.CombineVideosJob" */
   update_job_queues_CombineVideosJob?: Maybe<Job_Queues_CombineVideosJob_Mutation_Response>;
   /** update single row of the table: "job_queues.CombineVideosJob" */
@@ -16282,6 +16608,10 @@ export type Mutation_Root = {
   update_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** update single row of the table: "registrant.Registrant" */
   update_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** update data of the table: "registrant.SavedVonageRoomRecording" */
+  update_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** update single row of the table: "registrant.SavedVonageRoomRecording" */
+  update_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** update data of the table: "room.Backend" */
   update_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** update single row of the table: "room.Backend" */
@@ -16364,6 +16694,8 @@ export type Mutation_Root = {
   update_system_Configuration_by_pk?: Maybe<System_Configuration>;
   /** update data of the table: "video.ChannelStack" */
   update_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+  /** update data of the table: "video.ChannelStackWithStreamKey" */
+  update_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
   /** update single row of the table: "video.ChannelStack" */
   update_video_ChannelStack_by_pk?: Maybe<Video_ChannelStack>;
   /** update data of the table: "video.EventParticipantStream" */
@@ -16406,6 +16738,10 @@ export type Mutation_Root = {
   update_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "video.VideoRenderJob" */
   update_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** update data of the table: "video.VonageRoomRecording" */
+  update_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** update single row of the table: "video.VonageRoomRecording" */
+  update_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** update data of the table: "video.YouTubeUpload" */
   update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** update single row of the table: "video.YouTubeUpload" */
@@ -16924,6 +17260,18 @@ export type Mutation_RootDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJobArgs = {
+  where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Job_Queues_CombineVideosJobArgs = {
   where: Job_Queues_CombineVideosJob_Bool_Exp;
 };
@@ -17123,6 +17471,18 @@ export type Mutation_RootDelete_Registrant_RegistrantArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Registrant_Registrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecordingArgs = {
+  where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -17374,6 +17734,12 @@ export type Mutation_RootDelete_Video_ChannelStackArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Video_ChannelStackWithStreamKeyArgs = {
+  where: Video_ChannelStackWithStreamKey_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Video_ChannelStack_By_PkArgs = {
   id: Scalars['uuid'];
 };
@@ -17495,6 +17861,18 @@ export type Mutation_RootDelete_Video_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecordingArgs = {
+  where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18133,6 +18511,20 @@ export type Mutation_RootInsert_Job_Queues_ChannelStackDeleteJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJobArgs = {
+  objects: Array<Job_Queues_ChannelStackUpdateJob_Insert_Input>;
+  on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Job_Queues_ChannelStackUpdateJob_OneArgs = {
+  object: Job_Queues_ChannelStackUpdateJob_Insert_Input;
+  on_conflict?: Maybe<Job_Queues_ChannelStackUpdateJob_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Job_Queues_CombineVideosJobArgs = {
   objects: Array<Job_Queues_CombineVideosJob_Insert_Input>;
   on_conflict?: Maybe<Job_Queues_CombineVideosJob_On_Conflict>;
@@ -18367,6 +18759,20 @@ export type Mutation_RootInsert_Registrant_RegistrantArgs = {
 export type Mutation_RootInsert_Registrant_Registrant_OneArgs = {
   object: Registrant_Registrant_Insert_Input;
   on_conflict?: Maybe<Registrant_Registrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecordingArgs = {
+  objects: Array<Registrant_SavedVonageRoomRecording_Insert_Input>;
+  on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecording_OneArgs = {
+  object: Registrant_SavedVonageRoomRecording_Insert_Input;
+  on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
 };
 
 
@@ -18658,6 +19064,18 @@ export type Mutation_RootInsert_Video_ChannelStackArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Video_ChannelStackWithStreamKeyArgs = {
+  objects: Array<Video_ChannelStackWithStreamKey_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_ChannelStackWithStreamKey_OneArgs = {
+  object: Video_ChannelStackWithStreamKey_Insert_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Video_ChannelStack_OneArgs = {
   object: Video_ChannelStack_Insert_Input;
   on_conflict?: Maybe<Video_ChannelStack_On_Conflict>;
@@ -18805,6 +19223,20 @@ export type Mutation_RootInsert_Video_VideoRenderJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecordingArgs = {
+  objects: Array<Video_VonageRoomRecording_Insert_Input>;
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecording_OneArgs = {
+  object: Video_VonageRoomRecording_Insert_Input;
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Video_YouTubeUploadArgs = {
   objects: Array<Video_YouTubeUpload_Insert_Input>;
   on_conflict?: Maybe<Video_YouTubeUpload_On_Conflict>;
@@ -18872,6 +19304,13 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 export type Mutation_RootSubmitUploadableElementArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootToggleVonageRecordingStateArgs = {
+  recordingActive: Scalars['Boolean'];
+  vonageSessionId: Scalars['String'];
 };
 
 
@@ -19578,6 +20017,20 @@ export type Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJobArgs = {
+  _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+  where: Job_Queues_ChannelStackUpdateJob_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJob_By_PkArgs = {
+  _set?: Maybe<Job_Queues_ChannelStackUpdateJob_Set_Input>;
+  pk_columns: Job_Queues_ChannelStackUpdateJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Job_Queues_CombineVideosJobArgs = {
   _append?: Maybe<Job_Queues_CombineVideosJob_Append_Input>;
   _delete_at_path?: Maybe<Job_Queues_CombineVideosJob_Delete_At_Path_Input>;
@@ -19876,6 +20329,20 @@ export type Mutation_RootUpdate_Registrant_RegistrantArgs = {
 export type Mutation_RootUpdate_Registrant_Registrant_By_PkArgs = {
   _set?: Maybe<Registrant_Registrant_Set_Input>;
   pk_columns: Registrant_Registrant_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecordingArgs = {
+  _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+  where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecording_By_PkArgs = {
+  _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+  pk_columns: Registrant_SavedVonageRoomRecording_Pk_Columns_Input;
 };
 
 
@@ -20209,6 +20676,13 @@ export type Mutation_RootUpdate_Video_ChannelStackArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_ChannelStackWithStreamKeyArgs = {
+  _set?: Maybe<Video_ChannelStackWithStreamKey_Set_Input>;
+  where: Video_ChannelStackWithStreamKey_Bool_Exp;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_ChannelStack_By_PkArgs = {
   _set?: Maybe<Video_ChannelStack_Set_Input>;
   pk_columns: Video_ChannelStack_Pk_Columns_Input;
@@ -20386,6 +20860,20 @@ export type Mutation_RootUpdate_Video_VideoRenderJob_By_PkArgs = {
   _prepend?: Maybe<Video_VideoRenderJob_Prepend_Input>;
   _set?: Maybe<Video_VideoRenderJob_Set_Input>;
   pk_columns: Video_VideoRenderJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecordingArgs = {
+  _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+  where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecording_By_PkArgs = {
+  _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+  pk_columns: Video_VonageRoomRecording_Pk_Columns_Input;
 };
 
 
@@ -21982,6 +22470,12 @@ export type Query_Root = {
   job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
   /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
   job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+  /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+  job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+  /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+  job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+  /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+  job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
   /** fetch data from the table: "job_queues.CombineVideosJob" */
   job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
   /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -22089,6 +22583,12 @@ export type Query_Root = {
   registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
   /** fetch data from the table: "registrant.Registrant" using primary key columns */
   registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+  registrant_SavedVonageRoomRecording: Array<Registrant_SavedVonageRoomRecording>;
+  /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+  registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+  registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** fetch data from the table: "room.Backend" */
   room_Backend: Array<Room_Backend>;
   /** fetch aggregated fields from the table: "room.Backend" */
@@ -22224,6 +22724,10 @@ export type Query_Root = {
   vapidPublicKey: VapidPublicKeyOutput;
   /** fetch data from the table: "video.ChannelStack" */
   video_ChannelStack: Array<Video_ChannelStack>;
+  /** fetch data from the table: "video.ChannelStackWithStreamKey" */
+  video_ChannelStackWithStreamKey: Array<Video_ChannelStackWithStreamKey>;
+  /** fetch aggregated fields from the table: "video.ChannelStackWithStreamKey" */
+  video_ChannelStackWithStreamKey_aggregate: Video_ChannelStackWithStreamKey_Aggregate;
   /** fetch aggregated fields from the table: "video.ChannelStack" */
   video_ChannelStack_aggregate: Video_ChannelStack_Aggregate;
   /** fetch data from the table: "video.ChannelStack" using primary key columns */
@@ -22288,6 +22792,12 @@ export type Query_Root = {
   video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
   /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
   video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** fetch data from the table: "video.VonageRoomRecording" */
+  video_VonageRoomRecording: Array<Video_VonageRoomRecording>;
+  /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+  video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+  /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+  video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** fetch data from the table: "video.YouTubeUpload" */
   video_YouTubeUpload: Array<Video_YouTubeUpload>;
   /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -23479,6 +23989,29 @@ export type Query_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
 };
 
 
+export type Query_RootJob_Queues_ChannelStackUpdateJobArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+export type Query_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootJob_Queues_CombineVideosJobArgs = {
   distinct_on?: Maybe<Array<Job_Queues_CombineVideosJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -23884,6 +24417,29 @@ export type Query_RootRegistrant_Registrant_AggregateArgs = {
 
 
 export type Query_RootRegistrant_Registrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootRegistrant_SavedVonageRoomRecordingArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -24413,6 +24969,24 @@ export type Query_RootVideo_ChannelStackArgs = {
 };
 
 
+export type Query_RootVideo_ChannelStackWithStreamKeyArgs = {
+  distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+  where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_ChannelStackWithStreamKey_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+  where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+
 export type Query_RootVideo_ChannelStack_AggregateArgs = {
   distinct_on?: Maybe<Array<Video_ChannelStack_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -24653,6 +25227,29 @@ export type Query_RootVideo_VideoRenderJob_AggregateArgs = {
 
 
 export type Query_RootVideo_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootVideo_VonageRoomRecordingArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_VonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -26055,6 +26652,205 @@ export enum Registrant_Registrant_Update_Column {
   UserId = 'userId'
 }
 
+/** columns and relationships of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording = {
+  __typename?: 'registrant_SavedVonageRoomRecording';
+  created_at: Scalars['timestamptz'];
+  id: Scalars['uuid'];
+  isHidden: Scalars['Boolean'];
+  /** An object relationship */
+  recording: Video_VonageRoomRecording;
+  recordingId: Scalars['uuid'];
+  /** An object relationship */
+  registrant: Registrant_Registrant;
+  registrantId: Scalars['uuid'];
+  updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate = {
+  __typename?: 'registrant_SavedVonageRoomRecording_aggregate';
+  aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Fields>;
+  nodes: Array<Registrant_SavedVonageRoomRecording>;
+};
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Fields = {
+  __typename?: 'registrant_SavedVonageRoomRecording_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Fields>;
+  min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Fields>;
+};
+
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Order_By>;
+  min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input = {
+  data: Array<Registrant_SavedVonageRoomRecording_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "registrant.SavedVonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Registrant_SavedVonageRoomRecording_Bool_Exp = {
+  _and?: Maybe<Array<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+  _not?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+  _or?: Maybe<Array<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+  created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  isHidden?: Maybe<Boolean_Comparison_Exp>;
+  recording?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+  recordingId?: Maybe<Uuid_Comparison_Exp>;
+  registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+  registrantId?: Maybe<Uuid_Comparison_Exp>;
+  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Constraint {
+  /** unique or primary key constraint */
+  SavedVonageRoomRecordingPkey = 'SavedVonageRoomRecording_pkey',
+  /** unique or primary key constraint */
+  SavedVonageRoomRecordingRecordingIdRegistrantIdKey = 'SavedVonageRoomRecording_recordingId_registrantId_key'
+}
+
+/** input type for inserting data into table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Insert_Input = {
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  recording?: Maybe<Video_VonageRoomRecording_Obj_Rel_Insert_Input>;
+  recordingId?: Maybe<Scalars['uuid']>;
+  registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  registrantId?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Registrant_SavedVonageRoomRecording_Max_Fields = {
+  __typename?: 'registrant_SavedVonageRoomRecording_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  recordingId?: Maybe<Scalars['uuid']>;
+  registrantId?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Max_Order_By = {
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  recordingId?: Maybe<Order_By>;
+  registrantId?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Registrant_SavedVonageRoomRecording_Min_Fields = {
+  __typename?: 'registrant_SavedVonageRoomRecording_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  recordingId?: Maybe<Scalars['uuid']>;
+  registrantId?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Min_Order_By = {
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  recordingId?: Maybe<Order_By>;
+  registrantId?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Mutation_Response = {
+  __typename?: 'registrant_SavedVonageRoomRecording_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Registrant_SavedVonageRoomRecording>;
+};
+
+/** on conflict condition type for table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_On_Conflict = {
+  constraint: Registrant_SavedVonageRoomRecording_Constraint;
+  update_columns?: Array<Registrant_SavedVonageRoomRecording_Update_Column>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "registrant.SavedVonageRoomRecording". */
+export type Registrant_SavedVonageRoomRecording_Order_By = {
+  created_at?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  isHidden?: Maybe<Order_By>;
+  recording?: Maybe<Video_VonageRoomRecording_Order_By>;
+  recordingId?: Maybe<Order_By>;
+  registrant?: Maybe<Registrant_Registrant_Order_By>;
+  registrantId?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: registrant_SavedVonageRoomRecording */
+export type Registrant_SavedVonageRoomRecording_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
+  RecordingId = 'recordingId',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Set_Input = {
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  recordingId?: Maybe<Scalars['uuid']>;
+  registrantId?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
+  RecordingId = 'recordingId',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
   __typename?: 'room_Backend';
@@ -27277,6 +28073,8 @@ export type Room_Room = {
   /** An aggregate relationship */
   channelStackCreateJobs_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
   /** An object relationship */
+  channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey>;
+  /** An object relationship */
   chat?: Maybe<Chat_Chat>;
   chatId?: Maybe<Scalars['uuid']>;
   /** An object relationship */
@@ -27336,6 +28134,10 @@ export type Room_Room = {
   /** An aggregate relationship */
   stats_aggregate: Analytics_RoomStats_Aggregate;
   updated_at: Scalars['timestamptz'];
+  /** An array relationship */
+  vonageRecordings: Array<Video_VonageRoomRecording>;
+  /** An aggregate relationship */
+  vonageRecordings_aggregate: Video_VonageRoomRecording_Aggregate;
 };
 
 
@@ -27476,6 +28278,26 @@ export type Room_RoomStats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Analytics_RoomStats_Order_By>>;
   where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordingsArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordings_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** columns and relationships of "room.RoomPerson" */
@@ -27756,6 +28578,7 @@ export type Room_Room_Bool_Exp = {
   capacity?: Maybe<Int_Comparison_Exp>;
   channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
   channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+  channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
   chat?: Maybe<Chat_Chat_Bool_Exp>;
   chatId?: Maybe<Uuid_Comparison_Exp>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
@@ -27787,6 +28610,7 @@ export type Room_Room_Bool_Exp = {
   shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  vonageRecordings?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Room" */
@@ -27809,6 +28633,7 @@ export type Room_Room_Insert_Input = {
   capacity?: Maybe<Scalars['Int']>;
   channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
   channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input>;
+  channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Obj_Rel_Insert_Input>;
   chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
   chatId?: Maybe<Scalars['uuid']>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
@@ -27839,6 +28664,7 @@ export type Room_Room_Insert_Input = {
   shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+  vonageRecordings?: Maybe<Video_VonageRoomRecording_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -27940,6 +28766,7 @@ export type Room_Room_Order_By = {
   capacity?: Maybe<Order_By>;
   channelStack?: Maybe<Video_ChannelStack_Order_By>;
   channelStackCreateJobs_aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Order_By>;
+  channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Order_By>;
   chat?: Maybe<Chat_Chat_Order_By>;
   chatId?: Maybe<Order_By>;
   chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
@@ -27971,6 +28798,7 @@ export type Room_Room_Order_By = {
   shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
   updated_at?: Maybe<Order_By>;
+  vonageRecordings_aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Room */
@@ -29986,6 +30814,7 @@ export type Schedule_Event = {
   continuations_aggregate: Schedule_Continuation_Aggregate;
   createdAt: Scalars['timestamptz'];
   durationSeconds: Scalars['Int'];
+  enableRecording: Scalars['Boolean'];
   endTime?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
   eventPeople: Array<Schedule_EventProgramPerson>;
@@ -30712,6 +31541,7 @@ export type Schedule_Event_Bool_Exp = {
   continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   durationSeconds?: Maybe<Int_Comparison_Exp>;
+  enableRecording?: Maybe<Boolean_Comparison_Exp>;
   endTime?: Maybe<Timestamptz_Comparison_Exp>;
   eventPeople?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
   eventTags?: Maybe<Schedule_EventTag_Bool_Exp>;
@@ -30754,6 +31584,7 @@ export type Schedule_Event_Insert_Input = {
   continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   durationSeconds?: Maybe<Scalars['Int']>;
+  enableRecording?: Maybe<Scalars['Boolean']>;
   endTime?: Maybe<Scalars['timestamptz']>;
   eventPeople?: Maybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
   eventTags?: Maybe<Schedule_EventTag_Arr_Rel_Insert_Input>;
@@ -30882,6 +31713,7 @@ export type Schedule_Event_Order_By = {
   continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
   createdAt?: Maybe<Order_By>;
   durationSeconds?: Maybe<Order_By>;
+  enableRecording?: Maybe<Order_By>;
   endTime?: Maybe<Order_By>;
   eventPeople_aggregate?: Maybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
   eventTags_aggregate?: Maybe<Schedule_EventTag_Aggregate_Order_By>;
@@ -30920,6 +31752,8 @@ export enum Schedule_Event_Select_Column {
   /** column name */
   DurationSeconds = 'durationSeconds',
   /** column name */
+  EnableRecording = 'enableRecording',
+  /** column name */
   EndTime = 'endTime',
   /** column name */
   ExhibitionId = 'exhibitionId',
@@ -30950,6 +31784,7 @@ export type Schedule_Event_Set_Input = {
   conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   durationSeconds?: Maybe<Scalars['Int']>;
+  enableRecording?: Maybe<Scalars['Boolean']>;
   endTime?: Maybe<Scalars['timestamptz']>;
   exhibitionId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
@@ -31016,6 +31851,8 @@ export enum Schedule_Event_Update_Column {
   CreatedAt = 'createdAt',
   /** column name */
   DurationSeconds = 'durationSeconds',
+  /** column name */
+  EnableRecording = 'enableRecording',
   /** column name */
   EndTime = 'endTime',
   /** column name */
@@ -31615,6 +32452,12 @@ export type Subscription_Root = {
   job_queues_ChannelStackDeleteJob_aggregate: Job_Queues_ChannelStackDeleteJob_Aggregate;
   /** fetch data from the table: "job_queues.ChannelStackDeleteJob" using primary key columns */
   job_queues_ChannelStackDeleteJob_by_pk?: Maybe<Job_Queues_ChannelStackDeleteJob>;
+  /** fetch data from the table: "job_queues.ChannelStackUpdateJob" */
+  job_queues_ChannelStackUpdateJob: Array<Job_Queues_ChannelStackUpdateJob>;
+  /** fetch aggregated fields from the table: "job_queues.ChannelStackUpdateJob" */
+  job_queues_ChannelStackUpdateJob_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+  /** fetch data from the table: "job_queues.ChannelStackUpdateJob" using primary key columns */
+  job_queues_ChannelStackUpdateJob_by_pk?: Maybe<Job_Queues_ChannelStackUpdateJob>;
   /** fetch data from the table: "job_queues.CombineVideosJob" */
   job_queues_CombineVideosJob: Array<Job_Queues_CombineVideosJob>;
   /** fetch aggregated fields from the table: "job_queues.CombineVideosJob" */
@@ -31721,6 +32564,12 @@ export type Subscription_Root = {
   registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
   /** fetch data from the table: "registrant.Registrant" using primary key columns */
   registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+  registrant_SavedVonageRoomRecording: Array<Registrant_SavedVonageRoomRecording>;
+  /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+  registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+  registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** fetch data from the table: "room.Backend" */
   room_Backend: Array<Room_Backend>;
   /** fetch aggregated fields from the table: "room.Backend" */
@@ -31855,6 +32704,10 @@ export type Subscription_Root = {
   system_Configuration_by_pk?: Maybe<System_Configuration>;
   /** fetch data from the table: "video.ChannelStack" */
   video_ChannelStack: Array<Video_ChannelStack>;
+  /** fetch data from the table: "video.ChannelStackWithStreamKey" */
+  video_ChannelStackWithStreamKey: Array<Video_ChannelStackWithStreamKey>;
+  /** fetch aggregated fields from the table: "video.ChannelStackWithStreamKey" */
+  video_ChannelStackWithStreamKey_aggregate: Video_ChannelStackWithStreamKey_Aggregate;
   /** fetch aggregated fields from the table: "video.ChannelStack" */
   video_ChannelStack_aggregate: Video_ChannelStack_Aggregate;
   /** fetch data from the table: "video.ChannelStack" using primary key columns */
@@ -31919,6 +32772,12 @@ export type Subscription_Root = {
   video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
   /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
   video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** fetch data from the table: "video.VonageRoomRecording" */
+  video_VonageRoomRecording: Array<Video_VonageRoomRecording>;
+  /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+  video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+  /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+  video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** fetch data from the table: "video.YouTubeUpload" */
   video_YouTubeUpload: Array<Video_YouTubeUpload>;
   /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -33093,6 +33952,29 @@ export type Subscription_RootJob_Queues_ChannelStackDeleteJob_By_PkArgs = {
 };
 
 
+export type Subscription_RootJob_Queues_ChannelStackUpdateJobArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_AggregateArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+export type Subscription_RootJob_Queues_ChannelStackUpdateJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootJob_Queues_CombineVideosJobArgs = {
   distinct_on?: Maybe<Array<Job_Queues_CombineVideosJob_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -33498,6 +34380,29 @@ export type Subscription_RootRegistrant_Registrant_AggregateArgs = {
 
 
 export type Subscription_RootRegistrant_Registrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecordingArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -34027,6 +34932,24 @@ export type Subscription_RootVideo_ChannelStackArgs = {
 };
 
 
+export type Subscription_RootVideo_ChannelStackWithStreamKeyArgs = {
+  distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+  where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_ChannelStackWithStreamKey_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+  where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+
 export type Subscription_RootVideo_ChannelStack_AggregateArgs = {
   distinct_on?: Maybe<Array<Video_ChannelStack_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -34267,6 +35190,29 @@ export type Subscription_RootVideo_VideoRenderJob_AggregateArgs = {
 
 
 export type Subscription_RootVideo_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecordingArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -34648,6 +35594,10 @@ export type Video_ChannelStack = {
   /** An object relationship */
   channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob>;
   channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  channelStackUpdateJobs: Array<Job_Queues_ChannelStackUpdateJob>;
+  /** An aggregate relationship */
+  channelStackUpdateJobs_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
   cloudFormationStackArn?: Maybe<Scalars['String']>;
   cloudFrontDistributionId: Scalars['String'];
   cloudFrontDomain: Scalars['String'];
@@ -34673,7 +35623,357 @@ export type Video_ChannelStack = {
   rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
   rtmpBInputId?: Maybe<Scalars['String']>;
   rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
   updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobsArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+/** columns and relationships of "video.ChannelStack" */
+export type Video_ChannelStackChannelStackUpdateJobs_AggregateArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey = {
+  __typename?: 'video_ChannelStackWithStreamKey';
+  channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  /** An array relationship */
+  channelStackUpdateJobs: Array<Job_Queues_ChannelStackUpdateJob>;
+  /** An aggregate relationship */
+  channelStackUpdateJobs_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  cloudFrontDomain?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  conference?: Maybe<Conference_Conference>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpointUri?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus>;
+  mediaPackageChannelId?: Maybe<Scalars['String']>;
+  mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mp4InputId?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpAInputId?: Maybe<Scalars['String']>;
+  rtmpAInputUri?: Maybe<Scalars['String']>;
+  rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpBInputId?: Maybe<Scalars['String']>;
+  rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKeyChannelStackUpdateJobsArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKeyChannelStackUpdateJobs_AggregateArgs = {
+  distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+  where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** aggregated selection of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate = {
+  __typename?: 'video_ChannelStackWithStreamKey_aggregate';
+  aggregate?: Maybe<Video_ChannelStackWithStreamKey_Aggregate_Fields>;
+  nodes: Array<Video_ChannelStackWithStreamKey>;
+};
+
+/** aggregate fields of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate_Fields = {
+  __typename?: 'video_ChannelStackWithStreamKey_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Video_ChannelStackWithStreamKey_Max_Fields>;
+  min?: Maybe<Video_ChannelStackWithStreamKey_Min_Fields>;
+};
+
+
+/** aggregate fields of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "video.ChannelStackWithStreamKey". All fields are combined with a logical 'AND'. */
+export type Video_ChannelStackWithStreamKey_Bool_Exp = {
+  _and?: Maybe<Array<Video_ChannelStackWithStreamKey_Bool_Exp>>;
+  _not?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+  _or?: Maybe<Array<Video_ChannelStackWithStreamKey_Bool_Exp>>;
+  channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+  channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+  cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+  cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
+  cloudFrontDomain?: Maybe<String_Comparison_Exp>;
+  conference?: Maybe<Conference_Conference_Bool_Exp>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  endpointUri?: Maybe<String_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  loopingMp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
+  mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+  mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Bool_Exp>;
+  mediaPackageChannelId?: Maybe<String_Comparison_Exp>;
+  mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
+  mp4InputId?: Maybe<String_Comparison_Exp>;
+  roomId?: Maybe<Uuid_Comparison_Exp>;
+  rtmpAInputAttachmentName?: Maybe<String_Comparison_Exp>;
+  rtmpAInputId?: Maybe<String_Comparison_Exp>;
+  rtmpAInputUri?: Maybe<String_Comparison_Exp>;
+  rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
+  rtmpBInputId?: Maybe<String_Comparison_Exp>;
+  rtmpBInputUri?: Maybe<String_Comparison_Exp>;
+  rtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+  rtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+  rtmpOutputUri?: Maybe<String_Comparison_Exp>;
+  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Insert_Input = {
+  channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  cloudFrontDomain?: Maybe<Scalars['String']>;
+  conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpointUri?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Obj_Rel_Insert_Input>;
+  mediaPackageChannelId?: Maybe<Scalars['String']>;
+  mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mp4InputId?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpAInputId?: Maybe<Scalars['String']>;
+  rtmpAInputUri?: Maybe<Scalars['String']>;
+  rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpBInputId?: Maybe<Scalars['String']>;
+  rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Video_ChannelStackWithStreamKey_Max_Fields = {
+  __typename?: 'video_ChannelStackWithStreamKey_max_fields';
+  channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  cloudFrontDomain?: Maybe<Scalars['String']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpointUri?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  mediaPackageChannelId?: Maybe<Scalars['String']>;
+  mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mp4InputId?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpAInputId?: Maybe<Scalars['String']>;
+  rtmpAInputUri?: Maybe<Scalars['String']>;
+  rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpBInputId?: Maybe<Scalars['String']>;
+  rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Video_ChannelStackWithStreamKey_Min_Fields = {
+  __typename?: 'video_ChannelStackWithStreamKey_min_fields';
+  channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  cloudFrontDomain?: Maybe<Scalars['String']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpointUri?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  mediaPackageChannelId?: Maybe<Scalars['String']>;
+  mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mp4InputId?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpAInputId?: Maybe<Scalars['String']>;
+  rtmpAInputUri?: Maybe<Scalars['String']>;
+  rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpBInputId?: Maybe<Scalars['String']>;
+  rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Mutation_Response = {
+  __typename?: 'video_ChannelStackWithStreamKey_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Video_ChannelStackWithStreamKey>;
+};
+
+/** input type for inserting object relation for remote table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Obj_Rel_Insert_Input = {
+  data: Video_ChannelStackWithStreamKey_Insert_Input;
+};
+
+/** Ordering options when selecting data from "video.ChannelStackWithStreamKey". */
+export type Video_ChannelStackWithStreamKey_Order_By = {
+  channelStackCreateJobId?: Maybe<Order_By>;
+  channelStackUpdateJobs_aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By>;
+  cloudFormationStackArn?: Maybe<Order_By>;
+  cloudFrontDistributionId?: Maybe<Order_By>;
+  cloudFrontDomain?: Maybe<Order_By>;
+  conference?: Maybe<Conference_Conference_Order_By>;
+  conferenceId?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  endpointUri?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  loopingMp4InputAttachmentName?: Maybe<Order_By>;
+  mediaLiveChannelId?: Maybe<Order_By>;
+  mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Order_By>;
+  mediaPackageChannelId?: Maybe<Order_By>;
+  mp4InputAttachmentName?: Maybe<Order_By>;
+  mp4InputId?: Maybe<Order_By>;
+  roomId?: Maybe<Order_By>;
+  rtmpAInputAttachmentName?: Maybe<Order_By>;
+  rtmpAInputId?: Maybe<Order_By>;
+  rtmpAInputUri?: Maybe<Order_By>;
+  rtmpBInputAttachmentName?: Maybe<Order_By>;
+  rtmpBInputId?: Maybe<Order_By>;
+  rtmpBInputUri?: Maybe<Order_By>;
+  rtmpOutputDestinationId?: Maybe<Order_By>;
+  rtmpOutputStreamKey?: Maybe<Order_By>;
+  rtmpOutputUri?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
+/** select columns of table "video.ChannelStackWithStreamKey" */
+export enum Video_ChannelStackWithStreamKey_Select_Column {
+  /** column name */
+  ChannelStackCreateJobId = 'channelStackCreateJobId',
+  /** column name */
+  CloudFormationStackArn = 'cloudFormationStackArn',
+  /** column name */
+  CloudFrontDistributionId = 'cloudFrontDistributionId',
+  /** column name */
+  CloudFrontDomain = 'cloudFrontDomain',
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndpointUri = 'endpointUri',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LoopingMp4InputAttachmentName = 'loopingMp4InputAttachmentName',
+  /** column name */
+  MediaLiveChannelId = 'mediaLiveChannelId',
+  /** column name */
+  MediaPackageChannelId = 'mediaPackageChannelId',
+  /** column name */
+  Mp4InputAttachmentName = 'mp4InputAttachmentName',
+  /** column name */
+  Mp4InputId = 'mp4InputId',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  RtmpAInputAttachmentName = 'rtmpAInputAttachmentName',
+  /** column name */
+  RtmpAInputId = 'rtmpAInputId',
+  /** column name */
+  RtmpAInputUri = 'rtmpAInputUri',
+  /** column name */
+  RtmpBInputAttachmentName = 'rtmpBInputAttachmentName',
+  /** column name */
+  RtmpBInputId = 'rtmpBInputId',
+  /** column name */
+  RtmpBInputUri = 'rtmpBInputUri',
+  /** column name */
+  RtmpOutputDestinationId = 'rtmpOutputDestinationId',
+  /** column name */
+  RtmpOutputStreamKey = 'rtmpOutputStreamKey',
+  /** column name */
+  RtmpOutputUri = 'rtmpOutputUri',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Set_Input = {
+  channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  cloudFormationStackArn?: Maybe<Scalars['String']>;
+  cloudFrontDistributionId?: Maybe<Scalars['String']>;
+  cloudFrontDomain?: Maybe<Scalars['String']>;
+  conferenceId?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endpointUri?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  loopingMp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mediaLiveChannelId?: Maybe<Scalars['String']>;
+  mediaPackageChannelId?: Maybe<Scalars['String']>;
+  mp4InputAttachmentName?: Maybe<Scalars['String']>;
+  mp4InputId?: Maybe<Scalars['String']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  rtmpAInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpAInputId?: Maybe<Scalars['String']>;
+  rtmpAInputUri?: Maybe<Scalars['String']>;
+  rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
+  rtmpBInputId?: Maybe<Scalars['String']>;
+  rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregated selection of "video.ChannelStack" */
@@ -34705,6 +36005,7 @@ export type Video_ChannelStack_Bool_Exp = {
   _or?: Maybe<Array<Video_ChannelStack_Bool_Exp>>;
   channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
   channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+  channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
   cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
   cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
   cloudFrontDomain?: Maybe<String_Comparison_Exp>;
@@ -34727,6 +36028,9 @@ export type Video_ChannelStack_Bool_Exp = {
   rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
   rtmpBInputId?: Maybe<String_Comparison_Exp>;
   rtmpBInputUri?: Maybe<String_Comparison_Exp>;
+  rtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+  rtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+  rtmpOutputUri?: Maybe<String_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -34742,6 +36046,7 @@ export enum Video_ChannelStack_Constraint {
 export type Video_ChannelStack_Insert_Input = {
   channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Obj_Rel_Insert_Input>;
   channelStackCreateJobId?: Maybe<Scalars['uuid']>;
+  channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input>;
   cloudFormationStackArn?: Maybe<Scalars['String']>;
   cloudFrontDistributionId?: Maybe<Scalars['String']>;
   cloudFrontDomain?: Maybe<Scalars['String']>;
@@ -34764,6 +36069,9 @@ export type Video_ChannelStack_Insert_Input = {
   rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
   rtmpBInputId?: Maybe<Scalars['String']>;
   rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -34790,6 +36098,9 @@ export type Video_ChannelStack_Max_Fields = {
   rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
   rtmpBInputId?: Maybe<Scalars['String']>;
   rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -34816,6 +36127,9 @@ export type Video_ChannelStack_Min_Fields = {
   rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
   rtmpBInputId?: Maybe<Scalars['String']>;
   rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -34846,6 +36160,7 @@ export type Video_ChannelStack_On_Conflict = {
 export type Video_ChannelStack_Order_By = {
   channelStackCreateJob?: Maybe<Job_Queues_ChannelStackCreateJob_Order_By>;
   channelStackCreateJobId?: Maybe<Order_By>;
+  channelStackUpdateJobs_aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By>;
   cloudFormationStackArn?: Maybe<Order_By>;
   cloudFrontDistributionId?: Maybe<Order_By>;
   cloudFrontDomain?: Maybe<Order_By>;
@@ -34868,6 +36183,9 @@ export type Video_ChannelStack_Order_By = {
   rtmpBInputAttachmentName?: Maybe<Order_By>;
   rtmpBInputId?: Maybe<Order_By>;
   rtmpBInputUri?: Maybe<Order_By>;
+  rtmpOutputDestinationId?: Maybe<Order_By>;
+  rtmpOutputStreamKey?: Maybe<Order_By>;
+  rtmpOutputUri?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
 
@@ -34919,6 +36237,12 @@ export enum Video_ChannelStack_Select_Column {
   /** column name */
   RtmpBInputUri = 'rtmpBInputUri',
   /** column name */
+  RtmpOutputDestinationId = 'rtmpOutputDestinationId',
+  /** column name */
+  RtmpOutputStreamKey = 'rtmpOutputStreamKey',
+  /** column name */
+  RtmpOutputUri = 'rtmpOutputUri',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -34944,6 +36268,9 @@ export type Video_ChannelStack_Set_Input = {
   rtmpBInputAttachmentName?: Maybe<Scalars['String']>;
   rtmpBInputId?: Maybe<Scalars['String']>;
   rtmpBInputUri?: Maybe<Scalars['String']>;
+  rtmpOutputDestinationId?: Maybe<Scalars['String']>;
+  rtmpOutputStreamKey?: Maybe<Scalars['String']>;
+  rtmpOutputUri?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -34989,6 +36316,12 @@ export enum Video_ChannelStack_Update_Column {
   RtmpBInputId = 'rtmpBInputId',
   /** column name */
   RtmpBInputUri = 'rtmpBInputUri',
+  /** column name */
+  RtmpOutputDestinationId = 'rtmpOutputDestinationId',
+  /** column name */
+  RtmpOutputStreamKey = 'rtmpOutputStreamKey',
+  /** column name */
+  RtmpOutputUri = 'rtmpOutputUri',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -35960,6 +37293,7 @@ export type Video_MediaLiveChannelStatus = {
   createdAt: Scalars['timestamptz'];
   id: Scalars['uuid'];
   pipelinesRunningCount?: Maybe<Scalars['numeric']>;
+  state: Scalars['String'];
   updatedAt: Scalars['timestamptz'];
 };
 
@@ -36013,6 +37347,7 @@ export type Video_MediaLiveChannelStatus_Bool_Exp = {
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   pipelinesRunningCount?: Maybe<Numeric_Comparison_Exp>;
+  state?: Maybe<String_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -36040,6 +37375,7 @@ export type Video_MediaLiveChannelStatus_Insert_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
   pipelinesRunningCount?: Maybe<Scalars['numeric']>;
+  state?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -36053,6 +37389,7 @@ export type Video_MediaLiveChannelStatus_Max_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
   pipelinesRunningCount?: Maybe<Scalars['numeric']>;
+  state?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -36066,6 +37403,7 @@ export type Video_MediaLiveChannelStatus_Min_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
   pipelinesRunningCount?: Maybe<Scalars['numeric']>;
+  state?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -36103,6 +37441,7 @@ export type Video_MediaLiveChannelStatus_Order_By = {
   createdAt?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   pipelinesRunningCount?: Maybe<Order_By>;
+  state?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
 
@@ -36128,6 +37467,8 @@ export enum Video_MediaLiveChannelStatus_Select_Column {
   /** column name */
   PipelinesRunningCount = 'pipelinesRunningCount',
   /** column name */
+  State = 'state',
+  /** column name */
   UpdatedAt = 'updatedAt'
 }
 
@@ -36140,6 +37481,7 @@ export type Video_MediaLiveChannelStatus_Set_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['uuid']>;
   pipelinesRunningCount?: Maybe<Scalars['numeric']>;
+  state?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -36183,6 +37525,8 @@ export enum Video_MediaLiveChannelStatus_Update_Column {
   Id = 'id',
   /** column name */
   PipelinesRunningCount = 'pipelinesRunningCount',
+  /** column name */
+  State = 'state',
   /** column name */
   UpdatedAt = 'updatedAt'
 }
@@ -37087,6 +38431,293 @@ export type Video_VideoRenderJob_Variance_Order_By = {
   retriesCount?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording = {
+  __typename?: 'video_VonageRoomRecording';
+  created_at: Scalars['timestamptz'];
+  endedAt?: Maybe<Scalars['timestamptz']>;
+  id: Scalars['uuid'];
+  initiatedBy?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  initiator?: Maybe<Registrant_Registrant>;
+  /** An object relationship */
+  room?: Maybe<Room_Room>;
+  roomId?: Maybe<Scalars['uuid']>;
+  s3Url?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  saves: Array<Registrant_SavedVonageRoomRecording>;
+  /** An aggregate relationship */
+  saves_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  startedAt: Scalars['timestamptz'];
+  updated_at: Scalars['timestamptz'];
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
+  vonageSessionId: Scalars['String'];
+};
+
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSavesArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSaves_AggregateArgs = {
+  distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** aggregated selection of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate = {
+  __typename?: 'video_VonageRoomRecording_aggregate';
+  aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Fields>;
+  nodes: Array<Video_VonageRoomRecording>;
+};
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Fields = {
+  __typename?: 'video_VonageRoomRecording_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Video_VonageRoomRecording_Max_Fields>;
+  min?: Maybe<Video_VonageRoomRecording_Min_Fields>;
+};
+
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Order_By = {
+  count?: Maybe<Order_By>;
+  max?: Maybe<Video_VonageRoomRecording_Max_Order_By>;
+  min?: Maybe<Video_VonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Arr_Rel_Insert_Input = {
+  data: Array<Video_VonageRoomRecording_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "video.VonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Video_VonageRoomRecording_Bool_Exp = {
+  _and?: Maybe<Array<Video_VonageRoomRecording_Bool_Exp>>;
+  _not?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+  _or?: Maybe<Array<Video_VonageRoomRecording_Bool_Exp>>;
+  created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  endedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  id?: Maybe<Uuid_Comparison_Exp>;
+  initiatedBy?: Maybe<Uuid_Comparison_Exp>;
+  initiator?: Maybe<Registrant_Registrant_Bool_Exp>;
+  room?: Maybe<Room_Room_Bool_Exp>;
+  roomId?: Maybe<Uuid_Comparison_Exp>;
+  s3Url?: Maybe<String_Comparison_Exp>;
+  saves?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+  startedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  uploaded_at?: Maybe<Timestamptz_Comparison_Exp>;
+  vonageSessionId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Constraint {
+  /** unique or primary key constraint */
+  VonageRoomRecordingPkey = 'VonageRoomRecording_pkey'
+}
+
+/** input type for inserting data into table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Insert_Input = {
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endedAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  initiatedBy?: Maybe<Scalars['uuid']>;
+  initiator?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+  roomId?: Maybe<Scalars['uuid']>;
+  s3Url?: Maybe<Scalars['String']>;
+  saves?: Maybe<Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input>;
+  startedAt?: Maybe<Scalars['timestamptz']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
+  vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Video_VonageRoomRecording_Max_Fields = {
+  __typename?: 'video_VonageRoomRecording_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endedAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  initiatedBy?: Maybe<Scalars['uuid']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  s3Url?: Maybe<Scalars['String']>;
+  startedAt?: Maybe<Scalars['timestamptz']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
+  vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Max_Order_By = {
+  created_at?: Maybe<Order_By>;
+  endedAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  initiatedBy?: Maybe<Order_By>;
+  roomId?: Maybe<Order_By>;
+  s3Url?: Maybe<Order_By>;
+  startedAt?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
+  vonageSessionId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Video_VonageRoomRecording_Min_Fields = {
+  __typename?: 'video_VonageRoomRecording_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endedAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  initiatedBy?: Maybe<Scalars['uuid']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  s3Url?: Maybe<Scalars['String']>;
+  startedAt?: Maybe<Scalars['timestamptz']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
+  vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Min_Order_By = {
+  created_at?: Maybe<Order_By>;
+  endedAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  initiatedBy?: Maybe<Order_By>;
+  roomId?: Maybe<Order_By>;
+  s3Url?: Maybe<Order_By>;
+  startedAt?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
+  vonageSessionId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Mutation_Response = {
+  __typename?: 'video_VonageRoomRecording_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Video_VonageRoomRecording>;
+};
+
+/** input type for inserting object relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Obj_Rel_Insert_Input = {
+  data: Video_VonageRoomRecording_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_On_Conflict = {
+  constraint: Video_VonageRoomRecording_Constraint;
+  update_columns?: Array<Video_VonageRoomRecording_Update_Column>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.VonageRoomRecording". */
+export type Video_VonageRoomRecording_Order_By = {
+  created_at?: Maybe<Order_By>;
+  endedAt?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  initiatedBy?: Maybe<Order_By>;
+  initiator?: Maybe<Registrant_Registrant_Order_By>;
+  room?: Maybe<Room_Room_Order_By>;
+  roomId?: Maybe<Order_By>;
+  s3Url?: Maybe<Order_By>;
+  saves_aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Order_By>;
+  startedAt?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
+  vonageSessionId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_VonageRoomRecording */
+export type Video_VonageRoomRecording_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndedAt = 'endedAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InitiatedBy = 'initiatedBy',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  S3Url = 's3Url',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
+  VonageSessionId = 'vonageSessionId'
+}
+
+/** input type for updating data in table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Set_Input = {
+  created_at?: Maybe<Scalars['timestamptz']>;
+  endedAt?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['uuid']>;
+  initiatedBy?: Maybe<Scalars['uuid']>;
+  roomId?: Maybe<Scalars['uuid']>;
+  s3Url?: Maybe<Scalars['String']>;
+  startedAt?: Maybe<Scalars['timestamptz']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
+  vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndedAt = 'endedAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InitiatedBy = 'initiatedBy',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  S3Url = 's3Url',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
+  VonageSessionId = 'vonageSessionId'
+}
+
 /** columns and relationships of "video.YouTubeUpload" */
 export type Video_YouTubeUpload = {
   __typename?: 'video_YouTubeUpload';
@@ -37549,7 +39180,7 @@ export type GetEventTimingsQueryVariables = Exact<{
 }>;
 
 
-export type GetEventTimingsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, name: string, timingsUpdatedAt: any, startTime: any, endTime?: Maybe<any>, conferenceId: any, intendedRoomModeName: Room_Mode_Enum, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string, chatId?: Maybe<any> }>, continuations: Array<{ __typename?: 'schedule_Continuation', id: any, to: any }> }> };
+export type GetEventTimingsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, name: string, timingsUpdatedAt: any, startTime: any, endTime?: Maybe<any>, conferenceId: any, intendedRoomModeName: Room_Mode_Enum, roomId: any, enableRecording: boolean, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string, chatId?: Maybe<any> }>, continuations: Array<{ __typename?: 'schedule_Continuation', id: any, to: any }> }> };
 
 export type Event_GetEventVonageSessionQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -38016,13 +39647,61 @@ export type OngoingBroadcastableVideoRoomEventsQueryVariables = Exact<{
 
 export type OngoingBroadcastableVideoRoomEventsQuery = { __typename?: 'query_root', schedule_Event: Array<{ __typename?: 'schedule_Event', id: any }> };
 
+export type OngoingArchivableVideoRoomEventsQueryVariables = Exact<{
+  time: Scalars['timestamptz'];
+  sessionId: Scalars['String'];
+}>;
+
+
+export type OngoingArchivableVideoRoomEventsQuery = { __typename?: 'query_root', schedule_Event: Array<{ __typename?: 'schedule_Event', id: any, roomId: any }> };
+
+export type GetEventForArchiveQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventForArchiveQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, name: string, startTime: any, conferenceId: any, item?: Maybe<{ __typename?: 'content_Item', id: any, elements_aggregate: { __typename?: 'content_Element_aggregate', aggregate?: Maybe<{ __typename?: 'content_Element_aggregate_fields', count: number }> } }> }> };
+
+export type InsertVonageArchiveElementMutationVariables = Exact<{
+  object: Content_Element_Insert_Input;
+}>;
+
+
+export type InsertVonageArchiveElementMutation = { __typename?: 'mutation_root', insert_content_Element_one?: Maybe<{ __typename?: 'content_Element', id: any }> };
+
+export type CheckForVonageRoomRecordingQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+  vonageSessionId: Scalars['String'];
+}>;
+
+
+export type CheckForVonageRoomRecordingQuery = { __typename?: 'query_root', video_VonageRoomRecording: Array<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+
+export type CheckForVonageRoomRecordingNotUploadedQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+  vonageSessionId: Scalars['String'];
+}>;
+
+
+export type CheckForVonageRoomRecordingNotUploadedQuery = { __typename?: 'query_root', video_VonageRoomRecording: Array<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+
+export type SaveVonageRoomRecordingMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  endedAt: Scalars['timestamptz'];
+  uploadedAt?: Maybe<Scalars['timestamptz']>;
+  s3Url?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SaveVonageRoomRecordingMutation = { __typename?: 'mutation_root', update_video_VonageRoomRecording_by_pk?: Maybe<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
   userId: Scalars['String'];
 }>;
 
 
-export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', conferenceId: any, id: any, intendedRoomModeName: Room_Mode_Enum, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, room: { __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any, roleName: Schedule_EventProgramPersonRole_Enum }>, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> } }> };
+export type Vonage_GetEventDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', conferenceId: any, id: any, intendedRoomModeName: Room_Mode_Enum, enableRecording: boolean, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', id: any, sessionId: string }>, room: { __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any, roleName: Schedule_EventProgramPersonRole_Enum }>, conference: { __typename?: 'conference_Conference', id: any, registrants: Array<{ __typename?: 'registrant_Registrant', id: any, displayName: string, conferenceId: any, groupRegistrants: Array<{ __typename?: 'permissions_GroupRegistrant', id: any, group: { __typename?: 'permissions_Group', id: any, groupRoles: Array<{ __typename?: 'permissions_GroupRole', id: any, role: { __typename?: 'permissions_Role', id: any, rolePermissions: Array<{ __typename?: 'permissions_RolePermission', id: any, permissionName: Permissions_Permission_Enum }> } }> } }> }> } }> };
 
 export type GetRoomThatUserCanJoinQueryVariables = Exact<{
   roomId?: Maybe<Scalars['uuid']>;
@@ -38031,6 +39710,23 @@ export type GetRoomThatUserCanJoinQueryVariables = Exact<{
 
 
 export type GetRoomThatUserCanJoinQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', id: any, publicVonageSessionId?: Maybe<string> }> };
+
+export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
+  recordingId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type AddVonageRoomRecordingToUserListMutation = { __typename?: 'mutation_root', insert_registrant_SavedVonageRoomRecording_one?: Maybe<{ __typename?: 'registrant_SavedVonageRoomRecording', id: any }> };
+
+export type FindRoomByVonageSessionIdQueryVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+  now: Scalars['timestamptz'];
+  userId: Scalars['String'];
+}>;
+
+
+export type FindRoomByVonageSessionIdQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, events: Array<{ __typename?: 'schedule_Event', id: any, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any }> }>, conference: { __typename?: 'conference_Conference', registrants: Array<{ __typename?: 'registrant_Registrant', id: any }> } }> };
 
 export type FetchPresenceSummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -38315,12 +40011,34 @@ export type GetBroadcastVideoRenderJobDetailsQueryVariables = Exact<{
 
 export type GetBroadcastVideoRenderJobDetailsQuery = { __typename?: 'query_root', video_VideoRenderJob_by_pk?: Maybe<{ __typename?: 'video_VideoRenderJob', id: any, elementId: any, jobStatusName: Video_JobStatus_Enum, conferencePrepareJob: { __typename?: 'conference_PrepareJob', id: any, jobStatusName: Video_JobStatus_Enum } }> };
 
+export type OngoingArchivableVideoRoomEventsWithRoomInfoQueryVariables = Exact<{
+  time: Scalars['timestamptz'];
+  sessionId: Scalars['String'];
+}>;
+
+
+export type OngoingArchivableVideoRoomEventsWithRoomInfoQuery = { __typename?: 'query_root', schedule_Event: Array<{ __typename?: 'schedule_Event', id: any, roomId: any }>, room_Room: Array<{ __typename?: 'room_Room', id: any }> };
+
 export type GetEventBroadcastDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type GetEventBroadcastDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, startTime: any, durationSeconds: number, endTime?: Maybe<any>, intendedRoomModeName: Room_Mode_Enum, room: { __typename?: 'room_Room', id: any, channelStack?: Maybe<{ __typename?: 'video_ChannelStack', rtmpAInputUri: string, rtmpBInputUri?: Maybe<string>, id: any }> }, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', sessionId: string, id: any, rtmpInputName: Video_RtmpInput_Enum }> }> };
+export type GetEventBroadcastDetailsQuery = { __typename?: 'query_root', schedule_Event_by_pk?: Maybe<{ __typename?: 'schedule_Event', id: any, room: { __typename?: 'room_Room', id: any, channelStack?: Maybe<{ __typename?: 'video_ChannelStack', rtmpAInputUri: string, rtmpBInputUri?: Maybe<string>, id: any }> }, eventVonageSession?: Maybe<{ __typename?: 'video_EventVonageSession', sessionId: string, id: any, rtmpInputName: Video_RtmpInput_Enum }> }> };
+
+export type GetRoomArchiveDetailsQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomArchiveDetailsQuery = { __typename?: 'query_root', room_Room_by_pk?: Maybe<{ __typename?: 'room_Room', publicVonageSessionId?: Maybe<string>, id: any }> };
+
+export type CreateVonageRoomRecordingMutationVariables = Exact<{
+  object: Video_VonageRoomRecording_Insert_Input;
+}>;
+
+
+export type CreateVonageRoomRecordingMutation = { __typename?: 'mutation_root', insert_video_VonageRoomRecording_one?: Maybe<{ __typename?: 'video_VonageRoomRecording', id: any }> };
 
 export type GetEventByVonageSessionIdQueryVariables = Exact<{
   sessionId: Scalars['String'];
@@ -38407,7 +40125,7 @@ export const GetEventChatInfoDocument = {"kind":"Document","definitions":[{"kind
 export const StartChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<StartChatDuplicationMutation, StartChatDuplicationMutationVariables>;
 export const EndChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EndChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<EndChatDuplicationMutation, EndChatDuplicationMutationVariables>;
 export const NotifyRealtimeEventEndedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NotifyRealtimeEventEnded"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyEventEnded"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ok"}}]}}]}}]} as unknown as DocumentNode<NotifyRealtimeEventEndedMutation, NotifyRealtimeEventEndedMutationVariables>;
-export const GetEventTimingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventTimings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"timingsUpdatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"continuations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"to"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventTimingsQuery, GetEventTimingsQueryVariables>;
+export const GetEventTimingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventTimings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"timingsUpdatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"enableRecording"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"continuations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"to"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventTimingsQuery, GetEventTimingsQueryVariables>;
 export const Event_GetEventVonageSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Event_GetEventVonageSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}}]}}]}}]} as unknown as DocumentNode<Event_GetEventVonageSessionQuery, Event_GetEventVonageSessionQueryVariables>;
 export const FindEventConnectionsForParticipantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindEventConnectionsForParticipant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"personId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_EventParticipantStream_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"vonageConnectionId"}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"programPeople"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"personId"}}}]}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vonageConnectionId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindEventConnectionsForParticipantQuery, FindEventConnectionsForParticipantQueryVariables>;
 export const EventVonageSession_RemoveInvalidStreamsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EventVonageSession_RemoveInvalidStreams"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validStreamIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_video_EventParticipantStream"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_nin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validStreamIds"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<EventVonageSession_RemoveInvalidStreamsMutation, EventVonageSession_RemoveInvalidStreamsMutationVariables>;
@@ -38464,8 +40182,16 @@ export const SelectNewVideoRenderJobsDocument = {"kind":"Document","definitions"
 export const MarkAndSelectNewVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectNewVideoRenderJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VideoRenderJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"NEW"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"IN_PROGRESS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"retriesCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoRenderJobData"}}]}}]}}]}},...VideoRenderJobDataFragmentDoc.definitions]} as unknown as DocumentNode<MarkAndSelectNewVideoRenderJobsMutation, MarkAndSelectNewVideoRenderJobsMutationVariables>;
 export const UnmarkVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnmarkVideoRenderJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VideoRenderJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"FAILED"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}},{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UnmarkVideoRenderJobsMutation, UnmarkVideoRenderJobsMutationVariables>;
 export const OngoingBroadcastableVideoRoomEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OngoingBroadcastableVideoRoomEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"time"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventVonageSession"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"intendedRoomModeName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"Q_AND_A"},{"kind":"EnumValue","value":"PRESENTATION"}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<OngoingBroadcastableVideoRoomEventsQuery, OngoingBroadcastableVideoRoomEventsQueryVariables>;
-export const Vonage_GetEventDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vonage_GetEventDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roleName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}},{"kind":"Field","name":{"kind":"Name","value":"groupRegistrants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groupRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rolePermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionName"}}]}}]}}]}}]}}]}}]}}]}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
+export const OngoingArchivableVideoRoomEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OngoingArchivableVideoRoomEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"time"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"room"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publicVonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"intendedRoomModeName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"VIDEO_CHAT"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<OngoingArchivableVideoRoomEventsQuery, OngoingArchivableVideoRoomEventsQueryVariables>;
+export const GetEventForArchiveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventForArchive"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"elements_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetEventForArchiveQuery, GetEventForArchiveQueryVariables>;
+export const InsertVonageArchiveElementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertVonageArchiveElement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"content_Element_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_content_Element_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertVonageArchiveElementMutation, InsertVonageArchiveElementMutationVariables>;
+export const CheckForVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageRoomRecording"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roomId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CheckForVonageRoomRecordingQuery, CheckForVonageRoomRecordingQueryVariables>;
+export const CheckForVonageRoomRecordingNotUploadedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForVonageRoomRecordingNotUploaded"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageRoomRecording"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roomId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"uploaded_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"startedAt"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CheckForVonageRoomRecordingNotUploadedQuery, CheckForVonageRoomRecordingNotUploadedQueryVariables>;
+export const SaveVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VonageRoomRecording_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"uploaded_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+export const Vonage_GetEventDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vonage_GetEventDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"enableRecording"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roleName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}},{"kind":"Field","name":{"kind":"Name","value":"groupRegistrants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groupRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rolePermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionName"}}]}}]}}]}}]}}]}}]}}]}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
 export const GetRoomThatUserCanJoinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRoomThatUserCanJoin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}}]}}]} as unknown as DocumentNode<GetRoomThatUserCanJoinQuery, GetRoomThatUserCanJoinQueryVariables>;
+export const AddVonageRoomRecordingToUserListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddVonageRoomRecordingToUserList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordingId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_registrant_SavedVonageRoomRecording_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"isHidden"},"value":{"kind":"BooleanValue","value":false}},{"kind":"ObjectField","name":{"kind":"Name","value":"recordingId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordingId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"SavedVonageRoomRecording_recordingId_registrantId_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<AddVonageRoomRecordingToUserListMutation, AddVonageRoomRecordingToUserListMutationVariables>;
+export const FindRoomByVonageSessionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindRoomByVonageSessionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publicVonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roleName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"CHAIR"},{"kind":"EnumValue","value":"PRESENTER"}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"groupRegistrants"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"group"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"groupRoles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"role"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"rolePermissions"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permissionName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"CONFERENCE_MANAGE_SCHEDULE"},{"kind":"EnumValue","value":"CONFERENCE_MODERATE_ATTENDEES"},{"kind":"EnumValue","value":"CONFERENCE_VIEW_ATTENDEES"}]}}]}}]}}]}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindRoomByVonageSessionIdQuery, FindRoomByVonageSessionIdQueryVariables>;
 export const FetchPresenceSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FetchPresenceSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"presence_Summary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_unique_tabs"}},{"kind":"Field","name":{"kind":"Name","value":"total_unique_user_ids"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}}]}}]}}]} as unknown as DocumentNode<FetchPresenceSummaryQuery, FetchPresenceSummaryQueryVariables>;
 export const InsertAppStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertAppStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"analytics_AppStats_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_analytics_AppStats_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertAppStatsMutation, InsertAppStatsMutationVariables>;
 export const GetRegistrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRegistrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<GetRegistrantQuery, GetRegistrantQueryVariables>;
@@ -38501,7 +40227,10 @@ export const ExpireVideoRenderJobDocument = {"kind":"Document","definitions":[{"
 export const UpdateVideoRenderJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateVideoRenderJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VideoRenderJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_append"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateVideoRenderJobMutation, UpdateVideoRenderJobMutationVariables>;
 export const CountUnfinishedVideoRenderJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CountUnfinishedVideoRenderJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferencePrepareJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VideoRenderJob_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferencePrepareJobId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferencePrepareJobId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_nin"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"COMPLETED"}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<CountUnfinishedVideoRenderJobsQuery, CountUnfinishedVideoRenderJobsQueryVariables>;
 export const GetBroadcastVideoRenderJobDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetBroadcastVideoRenderJobDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VideoRenderJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"videoRenderJobId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"elementId"}},{"kind":"Field","name":{"kind":"Name","value":"conferencePrepareJob"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"jobStatusName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"jobStatusName"}}]}}]}}]} as unknown as DocumentNode<GetBroadcastVideoRenderJobDetailsQuery, GetBroadcastVideoRenderJobDetailsQueryVariables>;
-export const GetEventBroadcastDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventBroadcastDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"channelStack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rtmpAInputUri"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpBInputUri"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sessionId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpInputName"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventBroadcastDetailsQuery, GetEventBroadcastDetailsQueryVariables>;
+export const OngoingArchivableVideoRoomEventsWithRoomInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OngoingArchivableVideoRoomEventsWithRoomInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"time"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"room"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publicVonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"intendedRoomModeName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"VIDEO_CHAT"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"time"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room_Room"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publicVonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<OngoingArchivableVideoRoomEventsWithRoomInfoQuery, OngoingArchivableVideoRoomEventsWithRoomInfoQueryVariables>;
+export const GetEventBroadcastDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventBroadcastDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"channelStack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rtmpAInputUri"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpBInputUri"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sessionId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpInputName"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventBroadcastDetailsQuery, GetEventBroadcastDetailsQueryVariables>;
+export const GetRoomArchiveDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRoomArchiveDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetRoomArchiveDetailsQuery, GetRoomArchiveDetailsQueryVariables>;
+export const CreateVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"video_VonageRoomRecording_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_video_VonageRoomRecording_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateVonageRoomRecordingMutation, CreateVonageRoomRecordingMutationVariables>;
 export const GetEventByVonageSessionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventByVonageSessionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventVonageSession"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}}]}}]}}]} as unknown as DocumentNode<GetEventByVonageSessionIdQuery, GetEventByVonageSessionIdQueryVariables>;
 export const CreateEventParticipantStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEventParticipantStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_video_EventParticipantStream_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageConnectionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamType"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateEventParticipantStreamMutation, CreateEventParticipantStreamMutationVariables>;
 export const RemoveEventParticipantStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveEventParticipantStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_video_EventParticipantStream"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageConnectionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveEventParticipantStreamMutation, RemoveEventParticipantStreamMutationVariables>;

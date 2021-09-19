@@ -8,6 +8,7 @@ import {
     Room_EventSummaryFragment,
     Room_EventSummaryFragmentDoc,
     useDeleteEventParticipantMutation,
+    useSaveVonageRoomRecordingMutation,
 } from "../../../../../generated/graphql";
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
@@ -37,6 +38,18 @@ gql`
             }
         }
     }
+
+    mutation SaveVonageRoomRecording($recordingId: uuid!, $registrantId: uuid!) {
+        insert_registrant_SavedVonageRoomRecording_one(
+            object: { recordingId: $recordingId, registrantId: $registrantId }
+            on_conflict: { constraint: SavedVonageRoomRecording_recordingId_registrantId_key, update_columns: [] }
+        ) {
+            id
+            recordingId
+            registrantId
+            isHidden
+        }
+    }
 `;
 
 export function VonageRoom({
@@ -47,10 +60,11 @@ export function VonageRoom({
     isBackstageRoom,
     raiseHandPrejoinEventId,
     isRaiseHandWaiting,
-    requireMicrophone = false,
+    requireMicrophoneOrCamera = false,
     completeJoinRef,
     onLeave,
     onPermissionsProblem,
+    canControlRecording,
 }: {
     eventId: string | null;
     vonageSessionId: string;
@@ -59,10 +73,11 @@ export function VonageRoom({
     isBackstageRoom: boolean;
     raiseHandPrejoinEventId: string | null;
     isRaiseHandWaiting?: boolean;
-    requireMicrophone?: boolean;
+    requireMicrophoneOrCamera?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    canControlRecording: boolean;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -87,7 +102,7 @@ export function VonageRoom({
                         stop={!roomCouldBeInUse || disable}
                         getAccessToken={getAccessToken}
                         isBackstageRoom={isBackstageRoom}
-                        requireMicrophone={requireMicrophone}
+                        requireMicrophoneOrCamera={requireMicrophoneOrCamera}
                         joinRoomButtonText={
                             isBackstageRoom
                                 ? raiseHandPrejoinEventId
@@ -170,6 +185,7 @@ export function VonageRoom({
                                 : undefined
                         }
                         onPermissionsProblem={onPermissionsProblem}
+                        canControlRecording={canControlRecording}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -184,29 +200,53 @@ function VonageRoomInner({
     isBackstageRoom,
     onRoomJoined,
     joinRoomButtonText,
-    requireMicrophone,
+    requireMicrophoneOrCamera,
     overrideJoining,
     beginJoin,
     cancelJoin,
     completeJoinRef,
     onPermissionsProblem,
+    canControlRecording,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
     stop: boolean;
     isBackstageRoom: boolean;
     joinRoomButtonText?: string;
-    requireMicrophone: boolean;
+    requireMicrophoneOrCamera: boolean;
     onRoomJoined?: (_joined: boolean) => void;
     overrideJoining?: boolean;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    canControlRecording: boolean;
 }): JSX.Element {
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
+
+    const currentRegistrant = useCurrentRegistrant();
+    const [saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
+
+    const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
+    const onRecordingStarted = useCallback(() => {
+        setIsRecordingActive(true);
+    }, []);
+    const onRecordingStopped = useCallback(() => {
+        setIsRecordingActive(false);
+    }, []);
+    const onRecordingIdReceived = useCallback(
+        (recordingId: string) => {
+            saveVonageRoomRecording({
+                variables: {
+                    recordingId,
+                    registrantId: currentRegistrant.id,
+                },
+            });
+        },
+        [currentRegistrant.id, saveVonageRoomRecording]
+    );
 
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
@@ -215,12 +255,25 @@ function VonageRoomInner({
             vonageSessionId,
             overrideJoining,
             onRoomJoined,
+            onRecordingStarted,
+            onRecordingStopped,
+            onRecordingIdReceived,
             isBackstageRoom,
             beginJoin,
             cancelJoin,
             completeJoinRef,
             cameraPublishContainerRef,
         });
+
+    useEffect(() => {
+        if (!connected) {
+            setIsRecordingActive(false);
+        }
+    }, [connected]);
+
+    useEffect(() => {
+        setIsRecordingActive(false);
+    }, [vonageSessionId]);
 
     const [cameraEnabled, setCameraEnabled] = useState<boolean>(false);
     useEffect(() => {
@@ -715,8 +768,11 @@ function VonageRoomInner({
                     onCancelJoinRoom={cancelJoin}
                     joining={joining}
                     joinRoomButtonText={joinRoomButtonText}
-                    requireMicrophone={requireMicrophone}
+                    requireMicrophoneOrCamera={requireMicrophoneOrCamera}
                     onPermissionsProblem={onPermissionsProblem}
+                    isRecordingActive={isRecordingActive}
+                    isBackstage={isBackstageRoom}
+                    canControlRecording={canControlRecording}
                 />
             </Flex>
             <Box position="relative" mb={8} width="100%">

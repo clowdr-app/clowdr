@@ -30,6 +30,9 @@ interface InitialisedStateData {
     onCameraStreamCreated: () => void;
     onScreenStreamCreated: () => void;
     onMuteForced: () => void;
+    onRecordingStarted: () => void;
+    onRecordingStopped: () => void;
+    onRecordingIdReceived: (recordingId: string) => void;
 }
 
 interface ConnectedStateData {
@@ -114,7 +117,10 @@ export class VonageGlobalState {
         onScreenStreamDestroyed: (reason: string) => void,
         onCameraStreamCreated: () => void,
         onScreenStreamCreated: () => void,
-        onMuteForced: () => void
+        onMuteForced: () => void,
+        onRecordingStarted: () => void,
+        onRecordingStopped: () => void,
+        onRecordingIdReceived: (recordingId: string) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -146,6 +152,9 @@ export class VonageGlobalState {
                 onCameraStreamCreated,
                 onScreenStreamCreated,
                 onMuteForced,
+                onRecordingStarted,
+                onRecordingStopped,
+                onRecordingIdReceived,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -203,10 +212,21 @@ export class VonageGlobalState {
             session.on("muteForced", (event) =>
                 this.onMuteForced(event).catch((e) => console.error("VonageGlobalState: error handling muteForced", e))
             );
-
-            // TODO: session.capabilities.forceMute
-            // TODO: session.capabilities.forceDisconnect
-            // TODO: session.capabilities.forceUnpublish
+            session.on("archiveStarted", (event) =>
+                this.onArchiveStarted(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling archiveStarted", e)
+                )
+            );
+            session.on("archiveStopped", (event) =>
+                this.onArchiveStopped(event).catch((e) =>
+                    console.error("VonageGlobalState: error handling archiveStopped", e)
+                )
+            );
+            session.on("signal:recordingId", (event: any) =>
+                this.onRecordingIdReceived(event.data).catch((e) =>
+                    console.error("VonageGlobalState: error handling recordingId signal", e)
+                )
+            );
 
             await new Promise<void>((resolve, reject) => {
                 session.connect(token, (error) => {
@@ -877,6 +897,53 @@ export class VonageGlobalState {
             }
         } catch (e) {
             console.error("VonageGlobalState: onMuteForced failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    private async onArchiveStarted(_event: OT.Event<"archiveStarted", OT.Session>): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onRecordingStarted();
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onRecordingStarted();
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onArchiveStarted failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+    private async onArchiveStopped(_event: OT.Event<"archiveStopped", OT.Session>): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onRecordingStopped();
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onRecordingStopped();
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onArchiveStopped failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    private async onRecordingIdReceived(recordingId: string): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (this.state.type === StateType.Initialised) {
+                this.state.onRecordingIdReceived(recordingId);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onRecordingIdReceived(recordingId);
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onRecordingIdReceived failure", e);
             throw e;
         } finally {
             release();

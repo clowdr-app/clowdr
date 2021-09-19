@@ -12,12 +12,6 @@ import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
-    mutation GetEventVonageToken($eventId: uuid!) {
-        joinEventVonageSession(eventId: $eventId) {
-            accessToken
-        }
-    }
-
     query GetEventDetails($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             ...RoomEventDetails
@@ -93,7 +87,7 @@ export function VonageBackstage({
                                 isBackstageRoom={true}
                                 raiseHandPrejoinEventId={isRaiseHandPreJoin ? eventId : null}
                                 isRaiseHandWaiting={isRaiseHandWaiting}
-                                requireMicrophone={isRaiseHandPreJoin}
+                                requireMicrophoneOrCamera={isRaiseHandPreJoin}
                                 completeJoinRef={completeJoinRef}
                                 onLeave={onLeave}
                             />

@@ -103,12 +103,6 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
 }
 
 gql`
-    mutation GetEventVonageToken($eventId: uuid!) {
-        joinEventVonageSession(eventId: $eventId) {
-            accessToken
-        }
-    }
-
     query GetEventVonageDetails($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {

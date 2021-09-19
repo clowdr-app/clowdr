@@ -6034,6 +6034,60 @@
                 schema: public
                 name: FlatUserPermission
 - table:
+    schema: registrant
+    name: SavedVonageRoomRecording
+  object_relationships:
+  - name: recording
+    using:
+      foreign_key_constraint_on: recordingId
+  - name: registrant
+    using:
+      foreign_key_constraint_on: registrantId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - registrant:
+            userId:
+              _eq: X-Hasura-User-Id
+        - recording:
+            room:
+              conference:
+                registrants:
+                  id:
+                    _ceq:
+                    - $
+                    - registrantId
+      columns:
+      - recordingId
+      - registrantId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - recordingId
+      - isHidden
+      - registrantId
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - isHidden
+      filter:
+        registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      check: null
+- table:
     schema: room
     name: Backend
   is_enum: true
@@ -6419,6 +6473,15 @@
         table:
           schema: analytics
           name: RoomStats
+  - name: vonageRecordings
+    using:
+      manual_configuration:
+        remote_table:
+          schema: video
+          name: VonageRoomRecording
+        insertion_order: null
+        column_mapping:
+          id: roomId
   computed_fields:
   - name: isProgramRoom
     definition:
@@ -7564,11 +7627,12 @@
               name: FlatUserPermission
       columns:
       - conferenceId
-      - itemId
       - durationSeconds
+      - enableRecording
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7580,12 +7644,13 @@
     permission:
       columns:
       - conferenceId
-      - itemId
       - durationSeconds
+      - enableRecording
       - endTime
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7610,13 +7675,14 @@
     permission:
       columns:
       - conferenceId
-      - itemId
       - created_at
       - durationSeconds
+      - enableRecording
       - endTime
       - exhibitionId
       - id
       - intendedRoomModeName
+      - itemId
       - name
       - originatingDataId
       - roomId
@@ -7658,6 +7724,7 @@
     permission:
       columns:
       - durationSeconds
+      - enableRecording
       - exhibitionId
       - intendedRoomModeName
       - itemId
@@ -8992,6 +9059,49 @@
     headers:
     - name: x-hasura-event-secret
       value_from_env: EVENT_SECRET
+- table:
+    schema: video
+    name: VonageRoomRecording
+  object_relationships:
+  - name: initiator
+    using:
+      foreign_key_constraint_on: initiatedBy
+  - name: room
+    using:
+      foreign_key_constraint_on: roomId
+  array_relationships:
+  - name: saves
+    using:
+      manual_configuration:
+        remote_table:
+          schema: registrant
+          name: SavedVonageRoomRecording
+        insertion_order: null
+        column_mapping:
+          id: recordingId
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - created_at
+      - endedAt
+      - id
+      - initiatedBy
+      - roomId
+      - s3Url
+      - startedAt
+      - updated_at
+      - uploaded_at
+      - vonageSessionId
+      filter:
+        _or:
+        - initiator:
+            userId:
+              _eq: X-Hasura-User-Id
+        - saves:
+            registrant:
+              userId:
+                _eq: X-Hasura-User-Id
 - table:
     schema: video
     name: YouTubeUpload

@@ -29,6 +29,7 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
                     roomId: event.roomId,
                     startTime: event.startTime,
                     tagIds: new Set(event.eventTags.map((x) => x.tagId)),
+                    enableRecording: event.enableRecording,
                 },
             ])
         ),
@@ -109,6 +110,7 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
         roomId: event.roomId,
         startTime: event.startTime,
         tagIds: new Set(event.tagIds),
+        enableRecording: event.enableRecording,
     };
 }
 

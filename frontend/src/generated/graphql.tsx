@@ -719,6 +719,7 @@ export type Int_Comparison_Exp = {
 export type JoinEventVonageSessionOutput = {
   readonly __typename?: 'JoinEventVonageSessionOutput';
   readonly accessToken?: Maybe<Scalars['String']>;
+  readonly isRecorded?: Maybe<Scalars['Boolean']>;
 };
 
 export type JoinRoomChimeSessionOutput = {
@@ -731,6 +732,7 @@ export type JoinRoomChimeSessionOutput = {
 export type JoinRoomVonageSessionOutput = {
   readonly __typename?: 'JoinRoomVonageSessionOutput';
   readonly accessToken?: Maybe<Scalars['String']>;
+  readonly isRecorded?: Maybe<Scalars['Boolean']>;
   readonly message?: Maybe<Scalars['String']>;
   readonly sessionId?: Maybe<Scalars['String']>;
 };
@@ -1013,6 +1015,12 @@ export type SubmitUploadableElementOutput = {
   readonly __typename?: 'SubmitUploadableElementOutput';
   readonly message: Scalars['String'];
   readonly success: Scalars['Boolean'];
+};
+
+export type ToggleVonageRecordingStateOutput = {
+  readonly __typename?: 'ToggleVonageRecordingStateOutput';
+  readonly allowed: Scalars['Boolean'];
+  readonly recordingState: Scalars['Boolean'];
 };
 
 export type UpdateProfilePhotoResponse = {
@@ -15822,6 +15830,10 @@ export type Mutation_Root = {
   readonly delete_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** delete single row from the table: "registrant.Registrant" */
   readonly delete_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** delete data from the table: "registrant.SavedVonageRoomRecording" */
+  readonly delete_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** delete single row from the table: "registrant.SavedVonageRoomRecording" */
+  readonly delete_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** delete data from the table: "room.Backend" */
   readonly delete_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** delete single row from the table: "room.Backend" */
@@ -15948,6 +15960,10 @@ export type Mutation_Root = {
   readonly delete_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** delete single row from the table: "video.VideoRenderJob" */
   readonly delete_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** delete data from the table: "video.VonageRoomRecording" */
+  readonly delete_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** delete single row from the table: "video.VonageRoomRecording" */
+  readonly delete_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** delete data from the table: "video.YouTubeUpload" */
   readonly delete_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** delete single row from the table: "video.YouTubeUpload" */
@@ -16205,6 +16221,10 @@ export type Mutation_Root = {
   readonly insert_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** insert a single row into the table: "registrant.Registrant" */
   readonly insert_registrant_Registrant_one?: Maybe<Registrant_Registrant>;
+  /** insert data into the table: "registrant.SavedVonageRoomRecording" */
+  readonly insert_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** insert a single row into the table: "registrant.SavedVonageRoomRecording" */
+  readonly insert_registrant_SavedVonageRoomRecording_one?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** insert data into the table: "room.Backend" */
   readonly insert_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** insert a single row into the table: "room.Backend" */
@@ -16333,6 +16353,10 @@ export type Mutation_Root = {
   readonly insert_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** insert a single row into the table: "video.VideoRenderJob" */
   readonly insert_video_VideoRenderJob_one?: Maybe<Video_VideoRenderJob>;
+  /** insert data into the table: "video.VonageRoomRecording" */
+  readonly insert_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** insert a single row into the table: "video.VonageRoomRecording" */
+  readonly insert_video_VonageRoomRecording_one?: Maybe<Video_VonageRoomRecording>;
   /** insert data into the table: "video.YouTubeUpload" */
   readonly insert_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** insert a single row into the table: "video.YouTubeUpload" */
@@ -16347,6 +16371,7 @@ export type Mutation_Root = {
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   readonly submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   readonly submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
+  readonly toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
   readonly updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Email" */
@@ -16585,6 +16610,10 @@ export type Mutation_Root = {
   readonly update_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
   /** update single row of the table: "registrant.Registrant" */
   readonly update_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** update data of the table: "registrant.SavedVonageRoomRecording" */
+  readonly update_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+  /** update single row of the table: "registrant.SavedVonageRoomRecording" */
+  readonly update_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** update data of the table: "room.Backend" */
   readonly update_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
   /** update single row of the table: "room.Backend" */
@@ -16711,6 +16740,10 @@ export type Mutation_Root = {
   readonly update_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
   /** update single row of the table: "video.VideoRenderJob" */
   readonly update_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** update data of the table: "video.VonageRoomRecording" */
+  readonly update_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+  /** update single row of the table: "video.VonageRoomRecording" */
+  readonly update_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** update data of the table: "video.YouTubeUpload" */
   readonly update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
   /** update single row of the table: "video.YouTubeUpload" */
@@ -17445,6 +17478,18 @@ export type Mutation_RootDelete_Registrant_Registrant_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecordingArgs = {
+  where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecording_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Room_BackendArgs = {
   where: Room_Backend_Bool_Exp;
 };
@@ -17818,6 +17863,18 @@ export type Mutation_RootDelete_Video_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecordingArgs = {
+  where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -18708,6 +18765,20 @@ export type Mutation_RootInsert_Registrant_Registrant_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecordingArgs = {
+  objects: ReadonlyArray<Registrant_SavedVonageRoomRecording_Insert_Input>;
+  on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecording_OneArgs = {
+  object: Registrant_SavedVonageRoomRecording_Insert_Input;
+  on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Room_BackendArgs = {
   objects: ReadonlyArray<Room_Backend_Insert_Input>;
   on_conflict?: Maybe<Room_Backend_On_Conflict>;
@@ -19154,6 +19225,20 @@ export type Mutation_RootInsert_Video_VideoRenderJob_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecordingArgs = {
+  objects: ReadonlyArray<Video_VonageRoomRecording_Insert_Input>;
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecording_OneArgs = {
+  object: Video_VonageRoomRecording_Insert_Input;
+  on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Video_YouTubeUploadArgs = {
   objects: ReadonlyArray<Video_YouTubeUpload_Insert_Input>;
   on_conflict?: Maybe<Video_YouTubeUpload_On_Conflict>;
@@ -19221,6 +19306,13 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 export type Mutation_RootSubmitUploadableElementArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootToggleVonageRecordingStateArgs = {
+  recordingActive: Scalars['Boolean'];
+  vonageSessionId: Scalars['String'];
 };
 
 
@@ -20243,6 +20335,20 @@ export type Mutation_RootUpdate_Registrant_Registrant_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecordingArgs = {
+  _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+  where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecording_By_PkArgs = {
+  _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+  pk_columns: Registrant_SavedVonageRoomRecording_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Room_BackendArgs = {
   _set?: Maybe<Room_Backend_Set_Input>;
   where: Room_Backend_Bool_Exp;
@@ -20756,6 +20862,20 @@ export type Mutation_RootUpdate_Video_VideoRenderJob_By_PkArgs = {
   _prepend?: Maybe<Video_VideoRenderJob_Prepend_Input>;
   _set?: Maybe<Video_VideoRenderJob_Set_Input>;
   pk_columns: Video_VideoRenderJob_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecordingArgs = {
+  _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+  where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecording_By_PkArgs = {
+  _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+  pk_columns: Video_VonageRoomRecording_Pk_Columns_Input;
 };
 
 
@@ -22465,6 +22585,12 @@ export type Query_Root = {
   readonly registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
   /** fetch data from the table: "registrant.Registrant" using primary key columns */
   readonly registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+  readonly registrant_SavedVonageRoomRecording: ReadonlyArray<Registrant_SavedVonageRoomRecording>;
+  /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+  readonly registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+  readonly registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** fetch data from the table: "room.Backend" */
   readonly room_Backend: ReadonlyArray<Room_Backend>;
   /** fetch aggregated fields from the table: "room.Backend" */
@@ -22668,6 +22794,12 @@ export type Query_Root = {
   readonly video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
   /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
   readonly video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** fetch data from the table: "video.VonageRoomRecording" */
+  readonly video_VonageRoomRecording: ReadonlyArray<Video_VonageRoomRecording>;
+  /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+  readonly video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+  /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+  readonly video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** fetch data from the table: "video.YouTubeUpload" */
   readonly video_YouTubeUpload: ReadonlyArray<Video_YouTubeUpload>;
   /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -24291,6 +24423,29 @@ export type Query_RootRegistrant_Registrant_By_PkArgs = {
 };
 
 
+export type Query_RootRegistrant_SavedVonageRoomRecordingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootRoom_BackendArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_Backend_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -25074,6 +25229,29 @@ export type Query_RootVideo_VideoRenderJob_AggregateArgs = {
 
 
 export type Query_RootVideo_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootVideo_VonageRoomRecordingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_VonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Query_RootVideo_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -26476,6 +26654,205 @@ export enum Registrant_Registrant_Update_Column {
   UserId = 'userId'
 }
 
+/** columns and relationships of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording';
+  readonly created_at: Scalars['timestamptz'];
+  readonly id: Scalars['uuid'];
+  readonly isHidden: Scalars['Boolean'];
+  /** An object relationship */
+  readonly recording: Video_VonageRoomRecording;
+  readonly recordingId: Scalars['uuid'];
+  /** An object relationship */
+  readonly registrant: Registrant_Registrant;
+  readonly registrantId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording_aggregate';
+  readonly aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Registrant_SavedVonageRoomRecording>;
+};
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Fields = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Fields>;
+  readonly min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Fields>;
+};
+
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Order_By>;
+  readonly min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Registrant_SavedVonageRoomRecording_Insert_Input>;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "registrant.SavedVonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Registrant_SavedVonageRoomRecording_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+  readonly _not?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly isHidden?: Maybe<Boolean_Comparison_Exp>;
+  readonly recording?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+  readonly recordingId?: Maybe<Uuid_Comparison_Exp>;
+  readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+  readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Constraint {
+  /** unique or primary key constraint */
+  SavedVonageRoomRecordingPkey = 'SavedVonageRoomRecording_pkey',
+  /** unique or primary key constraint */
+  SavedVonageRoomRecordingRecordingIdRegistrantIdKey = 'SavedVonageRoomRecording_recordingId_registrantId_key'
+}
+
+/** input type for inserting data into table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
+  readonly recording?: Maybe<Video_VonageRoomRecording_Obj_Rel_Insert_Input>;
+  readonly recordingId?: Maybe<Scalars['uuid']>;
+  readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Registrant_SavedVonageRoomRecording_Max_Fields = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly recordingId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly recordingId?: Maybe<Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Registrant_SavedVonageRoomRecording_Min_Fields = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly recordingId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly recordingId?: Maybe<Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Mutation_Response = {
+  readonly __typename?: 'registrant_SavedVonageRoomRecording_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Registrant_SavedVonageRoomRecording>;
+};
+
+/** on conflict condition type for table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_On_Conflict = {
+  readonly constraint: Registrant_SavedVonageRoomRecording_Constraint;
+  readonly update_columns?: ReadonlyArray<Registrant_SavedVonageRoomRecording_Update_Column>;
+  readonly where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "registrant.SavedVonageRoomRecording". */
+export type Registrant_SavedVonageRoomRecording_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly isHidden?: Maybe<Order_By>;
+  readonly recording?: Maybe<Video_VonageRoomRecording_Order_By>;
+  readonly recordingId?: Maybe<Order_By>;
+  readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: registrant_SavedVonageRoomRecording */
+export type Registrant_SavedVonageRoomRecording_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
+  RecordingId = 'recordingId',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly isHidden?: Maybe<Scalars['Boolean']>;
+  readonly recordingId?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsHidden = 'isHidden',
+  /** column name */
+  RecordingId = 'recordingId',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
   readonly __typename?: 'room_Backend';
@@ -27759,6 +28136,10 @@ export type Room_Room = {
   /** An aggregate relationship */
   readonly stats_aggregate: Analytics_RoomStats_Aggregate;
   readonly updated_at: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly vonageRecordings: ReadonlyArray<Video_VonageRoomRecording>;
+  /** An aggregate relationship */
+  readonly vonageRecordings_aggregate: Video_VonageRoomRecording_Aggregate;
 };
 
 
@@ -27899,6 +28280,26 @@ export type Room_RoomStats_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Analytics_RoomStats_Order_By>>;
   where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordingsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordings_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** columns and relationships of "room.RoomPerson" */
@@ -28211,6 +28612,7 @@ export type Room_Room_Bool_Exp = {
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
   readonly stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vonageRecordings?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Room" */
@@ -28264,6 +28666,7 @@ export type Room_Room_Insert_Input = {
   readonly shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
   readonly stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageRecordings?: Maybe<Video_VonageRoomRecording_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -28397,6 +28800,7 @@ export type Room_Room_Order_By = {
   readonly shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
   readonly stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly vonageRecordings_aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Room */
@@ -30412,6 +30816,7 @@ export type Schedule_Event = {
   readonly continuations_aggregate: Schedule_Continuation_Aggregate;
   readonly createdAt: Scalars['timestamptz'];
   readonly durationSeconds: Scalars['Int'];
+  readonly enableRecording: Scalars['Boolean'];
   readonly endTime?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
   readonly eventPeople: ReadonlyArray<Schedule_EventProgramPerson>;
@@ -31138,6 +31543,7 @@ export type Schedule_Event_Bool_Exp = {
   readonly continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly durationSeconds?: Maybe<Int_Comparison_Exp>;
+  readonly enableRecording?: Maybe<Boolean_Comparison_Exp>;
   readonly endTime?: Maybe<Timestamptz_Comparison_Exp>;
   readonly eventPeople?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
   readonly eventTags?: Maybe<Schedule_EventTag_Bool_Exp>;
@@ -31180,6 +31586,7 @@ export type Schedule_Event_Insert_Input = {
   readonly continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly enableRecording?: Maybe<Scalars['Boolean']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly eventPeople?: Maybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
   readonly eventTags?: Maybe<Schedule_EventTag_Arr_Rel_Insert_Input>;
@@ -31308,6 +31715,7 @@ export type Schedule_Event_Order_By = {
   readonly continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly durationSeconds?: Maybe<Order_By>;
+  readonly enableRecording?: Maybe<Order_By>;
   readonly endTime?: Maybe<Order_By>;
   readonly eventPeople_aggregate?: Maybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
   readonly eventTags_aggregate?: Maybe<Schedule_EventTag_Aggregate_Order_By>;
@@ -31346,6 +31754,8 @@ export enum Schedule_Event_Select_Column {
   /** column name */
   DurationSeconds = 'durationSeconds',
   /** column name */
+  EnableRecording = 'enableRecording',
+  /** column name */
   EndTime = 'endTime',
   /** column name */
   ExhibitionId = 'exhibitionId',
@@ -31376,6 +31786,7 @@ export type Schedule_Event_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly durationSeconds?: Maybe<Scalars['Int']>;
+  readonly enableRecording?: Maybe<Scalars['Boolean']>;
   readonly endTime?: Maybe<Scalars['timestamptz']>;
   readonly exhibitionId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
@@ -31442,6 +31853,8 @@ export enum Schedule_Event_Update_Column {
   CreatedAt = 'createdAt',
   /** column name */
   DurationSeconds = 'durationSeconds',
+  /** column name */
+  EnableRecording = 'enableRecording',
   /** column name */
   EndTime = 'endTime',
   /** column name */
@@ -32153,6 +32566,12 @@ export type Subscription_Root = {
   readonly registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
   /** fetch data from the table: "registrant.Registrant" using primary key columns */
   readonly registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+  readonly registrant_SavedVonageRoomRecording: ReadonlyArray<Registrant_SavedVonageRoomRecording>;
+  /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+  readonly registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+  readonly registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
   /** fetch data from the table: "room.Backend" */
   readonly room_Backend: ReadonlyArray<Room_Backend>;
   /** fetch aggregated fields from the table: "room.Backend" */
@@ -32355,6 +32774,12 @@ export type Subscription_Root = {
   readonly video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
   /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
   readonly video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+  /** fetch data from the table: "video.VonageRoomRecording" */
+  readonly video_VonageRoomRecording: ReadonlyArray<Video_VonageRoomRecording>;
+  /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+  readonly video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+  /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+  readonly video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
   /** fetch data from the table: "video.YouTubeUpload" */
   readonly video_YouTubeUpload: ReadonlyArray<Video_YouTubeUpload>;
   /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -33961,6 +34386,29 @@ export type Subscription_RootRegistrant_Registrant_By_PkArgs = {
 };
 
 
+export type Subscription_RootRegistrant_SavedVonageRoomRecordingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootRoom_BackendArgs = {
   distinct_on?: Maybe<ReadonlyArray<Room_Backend_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -34744,6 +35192,29 @@ export type Subscription_RootVideo_VideoRenderJob_AggregateArgs = {
 
 
 export type Subscription_RootVideo_VideoRenderJob_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecordingArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecording_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
+  where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+
+export type Subscription_RootVideo_VonageRoomRecording_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -37962,6 +38433,293 @@ export type Video_VideoRenderJob_Variance_Order_By = {
   readonly retriesCount?: Maybe<Order_By>;
 };
 
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording = {
+  readonly __typename?: 'video_VonageRoomRecording';
+  readonly created_at: Scalars['timestamptz'];
+  readonly endedAt?: Maybe<Scalars['timestamptz']>;
+  readonly id: Scalars['uuid'];
+  readonly initiatedBy?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  readonly initiator?: Maybe<Registrant_Registrant>;
+  /** An object relationship */
+  readonly room?: Maybe<Room_Room>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly s3Url?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  readonly saves: ReadonlyArray<Registrant_SavedVonageRoomRecording>;
+  /** An aggregate relationship */
+  readonly saves_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+  readonly startedAt: Scalars['timestamptz'];
+  readonly updated_at: Scalars['timestamptz'];
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageSessionId: Scalars['String'];
+};
+
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSavesArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSaves_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_SavedVonageRoomRecording_Order_By>>;
+  where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** aggregated selection of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate = {
+  readonly __typename?: 'video_VonageRoomRecording_aggregate';
+  readonly aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Video_VonageRoomRecording>;
+};
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Fields = {
+  readonly __typename?: 'video_VonageRoomRecording_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Video_VonageRoomRecording_Max_Fields>;
+  readonly min?: Maybe<Video_VonageRoomRecording_Min_Fields>;
+};
+
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Video_VonageRoomRecording_Max_Order_By>;
+  readonly min?: Maybe<Video_VonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Video_VonageRoomRecording_Insert_Input>;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "video.VonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Video_VonageRoomRecording_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Bool_Exp>>;
+  readonly _not?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Bool_Exp>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly endedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly initiatedBy?: Maybe<Uuid_Comparison_Exp>;
+  readonly initiator?: Maybe<Registrant_Registrant_Bool_Exp>;
+  readonly room?: Maybe<Room_Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly s3Url?: Maybe<String_Comparison_Exp>;
+  readonly saves?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+  readonly startedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploaded_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly vonageSessionId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Constraint {
+  /** unique or primary key constraint */
+  VonageRoomRecordingPkey = 'VonageRoomRecording_pkey'
+}
+
+/** input type for inserting data into table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endedAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly initiatedBy?: Maybe<Scalars['uuid']>;
+  readonly initiator?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly s3Url?: Maybe<Scalars['String']>;
+  readonly saves?: Maybe<Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Video_VonageRoomRecording_Max_Fields = {
+  readonly __typename?: 'video_VonageRoomRecording_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endedAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly initiatedBy?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly s3Url?: Maybe<Scalars['String']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Max_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly endedAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly initiatedBy?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly s3Url?: Maybe<Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
+  readonly vonageSessionId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Video_VonageRoomRecording_Min_Fields = {
+  readonly __typename?: 'video_VonageRoomRecording_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endedAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly initiatedBy?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly s3Url?: Maybe<Scalars['String']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Min_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly endedAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly initiatedBy?: Maybe<Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly s3Url?: Maybe<Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
+  readonly vonageSessionId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Mutation_Response = {
+  readonly __typename?: 'video_VonageRoomRecording_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Video_VonageRoomRecording>;
+};
+
+/** input type for inserting object relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Obj_Rel_Insert_Input = {
+  readonly data: Video_VonageRoomRecording_Insert_Input;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_On_Conflict = {
+  readonly constraint: Video_VonageRoomRecording_Constraint;
+  readonly update_columns?: ReadonlyArray<Video_VonageRoomRecording_Update_Column>;
+  readonly where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.VonageRoomRecording". */
+export type Video_VonageRoomRecording_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly endedAt?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly initiatedBy?: Maybe<Order_By>;
+  readonly initiator?: Maybe<Registrant_Registrant_Order_By>;
+  readonly room?: Maybe<Room_Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly s3Url?: Maybe<Order_By>;
+  readonly saves_aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Order_By>;
+  readonly startedAt?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
+  readonly vonageSessionId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_VonageRoomRecording */
+export type Video_VonageRoomRecording_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndedAt = 'endedAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InitiatedBy = 'initiatedBy',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  S3Url = 's3Url',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
+  VonageSessionId = 'vonageSessionId'
+}
+
+/** input type for updating data in table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly endedAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly initiatedBy?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly s3Url?: Maybe<Scalars['String']>;
+  readonly startedAt?: Maybe<Scalars['timestamptz']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
+  readonly vonageSessionId?: Maybe<Scalars['String']>;
+};
+
+/** update columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndedAt = 'endedAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InitiatedBy = 'initiatedBy',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  S3Url = 's3Url',
+  /** column name */
+  StartedAt = 'startedAt',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
+  VonageSessionId = 'vonageSessionId'
+}
+
 /** columns and relationships of "video.YouTubeUpload" */
 export type Video_YouTubeUpload = {
   readonly __typename?: 'video_YouTubeUpload';
@@ -38462,6 +39220,13 @@ export type ProfilePage_ItemsQueryVariables = Exact<{
 
 export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
 
+export type MyRecordingsQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type MyRecordingsQuery = { readonly __typename?: 'query_root', readonly registrant_SavedVonageRoomRecording: ReadonlyArray<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly recording: { readonly __typename?: 'video_VonageRoomRecording', readonly id: any, readonly startedAt: any, readonly endedAt?: Maybe<any>, readonly s3Url?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> } }> };
+
 export type SelectRegistrantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -38528,13 +39293,6 @@ export type RoomPage_GetRoomChannelStackQueryVariables = Exact<{
 export type RoomPage_GetRoomChannelStackQuery = { readonly __typename?: 'query_root', readonly video_ChannelStack: ReadonlyArray<{ readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> };
 
 export type RoomPage_RoomChannelStackFragment = { readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any };
-
-export type GetEventVonageTokenMutationVariables = Exact<{
-  eventId: Scalars['uuid'];
-}>;
-
-
-export type GetEventVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinEventVonageSession?: Maybe<{ readonly __typename?: 'JoinEventVonageSessionOutput', readonly accessToken?: Maybe<string> }> };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -38631,12 +39389,19 @@ export type GetRoomChimeDataMutationVariables = Exact<{
 
 export type GetRoomChimeDataMutation = { readonly __typename?: 'mutation_root', readonly joinRoomChimeSession?: Maybe<{ readonly __typename?: 'JoinRoomChimeSessionOutput', readonly registrant?: Maybe<any>, readonly meeting?: Maybe<any>, readonly message?: Maybe<string> }> };
 
+export type GetEventVonageTokenMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinEventVonageSession?: Maybe<{ readonly __typename?: 'JoinEventVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly isRecorded?: Maybe<boolean> }> };
+
 export type GetRoomVonageTokenMutationVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string> }> };
+export type GetRoomVonageTokenMutation = { readonly __typename?: 'mutation_root', readonly joinRoomVonageSession?: Maybe<{ readonly __typename?: 'JoinRoomVonageSessionOutput', readonly accessToken?: Maybe<string>, readonly sessionId?: Maybe<string>, readonly isRecorded?: Maybe<boolean> }> };
 
 export type GetRoomVonageSessionIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -38652,6 +39417,22 @@ export type DeleteEventParticipantMutationVariables = Exact<{
 
 
 export type DeleteEventParticipantMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_EventProgramPerson?: Maybe<{ readonly __typename?: 'schedule_EventProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any }> }> };
+
+export type SaveVonageRoomRecordingMutationVariables = Exact<{
+  recordingId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type SaveVonageRoomRecordingMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_SavedVonageRoomRecording_one?: Maybe<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly recordingId: any, readonly registrantId: any, readonly isHidden: boolean }> };
+
+export type ToggleVonageRecordingStateMutationVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+  recordingActive: Scalars['Boolean'];
+}>;
+
+
+export type ToggleVonageRecordingStateMutation = { readonly __typename?: 'mutation_root', readonly toggleVonageRecordingState?: Maybe<{ readonly __typename?: 'ToggleVonageRecordingStateOutput', readonly allowed: boolean, readonly recordingState: boolean }> };
 
 export type GetAllRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -40149,10 +40930,11 @@ export type InsertEventInfoMutationVariables = Exact<{
   exhibitionId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   insertContinuation: Scalars['Boolean'];
+  enableRecording: Scalars['Boolean'];
 }>;
 
 
-export type InsertEventInfoMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
+export type InsertEventInfoMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventInfoMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -40165,10 +40947,11 @@ export type UpdateEventInfoMutationVariables = Exact<{
   itemId?: Maybe<Scalars['uuid']>;
   exhibitionId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
+  enableRecording: Scalars['Boolean'];
 }>;
 
 
-export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }> };
+export type UpdateEventInfoMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }> };
 
 export type DeleteEventInfosMutationVariables = Exact<{
   eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -40181,7 +40964,7 @@ export type RoomInfoFragment = { readonly __typename?: 'room_Room', readonly cap
 
 export type RoomParticipantInfoFragment = { readonly __typename?: 'room_Participant', readonly registrantId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any };
 
-export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> };
+export type EventInfoFragment = { readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> };
 
 export type EventProgramPersonInfoFragment = { readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any };
 
@@ -40192,7 +40975,7 @@ export type SelectWholeScheduleQueryVariables = Exact<{
 }>;
 
 
-export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly registrantId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly conferenceId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
+export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly registrantId: any, readonly conferenceId: any, readonly id: any, readonly roomId: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly conferenceId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly conferenceId: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPersonWithAccessToken: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly conferenceId?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
 
 export type InsertRoomsMutationVariables = Exact<{
   newRooms: ReadonlyArray<Room_Room_Insert_Input> | Room_Room_Insert_Input;
@@ -40233,7 +41016,7 @@ export type InsertEventMutationVariables = Exact<{
 }>;
 
 
-export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
+export type InsertEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_Event_one?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly insert_schedule_Continuation_one?: Maybe<{ readonly __typename?: 'schedule_Continuation', readonly id: any }> };
 
 export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -40250,7 +41033,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly delete_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly id: any }> }> };
+export type UpdateEventMutation = { readonly __typename?: 'mutation_root', readonly insert_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }>, readonly eventTags: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly eventId: any, readonly id: any, readonly tagId: any }> }>, readonly delete_schedule_EventTag?: Maybe<{ readonly __typename?: 'schedule_EventTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventTag', readonly id: any }> }> };
 
 export type UpdateShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -42218,6 +43001,7 @@ export const EventInfoFragmentDoc = gql`
   itemId
   exhibitionId
   shufflePeriodId
+  enableRecording
 }
     ${EventProgramPersonInfoFragmentDoc}
 ${EventTagInfoFragmentDoc}`;
@@ -43503,6 +44287,54 @@ export function useProfilePage_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProfilePage_ItemsQueryHookResult = ReturnType<typeof useProfilePage_ItemsQuery>;
 export type ProfilePage_ItemsLazyQueryHookResult = ReturnType<typeof useProfilePage_ItemsLazyQuery>;
 export type ProfilePage_ItemsQueryResult = Apollo.QueryResult<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>;
+export const MyRecordingsDocument = gql`
+    query MyRecordings($registrantId: uuid!) {
+  registrant_SavedVonageRoomRecording(
+    where: {registrantId: {_eq: $registrantId}}
+    order_by: {recording: {endedAt: desc}}
+  ) {
+    id
+    recording {
+      id
+      room {
+        id
+        name
+      }
+      startedAt
+      endedAt
+      s3Url
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyRecordingsQuery__
+ *
+ * To run a query within a React component, call `useMyRecordingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyRecordingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyRecordingsQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useMyRecordingsQuery(baseOptions: Apollo.QueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
+      }
+export function useMyRecordingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
+        }
+export type MyRecordingsQueryHookResult = ReturnType<typeof useMyRecordingsQuery>;
+export type MyRecordingsLazyQueryHookResult = ReturnType<typeof useMyRecordingsLazyQuery>;
+export type MyRecordingsQueryResult = Apollo.QueryResult<MyRecordingsQuery, MyRecordingsQueryVariables>;
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(
@@ -43797,39 +44629,6 @@ export function useRoomPage_GetRoomChannelStackLazyQuery(baseOptions?: Apollo.La
 export type RoomPage_GetRoomChannelStackQueryHookResult = ReturnType<typeof useRoomPage_GetRoomChannelStackQuery>;
 export type RoomPage_GetRoomChannelStackLazyQueryHookResult = ReturnType<typeof useRoomPage_GetRoomChannelStackLazyQuery>;
 export type RoomPage_GetRoomChannelStackQueryResult = Apollo.QueryResult<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>;
-export const GetEventVonageTokenDocument = gql`
-    mutation GetEventVonageToken($eventId: uuid!) {
-  joinEventVonageSession(eventId: $eventId) {
-    accessToken
-  }
-}
-    `;
-export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
-
-/**
- * __useGetEventVonageTokenMutation__
- *
- * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, options);
-      }
-export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
 export const GetEventVonageDetailsDocument = gql`
     query GetEventVonageDetails($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -44299,11 +45098,46 @@ export function useGetRoomChimeDataMutation(baseOptions?: Apollo.MutationHookOpt
 export type GetRoomChimeDataMutationHookResult = ReturnType<typeof useGetRoomChimeDataMutation>;
 export type GetRoomChimeDataMutationResult = Apollo.MutationResult<GetRoomChimeDataMutation>;
 export type GetRoomChimeDataMutationOptions = Apollo.BaseMutationOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
+export const GetEventVonageTokenDocument = gql`
+    mutation GetEventVonageToken($eventId: uuid!) {
+  joinEventVonageSession(eventId: $eventId) {
+    accessToken
+    isRecorded
+  }
+}
+    `;
+export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+
+/**
+ * __useGetEventVonageTokenMutation__
+ *
+ * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, options);
+      }
+export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
+export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
 export const GetRoomVonageTokenDocument = gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
   joinRoomVonageSession(roomId: $roomId) {
     accessToken
     sessionId
+    isRecorded
   }
 }
     `;
@@ -44407,6 +45241,84 @@ export function useDeleteEventParticipantMutation(baseOptions?: Apollo.MutationH
 export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
+export const SaveVonageRoomRecordingDocument = gql`
+    mutation SaveVonageRoomRecording($recordingId: uuid!, $registrantId: uuid!) {
+  insert_registrant_SavedVonageRoomRecording_one(
+    object: {recordingId: $recordingId, registrantId: $registrantId}
+    on_conflict: {constraint: SavedVonageRoomRecording_recordingId_registrantId_key, update_columns: []}
+  ) {
+    id
+    recordingId
+    registrantId
+    isHidden
+  }
+}
+    `;
+export type SaveVonageRoomRecordingMutationFn = Apollo.MutationFunction<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+
+/**
+ * __useSaveVonageRoomRecordingMutation__
+ *
+ * To run a mutation, you first call `useSaveVonageRoomRecordingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveVonageRoomRecordingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveVonageRoomRecordingMutation, { data, loading, error }] = useSaveVonageRoomRecordingMutation({
+ *   variables: {
+ *      recordingId: // value for 'recordingId'
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useSaveVonageRoomRecordingMutation(baseOptions?: Apollo.MutationHookOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>(SaveVonageRoomRecordingDocument, options);
+      }
+export type SaveVonageRoomRecordingMutationHookResult = ReturnType<typeof useSaveVonageRoomRecordingMutation>;
+export type SaveVonageRoomRecordingMutationResult = Apollo.MutationResult<SaveVonageRoomRecordingMutation>;
+export type SaveVonageRoomRecordingMutationOptions = Apollo.BaseMutationOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+export const ToggleVonageRecordingStateDocument = gql`
+    mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
+  toggleVonageRecordingState(
+    vonageSessionId: $vonageSessionId
+    recordingActive: $recordingActive
+  ) {
+    allowed
+    recordingState
+  }
+}
+    `;
+export type ToggleVonageRecordingStateMutationFn = Apollo.MutationFunction<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
+
+/**
+ * __useToggleVonageRecordingStateMutation__
+ *
+ * To run a mutation, you first call `useToggleVonageRecordingStateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleVonageRecordingStateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleVonageRecordingStateMutation, { data, loading, error }] = useToggleVonageRecordingStateMutation({
+ *   variables: {
+ *      vonageSessionId: // value for 'vonageSessionId'
+ *      recordingActive: // value for 'recordingActive'
+ *   },
+ * });
+ */
+export function useToggleVonageRecordingStateMutation(baseOptions?: Apollo.MutationHookOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>(ToggleVonageRecordingStateDocument, options);
+      }
+export type ToggleVonageRecordingStateMutationHookResult = ReturnType<typeof useToggleVonageRecordingStateMutation>;
+export type ToggleVonageRecordingStateMutationResult = Apollo.MutationResult<ToggleVonageRecordingStateMutation>;
+export type ToggleVonageRecordingStateMutationOptions = Apollo.BaseMutationOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
@@ -51339,9 +52251,9 @@ export type ManageSchedule_ShufflePeriodsQueryHookResult = ReturnType<typeof use
 export type ManageSchedule_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsLazyQuery>;
 export type ManageSchedule_ShufflePeriodsQueryResult = Apollo.QueryResult<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>;
 export const InsertEventInfoDocument = gql`
-    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!) {
+    mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!, $enableRecording: Boolean!) {
   insert_schedule_Event_one(
-    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId}
+    object: {id: $id, roomId: $roomId, conferenceId: $conferenceId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording}
   ) {
     ...EventInfo
   }
@@ -51379,6 +52291,7 @@ export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoM
  *      exhibitionId: // value for 'exhibitionId'
  *      shufflePeriodId: // value for 'shufflePeriodId'
  *      insertContinuation: // value for 'insertContinuation'
+ *      enableRecording: // value for 'enableRecording'
  *   },
  * });
  */
@@ -51390,10 +52303,10 @@ export type InsertEventInfoMutationHookResult = ReturnType<typeof useInsertEvent
 export type InsertEventInfoMutationResult = Apollo.MutationResult<InsertEventInfoMutation>;
 export type InsertEventInfoMutationOptions = Apollo.BaseMutationOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
 export const UpdateEventInfoDocument = gql`
-    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null) {
+    mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $enableRecording: Boolean!) {
   update_schedule_Event_by_pk(
     pk_columns: {id: $eventId}
-    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId}
+    _set: {roomId: $roomId, intendedRoomModeName: $intendedRoomModeName, originatingDataId: $originatingDataId, name: $name, startTime: $startTime, durationSeconds: $durationSeconds, itemId: $itemId, exhibitionId: $exhibitionId, shufflePeriodId: $shufflePeriodId, enableRecording: $enableRecording}
   ) {
     ...EventInfo
   }
@@ -51424,6 +52337,7 @@ export type UpdateEventInfoMutationFn = Apollo.MutationFunction<UpdateEventInfoM
  *      itemId: // value for 'itemId'
  *      exhibitionId: // value for 'exhibitionId'
  *      shufflePeriodId: // value for 'shufflePeriodId'
+ *      enableRecording: // value for 'enableRecording'
  *   },
  * });
  */

@@ -713,6 +713,7 @@ export type Int_Comparison_Exp = {
 export type JoinEventVonageSessionOutput = {
     __typename?: "JoinEventVonageSessionOutput";
     accessToken?: Maybe<Scalars["String"]>;
+    isRecorded?: Maybe<Scalars["Boolean"]>;
 };
 
 export type JoinRoomChimeSessionOutput = {
@@ -725,6 +726,7 @@ export type JoinRoomChimeSessionOutput = {
 export type JoinRoomVonageSessionOutput = {
     __typename?: "JoinRoomVonageSessionOutput";
     accessToken?: Maybe<Scalars["String"]>;
+    isRecorded?: Maybe<Scalars["Boolean"]>;
     message?: Maybe<Scalars["String"]>;
     sessionId?: Maybe<Scalars["String"]>;
 };
@@ -15613,6 +15615,10 @@ export type Mutation_Root = {
     delete_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
     /** delete single row from the table: "registrant.Registrant" */
     delete_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+    /** delete data from the table: "registrant.SavedVonageRoomRecording" */
+    delete_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+    /** delete single row from the table: "registrant.SavedVonageRoomRecording" */
+    delete_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
     /** delete data from the table: "room.Backend" */
     delete_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
     /** delete single row from the table: "room.Backend" */
@@ -15695,6 +15701,8 @@ export type Mutation_Root = {
     delete_system_Configuration_by_pk?: Maybe<System_Configuration>;
     /** delete data from the table: "video.ChannelStack" */
     delete_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+    /** delete data from the table: "video.ChannelStackWithStreamKey" */
+    delete_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
     /** delete single row from the table: "video.ChannelStack" */
     delete_video_ChannelStack_by_pk?: Maybe<Video_ChannelStack>;
     /** delete data from the table: "video.EventParticipantStream" */
@@ -15737,6 +15745,10 @@ export type Mutation_Root = {
     delete_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
     /** delete single row from the table: "video.VideoRenderJob" */
     delete_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+    /** delete data from the table: "video.VonageRoomRecording" */
+    delete_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+    /** delete single row from the table: "video.VonageRoomRecording" */
+    delete_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
     /** delete data from the table: "video.YouTubeUpload" */
     delete_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** delete single row from the table: "video.YouTubeUpload" */
@@ -15994,6 +16006,10 @@ export type Mutation_Root = {
     insert_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
     /** insert a single row into the table: "registrant.Registrant" */
     insert_registrant_Registrant_one?: Maybe<Registrant_Registrant>;
+    /** insert data into the table: "registrant.SavedVonageRoomRecording" */
+    insert_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+    /** insert a single row into the table: "registrant.SavedVonageRoomRecording" */
+    insert_registrant_SavedVonageRoomRecording_one?: Maybe<Registrant_SavedVonageRoomRecording>;
     /** insert data into the table: "room.Backend" */
     insert_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
     /** insert a single row into the table: "room.Backend" */
@@ -16076,6 +16092,10 @@ export type Mutation_Root = {
     insert_system_Configuration_one?: Maybe<System_Configuration>;
     /** insert data into the table: "video.ChannelStack" */
     insert_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+    /** insert data into the table: "video.ChannelStackWithStreamKey" */
+    insert_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
+    /** insert a single row into the table: "video.ChannelStackWithStreamKey" */
+    insert_video_ChannelStackWithStreamKey_one?: Maybe<Video_ChannelStackWithStreamKey>;
     /** insert a single row into the table: "video.ChannelStack" */
     insert_video_ChannelStack_one?: Maybe<Video_ChannelStack>;
     /** insert data into the table: "video.EventParticipantStream" */
@@ -16118,6 +16138,10 @@ export type Mutation_Root = {
     insert_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
     /** insert a single row into the table: "video.VideoRenderJob" */
     insert_video_VideoRenderJob_one?: Maybe<Video_VideoRenderJob>;
+    /** insert data into the table: "video.VonageRoomRecording" */
+    insert_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+    /** insert a single row into the table: "video.VonageRoomRecording" */
+    insert_video_VonageRoomRecording_one?: Maybe<Video_VonageRoomRecording>;
     /** insert data into the table: "video.YouTubeUpload" */
     insert_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** insert a single row into the table: "video.YouTubeUpload" */
@@ -16370,6 +16394,10 @@ export type Mutation_Root = {
     update_registrant_Registrant?: Maybe<Registrant_Registrant_Mutation_Response>;
     /** update single row of the table: "registrant.Registrant" */
     update_registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+    /** update data of the table: "registrant.SavedVonageRoomRecording" */
+    update_registrant_SavedVonageRoomRecording?: Maybe<Registrant_SavedVonageRoomRecording_Mutation_Response>;
+    /** update single row of the table: "registrant.SavedVonageRoomRecording" */
+    update_registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
     /** update data of the table: "room.Backend" */
     update_room_Backend?: Maybe<Room_Backend_Mutation_Response>;
     /** update single row of the table: "room.Backend" */
@@ -16452,6 +16480,8 @@ export type Mutation_Root = {
     update_system_Configuration_by_pk?: Maybe<System_Configuration>;
     /** update data of the table: "video.ChannelStack" */
     update_video_ChannelStack?: Maybe<Video_ChannelStack_Mutation_Response>;
+    /** update data of the table: "video.ChannelStackWithStreamKey" */
+    update_video_ChannelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Mutation_Response>;
     /** update single row of the table: "video.ChannelStack" */
     update_video_ChannelStack_by_pk?: Maybe<Video_ChannelStack>;
     /** update data of the table: "video.EventParticipantStream" */
@@ -16494,6 +16524,10 @@ export type Mutation_Root = {
     update_video_VideoRenderJob?: Maybe<Video_VideoRenderJob_Mutation_Response>;
     /** update single row of the table: "video.VideoRenderJob" */
     update_video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+    /** update data of the table: "video.VonageRoomRecording" */
+    update_video_VonageRoomRecording?: Maybe<Video_VonageRoomRecording_Mutation_Response>;
+    /** update single row of the table: "video.VonageRoomRecording" */
+    update_video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
     /** update data of the table: "video.YouTubeUpload" */
     update_video_YouTubeUpload?: Maybe<Video_YouTubeUpload_Mutation_Response>;
     /** update single row of the table: "video.YouTubeUpload" */
@@ -17107,6 +17141,16 @@ export type Mutation_RootDelete_Registrant_Registrant_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecordingArgs = {
+    where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_SavedVonageRoomRecording_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Room_BackendArgs = {
     where: Room_Backend_Bool_Exp;
 };
@@ -17312,6 +17356,11 @@ export type Mutation_RootDelete_Video_ChannelStackArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Video_ChannelStackWithStreamKeyArgs = {
+    where: Video_ChannelStackWithStreamKey_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Video_ChannelStack_By_PkArgs = {
     id: Scalars["uuid"];
 };
@@ -17413,6 +17462,16 @@ export type Mutation_RootDelete_Video_VideoRenderJobArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Video_VideoRenderJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecordingArgs = {
+    where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Video_VonageRoomRecording_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -18173,6 +18232,18 @@ export type Mutation_RootInsert_Registrant_Registrant_OneArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecordingArgs = {
+    objects: Array<Registrant_SavedVonageRoomRecording_Insert_Input>;
+    on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_SavedVonageRoomRecording_OneArgs = {
+    object: Registrant_SavedVonageRoomRecording_Insert_Input;
+    on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Room_BackendArgs = {
     objects: Array<Room_Backend_Insert_Input>;
     on_conflict?: Maybe<Room_Backend_On_Conflict>;
@@ -18419,6 +18490,16 @@ export type Mutation_RootInsert_Video_ChannelStackArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Video_ChannelStackWithStreamKeyArgs = {
+    objects: Array<Video_ChannelStackWithStreamKey_Insert_Input>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_ChannelStackWithStreamKey_OneArgs = {
+    object: Video_ChannelStackWithStreamKey_Insert_Input;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Video_ChannelStack_OneArgs = {
     object: Video_ChannelStack_Insert_Input;
     on_conflict?: Maybe<Video_ChannelStack_On_Conflict>;
@@ -18542,6 +18623,18 @@ export type Mutation_RootInsert_Video_VideoRenderJobArgs = {
 export type Mutation_RootInsert_Video_VideoRenderJob_OneArgs = {
     object: Video_VideoRenderJob_Insert_Input;
     on_conflict?: Maybe<Video_VideoRenderJob_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecordingArgs = {
+    objects: Array<Video_VonageRoomRecording_Insert_Input>;
+    on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Video_VonageRoomRecording_OneArgs = {
+    object: Video_VonageRoomRecording_Insert_Input;
+    on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
 };
 
 /** mutation root */
@@ -19503,6 +19596,18 @@ export type Mutation_RootUpdate_Registrant_Registrant_By_PkArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecordingArgs = {
+    _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+    where: Registrant_SavedVonageRoomRecording_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_SavedVonageRoomRecording_By_PkArgs = {
+    _set?: Maybe<Registrant_SavedVonageRoomRecording_Set_Input>;
+    pk_columns: Registrant_SavedVonageRoomRecording_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Room_BackendArgs = {
     _set?: Maybe<Room_Backend_Set_Input>;
     where: Room_Backend_Bool_Exp;
@@ -19791,6 +19896,12 @@ export type Mutation_RootUpdate_Video_ChannelStackArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Video_ChannelStackWithStreamKeyArgs = {
+    _set?: Maybe<Video_ChannelStackWithStreamKey_Set_Input>;
+    where: Video_ChannelStackWithStreamKey_Bool_Exp;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Video_ChannelStack_By_PkArgs = {
     _set?: Maybe<Video_ChannelStack_Set_Input>;
     pk_columns: Video_ChannelStack_Pk_Columns_Input;
@@ -19948,6 +20059,18 @@ export type Mutation_RootUpdate_Video_VideoRenderJob_By_PkArgs = {
     _prepend?: Maybe<Video_VideoRenderJob_Prepend_Input>;
     _set?: Maybe<Video_VideoRenderJob_Set_Input>;
     pk_columns: Video_VideoRenderJob_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecordingArgs = {
+    _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+    where: Video_VonageRoomRecording_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Video_VonageRoomRecording_By_PkArgs = {
+    _set?: Maybe<Video_VonageRoomRecording_Set_Input>;
+    pk_columns: Video_VonageRoomRecording_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -21638,6 +21761,12 @@ export type Query_Root = {
     registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "registrant.Registrant" using primary key columns */
     registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+    /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+    registrant_SavedVonageRoomRecording: Array<Registrant_SavedVonageRoomRecording>;
+    /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+    registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+    /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+    registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -21773,6 +21902,10 @@ export type Query_Root = {
     vapidPublicKey: VapidPublicKeyOutput;
     /** fetch data from the table: "video.ChannelStack" */
     video_ChannelStack: Array<Video_ChannelStack>;
+    /** fetch data from the table: "video.ChannelStackWithStreamKey" */
+    video_ChannelStackWithStreamKey: Array<Video_ChannelStackWithStreamKey>;
+    /** fetch aggregated fields from the table: "video.ChannelStackWithStreamKey" */
+    video_ChannelStackWithStreamKey_aggregate: Video_ChannelStackWithStreamKey_Aggregate;
     /** fetch aggregated fields from the table: "video.ChannelStack" */
     video_ChannelStack_aggregate: Video_ChannelStack_Aggregate;
     /** fetch data from the table: "video.ChannelStack" using primary key columns */
@@ -21837,6 +21970,12 @@ export type Query_Root = {
     video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
     /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
     video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+    /** fetch data from the table: "video.VonageRoomRecording" */
+    video_VonageRoomRecording: Array<Video_VonageRoomRecording>;
+    /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+    video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+    /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+    video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
     /** fetch data from the table: "video.YouTubeUpload" */
     video_YouTubeUpload: Array<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -23255,6 +23394,26 @@ export type Query_RootRegistrant_Registrant_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Query_RootRegistrant_SavedVonageRoomRecordingArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+export type Query_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Query_RootRoom_BackendArgs = {
     distinct_on?: Maybe<Array<Room_Backend_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -23713,6 +23872,22 @@ export type Query_RootVideo_ChannelStackArgs = {
     where?: Maybe<Video_ChannelStack_Bool_Exp>;
 };
 
+export type Query_RootVideo_ChannelStackWithStreamKeyArgs = {
+    distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+    where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+export type Query_RootVideo_ChannelStackWithStreamKey_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+    where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
 export type Query_RootVideo_ChannelStack_AggregateArgs = {
     distinct_on?: Maybe<Array<Video_ChannelStack_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -23922,6 +24097,26 @@ export type Query_RootVideo_VideoRenderJob_AggregateArgs = {
 };
 
 export type Query_RootVideo_VideoRenderJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Query_RootVideo_VonageRoomRecordingArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageRoomRecording_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+export type Query_RootVideo_VonageRoomRecording_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -25302,6 +25497,204 @@ export enum Registrant_Registrant_Update_Column {
     UserId = "userId",
 }
 
+/** columns and relationships of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording = {
+    __typename?: "registrant_SavedVonageRoomRecording";
+    created_at: Scalars["timestamptz"];
+    id: Scalars["uuid"];
+    isHidden: Scalars["Boolean"];
+    /** An object relationship */
+    recording: Video_VonageRoomRecording;
+    recordingId: Scalars["uuid"];
+    /** An object relationship */
+    registrant: Registrant_Registrant;
+    registrantId: Scalars["uuid"];
+    updated_at: Scalars["timestamptz"];
+};
+
+/** aggregated selection of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate = {
+    __typename?: "registrant_SavedVonageRoomRecording_aggregate";
+    aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Fields>;
+    nodes: Array<Registrant_SavedVonageRoomRecording>;
+};
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Fields = {
+    __typename?: "registrant_SavedVonageRoomRecording_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Fields>;
+    min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Fields>;
+};
+
+/** aggregate fields of "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Registrant_SavedVonageRoomRecording_Max_Order_By>;
+    min?: Maybe<Registrant_SavedVonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input = {
+    data: Array<Registrant_SavedVonageRoomRecording_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Registrant_SavedVonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "registrant.SavedVonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Registrant_SavedVonageRoomRecording_Bool_Exp = {
+    _and?: Maybe<Array<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+    _not?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+    _or?: Maybe<Array<Registrant_SavedVonageRoomRecording_Bool_Exp>>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    isHidden?: Maybe<Boolean_Comparison_Exp>;
+    recording?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+    recordingId?: Maybe<Uuid_Comparison_Exp>;
+    registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+    registrantId?: Maybe<Uuid_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Constraint {
+    /** unique or primary key constraint */
+    SavedVonageRoomRecordingPkey = "SavedVonageRoomRecording_pkey",
+    /** unique or primary key constraint */
+    SavedVonageRoomRecordingRecordingIdRegistrantIdKey = "SavedVonageRoomRecording_recordingId_registrantId_key",
+}
+
+/** input type for inserting data into table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Insert_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isHidden?: Maybe<Scalars["Boolean"]>;
+    recording?: Maybe<Video_VonageRoomRecording_Obj_Rel_Insert_Input>;
+    recordingId?: Maybe<Scalars["uuid"]>;
+    registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Registrant_SavedVonageRoomRecording_Max_Fields = {
+    __typename?: "registrant_SavedVonageRoomRecording_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    recordingId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by max() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Max_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    recordingId?: Maybe<Order_By>;
+    registrantId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Registrant_SavedVonageRoomRecording_Min_Fields = {
+    __typename?: "registrant_SavedVonageRoomRecording_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    recordingId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** order by min() on columns of table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Min_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    recordingId?: Maybe<Order_By>;
+    registrantId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Mutation_Response = {
+    __typename?: "registrant_SavedVonageRoomRecording_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Registrant_SavedVonageRoomRecording>;
+};
+
+/** on conflict condition type for table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_On_Conflict = {
+    constraint: Registrant_SavedVonageRoomRecording_Constraint;
+    update_columns?: Array<Registrant_SavedVonageRoomRecording_Update_Column>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "registrant.SavedVonageRoomRecording". */
+export type Registrant_SavedVonageRoomRecording_Order_By = {
+    created_at?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    isHidden?: Maybe<Order_By>;
+    recording?: Maybe<Video_VonageRoomRecording_Order_By>;
+    recordingId?: Maybe<Order_By>;
+    registrant?: Maybe<Registrant_Registrant_Order_By>;
+    registrantId?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: registrant_SavedVonageRoomRecording */
+export type Registrant_SavedVonageRoomRecording_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IsHidden = "isHidden",
+    /** column name */
+    RecordingId = "recordingId",
+    /** column name */
+    RegistrantId = "registrantId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "registrant.SavedVonageRoomRecording" */
+export type Registrant_SavedVonageRoomRecording_Set_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    isHidden?: Maybe<Scalars["Boolean"]>;
+    recordingId?: Maybe<Scalars["uuid"]>;
+    registrantId?: Maybe<Scalars["uuid"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** update columns of table "registrant.SavedVonageRoomRecording" */
+export enum Registrant_SavedVonageRoomRecording_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    Id = "id",
+    /** column name */
+    IsHidden = "isHidden",
+    /** column name */
+    RecordingId = "recordingId",
+    /** column name */
+    RegistrantId = "registrantId",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
 /** columns and relationships of "room.Backend" */
 export type Room_Backend = {
     __typename?: "room_Backend";
@@ -26512,6 +26905,8 @@ export type Room_Room = {
     /** An aggregate relationship */
     channelStackCreateJobs_aggregate: Job_Queues_ChannelStackCreateJob_Aggregate;
     /** An object relationship */
+    channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey>;
+    /** An object relationship */
     chat?: Maybe<Chat_Chat>;
     chatId?: Maybe<Scalars["uuid"]>;
     /** An object relationship */
@@ -26571,6 +26966,10 @@ export type Room_Room = {
     /** An aggregate relationship */
     stats_aggregate: Analytics_RoomStats_Aggregate;
     updated_at: Scalars["timestamptz"];
+    /** An array relationship */
+    vonageRecordings: Array<Video_VonageRoomRecording>;
+    /** An aggregate relationship */
+    vonageRecordings_aggregate: Video_VonageRoomRecording_Aggregate;
 };
 
 /** columns and relationships of "room.Room" */
@@ -26697,6 +27096,24 @@ export type Room_RoomStats_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Analytics_RoomStats_Order_By>>;
     where?: Maybe<Analytics_RoomStats_Bool_Exp>;
+};
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordingsArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+/** columns and relationships of "room.Room" */
+export type Room_RoomVonageRecordings_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** columns and relationships of "room.RoomPerson" */
@@ -26975,6 +27392,7 @@ export type Room_Room_Bool_Exp = {
     capacity?: Maybe<Int_Comparison_Exp>;
     channelStack?: Maybe<Video_ChannelStack_Bool_Exp>;
     channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Bool_Exp>;
+    channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
     chat?: Maybe<Chat_Chat_Bool_Exp>;
     chatId?: Maybe<Uuid_Comparison_Exp>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Bool_Exp>;
@@ -27006,6 +27424,7 @@ export type Room_Room_Bool_Exp = {
     shuffleRooms?: Maybe<Room_ShuffleRoom_Bool_Exp>;
     stats?: Maybe<Analytics_RoomStats_Bool_Exp>;
     updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    vonageRecordings?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "room.Room" */
@@ -27028,6 +27447,7 @@ export type Room_Room_Insert_Input = {
     capacity?: Maybe<Scalars["Int"]>;
     channelStack?: Maybe<Video_ChannelStack_Obj_Rel_Insert_Input>;
     channelStackCreateJobs?: Maybe<Job_Queues_ChannelStackCreateJob_Arr_Rel_Insert_Input>;
+    channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Obj_Rel_Insert_Input>;
     chat?: Maybe<Chat_Chat_Obj_Rel_Insert_Input>;
     chatId?: Maybe<Scalars["uuid"]>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Obj_Rel_Insert_Input>;
@@ -27058,6 +27478,7 @@ export type Room_Room_Insert_Input = {
     shuffleRooms?: Maybe<Room_ShuffleRoom_Arr_Rel_Insert_Input>;
     stats?: Maybe<Analytics_RoomStats_Arr_Rel_Insert_Input>;
     updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageRecordings?: Maybe<Video_VonageRoomRecording_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -27159,6 +27580,7 @@ export type Room_Room_Order_By = {
     capacity?: Maybe<Order_By>;
     channelStack?: Maybe<Video_ChannelStack_Order_By>;
     channelStackCreateJobs_aggregate?: Maybe<Job_Queues_ChannelStackCreateJob_Aggregate_Order_By>;
+    channelStackWithStreamKey?: Maybe<Video_ChannelStackWithStreamKey_Order_By>;
     chat?: Maybe<Chat_Chat_Order_By>;
     chatId?: Maybe<Order_By>;
     chimeMeeting?: Maybe<Room_ChimeMeeting_Order_By>;
@@ -27190,6 +27612,7 @@ export type Room_Room_Order_By = {
     shuffleRooms_aggregate?: Maybe<Room_ShuffleRoom_Aggregate_Order_By>;
     stats_aggregate?: Maybe<Analytics_RoomStats_Aggregate_Order_By>;
     updated_at?: Maybe<Order_By>;
+    vonageRecordings_aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: room_Room */
@@ -29187,6 +29610,7 @@ export type Schedule_Event = {
     continuations_aggregate: Schedule_Continuation_Aggregate;
     createdAt: Scalars["timestamptz"];
     durationSeconds: Scalars["Int"];
+    enableRecording: Scalars["Boolean"];
     endTime?: Maybe<Scalars["timestamptz"]>;
     /** An array relationship */
     eventPeople: Array<Schedule_EventProgramPerson>;
@@ -29899,6 +30323,7 @@ export type Schedule_Event_Bool_Exp = {
     continuations?: Maybe<Schedule_Continuation_Bool_Exp>;
     createdAt?: Maybe<Timestamptz_Comparison_Exp>;
     durationSeconds?: Maybe<Int_Comparison_Exp>;
+    enableRecording?: Maybe<Boolean_Comparison_Exp>;
     endTime?: Maybe<Timestamptz_Comparison_Exp>;
     eventPeople?: Maybe<Schedule_EventProgramPerson_Bool_Exp>;
     eventTags?: Maybe<Schedule_EventTag_Bool_Exp>;
@@ -29941,6 +30366,7 @@ export type Schedule_Event_Insert_Input = {
     continuations?: Maybe<Schedule_Continuation_Arr_Rel_Insert_Input>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
+    enableRecording?: Maybe<Scalars["Boolean"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
     eventPeople?: Maybe<Schedule_EventProgramPerson_Arr_Rel_Insert_Input>;
     eventTags?: Maybe<Schedule_EventTag_Arr_Rel_Insert_Input>;
@@ -30069,6 +30495,7 @@ export type Schedule_Event_Order_By = {
     continuations_aggregate?: Maybe<Schedule_Continuation_Aggregate_Order_By>;
     createdAt?: Maybe<Order_By>;
     durationSeconds?: Maybe<Order_By>;
+    enableRecording?: Maybe<Order_By>;
     endTime?: Maybe<Order_By>;
     eventPeople_aggregate?: Maybe<Schedule_EventProgramPerson_Aggregate_Order_By>;
     eventTags_aggregate?: Maybe<Schedule_EventTag_Aggregate_Order_By>;
@@ -30107,6 +30534,8 @@ export enum Schedule_Event_Select_Column {
     /** column name */
     DurationSeconds = "durationSeconds",
     /** column name */
+    EnableRecording = "enableRecording",
+    /** column name */
     EndTime = "endTime",
     /** column name */
     ExhibitionId = "exhibitionId",
@@ -30137,6 +30566,7 @@ export type Schedule_Event_Set_Input = {
     conferenceId?: Maybe<Scalars["uuid"]>;
     createdAt?: Maybe<Scalars["timestamptz"]>;
     durationSeconds?: Maybe<Scalars["Int"]>;
+    enableRecording?: Maybe<Scalars["Boolean"]>;
     endTime?: Maybe<Scalars["timestamptz"]>;
     exhibitionId?: Maybe<Scalars["uuid"]>;
     id?: Maybe<Scalars["uuid"]>;
@@ -30203,6 +30633,8 @@ export enum Schedule_Event_Update_Column {
     CreatedAt = "createdAt",
     /** column name */
     DurationSeconds = "durationSeconds",
+    /** column name */
+    EnableRecording = "enableRecording",
     /** column name */
     EndTime = "endTime",
     /** column name */
@@ -30912,6 +31344,12 @@ export type Subscription_Root = {
     registrant_Registrant_aggregate: Registrant_Registrant_Aggregate;
     /** fetch data from the table: "registrant.Registrant" using primary key columns */
     registrant_Registrant_by_pk?: Maybe<Registrant_Registrant>;
+    /** fetch data from the table: "registrant.SavedVonageRoomRecording" */
+    registrant_SavedVonageRoomRecording: Array<Registrant_SavedVonageRoomRecording>;
+    /** fetch aggregated fields from the table: "registrant.SavedVonageRoomRecording" */
+    registrant_SavedVonageRoomRecording_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+    /** fetch data from the table: "registrant.SavedVonageRoomRecording" using primary key columns */
+    registrant_SavedVonageRoomRecording_by_pk?: Maybe<Registrant_SavedVonageRoomRecording>;
     /** fetch data from the table: "room.Backend" */
     room_Backend: Array<Room_Backend>;
     /** fetch aggregated fields from the table: "room.Backend" */
@@ -31046,6 +31484,10 @@ export type Subscription_Root = {
     system_Configuration_by_pk?: Maybe<System_Configuration>;
     /** fetch data from the table: "video.ChannelStack" */
     video_ChannelStack: Array<Video_ChannelStack>;
+    /** fetch data from the table: "video.ChannelStackWithStreamKey" */
+    video_ChannelStackWithStreamKey: Array<Video_ChannelStackWithStreamKey>;
+    /** fetch aggregated fields from the table: "video.ChannelStackWithStreamKey" */
+    video_ChannelStackWithStreamKey_aggregate: Video_ChannelStackWithStreamKey_Aggregate;
     /** fetch aggregated fields from the table: "video.ChannelStack" */
     video_ChannelStack_aggregate: Video_ChannelStack_Aggregate;
     /** fetch data from the table: "video.ChannelStack" using primary key columns */
@@ -31110,6 +31552,12 @@ export type Subscription_Root = {
     video_VideoRenderJob_aggregate: Video_VideoRenderJob_Aggregate;
     /** fetch data from the table: "video.VideoRenderJob" using primary key columns */
     video_VideoRenderJob_by_pk?: Maybe<Video_VideoRenderJob>;
+    /** fetch data from the table: "video.VonageRoomRecording" */
+    video_VonageRoomRecording: Array<Video_VonageRoomRecording>;
+    /** fetch aggregated fields from the table: "video.VonageRoomRecording" */
+    video_VonageRoomRecording_aggregate: Video_VonageRoomRecording_Aggregate;
+    /** fetch data from the table: "video.VonageRoomRecording" using primary key columns */
+    video_VonageRoomRecording_by_pk?: Maybe<Video_VonageRoomRecording>;
     /** fetch data from the table: "video.YouTubeUpload" */
     video_YouTubeUpload: Array<Video_YouTubeUpload>;
     /** fetch aggregated fields from the table: "video.YouTubeUpload" */
@@ -32514,6 +32962,26 @@ export type Subscription_RootRegistrant_Registrant_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
+export type Subscription_RootRegistrant_SavedVonageRoomRecordingArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_AggregateArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+export type Subscription_RootRegistrant_SavedVonageRoomRecording_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
 export type Subscription_RootRoom_BackendArgs = {
     distinct_on?: Maybe<Array<Room_Backend_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -32972,6 +33440,22 @@ export type Subscription_RootVideo_ChannelStackArgs = {
     where?: Maybe<Video_ChannelStack_Bool_Exp>;
 };
 
+export type Subscription_RootVideo_ChannelStackWithStreamKeyArgs = {
+    distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+    where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_ChannelStackWithStreamKey_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_ChannelStackWithStreamKey_Order_By>>;
+    where?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+};
+
 export type Subscription_RootVideo_ChannelStack_AggregateArgs = {
     distinct_on?: Maybe<Array<Video_ChannelStack_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -33181,6 +33665,26 @@ export type Subscription_RootVideo_VideoRenderJob_AggregateArgs = {
 };
 
 export type Subscription_RootVideo_VideoRenderJob_By_PkArgs = {
+    id: Scalars["uuid"];
+};
+
+export type Subscription_RootVideo_VonageRoomRecordingArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageRoomRecording_AggregateArgs = {
+    distinct_on?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Video_VonageRoomRecording_Order_By>>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+export type Subscription_RootVideo_VonageRoomRecording_By_PkArgs = {
     id: Scalars["uuid"];
 };
 
@@ -33605,6 +34109,330 @@ export type Video_ChannelStackChannelStackUpdateJobs_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
     where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey = {
+    __typename?: "video_ChannelStackWithStreamKey";
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    /** An array relationship */
+    channelStackUpdateJobs: Array<Job_Queues_ChannelStackUpdateJob>;
+    /** An aggregate relationship */
+    channelStackUpdateJobs_aggregate: Job_Queues_ChannelStackUpdateJob_Aggregate;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    cloudFrontDistributionId?: Maybe<Scalars["String"]>;
+    cloudFrontDomain?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    conference?: Maybe<Conference_Conference>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endpointUri?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    loopingMp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    /** An object relationship */
+    mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus>;
+    mediaPackageChannelId?: Maybe<Scalars["String"]>;
+    mp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKeyChannelStackUpdateJobsArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** columns and relationships of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKeyChannelStackUpdateJobs_AggregateArgs = {
+    distinct_on?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Job_Queues_ChannelStackUpdateJob_Order_By>>;
+    where?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+};
+
+/** aggregated selection of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate = {
+    __typename?: "video_ChannelStackWithStreamKey_aggregate";
+    aggregate?: Maybe<Video_ChannelStackWithStreamKey_Aggregate_Fields>;
+    nodes: Array<Video_ChannelStackWithStreamKey>;
+};
+
+/** aggregate fields of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate_Fields = {
+    __typename?: "video_ChannelStackWithStreamKey_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_ChannelStackWithStreamKey_Max_Fields>;
+    min?: Maybe<Video_ChannelStackWithStreamKey_Min_Fields>;
+};
+
+/** aggregate fields of "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Video_ChannelStackWithStreamKey_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** Boolean expression to filter rows from the table "video.ChannelStackWithStreamKey". All fields are combined with a logical 'AND'. */
+export type Video_ChannelStackWithStreamKey_Bool_Exp = {
+    _and?: Maybe<Array<Video_ChannelStackWithStreamKey_Bool_Exp>>;
+    _not?: Maybe<Video_ChannelStackWithStreamKey_Bool_Exp>;
+    _or?: Maybe<Array<Video_ChannelStackWithStreamKey_Bool_Exp>>;
+    channelStackCreateJobId?: Maybe<Uuid_Comparison_Exp>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Bool_Exp>;
+    cloudFormationStackArn?: Maybe<String_Comparison_Exp>;
+    cloudFrontDistributionId?: Maybe<String_Comparison_Exp>;
+    cloudFrontDomain?: Maybe<String_Comparison_Exp>;
+    conference?: Maybe<Conference_Conference_Bool_Exp>;
+    conferenceId?: Maybe<Uuid_Comparison_Exp>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    endpointUri?: Maybe<String_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    loopingMp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
+    mediaLiveChannelId?: Maybe<String_Comparison_Exp>;
+    mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Bool_Exp>;
+    mediaPackageChannelId?: Maybe<String_Comparison_Exp>;
+    mp4InputAttachmentName?: Maybe<String_Comparison_Exp>;
+    mp4InputId?: Maybe<String_Comparison_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+    rtmpAInputAttachmentName?: Maybe<String_Comparison_Exp>;
+    rtmpAInputId?: Maybe<String_Comparison_Exp>;
+    rtmpAInputUri?: Maybe<String_Comparison_Exp>;
+    rtmpBInputAttachmentName?: Maybe<String_Comparison_Exp>;
+    rtmpBInputId?: Maybe<String_Comparison_Exp>;
+    rtmpBInputUri?: Maybe<String_Comparison_Exp>;
+    rtmpOutputDestinationId?: Maybe<String_Comparison_Exp>;
+    rtmpOutputStreamKey?: Maybe<String_Comparison_Exp>;
+    rtmpOutputUri?: Maybe<String_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** input type for inserting data into table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Insert_Input = {
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    channelStackUpdateJobs?: Maybe<Job_Queues_ChannelStackUpdateJob_Arr_Rel_Insert_Input>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    cloudFrontDistributionId?: Maybe<Scalars["String"]>;
+    cloudFrontDomain?: Maybe<Scalars["String"]>;
+    conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endpointUri?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    loopingMp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Obj_Rel_Insert_Input>;
+    mediaPackageChannelId?: Maybe<Scalars["String"]>;
+    mp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate max on columns */
+export type Video_ChannelStackWithStreamKey_Max_Fields = {
+    __typename?: "video_ChannelStackWithStreamKey_max_fields";
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    cloudFrontDistributionId?: Maybe<Scalars["String"]>;
+    cloudFrontDomain?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endpointUri?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    loopingMp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    mediaPackageChannelId?: Maybe<Scalars["String"]>;
+    mp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** aggregate min on columns */
+export type Video_ChannelStackWithStreamKey_Min_Fields = {
+    __typename?: "video_ChannelStackWithStreamKey_min_fields";
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    cloudFrontDistributionId?: Maybe<Scalars["String"]>;
+    cloudFrontDomain?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endpointUri?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    loopingMp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    mediaPackageChannelId?: Maybe<Scalars["String"]>;
+    mp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+};
+
+/** response of any mutation on the table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Mutation_Response = {
+    __typename?: "video_ChannelStackWithStreamKey_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_ChannelStackWithStreamKey>;
+};
+
+/** input type for inserting object relation for remote table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Obj_Rel_Insert_Input = {
+    data: Video_ChannelStackWithStreamKey_Insert_Input;
+};
+
+/** Ordering options when selecting data from "video.ChannelStackWithStreamKey". */
+export type Video_ChannelStackWithStreamKey_Order_By = {
+    channelStackCreateJobId?: Maybe<Order_By>;
+    channelStackUpdateJobs_aggregate?: Maybe<Job_Queues_ChannelStackUpdateJob_Aggregate_Order_By>;
+    cloudFormationStackArn?: Maybe<Order_By>;
+    cloudFrontDistributionId?: Maybe<Order_By>;
+    cloudFrontDomain?: Maybe<Order_By>;
+    conference?: Maybe<Conference_Conference_Order_By>;
+    conferenceId?: Maybe<Order_By>;
+    created_at?: Maybe<Order_By>;
+    endpointUri?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    loopingMp4InputAttachmentName?: Maybe<Order_By>;
+    mediaLiveChannelId?: Maybe<Order_By>;
+    mediaLiveChannelStatus?: Maybe<Video_MediaLiveChannelStatus_Order_By>;
+    mediaPackageChannelId?: Maybe<Order_By>;
+    mp4InputAttachmentName?: Maybe<Order_By>;
+    mp4InputId?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+    rtmpAInputAttachmentName?: Maybe<Order_By>;
+    rtmpAInputId?: Maybe<Order_By>;
+    rtmpAInputUri?: Maybe<Order_By>;
+    rtmpBInputAttachmentName?: Maybe<Order_By>;
+    rtmpBInputId?: Maybe<Order_By>;
+    rtmpBInputUri?: Maybe<Order_By>;
+    rtmpOutputDestinationId?: Maybe<Order_By>;
+    rtmpOutputStreamKey?: Maybe<Order_By>;
+    rtmpOutputUri?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+};
+
+/** select columns of table "video.ChannelStackWithStreamKey" */
+export enum Video_ChannelStackWithStreamKey_Select_Column {
+    /** column name */
+    ChannelStackCreateJobId = "channelStackCreateJobId",
+    /** column name */
+    CloudFormationStackArn = "cloudFormationStackArn",
+    /** column name */
+    CloudFrontDistributionId = "cloudFrontDistributionId",
+    /** column name */
+    CloudFrontDomain = "cloudFrontDomain",
+    /** column name */
+    ConferenceId = "conferenceId",
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EndpointUri = "endpointUri",
+    /** column name */
+    Id = "id",
+    /** column name */
+    LoopingMp4InputAttachmentName = "loopingMp4InputAttachmentName",
+    /** column name */
+    MediaLiveChannelId = "mediaLiveChannelId",
+    /** column name */
+    MediaPackageChannelId = "mediaPackageChannelId",
+    /** column name */
+    Mp4InputAttachmentName = "mp4InputAttachmentName",
+    /** column name */
+    Mp4InputId = "mp4InputId",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    RtmpAInputAttachmentName = "rtmpAInputAttachmentName",
+    /** column name */
+    RtmpAInputId = "rtmpAInputId",
+    /** column name */
+    RtmpAInputUri = "rtmpAInputUri",
+    /** column name */
+    RtmpBInputAttachmentName = "rtmpBInputAttachmentName",
+    /** column name */
+    RtmpBInputId = "rtmpBInputId",
+    /** column name */
+    RtmpBInputUri = "rtmpBInputUri",
+    /** column name */
+    RtmpOutputDestinationId = "rtmpOutputDestinationId",
+    /** column name */
+    RtmpOutputStreamKey = "rtmpOutputStreamKey",
+    /** column name */
+    RtmpOutputUri = "rtmpOutputUri",
+    /** column name */
+    UpdatedAt = "updated_at",
+}
+
+/** input type for updating data in table "video.ChannelStackWithStreamKey" */
+export type Video_ChannelStackWithStreamKey_Set_Input = {
+    channelStackCreateJobId?: Maybe<Scalars["uuid"]>;
+    cloudFormationStackArn?: Maybe<Scalars["String"]>;
+    cloudFrontDistributionId?: Maybe<Scalars["String"]>;
+    cloudFrontDomain?: Maybe<Scalars["String"]>;
+    conferenceId?: Maybe<Scalars["uuid"]>;
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endpointUri?: Maybe<Scalars["String"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    loopingMp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mediaLiveChannelId?: Maybe<Scalars["String"]>;
+    mediaPackageChannelId?: Maybe<Scalars["String"]>;
+    mp4InputAttachmentName?: Maybe<Scalars["String"]>;
+    mp4InputId?: Maybe<Scalars["String"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    rtmpAInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpAInputId?: Maybe<Scalars["String"]>;
+    rtmpAInputUri?: Maybe<Scalars["String"]>;
+    rtmpBInputAttachmentName?: Maybe<Scalars["String"]>;
+    rtmpBInputId?: Maybe<Scalars["String"]>;
+    rtmpBInputUri?: Maybe<Scalars["String"]>;
+    rtmpOutputDestinationId?: Maybe<Scalars["String"]>;
+    rtmpOutputStreamKey?: Maybe<Scalars["String"]>;
+    rtmpOutputUri?: Maybe<Scalars["String"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
 };
 
 /** aggregated selection of "video.ChannelStack" */
@@ -36045,6 +36873,277 @@ export type Video_VideoRenderJob_Variance_Fields = {
 export type Video_VideoRenderJob_Variance_Order_By = {
     retriesCount?: Maybe<Order_By>;
 };
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording = {
+    __typename?: "video_VonageRoomRecording";
+    created_at: Scalars["timestamptz"];
+    endedAt?: Maybe<Scalars["timestamptz"]>;
+    id: Scalars["uuid"];
+    initiatedBy?: Maybe<Scalars["uuid"]>;
+    /** An object relationship */
+    initiator?: Maybe<Registrant_Registrant>;
+    /** An object relationship */
+    room?: Maybe<Room_Room>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    s3Url?: Maybe<Scalars["String"]>;
+    /** An array relationship */
+    saves: Array<Registrant_SavedVonageRoomRecording>;
+    /** An aggregate relationship */
+    saves_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
+    startedAt: Scalars["timestamptz"];
+    updated_at: Scalars["timestamptz"];
+    vonageSessionId: Scalars["String"];
+};
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSavesArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** columns and relationships of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecordingSaves_AggregateArgs = {
+    distinct_on?: Maybe<Array<Registrant_SavedVonageRoomRecording_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Registrant_SavedVonageRoomRecording_Order_By>>;
+    where?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+};
+
+/** aggregated selection of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate = {
+    __typename?: "video_VonageRoomRecording_aggregate";
+    aggregate?: Maybe<Video_VonageRoomRecording_Aggregate_Fields>;
+    nodes: Array<Video_VonageRoomRecording>;
+};
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Fields = {
+    __typename?: "video_VonageRoomRecording_aggregate_fields";
+    count: Scalars["Int"];
+    max?: Maybe<Video_VonageRoomRecording_Max_Fields>;
+    min?: Maybe<Video_VonageRoomRecording_Min_Fields>;
+};
+
+/** aggregate fields of "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_FieldsCountArgs = {
+    columns?: Maybe<Array<Video_VonageRoomRecording_Select_Column>>;
+    distinct?: Maybe<Scalars["Boolean"]>;
+};
+
+/** order by aggregate values of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Aggregate_Order_By = {
+    count?: Maybe<Order_By>;
+    max?: Maybe<Video_VonageRoomRecording_Max_Order_By>;
+    min?: Maybe<Video_VonageRoomRecording_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Arr_Rel_Insert_Input = {
+    data: Array<Video_VonageRoomRecording_Insert_Input>;
+    /** on conflict condition */
+    on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "video.VonageRoomRecording". All fields are combined with a logical 'AND'. */
+export type Video_VonageRoomRecording_Bool_Exp = {
+    _and?: Maybe<Array<Video_VonageRoomRecording_Bool_Exp>>;
+    _not?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+    _or?: Maybe<Array<Video_VonageRoomRecording_Bool_Exp>>;
+    created_at?: Maybe<Timestamptz_Comparison_Exp>;
+    endedAt?: Maybe<Timestamptz_Comparison_Exp>;
+    id?: Maybe<Uuid_Comparison_Exp>;
+    initiatedBy?: Maybe<Uuid_Comparison_Exp>;
+    initiator?: Maybe<Registrant_Registrant_Bool_Exp>;
+    room?: Maybe<Room_Room_Bool_Exp>;
+    roomId?: Maybe<Uuid_Comparison_Exp>;
+    s3Url?: Maybe<String_Comparison_Exp>;
+    saves?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
+    startedAt?: Maybe<Timestamptz_Comparison_Exp>;
+    updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+    vonageSessionId?: Maybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Constraint {
+    /** unique or primary key constraint */
+    VonageRoomRecordingPkey = "VonageRoomRecording_pkey",
+}
+
+/** input type for inserting data into table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Insert_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    initiatedBy?: Maybe<Scalars["uuid"]>;
+    initiator?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+    room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    s3Url?: Maybe<Scalars["String"]>;
+    saves?: Maybe<Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input>;
+    startedAt?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** aggregate max on columns */
+export type Video_VonageRoomRecording_Max_Fields = {
+    __typename?: "video_VonageRoomRecording_max_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    initiatedBy?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    s3Url?: Maybe<Scalars["String"]>;
+    startedAt?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** order by max() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Max_Order_By = {
+    created_at?: Maybe<Order_By>;
+    endedAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    initiatedBy?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+    s3Url?: Maybe<Order_By>;
+    startedAt?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    vonageSessionId?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Video_VonageRoomRecording_Min_Fields = {
+    __typename?: "video_VonageRoomRecording_min_fields";
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    initiatedBy?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    s3Url?: Maybe<Scalars["String"]>;
+    startedAt?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** order by min() on columns of table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Min_Order_By = {
+    created_at?: Maybe<Order_By>;
+    endedAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    initiatedBy?: Maybe<Order_By>;
+    roomId?: Maybe<Order_By>;
+    s3Url?: Maybe<Order_By>;
+    startedAt?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    vonageSessionId?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Mutation_Response = {
+    __typename?: "video_VonageRoomRecording_mutation_response";
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars["Int"];
+    /** data from the rows affected by the mutation */
+    returning: Array<Video_VonageRoomRecording>;
+};
+
+/** input type for inserting object relation for remote table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Obj_Rel_Insert_Input = {
+    data: Video_VonageRoomRecording_Insert_Input;
+    /** on conflict condition */
+    on_conflict?: Maybe<Video_VonageRoomRecording_On_Conflict>;
+};
+
+/** on conflict condition type for table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_On_Conflict = {
+    constraint: Video_VonageRoomRecording_Constraint;
+    update_columns?: Array<Video_VonageRoomRecording_Update_Column>;
+    where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "video.VonageRoomRecording". */
+export type Video_VonageRoomRecording_Order_By = {
+    created_at?: Maybe<Order_By>;
+    endedAt?: Maybe<Order_By>;
+    id?: Maybe<Order_By>;
+    initiatedBy?: Maybe<Order_By>;
+    initiator?: Maybe<Registrant_Registrant_Order_By>;
+    room?: Maybe<Room_Room_Order_By>;
+    roomId?: Maybe<Order_By>;
+    s3Url?: Maybe<Order_By>;
+    saves_aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Order_By>;
+    startedAt?: Maybe<Order_By>;
+    updated_at?: Maybe<Order_By>;
+    vonageSessionId?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: video_VonageRoomRecording */
+export type Video_VonageRoomRecording_Pk_Columns_Input = {
+    id: Scalars["uuid"];
+};
+
+/** select columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Select_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EndedAt = "endedAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InitiatedBy = "initiatedBy",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    S3Url = "s3Url",
+    /** column name */
+    StartedAt = "startedAt",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
+
+/** input type for updating data in table "video.VonageRoomRecording" */
+export type Video_VonageRoomRecording_Set_Input = {
+    created_at?: Maybe<Scalars["timestamptz"]>;
+    endedAt?: Maybe<Scalars["timestamptz"]>;
+    id?: Maybe<Scalars["uuid"]>;
+    initiatedBy?: Maybe<Scalars["uuid"]>;
+    roomId?: Maybe<Scalars["uuid"]>;
+    s3Url?: Maybe<Scalars["String"]>;
+    startedAt?: Maybe<Scalars["timestamptz"]>;
+    updated_at?: Maybe<Scalars["timestamptz"]>;
+    vonageSessionId?: Maybe<Scalars["String"]>;
+};
+
+/** update columns of table "video.VonageRoomRecording" */
+export enum Video_VonageRoomRecording_Update_Column {
+    /** column name */
+    CreatedAt = "created_at",
+    /** column name */
+    EndedAt = "endedAt",
+    /** column name */
+    Id = "id",
+    /** column name */
+    InitiatedBy = "initiatedBy",
+    /** column name */
+    RoomId = "roomId",
+    /** column name */
+    S3Url = "s3Url",
+    /** column name */
+    StartedAt = "startedAt",
+    /** column name */
+    UpdatedAt = "updated_at",
+    /** column name */
+    VonageSessionId = "vonageSessionId",
+}
 
 /** columns and relationships of "video.YouTubeUpload" */
 export type Video_YouTubeUpload = {

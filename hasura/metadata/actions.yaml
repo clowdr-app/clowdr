@@ -167,6 +167,16 @@ actions:
   permissions:
   - role: unauthenticated
   - role: user
+- name: toggleVonageRecordingState
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/vonage/toggleRecordingState'
+    forward_client_headers: true
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: user
 - name: updateProfilePhoto
   definition:
     kind: synchronous
@@ -257,4 +267,5 @@ custom_types:
   - name: NotifyEventEnded
   - name: GetSlugOutput
   - name: MatchingPersonOutput
+  - name: ToggleVonageRecordingStateOutput
   scalars: []

@@ -1,13 +1,46 @@
+import { gql } from "@apollo/client";
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
-import { Box, Button, chakra, HStack, Spinner, Stack, Tag, TagLabel, TagLeftIcon, Tooltip } from "@chakra-ui/react";
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Box,
+    Button,
+    ButtonGroup,
+    chakra,
+    Heading,
+    HStack,
+    Spinner,
+    Stack,
+    Tag,
+    TagLabel,
+    TagLeftIcon,
+    Text,
+    Tooltip,
+    useDisclosure,
+    VStack,
+} from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { DevicesProps, devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
+
+gql`
+    mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
+        toggleVonageRecordingState(vonageSessionId: $vonageSessionId, recordingActive: $recordingActive) {
+            allowed
+            recordingState
+        }
+    }
+`;
 
 export function VonageRoomControlBar({
     onJoinRoom,
@@ -16,8 +49,11 @@ export function VonageRoomControlBar({
     joining,
     joinRoomButtonText = "Join Room",
     joiningRoomButtonText = "Waiting to be admitted",
-    requireMicrophone,
+    requireMicrophoneOrCamera,
     onPermissionsProblem,
+    isRecordingActive,
+    isBackstage,
+    canControlRecording,
 }: {
     onJoinRoom: () => void;
     onLeaveRoom: () => void;
@@ -25,11 +61,16 @@ export function VonageRoomControlBar({
     joining: boolean;
     joinRoomButtonText?: string;
     joiningRoomButtonText?: string;
-    requireMicrophone: boolean;
+    requireMicrophoneOrCamera: boolean;
+    isRecordingActive: boolean;
+    isBackstage: boolean;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    canControlRecording: boolean;
 }): JSX.Element {
     const { state, dispatch } = useVonageRoom();
     const vonage = useVonageGlobalState();
+
+    const [toggleVonageRecording, toggleVonageRecordingResponse] = useToggleVonageRecordingStateMutation();
 
     const [isOpening, setIsOpening] = useState<boolean>(false);
     const [userMediaPermissionGranted, setUserMediaPermissionGranted] = useState<{
@@ -325,6 +366,47 @@ export function VonageRoomControlBar({
         [vonage.state]
     );
 
+    const {
+        isOpen: isRecordingAlertOpen,
+        onOpen: onRecordingAlertOpen,
+        onClose: onRecordingAlertClose,
+    } = useDisclosure();
+    const recordingAlert_LeastDestructiveRef = useRef<HTMLButtonElement | null>(null);
+    const [recentlyConnected, setRecentlyConnected] = useState<boolean>(false);
+    const [recentlyToggledRecording, setRecentlyToggledRecording] = useState<boolean>(false);
+    useEffect(() => {
+        if (!isRecordingActive || vonage.state.type !== StateType.Connected) {
+            onRecordingAlertClose();
+        }
+    }, [isRecordingActive, onRecordingAlertClose, vonage.state.type]);
+    useEffect(() => {
+        let tId: number | undefined;
+        if (vonage.state.type === StateType.Connected) {
+            setRecentlyConnected(true);
+
+            tId = setTimeout(
+                (() => {
+                    setRecentlyConnected(false);
+                }) as TimerHandler,
+                30000
+            );
+        } else {
+            setRecentlyConnected(false);
+        }
+        return () => {
+            if (tId) {
+                clearTimeout(tId);
+            }
+        };
+    }, [vonage.state.type]);
+    useEffect(() => {
+        if (isRecordingActive && !recentlyConnected && !recentlyToggledRecording) {
+            onRecordingAlertOpen();
+        }
+        setRecentlyToggledRecording(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isRecordingActive]);
+
     return (
         <>
             <Stack
@@ -338,7 +420,7 @@ export function VonageRoomControlBar({
                 <Button
                     isLoading={isOpening}
                     leftIcon={<SettingsIcon />}
-                    onClick={() => onOpen(true, !joining || !requireMicrophone)}
+                    onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
                     isDisabled={joining}
                     colorScheme="blue"
                 >
@@ -393,6 +475,35 @@ export function VonageRoomControlBar({
                         <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
                     </Tag>
                 )}
+                {vonage.state.type === StateType.Connected && !isBackstage ? (
+                    canControlRecording ? (
+                        <Button
+                            colorScheme="blue"
+                            onClick={() => {
+                                if (vonage.state.type === StateType.Connected) {
+                                    setRecentlyToggledRecording(true);
+                                    toggleVonageRecording({
+                                        variables: {
+                                            vonageSessionId: vonage.state.session.sessionId,
+                                            recordingActive: !isRecordingActive,
+                                        },
+                                    });
+                                }
+                            }}
+                            isLoading={toggleVonageRecordingResponse.loading}
+                        >
+                            {isRecordingActive ? "Stop recording" : "Start recording"}
+                        </Button>
+                    ) : (
+                        <Tag size="md" variant="outline" colorScheme="blue">
+                            {isRecordingActive ? (
+                                <TagLabel overflow="visible">Recording</TagLabel>
+                            ) : (
+                                <TagLabel overflow="visible">Not recording</TagLabel>
+                            )}
+                        </Tag>
+                    )
+                ) : undefined}
                 {vonage.state.type === StateType.Connected ? (
                     <Button colorScheme="purple" onClick={onLeaveRoom}>
                         Leave Room
@@ -400,7 +511,11 @@ export function VonageRoomControlBar({
                 ) : (
                     <Tooltip
                         label={
-                            requireMicrophone && !state.microphoneIntendedEnabled ? "Microphone required" : undefined
+                            requireMicrophoneOrCamera &&
+                            !state.microphoneIntendedEnabled &&
+                            !state.cameraIntendedEnabled
+                                ? "Microphone or camera required"
+                                : undefined
                         }
                     >
                         <Box w="100%">
@@ -413,7 +528,12 @@ export function VonageRoomControlBar({
                                 variant="glowing"
                                 onClick={joining ? onCancelJoinRoom : onJoinRoom}
                                 isLoading={!onCancelJoinRoom && joining}
-                                isDisabled={!joining && requireMicrophone && !state.microphoneIntendedEnabled}
+                                isDisabled={
+                                    !joining &&
+                                    requireMicrophoneOrCamera &&
+                                    !state.microphoneIntendedEnabled &&
+                                    !state.cameraIntendedEnabled
+                                }
                                 whiteSpace="normal"
                                 overflow="hidden"
                                 display="inline-flex"
@@ -450,6 +570,49 @@ export function VonageRoomControlBar({
                 onClose={onClose}
                 onOpen={() => onOpen(true, true)}
             />
+            <AlertDialog
+                isOpen={isRecordingAlertOpen}
+                onClose={onRecordingAlertClose}
+                leastDestructiveRef={recordingAlert_LeastDestructiveRef}
+            >
+                <AlertDialogOverlay />
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <Heading as="h1" fontSize="md">
+                            Recording has started
+                        </Heading>
+                    </AlertDialogHeader>
+                    <AlertDialogBody>
+                        <VStack>
+                            <Text>
+                                Recording of the video-call in this room has started. The recording will be managed by
+                                the conference and be made available to you when recording ends. For further
+                                information, please contact your conference organizers.
+                            </Text>
+                            <Text>You can find recordings under the My Stuff menu on the left.</Text>
+                        </VStack>
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <ButtonGroup spacing={2}>
+                            <Button
+                                onClick={() => {
+                                    onLeaveRoom();
+                                    onRecordingAlertClose();
+                                }}
+                            >
+                                Disconnect
+                            </Button>
+                            <Button
+                                ref={recordingAlert_LeastDestructiveRef}
+                                colorScheme="purple"
+                                onClick={() => onRecordingAlertClose()}
+                            >
+                                Ok, stay connected
+                            </Button>
+                        </ButtonGroup>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }

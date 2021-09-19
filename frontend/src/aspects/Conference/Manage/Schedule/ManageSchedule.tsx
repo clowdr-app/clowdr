@@ -13,6 +13,7 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Code,
     Drawer,
     DrawerBody,
@@ -62,6 +63,7 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import {
+    CheckBoxColumnFilter,
     DateTimeColumnFilter,
     dateTimeFilterFn,
     formatEnumValue,
@@ -111,6 +113,7 @@ gql`
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
         $insertContinuation: Boolean!
+        $enableRecording: Boolean!
     ) {
         insert_schedule_Event_one(
             object: {
@@ -125,6 +128,7 @@ gql`
                 itemId: $itemId
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
+                enableRecording: $enableRecording
             }
         ) {
             ...EventInfo
@@ -155,6 +159,7 @@ gql`
         $itemId: uuid = null
         $exhibitionId: uuid = null
         $shufflePeriodId: uuid = null
+        $enableRecording: Boolean!
     ) {
         update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
@@ -168,6 +173,7 @@ gql`
                 itemId: $itemId
                 exhibitionId: $exhibitionId
                 shufflePeriodId: $shufflePeriodId
+                enableRecording: $enableRecording
             }
         ) {
             ...EventInfo
@@ -192,6 +198,7 @@ enum ColumnId {
     Content = "content",
     Exhibition = "exhibition",
     ShufflePeriod = "shufflePeriod",
+    EnableRecording = "enableRecording",
 }
 
 function rowWarning(row: EventInfoFragment) {
@@ -933,6 +940,50 @@ function EditableScheduleTable(): JSX.Element {
                     );
                 },
             },
+            {
+                id: ColumnId.EnableRecording,
+                header: function EnableRecordingHeader({
+                    isInCreate,
+                    onClick,
+                    sortDir,
+                }: ColumnHeaderProps<EventInfoFragment>) {
+                    if (isInCreate) {
+                        return <FormLabel>Recorded?</FormLabel>;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={onClick} h="auto" py={1}>
+                                Recorded?{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => data.enableRecording ?? false,
+                set: (data, value: boolean) => {
+                    data.enableRecording = value;
+                },
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<EventInfoFragment>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.enableRecording === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function EnableRecordingCell({
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<EventInfoFragment>, boolean>) {
+                    return (
+                        <Center>
+                            <Checkbox
+                                isChecked={value ?? false}
+                                onChange={(ev) => onChange?.(ev.target.checked)}
+                                onBlur={onBlur}
+                                ref={ref as LegacyRef<HTMLInputElement>}
+                            />
+                        </Center>
+                    );
+                },
+            },
         ],
         [
             wholeSchedule.data?.room_Room,
@@ -1097,6 +1148,7 @@ function EditableScheduleTable(): JSX.Element {
                           exhibitionId: null,
                           shufflePeriodId: null,
                           originatingDataId: null,
+                          enableRecording: true,
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {

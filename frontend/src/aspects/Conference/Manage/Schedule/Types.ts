@@ -28,6 +28,7 @@ export type EventDescriptor = {
     startTime: string;
     durationSeconds: number;
     endTime?: string | null;
+    enableRecording?: boolean | null;
 
     tagIds: Set<string>;
 };

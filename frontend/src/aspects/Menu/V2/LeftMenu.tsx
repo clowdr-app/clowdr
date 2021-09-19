@@ -200,6 +200,10 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                 My profile
                             </MenuItem>
+                            <MenuItem as={ReactLink} to={`/conference/${conference.slug}/recordings`}>
+                                <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
+                                My recordings
+                            </MenuItem>
                             <MenuItem
                                 ref={myBackstagesButtonRef as React.RefObject<HTMLButtonElement>}
                                 onClick={myBackstages_OnOpen}

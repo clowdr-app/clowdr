@@ -13,6 +13,7 @@ import ExhibitionsPage from "./Attend/Exhibition/ExhibitionsPage";
 import EditProfilePage from "./Attend/Profile/EditProfilePage";
 import MyBackstages from "./Attend/Profile/MyBackstages";
 import ViewProfilePage from "./Attend/Profile/ViewProfilePage";
+import MyRecordingsPage from "./Attend/Recordings/MyRecordingsPage";
 import RegistrantListPage from "./Attend/Registrant/RegistrantListPage";
 import RoomPage from "./Attend/Room/RoomPage";
 import RoomListPageV1 from "./Attend/Rooms/V1/RoomListPage";
@@ -263,6 +264,15 @@ export default function ConferenceRoutes(): JSX.Element {
                     ]}
                 >
                     <WaitingPage />
+                </RequireAtLeastOnePermissionWrapper>
+            </Route>
+
+            <Route path={`${path}/recordings`}>
+                <RequireAtLeastOnePermissionWrapper
+                    componentIfDenied={<PageNotFound />}
+                    permissions={[Permissions_Permission_Enum.ConferenceView]}
+                >
+                    <MyRecordingsPage />
                 </RequireAtLeastOnePermissionWrapper>
             </Route>
 

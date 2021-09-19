@@ -9083,15 +9083,16 @@
   - role: user
     permission:
       columns:
-      - id
       - created_at
-      - updated_at
-      - roomId
-      - startedAt
       - endedAt
-      - vonageSessionId
-      - s3Url
+      - id
       - initiatedBy
+      - roomId
+      - s3Url
+      - startedAt
+      - updated_at
+      - uploaded_at
+      - vonageSessionId
       filter:
         _or:
         - initiator:

@@ -39220,6 +39220,13 @@ export type ProfilePage_ItemsQueryVariables = Exact<{
 
 export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
 
+export type MyRecordingsQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type MyRecordingsQuery = { readonly __typename?: 'query_root', readonly registrant_SavedVonageRoomRecording: ReadonlyArray<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly recording: { readonly __typename?: 'video_VonageRoomRecording', readonly id: any, readonly startedAt: any, readonly endedAt?: Maybe<any>, readonly s3Url?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> } }> };
+
 export type SelectRegistrantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -44280,6 +44287,54 @@ export function useProfilePage_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProfilePage_ItemsQueryHookResult = ReturnType<typeof useProfilePage_ItemsQuery>;
 export type ProfilePage_ItemsLazyQueryHookResult = ReturnType<typeof useProfilePage_ItemsLazyQuery>;
 export type ProfilePage_ItemsQueryResult = Apollo.QueryResult<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>;
+export const MyRecordingsDocument = gql`
+    query MyRecordings($registrantId: uuid!) {
+  registrant_SavedVonageRoomRecording(
+    where: {registrantId: {_eq: $registrantId}}
+    order_by: {recording: {endedAt: desc}}
+  ) {
+    id
+    recording {
+      id
+      room {
+        id
+        name
+      }
+      startedAt
+      endedAt
+      s3Url
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyRecordingsQuery__
+ *
+ * To run a query within a React component, call `useMyRecordingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyRecordingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyRecordingsQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useMyRecordingsQuery(baseOptions: Apollo.QueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
+      }
+export function useMyRecordingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
+        }
+export type MyRecordingsQueryHookResult = ReturnType<typeof useMyRecordingsQuery>;
+export type MyRecordingsLazyQueryHookResult = ReturnType<typeof useMyRecordingsLazyQuery>;
+export type MyRecordingsQueryResult = Apollo.QueryResult<MyRecordingsQuery, MyRecordingsQueryVariables>;
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(

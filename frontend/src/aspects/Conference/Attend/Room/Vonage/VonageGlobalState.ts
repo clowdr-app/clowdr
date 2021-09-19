@@ -297,6 +297,11 @@ export class VonageGlobalState {
                         style: {
                             backgroundImageURI: transparentImage,
                         },
+
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        fitMode: "cover",
+                        videoContentHint: "motion",
                     });
 
                     _publisher = publisher;
@@ -371,6 +376,11 @@ export class VonageGlobalState {
                     style: {
                         backgroundImageURI: transparentImage,
                     },
+
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    fitMode: "cover",
+                    videoContentHint: "motion",
                 });
 
                 _publisher = publisher;
@@ -438,6 +448,9 @@ export class VonageGlobalState {
                 height: "100%",
                 insertMode: "append",
                 showControls: false,
+                videoContentHint: "text",
+                echoCancellation: false,
+                noiseSuppression: false,
             });
 
             _publisher = publisher;

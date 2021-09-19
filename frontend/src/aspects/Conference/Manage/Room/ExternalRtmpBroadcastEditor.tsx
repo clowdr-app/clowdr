@@ -103,7 +103,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     const rtmpOutput = rtmpOutputResponse.data?.room_Room_by_pk?.rtmpOutput;
     const channelStack = rtmpOutputResponse.data?.room_Room_by_pk?.channelStack;
     const rtmpOutputUpdateRequired =
-        channelStack?.rtmpOutputUri !== rtmpOutput?.url || channelStack?.rtmpOutputStreamKey !== rtmpOutput?.streamKey;
+        channelStack?.rtmpOutputUri != rtmpOutput?.url || channelStack?.rtmpOutputStreamKey != rtmpOutput?.streamKey;
     const channelStatus = channelStack?.mediaLiveChannelStatus;
     const updateJobs = channelStack?.updateJobs[0];
     const isUpdating =

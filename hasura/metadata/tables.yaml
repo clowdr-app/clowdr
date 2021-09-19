@@ -6043,6 +6043,26 @@
   - name: registrant
     using:
       foreign_key_constraint_on: registrantId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+        - registrant:
+            userId:
+              _eq: X-Hasura-User-Id
+        - recording:
+            room:
+              conference:
+                registrants:
+                  id:
+                    _ceq:
+                    - $
+                    - registrantId
+      columns:
+      - recordingId
+      - registrantId
+      backend_only: false
   select_permissions:
   - role: user
     permission:

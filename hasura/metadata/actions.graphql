@@ -105,6 +105,13 @@ type Mutation {
 }
 
 type Mutation {
+  toggleVonageRecordingState (
+    recordingActive: Boolean!
+    vonageSessionId: String!
+  ): ToggleVonageRecordingStateOutput
+}
+
+type Mutation {
   updateProfilePhoto (
     registrantId: uuid!
     s3URL: String
@@ -299,5 +306,10 @@ type GetSlugOutput {
 
 type MatchingPersonOutput {
   accessToken : String
+}
+
+type ToggleVonageRecordingStateOutput {
+  allowed : Boolean!
+  recordingState : Boolean!
 }
 

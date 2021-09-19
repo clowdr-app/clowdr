@@ -12,6 +12,7 @@ export function VideoChatRoom({
     enable,
     eventId,
     eventIsFuture,
+    isChairOrOrganizer,
 }: {
     videoRoomBackendName?: string;
     defaultVideoBackendName?: string;
@@ -19,6 +20,7 @@ export function VideoChatRoom({
     enable: boolean;
     eventId: string | undefined;
     eventIsFuture: boolean;
+    isChairOrOrganizer: boolean;
 }): JSX.Element {
     const backend = useMemo(() => {
         switch (roomDetails.backendName) {
@@ -54,13 +56,14 @@ export function VideoChatRoom({
                         enable={enableVonage}
                         eventId={eventId}
                         eventIsFuture={eventIsFuture}
+                        isChairOrOrganizer={isChairOrOrganizer}
                     />
                     {enableVonage ? <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} /> : undefined}
                 </Box>
                 {!backend && enable ? <CenteredSpinner spinnerProps={{ mt: 2, mx: "auto" }} /> : undefined}
             </>
         );
-    }, [backend, enable, enableChime, enableVonage, roomDetails, eventId, eventIsFuture]);
+    }, [enableChime, roomDetails, enableVonage, eventId, eventIsFuture, isChairOrOrganizer, backend, enable]);
 
     return breakoutRoomEl;
 }

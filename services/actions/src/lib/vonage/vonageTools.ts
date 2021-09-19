@@ -351,7 +351,16 @@ export async function startRoomVonageArchiving(
                 console.error("No archive returned by Vonage", archiveDetails.vonageSessionId, roomId);
             }
 
-            return recordingResponse.data?.insert_video_VonageRoomRecording_one?.id ?? null;
+            const recordingId = recordingResponse.data?.insert_video_VonageRoomRecording_one?.id ?? null;
+
+            if (recordingId) {
+                await Vonage.signal(archiveDetails.vonageSessionId, null, {
+                    type: "recordingId",
+                    data: recordingId,
+                });
+            }
+
+            return recordingId;
         } catch (e) {
             console.error("Failed to start archive", archiveDetails.vonageSessionId, roomId, e);
             return null;

@@ -1015,6 +1015,12 @@ export type SubmitUploadableElementOutput = {
   success: Scalars['Boolean'];
 };
 
+export type ToggleVonageRecordingStateOutput = {
+  __typename?: 'ToggleVonageRecordingStateOutput';
+  allowed: Scalars['Boolean'];
+  recordingState: Scalars['Boolean'];
+};
+
 export type UpdateProfilePhotoResponse = {
   __typename?: 'UpdateProfilePhotoResponse';
   ok: Scalars['Boolean'];
@@ -16363,6 +16369,7 @@ export type Mutation_Root = {
   stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
+  toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
   updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Email" */
@@ -19297,6 +19304,13 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 export type Mutation_RootSubmitUploadableElementArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootToggleVonageRecordingStateArgs = {
+  recordingActive: Scalars['Boolean'];
+  vonageSessionId: Scalars['String'];
 };
 
 
@@ -38436,6 +38450,7 @@ export type Video_VonageRoomRecording = {
   saves_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
   startedAt: Scalars['timestamptz'];
   updated_at: Scalars['timestamptz'];
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId: Scalars['String'];
 };
 
@@ -38511,6 +38526,7 @@ export type Video_VonageRoomRecording_Bool_Exp = {
   saves?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
   startedAt?: Maybe<Timestamptz_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  uploaded_at?: Maybe<Timestamptz_Comparison_Exp>;
   vonageSessionId?: Maybe<String_Comparison_Exp>;
 };
 
@@ -38533,6 +38549,7 @@ export type Video_VonageRoomRecording_Insert_Input = {
   saves?: Maybe<Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input>;
   startedAt?: Maybe<Scalars['timestamptz']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38547,6 +38564,7 @@ export type Video_VonageRoomRecording_Max_Fields = {
   s3Url?: Maybe<Scalars['String']>;
   startedAt?: Maybe<Scalars['timestamptz']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38560,6 +38578,7 @@ export type Video_VonageRoomRecording_Max_Order_By = {
   s3Url?: Maybe<Order_By>;
   startedAt?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
   vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38574,6 +38593,7 @@ export type Video_VonageRoomRecording_Min_Fields = {
   s3Url?: Maybe<Scalars['String']>;
   startedAt?: Maybe<Scalars['timestamptz']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38587,6 +38607,7 @@ export type Video_VonageRoomRecording_Min_Order_By = {
   s3Url?: Maybe<Order_By>;
   startedAt?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
   vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38626,6 +38647,7 @@ export type Video_VonageRoomRecording_Order_By = {
   saves_aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Order_By>;
   startedAt?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
+  uploaded_at?: Maybe<Order_By>;
   vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38653,6 +38675,8 @@ export enum Video_VonageRoomRecording_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
   VonageSessionId = 'vonageSessionId'
 }
 
@@ -38666,6 +38690,7 @@ export type Video_VonageRoomRecording_Set_Input = {
   s3Url?: Maybe<Scalars['String']>;
   startedAt?: Maybe<Scalars['timestamptz']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+  uploaded_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38687,6 +38712,8 @@ export enum Video_VonageRoomRecording_Update_Column {
   StartedAt = 'startedAt',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
   /** column name */
   VonageSessionId = 'vonageSessionId'
 }
@@ -39650,18 +39677,18 @@ export type CheckForVonageRoomRecordingQueryVariables = Exact<{
 
 export type CheckForVonageRoomRecordingQuery = { __typename?: 'query_root', video_VonageRoomRecording: Array<{ __typename?: 'video_VonageRoomRecording', id: any }> };
 
-export type CheckForVonageRoomRecordingAtEndTimeQueryVariables = Exact<{
+export type CheckForVonageRoomRecordingNotUploadedQueryVariables = Exact<{
   roomId: Scalars['uuid'];
   vonageSessionId: Scalars['String'];
-  endedAt: Scalars['timestamptz'];
 }>;
 
 
-export type CheckForVonageRoomRecordingAtEndTimeQuery = { __typename?: 'query_root', video_VonageRoomRecording: Array<{ __typename?: 'video_VonageRoomRecording', id: any }> };
+export type CheckForVonageRoomRecordingNotUploadedQuery = { __typename?: 'query_root', video_VonageRoomRecording: Array<{ __typename?: 'video_VonageRoomRecording', id: any }> };
 
 export type SaveVonageRoomRecordingMutationVariables = Exact<{
   id: Scalars['uuid'];
   endedAt: Scalars['timestamptz'];
+  uploadedAt?: Maybe<Scalars['timestamptz']>;
   s3Url?: Maybe<Scalars['String']>;
 }>;
 
@@ -39691,6 +39718,15 @@ export type AddVonageRoomRecordingToUserListMutationVariables = Exact<{
 
 
 export type AddVonageRoomRecordingToUserListMutation = { __typename?: 'mutation_root', insert_registrant_SavedVonageRoomRecording_one?: Maybe<{ __typename?: 'registrant_SavedVonageRoomRecording', id: any }> };
+
+export type FindRoomByVonageSessionIdQueryVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+  now: Scalars['timestamptz'];
+  userId: Scalars['String'];
+}>;
+
+
+export type FindRoomByVonageSessionIdQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, events: Array<{ __typename?: 'schedule_Event', id: any, eventPeople: Array<{ __typename?: 'schedule_EventProgramPerson', id: any }> }>, conference: { __typename?: 'conference_Conference', registrants: Array<{ __typename?: 'registrant_Registrant', id: any }> } }> };
 
 export type FetchPresenceSummaryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -40150,11 +40186,12 @@ export const OngoingArchivableVideoRoomEventsDocument = {"kind":"Document","defi
 export const GetEventForArchiveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventForArchive"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"elements_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetEventForArchiveQuery, GetEventForArchiveQueryVariables>;
 export const InsertVonageArchiveElementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertVonageArchiveElement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"content_Element_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_content_Element_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertVonageArchiveElementMutation, InsertVonageArchiveElementMutationVariables>;
 export const CheckForVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageRoomRecording"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roomId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CheckForVonageRoomRecordingQuery, CheckForVonageRoomRecordingQueryVariables>;
-export const CheckForVonageRoomRecordingAtEndTimeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForVonageRoomRecordingAtEndTime"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageRoomRecording"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roomId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CheckForVonageRoomRecordingAtEndTimeQuery, CheckForVonageRoomRecordingAtEndTimeQueryVariables>;
-export const SaveVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VonageRoomRecording_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+export const CheckForVonageRoomRecordingNotUploadedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForVonageRoomRecordingNotUploaded"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageRoomRecording"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roomId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"uploaded_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"startedAt"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CheckForVonageRoomRecordingNotUploadedQuery, CheckForVonageRoomRecordingNotUploadedQueryVariables>;
+export const SaveVonageRoomRecordingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveVonageRoomRecording"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_video_VonageRoomRecording_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"endedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"uploaded_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"s3Url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"s3Url"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
 export const Vonage_GetEventDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vonage_GetEventDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}},{"kind":"Field","name":{"kind":"Name","value":"enableRecording"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roleName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}},{"kind":"Field","name":{"kind":"Name","value":"groupRegistrants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groupRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rolePermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionName"}}]}}]}}]}}]}}]}}]}}]}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<Vonage_GetEventDetailsQuery, Vonage_GetEventDetailsQueryVariables>;
 export const GetRoomThatUserCanJoinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRoomThatUserCanJoin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicVonageSessionId"}}]}}]}}]} as unknown as DocumentNode<GetRoomThatUserCanJoinQuery, GetRoomThatUserCanJoinQueryVariables>;
 export const AddVonageRoomRecordingToUserListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddVonageRoomRecordingToUserList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordingId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_registrant_SavedVonageRoomRecording_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"isHidden"},"value":{"kind":"BooleanValue","value":false}},{"kind":"ObjectField","name":{"kind":"Name","value":"recordingId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordingId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"SavedVonageRoomRecording_recordingId_registrantId_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<AddVonageRoomRecordingToUserListMutation, AddVonageRoomRecordingToUserListMutationVariables>;
+export const FindRoomByVonageSessionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindRoomByVonageSessionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room_Room"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publicVonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"events"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"startTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"endTime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eventPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"roleName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"CHAIR"},{"kind":"EnumValue","value":"PRESENTER"}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"groupRegistrants"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"group"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"groupRoles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"role"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"rolePermissions"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permissionName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"CONFERENCE_MANAGE_SCHEDULE"},{"kind":"EnumValue","value":"CONFERENCE_MODERATE_ATTENDEES"},{"kind":"EnumValue","value":"CONFERENCE_VIEW_ATTENDEES"}]}}]}}]}}]}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindRoomByVonageSessionIdQuery, FindRoomByVonageSessionIdQueryVariables>;
 export const FetchPresenceSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FetchPresenceSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"presence_Summary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_unique_tabs"}},{"kind":"Field","name":{"kind":"Name","value":"total_unique_user_ids"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}}]}}]}}]} as unknown as DocumentNode<FetchPresenceSummaryQuery, FetchPresenceSummaryQueryVariables>;
 export const InsertAppStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertAppStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"analytics_AppStats_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_analytics_AppStats_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"object"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertAppStatsMutation, InsertAppStatsMutationVariables>;
 export const GetRegistrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRegistrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GetRegistrant_Registrant"}}]}}]}},...GetRegistrant_RegistrantFragmentDoc.definitions]} as unknown as DocumentNode<GetRegistrantQuery, GetRegistrantQueryVariables>;

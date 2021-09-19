@@ -14,6 +14,7 @@ export function useVonageComputedState({
     onRoomJoined,
     onRecordingStarted,
     onRecordingStopped,
+    onRecordingIdReceived,
     beginJoin,
     cancelJoin,
     completeJoinRef,
@@ -26,6 +27,7 @@ export function useVonageComputedState({
     onRoomJoined?: (_joined: boolean) => void;
     onRecordingStarted?: () => void;
     onRecordingStopped?: () => void;
+    onRecordingIdReceived?: (recordingId: string) => void;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
@@ -248,6 +250,9 @@ export function useVonageComputedState({
                     },
                     () => {
                         onRecordingStopped?.();
+                    },
+                    (recordingId) => {
+                        onRecordingIdReceived?.(recordingId);
                     }
                 );
             } catch (e) {

@@ -1017,6 +1017,12 @@ export type SubmitUploadableElementOutput = {
   readonly success: Scalars['Boolean'];
 };
 
+export type ToggleVonageRecordingStateOutput = {
+  readonly __typename?: 'ToggleVonageRecordingStateOutput';
+  readonly allowed: Scalars['Boolean'];
+  readonly recordingState: Scalars['Boolean'];
+};
+
 export type UpdateProfilePhotoResponse = {
   readonly __typename?: 'UpdateProfilePhotoResponse';
   readonly ok: Scalars['Boolean'];
@@ -16365,6 +16371,7 @@ export type Mutation_Root = {
   readonly stopEventBroadcast?: Maybe<StopEventBroadcastOutput>;
   readonly submitGoogleOAuthCode?: Maybe<SubmitGoogleOAuthCodeOutput>;
   readonly submitUploadableElement?: Maybe<SubmitUploadableElementOutput>;
+  readonly toggleVonageRecordingState?: Maybe<ToggleVonageRecordingStateOutput>;
   readonly updateProfilePhoto?: Maybe<UpdateProfilePhotoResponse>;
   readonly updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
   /** update data of the table: "Email" */
@@ -19299,6 +19306,13 @@ export type Mutation_RootSubmitGoogleOAuthCodeArgs = {
 export type Mutation_RootSubmitUploadableElementArgs = {
   data: Scalars['jsonb'];
   magicToken: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootToggleVonageRecordingStateArgs = {
+  recordingActive: Scalars['Boolean'];
+  vonageSessionId: Scalars['String'];
 };
 
 
@@ -38438,6 +38452,7 @@ export type Video_VonageRoomRecording = {
   readonly saves_aggregate: Registrant_SavedVonageRoomRecording_Aggregate;
   readonly startedAt: Scalars['timestamptz'];
   readonly updated_at: Scalars['timestamptz'];
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
   readonly vonageSessionId: Scalars['String'];
 };
 
@@ -38513,6 +38528,7 @@ export type Video_VonageRoomRecording_Bool_Exp = {
   readonly saves?: Maybe<Registrant_SavedVonageRoomRecording_Bool_Exp>;
   readonly startedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploaded_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly vonageSessionId?: Maybe<String_Comparison_Exp>;
 };
 
@@ -38535,6 +38551,7 @@ export type Video_VonageRoomRecording_Insert_Input = {
   readonly saves?: Maybe<Registrant_SavedVonageRoomRecording_Arr_Rel_Insert_Input>;
   readonly startedAt?: Maybe<Scalars['timestamptz']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38549,6 +38566,7 @@ export type Video_VonageRoomRecording_Max_Fields = {
   readonly s3Url?: Maybe<Scalars['String']>;
   readonly startedAt?: Maybe<Scalars['timestamptz']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38562,6 +38580,7 @@ export type Video_VonageRoomRecording_Max_Order_By = {
   readonly s3Url?: Maybe<Order_By>;
   readonly startedAt?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38576,6 +38595,7 @@ export type Video_VonageRoomRecording_Min_Fields = {
   readonly s3Url?: Maybe<Scalars['String']>;
   readonly startedAt?: Maybe<Scalars['timestamptz']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38589,6 +38609,7 @@ export type Video_VonageRoomRecording_Min_Order_By = {
   readonly s3Url?: Maybe<Order_By>;
   readonly startedAt?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38628,6 +38649,7 @@ export type Video_VonageRoomRecording_Order_By = {
   readonly saves_aggregate?: Maybe<Registrant_SavedVonageRoomRecording_Aggregate_Order_By>;
   readonly startedAt?: Maybe<Order_By>;
   readonly updated_at?: Maybe<Order_By>;
+  readonly uploaded_at?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
 };
 
@@ -38655,6 +38677,8 @@ export enum Video_VonageRoomRecording_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
+  UploadedAt = 'uploaded_at',
+  /** column name */
   VonageSessionId = 'vonageSessionId'
 }
 
@@ -38668,6 +38692,7 @@ export type Video_VonageRoomRecording_Set_Input = {
   readonly s3Url?: Maybe<Scalars['String']>;
   readonly startedAt?: Maybe<Scalars['timestamptz']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
+  readonly uploaded_at?: Maybe<Scalars['timestamptz']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
 };
 
@@ -38689,6 +38714,8 @@ export enum Video_VonageRoomRecording_Update_Column {
   StartedAt = 'startedAt',
   /** column name */
   UpdatedAt = 'updated_at',
+  /** column name */
+  UploadedAt = 'uploaded_at',
   /** column name */
   VonageSessionId = 'vonageSessionId'
 }
@@ -39383,6 +39410,22 @@ export type DeleteEventParticipantMutationVariables = Exact<{
 
 
 export type DeleteEventParticipantMutation = { readonly __typename?: 'mutation_root', readonly delete_schedule_EventProgramPerson?: Maybe<{ readonly __typename?: 'schedule_EventProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any }> }> };
+
+export type SaveVonageRoomRecordingMutationVariables = Exact<{
+  recordingId: Scalars['uuid'];
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type SaveVonageRoomRecordingMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_SavedVonageRoomRecording_one?: Maybe<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly recordingId: any, readonly registrantId: any, readonly isHidden: boolean }> };
+
+export type ToggleVonageRecordingStateMutationVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+  recordingActive: Scalars['Boolean'];
+}>;
+
+
+export type ToggleVonageRecordingStateMutation = { readonly __typename?: 'mutation_root', readonly toggleVonageRecordingState?: Maybe<{ readonly __typename?: 'ToggleVonageRecordingStateOutput', readonly allowed: boolean, readonly recordingState: boolean }> };
 
 export type GetAllRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -45143,6 +45186,84 @@ export function useDeleteEventParticipantMutation(baseOptions?: Apollo.MutationH
 export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
 export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
+export const SaveVonageRoomRecordingDocument = gql`
+    mutation SaveVonageRoomRecording($recordingId: uuid!, $registrantId: uuid!) {
+  insert_registrant_SavedVonageRoomRecording_one(
+    object: {recordingId: $recordingId, registrantId: $registrantId}
+    on_conflict: {constraint: SavedVonageRoomRecording_recordingId_registrantId_key, update_columns: []}
+  ) {
+    id
+    recordingId
+    registrantId
+    isHidden
+  }
+}
+    `;
+export type SaveVonageRoomRecordingMutationFn = Apollo.MutationFunction<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+
+/**
+ * __useSaveVonageRoomRecordingMutation__
+ *
+ * To run a mutation, you first call `useSaveVonageRoomRecordingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveVonageRoomRecordingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveVonageRoomRecordingMutation, { data, loading, error }] = useSaveVonageRoomRecordingMutation({
+ *   variables: {
+ *      recordingId: // value for 'recordingId'
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useSaveVonageRoomRecordingMutation(baseOptions?: Apollo.MutationHookOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>(SaveVonageRoomRecordingDocument, options);
+      }
+export type SaveVonageRoomRecordingMutationHookResult = ReturnType<typeof useSaveVonageRoomRecordingMutation>;
+export type SaveVonageRoomRecordingMutationResult = Apollo.MutationResult<SaveVonageRoomRecordingMutation>;
+export type SaveVonageRoomRecordingMutationOptions = Apollo.BaseMutationOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+export const ToggleVonageRecordingStateDocument = gql`
+    mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
+  toggleVonageRecordingState(
+    vonageSessionId: $vonageSessionId
+    recordingActive: $recordingActive
+  ) {
+    allowed
+    recordingState
+  }
+}
+    `;
+export type ToggleVonageRecordingStateMutationFn = Apollo.MutationFunction<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
+
+/**
+ * __useToggleVonageRecordingStateMutation__
+ *
+ * To run a mutation, you first call `useToggleVonageRecordingStateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleVonageRecordingStateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleVonageRecordingStateMutation, { data, loading, error }] = useToggleVonageRecordingStateMutation({
+ *   variables: {
+ *      vonageSessionId: // value for 'vonageSessionId'
+ *      recordingActive: // value for 'recordingActive'
+ *   },
+ * });
+ */
+export function useToggleVonageRecordingStateMutation(baseOptions?: Apollo.MutationHookOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>(ToggleVonageRecordingStateDocument, options);
+      }
+export type ToggleVonageRecordingStateMutationHookResult = ReturnType<typeof useToggleVonageRecordingStateMutation>;
+export type ToggleVonageRecordingStateMutationResult = Apollo.MutationResult<ToggleVonageRecordingStateMutation>;
+export type ToggleVonageRecordingStateMutationOptions = Apollo.BaseMutationOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(

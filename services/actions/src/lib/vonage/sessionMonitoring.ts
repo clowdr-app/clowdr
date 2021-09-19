@@ -95,25 +95,36 @@ export async function startArchiveIfOngoingEvent(payload: SessionMonitoringWebho
     const ongoingMatchingEvent = ongoingMatchingEvents.data.schedule_Event[0];
 
     console.log("Vonage session has ongoing matching event, ensuring archive is started", payload.sessionId);
-    const recordingId = await startRoomVonageArchiving(ongoingMatchingEvent.roomId, ongoingMatchingEvent.id);
+
+    let registrantId: string | undefined;
+    if (payload.event === "connectionCreated") {
+        const data = JSON.parse(payload.connection.data);
+        const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
+        registrantId = _registrantId;
+    } else if (payload.event === "streamCreated") {
+        const data = JSON.parse(payload.stream.connection.data);
+        const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
+        registrantId = _registrantId;
+    }
+    await startVonageArchive(ongoingMatchingEvent.roomId, ongoingMatchingEvent.id, payload.sessionId, registrantId);
+
+    return true;
+}
+
+export async function startVonageArchive(
+    roomId: string,
+    eventId: string | undefined,
+    vonageSessionId: string,
+    registrantId: string | undefined
+): Promise<void> {
+    const recordingId = await startRoomVonageArchiving(roomId, eventId, registrantId);
     if (recordingId) {
         console.log(
             "Archive just started, adding to registrant's saved recordings (because join session might not have).",
-            payload.sessionId
+            vonageSessionId
         );
 
         try {
-            let registrantId: string | undefined;
-            if (payload.event === "connectionCreated") {
-                const data = JSON.parse(payload.connection.data);
-                const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
-                registrantId = _registrantId;
-            } else if (payload.event === "streamCreated") {
-                const data = JSON.parse(payload.stream.connection.data);
-                const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
-                registrantId = _registrantId;
-            }
-
             if (registrantId) {
                 await apolloClient.mutate({
                     mutation: AddVonageRoomRecordingToUserListDocument,
@@ -125,15 +136,13 @@ export async function startArchiveIfOngoingEvent(payload: SessionMonitoringWebho
             }
         } catch (error) {
             console.error("Could not save Vonage recording to registrant's list of recordings!", {
-                sessionId: payload.sessionId,
-                roomId: ongoingMatchingEvent.roomId,
-                eventId: ongoingMatchingEvent.id,
+                sessionId: vonageSessionId,
+                roomId,
+                eventId,
                 error,
             });
         }
     }
-
-    return true;
 }
 
 gql`

@@ -317,3 +317,13 @@ type getProgramPersonAccessTokenArgs = {
 type MatchingPersonOutput = {
     accessToken?: Maybe<string>;
 };
+
+type toggleVonageRecordingStateArgs = {
+    recordingActive: boolean;
+    vonageSessionId: string;
+};
+
+type ToggleVonageRecordingStateOutput = {
+    allowed: boolean;
+    recordingState: boolean;
+};

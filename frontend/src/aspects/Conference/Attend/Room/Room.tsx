@@ -731,6 +731,18 @@ function RoomInner({
                                             : undefined)
                                     }
                                     eventIsFuture={!currentRoomEvent}
+                                    isChairOrOrganizer={
+                                        currentRoomEvent
+                                            ? currentRoomEvent.eventPeople.some(
+                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                              )
+                                            : nextRoomEvent &&
+                                              nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
+                                            ? nextRoomEvent.eventPeople.some(
+                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                              )
+                                            : false
+                                    }
                                 />
                             </Box>
                             {contentEl}

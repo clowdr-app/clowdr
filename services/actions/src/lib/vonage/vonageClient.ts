@@ -26,4 +26,5 @@ export default {
     setStreamClassLists: promisify(vonage.setStreamClassLists.bind(vonage)),
 
     forceDisconnect: promisify(vonage.forceDisconnect.bind(vonage)),
+    signal: promisify(vonage.signal.bind(vonage)),
 };

@@ -5,6 +5,7 @@ import { assertType } from "typescript-is";
 import {
     handleJoinEvent,
     handleJoinRoom,
+    handleToggleVonageRecordingState,
     handleVonageArchiveMonitoringWebhook,
     handleVonageSessionMonitoringWebhook,
 } from "../handlers/vonage";
@@ -119,6 +120,31 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomVona
         console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             message: "Failure while handling request",
+        });
+    }
+});
+
+router.post("/toggleRecordingState", json(), async (req: Request, res: Response<ToggleVonageRecordingStateOutput>) => {
+    let body: ActionPayload<toggleVonageRecordingStateArgs>;
+    try {
+        body = req.body;
+        assertType<ActionPayload<toggleVonageRecordingStateArgs>>(body);
+    } catch (e) {
+        console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            allowed: false,
+            recordingState: false,
+        });
+    }
+
+    try {
+        const result = await handleToggleVonageRecordingState(body.input, body.session_variables["x-hasura-user-id"]);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
+        return res.status(200).json({
+            allowed: false,
+            recordingState: false,
         });
     }
 });

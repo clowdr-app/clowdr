@@ -1,0 +1,393 @@
+table:
+  name: Room
+  schema: room
+object_relationships:
+- name: channelStack
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: ChannelStack
+        schema: video
+- name: channelStackWithStreamKey
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: ChannelStackWithStreamKey
+        schema: video
+- name: chat
+  using:
+    foreign_key_constraint_on: chatId
+- name: chimeMeeting
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: ChimeMeeting
+        schema: room
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: currentMode
+  using:
+    foreign_key_constraint_on: currentModeName
+- name: livestreamDuration
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: LivestreamDurations
+        schema: room
+- name: managementMode
+  using:
+    foreign_key_constraint_on: managementModeName
+- name: originatingData
+  using:
+    foreign_key_constraint_on: originatingDataId
+- name: originatingEvent
+  using:
+    foreign_key_constraint_on: originatingEventId
+- name: originatingItem
+  using:
+    foreign_key_constraint_on: originatingItemId
+- name: rtmpOutput
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: RoomRtmpOutput
+        schema: video
+array_relationships:
+- name: channelStackCreateJobs
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: ChannelStackCreateJob
+        schema: job_queues
+- name: events
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: Event
+        schema: schedule
+- name: participants
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: Participant
+        schema: room
+- name: presenceCounts
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: RoomPresence
+        schema: analytics
+- name: roomPeople
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: RoomPerson
+        schema: room
+- name: shuffleRooms
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: ShuffleRoom
+        schema: room
+- name: stats
+  using:
+    foreign_key_constraint_on:
+      column: roomId
+      table:
+        name: RoomStats
+        schema: analytics
+- name: vonageRecordings
+  using:
+    manual_configuration:
+      column_mapping:
+        id: roomId
+      insertion_order: null
+      remote_table:
+        name: VonageRoomRecording
+        schema: video
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: IsProgramRoom
+      schema: room
+  name: isProgramRoom
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_VIEW_ATTENDEES
+                - CONFERENCE_MANAGE_SCHEDULE
+    columns:
+    - capacity
+    - colour
+    - conferenceId
+    - currentModeName
+    - id
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingItemId
+    - priority
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - capacity
+    - chatId
+    - colour
+    - conferenceId
+    - created_at
+    - currentModeName
+    - id
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingEventId
+    - originatingItemId
+    - priority
+    - updated_at
+    computed_fields:
+    - isProgramRoom
+    filter:
+      _and:
+      - conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUnauthPermission
+                schema: public
+              _where:
+                _and:
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW
+      - managementModeName:
+          _eq: PUBLIC
+  role: unauthenticated
+- permission:
+    columns:
+    - backendName
+    - capacity
+    - chatId
+    - colour
+    - conferenceId
+    - created_at
+    - currentModeName
+    - id
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingEventId
+    - originatingItemId
+    - priority
+    - publicVonageSessionId
+    - updated_at
+    computed_fields:
+    - isProgramRoom
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _or:
+            - _exists:
+                _table:
+                  name: FlatUnauthPermission
+                  schema: public
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_VIEW
+                      - CONFERENCE_VIEW_ATTENDEES
+                      - CONFERENCE_MANAGE_SCHEDULE
+          - _or:
+            - managementModeName:
+                _eq: PUBLIC
+            - roomPeople:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - capacity
+    - colour
+    - managementModeName
+    - name
+    - originatingDataId
+    - originatingItemId
+    - priority
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_VIEW_ATTENDEES
+          - roomPeople:
+              _and:
+              - registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - personRoleName:
+                  _eq: ADMIN
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_VIEW_ATTENDEES
+          - roomPeople:
+              _and:
+              - registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+              - personRoleName:
+                  _eq: ADMIN
+  role: user
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: RoomCreated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/room/created"

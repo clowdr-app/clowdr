@@ -1,0 +1,16 @@
+table:
+  name: FlatUnauthPermission
+  schema: public
+select_permissions:
+- permission:
+    columns:
+    - permission_name
+    - slug
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - permission_name
+    - slug
+    filter: {}
+  role: user

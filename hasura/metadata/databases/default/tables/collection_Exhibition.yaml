@@ -1,0 +1,168 @@
+table:
+  name: Exhibition
+  schema: collection
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: descriptiveItem
+  using:
+    foreign_key_constraint_on: descriptiveItemId
+array_relationships:
+- name: items
+  using:
+    foreign_key_constraint_on:
+      column: exhibitionId
+      table:
+        name: ItemExhibition
+        schema: content
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+    columns:
+    - colour
+    - conferenceId
+    - id
+    - isHidden
+    - name
+    - priority
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - colour
+    - conferenceId
+    - descriptiveItemId
+    - id
+    - isHidden
+    - name
+    - priority
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - colour
+    - conferenceId
+    - created_at
+    - descriptiveItemId
+    - id
+    - isHidden
+    - name
+    - priority
+    - updated_at
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - colour
+    - descriptiveItemId
+    - isHidden
+    - name
+    - priority
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user

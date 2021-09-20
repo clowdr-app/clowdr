@@ -1,0 +1,210 @@
+table:
+  name: Continuation
+  schema: schedule
+object_relationships:
+- name: event
+  using:
+    foreign_key_constraint_on: fromEvent
+- name: shufflePeriod
+  using:
+    foreign_key_constraint_on: fromShuffleQueue
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _or:
+      - event:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+      - shufflePeriod:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SHUFFLE
+    columns:
+    - isActiveChoice
+    - priority
+    - to
+    - colour
+    - defaultFor
+    - description
+    - fromEvent
+    - fromShuffleQueue
+    - id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - id
+    - fromEvent
+    - to
+    - defaultFor
+    - isActiveChoice
+    - priority
+    - colour
+    - description
+    - fromShuffleQueue
+    filter:
+      _or:
+      - event:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _or:
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_VIEW
+                      - CONFERENCE_MANAGE_SCHEDULE
+            - _exists:
+                _table:
+                  name: FlatUnauthPermission
+                  schema: public
+                _where:
+                  _and:
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW
+      - shufflePeriod:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SHUFFLE
+                    - CONFERENCE_VIEW_ATTENDEES
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - colour
+    - defaultFor
+    - description
+    - isActiveChoice
+    - priority
+    - to
+    filter:
+      _or:
+      - event:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+      - shufflePeriod:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SHUFFLE
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _or:
+      - event:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SCHEDULE
+      - shufflePeriod:
+          _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_MANAGE_SHUFFLE
+  role: user

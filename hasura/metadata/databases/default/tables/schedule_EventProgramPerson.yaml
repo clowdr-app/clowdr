@@ -1,0 +1,238 @@
+table:
+  name: EventProgramPerson
+  schema: schedule
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: event
+  using:
+    foreign_key_constraint_on: eventId
+- name: eventPersonRole
+  using:
+    foreign_key_constraint_on: roleName
+- name: person
+  using:
+    foreign_key_constraint_on: personId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - event:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - event:
+              eventPeople:
+                _and:
+                - person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+    columns:
+    - eventId
+    - id
+    - personId
+    - roleName
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - eventId
+    - id
+    - personId
+    - roleName
+    filter:
+      _and:
+      - event:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUnauthPermission
+            schema: public
+          _where:
+            _and:
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - eventId
+    - id
+    - personId
+    - roleName
+    filter:
+      _and:
+      - event:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_VIEW
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - personId
+    - roleName
+    filter:
+      _and:
+      - event:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - event:
+              eventPeople:
+                _and:
+                - person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - event:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - event:
+              eventPeople:
+                _and:
+                - person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+                - eventPersonRole:
+                    name:
+                      _in:
+                      - CHAIR
+                      - PRESENTER
+        - person:
+            registrant:
+              userId:
+                _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: false
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: EventPersonDeleted
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/eventPerson/deleted"

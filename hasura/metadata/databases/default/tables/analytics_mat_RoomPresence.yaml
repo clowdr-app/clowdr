@@ -1,0 +1,3 @@
+table:
+  name: mat_RoomPresence
+  schema: analytics

@@ -1,0 +1,42 @@
+table:
+  name: DemoCode
+  schema: conference
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        id: demoCodeId
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+- name: usedBy
+  using:
+    foreign_key_constraint_on: usedById
+select_permissions:
+- permission:
+    columns:
+    - id
+    - note
+    - usedById
+    filter:
+      usedById:
+        _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - note
+    filter:
+      usedById:
+        _is_null: true
+    set:
+      usedById: x-hasura-User-Id
+  role: user

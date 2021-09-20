@@ -1,0 +1,56 @@
+table:
+  name: SubmissionRequestEmailJob
+  schema: job_queues
+object_relationships:
+- name: person
+  using:
+    foreign_key_constraint_on: personId
+- name: uploader
+  using:
+    foreign_key_constraint_on: uploaderId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _or:
+      - uploader:
+          conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+                - groupRegistrants:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+      - person:
+          conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MANAGE_CONTENT
+                - groupRegistrants:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+    columns:
+    - emailTemplate
+    - personId
+    - uploaderId
+  role: user

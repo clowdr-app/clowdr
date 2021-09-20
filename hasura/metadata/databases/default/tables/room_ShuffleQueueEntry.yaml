@@ -1,0 +1,130 @@
+table:
+  name: ShuffleQueueEntry
+  schema: room
+object_relationships:
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+- name: shufflePeriod
+  using:
+    foreign_key_constraint_on: shufflePeriodId
+- name: shuffleRoom
+  using:
+    foreign_key_constraint_on: allocatedShuffleRoomId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - shufflePeriod:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SHUFFLE
+                - CONFERENCE_VIEW_ATTENDEES
+      - registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+    columns:
+    - allocatedShuffleRoomId
+    - registrantId
+    - id
+    - shufflePeriodId
+  role: user
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - allocatedShuffleRoomId
+    - created_at
+    - id
+    - isExpired
+    - registrantId
+    - shufflePeriodId
+    - updated_at
+    filter:
+      _and:
+      - shufflePeriod:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SHUFFLE
+                - CONFERENCE_VIEW_ATTENDEES
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - shufflePeriod:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - registrant:
+              userId:
+                _eq: X-Hasura-User-Id
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SHUFFLE
+  role: user
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ShuffleQueueEntered
+  retry_conf:
+    interval_sec: 30
+    num_retries: 1
+    timeout_sec: 20
+  webhook: "{{ACTION_BASE_URL}}/shuffle/entered"

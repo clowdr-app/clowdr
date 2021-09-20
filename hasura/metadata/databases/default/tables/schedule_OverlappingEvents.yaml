@@ -1,0 +1,57 @@
+table:
+  name: OverlappingEvents
+  schema: schedule
+object_relationships:
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        conferenceId: id
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+- name: eventX
+  using:
+    manual_configuration:
+      column_mapping:
+        xId: id
+      insertion_order: null
+      remote_table:
+        name: Event
+        schema: schedule
+- name: eventY
+  using:
+    manual_configuration:
+      column_mapping:
+        yId: id
+      insertion_order: null
+      remote_table:
+        name: Event
+        schema: schedule
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - xId
+    - yId
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+  role: user

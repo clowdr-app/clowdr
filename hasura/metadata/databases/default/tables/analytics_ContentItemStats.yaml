@@ -1,0 +1,47 @@
+table:
+  name: ContentItemStats
+  schema: analytics
+object_relationships:
+- name: contentGroup
+  using:
+    foreign_key_constraint_on: itemId
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - id
+    - itemId
+    - updated_at
+    - viewCount
+    filter:
+      contentGroup:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_VIEW
+                    - CONFERENCE_MANAGE_CONTENT
+          - _exists:
+              _table:
+                name: FlatUnauthPermission
+                schema: public
+              _where:
+                _and:
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW
+  role: user

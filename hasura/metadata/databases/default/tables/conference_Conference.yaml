@@ -1,0 +1,230 @@
+table:
+  name: Conference
+  schema: conference
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: completedRegistrationsStat
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: CompletedRegistrations
+        schema: analytics
+- name: creator
+  using:
+    foreign_key_constraint_on: createdBy
+- name: demoCode
+  using:
+    foreign_key_constraint_on: demoCodeId
+array_relationships:
+- name: chats
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Chat
+        schema: chat
+- name: configurations
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Configuration
+        schema: conference
+- name: exhibitions
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Exhibition
+        schema: collection
+- name: groups
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Group
+        schema: permissions
+- name: items
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Item
+        schema: content
+- name: originatingDatas
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: OriginatingData
+        schema: conference
+- name: programPeople
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: ProgramPerson
+        schema: collection
+- name: publicPermissions
+  using:
+    manual_configuration:
+      column_mapping:
+        slug: slug
+      insertion_order: null
+      remote_table:
+        name: FlatUnauthPermission
+        schema: public
+- name: registrants
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Registrant
+        schema: registrant
+- name: roles
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Role
+        schema: permissions
+- name: rooms
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Room
+        schema: room
+- name: shufflePeriods
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: ShufflePeriod
+        schema: room
+- name: tags
+  using:
+    foreign_key_constraint_on:
+      column: conferenceId
+      table:
+        name: Tag
+        schema: collection
+- name: userPermissions
+  using:
+    manual_configuration:
+      column_mapping:
+        slug: slug
+      insertion_order: null
+      remote_table:
+        name: FlatUserPermission
+        schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      demoCode:
+        usedById:
+          _is_null: true
+    columns:
+    - demoCodeId
+    - name
+    - shortName
+    - slug
+    set:
+      createdBy: x-hasura-User-Id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - createdBy
+    - created_at
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      _and:
+      - slug:
+          _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUnauthPermission
+            schema: public
+          _where:
+            _and:
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - createdBy
+    - created_at
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      _or:
+      - createdBy:
+          _eq: X-Hasura-User-Id
+      - registrants:
+          userId:
+            _eq: X-Hasura-User-Id
+      - _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - name
+    - shortName
+    - slug
+    filter:
+      _or:
+      - createdBy:
+          _eq: X-Hasura-User-Id
+      - _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_NAME
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      createdBy:
+        _eq: X-Hasura-User-Id
+  role: user

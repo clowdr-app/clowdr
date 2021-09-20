@@ -1,0 +1,47 @@
+table:
+  name: StarredEvent
+  schema: schedule
+object_relationships:
+- name: event
+  using:
+    foreign_key_constraint_on: eventId
+- name: registrant
+  using:
+    manual_configuration:
+      column_mapping:
+        registrantId: id
+      insertion_order: null
+      remote_table:
+        name: Registrant
+        schema: registrant
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+    columns:
+    - eventId
+    - registrantId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - updated_at
+    - eventId
+    - id
+    - registrantId
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user

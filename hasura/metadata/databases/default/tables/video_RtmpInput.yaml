@@ -1,0 +1,4 @@
+table:
+  name: RtmpInput
+  schema: video
+is_enum: true

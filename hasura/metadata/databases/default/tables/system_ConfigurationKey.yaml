@@ -1,0 +1,4 @@
+table:
+  name: ConfigurationKey
+  schema: system
+is_enum: true

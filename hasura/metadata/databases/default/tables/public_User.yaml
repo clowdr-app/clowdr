@@ -1,0 +1,82 @@
+table:
+  name: User
+  schema: public
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+array_relationships:
+- name: conferenceDemoCodes
+  using:
+    foreign_key_constraint_on:
+      column: usedById
+      table:
+        name: DemoCode
+        schema: conference
+- name: conferencesCreated
+  using:
+    foreign_key_constraint_on:
+      column: createdBy
+      table:
+        name: Conference
+        schema: conference
+- name: emails
+  using:
+    foreign_key_constraint_on:
+      column: userId
+      table:
+        name: Email
+        schema: public
+- name: invitationsPendingConfirmation
+  using:
+    foreign_key_constraint_on:
+      column: linkToUserId
+      table:
+        name: Invitation
+        schema: registrant
+- name: pushNotificationSubscriptions
+  using:
+    foreign_key_constraint_on:
+      column: userId
+      table:
+        name: PushNotificationSubscription
+        schema: public
+- name: registrants
+  using:
+    foreign_key_constraint_on:
+      column: userId
+      table:
+        name: Registrant
+        schema: registrant
+select_permissions:
+- permission:
+    columns:
+    - acceptedPrivacyPolicyAt
+    - acceptedTermsAt
+    - created_at
+    - email
+    - id
+    - updated_at
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+    limit: 5000
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - acceptedPrivacyPolicyAt
+    - acceptedTermsAt
+    - email
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user

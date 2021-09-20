@@ -1,0 +1,4 @@
+table:
+  name: ShuffleAlgorithm
+  schema: room
+is_enum: true

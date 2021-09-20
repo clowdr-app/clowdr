@@ -1,0 +1,166 @@
+table:
+  name: ProgramPerson
+  schema: collection
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: originatingData
+  using:
+    foreign_key_constraint_on: originatingDataId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+array_relationships:
+- name: eventPeople
+  using:
+    foreign_key_constraint_on:
+      column: personId
+      table:
+        name: EventProgramPerson
+        schema: schedule
+- name: itemPeople
+  using:
+    foreign_key_constraint_on:
+      column: personId
+      table:
+        name: ItemProgramPerson
+        schema: content
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+    columns:
+    - affiliation
+    - registrantId
+    - conferenceId
+    - email
+    - id
+    - name
+    - originatingDataId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - affiliation
+    - conferenceId
+    - id
+    - name
+    - registrantId
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - affiliation
+    - conferenceId
+    - id
+    - name
+    - registrantId
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW
+                  - CONFERENCE_MANAGE_CONTENT
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - affiliation
+    - registrantId
+    - email
+    - name
+    - originatingDataId
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+  role: user

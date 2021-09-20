@@ -1,0 +1,4 @@
+table:
+  name: ConfigurationKey
+  schema: conference
+is_enum: true

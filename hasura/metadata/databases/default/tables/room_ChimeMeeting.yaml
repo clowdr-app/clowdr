@@ -1,0 +1,78 @@
+table:
+  name: ChimeMeeting
+  schema: room
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        conferenceId: id
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+- name: room
+  using:
+    manual_configuration:
+      column_mapping:
+        roomId: id
+      insertion_order: null
+      remote_table:
+        name: Room
+        schema: room
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - id
+    - roomId
+    - updated_at
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - _or:
+            - room:
+                _or:
+                - managementModeName:
+                    _eq: PUBLIC
+                - roomPeople:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+    limit: 1
+  role: user

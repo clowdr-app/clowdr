@@ -1,0 +1,82 @@
+table:
+  name: PublishVideoJob
+  schema: job_queues
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: element
+  using:
+    foreign_key_constraint_on: elementId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conference:
+        groups:
+          _and:
+          - enabled:
+              _eq: true
+          - groupRoles:
+              role:
+                rolePermissions:
+                  permissionName:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+          - _or:
+            - includeUnauthenticated:
+                _eq: true
+            - groupRegistrants:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+    columns:
+    - conferenceId
+    - elementId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - elementId
+    - created_at
+    - id
+    - jobStatusName
+    - updated_at
+    filter:
+      conference:
+        groups:
+          _and:
+          - enabled:
+              _eq: true
+          - groupRoles:
+              role:
+                rolePermissions:
+                  permissionName:
+                    _eq: CONFERENCE_MANAGE_CONTENT
+          - _or:
+            - includeUnauthenticated:
+                _eq: true
+            - groupRegistrants:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: PublishVideoJob
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/publishVideoJob/created"

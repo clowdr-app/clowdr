@@ -1,0 +1,49 @@
+table:
+  name: YouTubeUpload
+  schema: video
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: element
+  using:
+    foreign_key_constraint_on: elementId
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - elementId
+    - created_at
+    - id
+    - updated_at
+    - videoId
+    - videoPrivacyStatus
+    - videoStatus
+    - videoTitle
+    filter:
+      _and:
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+      - element:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+  role: user

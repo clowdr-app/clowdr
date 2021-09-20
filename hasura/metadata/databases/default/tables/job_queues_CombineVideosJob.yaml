@@ -1,0 +1,61 @@
+table:
+  name: CombineVideosJob
+  schema: job_queues
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: jobStatus
+  using:
+    foreign_key_constraint_on: jobStatusName
+- name: registrant
+  using:
+    foreign_key_constraint_on: createdByRegistrantId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      - conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - userPermissions:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - data
+    - outputName
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - createdByRegistrantId
+    - created_at
+    - data
+    - id
+    - jobStatusName
+    - message
+    - outputName
+    - updated_at
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - userPermissions:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+  role: user

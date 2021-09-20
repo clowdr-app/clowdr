@@ -1,0 +1,4 @@
+table:
+  name: JobStatus
+  schema: video
+is_enum: true

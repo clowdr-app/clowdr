@@ -1,0 +1,32 @@
+table:
+  name: Mode
+  schema: room
+is_enum: true
+array_relationships:
+- name: events
+  using:
+    foreign_key_constraint_on:
+      column: intendedRoomModeName
+      table:
+        name: Event
+        schema: schedule
+- name: rooms
+  using:
+    foreign_key_constraint_on:
+      column: currentModeName
+      table:
+        name: Room
+        schema: room
+select_permissions:
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

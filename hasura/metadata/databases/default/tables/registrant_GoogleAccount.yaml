@@ -1,0 +1,83 @@
+table:
+  name: GoogleAccount
+  schema: registrant
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+select_permissions:
+- permission:
+    columns:
+    - registrantId
+    - conferenceId
+    - created_at
+    - googleAccountEmail
+    - id
+    - updated_at
+    - youTubeData
+    filter:
+      _and:
+      - registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - user_id:
+                _eq: X-Hasura-User-Id
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_CONTENT
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - user_id:
+                _eq: X-Hasura-User-Id
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+  role: user
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: false
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: RegistrantGoogleAccountDeleted
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted"

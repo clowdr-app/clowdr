@@ -1,0 +1,230 @@
+table:
+  name: RoomPerson
+  schema: room
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: personRole
+  using:
+    foreign_key_constraint_on: personRoleName
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+- name: room
+  using:
+    foreign_key_constraint_on: roomId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - _or:
+        - room:
+            _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - room:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _exists:
+                  _table:
+                    name: FlatUserPermission
+                    schema: public
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+          - room:
+              roomPeople:
+                _and:
+                - registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - personRole:
+                    name:
+                      _eq: ADMIN
+    columns:
+    - registrantId
+    - roomId
+    - personRoleName
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - registrantId
+    - created_at
+    - id
+    - roomId
+    - personRoleName
+    - updated_at
+    filter:
+      _and:
+      - _or:
+        - room:
+            _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - room:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _exists:
+                  _table:
+                    name: FlatUserPermission
+                    schema: public
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+          - room:
+              roomPeople:
+                _and:
+                - registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - personRoleName
+    filter:
+      _and:
+      - _or:
+        - room:
+            _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - room:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _exists:
+                  _table:
+                    name: FlatUserPermission
+                    schema: public
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+          - room:
+              roomPeople:
+                _and:
+                - registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - personRole:
+                    name:
+                      _eq: ADMIN
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - _or:
+        - room:
+            _and:
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - room:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _exists:
+                  _table:
+                    name: FlatUserPermission
+                    schema: public
+                  _where:
+                    _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - slug:
+                        _eq: X-Hasura-Conference-Slug
+                    - permission_name:
+                        _eq: CONFERENCE_VIEW_ATTENDEES
+          - room:
+              roomPeople:
+                _and:
+                - registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+                - personRole:
+                    name:
+                      _eq: ADMIN
+  role: user

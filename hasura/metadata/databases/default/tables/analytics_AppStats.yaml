@@ -1,0 +1,3 @@
+table:
+  name: AppStats
+  schema: analytics

@@ -1,0 +1,49 @@
+table:
+  name: ItemProgramPersonByAccessToken
+  schema: content
+object_relationships:
+- name: item
+  using:
+    manual_configuration:
+      column_mapping:
+        itemId: id
+      insertion_order: null
+      remote_table:
+        name: ItemByPersonAccessToken
+        schema: content
+- name: person
+  using:
+    manual_configuration:
+      column_mapping:
+        personId: id
+      insertion_order: null
+      remote_table:
+        name: ProgramPersonByAccessToken
+        schema: collection
+select_permissions:
+- permission:
+    columns:
+    - priority
+    - roleName
+    - conferenceId
+    - id
+    - itemId
+    - personId
+    filter:
+      person:
+        accessToken:
+          _eq: X-Hasura-Magic-Token
+  role: unauthenticated
+- permission:
+    columns:
+    - id
+    - personId
+    - itemId
+    - priority
+    - roleName
+    - conferenceId
+    filter:
+      person:
+        accessToken:
+          _eq: X-Hasura-Magic-Token
+  role: user

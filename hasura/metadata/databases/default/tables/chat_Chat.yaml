@@ -1,0 +1,151 @@
+table:
+  name: Chat
+  schema: chat
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: duplicateTo
+  using:
+    foreign_key_constraint_on: duplicateToId
+array_relationships:
+- name: duplicatesFrom
+  using:
+    foreign_key_constraint_on:
+      column: duplicateToId
+      table:
+        name: Chat
+        schema: chat
+- name: flags
+  using:
+    foreign_key_constraint_on:
+      column: discussionChatId
+      table:
+        name: Flag
+        schema: chat
+- name: items
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: Item
+        schema: content
+- name: messages
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: Message
+        schema: chat
+- name: pins
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: Pin
+        schema: chat
+- name: readUpToIndices
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: ReadUpToIndex
+        schema: chat
+- name: rooms
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: Room
+        schema: room
+- name: subscriptions
+  using:
+    foreign_key_constraint_on:
+      column: chatId
+      table:
+        name: Subscription
+        schema: chat
+select_permissions:
+- permission:
+    columns:
+    - id
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - enableAutoPin
+    - enableAutoSubscribe
+    - enableMandatoryPin
+    - enableMandatorySubscribe
+    - id
+    - remoteServiceId
+    - restrictToAdmins
+    - updated_at
+    filter:
+      _and:
+      - conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - userPermissions:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW_ATTENDEES
+                  - CONFERENCE_MANAGE_SCHEDULE
+                  - CONFERENCE_MODERATE_ATTENDEES
+      - _or:
+        - rooms:
+            _or:
+            - managementModeName:
+                _eq: PUBLIC
+            - roomPeople:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+        - _not:
+            rooms: {}
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - enableAutoPin
+    - enableAutoSubscribe
+    - enableMandatoryPin
+    - enableMandatorySubscribe
+    - restrictToAdmins
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - userPermissions:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - userPermissions:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user

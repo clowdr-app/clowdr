@@ -1,0 +1,42 @@
+table:
+  name: CustomEmailJob
+  schema: job_queues
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conference:
+        _and:
+        - _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      _or:
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ROLES
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_GROUPS
+                      - permissionName:
+                          _eq: CONFERENCE_MANAGE_ATTENDEES
+              - groupRegistrants:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+    columns:
+    - registrantIds
+    - conferenceId
+    - htmlBody
+    - subject
+  role: user

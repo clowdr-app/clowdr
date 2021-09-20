@@ -1,0 +1,159 @@
+table:
+  name: ImmediateSwitch
+  schema: video
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        conferenceId: id
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+- name: event
+  using:
+    manual_configuration:
+      column_mapping:
+        eventId: id
+      insertion_order: null
+      remote_table:
+        name: Event
+        schema: schedule
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - _or:
+        - conference:
+            _and:
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _in:
+                      - CONFERENCE_MANAGE_SCHEDULE
+        - _and:
+          - _and:
+            - event:
+                conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+            - _exists:
+                _table:
+                  name: FlatUserPermission
+                  schema: public
+                _where:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - slug:
+                      _eq: X-Hasura-Conference-Slug
+                  - permission_name:
+                      _eq: CONFERENCE_VIEW_ATTENDEES
+            - event:
+                eventPeople:
+                  _and:
+                  - person:
+                      registrant:
+                        userId:
+                          _eq: X-Hasura-User-Id
+                  - eventPersonRole:
+                      name:
+                        _in:
+                        - CHAIR
+                        - PRESENTER
+      - event:
+          conferenceId:
+            _ceq: conferenceId
+    columns:
+    - conferenceId
+    - data
+    - eventId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - data
+    - errorMessage
+    - eventId
+    - executedAt
+    - id
+    - updated_at
+    filter:
+      _or:
+      - conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+      - _and:
+        - _and:
+          - event:
+              conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+          - event:
+              room:
+                _or:
+                - managementModeName:
+                    _eq: PUBLIC
+                - roomPeople:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ImmediateSwitchCreated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{PLAYOUT_BASE_URL}}/hasura/events"

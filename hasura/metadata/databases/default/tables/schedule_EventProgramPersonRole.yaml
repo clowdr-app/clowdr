@@ -1,0 +1,25 @@
+table:
+  name: EventProgramPersonRole
+  schema: schedule
+is_enum: true
+array_relationships:
+- name: eventPeople
+  using:
+    foreign_key_constraint_on:
+      column: roleName
+      table:
+        name: EventProgramPerson
+        schema: schedule
+select_permissions:
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

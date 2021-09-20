@@ -1,0 +1,15 @@
+table:
+  name: MessageType
+  schema: chat
+is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: user

@@ -1,0 +1,43 @@
+table:
+  name: InvitationEmailJob
+  schema: job_queues
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conference:
+        _or:
+        - createdBy:
+            _eq: X-Hasura-User-Id
+        - groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    _or:
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_ROLES
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_GROUPS
+                    - permissionName:
+                        _eq: CONFERENCE_MANAGE_ATTENDEES
+            - groupRegistrants:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+    columns:
+    - registrantIds
+    - conferenceId
+    - sendRepeat
+  role: user

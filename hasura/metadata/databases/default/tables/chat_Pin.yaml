@@ -1,0 +1,66 @@
+table:
+  name: Pin
+  schema: chat
+object_relationships:
+- name: chat
+  using:
+    foreign_key_constraint_on: chatId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+    columns:
+    - registrantId
+    - chatId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - wasManuallyPinned
+    - created_at
+    - registrantId
+    - chatId
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - wasManuallyPinned
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ChatPinChanged
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{REALTIME_BASE_URL}}/chat/pinChanged"

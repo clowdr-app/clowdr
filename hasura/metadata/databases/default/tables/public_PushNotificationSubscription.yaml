@@ -1,0 +1,68 @@
+table:
+  name: PushNotificationSubscription
+  schema: public
+object_relationships:
+- name: user
+  using:
+    foreign_key_constraint_on: userId
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - auth
+    - endpoint
+    - p256dh
+    set:
+      userId: x-hasura-User-Id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - endpoint
+    - updated_at
+    - userId
+    filter:
+      userId:
+        _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - auth
+    - endpoint
+    - p256dh
+    filter:
+      userId:
+        _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      userId:
+        _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - auth
+      - endpoint
+      - p256dh
+      - userId
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: PushNotificationSubscriptionChanged
+  retry_conf:
+    interval_sec: 120
+    num_retries: 1
+    timeout_sec: 60
+  webhook: "{{REALTIME_BASE_URL}}/pushNotificationSubscription/changed"

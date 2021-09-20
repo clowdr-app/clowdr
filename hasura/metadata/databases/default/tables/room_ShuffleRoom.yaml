@@ -1,0 +1,60 @@
+table:
+  name: ShuffleRoom
+  schema: room
+object_relationships:
+- name: room
+  using:
+    foreign_key_constraint_on: roomId
+- name: shufflePeriod
+  using:
+    foreign_key_constraint_on: shufflePeriodId
+array_relationships:
+- name: continuations
+  using:
+    manual_configuration:
+      column_mapping:
+        id: fromShuffleQueue
+      insertion_order: null
+      remote_table:
+        name: Continuation
+        schema: schedule
+- name: queueEntries
+  using:
+    foreign_key_constraint_on:
+      column: allocatedShuffleRoomId
+      table:
+        name: ShuffleQueueEntry
+        schema: room
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - shufflePeriodId
+    - roomId
+    - durationMinutes
+    - startedAt
+    - reshuffleUponEnd
+    - isEnded
+    filter:
+      _and:
+      - shufflePeriod:
+          conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SHUFFLE
+                - CONFERENCE_VIEW_ATTENDEES
+  role: user

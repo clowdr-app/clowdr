@@ -1,0 +1,120 @@
+table:
+  name: GroupRole
+  schema: permissions
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: groupId
+- name: role
+  using:
+    foreign_key_constraint_on: roleId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      group:
+        conference:
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _in:
+                        - CONFERENCE_MANAGE_ROLES
+                        - CONFERENCE_MANAGE_GROUPS
+              - groupRegistrants:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+    columns:
+    - groupId
+    - roleId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - groupId
+    - id
+    - roleId
+    filter:
+      group:
+        _and:
+        - enabled:
+            _eq: true
+        - includeUnauthenticated:
+            _eq: true
+  role: unauthenticated
+- permission:
+    columns:
+    - groupId
+    - id
+    - roleId
+    filter:
+      _or:
+      - group:
+          _and:
+          - enabled:
+              _eq: true
+          - _or:
+            - includeUnauthenticated:
+                _eq: true
+            - groupRegistrants:
+                registrant:
+                  userId:
+                    _eq: X-Hasura-User-Id
+      - group:
+          conference:
+            _or:
+            - createdBy:
+                _eq: X-Hasura-User-Id
+            - groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _in:
+                          - CONFERENCE_MANAGE_ROLES
+                          - CONFERENCE_MANAGE_GROUPS
+                - groupRegistrants:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      group:
+        conference:
+          _or:
+          - createdBy:
+              _eq: X-Hasura-User-Id
+          - groups:
+              _and:
+              - enabled:
+                  _eq: true
+              - groupRoles:
+                  role:
+                    rolePermissions:
+                      permissionName:
+                        _in:
+                        - CONFERENCE_MANAGE_ROLES
+                        - CONFERENCE_MANAGE_GROUPS
+              - groupRegistrants:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+  role: user

@@ -1,0 +1,54 @@
+table:
+  name: SavedVonageRoomRecording
+  schema: registrant
+object_relationships:
+- name: recording
+  using:
+    foreign_key_constraint_on: recordingId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - registrant:
+          userId:
+            _eq: X-Hasura-User-Id
+      - recording:
+          room:
+            conference:
+              registrants:
+                id:
+                  _ceq:
+                  - $
+                  - registrantId
+    columns:
+    - recordingId
+    - registrantId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - recordingId
+    - isHidden
+    - registrantId
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - isHidden
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user

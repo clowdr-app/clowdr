@@ -1,0 +1,177 @@
+table:
+  name: Tag
+  schema: collection
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: originatingData
+  using:
+    foreign_key_constraint_on: originatingDataId
+array_relationships:
+- name: eventTags
+  using:
+    foreign_key_constraint_on:
+      column: tagId
+      table:
+        name: EventTag
+        schema: schedule
+- name: itemTags
+  using:
+    foreign_key_constraint_on:
+      column: tagId
+      table:
+        name: ItemTag
+        schema: content
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+    columns:
+    - colour
+    - conferenceId
+    - id
+    - name
+    - originatingDataId
+    - priority
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - colour
+    - conferenceId
+    - id
+    - name
+    - originatingDataId
+    - priority
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - colour
+    - conferenceId
+    - created_at
+    - id
+    - name
+    - originatingDataId
+    - priority
+    - updated_at
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW
+                  - CONFERENCE_MANAGE_CONTENT
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - colour
+    - name
+    - originatingDataId
+    - priority
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_MANAGE_SCHEDULE
+  role: user

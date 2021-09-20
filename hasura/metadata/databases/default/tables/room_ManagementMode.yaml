@@ -1,0 +1,17 @@
+table:
+  name: ManagementMode
+  schema: room
+is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

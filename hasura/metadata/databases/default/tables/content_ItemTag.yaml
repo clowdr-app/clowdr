@@ -1,0 +1,140 @@
+table:
+  name: ItemTag
+  schema: content
+object_relationships:
+- name: item
+  using:
+    foreign_key_constraint_on: itemId
+- name: tag
+  using:
+    foreign_key_constraint_on: tagId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      item:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+    columns:
+    - itemId
+    - id
+    - tagId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - itemId
+    - id
+    - tagId
+    filter:
+      item:
+        conference:
+          _and:
+          - slug:
+              _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUnauthPermission
+                schema: public
+              _where:
+                _and:
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - itemId
+    - id
+    - tagId
+    filter:
+      item:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_VIEW
+                    - CONFERENCE_MANAGE_CONTENT
+          - _exists:
+              _table:
+                name: FlatUnauthPermission
+                schema: public
+              _where:
+                _and:
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns: []
+    filter:
+      item:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      item:
+        _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_CONTENT
+  role: user

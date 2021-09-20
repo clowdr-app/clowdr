@@ -1,0 +1,22 @@
+table:
+  name: ReadUpToIndex
+  schema: chat
+object_relationships:
+- name: chat
+  using:
+    foreign_key_constraint_on: chatId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+select_permissions:
+- permission:
+    columns:
+    - registrantId
+    - chatId
+    - messageSId
+    - updated_at
+    filter:
+      registrant:
+        userId:
+          _eq: X-Hasura-User-Id
+  role: user

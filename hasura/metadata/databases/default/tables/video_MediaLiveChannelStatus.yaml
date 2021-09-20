@@ -1,0 +1,53 @@
+table:
+  name: MediaLiveChannelStatus
+  schema: video
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: channelStack
+  using:
+    foreign_key_constraint_on: channelStackId
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        conferenceId: id
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+select_permissions:
+- permission:
+    columns:
+    - activeInputAttachmentName
+    - activeInputSwitchActionName
+    - channelStackId
+    - conferenceId
+    - created_at
+    - id
+    - pipelinesRunningCount
+    - state
+    - updated_at
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW_ATTENDEES
+                  - CONFERENCE_MANAGE_SCHEDULE
+  role: user

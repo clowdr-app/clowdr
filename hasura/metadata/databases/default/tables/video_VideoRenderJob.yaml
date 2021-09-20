@@ -1,0 +1,75 @@
+table:
+  name: VideoRenderJob
+  schema: video
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: conferencePrepareJob
+  using:
+    foreign_key_constraint_on: conferencePrepareJobId
+- name: element
+  using:
+    manual_configuration:
+      column_mapping:
+        elementId: id
+      insertion_order: null
+      remote_table:
+        name: Element
+        schema: content
+- name: jobStatus
+  using:
+    foreign_key_constraint_on: jobStatusName
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - conferencePrepareJobId
+    - created_at
+    - elementId
+    - id
+    - jobStatusName
+    - updated_at
+    filter:
+      _or:
+      - conference:
+          groups:
+            _and:
+            - enabled:
+                _eq: true
+            - groupRoles:
+                role:
+                  rolePermissions:
+                    permissionName:
+                      _eq: CONFERENCE_MANAGE_CONTENT
+            - _or:
+              - includeUnauthenticated:
+                  _eq: true
+              - groupRegistrants:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - data
+      - jobStatusName
+      - message
+      - conferenceId
+      - conferencePrepareJobId
+      - elementId
+      - id
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: VideoRenderJobUpdated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/videoRenderJob/updated"

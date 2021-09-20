@@ -1,0 +1,48 @@
+table:
+  name: LivestreamDurations
+  schema: room
+object_relationships:
+- name: conference
+  using:
+    manual_configuration:
+      column_mapping:
+        conferenceId: id
+      insertion_order: null
+      remote_table:
+        name: Conference
+        schema: conference
+- name: room
+  using:
+    manual_configuration:
+      column_mapping:
+        roomId: id
+      insertion_order: null
+      remote_table:
+        name: Room
+        schema: room
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - roomId
+    - sum
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_MANAGE_SCHEDULE
+  role: user

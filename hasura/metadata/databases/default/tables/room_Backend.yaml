@@ -1,0 +1,4 @@
+table:
+  name: Backend
+  schema: room
+is_enum: true

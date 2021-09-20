@@ -1,0 +1,212 @@
+table:
+  name: Flag
+  schema: chat
+object_relationships:
+- name: discussionChat
+  using:
+    foreign_key_constraint_on: discussionChatId
+- name: flaggedBy
+  using:
+    foreign_key_constraint_on: flaggedById
+- name: message
+  using:
+    foreign_key_constraint_on: messageSId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - flaggedBy:
+          userId:
+            _eq: X-Hasura-User-Id
+      - message:
+          chat:
+            _or:
+            - _and:
+              - restrictToAdmins:
+                  _eq: false
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            _or:
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW
+                            - permissionName:
+                                _eq: CONFERENCE_MANAGE_ATTENDEES
+                            - permissionName:
+                                _eq: CONFERENCE_VIEW_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupRegistrants:
+                          registrant:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - rooms:
+                    _or:
+                    - managementModeName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    rooms: {}
+            - _and:
+              - restrictToAdmins:
+                  _eq: true
+              - conference:
+                  groups:
+                    _and:
+                    - enabled:
+                        _eq: true
+                    - groupRoles:
+                        role:
+                          rolePermissions:
+                            permissionName:
+                              _eq: CONFERENCE_MANAGE_ATTENDEES
+                    - _or:
+                      - includeUnauthenticated:
+                          _eq: true
+                      - groupRegistrants:
+                          registrant:
+                            userId:
+                              _eq: X-Hasura-User-Id
+              - _or:
+                - rooms:
+                    _or:
+                    - managementModeName:
+                        _eq: PUBLIC
+                    - roomPeople:
+                        registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+                - _not:
+                    rooms: {}
+    columns:
+    - discussionChatId
+    - flaggedById
+    - id
+    - messageSId
+    - notes
+    - type
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - discussionChatId
+    - flaggedById
+    - id
+    - messageSId
+    - notes
+    - resolution
+    - resolved_at
+    - type
+    - updated_at
+    filter:
+      _or:
+      - flaggedBy:
+          userId:
+            _eq: X-Hasura-User-Id
+      - message:
+          chat:
+            conference:
+              groups:
+                _and:
+                - enabled:
+                    _eq: true
+                - groupRoles:
+                    role:
+                      rolePermissions:
+                        permissionName:
+                          _eq: CONFERENCE_MODERATE_ATTENDEES
+                - _or:
+                  - includeUnauthenticated:
+                      _eq: true
+                  - groupRegistrants:
+                      registrant:
+                        userId:
+                          _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - discussionChatId
+    - id
+    - notes
+    - resolution
+    - resolved_at
+    - type
+    filter:
+      _and:
+      - resolved_at:
+          _is_null: true
+      - _or:
+        - flaggedBy:
+            userId:
+              _eq: X-Hasura-User-Id
+        - message:
+            chat:
+              conference:
+                groups:
+                  _and:
+                  - enabled:
+                      _eq: true
+                  - groupRoles:
+                      role:
+                        rolePermissions:
+                          permissionName:
+                            _eq: CONFERENCE_MODERATE_ATTENDEES
+                  - _or:
+                    - includeUnauthenticated:
+                        _eq: true
+                    - groupRegistrants:
+                        registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - resolved_at:
+          _is_null: true
+      - flaggedBy:
+          userId:
+            _eq: X-Hasura-User-Id
+  role: user
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ChatFlagInserted_NotifyActions
+  retry_conf:
+    interval_sec: 120
+    num_retries: 2
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/chat/flag/inserted"
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: ChatFlagInserted_NotifyRealtime
+  retry_conf:
+    interval_sec: 120
+    num_retries: 2
+    timeout_sec: 60
+  webhook: "{{REALTIME_BASE_URL}}/chat/flag/inserted"

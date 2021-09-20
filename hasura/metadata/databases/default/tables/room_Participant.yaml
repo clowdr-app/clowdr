@@ -1,0 +1,68 @@
+table:
+  name: Participant
+  schema: room
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+- name: room
+  using:
+    foreign_key_constraint_on: roomId
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - registrantId
+    - conferenceId
+    - created_at
+    - id
+    - roomId
+    - updated_at
+    filter:
+      _and:
+      - _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _or:
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_SCHEDULE
+                    - CONFERENCE_VIEW_ATTENDEES
+          - _exists:
+              _table:
+                name: FlatUnauthPermission
+                schema: public
+              _where:
+                _and:
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+      - room:
+          _or:
+          - managementModeName:
+              _eq: PUBLIC
+          - roomPeople:
+              registrant:
+                userId:
+                  _eq: X-Hasura-User-Id
+  role: user

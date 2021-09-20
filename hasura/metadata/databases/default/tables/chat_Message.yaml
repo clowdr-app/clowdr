@@ -1,0 +1,80 @@
+table:
+  name: Message
+  schema: chat
+object_relationships:
+- name: chat
+  using:
+    foreign_key_constraint_on: chatId
+- name: duplicateIncoming
+  using:
+    manual_configuration:
+      column_mapping:
+        sId: duplicatedMessageSId
+      insertion_order: null
+      remote_table:
+        name: Message
+        schema: chat
+- name: duplicateOutgoing
+  using:
+    foreign_key_constraint_on: duplicatedMessageSId
+- name: sender
+  using:
+    foreign_key_constraint_on: senderId
+array_relationships:
+- name: flags
+  using:
+    foreign_key_constraint_on:
+      column: messageSId
+      table:
+        name: Flag
+        schema: chat
+- name: reactions
+  using:
+    foreign_key_constraint_on:
+      column: messageSId
+      table:
+        name: Reaction
+        schema: chat
+select_permissions:
+- permission:
+    columns:
+    - chatId
+    - created_at
+    - data
+    - duplicatedMessageSId
+    - id
+    - isPinned
+    - message
+    - sId
+    - senderId
+    - systemId
+    - type
+    - updated_at
+    filter:
+      chat:
+        _and:
+        - _or:
+          - rooms:
+              _or:
+              - managementModeName:
+                  _eq: PUBLIC
+              - roomPeople:
+                  registrant:
+                    userId:
+                      _eq: X-Hasura-User-Id
+          - _not:
+              rooms: {}
+        - conference:
+            _and:
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - userPermissions:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_ATTENDEES
+                    - CONFERENCE_MODERATE_ATTENDEES
+                    - CONFERENCE_VIEW_ATTENDEES
+  role: user

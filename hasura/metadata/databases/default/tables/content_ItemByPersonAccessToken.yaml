@@ -1,0 +1,53 @@
+table:
+  name: ItemByPersonAccessToken
+  schema: content
+array_relationships:
+- name: elements
+  using:
+    manual_configuration:
+      column_mapping:
+        id: itemId
+      insertion_order: null
+      remote_table:
+        name: ElementByPersonAccessToken
+        schema: content
+- name: itemPeople
+  using:
+    manual_configuration:
+      column_mapping:
+        id: itemId
+      insertion_order: null
+      remote_table:
+        name: ItemProgramPersonByAccessToken
+        schema: content
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - id
+    - shortTitle
+    - title
+    - typeName
+    - updated_at
+    filter:
+      itemPeople:
+        person:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
+  role: unauthenticated
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - id
+    - shortTitle
+    - title
+    - typeName
+    - updated_at
+    filter:
+      itemPeople:
+        person:
+          accessToken:
+            _eq: X-Hasura-Magic-Token
+  role: user

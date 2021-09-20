@@ -1,0 +1,43 @@
+table:
+  name: VonageRoomRecording
+  schema: video
+object_relationships:
+- name: initiator
+  using:
+    foreign_key_constraint_on: initiatedBy
+- name: room
+  using:
+    foreign_key_constraint_on: roomId
+array_relationships:
+- name: saves
+  using:
+    manual_configuration:
+      column_mapping:
+        id: recordingId
+      insertion_order: null
+      remote_table:
+        name: SavedVonageRoomRecording
+        schema: registrant
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - endedAt
+    - id
+    - initiatedBy
+    - roomId
+    - s3Url
+    - startedAt
+    - updated_at
+    - uploaded_at
+    - vonageSessionId
+    filter:
+      _or:
+      - initiator:
+          userId:
+            _eq: X-Hasura-User-Id
+      - saves:
+          registrant:
+            userId:
+              _eq: X-Hasura-User-Id
+  role: user

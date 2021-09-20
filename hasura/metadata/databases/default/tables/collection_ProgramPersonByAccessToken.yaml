@@ -1,0 +1,34 @@
+table:
+  name: ProgramPersonByAccessToken
+  schema: collection
+array_relationships:
+- name: itemPeople
+  using:
+    manual_configuration:
+      column_mapping:
+        id: personId
+      insertion_order: null
+      remote_table:
+        name: ItemProgramPersonByAccessToken
+        schema: content
+select_permissions:
+- permission:
+    columns:
+    - accessToken
+    - conferenceId
+    - id
+    - name
+    filter:
+      accessToken:
+        _eq: X-Hasura-Magic-Token
+  role: unauthenticated
+- permission:
+    columns:
+    - accessToken
+    - conferenceId
+    - id
+    - name
+    filter:
+      accessToken:
+        _eq: X-Hasura-Magic-Token
+  role: user

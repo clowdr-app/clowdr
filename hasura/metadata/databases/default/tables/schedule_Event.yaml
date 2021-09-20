@@ -1,0 +1,273 @@
+table:
+  name: Event
+  schema: schedule
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    timings_updated_at: timingsUpdatedAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: eventVonageSession
+  using:
+    manual_configuration:
+      column_mapping:
+        id: eventId
+      insertion_order: null
+      remote_table:
+        name: EventVonageSession
+        schema: video
+- name: exhibition
+  using:
+    foreign_key_constraint_on: exhibitionId
+- name: item
+  using:
+    foreign_key_constraint_on: itemId
+- name: originatingData
+  using:
+    foreign_key_constraint_on: originatingDataId
+- name: room
+  using:
+    foreign_key_constraint_on: roomId
+- name: roomMode
+  using:
+    foreign_key_constraint_on: intendedRoomModeName
+- name: shufflePeriod
+  using:
+    foreign_key_constraint_on: shufflePeriodId
+array_relationships:
+- name: continuations
+  using:
+    foreign_key_constraint_on:
+      column: fromEvent
+      table:
+        name: Continuation
+        schema: schedule
+- name: eventPeople
+  using:
+    foreign_key_constraint_on:
+      column: eventId
+      table:
+        name: EventProgramPerson
+        schema: schedule
+- name: eventTags
+  using:
+    foreign_key_constraint_on:
+      column: eventId
+      table:
+        name: EventTag
+        schema: schedule
+- name: participantStreams
+  using:
+    foreign_key_constraint_on:
+      column: eventId
+      table:
+        name: EventParticipantStream
+        schema: video
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_SCHEDULE
+    columns:
+    - conferenceId
+    - durationSeconds
+    - enableRecording
+    - exhibitionId
+    - id
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - conferenceId
+    - durationSeconds
+    - enableRecording
+    - endTime
+    - exhibitionId
+    - id
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    filter:
+      conference:
+        _and:
+        - slug:
+            _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: unauthenticated
+- permission:
+    columns:
+    - conferenceId
+    - created_at
+    - durationSeconds
+    - enableRecording
+    - endTime
+    - exhibitionId
+    - id
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    - updated_at
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _in:
+                  - CONFERENCE_VIEW
+                  - CONFERENCE_MANAGE_SCHEDULE
+        - _exists:
+            _table:
+              name: FlatUnauthPermission
+              schema: public
+            _where:
+              _and:
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_VIEW
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - durationSeconds
+    - enableRecording
+    - exhibitionId
+    - intendedRoomModeName
+    - itemId
+    - name
+    - originatingDataId
+    - roomId
+    - shufflePeriodId
+    - startTime
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_SCHEDULE
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _eq: CONFERENCE_MANAGE_SCHEDULE
+  role: user
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - timings_updated_at
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: EventUpdated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/event/updated"
+- definition:
+    enable_manual: true
+    update:
+      columns:
+      - durationSeconds
+      - intendedRoomModeName
+      - endTime
+      - startTime
+      - conferenceId
+      - itemId
+      - id
+      - roomId
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: Playout_EventUpdated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{PLAYOUT_BASE_URL}}/hasura/events"

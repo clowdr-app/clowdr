@@ -1,0 +1,60 @@
+table:
+  name: ProfileBadges
+  schema: registrant
+object_relationships:
+- name: registrant
+  using:
+    manual_configuration:
+      column_mapping:
+        registrantId: id
+      insertion_order: null
+      remote_table:
+        name: Registrant
+        schema: registrant
+select_permissions:
+- permission:
+    columns:
+    - colour
+    - name
+    - registrantId
+    filter:
+      registrant:
+        _or:
+        - _and:
+          - userId:
+              _is_null: false
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _eq: CONFERENCE_VIEW_ATTENDEES
+        - _and:
+          - conference:
+              slug:
+                _eq: X-Hasura-Conference-Slug
+          - _exists:
+              _table:
+                name: FlatUserPermission
+                schema: public
+              _where:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - slug:
+                    _eq: X-Hasura-Conference-Slug
+                - permission_name:
+                    _in:
+                    - CONFERENCE_MANAGE_ROLES
+                    - CONFERENCE_MANAGE_GROUPS
+                    - CONFERENCE_MANAGE_ATTENDEES
+  role: user

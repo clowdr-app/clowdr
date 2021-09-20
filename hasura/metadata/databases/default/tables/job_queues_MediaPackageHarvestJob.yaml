@@ -1,0 +1,35 @@
+table:
+  name: MediaPackageHarvestJob
+  schema: job_queues
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: event
+  using:
+    foreign_key_constraint_on: eventId
+- name: jobStatus
+  using:
+    foreign_key_constraint_on: jobStatusName
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - jobStatusName
+      - mediaPackageHarvestJobId
+      - message
+      - conferenceId
+      - eventId
+      - id
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: MediaPackageHarvestJobUpdated
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/mediaPackageHarvestJob/updated"

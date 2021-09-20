@@ -1,0 +1,11 @@
+table:
+  name: InputType
+  schema: video
+is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: unauthenticated

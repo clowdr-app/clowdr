@@ -1,0 +1,17 @@
+table:
+  name: PersonRole
+  schema: room
+is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

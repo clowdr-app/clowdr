@@ -20,16 +20,18 @@ export default function EmailVerificationRequiredPage({
         continuationPath = `/invitation/accept/${cachedInviteCode}`;
     }
 
+    const alreadyUsed = message?.toLowerCase().includes("url can only be used once");
+
     return (
         <>
             {title}
             <FAIcon iconStyle="s" icon="envelope" fontSize="6xl" />
             <Heading as="h1" id="page-heading" fontSize="3xl" lineHeight="revert">
-                {success
+                {success || alreadyUsed
                     ? "Your email was verified. You can now log in."
                     : message ?? "Please verify your email address"}
             </Heading>
-            {!message ? (
+            {!message && !alreadyUsed ? (
                 <Text fontSize="xl" lineHeight="revert" fontWeight="light" maxW={600}>
                     Before you can login you must verify your email address.{" "}
                     <b>You should have received an email from our domain</b>
@@ -37,7 +39,7 @@ export default function EmailVerificationRequiredPage({
                 </Text>
             ) : undefined}
             <Text>
-                {success ? (
+                {success || alreadyUsed ? (
                     <LoginButton size="lg" redirectTo={continuationPath ?? "/"} />
                 ) : (
                     <i>You can now close this page while you wait for your verification email.</i>

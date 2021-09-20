@@ -25,7 +25,7 @@ services:
     ports:
       - "6379:6379"
   graphql-engine:
-    image: ${HASURA_DOCKER_IMAGE:-hasura/graphql-engine:v2.0.7.cli-migrations-v2}
+    image: ${HASURA_DOCKER_IMAGE:-hasura/graphql-engine:v2.0.9.cli-migrations-v3}
     ports:
       - "8080:8080"
     depends_on:

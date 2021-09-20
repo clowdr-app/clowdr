@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import {
     RoomEventDetailsFragment,
-    useGetEventParticipantStreamsSubscription,
+    useGetVonageParticipantStreamsSubscription,
 } from "../../../../../../generated/graphql";
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../../GQL/useQueryErrorToast";
@@ -29,20 +29,20 @@ import { LayoutControls } from "./LayoutControls";
 import { LiveIndicator } from "./LiveIndicator";
 
 gql`
-    subscription GetEventParticipantStreams($eventId: uuid!) {
-        video_EventParticipantStream(where: { eventId: { _eq: $eventId } }) {
-            ...EventParticipantStreamDetails
+    subscription GetVonageParticipantStreams($eventId: uuid!) {
+        video_VonageParticipantStream(where: { eventVonageSession: { eventId: { _eq: $eventId } } }) {
+            ...VonageParticipantStreamDetails
         }
     }
 
-    fragment EventParticipantStreamDetails on video_EventParticipantStream {
+    fragment VonageParticipantStreamDetails on video_VonageParticipantStream {
         id
         registrant {
             id
             displayName
         }
         conferenceId
-        eventId
+        vonageSessionId
         vonageStreamType
         vonageStreamId
         registrantId
@@ -68,12 +68,12 @@ export function BackstageControls({
         data: streamsData,
         loading: streamsLoading,
         error: streamsError,
-    } = useGetEventParticipantStreamsSubscription({
+    } = useGetVonageParticipantStreamsSubscription({
         variables: {
             eventId: event.id,
         },
     });
-    useQueryErrorToast(streamsError, true, "EventRoomControlBar:GetEventParticipantStreams");
+    useQueryErrorToast(streamsError, true, "EventRoomControlBar:GetVonageParticipantStreams");
 
     const vonageGlobalState = useVonageGlobalState();
     const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -115,7 +115,7 @@ export function BackstageControls({
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <LayoutControls
                                     live={live}
-                                    streams={streamsData?.video_EventParticipantStream ?? null}
+                                    streams={streamsData?.video_VonageParticipantStream ?? null}
                                     eventVonageSessionId={event.eventVonageSession?.id ?? null}
                                 />
                             </PopoverBody>
@@ -124,7 +124,7 @@ export function BackstageControls({
                 </Portal>
             </Popover>
         ),
-        [event.eventVonageSession?.id, live, streamsData?.video_EventParticipantStream, streamsError, streamsLoading]
+        [event.eventVonageSession?.id, live, streamsData?.video_VonageParticipantStream, streamsError, streamsLoading]
     );
 
     const immediateSwitchControls = useMemo(

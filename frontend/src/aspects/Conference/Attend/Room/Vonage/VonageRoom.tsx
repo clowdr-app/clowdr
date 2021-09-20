@@ -1,5 +1,5 @@
 import { gql, useApolloClient } from "@apollo/client";
-import { Alert, AlertIcon, AlertTitle, Box, Flex, useBreakpointValue, useToast } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle, Box, Flex, HStack, useBreakpointValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
@@ -293,11 +293,11 @@ function VonageRoomInner({
         base: "low",
         lg: "normal",
     });
-    const receivingScreenShare = useMemo(() => streams.find((s) => s.videoType === "screen"), [streams]);
-    const screenSharingActive = receivingScreenShare || screen;
-    const maxVideoStreams = screenSharingActive ? 4 : 10;
+    const receivingScreenShareCount = useMemo(() => streams.filter((s) => s.videoType === "screen").length, [streams]);
+    const allScreenShareCount = receivingScreenShareCount + (screen ? 1 : 0);
+    const maxVideoStreams = allScreenShareCount ? 4 : 10;
     const cameraResolution =
-        screenSharingActive || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
+        allScreenShareCount || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
     const participantWidth = cameraResolution === "low" ? 150 : 300;
 
     useEffect(() => {
@@ -467,7 +467,7 @@ function VonageRoomInner({
                 }
             });
         }
-    }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, screenSharingActive, streamLastActive]);
+    }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, allScreenShareCount, streamLastActive]);
 
     const [sortedStreams, setSortedStreams] = useState<OT.Stream[]>([]);
     const sortCameraStreamsWhileScreenSharing = useCallback(
@@ -538,17 +538,26 @@ function VonageRoomInner({
     useEffect(
         () =>
             setSortedStreams(
-                screenSharingActive
+                allScreenShareCount
                     ? sortCameraStreamsWhileScreenSharing(othersCameraStreams, enableStreams, maxVideoStreams)
                     : R.sortWith([R.ascend((s) => s.connection.creationTime)], othersCameraStreams)
             ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [othersCameraStreams, screenSharingActive, enableStreams, maxVideoStreams]
+        [othersCameraStreams, allScreenShareCount, enableStreams, maxVideoStreams]
     );
 
     const viewPublishedScreenShareEl = useMemo(
         () => (
-            <Box position="relative" maxH="80vh" hidden={!screen} height={"70vh"} width="100%" mb={2} overflow="hidden">
+            <Box
+                position="relative"
+                maxH="80vh"
+                hidden={!screen}
+                height="70vh"
+                width={`${100 / Math.max(allScreenShareCount, 1)}%`}
+                mb={2}
+                overflow="hidden"
+                flex={screen ? 1 : 0}
+            >
                 <Box ref={screenPublishContainerRef} position="absolute" left="0" top="0" height="100%" width="100%" />
                 <Box
                     position="absolute"
@@ -564,53 +573,57 @@ function VonageRoomInner({
                 </Box>
             </Box>
         ),
-        [registrant.id, screen]
+        [allScreenShareCount, registrant.id, screen]
     );
 
     const fullScreenHandle = useFullScreenHandle();
 
     useEffect(() => {
-        if (!receivingScreenShare && fullScreenHandle.active) {
+        if (!receivingScreenShareCount && fullScreenHandle.active) {
             fullScreenHandle.exit().catch((e) => console.error("Failed to exit full screen", e));
         }
-    }, [fullScreenHandle, receivingScreenShare]);
+    }, [fullScreenHandle, receivingScreenShareCount]);
 
-    const viewSubscribedScreenShare = useMemo(
+    const viewSubscribedScreenShares = useMemo(
         () => (
-            <FullScreen handle={fullScreenHandle}>
-                <Box
-                    onClick={async () => {
-                        try {
-                            if (fullScreenHandle.active) {
-                                await fullScreenHandle.exit();
-                            } else {
-                                await fullScreenHandle.enter();
+            <div style={{ flex: 1 }}>
+                <FullScreen handle={fullScreenHandle}>
+                    <HStack
+                        spacing={0}
+                        onClick={async () => {
+                            try {
+                                if (fullScreenHandle.active) {
+                                    await fullScreenHandle.exit();
+                                } else {
+                                    await fullScreenHandle.enter();
+                                }
+                            } catch (e) {
+                                console.error("Could not enter full screen", e);
                             }
-                        } catch (e) {
-                            console.error("Could not enter full screen", e);
-                        }
-                    }}
-                    maxH={fullScreenHandle.active ? "100%" : "80vh"}
-                    height={fullScreenHandle.active ? "100%" : receivingScreenShare ? "70vh" : undefined}
-                    width="100%"
-                    mb={2}
-                    zIndex={300}
-                    hidden={!receivingScreenShare}
-                >
-                    {streams
-                        .filter((stream) => stream.videoType === "screen")
-                        .map((stream) => (
-                            <VonageSubscriber
-                                key={stream.streamId}
-                                stream={stream}
-                                enableVideo={true}
-                                resolution={"high"}
-                            />
-                        ))}
-                </Box>
-            </FullScreen>
+                        }}
+                        maxH={fullScreenHandle.active ? "100%" : "80vh"}
+                        height={fullScreenHandle.active ? "100%" : "70vh"}
+                        width="100%"
+                        mb={2}
+                        zIndex={300}
+                        hidden={!receivingScreenShareCount}
+                    >
+                        {streams
+                            .filter((stream) => stream.videoType === "screen")
+                            .map((stream) => (
+                                <Box
+                                    h="100%"
+                                    w={`${100 / Math.max(receivingScreenShareCount, 1)}%`}
+                                    key={stream.streamId}
+                                >
+                                    <VonageSubscriber stream={stream} enableVideo={true} resolution={"high"} />
+                                </Box>
+                            ))}
+                    </HStack>
+                </FullScreen>
+            </div>
         ),
-        [fullScreenHandle, receivingScreenShare, streams]
+        [fullScreenHandle, receivingScreenShareCount, streams]
     );
 
     const connectionData = useMemo(() => JSON.stringify({ registrantId: registrant.id }), [registrant.id]);
@@ -776,16 +789,17 @@ function VonageRoomInner({
                 />
             </Flex>
             <Box position="relative" mb={8} width="100%">
-                {viewPublishedScreenShareEl}
-
-                {viewSubscribedScreenShare}
+                <HStack spacing={0}>
+                    {viewPublishedScreenShareEl}
+                    {viewSubscribedScreenShares}
+                </HStack>
 
                 <Flex
                     width="100%"
                     height="auto"
-                    flexWrap={screenSharingActive ? "nowrap" : "wrap"}
-                    overflowX={screenSharingActive ? "auto" : "hidden"}
-                    overflowY={screenSharingActive ? "hidden" : "auto"}
+                    flexWrap={allScreenShareCount ? "nowrap" : "wrap"}
+                    overflowX={allScreenShareCount ? "auto" : "hidden"}
+                    overflowY={allScreenShareCount ? "hidden" : "auto"}
                 >
                     {viewPublishedPlaceholder}
 

@@ -67,7 +67,7 @@ export function VonageRoomControlBar({
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
 }): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
+    const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
 
     const [toggleVonageRecording, toggleVonageRecordingResponse] = useToggleVonageRecordingStateMutation();
@@ -358,11 +358,11 @@ export function VonageRoomControlBar({
         });
     }, [dispatch]);
 
-    const receivingScreenShare = useMemo(
+    const receivingScreenShareCount = useMemo(
         () =>
             vonage.state.type === StateType.Connected
-                ? vonage.state.streams.find((s) => s.videoType === "screen")
-                : false,
+                ? vonage.state.streams.filter((s) => s.videoType === "screen").length
+                : 0,
         [vonage.state]
     );
 
@@ -406,7 +406,6 @@ export function VonageRoomControlBar({
         setRecentlyToggledRecording(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRecordingActive]);
-
     return (
         <>
             <Stack
@@ -448,33 +447,49 @@ export function VonageRoomControlBar({
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
                 )}
-                {vonage.state.type === StateType.Connected && receivingScreenShare ? (
-                    <Tag size="sm" variant="outline" colorScheme="blue" px={2} py="4px" ml={1} mr="auto" maxW="190px">
-                        <TagLeftIcon as={CheckCircleIcon} />
-                        <TagLabel whiteSpace="normal">Someone else is sharing their screen at the moment</TagLabel>
-                    </Tag>
-                ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                    <Button onClick={stopScreenShare} mr="auto" colorScheme="red" isDisabled={joining}>
-                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
-                    </Button>
-                ) : vonage.state.type === StateType.Connected &&
-                  vonage.state.initialisedState.screenSharingSupported ? (
-                    <Button onClick={startScreenShare} mr="auto" isDisabled={joining} colorScheme="blue">
-                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Share screen</span>
-                    </Button>
-                ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
-                    <Tag size="md" variant="outline" colorScheme="blue">
-                        <TagLeftIcon as={CheckCircleIcon} />
-                        <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
-                    </Tag>
-                ) : (
-                    <Tag size="md" variant="outline" colorScheme="red">
-                        <TagLeftIcon as={NotAllowedIcon} />
-                        <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
-                    </Tag>
-                )}
+                {settings.maximumSimultaneousScreenShares ? (
+                    vonage.state.type === StateType.Connected &&
+                    receivingScreenShareCount >= settings.maximumSimultaneousScreenShares ? (
+                        <Tag
+                            size="sm"
+                            variant="outline"
+                            colorScheme="blue"
+                            px={2}
+                            py="4px"
+                            ml={1}
+                            mr="auto"
+                            maxW="190px"
+                        >
+                            <TagLeftIcon as={CheckCircleIcon} />
+                            <TagLabel whiteSpace="normal">
+                                {settings.maximumSimultaneousScreenShares === 1
+                                    ? "Someone else is sharing their screen at the moment"
+                                    : "No more screens can be shared at the moment"}
+                            </TagLabel>
+                        </Tag>
+                    ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
+                        <Button onClick={stopScreenShare} mr="auto" colorScheme="red" isDisabled={joining}>
+                            <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                        </Button>
+                    ) : vonage.state.type === StateType.Connected &&
+                      vonage.state.initialisedState.screenSharingSupported ? (
+                        <Button onClick={startScreenShare} mr="auto" isDisabled={joining} colorScheme="blue">
+                            <FAIcon icon="desktop" iconStyle="s" mr="auto" />
+                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                        </Button>
+                    ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
+                        <Tag size="md" variant="outline" colorScheme="blue">
+                            <TagLeftIcon as={CheckCircleIcon} />
+                            <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
+                        </Tag>
+                    ) : (
+                        <Tag size="md" variant="outline" colorScheme="red">
+                            <TagLeftIcon as={NotAllowedIcon} />
+                            <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
+                        </Tag>
+                    )
+                ) : undefined}
                 {vonage.state.type === StateType.Connected && !isBackstage ? (
                     canControlRecording ? (
                         <Button

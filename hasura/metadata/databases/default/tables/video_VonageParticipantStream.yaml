@@ -1,0 +1,54 @@
+table:
+  schema: video
+  name: VonageParticipantStream
+configuration:
+  custom_root_fields: {}
+  custom_column_names:
+    updated_at: updatedAt
+    created_at: createdAt
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: eventVonageSession
+  using:
+    manual_configuration:
+      remote_table:
+        schema: video
+        name: EventVonageSession
+      insertion_order: null
+      column_mapping:
+        vonageSessionId: sessionId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+select_permissions:
+- role: user
+  permission:
+    columns:
+    - conferenceId
+    - id
+    - registrantId
+    - updated_at
+    - vonageStreamId
+    - vonageStreamType
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _exists:
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SCHEDULE
+                - CONFERENCE_MANAGE_CONTENT
+                - CONFERENCE_VIEW_ATTENDEES
+          _table:
+            schema: public
+            name: FlatUserPermission

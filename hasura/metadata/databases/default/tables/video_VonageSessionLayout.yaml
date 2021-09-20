@@ -1,0 +1,31 @@
+table:
+  schema: video
+  name: VonageSessionLayout
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: eventVonageSession
+  using:
+    manual_configuration:
+      remote_table:
+        schema: video
+        name: EventVonageSession
+      insertion_order: null
+      column_mapping:
+        vonageSessionId: sessionId
+event_triggers:
+- name: VonageSessionLayoutUpdated
+  definition:
+    enable_manual: false
+    update:
+      columns:z
+      - layoutData
+  retry_conf:
+    num_retries: 1
+    interval_sec: 10
+    timeout_sec: 5
+  webhook: '{{ACTION_BASE_URL}}/vonageSessionLayout/updated'
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET

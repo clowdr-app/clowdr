@@ -2,23 +2,21 @@ import { gql } from "@apollo/client/core";
 import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import assert from "assert";
 import * as R from "ramda";
-import { EventVonageSession_RemoveInvalidStreamsDocument } from "../generated/graphql";
+import { VonageSessionLayout_RemoveInvalidStreamsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
-import { EventVonageSessionData, Payload } from "../types/hasura/event";
+import { Payload, VonageSessionLayoutData_Record } from "../types/hasura/event";
 
-async function removeInvalidStreams(eventId: string, vonageSessionId: string): Promise<string[]> {
+async function removeInvalidStreams(vonageSessionId: string): Promise<string[]> {
     gql`
-        mutation EventVonageSession_RemoveInvalidStreams($validStreamIds: [String!]!, $eventId: uuid) {
-            delete_video_EventParticipantStream(
-                where: { vonageStreamId: { _nin: $validStreamIds }, eventId: { _eq: $eventId } }
-            ) {
+        mutation VonageSessionLayout_RemoveInvalidStreams($validStreamIds: [String!]!) {
+            delete_video_VonageParticipantStream(where: { vonageStreamId: { _nin: $validStreamIds } }) {
                 affected_rows
             }
         }
     `;
 
-    console.log("Attempting to remove invalid EventParticipantStreams", eventId, vonageSessionId);
+    console.log("Attempting to remove invalid ParticipantStreams", vonageSessionId);
     const streams = await Vonage.listStreams(vonageSessionId);
 
     if (!streams) {
@@ -28,17 +26,18 @@ async function removeInvalidStreams(eventId: string, vonageSessionId: string): P
     const validStreamIds = streams.map((stream) => stream.id);
 
     await apolloClient.mutate({
-        mutation: EventVonageSession_RemoveInvalidStreamsDocument,
+        mutation: VonageSessionLayout_RemoveInvalidStreamsDocument,
         variables: {
             validStreamIds,
-            eventId,
         },
     });
 
     return validStreamIds;
 }
 
-export async function handleEventVonageSessionUpdated(payload: Payload<EventVonageSessionData>): Promise<void> {
+export async function handleVonageSessionLayoutUpdated(
+    payload: Payload<VonageSessionLayoutData_Record>
+): Promise<void> {
     assert(payload.event.data.new, "Expected payload to have new row");
 
     const newRow = payload.event.data.new;
@@ -51,7 +50,7 @@ export async function handleEventVonageSessionUpdated(payload: Payload<EventVona
 
     // At the moment, there seems to be no easy way to figure out who is publishing a stream if we didn't
     // record/receive the callback. So we'll just settle for removing invalid ones.
-    const streamIds = await removeInvalidStreams(newRow.eventId, newRow.sessionId);
+    const streamIds = await removeInvalidStreams(newRow.sessionId);
 
     switch (layoutData.type) {
         case VonageSessionLayoutType.BestFit: {

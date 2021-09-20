@@ -2,14 +2,14 @@ import { Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } fr
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
-import type { EventParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
+import type { VonageParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
 
 export function SingleLayoutForm({
     setLayout,
     streams,
 }: {
     setLayout: (layoutData: VonageSessionLayoutData) => Promise<void>;
-    streams: readonly EventParticipantStreamDetailsFragment[];
+    streams: readonly VonageParticipantStreamDetailsFragment[];
 }): JSX.Element {
     const toast = useToast();
     return (

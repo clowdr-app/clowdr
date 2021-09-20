@@ -13,6 +13,34 @@ object_relationships:
 - name: event
   using:
     foreign_key_constraint_on: eventId
+- name: layout
+  using:
+    manual_configuration:
+      remote_table:
+        schema: video
+        name: VonageSessionLayout
+      insertion_order: null
+      column_mapping:
+        sessionId: vonageSessionId
+array_relationships:
+- name: participantStreams
+  using:
+    manual_configuration:
+      remote_table:
+        schema: video
+        name: VonageParticipantStream
+      insertion_order: null
+      column_mapping:
+        sessionId: vonageSessionId
+- name: recordings
+  using:
+    manual_configuration:
+      remote_table:
+        schema: video
+        name: VonageRoomRecording
+      insertion_order: null
+      column_mapping:
+        sessionId: vonageSessionId
 select_permissions:
 - permission:
     columns:
@@ -40,60 +68,6 @@ select_permissions:
                 _in:
                 - CONFERENCE_VIEW
                 - CONFERENCE_MANAGE_SCHEDULE
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - layoutData
-    filter:
-      _or:
-      - conference:
-          _and:
-          - slug:
-              _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-      - _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-        - event:
-            eventPeople:
-              _and:
-              - person:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-              - eventPersonRole:
-                  name:
-                    _in:
-                    - CHAIR
-                    - PRESENTER
   role: user
 event_triggers:
 - definition:

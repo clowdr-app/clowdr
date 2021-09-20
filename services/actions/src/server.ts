@@ -19,8 +19,6 @@ import { router as conferencePrepareJobRouter } from "./router/conferencePrepare
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as elementRouter } from "./router/element";
 import { router as eventRouter } from "./router/event";
-import { router as eventProgramPersonRouter } from "./router/eventProgramPerson";
-import { router as eventVonageSessionRouter } from "./router/eventVonageSession";
 import { router as googleRouter } from "./router/google";
 import { router as hasuraRouter } from "./router/hasura";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
@@ -33,6 +31,7 @@ import { router as roomRouter } from "./router/room";
 import { router as shuffleRoomsRouter } from "./router/shuffleRooms";
 import { router as videoRenderJobRouter } from "./router/videoRenderJob";
 import { router as vonageRouter } from "./router/vonage";
+import { router as vonageSessionLayoutRouter } from "./router/vonageSessionLayout";
 
 if (process.env.NODE_ENV !== "test") {
     assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN environment variable not provided.");
@@ -69,8 +68,7 @@ app.use("/conferencePrepareJob", conferencePrepareJobRouter);
 app.use("/videoRenderJob", videoRenderJobRouter);
 app.use("/event", eventRouter);
 app.use("/room", roomRouter);
-app.use("/eventVonageSession", eventVonageSessionRouter);
-app.use("/eventProgramPerson", eventProgramPersonRouter);
+app.use("/vonageSessionLayout", vonageSessionLayoutRouter);
 app.use("/mediaPackageHarvestJob", mediaPackageHarvestJobRouter);
 app.use("/combineVideosJob", combineVideosJobRouter);
 app.use("/registrantGoogleAccount", registrantGoogleAccountRouter);

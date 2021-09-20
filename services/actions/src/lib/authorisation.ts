@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import {
     Authorisation_FindRegistrantDocument,
+    Authorisation_GetRegistrantDocument,
     GetRegistrantByConferenceSlugDocument,
     GetRegistrantDocument,
     GetRegistrantWithPermissionsDocument,
@@ -124,6 +125,12 @@ gql`
             ...GetRegistrant_Registrant
         }
     }
+
+    query Authorisation_GetRegistrant($registrantId: uuid!) {
+        registrant_Registrant_by_pk(id: $registrantId) {
+            ...GetRegistrant_Registrant
+        }
+    }
 `;
 
 export async function registrantBelongsToUser(
@@ -141,6 +148,25 @@ export async function registrantBelongsToUser(
 
         if (result.data.registrant_Registrant.length === 1) {
             return result.data.registrant_Registrant[0];
+        }
+
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+export async function getRegistrantDetails(registrantId: string): Promise<false | GetRegistrant_RegistrantFragment> {
+    try {
+        const result = await apolloClient.query({
+            query: Authorisation_GetRegistrantDocument,
+            variables: {
+                registrantId,
+            },
+        });
+
+        if (result.data.registrant_Registrant_by_pk) {
+            return result.data.registrant_Registrant_by_pk;
         }
 
         return false;

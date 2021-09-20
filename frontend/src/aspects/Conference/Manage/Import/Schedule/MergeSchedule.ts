@@ -242,7 +242,6 @@ function convertRoom(context: Context, item: IntermediaryRoomDescriptor | RoomDe
         name: item.name,
         capacity: item.capacity,
         priority: item.priority ?? 10,
-        participants: new Set(),
     } as RoomDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);

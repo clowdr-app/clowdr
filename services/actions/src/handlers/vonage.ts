@@ -20,8 +20,8 @@ import { apolloClient } from "../graphqlClient";
 import { getRegistrantWithPermissions } from "../lib/authorisation";
 import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
-    addAndRemoveEventParticipantStreams,
     addAndRemoveRoomParticipants,
+    addAndRemoveVonageParticipantStreams,
     startArchiveIfOngoingEvent,
     startBroadcastIfOngoingEvent,
     startVonageArchive,
@@ -96,7 +96,7 @@ export async function handleVonageSessionMonitoringWebhook(payload: SessionMonit
     }
 
     try {
-        success &&= await addAndRemoveEventParticipantStreams(payload);
+        success &&= await addAndRemoveVonageParticipantStreams(payload);
     } catch (e) {
         console.error("Error while adding/removing event participant streams", e);
         success = false;

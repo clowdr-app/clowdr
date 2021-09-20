@@ -136,10 +136,9 @@ export interface RoomData extends BaseData {
     managementModeName: Room_ManagementMode_Enum;
 }
 
-export interface EventVonageSessionData extends BaseData {
+export interface VonageSessionLayoutData_Record extends BaseData {
     sessionId: string;
     conferenceId: string;
-    eventId: string;
     layoutData: VonageSessionLayoutData | null;
 }
 

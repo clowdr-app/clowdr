@@ -10,8 +10,6 @@ export type RoomDescriptor = {
     currentModeName: Room_Mode_Enum;
     capacity?: number | null;
     priority: number;
-
-    participants: Set<string>;
 };
 
 export type EventDescriptor = {

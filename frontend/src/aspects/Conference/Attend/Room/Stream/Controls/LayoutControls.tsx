@@ -3,8 +3,8 @@ import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, useT
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useCallback } from "react";
 import {
-    EventParticipantStreamDetailsFragment,
     useUpdateEventVonageSessionLayoutMutation,
+    VonageParticipantStreamDetailsFragment,
 } from "../../../../../../generated/graphql";
 import { PairLayoutForm } from "./Layouts/PairLayoutForm";
 import { PictureInPictureLayoutForm } from "./Layouts/PictureInPictureLayoutForm";
@@ -27,7 +27,7 @@ export function LayoutControls({
     eventVonageSessionId,
 }: {
     live: boolean;
-    streams: readonly EventParticipantStreamDetailsFragment[] | null;
+    streams: readonly VonageParticipantStreamDetailsFragment[] | null;
     eventVonageSessionId: string | null;
 }): JSX.Element {
     const [updateLayout] = useUpdateEventVonageSessionLayoutMutation();

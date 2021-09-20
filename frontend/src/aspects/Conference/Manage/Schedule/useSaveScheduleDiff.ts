@@ -42,16 +42,6 @@ gql`
         originatingData {
             ...OriginatingDataInfo
         }
-        participants {
-            ...RoomParticipantInfo
-        }
-    }
-
-    fragment RoomParticipantInfo on room_Participant {
-        registrantId
-        conferenceId
-        id
-        roomId
     }
 
     fragment EventInfo on schedule_Event {

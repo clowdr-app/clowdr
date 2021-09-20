@@ -20,6 +20,7 @@ import { PreJoin } from "../PreJoin";
 import type { DevicesProps } from "../VideoChat/PermissionInstructions";
 import SubscriberControlBar from "./SubscriberControlBar";
 import { useVonageComputedState } from "./useVonageComputedState";
+import type { VonageLayout } from "./VonageLayoutProvider";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
@@ -65,6 +66,7 @@ export function VonageRoom({
     onLeave,
     onPermissionsProblem,
     canControlRecording,
+    layout,
 }: {
     eventId: string | null;
     vonageSessionId: string;
@@ -78,6 +80,7 @@ export function VonageRoom({
     onLeave?: () => void;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    layout?: VonageLayout;
 }): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
 
@@ -94,7 +97,7 @@ export function VonageRoom({
     const apolloClient = useApolloClient();
 
     return (
-        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>
+        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem} layout={layout}>
             <ChatProfileModalProvider>
                 {mRegistrant ? (
                     <VonageRoomInner
@@ -186,6 +189,7 @@ export function VonageRoom({
                         }
                         onPermissionsProblem={onPermissionsProblem}
                         canControlRecording={canControlRecording}
+                        layout={layout}
                     />
                 ) : undefined}
             </ChatProfileModalProvider>
@@ -207,6 +211,7 @@ function VonageRoomInner({
     completeJoinRef,
     onPermissionsProblem,
     canControlRecording,
+    layout,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -221,6 +226,7 @@ function VonageRoomInner({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    layout?: VonageLayout;
 }): JSX.Element {
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);

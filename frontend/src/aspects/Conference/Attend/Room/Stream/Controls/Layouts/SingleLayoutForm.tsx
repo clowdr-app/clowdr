@@ -4,6 +4,10 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import type { VonageParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
 
+interface FormValues {
+    stream_id: string;
+}
+
 export function SingleLayoutForm({
     setLayout,
     streams,
@@ -12,19 +16,31 @@ export function SingleLayoutForm({
     streams: readonly VonageParticipantStreamDetailsFragment[];
 }): JSX.Element {
     const toast = useToast();
+
     return (
-        <Formik<{ stream_id: string }>
+        <Formik<FormValues>
             initialValues={{
                 stream_id: "",
             }}
+            validate={(values) => {
+                const errors: {
+                    [K in keyof FormValues]?: string;
+                } = {};
+                if (!values.stream_id) {
+                    errors.stream_id = "Please choose a video.";
+                }
+                return errors;
+            }}
+            isInitialValid={false}
             onSubmit={async (values) => {
-                const layoutData: VonageSessionLayoutData = {
-                    type: VonageSessionLayoutType.Single,
-                    focusStreamId: values.stream_id,
-                };
-
                 try {
-                    await setLayout(layoutData);
+                    if (values.stream_id) {
+                        const layoutData: VonageSessionLayoutData = {
+                            type: VonageSessionLayoutType.Single,
+                            focusStreamId: values.stream_id,
+                        };
+                        await setLayout(layoutData);
+                    }
                 } catch (e) {
                     console.error("Failed to set broadcast layout", e);
                     toast({

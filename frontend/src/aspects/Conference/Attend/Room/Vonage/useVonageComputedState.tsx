@@ -45,7 +45,7 @@ export function useVonageComputedState({
     leaveRoom: () => Promise<void>;
 } {
     const vonage = useVonageGlobalState();
-    const { dispatch, state } = useVonageRoom();
+    const { dispatch, state, layout } = useVonageRoom();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -253,6 +253,9 @@ export function useVonageComputedState({
                     },
                     (recordingId) => {
                         onRecordingIdReceived?.(recordingId);
+                    },
+                    (layoutData) => {
+                        layout?.updateCurrentLayout(layoutData);
                     }
                 );
             } catch (e) {

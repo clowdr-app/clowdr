@@ -22,7 +22,6 @@ import {
     RoomEventDetailsFragment,
     useGetVonageParticipantStreamsSubscription,
 } from "../../../../../../generated/graphql";
-import { useRealTime } from "../../../../../Generic/useRealTime";
 import useQueryErrorToast from "../../../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useVonageGlobalState } from "../../Vonage/VonageGlobalStateProvider";
@@ -58,14 +57,6 @@ export function BackstageControls({
     event: RoomEventDetailsFragment;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
-    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
-    const realNow = useRealTime(1000);
-    const now = realNow + 2000; // adjust for expected RTMP delay
-    const live = now >= startTime && now <= endTime;
-    const secondsUntilLive = (startTime - now) / 1000;
-    const secondsUntilOffAir = (endTime - now) / 1000;
-
     const {
         data: streamsData,
         loading: streamsLoading,
@@ -120,7 +111,6 @@ export function BackstageControls({
                                 </Text>
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <LayoutControls
-                                    live={live}
                                     streams={streamsData?.video_VonageParticipantStream ?? null}
                                     vonageSessionId={event.eventVonageSession?.sessionId ?? null}
                                 />
@@ -132,7 +122,6 @@ export function BackstageControls({
         ),
         [
             event.eventVonageSession?.sessionId,
-            live,
             streamsData?.video_VonageParticipantStream,
             streamsError,
             streamsLoading,
@@ -143,23 +132,15 @@ export function BackstageControls({
     const immediateSwitchControls = useMemo(
         () => (
             <Box maxW="30ch">
-                <ImmediateSwitch live={live} secondsUntilOffAir={secondsUntilOffAir} eventId={event.id} />
+                <ImmediateSwitch event={event} />
             </Box>
         ),
-        [event.id, live, secondsUntilOffAir]
+        [event]
     );
 
     return (
         <>
-            <LiveIndicator
-                live={live}
-                secondsUntilLive={secondsUntilLive}
-                secondsUntilOffAir={secondsUntilOffAir}
-                now={now}
-                eventId={event.id}
-                isConnected={isConnected}
-                hlsUri={hlsUri}
-            />
+            <LiveIndicator event={event} isConnected={isConnected} hlsUri={hlsUri} />
             <HStack flexWrap="wrap" w="100%" justifyContent="center" alignItems="flex-end" my={2}>
                 {immediateSwitchControls}
                 {broadcastPopover}

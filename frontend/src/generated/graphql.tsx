@@ -13644,8 +13644,8 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
 export type Job_Queues_ChannelStackUpdateJob = {
   readonly __typename?: 'job_queues_ChannelStackUpdateJob';
   /** An object relationship */
-  readonly channelStack: Video_ChannelStack;
-  readonly channelStackId: Scalars['uuid'];
+  readonly channelStack?: Maybe<Video_ChannelStack>;
+  readonly channelStackId?: Maybe<Scalars['uuid']>;
   readonly cloudFormationStackArn: Scalars['String'];
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
@@ -39623,6 +39623,13 @@ export type GetRoomVonageSessionIdQueryVariables = Exact<{
 
 export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
 
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+}>;
+
+
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any> }> };
+
 export type DeleteEventParticipantMutationVariables = Exact<{
   eventId: Scalars['uuid'];
   registrantId: Scalars['uuid'];
@@ -45411,6 +45418,46 @@ export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
 export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
 export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
+export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
+    query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
+  video_VonageSessionLayout(
+    where: {vonageSessionId: {_eq: $vonageSessionId}}
+    order_by: {created_at: desc}
+    limit: 1
+  ) {
+    id
+    layoutData
+  }
+}
+    `;
+
+/**
+ * __useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery__
+ *
+ * To run a query within a React component, call `useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
+ *   variables: {
+ *      vonageSessionId: // value for 'vonageSessionId'
+ *   },
+ * });
+ */
+export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(baseOptions: Apollo.QueryHookOptions<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>(VonageLayoutProvider_GetLatestVonageSessionLayoutDocument, options);
+      }
+export function useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>(VonageLayoutProvider_GetLatestVonageSessionLayoutDocument, options);
+        }
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery>;
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutLazyQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery>;
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryResult = Apollo.QueryResult<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>;
 export const DeleteEventParticipantDocument = gql`
     mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
   delete_schedule_EventProgramPerson(

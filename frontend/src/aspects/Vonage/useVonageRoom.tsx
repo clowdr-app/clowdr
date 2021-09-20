@@ -5,6 +5,7 @@ import * as R from "ramda";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
 import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
+import type { VonageLayout } from "../Conference/Attend/Room/Vonage/VonageLayoutProvider";
 import { useConference } from "../Conference/useConference";
 import { useRestorableState } from "../Generic/useRestorableState";
 
@@ -127,6 +128,7 @@ interface VonageRoomContext {
     computedState: VonageRoomComputedState;
     dispatch: Dispatch<VonageRoomStateAction>;
     settings: VonageRoomSettings;
+    layout?: VonageLayout;
 }
 
 const defaultVonageRoomSettings: VonageRoomSettings = {
@@ -138,6 +140,7 @@ export const VonageContext = React.createContext<VonageRoomContext>({
     computedState: initialComputedState,
     dispatch: () => null,
     settings: defaultVonageRoomSettings,
+    layout: undefined,
 });
 
 function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageRoomState {
@@ -227,9 +230,11 @@ gql`
 
 export function VonageRoomStateProvider({
     onPermissionsProblem,
+    layout,
     children,
 }: {
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
+    layout?: VonageLayout;
     children: React.ReactNode | React.ReactNodeArray;
 }): JSX.Element {
     const [preferredCamera, setPreferredCamera] = useRestorableState<string | null>(
@@ -493,7 +498,10 @@ export function VonageRoomStateProvider({
         [maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk]
     );
 
-    const ctx = useMemo(() => ({ state, dispatch, computedState, settings }), [computedState, state, settings]);
+    const ctx = useMemo(
+        () => ({ state, dispatch, computedState, settings, layout }),
+        [computedState, state, settings, layout]
+    );
 
     return <VonageContext.Provider value={ctx}>{children}</VonageContext.Provider>;
 }

@@ -24,7 +24,12 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
+import {
+    RoomEventDetailsFragment,
+    useLiveIndicator_GetElementQuery,
+    useLiveIndicator_GetLatestQuery,
+} from "../../../../../../generated/graphql";
+import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
 import StreamPreview from "./StreamPreview";
@@ -51,28 +56,28 @@ gql`
 `;
 
 export function LiveIndicator({
-    live,
-    now,
-    secondsUntilLive,
-    secondsUntilOffAir,
-    eventId,
     isConnected,
     hlsUri,
+    event,
 }: {
-    live: boolean;
-    now: number;
-    secondsUntilLive: number;
-    secondsUntilOffAir: number;
-    eventId: string;
     isConnected: boolean;
     hlsUri: string | undefined;
+    event: RoomEventDetailsFragment;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const realNow = useRealTime(1000);
+    const now = realNow + 2000; // adjust for expected RTMP delay
+    const live = now >= startTime && now <= endTime;
+    const secondsUntilLive = (startTime - now) / 1000;
+    const secondsUntilOffAir = (endTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
     const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
         variables: {
-            eventId,
+            eventId: event.id,
         },
         pollInterval: 10000,
     });
@@ -323,8 +328,8 @@ export function LiveIndicator({
                                     <StatLabel>Time until start</StatLabel>
                                     <StatNumber
                                         css={{
-                                            "font-feature-settings": "tnum",
-                                            "font-variant-numeric": "tabular-nums",
+                                            fontFeatureSettings: "tnum",
+                                            fontVariantNumeric: "tabular-nums",
                                         }}
                                     >
                                         {formatRemainingTime(secondsUntilLive)}

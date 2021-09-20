@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Text, useToast } from "@chakra-ui/react";
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
     useInsertVonageSessionLayoutMutation,
     VonageParticipantStreamDetailsFragment,
 } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
+import { useVonageLayout } from "../../Vonage/VonageLayoutProvider";
 import { PairLayoutForm } from "./Layouts/PairLayoutForm";
 import { PictureInPictureLayoutForm } from "./Layouts/PictureInPictureLayoutForm";
 import { SingleLayoutForm } from "./Layouts/SingleLayoutForm";
@@ -22,18 +23,17 @@ gql`
 `;
 
 export function LayoutControls({
-    live,
     streams,
     vonageSessionId,
 }: {
-    live: boolean;
     streams: readonly VonageParticipantStreamDetailsFragment[] | null;
     vonageSessionId: string | null;
 }): JSX.Element {
     const [insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
 
-    const conference = useConference();
+    const layout = useVonageLayout();
+    const { id: conferenceId } = useConference();
 
     const setLayout = useCallback(
         async (layoutData: VonageSessionLayoutData) => {
@@ -45,7 +45,7 @@ export function LayoutControls({
             try {
                 await insertLayout({
                     variables: {
-                        conferenceId: conference.id,
+                        conferenceId,
                         vonageSessionId,
                         layoutData,
                     },
@@ -59,50 +59,50 @@ export function LayoutControls({
                 });
             }
         },
-        [conference.id, vonageSessionId, toast, insertLayout]
+        [conferenceId, vonageSessionId, toast, insertLayout]
     );
-    return (
-        <>
-            {!live ? (
-                <>Broadcast controls not available while event is off air.</>
-            ) : !streams ? undefined : streams.length === 0 ? (
-                <>No streams that can be broadcast.</>
-            ) : (
-                <>
-                    <Accordion>
-                        <AccordionItem>
-                            <AccordionButton>Auto layout</AccordionButton>
-                            <AccordionPanel>
-                                <Button
-                                    colorScheme="purple"
-                                    aria-label="Set stream layout to automatic mode"
-                                    onClick={() => setLayout({ type: VonageSessionLayoutType.BestFit })}
-                                >
-                                    Auto layout
-                                </Button>
-                            </AccordionPanel>
-                        </AccordionItem>
-                        <AccordionItem>
-                            <AccordionButton>Side-by-side layout</AccordionButton>
-                            <AccordionPanel>
-                                <PairLayoutForm streams={streams} setLayout={setLayout} />
-                            </AccordionPanel>
-                        </AccordionItem>
-                        <AccordionItem>
-                            <AccordionButton>Fullscreen layout</AccordionButton>
-                            <AccordionPanel>
-                                <SingleLayoutForm streams={streams} setLayout={setLayout} />
-                            </AccordionPanel>
-                        </AccordionItem>
-                        <AccordionItem>
-                            <AccordionButton>Picture-in-picture layout</AccordionButton>
-                            <AccordionPanel>
-                                <PictureInPictureLayoutForm streams={streams} setLayout={setLayout} />
-                            </AccordionPanel>
-                        </AccordionItem>
-                    </Accordion>
-                </>
-            )}
-        </>
+
+    const el = useMemo(
+        (): JSX.Element => (
+            <>
+                <Text>{layout?.currentLayout?.type ?? "unknown layout"}</Text>
+                <Accordion>
+                    <AccordionItem>
+                        <AccordionButton>Auto layout</AccordionButton>
+                        <AccordionPanel>
+                            <Button
+                                colorScheme="purple"
+                                aria-label="Set stream layout to automatic mode"
+                                onClick={() => setLayout({ type: VonageSessionLayoutType.BestFit })}
+                                isDisabled={!streams || !streams.length}
+                            >
+                                Auto layout
+                            </Button>
+                        </AccordionPanel>
+                    </AccordionItem>
+                    <AccordionItem>
+                        <AccordionButton>Side-by-side layout</AccordionButton>
+                        <AccordionPanel>
+                            <PairLayoutForm streams={streams ?? []} setLayout={setLayout} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                    <AccordionItem>
+                        <AccordionButton>Fullscreen layout</AccordionButton>
+                        <AccordionPanel>
+                            <SingleLayoutForm streams={streams ?? []} setLayout={setLayout} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                    <AccordionItem>
+                        <AccordionButton>Picture-in-picture layout</AccordionButton>
+                        <AccordionPanel>
+                            <PictureInPictureLayoutForm streams={streams ?? []} setLayout={setLayout} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                </Accordion>
+            </>
+        ),
+        [layout?.currentLayout?.type, setLayout, streams]
     );
+
+    return el;
 }

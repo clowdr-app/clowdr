@@ -1,3 +1,4 @@
+import { assertVonageSessionLayoutData, VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -33,6 +34,7 @@ interface InitialisedStateData {
     onRecordingStarted: () => void;
     onRecordingStopped: () => void;
     onRecordingIdReceived: (recordingId: string) => void;
+    onLayoutReceived: (layoutData: VonageSessionLayoutData) => void;
 }
 
 interface ConnectedStateData {
@@ -120,7 +122,8 @@ export class VonageGlobalState {
         onMuteForced: () => void,
         onRecordingStarted: () => void,
         onRecordingStopped: () => void,
-        onRecordingIdReceived: (recordingId: string) => void
+        onRecordingIdReceived: (recordingId: string) => void,
+        onLayoutReceived: (layoutData: VonageSessionLayoutData) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -155,6 +158,7 @@ export class VonageGlobalState {
                 onRecordingStarted,
                 onRecordingStopped,
                 onRecordingIdReceived,
+                onLayoutReceived,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -225,6 +229,16 @@ export class VonageGlobalState {
             session.on("signal:recordingId", (event: any) =>
                 this.onRecordingIdReceived(event.data).catch((e) =>
                     console.error("VonageGlobalState: error handling recordingId signal", e)
+                )
+            );
+            session.on("signal:recordingId", (event: any) =>
+                this.onRecordingIdReceived(event.data).catch((e) =>
+                    console.error("VonageGlobalState: error handling recordingId signal", e)
+                )
+            );
+            session.on("signal:layout-signal", (event: any) =>
+                this.onLayoutReceived(event.data).catch((e) =>
+                    console.error("VonageGlobalState: error handling layout signal", e)
                 )
             );
 
@@ -944,6 +958,23 @@ export class VonageGlobalState {
             }
         } catch (e) {
             console.error("VonageGlobalState: onRecordingIdReceived failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    private async onLayoutReceived(layoutData: any): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            assertVonageSessionLayoutData(layoutData);
+            if (this.state.type === StateType.Initialised) {
+                this.state.onLayoutReceived(layoutData);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onLayoutReceived(layoutData);
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onLayoutReceived failure", e);
             throw e;
         } finally {
             release();

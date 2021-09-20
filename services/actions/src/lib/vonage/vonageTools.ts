@@ -1,10 +1,12 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
+import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import {
     CreateVonageParticipantStreamDocument,
     CreateVonageRoomRecordingDocument,
     GetEventBroadcastDetailsDocument,
     GetRoomArchiveDetailsDocument,
+    GetVonageSessionLayoutDocument,
     RemoveVonageParticipantStreamDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
@@ -91,8 +93,8 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
     let broadcastDetails: EventBroadcastDetails;
     try {
         broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
-    } catch (e) {
-        console.error("Error retrieving Vonage broadcast details for event", e);
+    } catch (err) {
+        console.error("Error retrieving Vonage broadcast details for event", { eventId, err });
         return;
     }
 
@@ -156,11 +158,14 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             rtmpId
         );
         try {
+            const layout = await getVonageLayout(broadcastDetails.vonageSessionId);
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
-                layout: {
-                    type: "bestFit",
-                    screenshareType: "verticalPresentation",
-                },
+                layout: layout
+                    ? convertLayout(layout).layout
+                    : {
+                          type: "bestFit",
+                          screenshareType: "verticalPresentation",
+                      },
                 outputs: {
                     rtmp: [
                         {
@@ -321,6 +326,7 @@ export async function startRoomVonageArchiving(
     if (!existingArchive) {
         console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
         try {
+            const layout = await getVonageLayout(archiveDetails.vonageSessionId);
             const recordingResponse = await apolloClient.mutate({
                 mutation: CreateVonageRoomRecordingDocument,
                 variables: {
@@ -340,10 +346,12 @@ export async function startRoomVonageArchiving(
                     outputMode: "composed",
                     hasAudio: true,
                     hasVideo: true,
-                    layout: {
-                        type: "bestFit",
-                        screenshareType: "verticalPresentation",
-                    },
+                    layout: layout
+                        ? convertLayout(layout).layout
+                        : {
+                              type: "bestFit",
+                              screenshareType: "verticalPresentation",
+                          },
                 })
             );
 
@@ -569,5 +577,201 @@ export async function removeVonageParticipantStream(
             registrantId,
             stream.id
         );
+    }
+}
+
+///////////////////////////////////////////////////////
+
+gql`
+    query GetVonageSessionLayout($vonageSessionId: String!) {
+        video_VonageSessionLayout(where: { vonageSessionId: { _eq: $vonageSessionId } }) {
+            id
+            layoutData
+        }
+    }
+`;
+
+export async function getVonageLayout(vonageSessionId: string): Promise<VonageSessionLayoutData | null> {
+    const response = await apolloClient.query({
+        query: GetVonageSessionLayoutDocument,
+        variables: {
+            vonageSessionId,
+        },
+    });
+
+    return response.data.video_VonageSessionLayout[0]?.layoutData ?? null;
+}
+
+export interface VonageLayout {
+    streamClasses: {
+        [streamId: string]: string[];
+    };
+    layout: VonageLayoutCustom | VonageLayoutBuiltin;
+}
+
+export interface VonageLayoutCustom {
+    type: "custom";
+    stylesheet: string;
+}
+
+export interface VonageLayoutBuiltin {
+    type: "bestFit";
+    screenShareType: "verticalPresentation";
+}
+
+async function getOngoingBroadcastIds(vonageSessionId: string): Promise<string[]> {
+    console.log("Getting list of Vonage broadcasts", { vonageSessionId });
+    const broadcasts = await Vonage.listBroadcasts({
+        sessionId: vonageSessionId,
+    });
+
+    return (
+        broadcasts
+            ?.filter((broadcast) => broadcast.status === "started" || broadcast.status === "paused")
+            .map((broadcast) => broadcast.id) ?? []
+    );
+}
+
+async function getOngoingArchiveIds(vonageSessionId: string): Promise<string[]> {
+    console.log("Getting list of Vonage archives", { vonageSessionId });
+    const archives = await Vonage.listArchives({
+        sessionId: vonageSessionId,
+    });
+
+    return (
+        archives
+            ?.filter((archive) => archive.status === "started" || archive.status === "paused")
+            .map((archive) => archive.id) ?? []
+    );
+}
+
+export async function applyVonageSessionLayout(vonageSessionId: string, layout: VonageLayout): Promise<void> {
+    const streams = await Vonage.listStreams(vonageSessionId);
+    if (!streams) {
+        console.error("Could not retrieve list of streams from Vonage", { vonageSessionId });
+        throw new Error("Could not retrieve list of streams from Vonage");
+    }
+
+    const invalidStreamClasses = Object.keys(layout.streamClasses).filter(
+        (streamId) => !streams.some((s) => s.id === streamId)
+    );
+
+    if (invalidStreamClasses.length) {
+        console.error(
+            "Cannot apply Vonage layout, found invalid streams",
+            JSON.stringify({
+                vonageSessionId,
+                invalidStreams: Object.entries(layout.streamClasses).filter(([streamId]) =>
+                    invalidStreamClasses.some((s) => s === streamId)
+                ),
+            })
+        );
+        throw new Error("Could not apply Vonage layout, found invalid streams");
+    }
+
+    const streamsToClear = streams
+        .filter((stream) => stream.layoutClassList.length)
+        .filter((stream) => !Object.keys(layout.streamClasses).includes(stream.id))
+        .map((stream) => ({
+            id: stream.id,
+            layoutClassList: [] as string[],
+        }));
+    const streamsToSet = Object.entries(layout.streamClasses).map(([streamId, classes]) => ({
+        id: streamId,
+        layoutClassList: classes,
+    }));
+
+    await Vonage.setStreamClassLists(vonageSessionId, streamsToClear.concat(streamsToSet));
+
+    // Update broadcasts
+    const startedBroadcastIds = await getOngoingBroadcastIds(vonageSessionId);
+    console.log("Setting layout of Vonage broadcasts", { vonageSessionId, startedBroadcastIds });
+    for (const startedBroadcastId of startedBroadcastIds) {
+        try {
+            switch (layout.layout.type) {
+                case "bestFit":
+                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, "verticalPresentation");
+                    break;
+                case "custom":
+                    await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
+                    break;
+            }
+        } catch (err) {
+            console.error("Failed to set layout for Vonage broadcast", {
+                vonageSessionId,
+                startedBroadcastId,
+                err,
+            });
+        }
+    }
+
+    // Update archives
+    const startedArchiveIds = await getOngoingArchiveIds(vonageSessionId);
+    console.log("Setting layout of Vonage archives", { vonageSessionId, startedArchiveIds });
+    for (const startedArchiveId of startedArchiveIds) {
+        try {
+            switch (layout.layout.type) {
+                case "bestFit":
+                    await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
+                    break;
+                case "custom":
+                    await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
+                    break;
+            }
+        } catch (err) {
+            console.error("Failed to set layout for Vonage archive", {
+                vonageSessionId,
+                startedBroadcastId: startedArchiveId,
+                err,
+            });
+        }
+    }
+}
+
+export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout {
+    switch (layoutData.type) {
+        case VonageSessionLayoutType.BestFit:
+            return {
+                layout: {
+                    type: "bestFit",
+                    screenShareType: "verticalPresentation",
+                },
+                streamClasses: {},
+            };
+        case VonageSessionLayoutType.Pair:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        "stream.left {display: block; position: absolute; width: 50%; height: 100%; left: 0;} stream.right {position: absolute; width: 50%; height: 100%; right: 0;}",
+                },
+                streamClasses: {
+                    [layoutData.leftStreamId]: ["left"],
+                    [layoutData.rightStreamId]: ["right"],
+                },
+            };
+        case VonageSessionLayoutType.PictureInPicture:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 15%; height: 15%; right: 2%; bottom: 3%; z-index: 200;}",
+                },
+                streamClasses: {
+                    [layoutData.focusStreamId]: ["focus"],
+                    [layoutData.cornerStreamId]: ["corner"],
+                },
+            };
+        case VonageSessionLayoutType.Single:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0;}",
+                },
+                streamClasses: {
+                    [layoutData.focusStreamId]: ["focus"],
+                },
+            };
     }
 }

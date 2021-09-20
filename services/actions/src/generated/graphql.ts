@@ -13642,8 +13642,8 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
 export type Job_Queues_ChannelStackUpdateJob = {
   __typename?: 'job_queues_ChannelStackUpdateJob';
   /** An object relationship */
-  channelStack: Video_ChannelStack;
-  channelStackId: Scalars['uuid'];
+  channelStack?: Maybe<Video_ChannelStack>;
+  channelStackId?: Maybe<Scalars['uuid']>;
   cloudFormationStackArn: Scalars['String'];
   created_at: Scalars['timestamptz'];
   id: Scalars['uuid'];
@@ -38677,6 +38677,10 @@ export type Video_VonageSessionLayout = {
   eventVonageSession?: Maybe<Video_EventVonageSession>;
   id: Scalars['uuid'];
   layoutData?: Maybe<Scalars['jsonb']>;
+  /** An array relationship */
+  rooms: Array<Room_Room>;
+  /** An aggregate relationship */
+  rooms_aggregate: Room_Room_Aggregate;
   updated_at: Scalars['timestamptz'];
   vonageSessionId: Scalars['String'];
 };
@@ -38685,6 +38689,26 @@ export type Video_VonageSessionLayout = {
 /** columns and relationships of "video.VonageSessionLayout" */
 export type Video_VonageSessionLayoutLayoutDataArgs = {
   path?: Maybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "video.VonageSessionLayout" */
+export type Video_VonageSessionLayoutRoomsArgs = {
+  distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Room_Room_Order_By>>;
+  where?: Maybe<Room_Room_Bool_Exp>;
+};
+
+
+/** columns and relationships of "video.VonageSessionLayout" */
+export type Video_VonageSessionLayoutRooms_AggregateArgs = {
+  distinct_on?: Maybe<Array<Room_Room_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Room_Room_Order_By>>;
+  where?: Maybe<Room_Room_Bool_Exp>;
 };
 
 /** aggregated selection of "video.VonageSessionLayout" */
@@ -38739,6 +38763,7 @@ export type Video_VonageSessionLayout_Bool_Exp = {
   eventVonageSession?: Maybe<Video_EventVonageSession_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   layoutData?: Maybe<Jsonb_Comparison_Exp>;
+  rooms?: Maybe<Room_Room_Bool_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   vonageSessionId?: Maybe<String_Comparison_Exp>;
 };
@@ -38774,6 +38799,7 @@ export type Video_VonageSessionLayout_Insert_Input = {
   eventVonageSession?: Maybe<Video_EventVonageSession_Obj_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
   layoutData?: Maybe<Scalars['jsonb']>;
+  rooms?: Maybe<Room_Room_Arr_Rel_Insert_Input>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   vonageSessionId?: Maybe<Scalars['String']>;
 };
@@ -38847,6 +38873,7 @@ export type Video_VonageSessionLayout_Order_By = {
   eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
   id?: Maybe<Order_By>;
   layoutData?: Maybe<Order_By>;
+  rooms_aggregate?: Maybe<Room_Room_Aggregate_Order_By>;
   updated_at?: Maybe<Order_By>;
   vonageSessionId?: Maybe<Order_By>;
 };
@@ -40254,6 +40281,13 @@ export type RemoveVonageParticipantStreamMutationVariables = Exact<{
 
 export type RemoveVonageParticipantStreamMutation = { __typename?: 'mutation_root', delete_video_VonageParticipantStream?: Maybe<{ __typename?: 'video_VonageParticipantStream_mutation_response', affected_rows: number }> };
 
+export type GetVonageSessionLayoutQueryVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+}>;
+
+
+export type GetVonageSessionLayoutQuery = { __typename?: 'query_root', video_VonageSessionLayout: Array<{ __typename?: 'video_VonageSessionLayout', id: any, layoutData?: Maybe<any> }> };
+
 export type UpdateProfilePhotoMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   userId: Scalars['String'];
@@ -40418,4 +40452,5 @@ export const CreateVonageRoomRecordingDocument = {"kind":"Document","definitions
 export const GetEventByVonageSessionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventByVonageSessionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventVonageSession"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}}]}}]}}]} as unknown as DocumentNode<GetEventByVonageSessionIdQuery, GetEventByVonageSessionIdQueryVariables>;
 export const CreateVonageParticipantStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateVonageParticipantStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_video_VonageParticipantStream_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageConnectionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamType"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateVonageParticipantStreamMutation, CreateVonageParticipantStreamMutationVariables>;
 export const RemoveVonageParticipantStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveVonageParticipantStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_video_VonageParticipantStream"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageConnectionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageConnectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vonageStreamId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageStreamId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveVonageParticipantStreamMutation, RemoveVonageParticipantStreamMutationVariables>;
+export const GetVonageSessionLayoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetVonageSessionLayout"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_VonageSessionLayout"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vonageSessionId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vonageSessionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"layoutData"}}]}}]}}]} as unknown as DocumentNode<GetVonageSessionLayoutQuery, GetVonageSessionLayoutQueryVariables>;
 export const UpdateProfilePhotoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProfilePhoto"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"NullValue"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"bucket"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"NullValue"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"region"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"NullValue"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"photoURL_50x50"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"NullValue"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"photoURL_350x350"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"NullValue"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_registrant_Profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrantId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registrant"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conference"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"createdBy"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}]}}]}]}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"photoS3BucketName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"bucket"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"photoS3BucketRegion"},"value":{"kind":"Variable","name":{"kind":"Name","value":"region"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"photoS3ObjectName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectName"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"photoURL_50x50"},"value":{"kind":"Variable","name":{"kind":"Name","value":"photoURL_50x50"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"photoURL_350x350"},"value":{"kind":"Variable","name":{"kind":"Name","value":"photoURL_350x350"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"hasBeenEdited"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateProfilePhotoMutation, UpdateProfilePhotoMutationVariables>;

@@ -26,6 +26,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { validate } from "uuid";
 import {
+    RoomEventDetailsFragment,
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
     useLiveIndicator_GetLatestQuery,
@@ -34,55 +35,55 @@ import { useRealTime } from "../../../../../Generic/useRealTime";
 import FAIcon from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
-export function ImmediateSwitch({
-    live,
-    secondsUntilOffAir,
-    eventId,
-}: {
-    live: boolean;
-    secondsUntilOffAir: number;
-    eventId: string;
-}): JSX.Element {
-    const toast = useToast();
-    gql`
-        query ImmediateSwitch_GetElements($eventId: uuid!) {
-            schedule_Event_by_pk(id: $eventId) {
+gql`
+    query ImmediateSwitch_GetElements($eventId: uuid!) {
+        schedule_Event_by_pk(id: $eventId) {
+            id
+            item {
                 id
-                item {
+                title
+                elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                     id
-                    title
-                    elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                        id
-                        name
-                    }
+                    name
                 }
-                exhibition {
+            }
+            exhibition {
+                id
+                items {
                     id
-                    items {
+                    item {
                         id
-                        item {
+                        title
+                        elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                             id
-                            title
-                            elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
-                                id
-                                name
-                            }
+                            name
                         }
                     }
                 }
             }
         }
+    }
 
-        mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
-            insert_video_ImmediateSwitch_one(object: { data: $data, eventId: $eventId, conferenceId: $conferenceId }) {
-                id
-            }
+    mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
+        insert_video_ImmediateSwitch_one(object: { data: $data, eventId: $eventId, conferenceId: $conferenceId }) {
+            id
         }
-    `;
+    }
+`;
+
+export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }): JSX.Element {
+    const toast = useToast();
+
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const now = useRealTime(1000);
+    const offsetNow = now + 2000; // adjust for expected RTMP delay
+    const live = offsetNow >= startTime && offsetNow <= endTime;
+    const secondsUntilOffAir = (endTime - offsetNow) / 1000;
 
     const { data: elementsData } = useImmediateSwitch_GetElementsQuery({
         variables: {
-            eventId,
+            eventId: event.id,
         },
     });
 
@@ -91,7 +92,6 @@ export function ImmediateSwitch({
         skip: true,
     });
 
-    const now = useRealTime(1000);
     const [lastSwitched, setLastSwitched] = useState<number>(0);
     const enableSwitchButton = now - lastSwitched > 5000;
     const conference = useConference();
@@ -144,12 +144,12 @@ export function ImmediateSwitch({
                         await createImmediateSwitch({
                             variables: {
                                 data,
-                                eventId,
+                                eventId: event.id,
                                 conferenceId: conference.id,
                             },
                         });
                         await liveIndicatorLatest.refetch({
-                            eventId,
+                            eventId: event.id,
                         });
                     } catch (err: any) {
                         toast({
@@ -169,7 +169,7 @@ export function ImmediateSwitch({
                         await createImmediateSwitch({
                             variables: {
                                 data,
-                                eventId,
+                                eventId: event.id,
                                 conferenceId: conference.id,
                             },
                         });
@@ -201,7 +201,7 @@ export function ImmediateSwitch({
                         await createImmediateSwitch({
                             variables: {
                                 data,
-                                eventId,
+                                eventId: event.id,
                                 conferenceId: conference.id,
                             },
                         });
@@ -218,7 +218,7 @@ export function ImmediateSwitch({
             }
             setLastSwitched(now);
         },
-        [conference.id, createImmediateSwitch, eventId, liveIndicatorLatest, now, toast]
+        [conference.id, createImmediateSwitch, event.id, liveIndicatorLatest, now, toast]
     );
 
     const cancelRef = useRef<HTMLButtonElement>(null);

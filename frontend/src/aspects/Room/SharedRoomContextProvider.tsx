@@ -57,6 +57,7 @@ export function SharedRoomContextProvider({
                     completeJoinRef={undefined}
                     onPermissionsProblem={onPermissionsProblem}
                     canControlRecording={false}
+                    layout={undefined}
                 />
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>

@@ -1,8 +1,13 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } from "@chakra-ui/react";
-import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import { PairLayout, VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
 import type { VonageParticipantStreamDetailsFragment } from "../../../../../../../generated/graphql";
+
+interface FormValues {
+    left_stream_id: string;
+    right_stream_id: string;
+}
 
 export function PairLayoutForm({
     setLayout,
@@ -12,21 +17,36 @@ export function PairLayoutForm({
     streams: readonly VonageParticipantStreamDetailsFragment[];
 }): JSX.Element {
     const toast = useToast();
+
     return (
-        <Formik<{ left_stream_id: string; right_stream_id: string }>
+        <Formik<FormValues>
             initialValues={{
                 left_stream_id: "",
                 right_stream_id: "",
             }}
+            validate={(values) => {
+                const errors: {
+                    [K in keyof FormValues]?: string;
+                } = {};
+                if (!values.left_stream_id) {
+                    errors.left_stream_id = "Please choose a video for the left panel.";
+                }
+                if (!values.right_stream_id) {
+                    errors.right_stream_id = "Please choose a video for the right panel.";
+                }
+                return errors;
+            }}
+            isInitialValid={false}
             onSubmit={async (values) => {
-                const layoutData: VonageSessionLayoutData = {
-                    type: VonageSessionLayoutType.Pair,
-                    leftStreamId: values.left_stream_id,
-                    rightStreamId: values.right_stream_id,
-                };
-
                 try {
-                    await setLayout(layoutData);
+                    if (values.left_stream_id && values.right_stream_id) {
+                        const layoutData: PairLayout = {
+                            leftStreamId: values.left_stream_id,
+                            rightStreamId: values.right_stream_id,
+                            type: VonageSessionLayoutType.Pair,
+                        };
+                        await setLayout(layoutData);
+                    }
                 } catch (e) {
                     console.error("Failed to set broadcast layout", e);
                     toast({

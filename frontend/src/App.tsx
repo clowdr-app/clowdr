@@ -1,11 +1,12 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { useMemo } from "react";
-import { Route, RouteComponentProps, Switch, useLocation } from "react-router-dom";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";
 import AppPageV2 from "./aspects/App/AppPageV2";
+import { AppSettingsProvider } from "./aspects/App/AppSettingsProvider";
 import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/MyBackstages";
 import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
@@ -26,9 +27,9 @@ import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvi
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
 
-function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
+// function useQuery() {
+//     return new URLSearchParams(useLocation().search);
+// }
 
 export default function App(): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
@@ -61,9 +62,11 @@ export default function App(): JSX.Element {
     );
 
     return (
-        <ThemeProvider theme={chimeTheme}>
-            <MeetingProvider>{routed}</MeetingProvider>
-        </ThemeProvider>
+        <AppSettingsProvider>
+            <ThemeProvider theme={chimeTheme}>
+                <MeetingProvider>{routed}</MeetingProvider>
+            </ThemeProvider>
+        </AppSettingsProvider>
     );
 }
 

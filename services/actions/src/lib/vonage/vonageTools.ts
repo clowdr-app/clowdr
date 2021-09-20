@@ -108,7 +108,9 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
         return;
     }
 
-    let startedSessionBroadcasts = existingSessionBroadcasts?.filter((broadcast) => broadcast.status === "started");
+    let startedSessionBroadcasts = existingSessionBroadcasts?.filter(
+        (broadcast) => broadcast.status === "started" || broadcast.status === "paused"
+    );
 
     console.log(
         `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`,
@@ -207,7 +209,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
 
     for (const existingBroadcast of existingSessionBroadcasts) {
         try {
-            if (existingBroadcast.status === "started") {
+            if (existingBroadcast.status === "started" || existingBroadcast.status === "paused") {
                 await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
         } catch (e) {

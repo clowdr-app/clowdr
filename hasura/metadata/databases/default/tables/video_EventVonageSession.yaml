@@ -13,34 +13,34 @@ object_relationships:
 - name: event
   using:
     foreign_key_constraint_on: eventId
-- name: layout
+array_relationships:
+- name: layouts
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: VonageSessionLayout
-      insertion_order: null
       column_mapping:
         sessionId: vonageSessionId
-array_relationships:
+      insertion_order: null
+      remote_table:
+        name: VonageSessionLayout
+        schema: video
 - name: participantStreams
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: VonageParticipantStream
-      insertion_order: null
       column_mapping:
         sessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageParticipantStream
+        schema: video
 - name: recordings
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: VonageRoomRecording
-      insertion_order: null
       column_mapping:
         sessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageRoomRecording
+        schema: video
 select_permissions:
 - permission:
     columns:
@@ -69,18 +69,3 @@ select_permissions:
                 - CONFERENCE_VIEW
                 - CONFERENCE_MANAGE_SCHEDULE
   role: user
-event_triggers:
-- definition:
-    enable_manual: true
-    update:
-      columns:
-      - layoutData
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: EventVonageSessionUpdated
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/eventVonageSession/updated"

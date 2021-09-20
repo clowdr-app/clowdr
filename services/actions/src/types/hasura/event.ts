@@ -137,7 +137,7 @@ export interface RoomData extends BaseData {
 }
 
 export interface VonageSessionLayoutData_Record extends BaseData {
-    sessionId: string;
+    vonageSessionId: string;
     conferenceId: string;
     layoutData: VonageSessionLayoutData | null;
 }

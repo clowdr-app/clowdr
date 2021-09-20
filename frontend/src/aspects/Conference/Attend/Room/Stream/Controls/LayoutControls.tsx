@@ -3,18 +3,18 @@ import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, useT
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
 import React, { useCallback } from "react";
 import {
-    useUpdateEventVonageSessionLayoutMutation,
+    useInsertVonageSessionLayoutMutation,
     VonageParticipantStreamDetailsFragment,
 } from "../../../../../../generated/graphql";
+import { useConference } from "../../../../useConference";
 import { PairLayoutForm } from "./Layouts/PairLayoutForm";
 import { PictureInPictureLayoutForm } from "./Layouts/PictureInPictureLayoutForm";
 import { SingleLayoutForm } from "./Layouts/SingleLayoutForm";
 
 gql`
-    mutation UpdateEventVonageSessionLayout($eventVonageSessionId: uuid!, $layoutData: jsonb!) {
-        update_video_EventVonageSession_by_pk(
-            pk_columns: { id: $eventVonageSessionId }
-            _set: { layoutData: $layoutData }
+    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+        insert_video_VonageSessionLayout_one(
+            object: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
         ) {
             id
         }
@@ -24,31 +24,34 @@ gql`
 export function LayoutControls({
     live,
     streams,
-    eventVonageSessionId,
+    vonageSessionId,
 }: {
     live: boolean;
     streams: readonly VonageParticipantStreamDetailsFragment[] | null;
-    eventVonageSessionId: string | null;
+    vonageSessionId: string | null;
 }): JSX.Element {
-    const [updateLayout] = useUpdateEventVonageSessionLayoutMutation();
+    const [insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
+
+    const conference = useConference();
 
     const setLayout = useCallback(
         async (layoutData: VonageSessionLayoutData) => {
-            if (!eventVonageSessionId) {
-                console.error("No Vonage session available for layout update");
-                throw new Error("No Vonage session available for layout update");
+            if (!vonageSessionId) {
+                console.error("No Vonage session available for layout insert");
+                throw new Error("No Vonage session available for layout insert");
             }
 
             try {
-                await updateLayout({
+                await insertLayout({
                     variables: {
-                        eventVonageSessionId,
+                        conferenceId: conference.id,
+                        vonageSessionId,
                         layoutData,
                     },
                 });
             } catch (e) {
-                console.error("Failed to update layout of Vonage broadcast", e);
+                console.error("Failed to insert layout of Vonage broadcast", e);
                 toast({
                     status: "error",
                     title: "Could not set the broadcast layout",
@@ -56,7 +59,7 @@ export function LayoutControls({
                 });
             }
         },
-        [eventVonageSessionId, toast, updateLayout]
+        [conference.id, vonageSessionId, toast, insertLayout]
     );
     return (
         <>

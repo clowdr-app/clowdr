@@ -1,3 +1,5 @@
+import { assertType, is } from "typescript-is";
+
 export type VonageSessionLayoutData = BestFitLayout | PictureInPictureLayout | SingleLayout | PairLayout;
 
 export enum VonageSessionLayoutType {
@@ -26,4 +28,14 @@ export interface PairLayout {
     type: VonageSessionLayoutType.Pair;
     leftStreamId: string;
     rightStreamId: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function isVonageSessionLayoutData(data: any): boolean {
+    return is<VonageSessionLayoutData>(data);
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function assertVonageSessionLayoutData(data: any): asserts data is VonageSessionLayoutData {
+    assertType<VonageSessionLayoutData>(data);
 }

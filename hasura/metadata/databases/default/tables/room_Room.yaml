@@ -71,12 +71,12 @@ object_relationships:
 - name: vonageSessionLayout
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: VonageSessionLayout
-      insertion_order: null
       column_mapping:
         publicVonageSessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageSessionLayout
+        schema: video
 array_relationships:
 - name: channelStackCreateJobs
   using:
@@ -132,12 +132,12 @@ array_relationships:
 - name: vonageParticipantStreams
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: VonageParticipantStream
-      insertion_order: null
       column_mapping:
         publicVonageSessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageParticipantStream
+        schema: video
 - name: vonageRecordings
   using:
     manual_configuration:

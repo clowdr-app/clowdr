@@ -1,11 +1,11 @@
 table:
-  schema: video
   name: VonageParticipantStream
+  schema: video
 configuration:
-  custom_root_fields: {}
   custom_column_names:
-    updated_at: updatedAt
     created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
 object_relationships:
 - name: conference
   using:
@@ -13,18 +13,17 @@ object_relationships:
 - name: eventVonageSession
   using:
     manual_configuration:
-      remote_table:
-        schema: video
-        name: EventVonageSession
-      insertion_order: null
       column_mapping:
         vonageSessionId: sessionId
+      insertion_order: null
+      remote_table:
+        name: EventVonageSession
+        schema: video
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
 select_permissions:
-- role: user
-  permission:
+- permission:
     columns:
     - conferenceId
     - id
@@ -38,6 +37,9 @@ select_permissions:
           slug:
             _eq: X-Hasura-Conference-Slug
       - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
           _where:
             _and:
             - user_id:
@@ -49,6 +51,4 @@ select_permissions:
                 - CONFERENCE_MANAGE_SCHEDULE
                 - CONFERENCE_MANAGE_CONTENT
                 - CONFERENCE_VIEW_ATTENDEES
-          _table:
-            schema: public
-            name: FlatUserPermission
+  role: user

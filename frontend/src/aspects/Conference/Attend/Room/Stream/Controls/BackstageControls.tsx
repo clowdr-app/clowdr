@@ -116,7 +116,7 @@ export function BackstageControls({
                                 <LayoutControls
                                     live={live}
                                     streams={streamsData?.video_VonageParticipantStream ?? null}
-                                    eventVonageSessionId={event.eventVonageSession?.id ?? null}
+                                    vonageSessionId={event.eventVonageSession?.sessionId ?? null}
                                 />
                             </PopoverBody>
                         </PopoverContent>
@@ -124,7 +124,13 @@ export function BackstageControls({
                 </Portal>
             </Popover>
         ),
-        [event.eventVonageSession?.id, live, streamsData?.video_VonageParticipantStream, streamsError, streamsLoading]
+        [
+            event.eventVonageSession?.sessionId,
+            live,
+            streamsData?.video_VonageParticipantStream,
+            streamsError,
+            streamsLoading,
+        ]
     );
 
     const immediateSwitchControls = useMemo(

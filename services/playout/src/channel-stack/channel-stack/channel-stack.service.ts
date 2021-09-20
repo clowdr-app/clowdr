@@ -251,11 +251,7 @@ export class ChannelStackService {
         mediaLiveChannelId: string,
         newRtmpOutputUri: string | null,
         newRtmpOutputStreamKey: string | null
-    ): Promise<{
-        newRtmpOutputUri: string;
-        newRtmpOutputStreamKey: string;
-        newRtmpOutputDestinationId: string;
-    } | null> {
+    ): Promise<boolean> {
         let channelState: string | null = null;
         try {
             channelState = await this.mediaLiveService.getChannelState(mediaLiveChannelId);
@@ -285,8 +281,21 @@ export class ChannelStackService {
                 StackName: stackName,
             });
         } catch (err) {
-            this.logger.error({ stackName, err }, "Failed to get channel stack description");
-            throw err;
+            if (err.toString().includes(`Stack with id ${stackName} does not exist`)) {
+                this.logger.info(
+                    { stackName, err },
+                    "Channel stack does not exist - it has already been deleted. Update is no longer relevant."
+                );
+                await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
+                    cloudFormationStackArn,
+                    Video_JobStatus_Enum.Completed,
+                    "Stack has been deleted. This update is obsolete."
+                );
+                return false;
+            } else {
+                this.logger.error({ stackName, err }, "Failed to get channel stack description");
+                throw err;
+            }
         }
 
         if (!description.Stacks || description.Stacks.length === 0) {
@@ -302,7 +311,12 @@ export class ChannelStackService {
                 { cloudFormationStackArn, mediaLiveChannelId },
                 "Channel stack deletion has started, skipping"
             );
-            return null;
+            await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
+                cloudFormationStackArn,
+                Video_JobStatus_Enum.Completed,
+                "Stack is being deleted. This update is obsolete."
+            );
+            return false;
         } else if (
             description.Stacks[0].StackStatus &&
             [
@@ -315,7 +329,7 @@ export class ChannelStackService {
                 { cloudFormationStackArn, mediaLiveChannelId },
                 "A channel stack update is ongoing, skipping"
             );
-            return null;
+            return true;
         } else if (
             description.Stacks[0].StackStatus &&
             [StackStatus.CREATE_IN_PROGRESS as string].includes(description.Stacks[0].StackStatus)
@@ -324,7 +338,7 @@ export class ChannelStackService {
                 { cloudFormationStackArn, mediaLiveChannelId },
                 "Channel stack is still being created, skipping"
             );
-            return null;
+            return false;
         } else {
             this.logger.info({ cloudFormationStackArn, mediaLiveChannelId }, "Starting channel stack update");
             try {
@@ -422,13 +436,7 @@ export class ChannelStackService {
                     channelDescription.Destinations
                 );
 
-                return newRtmpOutputUri && newRtmpOutputStreamKey && rtmpOutputDestinationId
-                    ? {
-                          newRtmpOutputDestinationId: rtmpOutputDestinationId,
-                          newRtmpOutputStreamKey,
-                          newRtmpOutputUri,
-                      }
-                    : null;
+                return true;
             } catch (err) {
                 this.logger.error({ stackName, err }, "Failed to trigger channel stack update");
                 throw err;
@@ -439,7 +447,7 @@ export class ChannelStackService {
     /**
      * Actually start deletion of the channel stack. Will not start deletion if the MediaLive channel is still running.
      */
-    async deleteChannelStack(cloudFormationStackArn: string, mediaLiveChannelId: string): Promise<void> {
+    async deleteChannelStack(cloudFormationStackArn: string, mediaLiveChannelId: string): Promise<boolean> {
         let channelState: string | null = null;
         try {
             channelState = await this.mediaLiveService.getChannelState(mediaLiveChannelId);
@@ -469,8 +477,18 @@ export class ChannelStackService {
                 StackName: stackName,
             });
         } catch (err) {
-            this.logger.error({ stackName, err }, "Failed to get channel stack description");
-            throw err;
+            if (err.toString().includes(`Stack with id ${stackName} does not exist`)) {
+                this.logger.info({ stackName, err }, "Channel stack does not exist - it has already been deleted.");
+                await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
+                    cloudFormationStackArn,
+                    Video_JobStatus_Enum.Completed,
+                    null
+                );
+                return false;
+            } else {
+                this.logger.error({ stackName, err }, "Failed to get channel stack description");
+                throw err;
+            }
         }
 
         if (!description.Stacks || description.Stacks.length === 0) {
@@ -486,7 +504,7 @@ export class ChannelStackService {
                 { cloudFormationStackArn, mediaLiveChannelId },
                 "Channel stack deletion has already started, skipping"
             );
-            return;
+            return true;
         } else {
             this.logger.info({ cloudFormationStackArn, mediaLiveChannelId }, "Starting channel stack teardown");
             try {
@@ -497,7 +515,7 @@ export class ChannelStackService {
                 this.logger.error({ stackName, err }, "Failed to trigger channel stack teardown");
                 throw err;
             }
-            return;
+            return true;
         }
     }
 
@@ -506,17 +524,19 @@ export class ChannelStackService {
 
         for (const job of newJobs) {
             try {
-                await this.updateChannelStack(
+                const inProgress = await this.updateChannelStack(
                     job.cloudFormationStackArn,
                     job.mediaLiveChannelId,
                     job.newRtmpOutputUri,
                     job.newRtmpOutputStreamKey
                 );
-                await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
-                    job.cloudFormationStackArn,
-                    Video_JobStatus_Enum.InProgress,
-                    null
-                );
+                if (inProgress) {
+                    await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
+                        job.cloudFormationStackArn,
+                        Video_JobStatus_Enum.InProgress,
+                        null
+                    );
+                }
             } catch (err) {
                 this.logger.error({ err }, "Failed to process new channel stack update job");
             }
@@ -543,12 +563,14 @@ export class ChannelStackService {
 
         for (const job of newJobs) {
             try {
-                await this.deleteChannelStack(job.cloudFormationStackArn, job.mediaLiveChannelId);
-                await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
-                    job.cloudFormationStackArn,
-                    Video_JobStatus_Enum.InProgress,
-                    null
-                );
+                const inProgress = await this.deleteChannelStack(job.cloudFormationStackArn, job.mediaLiveChannelId);
+                if (inProgress) {
+                    await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
+                        job.cloudFormationStackArn,
+                        Video_JobStatus_Enum.InProgress,
+                        null
+                    );
+                }
             } catch (err) {
                 this.logger.error({ err }, "Failed to process new channel stack delete job");
             }

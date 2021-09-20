@@ -13,8 +13,10 @@ import {
     Portal,
     Spinner,
     Text,
+    useTheme,
     VStack,
 } from "@chakra-ui/react";
+import { transparentize } from "@chakra-ui/theme-tools";
 import React, { useEffect, useMemo, useState } from "react";
 import {
     RoomEventDetailsFragment,
@@ -86,15 +88,20 @@ export function BackstageControls({
         };
     }, [vonageGlobalState]);
 
+    const theme = useTheme();
     const broadcastPopover = useMemo(
         () => (
-            <Popover placement="auto-end" isLazy>
+            <Popover isLazy>
                 <PopoverTrigger>
                     <VStack>
                         <Button
-                            aria-label="Advanced broadcast controls"
-                            title="Advanced broadcast controls"
+                            aria-label="Chair/presenter controls"
+                            title="Chair/presenter controls"
                             textAlign="center"
+                            colorScheme="gray"
+                            bgColor={transparentize("gray.200", 0.7)(theme)}
+                            size="sm"
+                            rightIcon={<FAIcon icon="chevron-circle-down" iconStyle="s" mr={2} />}
                         >
                             <FAIcon icon="cogs" iconStyle="s" mr={2} />
                             <Text>Stream layout</Text>
@@ -106,11 +113,10 @@ export function BackstageControls({
                         <PopoverContent>
                             <PopoverArrow />
                             <PopoverCloseButton />
-                            <PopoverHeader>Broadcast controls</PopoverHeader>
+                            <PopoverHeader>Chair controls</PopoverHeader>
                             <PopoverBody>
                                 <Text fontSize="sm" mb={2}>
-                                    Here you can control how the video streams from the backstage are laid out in the
-                                    broadcast video.
+                                    Here you can control how the layout of video streams.
                                 </Text>
                                 {streamsError ? <>Error loading streams.</> : streamsLoading ? <Spinner /> : undefined}
                                 <LayoutControls
@@ -130,6 +136,7 @@ export function BackstageControls({
             streamsData?.video_VonageParticipantStream,
             streamsError,
             streamsLoading,
+            theme,
         ]
     );
 

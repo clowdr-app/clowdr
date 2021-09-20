@@ -705,7 +705,7 @@ function VonageRoomInner({
     const nobodyElseAlert = useMemo(
         () =>
             connected && connections.length <= 1 ? (
-                <Alert status="info" mt={2} w="max-content">
+                <Alert status="info" mt={2} w="max-content" maxW="100%">
                     <AlertIcon />
                     <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
                 </Alert>
@@ -771,7 +771,7 @@ function VonageRoomInner({
     }, [joinRoom]);
 
     return (
-        <Box width="100%">
+        <Box width="100%" isolation="isolate">
             <Flex mt={4} justifyContent="center" alignItems="center" flexWrap="wrap" w="100%">
                 {preJoin}
                 {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
@@ -788,7 +788,7 @@ function VonageRoomInner({
                     canControlRecording={canControlRecording}
                 />
             </Flex>
-            <Box position="relative" mb={8} width="100%">
+            <Box position="relative" width="100%">
                 <HStack spacing={0}>
                     {viewPublishedScreenShareEl}
                     {viewSubscribedScreenShares}

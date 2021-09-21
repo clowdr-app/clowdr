@@ -8,9 +8,18 @@ import { Payload, VonageSessionLayoutData_Record } from "../types/hasura/event";
 
 async function removeInvalidEventParticipantStreams(validStreamIds: string[], vonageSessionId: string) {
     gql`
-        mutation VonageSession_RemoveInvalidStreams($validStreamIds: [String!]!, $vonageSessionId: String!) {
-            delete_video_VonageParticipantStream(
-                where: { vonageStreamId: { _nin: $validStreamIds }, vonageSessionId: { _eq: $vonageSessionId } }
+        mutation VonageSession_RemoveInvalidStreams(
+            $validStreamIds: [String!]!
+            $vonageSessionId: String!
+            $now: timestamptz!
+        ) {
+            update_video_VonageParticipantStream(
+                where: {
+                    vonageStreamId: { _nin: $validStreamIds }
+                    vonageSessionId: { _eq: $vonageSessionId }
+                    stopped_at: { _is_null: true }
+                }
+                _set: { stopped_at: $now }
             ) {
                 affected_rows
             }
@@ -24,6 +33,7 @@ async function removeInvalidEventParticipantStreams(validStreamIds: string[], vo
         variables: {
             validStreamIds,
             vonageSessionId,
+            now: new Date().toISOString(),
         },
     });
 }

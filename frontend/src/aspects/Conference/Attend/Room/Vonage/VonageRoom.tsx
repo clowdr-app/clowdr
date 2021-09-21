@@ -21,6 +21,7 @@ import type { DevicesProps } from "../VideoChat/PermissionInstructions";
 import SubscriberControlBar from "./SubscriberControlBar";
 import { useVonageComputedState } from "./useVonageComputedState";
 import type { VonageLayout } from "./VonageLayoutProvider";
+import { VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageOverlay } from "./VonageOverlay";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 import { VonageSubscriber } from "./VonageSubscriber";
@@ -66,7 +67,6 @@ export function VonageRoom({
     onLeave,
     onPermissionsProblem,
     canControlRecording,
-    layout,
 }: {
     eventId: string | null;
     vonageSessionId: string;
@@ -97,100 +97,102 @@ export function VonageRoom({
     const apolloClient = useApolloClient();
 
     return (
-        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem} layout={layout}>
+        <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>
             <ChatProfileModalProvider>
                 {mRegistrant ? (
-                    <VonageRoomInner
-                        vonageSessionId={vonageSessionId}
-                        stop={!roomCouldBeInUse || disable}
-                        getAccessToken={getAccessToken}
-                        isBackstageRoom={isBackstageRoom}
-                        requireMicrophoneOrCamera={requireMicrophoneOrCamera}
-                        joinRoomButtonText={
-                            isBackstageRoom
-                                ? raiseHandPrejoinEventId
-                                    ? "I'm ready"
-                                    : "Connect to the backstage"
-                                : undefined
-                        }
-                        overrideJoining={
-                            isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
-                        }
-                        beginJoin={
-                            isBackstageRoom && raiseHandPrejoinEventId
-                                ? () => {
-                                      if (raiseHandPrejoinEventId) {
-                                          raiseHand.raise(raiseHandPrejoinEventId);
+                    <VonageLayoutProvider vonageSessionId={vonageSessionId} broadcastLayoutMode={isBackstageRoom}>
+                        <VonageRoomInner
+                            vonageSessionId={vonageSessionId}
+                            stop={!roomCouldBeInUse || disable}
+                            getAccessToken={getAccessToken}
+                            isBackstageRoom={isBackstageRoom}
+                            requireMicrophoneOrCamera={requireMicrophoneOrCamera}
+                            joinRoomButtonText={
+                                isBackstageRoom
+                                    ? raiseHandPrejoinEventId
+                                        ? "I'm ready"
+                                        : "Connect to the backstage"
+                                    : undefined
+                            }
+                            overrideJoining={
+                                isBackstageRoom && raiseHandPrejoinEventId && isRaiseHandWaiting ? true : undefined
+                            }
+                            beginJoin={
+                                isBackstageRoom && raiseHandPrejoinEventId
+                                    ? () => {
+                                          if (raiseHandPrejoinEventId) {
+                                              raiseHand.raise(raiseHandPrejoinEventId);
+                                          }
                                       }
-                                  }
-                                : undefined
-                        }
-                        cancelJoin={
-                            isBackstageRoom && raiseHandPrejoinEventId
-                                ? () => {
-                                      if (raiseHandPrejoinEventId) {
-                                          raiseHand.lower(raiseHandPrejoinEventId);
+                                    : undefined
+                            }
+                            cancelJoin={
+                                isBackstageRoom && raiseHandPrejoinEventId
+                                    ? () => {
+                                          if (raiseHandPrejoinEventId) {
+                                              raiseHand.lower(raiseHandPrejoinEventId);
+                                          }
                                       }
-                                  }
-                                : undefined
-                        }
-                        completeJoinRef={completeJoinRef}
-                        onRoomJoined={
-                            isBackstageRoom && eventId
-                                ? (joined) => {
-                                      if (!joined) {
-                                          if (eventId) {
-                                              deleteEventParticipant({
-                                                  variables: {
-                                                      eventId,
-                                                      registrantId: mRegistrant.id,
-                                                  },
-                                                  update: (cache, response) => {
-                                                      if (
-                                                          response.data?.delete_schedule_EventProgramPerson?.returning
-                                                      ) {
-                                                          const data =
-                                                              response.data.delete_schedule_EventProgramPerson
-                                                                  .returning;
-                                                          const fragmentId = apolloClient.cache.identify({
-                                                              __typename: "schedule_Event",
-                                                              id: eventId,
-                                                          });
-                                                          const eventFragment =
-                                                              apolloClient.cache.readFragment<Room_EventSummaryFragment>(
-                                                                  {
+                                    : undefined
+                            }
+                            completeJoinRef={completeJoinRef}
+                            onRoomJoined={
+                                isBackstageRoom && eventId
+                                    ? (joined) => {
+                                          if (!joined) {
+                                              if (eventId) {
+                                                  deleteEventParticipant({
+                                                      variables: {
+                                                          eventId,
+                                                          registrantId: mRegistrant.id,
+                                                      },
+                                                      update: (cache, response) => {
+                                                          if (
+                                                              response.data?.delete_schedule_EventProgramPerson
+                                                                  ?.returning
+                                                          ) {
+                                                              const data =
+                                                                  response.data.delete_schedule_EventProgramPerson
+                                                                      .returning;
+                                                              const fragmentId = apolloClient.cache.identify({
+                                                                  __typename: "schedule_Event",
+                                                                  id: eventId,
+                                                              });
+                                                              const eventFragment =
+                                                                  apolloClient.cache.readFragment<Room_EventSummaryFragment>(
+                                                                      {
+                                                                          fragment: Room_EventSummaryFragmentDoc,
+                                                                          id: fragmentId,
+                                                                          fragmentName: "Room_EventSummary",
+                                                                      }
+                                                                  );
+                                                              if (eventFragment) {
+                                                                  apolloClient.cache.writeFragment({
                                                                       fragment: Room_EventSummaryFragmentDoc,
                                                                       id: fragmentId,
                                                                       fragmentName: "Room_EventSummary",
-                                                                  }
-                                                              );
-                                                          if (eventFragment) {
-                                                              apolloClient.cache.writeFragment({
-                                                                  fragment: Room_EventSummaryFragmentDoc,
-                                                                  id: fragmentId,
-                                                                  fragmentName: "Room_EventSummary",
-                                                                  data: {
-                                                                      ...eventFragment,
-                                                                      eventPeople: eventFragment.eventPeople.filter(
-                                                                          (x) => !data.some((y) => x.id === y.id)
-                                                                      ),
-                                                                  },
-                                                              });
+                                                                      data: {
+                                                                          ...eventFragment,
+                                                                          eventPeople: eventFragment.eventPeople.filter(
+                                                                              (x) => !data.some((y) => x.id === y.id)
+                                                                          ),
+                                                                      },
+                                                                  });
+                                                              }
                                                           }
-                                                      }
-                                                  },
-                                              });
-                                          }
+                                                      },
+                                                  });
+                                              }
 
-                                          onLeave?.();
+                                              onLeave?.();
+                                          }
                                       }
-                                  }
-                                : undefined
-                        }
-                        onPermissionsProblem={onPermissionsProblem}
-                        canControlRecording={canControlRecording}
-                        layout={layout}
-                    />
+                                    : undefined
+                            }
+                            onPermissionsProblem={onPermissionsProblem}
+                            canControlRecording={canControlRecording}
+                        />
+                    </VonageLayoutProvider>
                 ) : undefined}
             </ChatProfileModalProvider>
         </VonageRoomStateProvider>
@@ -211,7 +213,6 @@ function VonageRoomInner({
     completeJoinRef,
     onPermissionsProblem,
     canControlRecording,
-    layout,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -226,7 +227,6 @@ function VonageRoomInner({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
-    layout?: VonageLayout;
 }): JSX.Element {
     const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
@@ -590,8 +590,9 @@ function VonageRoomInner({
         }
     }, [fullScreenHandle, receivingScreenShareCount]);
 
-    const viewSubscribedScreenShares = useMemo(
-        () => (
+    const viewSubscribedScreenShares = useMemo(() => {
+        const screenStreams = streams.filter((stream) => stream.videoType === "screen");
+        return screenStreams.length > 0 ? (
             <div style={{ flex: 1 }}>
                 <FullScreen handle={fullScreenHandle}>
                     <HStack
@@ -614,23 +615,16 @@ function VonageRoomInner({
                         zIndex={300}
                         hidden={!receivingScreenShareCount}
                     >
-                        {streams
-                            .filter((stream) => stream.videoType === "screen")
-                            .map((stream) => (
-                                <Box
-                                    h="100%"
-                                    w={`${100 / Math.max(receivingScreenShareCount, 1)}%`}
-                                    key={stream.streamId}
-                                >
-                                    <VonageSubscriber stream={stream} enableVideo={true} resolution={"high"} />
-                                </Box>
-                            ))}
+                        {screenStreams.map((stream) => (
+                            <Box h="100%" w={`${100 / Math.max(receivingScreenShareCount, 1)}%`} key={stream.streamId}>
+                                <VonageSubscriber stream={stream} enableVideo={true} resolution={"high"} />
+                            </Box>
+                        ))}
                     </HStack>
                 </FullScreen>
             </div>
-        ),
-        [fullScreenHandle, receivingScreenShareCount, streams]
-    );
+        ) : undefined;
+    }, [fullScreenHandle, receivingScreenShareCount, streams]);
 
     const connectionData = useMemo(() => JSON.stringify({ registrantId: registrant.id }), [registrant.id]);
 
@@ -711,7 +705,7 @@ function VonageRoomInner({
     const nobodyElseAlert = useMemo(
         () =>
             connected && connections.length <= 1 ? (
-                <Alert status="info" mt={2} w="max-content" maxW="100%">
+                <Alert status="info" mt={2} w="100%">
                     <AlertIcon />
                     <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
                 </Alert>

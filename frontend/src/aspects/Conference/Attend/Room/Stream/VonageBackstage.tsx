@@ -9,7 +9,6 @@ import {
 } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
-import { useVonageLayout, VonageLayoutProvider } from "../Vonage/VonageLayoutProvider";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
@@ -58,22 +57,16 @@ export function VonageBackstage({
 
     return (
         <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
-            {(event: RoomEventDetailsFragment) =>
-                event.eventVonageSession ? (
-                    <VonageLayoutProvider vonageSessionId={event.eventVonageSession.sessionId}>
-                        <EventVonageRoomInner
-                            event={event}
-                            isRaiseHandPreJoin={isRaiseHandPreJoin}
-                            isRaiseHandWaiting={isRaiseHandWaiting}
-                            completeJoinRef={completeJoinRef}
-                            onLeave={onLeave}
-                            hlsUri={hlsUri}
-                        />
-                    </VonageLayoutProvider>
-                ) : (
-                    <>No room session available.</>
-                )
-            }
+            {(event: RoomEventDetailsFragment) => (
+                <EventVonageRoomInner
+                    event={event}
+                    isRaiseHandPreJoin={isRaiseHandPreJoin}
+                    isRaiseHandWaiting={isRaiseHandWaiting}
+                    completeJoinRef={completeJoinRef}
+                    onLeave={onLeave}
+                    hlsUri={hlsUri}
+                />
+            )}
         </ApolloQueryWrapper>
     );
 }
@@ -108,7 +101,6 @@ export function EventVonageRoomInner({
     }, [getEventVonageToken]);
 
     const sharedRoomContext = useSharedRoomContext();
-    const layout = useVonageLayout();
 
     return (
         <VStack justifyContent="stretch" w="100%">
@@ -127,7 +119,6 @@ export function EventVonageRoomInner({
                         requireMicrophoneOrCamera={isRaiseHandPreJoin}
                         completeJoinRef={completeJoinRef}
                         onLeave={onLeave}
-                        layout={layout}
                     />
                 ) : (
                     <>No room session available.</>

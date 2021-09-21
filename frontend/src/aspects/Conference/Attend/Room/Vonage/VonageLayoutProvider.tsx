@@ -1,11 +1,16 @@
 import { gql } from "@apollo/client";
+import { useToast } from "@chakra-ui/react";
 import {
     assertVonageSessionLayoutData,
     VonageSessionLayoutData,
     VonageSessionLayoutType,
 } from "@clowdr-app/shared-types/build/vonage";
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
-import { useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery } from "../../../../../generated/graphql";
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import {
+    useInsertVonageSessionLayoutMutation,
+    useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
+} from "../../../../../generated/graphql";
+import { useConference } from "../../../useConference";
 
 gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
@@ -18,11 +23,21 @@ gql`
             layoutData
         }
     }
+
+    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+        insert_video_VonageSessionLayout_one(
+            object: { vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData }
+        ) {
+            id
+        }
+    }
 `;
 
 export interface VonageLayout {
-    currentLayout: VonageSessionLayoutData;
-    updateCurrentLayout: (layout: VonageSessionLayoutData) => void;
+    layout: VonageSessionLayoutData;
+    updateLayout: (layout: VonageSessionLayoutData) => void;
+    saveLayout: () => Promise<void>;
+    broadcastLayoutMode: boolean;
 }
 
 export const VonageLayoutContext = React.createContext<VonageLayout | undefined>(undefined);
@@ -38,7 +53,8 @@ export function useVonageLayout(): VonageLayout {
 export function VonageLayoutProvider({
     vonageSessionId,
     children,
-}: PropsWithChildren<{ vonageSessionId: string }>): JSX.Element {
+    broadcastLayoutMode,
+}: PropsWithChildren<{ vonageSessionId: string; broadcastLayoutMode: boolean }>): JSX.Element {
     const result = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
             vonageSessionId,
@@ -56,17 +72,55 @@ export function VonageLayoutProvider({
         }
     }, [result.data?.video_VonageSessionLayout]);
     const [layoutData, setLayoutData] = useState<VonageSessionLayoutData | null>(null);
+
+    const currentLayout: VonageSessionLayoutData = useMemo(
+        () =>
+            layoutData ??
+            initialLayoutData ?? { type: VonageSessionLayoutType.BestFit, screenShareType: "verticalPresentation" },
+        [initialLayoutData, layoutData]
+    );
+
+    const [insertLayout] = useInsertVonageSessionLayoutMutation();
+    const toast = useToast();
+    const { id: conferenceId } = useConference();
+
+    const saveLayout = useCallback(async () => {
+        if (!vonageSessionId) {
+            console.error("No Vonage session available for layout insert");
+            throw new Error("No Vonage session available for layout insert");
+        }
+
+        try {
+            await insertLayout({
+                variables: {
+                    conferenceId,
+                    vonageSessionId,
+                    layoutData,
+                },
+            });
+        } catch (e) {
+            console.error("Failed to insert Vonage layout", e);
+            toast({
+                status: "error",
+                title: "Could not set the Vonage layout",
+                description: "If this error persists, you may need to leave and re-enter the room.",
+            });
+        }
+    }, [layoutData, conferenceId, vonageSessionId, toast, insertLayout]);
+
+    const layout: VonageLayout = useMemo(
+        () => ({
+            layout: currentLayout,
+            updateLayout: setLayoutData,
+            saveLayout,
+            broadcastLayoutMode,
+        }),
+        [currentLayout, saveLayout, broadcastLayoutMode]
+    );
+
     useEffect(() => {
         setLayoutData(null);
     }, [vonageSessionId]);
-
-    const layout = useMemo(
-        () => ({
-            currentLayout: layoutData ?? initialLayoutData ?? { type: VonageSessionLayoutType.BestFit },
-            updateCurrentLayout: setLayoutData,
-        }),
-        [initialLayoutData, layoutData]
-    );
 
     return <VonageLayoutContext.Provider value={layout}>{children}</VonageLayoutContext.Provider>;
 }

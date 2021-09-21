@@ -4,6 +4,7 @@ import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
+import { useVonageLayout } from "./VonageLayoutProvider";
 
 const standaloneToast = createStandaloneToast({ theme });
 
@@ -45,7 +46,8 @@ export function useVonageComputedState({
     leaveRoom: () => Promise<void>;
 } {
     const vonage = useVonageGlobalState();
-    const { dispatch, state, layout } = useVonageRoom();
+    const { dispatch, state } = useVonageRoom();
+    const layout = useVonageLayout();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -255,7 +257,7 @@ export function useVonageComputedState({
                         onRecordingIdReceived?.(recordingId);
                     },
                     (layoutData) => {
-                        layout?.updateCurrentLayout(layoutData);
+                        layout?.updateLayout(layoutData);
                     }
                 );
             } catch (e) {

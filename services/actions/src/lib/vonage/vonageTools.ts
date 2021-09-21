@@ -531,15 +531,18 @@ gql`
         $vonageSessionId: String!
         $vonageConnectionId: String!
         $vonageStreamId: String!
+        $now: timestamptz!
     ) {
-        delete_video_VonageParticipantStream(
+        update_video_VonageParticipantStream(
             where: {
                 registrantId: { _eq: $registrantId }
                 conferenceId: { _eq: $conferenceId }
                 vonageSessionId: { _eq: $vonageSessionId }
                 vonageConnectionId: { _eq: $vonageConnectionId }
                 vonageStreamId: { _eq: $vonageStreamId }
+                stopped_at: { _is_null: true }
             }
+            _set: { stopped_at: $now }
         ) {
             affected_rows
         }
@@ -564,12 +567,13 @@ export async function removeVonageParticipantStream(
             vonageSessionId: sessionId,
             vonageConnectionId: stream.connection.id,
             vonageStreamId: stream.id,
+            now: new Date().toISOString(),
         },
     });
 
     if (
-        !removeResult.data?.delete_video_VonageParticipantStream?.affected_rows ||
-        removeResult.data.delete_video_VonageParticipantStream.affected_rows === 0
+        !removeResult.data?.update_video_VonageParticipantStream?.affected_rows ||
+        removeResult.data.update_video_VonageParticipantStream.affected_rows === 0
     ) {
         console.warn(
             "Could not find participant stream to remove for vonage session",
@@ -616,7 +620,7 @@ export interface VonageLayoutCustom {
 
 export interface VonageLayoutBuiltin {
     type: "bestFit";
-    screenShareType: "verticalPresentation";
+    screenShareType: "verticalPresentation" | "horizontalPresentation";
 }
 
 async function getOngoingBroadcastIds(vonageSessionId: string): Promise<string[]> {
@@ -669,9 +673,9 @@ export async function applyVonageSessionLayout(vonageSessionId: string, layout: 
         throw new Error("Could not apply Vonage layout, found invalid streams");
     }
 
+    const laidOutStreamIds = Object.keys(layout.streamClasses);
     const streamsToClear = streams
-        .filter((stream) => stream.layoutClassList.length)
-        .filter((stream) => !Object.keys(layout.streamClasses).includes(stream.id))
+        .filter((stream) => !laidOutStreamIds.includes(stream.id))
         .map((stream) => ({
             id: stream.id,
             layoutClassList: [] as string[],
@@ -681,7 +685,29 @@ export async function applyVonageSessionLayout(vonageSessionId: string, layout: 
         layoutClassList: classes,
     }));
 
-    await Vonage.setStreamClassLists(vonageSessionId, streamsToClear.concat(streamsToSet));
+    try {
+        const allStreamsTransform = streamsToClear.concat(streamsToSet);
+        console.info(
+            "Setting Vonage stream class list:" +
+                JSON.stringify(
+                    {
+                        vonageSessionId,
+                        classListArray: allStreamsTransform,
+                    },
+                    undefined,
+                    2
+                )
+        );
+        await Vonage.setStreamClassLists(vonageSessionId, allStreamsTransform);
+    } catch (err) {
+        console.error("Error setting Vonage stream class list", {
+            vonageSessionId,
+            streamsToClear,
+            streamsToSet,
+            err,
+        });
+        throw err;
+    }
 
     // Update broadcasts
     const startedBroadcastIds = await getOngoingBroadcastIds(vonageSessionId);
@@ -690,7 +716,7 @@ export async function applyVonageSessionLayout(vonageSessionId: string, layout: 
         try {
             switch (layout.layout.type) {
                 case "bestFit":
-                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, "verticalPresentation");
+                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, layout.layout.screenShareType);
                     break;
                 case "custom":
                     await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
@@ -734,44 +760,198 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
             return {
                 layout: {
                     type: "bestFit",
-                    screenShareType: "verticalPresentation",
+                    screenShareType: layoutData.screenShareType,
                 },
                 streamClasses: {},
-            };
-        case VonageSessionLayoutType.Pair:
-            return {
-                layout: {
-                    type: "custom",
-                    stylesheet:
-                        "stream.left {display: block; position: absolute; width: 50%; height: 100%; left: 0;} stream.right {position: absolute; width: 50%; height: 100%; right: 0;}",
-                },
-                streamClasses: {
-                    [layoutData.leftStreamId]: ["left"],
-                    [layoutData.rightStreamId]: ["right"],
-                },
-            };
-        case VonageSessionLayoutType.PictureInPicture:
-            return {
-                layout: {
-                    type: "custom",
-                    stylesheet:
-                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0; z-index: 100;} stream.corner {display: block; position: absolute; width: 15%; height: 15%; right: 2%; bottom: 3%; z-index: 200;}",
-                },
-                streamClasses: {
-                    [layoutData.focusStreamId]: ["focus"],
-                    [layoutData.cornerStreamId]: ["corner"],
-                },
             };
         case VonageSessionLayoutType.Single:
             return {
                 layout: {
                     type: "custom",
                     stylesheet:
-                        "stream.focus {display: block; position: absolute; width: 100%; height: 100%; left: 0;}",
+                        "stream.stream1 { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }",
                 },
                 streamClasses: {
-                    [layoutData.focusStreamId]: ["focus"],
+                    [layoutData.stream1Id]: ["stream1"],
                 },
             };
+        case VonageSessionLayoutType.Pair:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet: `
+                        stream.stream1 { position: absolute; width: 50%; height: 100%; left: 0px; top: 0px; }
+                        stream.stream2 { position: absolute; width: 50%; height: 100%; right: 0px; top: 0px; }
+                    `,
+                },
+                streamClasses: layoutData.stream2Id
+                    ? {
+                          [layoutData.stream1Id]: ["stream1"],
+                          [layoutData.stream2Id]: ["stream2"],
+                      }
+                    : {
+                          [layoutData.stream1Id]: ["stream1"],
+                      },
+            };
+        case VonageSessionLayoutType.PictureInPicture:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet: `
+                        stream.stream1 { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; z-index: 100;}
+                        stream.stream2 { position: absolute; width: 350px; height: 350px; right: 20px; bottom: 20px; z-index: 200; object-fit: cover; }
+                    `,
+                },
+                streamClasses: {
+                    [layoutData.stream1Id]: ["stream1"],
+                    [layoutData.stream2Id]: ["stream2"],
+                },
+            };
+        case VonageSessionLayoutType.Fitted4:
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        layoutData.side === "left"
+                            ? `
+                                stream.stream1 { position: absolute; width: 85.9375%; height: 100%; left: 14.0625%; top: 0px; z-index: 100;}
+                                stream.stream2 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 0%; z-index: 200; object-fit: cover; }
+                                stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 25%; z-index: 200; object-fit: cover; }
+                                stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 50%; z-index: 200; object-fit: cover; }
+                                stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 75%; z-index: 200; object-fit: cover; }
+                            `
+                            : `
+                                stream.stream1 { position: absolute; width: 100%; height: 75%; left: 0px; top: 0px; z-index: 100;}
+                                stream.stream2 { position: absolute; width: 14.0625%; height: 25%; left: 21.875%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 35.9375%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 50%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 64.0625%; bottom: 0px; z-index: 200; object-fit: cover; }
+                            `,
+                },
+                streamClasses: layoutData.stream2Id
+                    ? layoutData.stream3Id
+                        ? layoutData.stream4Id
+                            ? layoutData.stream5Id
+                                ? {
+                                      [layoutData.stream1Id]: ["stream1"],
+                                      [layoutData.stream2Id]: ["stream2"],
+                                      [layoutData.stream3Id]: ["stream3"],
+                                      [layoutData.stream4Id]: ["stream4"],
+                                      [layoutData.stream5Id]: ["stream5"],
+                                  }
+                                : {
+                                      [layoutData.stream1Id]: ["stream1"],
+                                      [layoutData.stream2Id]: ["stream2"],
+                                      [layoutData.stream3Id]: ["stream3"],
+                                      [layoutData.stream4Id]: ["stream4"],
+                                  }
+                            : {
+                                  [layoutData.stream1Id]: ["stream1"],
+                                  [layoutData.stream2Id]: ["stream2"],
+                                  [layoutData.stream3Id]: ["stream3"],
+                              }
+                        : {
+                              [layoutData.stream1Id]: ["stream1"],
+                              [layoutData.stream2Id]: ["stream2"],
+                          }
+                    : {
+                          [layoutData.stream1Id]: ["stream1"],
+                      },
+            };
+        case VonageSessionLayoutType.DualScreen: {
+            const sideStreams =
+                layoutData.splitDirection === "horizontal"
+                    ? `
+                        stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 0%; z-index: 200; object-fit: cover; }
+                        stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 25%; z-index: 200; object-fit: cover; }
+                        stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 50%; z-index: 200; object-fit: cover; }
+                        stream.stream6 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 75%; z-index: 200; object-fit: cover; }
+                    `
+                    : `
+                        stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 21.875%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 35.9375%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 50%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream6 { position: absolute; width: 14.0625%; height: 25%; left: 64.0625%; bottom: 0px; z-index: 200; object-fit: cover; }
+                    `;
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        layoutData.splitDirection === "horizontal"
+                            ? layoutData.narrowStream === 1
+                                ? `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 25%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 75%; left: 14.0625%; top: 25%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                                : layoutData.narrowStream === 2
+                                ? `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 75%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 25%; left: 14.0625%; top: 75%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                                : `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 50%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 50%; left: 14.0625%; top: 50%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                            : layoutData.narrowStream === 1
+                            ? `
+                                stream.stream1 { position: absolute; width: 25%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 75%; height: 75%; left: 25%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `
+                            : layoutData.narrowStream === 2
+                            ? `
+                                stream.stream1 { position: absolute; width: 25%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 75%; height: 75%; left: 75%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `
+                            : `
+                                stream.stream1 { position: absolute; width: 50%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 50%; height: 75%; left: 50%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `,
+                },
+                streamClasses: layoutData.stream2Id
+                    ? layoutData.stream3Id
+                        ? layoutData.stream4Id
+                            ? layoutData.stream5Id
+                                ? layoutData.stream6Id
+                                    ? {
+                                          [layoutData.stream1Id]: ["stream1"],
+                                          [layoutData.stream2Id]: ["stream2"],
+                                          [layoutData.stream3Id]: ["stream3"],
+                                          [layoutData.stream4Id]: ["stream4"],
+                                          [layoutData.stream5Id]: ["stream5"],
+                                          [layoutData.stream6Id]: ["stream6"],
+                                      }
+                                    : {
+                                          [layoutData.stream1Id]: ["stream1"],
+                                          [layoutData.stream2Id]: ["stream2"],
+                                          [layoutData.stream3Id]: ["stream3"],
+                                          [layoutData.stream4Id]: ["stream4"],
+                                          [layoutData.stream5Id]: ["stream5"],
+                                      }
+                                : {
+                                      [layoutData.stream1Id]: ["stream1"],
+                                      [layoutData.stream2Id]: ["stream2"],
+                                      [layoutData.stream3Id]: ["stream3"],
+                                      [layoutData.stream4Id]: ["stream4"],
+                                  }
+                            : {
+                                  [layoutData.stream1Id]: ["stream1"],
+                                  [layoutData.stream2Id]: ["stream2"],
+                                  [layoutData.stream3Id]: ["stream3"],
+                              }
+                        : {
+                              [layoutData.stream1Id]: ["stream1"],
+                              [layoutData.stream2Id]: ["stream2"],
+                          }
+                    : {
+                          [layoutData.stream1Id]: ["stream1"],
+                      },
+            };
+        }
     }
 }

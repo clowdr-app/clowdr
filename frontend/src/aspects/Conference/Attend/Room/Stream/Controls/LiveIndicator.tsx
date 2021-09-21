@@ -236,26 +236,33 @@ export function LiveIndicator({
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <VStack alignItems="left">
-                            <Text>
-                                <strong>The audience sees the stream with a bit of delay.</strong> This is normally 5-30
-                                seconds depending on where they are in the world. Don&apos;t wait for the audience to
-                                tell you they can see you - or they will see you sitting there silently for up to thirty
-                                seconds!
-                            </Text>
-                            <Text>
-                                <strong>Pay attention to the countdown clock.</strong> If it says the backstage is live,
-                                then you are live in front of the entire conference and should start your presentation
-                                or Q&amp;A session.
-                            </Text>
-                            <Text>
-                                <strong>Open the chat sidebar now.</strong> It&apos;s a good idea to have the chat open
-                                so that you can read feedback from the audience.
-                            </Text>
+                        <VStack alignItems="left" spacing={6}>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">The audience sees the stream with a bit of delay.</Text>
+                                <Text>
+                                    This is normally 5-30 seconds depending on where they are in the world. Don&apos;t
+                                    wait for the audience to tell you they can see you - or they will see you sitting
+                                    there silently for up to thirty seconds!
+                                </Text>
+                            </VStack>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">Pay attention to the countdown clock.</Text>
+                                <Text>
+                                    If it says the backstage is live, then you are live in front of the entire
+                                    conference and should start your presentation or Q&amp;A session.
+                                </Text>
+                            </VStack>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">Open the chat sidebar now.</Text>
+                                <Text>
+                                    It&apos;s a good idea to have the chat open so that you can read feedback from the
+                                    audience.
+                                </Text>
+                            </VStack>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button size="sm" colorScheme="blue" onClick={onClose}>
                             Close
                         </Button>
                     </ModalFooter>

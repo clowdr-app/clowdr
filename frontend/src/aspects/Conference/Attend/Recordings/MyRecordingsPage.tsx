@@ -156,7 +156,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             whiteSpace="nowrap"
                                                             overflow="hidden"
                                                         >
-                                                            Not yet available
+                                                            Processing
                                                         </Tag>
                                                     ) : save.recording.room ? (
                                                         <LinkButton

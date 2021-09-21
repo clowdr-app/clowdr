@@ -95,6 +95,17 @@ export function useVonageComputedState({
                     screenEnabled: false,
                 });
             }
+
+            if (reason === "forceUnpublished") {
+                standaloneToast({
+                    title: "Screenshare stopped",
+                    description: "Your screenshare has been stopped by a moderator.",
+                    status: "warning",
+                    duration: 20000,
+                    isClosable: true,
+                    position: "top",
+                });
+            }
         },
         [dispatch, vonage.screen]
     );

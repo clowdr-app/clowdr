@@ -281,6 +281,8 @@ function VonageRoomInner({
         setIsRecordingActive(false);
     }, [vonageSessionId]);
 
+    const preJoin = useMemo(() => (connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
+
     const [cameraEnabled, setCameraEnabled] = useState<boolean>(false);
     useEffect(() => {
         const unobserve = vonage.CameraEnabled.subscribe((enabled) => {
@@ -301,10 +303,12 @@ function VonageRoomInner({
     });
     const receivingScreenShareCount = useMemo(() => streams.filter((s) => s.videoType === "screen").length, [streams]);
     const allScreenShareCount = receivingScreenShareCount + (screen ? 1 : 0);
+    // THIS NEEDS REVISING - THE USER SHOULD HAVE CONTROL OVER THE MAXIMUM NUMBER OF VIDEO STREAMS
     const maxVideoStreams = allScreenShareCount ? 4 : 10;
+    // WE SHOULD ENABLE HIGH RESOLUTION FOR PRESENTERS IN A VIDEO-CHAT EVENT
     const cameraResolution =
         allScreenShareCount || connections.length >= maxVideoStreams ? "low" : resolutionBP ?? "normal";
-    const participantWidth = cameraResolution === "low" ? 150 : 300;
+    const participantWidth = cameraResolution === "low" ? 150 : 350;
 
     useEffect(() => {
         if (stop) {
@@ -416,6 +420,10 @@ function VonageRoomInner({
         fn();
     }, [connected, screen, state.screenShareIntendedEnabled, toast, vonage]);
 
+    //////////////////// START ////////////////////
+    //////// THIS NEEDS A TOTAL RETHINK SO THAT ALL SUBSCRIBED STREAMS ARE
+    //////// POLLED AT THE SAME TIME AND DON'T GENERATE A BAZILLION OBJECTS
+    //////// EVERY TIME ONE THING CHANGES.
     const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
     const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
         if (activity) {
@@ -425,10 +433,17 @@ function VonageRoomInner({
             }));
         }
     }, []);
+
+    // THIS PROBABLY ISN'T NECESSARY - WE SHOULD GENERATE A DESCRIPTION OF EACH
+    // SUBSCRIBED STREAM TYPE AND JUST PASS THAT WITH THE ELEMENT INTO THE
+    // LAYOUT MAPPER.
     const othersCameraStreams = useMemo(
         () => streams.filter((s) => s.videoType === "camera" || !s.videoType),
         [streams]
     );
+
+    //////////////////// START ////////////////////
+    //// ALL OF THIS NEEDS TO BE MOVED INTO AN INNER `STREAM-ELEMENT <-> VISUAL POSITION` MAPPING COMPONENT
 
     const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
     useEffect(() => {
@@ -552,6 +567,60 @@ function VonageRoomInner({
         [othersCameraStreams, allScreenShareCount, enableStreams, maxVideoStreams]
     );
 
+    ////////////////////  END  ////////////////////
+
+    // PRESUMABLY THIS FULL SCREEN STUFF SHOULD BE HANDLED WITHIN THE LAYOUT SYSTEM
+    const fullScreenHandle = useFullScreenHandle();
+    useEffect(() => {
+        if (!receivingScreenShareCount && fullScreenHandle.active) {
+            fullScreenHandle.exit().catch((e) => console.error("Failed to exit full screen", e));
+        }
+    }, [fullScreenHandle, receivingScreenShareCount]);
+
+    /* OKAY, SO ALL THIS ELEMENT GENERATOR CODE NEEDS RESTRUCTURING TO CREATE
+     * A SIMPLE LIST OF ELEMENTS AND SOME METADATA:
+     *      - Stream Id             (string)
+     *      - Associated Stream Ids (string[] - screenshares / cameras by the same participant)
+     *      - Video Type            (screen, camera, audio-only, placeholder)
+     *      - Is Self               (boolean)
+     *      - Joined At Time        (milliseconds)
+     *      - Last Active Time      (milliseconds)
+     *
+     *
+     * AND WE THEN COMBINE THAT WITH THE `layoutData` TO GENERATE THE FINAL
+     * LAYOUT.
+     *      - In the case of backstage layouts, we create a defined/headed
+     *        area for streams not being included in the broadcast.
+     *      - In the case of backstage layouts, if best-fit mode is chosen,
+     *        we attempt to replicate Vonage's rules.
+     *      - In the case of non-backstage layouts, if best-fit mode is chosen,
+     *        we use our own screenshares-first, then most-recent-speaker logic.
+     *      - Regardless, the overflow area uses the most-recent-speaker logic
+     *        to select visible streams.
+     *      - The user's own stream box should always be visible, either within
+     *        the main layout area or the first box in the overflow area.
+     *          - If not in backstage mode or in overflow area, possibly show an
+     *            indicator that they may not be visible if they haven't spoken
+     *            in a while.
+     *
+     *
+     * WE THEN NEED TO LAYER ON TWO LAYOUT CONTROLS:
+     *      1. The ability to choose the base layout type
+     *              - When choosing a layout, we should make it easy to tell
+     *                what that layout will be - possibly with little pictures.
+     *              - When switching base layout type, we use the stream1-N
+     *                names to re-assign streams to slots as appropriate.
+     *
+     *                Ideally, we should retain assignments for streams that
+     *                don't fit a slot in the selected layout until the user
+     *                saves the layout (or cancels).
+     *
+     *      2. If applicable, the ability to drag and drop streams into the
+     *         layout zones.
+     *              - If insufficient zones are filled, then when saving the
+     *                layout, we compute a nearest-approximation.
+     */
+
     const viewPublishedScreenShareEl = useMemo(
         () => (
             <Box
@@ -581,14 +650,6 @@ function VonageRoomInner({
         ),
         [allScreenShareCount, registrant.id, screen]
     );
-
-    const fullScreenHandle = useFullScreenHandle();
-
-    useEffect(() => {
-        if (!receivingScreenShareCount && fullScreenHandle.active) {
-            fullScreenHandle.exit().catch((e) => console.error("Failed to exit full screen", e));
-        }
-    }, [fullScreenHandle, receivingScreenShareCount]);
 
     const viewSubscribedScreenShares = useMemo(() => {
         const screenStreams = streams.filter((stream) => stream.videoType === "screen");
@@ -626,34 +687,33 @@ function VonageRoomInner({
         ) : undefined;
     }, [fullScreenHandle, receivingScreenShareCount, streams]);
 
-    const connectionData = useMemo(() => JSON.stringify({ registrantId: registrant.id }), [registrant.id]);
+    const viewPublishedPlaceholder = useMemo(() => {
+        const connectionData = JSON.stringify({ registrantId: registrant.id });
 
-    const viewPublishedPlaceholder = useMemo(
-        () =>
-            connected && !camera ? (
-                <Box
-                    position="relative"
-                    flex={`0 0 ${participantWidth}px`}
-                    w={participantWidth}
-                    h={participantWidth}
-                    bgColor="black"
-                >
-                    <Box position="absolute" zIndex="200" height="100%" width="100%" overflow="hidden">
-                        <VonageOverlay
-                            connectionData={connectionData}
-                            microphoneEnabled={state.microphoneIntendedEnabled}
-                        />
-                    </Box>
-                    <PlaceholderImage connectionData={connectionData} />
+        return connected && !camera ? (
+            <Box
+                position="relative"
+                flex={`0 0 ${participantWidth}px`}
+                w={participantWidth}
+                h={participantWidth}
+                bgColor="black"
+            >
+                <Box position="absolute" zIndex="200" height="100%" width="100%" overflow="hidden">
+                    <VonageOverlay
+                        connectionData={connectionData}
+                        microphoneEnabled={state.microphoneIntendedEnabled}
+                    />
                 </Box>
-            ) : (
-                <></>
-            ),
-        [connected, camera, participantWidth, connectionData, state.microphoneIntendedEnabled]
-    );
+                <PlaceholderImage connectionData={connectionData} />
+            </Box>
+        ) : (
+            <></>
+        );
+    }, [connected, camera, participantWidth, registrant.id, state.microphoneIntendedEnabled]);
 
-    const viewPublishedCamera = useMemo(
-        () => (
+    const viewPublishedCamera = useMemo(() => {
+        const connectionData = JSON.stringify({ registrantId: registrant.id });
+        return (
             <Box
                 flex={`0 0 ${participantWidth}px`}
                 w={participantWidth}
@@ -682,38 +742,14 @@ function VonageRoomInner({
                     {!cameraEnabled ? <PlaceholderImage zIndex={150} connectionData={connectionData} /> : undefined}
                     <Box position="absolute" zIndex="200" height="100%" width="100%" overflow="hidden">
                         <VonageOverlay
-                            connectionData={JSON.stringify({ registrantId: registrant.id })}
+                            connectionData={connectionData}
                             microphoneEnabled={state.microphoneIntendedEnabled}
                         />
                     </Box>
                 </Box>
             </Box>
-        ),
-        [
-            participantWidth,
-            connected,
-            camera,
-            registrant.id,
-            state.microphoneIntendedEnabled,
-            connectionData,
-            cameraEnabled,
-        ]
-    );
-
-    const preJoin = useMemo(() => (connected ? <></> : <PreJoin cameraPreviewRef={cameraPreviewRef} />), [connected]);
-
-    const nobodyElseAlert = useMemo(
-        () =>
-            connected && connections.length <= 1 ? (
-                <Alert status="info" mt={2} w="100%">
-                    <AlertIcon />
-                    <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
-                </Alert>
-            ) : (
-                <></>
-            ),
-        [connected, connections.length]
-    );
+        );
+    }, [participantWidth, connected, camera, registrant.id, state.microphoneIntendedEnabled, cameraEnabled]);
 
     const otherStreams = useMemo(
         () =>
@@ -766,9 +802,19 @@ function VonageRoomInner({
         [otherUnpublishedConnections, participantWidth]
     );
 
-    const joinRoom_ = useCallback(async () => {
-        joinRoom();
-    }, [joinRoom]);
+    // THIS CAN JUST BE HANDLED WITHIN THE LAYOUT COMPONENT
+    const nobodyElseAlert = useMemo(
+        () =>
+            connected && connections.length <= 1 ? (
+                <Alert status="info" mt={2} w="100%">
+                    <AlertIcon />
+                    <AlertTitle>Nobody else has joined the room at the moment.</AlertTitle>
+                </Alert>
+            ) : (
+                <></>
+            ),
+        [connected, connections.length]
+    );
 
     return (
         <Box width="100%" isolation="isolate">
@@ -776,7 +822,7 @@ function VonageRoomInner({
                 {preJoin}
                 {/* Use memo'ing the control bar causes the screenshare button to not update properly 🤔 */}
                 <VonageRoomControlBar
-                    onJoinRoom={joinRoom_}
+                    onJoinRoom={joinRoom}
                     onLeaveRoom={leaveRoom}
                     onCancelJoinRoom={cancelJoin}
                     joining={joining}

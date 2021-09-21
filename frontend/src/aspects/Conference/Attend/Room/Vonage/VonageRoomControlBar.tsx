@@ -55,7 +55,7 @@ export function VonageRoomControlBar({
     isBackstage,
     canControlRecording,
 }: {
-    onJoinRoom: () => void;
+    onJoinRoom: () => Promise<void>;
     onLeaveRoom: () => void;
     onCancelJoinRoom?: () => void;
     joining: boolean;

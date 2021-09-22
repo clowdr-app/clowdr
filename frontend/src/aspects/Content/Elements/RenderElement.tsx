@@ -2,8 +2,8 @@ import { Box, Container, Text, VStack } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
-import ReactPlayer from "react-player";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";
+import { VideoElement } from "../../Conference/Attend/Content/Element/VideoElement";
 import FAIcon from "../../Icons/FAIcon";
 import { Markdown } from "../../Text/Markdown";
 
@@ -77,22 +77,10 @@ export default function RenderElement({ data }: { data: ElementDataBlob }): JSX.
                     return <Text>This item is still being processed. Please check back in 15 minutes.</Text>;
                 }
 
-                return (
-                    <ReactPlayer
-                        style={{ maxWidth: "100%" }}
-                        url={s3UrlToHttpUrl(latestVersion.data.transcode.s3Url)}
-                        controls={true}
-                    />
-                );
+                return <VideoElement elementData={latestVersion.data} />;
             }
             case ElementBaseType.Audio: {
-                return (
-                    <ReactPlayer
-                        style={{ maxWidth: "100%" }}
-                        url={s3UrlToHttpUrl(latestVersion.data.s3Url)}
-                        controls={true}
-                    />
-                );
+                return <VideoElement elementData={latestVersion.data} />;
             }
             case ElementBaseType.Component: {
                 return <Text>This item type cannot be submitted.</Text>;

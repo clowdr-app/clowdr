@@ -19,7 +19,7 @@ export function VideoElement({
     onPause,
     onFinish,
 }: {
-    elementId: string;
+    elementId?: string;
     elementData: VideoElementBlob | AudioElementBlob;
     title?: string;
     onPlay?: () => void;
@@ -96,8 +96,6 @@ export function VideoElement({
     }, [error, loading, subtitlesUrl]);
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    useTrackView(isPlaying, elementId, "Element");
-
     const playerRef = useRef<ReactPlayer | null>(null);
     const player = useMemo(() => {
         // Only render the player once both the video URL and the subtitles config are available
@@ -159,6 +157,12 @@ export function VideoElement({
                 </Text>
             ) : undefined}
             {player}
+            {elementId ? <TrackVideoView elementId={elementId} isPlaying={isPlaying} /> : undefined}
         </>
     );
+}
+
+function TrackVideoView({ elementId, isPlaying }: { elementId: string; isPlaying: boolean }): JSX.Element {
+    useTrackView(isPlaying, elementId, "Element");
+    return <></>;
 }

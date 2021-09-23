@@ -63,7 +63,8 @@ export function AuthorList({
             (x) =>
                 x.roleName.toUpperCase() !== "AUTHOR" &&
                 x.roleName.toUpperCase() !== "PRESENTER" &&
-                x.roleName.toUpperCase() !== "CHAIR"
+                x.roleName.toUpperCase() !== "CHAIR" &&
+                x.roleName.toUpperCase() !== "REVIEWER"
         );
 
         const createEl = (programPersonData: ProgramPersonDataFragment) => {
@@ -373,7 +374,7 @@ function sortByRoleName(roleX: string, roleY: string): number {
     return roleToIndex(roleX) - roleToIndex(roleY);
 }
 
-const rolePositions = ["PRESENTER", "AUTHOR", "CHAIR"];
+const rolePositions = ["PRESENTER", "AUTHOR", "DISCUSSANT", "CHAIR", "SESSION ORGANIZER", "REVIEWER"];
 function roleToIndex(role: string) {
     const idx = rolePositions.indexOf(role);
     if (idx === -1) {

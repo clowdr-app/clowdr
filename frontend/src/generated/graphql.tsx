@@ -3097,17 +3097,6 @@ export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
   readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Inc_Input = {
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Insert_Input = {
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ElementTotalViews_Max_Fields = {
   readonly __typename?: 'analytics_mat_ElementTotalViews_max_fields';
@@ -3120,15 +3109,6 @@ export type Analytics_Mat_ElementTotalViews_Min_Fields = {
   readonly __typename?: 'analytics_mat_ElementTotalViews_min_fields';
   readonly elementId?: Maybe<Scalars['uuid']>;
   readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_ElementTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_ElementTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
@@ -3144,12 +3124,6 @@ export enum Analytics_Mat_ElementTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Set_Input = {
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
@@ -3245,17 +3219,6 @@ export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
   readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Inc_Input = {
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Insert_Input = {
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ItemTotalViews_Max_Fields = {
   readonly __typename?: 'analytics_mat_ItemTotalViews_max_fields';
@@ -3268,15 +3231,6 @@ export type Analytics_Mat_ItemTotalViews_Min_Fields = {
   readonly __typename?: 'analytics_mat_ItemTotalViews_min_fields';
   readonly itemId?: Maybe<Scalars['uuid']>;
   readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_ItemTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_ItemTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
@@ -3292,12 +3246,6 @@ export enum Analytics_Mat_ItemTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Set_Input = {
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
@@ -3378,11 +3326,6 @@ export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Append_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-};
-
 /** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
 export type Analytics_Mat_RoomPresence_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Bool_Exp>>;
@@ -3392,29 +3335,6 @@ export type Analytics_Mat_RoomPresence_Bool_Exp = {
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
-};
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Analytics_Mat_RoomPresence_Delete_At_Path_Input = {
-  readonly count?: Maybe<ReadonlyArray<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Analytics_Mat_RoomPresence_Delete_Elem_Input = {
-  readonly count?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Analytics_Mat_RoomPresence_Delete_Key_Input = {
-  readonly count?: Maybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Insert_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -3433,26 +3353,12 @@ export type Analytics_Mat_RoomPresence_Min_Fields = {
   readonly name?: Maybe<Scalars['String']>;
 };
 
-/** response of any mutation on the table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_RoomPresence_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_RoomPresence>;
-};
-
 /** Ordering options when selecting data from "analytics.mat_RoomPresence". */
 export type Analytics_Mat_RoomPresence_Order_By = {
   readonly count?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Prepend_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "analytics.mat_RoomPresence" */
@@ -3466,14 +3372,6 @@ export enum Analytics_Mat_RoomPresence_Select_Column {
   /** column name */
   Name = 'name'
 }
-
-/** input type for updating data in table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Set_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-};
 
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
@@ -13744,8 +13642,8 @@ export enum Job_Queues_ChannelStackDeleteJob_Update_Column {
 export type Job_Queues_ChannelStackUpdateJob = {
   readonly __typename?: 'job_queues_ChannelStackUpdateJob';
   /** An object relationship */
-  readonly channelStack: Video_ChannelStack;
-  readonly channelStackId: Scalars['uuid'];
+  readonly channelStack?: Maybe<Video_ChannelStack>;
+  readonly channelStackId?: Maybe<Scalars['uuid']>;
   readonly cloudFormationStackArn: Scalars['String'];
   readonly created_at: Scalars['timestamptz'];
   readonly id: Scalars['uuid'];
@@ -15622,12 +15520,6 @@ export type Mutation_Root = {
   readonly delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** delete single row from the table: "analytics.RoomStats" */
   readonly delete_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** delete data from the table: "analytics.mat_ElementTotalViews" */
-  readonly delete_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_ItemTotalViews" */
-  readonly delete_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_RoomPresence" */
-  readonly delete_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -15997,18 +15889,6 @@ export type Mutation_Root = {
   readonly insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.RoomStats" */
   readonly insert_analytics_RoomStats_one?: Maybe<Analytics_RoomStats>;
-  /** insert data into the table: "analytics.mat_ElementTotalViews" */
-  readonly insert_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ElementTotalViews" */
-  readonly insert_analytics_mat_ElementTotalViews_one?: Maybe<Analytics_Mat_ElementTotalViews>;
-  /** insert data into the table: "analytics.mat_ItemTotalViews" */
-  readonly insert_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ItemTotalViews" */
-  readonly insert_analytics_mat_ItemTotalViews_one?: Maybe<Analytics_Mat_ItemTotalViews>;
-  /** insert data into the table: "analytics.mat_RoomPresence" */
-  readonly insert_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_RoomPresence" */
-  readonly insert_analytics_mat_RoomPresence_one?: Maybe<Analytics_Mat_RoomPresence>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -16402,12 +16282,6 @@ export type Mutation_Root = {
   readonly update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** update single row of the table: "analytics.RoomStats" */
   readonly update_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** update data of the table: "analytics.mat_ElementTotalViews" */
-  readonly update_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_ItemTotalViews" */
-  readonly update_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_RoomPresence" */
-  readonly update_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -16846,24 +16720,6 @@ export type Mutation_RootDelete_Analytics_RoomStatsArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Analytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ElementTotalViewsArgs = {
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ItemTotalViewsArgs = {
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_RoomPresenceArgs = {
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -17993,42 +17849,6 @@ export type Mutation_RootInsert_Analytics_RoomStatsArgs = {
 export type Mutation_RootInsert_Analytics_RoomStats_OneArgs = {
   object: Analytics_RoomStats_Insert_Input;
   on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViewsArgs = {
-  objects: ReadonlyArray<Analytics_Mat_ElementTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViews_OneArgs = {
-  object: Analytics_Mat_ElementTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViewsArgs = {
-  objects: ReadonlyArray<Analytics_Mat_ItemTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViews_OneArgs = {
-  object: Analytics_Mat_ItemTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresenceArgs = {
-  objects: ReadonlyArray<Analytics_Mat_RoomPresence_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresence_OneArgs = {
-  object: Analytics_Mat_RoomPresence_Insert_Input;
 };
 
 
@@ -19446,34 +19266,6 @@ export type Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs = {
   _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
   _set?: Maybe<Analytics_RoomStats_Set_Input>;
   pk_columns: Analytics_RoomStats_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ElementTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ElementTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ElementTotalViews_Set_Input>;
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ItemTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ItemTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ItemTotalViews_Set_Input>;
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_RoomPresenceArgs = {
-  _append?: Maybe<Analytics_Mat_RoomPresence_Append_Input>;
-  _delete_at_path?: Maybe<Analytics_Mat_RoomPresence_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Analytics_Mat_RoomPresence_Delete_Elem_Input>;
-  _delete_key?: Maybe<Analytics_Mat_RoomPresence_Delete_Key_Input>;
-  _prepend?: Maybe<Analytics_Mat_RoomPresence_Prepend_Input>;
-  _set?: Maybe<Analytics_Mat_RoomPresence_Set_Input>;
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -41503,7 +41295,7 @@ export const ExhibitionSummaryFragmentDoc = gql`
   items {
     id
     item {
-      itemPeople {
+      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
         ...ProgramPersonData
       }
       itemTags {
@@ -41540,7 +41332,7 @@ export const ItemElements_ItemDataFragmentDoc = gql`
   ) {
     ...ElementData
   }
-  itemPeople(order_by: {priority: asc}) {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}, order_by: {priority: asc}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -41573,7 +41365,7 @@ export const ItemList_ItemDataFragmentDoc = gql`
     fragment ItemList_ItemData on content_Item {
   id
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ProgramPersonData
   }
 }
@@ -41647,7 +41439,7 @@ export const ExhibitionItemFragmentDoc = gql`
     endTime
     roomId
   }
-  itemPeople(order_by: {priority: asc}) {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}, order_by: {priority: asc}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -41884,7 +41676,7 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   managementModeName
   originatingItem {
     id
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       id
       roleName
       person {
@@ -41929,7 +41721,7 @@ export const RoomTile_RoomFragmentDoc = gql`
   originatingItem {
     id
     title
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       id
       roleName
       person {
@@ -41964,7 +41756,7 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
     data
   }
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     person {
       id
@@ -42029,7 +41821,7 @@ export const Schedule_ItemFieldsFragmentDoc = gql`
     itemId
     exhibitionId
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...Schedule_ItemPerson
   }
 }
@@ -42051,7 +41843,7 @@ export const Schedule_ItemFragmentDoc = gql`
   ) {
     ...Schedule_Element
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...Schedule_ItemPerson
   }
 }
@@ -42117,7 +41909,7 @@ export const ScheduleV2_ItemElementsFragmentDoc = gql`
     itemId
     tagId
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ScheduleV2_ItemPerson
   }
 }
@@ -42149,7 +41941,7 @@ export const ScheduleV2_EventFragmentDoc = gql`
     ) {
       ...ScheduleV2_Element
     }
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       ...ScheduleV2_ItemPerson
     }
   }
@@ -42176,7 +41968,7 @@ export const SearchPanel_ItemFragmentDoc = gql`
     fragment SearchPanel_Item on content_Item {
   id
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -42218,7 +42010,7 @@ export const SearchPanel_PersonFragmentDoc = gql`
   name
   affiliation
   registrantId
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     item {
       id
@@ -43205,7 +42997,7 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
   }
   title
   shortTitle
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     person {
       id
@@ -51368,7 +51160,9 @@ export type DeleteRoomRtmpOutputMutationResult = Apollo.MutationResult<DeleteRoo
 export type DeleteRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
-  content_ItemProgramPerson(where: {_or: [{itemId: {_in: $itemIds}}]}) {
+  content_ItemProgramPerson(
+    where: {itemId: {_in: $itemIds}, roleName: {_neq: "REVIEWER"}}
+  ) {
     ...AddEventPeople_ItemPerson
   }
   content_ItemExhibition(where: {exhibitionId: {_in: $exhibitionIds}}) {
@@ -51376,7 +51170,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
     exhibitionId
     item {
       id
-      itemPeople {
+      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
         ...AddEventPeople_ItemPerson
       }
     }

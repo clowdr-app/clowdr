@@ -181,6 +181,7 @@ function AddItemPersonBody({
                             <option value="PRESENTER">Presenter</option>
                             <option value="SESSION ORGANIZER">Session Organizer</option>
                             <option value="DISCUSSANT">Discussant</option>
+                            <option value="REVIWER">Reviewer</option>
                         </Select>
                     </FormControl>
                 </VStack>
@@ -575,6 +576,7 @@ function ItemPersonsList({
                                     <option value="PRESENTER">Presenter</option>
                                     <option value="SESSION ORGANIZER">Session Organizer</option>
                                     <option value="DISCUSSANT">Discussant</option>
+                                    <option value="REVIEWER">Reviewer</option>
                                 </Select>
                                 <Button
                                     ml={2}

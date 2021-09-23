@@ -69,7 +69,7 @@ gql`
             itemId
             exhibitionId
         }
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             ...Schedule_ItemPerson
         }
     }
@@ -79,7 +79,7 @@ gql`
         abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {
             ...Schedule_Element
         }
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             ...Schedule_ItemPerson
         }
     }

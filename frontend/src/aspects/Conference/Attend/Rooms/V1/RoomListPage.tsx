@@ -112,7 +112,7 @@ gql`
         managementModeName
         originatingItem {
             id
-            itemPeople {
+            itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                 id
                 roleName
                 person {

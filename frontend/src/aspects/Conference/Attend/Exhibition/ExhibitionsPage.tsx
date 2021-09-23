@@ -36,7 +36,7 @@ gql`
         items {
             id
             item {
-                itemPeople {
+                itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                     ...ProgramPersonData
                 }
                 itemTags {

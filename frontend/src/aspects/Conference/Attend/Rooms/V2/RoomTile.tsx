@@ -23,7 +23,7 @@ gql`
         originatingItem {
             id
             title
-            itemPeople {
+            itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                 id
                 roleName
                 person {

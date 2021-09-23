@@ -100,7 +100,7 @@ gql`
     }
 
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
-        content_ItemProgramPerson(where: { _or: [{ itemId: { _in: $itemIds } }] }) {
+        content_ItemProgramPerson(where: { itemId: { _in: $itemIds }, roleName: { _neq: "REVIEWER" } }) {
             ...AddEventPeople_ItemPerson
         }
         content_ItemExhibition(where: { exhibitionId: { _in: $exhibitionIds } }) {
@@ -108,7 +108,7 @@ gql`
             exhibitionId
             item {
                 id
-                itemPeople {
+                itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                     ...AddEventPeople_ItemPerson
                 }
             }

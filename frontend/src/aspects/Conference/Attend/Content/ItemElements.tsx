@@ -72,7 +72,7 @@ gql`
         ) {
             ...ElementData
         }
-        itemPeople(order_by: { priority: asc }) {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }, order_by: { priority: asc }) {
             ...ProgramPersonData
         }
         itemTags {

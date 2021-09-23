@@ -41739,7 +41739,7 @@ export const ExhibitionSummaryFragmentDoc = gql`
   items {
     id
     item {
-      itemPeople {
+      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
         ...ProgramPersonData
       }
       itemTags {
@@ -41776,7 +41776,7 @@ export const ItemElements_ItemDataFragmentDoc = gql`
   ) {
     ...ElementData
   }
-  itemPeople(order_by: {priority: asc}) {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}, order_by: {priority: asc}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -41809,7 +41809,7 @@ export const ItemList_ItemDataFragmentDoc = gql`
     fragment ItemList_ItemData on content_Item {
   id
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ProgramPersonData
   }
 }
@@ -41883,7 +41883,7 @@ export const ExhibitionItemFragmentDoc = gql`
     endTime
     roomId
   }
-  itemPeople(order_by: {priority: asc}) {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}, order_by: {priority: asc}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -42120,7 +42120,7 @@ export const RoomListRoomDetailsFragmentDoc = gql`
   managementModeName
   originatingItem {
     id
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       id
       roleName
       person {
@@ -42165,7 +42165,7 @@ export const RoomTile_RoomFragmentDoc = gql`
   originatingItem {
     id
     title
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       id
       roleName
       person {
@@ -42200,7 +42200,7 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
     data
   }
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     person {
       id
@@ -42265,7 +42265,7 @@ export const Schedule_ItemFieldsFragmentDoc = gql`
     itemId
     exhibitionId
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...Schedule_ItemPerson
   }
 }
@@ -42287,7 +42287,7 @@ export const Schedule_ItemFragmentDoc = gql`
   ) {
     ...Schedule_Element
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...Schedule_ItemPerson
   }
 }
@@ -42353,7 +42353,7 @@ export const ScheduleV2_ItemElementsFragmentDoc = gql`
     itemId
     tagId
   }
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ScheduleV2_ItemPerson
   }
 }
@@ -42385,7 +42385,7 @@ export const ScheduleV2_EventFragmentDoc = gql`
     ) {
       ...ScheduleV2_Element
     }
-    itemPeople {
+    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
       ...ScheduleV2_ItemPerson
     }
   }
@@ -42412,7 +42412,7 @@ export const SearchPanel_ItemFragmentDoc = gql`
     fragment SearchPanel_Item on content_Item {
   id
   title
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ProgramPersonData
   }
   itemTags {
@@ -42454,7 +42454,7 @@ export const SearchPanel_PersonFragmentDoc = gql`
   name
   affiliation
   registrantId
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     item {
       id
@@ -43429,7 +43429,7 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
   }
   title
   shortTitle
-  itemPeople {
+  itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
     person {
       id
@@ -51634,7 +51634,9 @@ export type DeleteRoomRtmpOutputMutationResult = Apollo.MutationResult<DeleteRoo
 export type DeleteRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
-  content_ItemProgramPerson(where: {_or: [{itemId: {_in: $itemIds}}]}) {
+  content_ItemProgramPerson(
+    where: {itemId: {_in: $itemIds}, roleName: {_neq: "REVIEWER"}}
+  ) {
     ...AddEventPeople_ItemPerson
   }
   content_ItemExhibition(where: {exhibitionId: {_in: $exhibitionIds}}) {
@@ -51642,7 +51644,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
     exhibitionId
     item {
       id
-      itemPeople {
+      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
         ...AddEventPeople_ItemPerson
       }
     }

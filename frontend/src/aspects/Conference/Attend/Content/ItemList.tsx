@@ -40,7 +40,7 @@ gql`
     fragment ItemList_ItemData on content_Item {
         id
         title
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             ...ProgramPersonData
         }
     }

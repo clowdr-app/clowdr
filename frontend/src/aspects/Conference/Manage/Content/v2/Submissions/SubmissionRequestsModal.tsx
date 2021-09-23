@@ -271,6 +271,10 @@ export function SendSubmissionRequestsModalInner({
                 label: "Discussant",
                 value: "DISCUSSANT",
             },
+            {
+                label: "Reviewer",
+                value: "REVIEWER",
+            },
         ],
         []
     );

@@ -40,7 +40,7 @@ gql`
         }
         title
         shortTitle
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             id
             person {
                 id

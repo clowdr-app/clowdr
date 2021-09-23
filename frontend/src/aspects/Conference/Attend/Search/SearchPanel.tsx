@@ -33,7 +33,7 @@ gql`
     fragment SearchPanel_Item on content_Item {
         id
         title
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             ...ProgramPersonData
         }
         itemTags {
@@ -87,7 +87,7 @@ gql`
         name
         affiliation
         registrantId
-        itemPeople {
+        itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             id
             item {
                 id

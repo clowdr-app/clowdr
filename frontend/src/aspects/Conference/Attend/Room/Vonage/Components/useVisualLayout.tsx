@@ -84,7 +84,9 @@ export default function useVisualLayout(
                         viewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position1.connectionId;
-                        viewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        viewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
 
@@ -105,7 +107,9 @@ export default function useVisualLayout(
                         leftViewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position1.connectionId;
-                        leftViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        leftViewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
 
@@ -115,7 +119,9 @@ export default function useVisualLayout(
                         rightViewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position2.connectionId;
-                        rightViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        rightViewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
 
                     if (rightViewport === leftViewport) {
@@ -141,7 +147,9 @@ export default function useVisualLayout(
                         fullscreenViewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position1.connectionId;
-                        fullscreenViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        fullscreenViewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
 
@@ -151,7 +159,9 @@ export default function useVisualLayout(
                         insetViewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position2.connectionId;
-                        insetViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        insetViewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
 
                     if (insetViewport === fullscreenViewport) {
@@ -177,7 +187,9 @@ export default function useVisualLayout(
                         largeAreaViewport = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position1.connectionId;
-                        largeAreaViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        largeAreaViewport = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
 
@@ -189,7 +201,9 @@ export default function useVisualLayout(
                             tempViewport = viewports.find((viewport) => viewport.streamId === streamId);
                         } else {
                             const connectionId = position.connectionId;
-                            tempViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                            tempViewport = viewports.find(
+                                (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                            );
                         }
 
                         if (
@@ -228,7 +242,9 @@ export default function useVisualLayout(
                         largeAreaViewport1 = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position1.connectionId;
-                        largeAreaViewport1 = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        largeAreaViewport1 = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
                 if (layout.position2) {
@@ -237,7 +253,9 @@ export default function useVisualLayout(
                         largeAreaViewport2 = viewports.find((viewport) => viewport.streamId === streamId);
                     } else {
                         const connectionId = layout.position2.connectionId;
-                        largeAreaViewport2 = viewports.find((viewport) => viewport.connectionId === connectionId);
+                        largeAreaViewport2 = viewports.find(
+                            (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                        );
                     }
                 }
 
@@ -249,7 +267,9 @@ export default function useVisualLayout(
                             tempViewport = viewports.find((viewport) => viewport.streamId === streamId);
                         } else {
                             const connectionId = position.connectionId;
-                            tempViewport = viewports.find((viewport) => viewport.connectionId === connectionId);
+                            tempViewport = viewports.find(
+                                (viewport) => !viewport.streamId && viewport.connectionId === connectionId
+                            );
                         }
 
                         if (

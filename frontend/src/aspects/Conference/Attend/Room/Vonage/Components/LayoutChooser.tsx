@@ -16,11 +16,9 @@ export default function LayoutChooser(): JSX.Element {
     const [initialLayout, setInitialLayout] = useState<VonageSessionLayoutData | null>(null);
     useEffect(() => {
         if (isOpen && !initialLayout) {
-            console.info("Initial layout", layout);
             setInitialLayout(layout);
         } else if (!isOpen) {
             if (initialLayout) {
-                console.info("Reset to layout", layout);
                 updateLayout(initialLayout);
             }
 
@@ -29,7 +27,7 @@ export default function LayoutChooser(): JSX.Element {
     }, [isOpen, initialLayout, layout, updateLayout]);
 
     return isOpen ? (
-        <VStack my={4}>
+        <VStack pt={4} mb={4} bgColor="gray.200">
             <ButtonGroup flexWrap="wrap" alignItems="center" justifyContent="center" gridRowGap={2}>
                 <Button
                     colorScheme="blue"
@@ -47,7 +45,9 @@ export default function LayoutChooser(): JSX.Element {
                     onClick={() => {
                         saveLayout();
                         setInitialLayout(null);
-                        onClose();
+                        setTimeout(() => {
+                            onClose();
+                        }, 50);
                     }}
                 >
                     Apply layout changes

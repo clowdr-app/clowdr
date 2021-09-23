@@ -23,9 +23,11 @@ import useVisualLayout from "./useVisualLayout";
 export default function Layout({
     viewports,
     isRecordingMode,
+    isBackstage,
 }: {
     viewports: Viewport[];
     isRecordingMode: boolean;
+    isBackstage: boolean;
 }): JSX.Element {
     const layout = useVonageLayout();
     const visualLayout = useVisualLayout(layout.layout, isRecordingMode, viewports);
@@ -105,7 +107,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -144,7 +146,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -163,68 +165,111 @@ export default function Layout({
             }
             case VisualLayoutType.Single: {
                 return (
-                    <Box w="100%" bgColor="gray.500" h="calc(90vh - 250px)">
-                        {visualLayout.viewport ? (
-                            <portals.OutPortal node={visualLayout.viewport.component} />
-                        ) : undefined}
-                        <StreamChooser
-                            positionKey="position1"
-                            centered={!visualLayout.viewport}
-                            isRecordingMode={isRecordingMode}
-                        />
-                    </Box>
-                );
-            }
-            case VisualLayoutType.Pair: {
-                return (
-                    <Flex my={2} h="calc(90vh - 250px)">
-                        <Box w="50%" bgColor="gray.500" mr={1} pos="relative">
-                            {visualLayout.leftViewport ? (
-                                <portals.OutPortal node={visualLayout.leftViewport.component} />
-                            ) : undefined}
-                            <StreamChooser
-                                positionKey="position1"
-                                centered={!visualLayout.leftViewport}
-                                isRecordingMode={isRecordingMode}
-                            />
-                        </Box>
-                        <Box w="50%" bgColor="gray.500" ml={1} pos="relative">
-                            {visualLayout.rightViewport ? (
-                                <portals.OutPortal node={visualLayout.rightViewport.component} />
-                            ) : undefined}
-                            <StreamChooser
-                                positionKey="position2"
-                                centered={!visualLayout.rightViewport}
-                                isRecordingMode={isRecordingMode}
-                            />
-                        </Box>
-                    </Flex>
-                );
-            }
-            case VisualLayoutType.PictureInPicture: {
-                return (
-                    <Box w="100%" bgColor="gray.500" h="calc(90vh - 250px)" mr={1} pos="relative">
-                        {visualLayout.fullscreenViewport ? (
-                            <portals.OutPortal node={visualLayout.fullscreenViewport.component} />
-                        ) : undefined}
-                        <StreamChooser
-                            positionKey="position1"
-                            centered={!visualLayout.fullscreenViewport}
-                            isRecordingMode={isRecordingMode}
-                        />
-                        <AspectRatio ratio={1} w="15.67%" bgColor="gray.700" bottom="20px" right="20px" pos="absolute">
-                            <Box>
-                                {visualLayout.insetViewport ? (
-                                    <portals.OutPortal node={visualLayout.insetViewport.component} />
+                    <Center border="3px solid" borderColor="gray.900">
+                        <AspectRatio
+                            ratio={16 / 9}
+                            w="100%"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
+                            bgColor="gray.500"
+                            mr={1}
+                            pos="relative"
+                        >
+                            <Box h="100%" w="100%" bgColor="gray.500">
+                                {visualLayout.viewport ? (
+                                    <portals.OutPortal node={visualLayout.viewport.component} />
                                 ) : undefined}
                                 <StreamChooser
-                                    positionKey="position2"
-                                    centered={!visualLayout.insetViewport}
+                                    positionKey="position1"
+                                    centered={!visualLayout.viewport}
                                     isRecordingMode={isRecordingMode}
                                 />
                             </Box>
                         </AspectRatio>
-                    </Box>
+                    </Center>
+                );
+            }
+            case VisualLayoutType.Pair: {
+                return (
+                    <Center border="3px solid" borderColor="gray.900">
+                        <AspectRatio
+                            ratio={16 / 9}
+                            w="100%"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
+                            bgColor="gray.500"
+                            mr={1}
+                            pos="relative"
+                        >
+                            <Flex w="100%" h="100%">
+                                <Box w="50%" h="100%" bgColor="gray.500" mr="1px" pos="relative">
+                                    {visualLayout.leftViewport ? (
+                                        <portals.OutPortal node={visualLayout.leftViewport.component} />
+                                    ) : undefined}
+                                    <StreamChooser
+                                        positionKey="position1"
+                                        centered={!visualLayout.leftViewport}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                </Box>
+                                <Box w="50%" h="100%" bgColor="gray.500" ml="1px" pos="relative">
+                                    {visualLayout.rightViewport ? (
+                                        <portals.OutPortal node={visualLayout.rightViewport.component} />
+                                    ) : undefined}
+                                    <StreamChooser
+                                        positionKey="position2"
+                                        centered={!visualLayout.rightViewport}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                </Box>
+                            </Flex>
+                        </AspectRatio>
+                    </Center>
+                );
+            }
+            case VisualLayoutType.PictureInPicture: {
+                return (
+                    <Center border="3px solid" borderColor="gray.900">
+                        <AspectRatio
+                            ratio={16 / 9}
+                            w="100%"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
+                            bgColor="gray.500"
+                            mr={1}
+                            pos="relative"
+                        >
+                            <Box>
+                                <Box w="100%" h="100%" bgColor="gray.500" top={0} left={0} pos="absolute" zIndex={50}>
+                                    {visualLayout.fullscreenViewport ? (
+                                        <portals.OutPortal node={visualLayout.fullscreenViewport.component} />
+                                    ) : undefined}
+                                    <StreamChooser
+                                        positionKey="position1"
+                                        centered={!visualLayout.fullscreenViewport}
+                                        isRecordingMode={isRecordingMode}
+                                    />
+                                </Box>
+                                <AspectRatio
+                                    ratio={1}
+                                    w="15.67%"
+                                    bgColor="gray.700"
+                                    bottom="20px"
+                                    right="20px"
+                                    pos="absolute"
+                                    zIndex={60}
+                                >
+                                    <Box>
+                                        {visualLayout.insetViewport ? (
+                                            <portals.OutPortal node={visualLayout.insetViewport.component} />
+                                        ) : undefined}
+                                        <StreamChooser
+                                            positionKey="position2"
+                                            centered={!visualLayout.insetViewport}
+                                            isRecordingMode={isRecordingMode}
+                                        />
+                                    </Box>
+                                </AspectRatio>
+                            </Box>
+                        </AspectRatio>
+                    </Center>
                 );
             }
             case VisualLayoutType.Fitted4_Left: {
@@ -277,7 +322,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -349,7 +394,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -421,7 +466,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -517,7 +562,7 @@ export default function Layout({
                         <AspectRatio
                             ratio={16 / 9}
                             w="100%"
-                            maxW="calc((16 / 9) * 90vh)"
+                            maxW="calc((16 / 9) * (90vh - 250px))"
                             bgColor="gray.500"
                             mr={1}
                             pos="relative"
@@ -635,7 +680,7 @@ export default function Layout({
                 <>
                     <Divider mt={4} mb={2} borderColor="black" borderWidth={4} />
                     <Heading as="h3" my={4} textAlign="left" mx={4} fontSize="xl">
-                        Not visible in recording or stream
+                        Not visible in {isBackstage ? "stream" : "recording"}
                     </Heading>
                 </>
             ) : undefined}

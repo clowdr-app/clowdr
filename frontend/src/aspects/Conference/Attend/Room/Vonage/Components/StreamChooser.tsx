@@ -83,7 +83,6 @@ export default function StreamChooser({
         return result;
     }, [availableStreams, isRecordingMode, changeLayout]);
 
-    console.log(centered);
     return (
         <Flex
             pos="absolute"

@@ -839,7 +839,11 @@ function VonageRoomInner({
             </Flex>
             {connected ? (
                 <Box position="relative" width="100%">
-                    <Layout viewports={viewports} isRecordingMode={isBackstageRoom || isRecordingActive} />
+                    <Layout
+                        viewports={viewports}
+                        isRecordingMode={isBackstageRoom || isRecordingActive}
+                        isBackstage={isBackstageRoom}
+                    />
                 </Box>
             ) : undefined}
             {[...streamPortalNodes.values()].map((x) => x.element)}

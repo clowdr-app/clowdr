@@ -96,6 +96,8 @@ export function VonageLayoutProvider({
     const toast = useToast();
     const { id: conferenceId } = useConference();
 
+    const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
+
     const saveLayout = useCallback(
         async (_layoutData?: VonageSessionLayoutData) => {
             if (!vonageSessionId) {
@@ -104,9 +106,79 @@ export function VonageLayoutProvider({
             }
 
             try {
-                // TODO: Sanitize the layout data to remove invalid position properties
-                // TODO: Sanitize the layout data to remove invalid streams/connections
-                const data = _layoutData ?? layoutData;
+                let data: any = _layoutData ?? layoutData;
+                if (data) {
+                    for (let idx = 1; idx < 7; idx++) {
+                        const key = "position" + idx;
+                        if (key in data && data[key]) {
+                            if ("streamId" in data[key]) {
+                                const streamId = data[key].streamId;
+                                if (!availableStreams.some((x) => x.streamId === streamId)) {
+                                    delete data[key];
+                                }
+                            } else {
+                                const connectionId = data[key].connectionId;
+                                if (!availableStreams.some((x) => x.connectionId === connectionId)) {
+                                    delete data[key];
+                                }
+                            }
+                        }
+                    }
+
+                    switch (data.type) {
+                        case VonageSessionLayoutType.BestFit:
+                            data = {
+                                type: VonageSessionLayoutType.BestFit,
+                                screenShareType: data.screenShareType ?? "verticalPresentation",
+                            } as VonageSessionLayoutData;
+                            break;
+                        case VonageSessionLayoutType.Single:
+                            data = {
+                                type: VonageSessionLayoutType.Single,
+                                position1: data.position1,
+                            } as VonageSessionLayoutData;
+                            break;
+                        case VonageSessionLayoutType.Pair:
+                            data = {
+                                type: VonageSessionLayoutType.Pair,
+                                position1: data.position1,
+                                position2: data.position2,
+                            } as VonageSessionLayoutData;
+                            break;
+                        case VonageSessionLayoutType.PictureInPicture:
+                            data = {
+                                type: VonageSessionLayoutType.PictureInPicture,
+                                position1: data.position1,
+                                position2: data.position2,
+                            } as VonageSessionLayoutData;
+                            break;
+                        case VonageSessionLayoutType.Fitted4:
+                            data = {
+                                type: VonageSessionLayoutType.Fitted4,
+                                side: data.side ?? "left",
+                                position1: data.position1,
+                                position2: data.position2,
+                                position3: data.position3,
+                                position4: data.position4,
+                                position5: data.position5,
+                            } as VonageSessionLayoutData;
+                            break;
+                        case VonageSessionLayoutType.DualScreen:
+                            data = {
+                                type: VonageSessionLayoutType.DualScreen,
+                                splitDirection: data.splitDirection ?? "horizontal",
+                                narrowStream: data.narrowStream ?? null,
+                                position1: data.position1,
+                                position2: data.position2,
+                                position3: data.position3,
+                                position4: data.position4,
+                                position5: data.position5,
+                                position6: data.position6,
+                            } as VonageSessionLayoutData;
+                            break;
+                    }
+                }
+
                 if (data) {
                     setLayoutData(data);
                     await insertLayout({
@@ -126,7 +198,7 @@ export function VonageLayoutProvider({
                 });
             }
         },
-        [layoutData, conferenceId, vonageSessionId, toast, insertLayout]
+        [vonageSessionId, layoutData, availableStreams, insertLayout, conferenceId, toast]
     );
 
     const {
@@ -135,7 +207,6 @@ export function VonageLayoutProvider({
         onClose: layoutChooser_onClose,
     } = useDisclosure();
 
-    const [availableStreams, setAvailableStreams] = useState<AvailableStream[]>([]);
     const layout: VonageLayout = useMemo(
         () => ({
             layout: currentLayout,

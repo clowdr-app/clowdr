@@ -37,15 +37,10 @@ insert_permissions:
             _and:
             - event:
                 eventPeople:
-                  _and:
-                  - roleName:
-                      _in:
-                      - CHAIR
-                      - PRESENTER
-                  - person:
-                      registrant:
-                        userId:
-                          _eq: X-Hasura-User-Id
+                  person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
             - conference:
                 slug:
                   _eq: X-Hasura-Conference-Slug
@@ -89,6 +84,69 @@ insert_permissions:
     - conferenceId
     - layoutData
     - vonageSessionId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - vonageSessionId
+    - conferenceId
+    - layoutData
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - eventVonageSession:
+            _and:
+            - event:
+                eventPeople:
+                  person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+        - _and:
+          - _not:
+              eventVonageSession: {}
+          - rooms:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _or:
+                - managementModeName:
+                    _eq: PUBLIC
+                - _and:
+                  - managementModeName:
+                      _in:
+                      - PRIVATE
+                      - DM
+                      - MANAGED
+                  - roomPeople:
+                      _and:
+                      - registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SCHEDULE
+                - CONFERENCE_VIEW
   role: user
 event_triggers:
 - definition:

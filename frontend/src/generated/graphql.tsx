@@ -38149,6 +38149,7 @@ export type Video_VonageParticipantStream = {
   /** An object relationship */
   readonly registrant: Registrant_Registrant;
   readonly registrantId: Scalars['uuid'];
+  readonly stopped_at?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt: Scalars['timestamptz'];
   readonly vonageConnectionId: Scalars['String'];
   readonly vonageSessionId: Scalars['String'];
@@ -38204,6 +38205,7 @@ export type Video_VonageParticipantStream_Bool_Exp = {
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+  readonly stopped_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly vonageConnectionId?: Maybe<String_Comparison_Exp>;
   readonly vonageSessionId?: Maybe<String_Comparison_Exp>;
@@ -38226,6 +38228,7 @@ export type Video_VonageParticipantStream_Insert_Input = {
   readonly id?: Maybe<Scalars['uuid']>;
   readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly stopped_at?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly vonageConnectionId?: Maybe<Scalars['String']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
@@ -38240,6 +38243,7 @@ export type Video_VonageParticipantStream_Max_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly stopped_at?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly vonageConnectionId?: Maybe<Scalars['String']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
@@ -38253,6 +38257,7 @@ export type Video_VonageParticipantStream_Max_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly registrantId?: Maybe<Order_By>;
+  readonly stopped_at?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly vonageConnectionId?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
@@ -38267,6 +38272,7 @@ export type Video_VonageParticipantStream_Min_Fields = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly stopped_at?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly vonageConnectionId?: Maybe<Scalars['String']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
@@ -38280,6 +38286,7 @@ export type Video_VonageParticipantStream_Min_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly registrantId?: Maybe<Order_By>;
+  readonly stopped_at?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly vonageConnectionId?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
@@ -38312,6 +38319,7 @@ export type Video_VonageParticipantStream_Order_By = {
   readonly id?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
   readonly registrantId?: Maybe<Order_By>;
+  readonly stopped_at?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly vonageConnectionId?: Maybe<Order_By>;
   readonly vonageSessionId?: Maybe<Order_By>;
@@ -38335,6 +38343,8 @@ export enum Video_VonageParticipantStream_Select_Column {
   /** column name */
   RegistrantId = 'registrantId',
   /** column name */
+  StoppedAt = 'stopped_at',
+  /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
   VonageConnectionId = 'vonageConnectionId',
@@ -38352,6 +38362,7 @@ export type Video_VonageParticipantStream_Set_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly stopped_at?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly vonageConnectionId?: Maybe<Scalars['String']>;
   readonly vonageSessionId?: Maybe<Scalars['String']>;
@@ -38369,6 +38380,8 @@ export enum Video_VonageParticipantStream_Update_Column {
   Id = 'id',
   /** column name */
   RegistrantId = 'registrantId',
+  /** column name */
+  StoppedAt = 'stopped_at',
   /** column name */
   UpdatedAt = 'updatedAt',
   /** column name */
@@ -38773,9 +38786,7 @@ export type Video_VonageSessionLayout_Bool_Exp = {
 /** unique or primary key constraints on table "video.VonageSessionLayout" */
 export enum Video_VonageSessionLayout_Constraint {
   /** unique or primary key constraint */
-  VonageSessionLayoutPkey = 'VonageSessionLayout_pkey',
-  /** unique or primary key constraint */
-  VonageSessionLayoutVonageSessionIdKey = 'VonageSessionLayout_vonageSessionId_key'
+  VonageSessionLayoutPkey = 'VonageSessionLayout_pkey'
 }
 
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
@@ -39549,15 +39560,6 @@ export type ImmediateSwitch_CreateMutationVariables = Exact<{
 
 export type ImmediateSwitch_CreateMutation = { readonly __typename?: 'mutation_root', readonly insert_video_ImmediateSwitch_one?: Maybe<{ readonly __typename?: 'video_ImmediateSwitch', readonly id: any }> };
 
-export type InsertVonageSessionLayoutMutationVariables = Exact<{
-  vonageSessionId: Scalars['String'];
-  conferenceId: Scalars['uuid'];
-  layoutData: Scalars['jsonb'];
-}>;
-
-
-export type InsertVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly insert_video_VonageSessionLayout_one?: Maybe<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any }> };
-
 export type LiveIndicator_GetLatestQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
@@ -39629,6 +39631,15 @@ export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Ex
 
 
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any> }> };
+
+export type InsertVonageSessionLayoutMutationVariables = Exact<{
+  vonageSessionId: Scalars['String'];
+  conferenceId: Scalars['uuid'];
+  layoutData: Scalars['jsonb'];
+}>;
+
+
+export type InsertVonageSessionLayoutMutation = { readonly __typename?: 'mutation_root', readonly insert_video_VonageSessionLayout?: Maybe<{ readonly __typename?: 'video_VonageSessionLayout_mutation_response', readonly affected_rows: number }> };
 
 export type DeleteEventParticipantMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -44919,7 +44930,7 @@ export type RoomSponsorContent_GetElementsQueryResult = Apollo.QueryResult<RoomS
 export const GetVonageParticipantStreamsDocument = gql`
     subscription GetVonageParticipantStreams($eventId: uuid!) {
   video_VonageParticipantStream(
-    where: {eventVonageSession: {eventId: {_eq: $eventId}}}
+    where: {eventVonageSession: {eventId: {_eq: $eventId}}, stopped_at: {_is_null: true}}
   ) {
     ...VonageParticipantStreamDetails
   }
@@ -45046,43 +45057,6 @@ export function useImmediateSwitch_CreateMutation(baseOptions?: Apollo.MutationH
 export type ImmediateSwitch_CreateMutationHookResult = ReturnType<typeof useImmediateSwitch_CreateMutation>;
 export type ImmediateSwitch_CreateMutationResult = Apollo.MutationResult<ImmediateSwitch_CreateMutation>;
 export type ImmediateSwitch_CreateMutationOptions = Apollo.BaseMutationOptions<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>;
-export const InsertVonageSessionLayoutDocument = gql`
-    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
-  insert_video_VonageSessionLayout_one(
-    object: {vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData}
-  ) {
-    id
-  }
-}
-    `;
-export type InsertVonageSessionLayoutMutationFn = Apollo.MutationFunction<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
-
-/**
- * __useInsertVonageSessionLayoutMutation__
- *
- * To run a mutation, you first call `useInsertVonageSessionLayoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertVonageSessionLayoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertVonageSessionLayoutMutation, { data, loading, error }] = useInsertVonageSessionLayoutMutation({
- *   variables: {
- *      vonageSessionId: // value for 'vonageSessionId'
- *      conferenceId: // value for 'conferenceId'
- *      layoutData: // value for 'layoutData'
- *   },
- * });
- */
-export function useInsertVonageSessionLayoutMutation(baseOptions?: Apollo.MutationHookOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>(InsertVonageSessionLayoutDocument, options);
-      }
-export type InsertVonageSessionLayoutMutationHookResult = ReturnType<typeof useInsertVonageSessionLayoutMutation>;
-export type InsertVonageSessionLayoutMutationResult = Apollo.MutationResult<InsertVonageSessionLayoutMutation>;
-export type InsertVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
 export const LiveIndicator_GetLatestDocument = gql`
     query LiveIndicator_GetLatest($eventId: uuid!) {
   video_ImmediateSwitch(
@@ -45458,6 +45432,43 @@ export function useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery(ba
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery>;
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutLazyQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery>;
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryResult = Apollo.QueryResult<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>;
+export const InsertVonageSessionLayoutDocument = gql`
+    mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
+  insert_video_VonageSessionLayout(
+    objects: {vonageSessionId: $vonageSessionId, conferenceId: $conferenceId, layoutData: $layoutData}
+  ) {
+    affected_rows
+  }
+}
+    `;
+export type InsertVonageSessionLayoutMutationFn = Apollo.MutationFunction<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
+
+/**
+ * __useInsertVonageSessionLayoutMutation__
+ *
+ * To run a mutation, you first call `useInsertVonageSessionLayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertVonageSessionLayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertVonageSessionLayoutMutation, { data, loading, error }] = useInsertVonageSessionLayoutMutation({
+ *   variables: {
+ *      vonageSessionId: // value for 'vonageSessionId'
+ *      conferenceId: // value for 'conferenceId'
+ *      layoutData: // value for 'layoutData'
+ *   },
+ * });
+ */
+export function useInsertVonageSessionLayoutMutation(baseOptions?: Apollo.MutationHookOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>(InsertVonageSessionLayoutDocument, options);
+      }
+export type InsertVonageSessionLayoutMutationHookResult = ReturnType<typeof useInsertVonageSessionLayoutMutation>;
+export type InsertVonageSessionLayoutMutationResult = Apollo.MutationResult<InsertVonageSessionLayoutMutation>;
+export type InsertVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
 export const DeleteEventParticipantDocument = gql`
     mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
   delete_schedule_EventProgramPerson(

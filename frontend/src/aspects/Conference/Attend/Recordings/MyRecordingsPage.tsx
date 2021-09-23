@@ -109,7 +109,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                 <chakra.span mr="auto">
                                                     {save.recording.room?.name ?? "Unknown room"}
                                                 </chakra.span>
-                                                <chakra.span>
+                                                <chakra.span ml={4}>
                                                     {new Date(save.recording.startedAt).toLocaleString(undefined, {
                                                         day: "numeric",
                                                         month: "short",

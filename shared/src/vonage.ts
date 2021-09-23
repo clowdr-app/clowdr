@@ -8,6 +8,16 @@ export type VonageSessionLayoutData =
     | Fitted4Layout
     | DualScreenLayout;
 
+export type ParticipantPlacement =
+    | {
+          streamId: string;
+      }
+    | {
+          connectionId: string;
+      }
+    | null
+    | undefined;
+
 export enum VonageSessionLayoutType {
     BestFit = "BEST_FIT",
     Single = "SINGLE",
@@ -29,23 +39,23 @@ export interface BestFitLayout {
 export interface SingleLayout {
     type: VonageSessionLayoutType.Single;
     /** Only stream */
-    stream1Id: string;
+    position1?: ParticipantPlacement;
 }
 
 export interface PairLayout {
     type: VonageSessionLayoutType.Pair;
     /** Left stream */
-    stream1Id: string;
+    position1?: ParticipantPlacement;
     /** Right stream */
-    stream2Id?: string | null;
+    position2?: ParticipantPlacement;
 }
 
 export interface PictureInPictureLayout {
     type: VonageSessionLayoutType.PictureInPicture;
     /** Large, focused area stream */
-    stream1Id: string;
+    position1?: ParticipantPlacement;
     /** Small, corner stream */
-    stream2Id: string;
+    position2?: ParticipantPlacement;
 }
 
 export interface Fitted4Layout {
@@ -53,33 +63,33 @@ export interface Fitted4Layout {
     /** Where to place the small streams */
     side: "left" | "bottom";
     /** Large, focused area stream */
-    stream1Id: string;
+    position1?: ParticipantPlacement;
     /** Small, side area stream 1 */
-    stream2Id?: string | null;
+    position2?: ParticipantPlacement;
     /** Small, side area stream 2 */
-    stream3Id?: string | null;
+    position3?: ParticipantPlacement;
     /** Small, side area stream 3 */
-    stream4Id?: string | null;
+    position4?: ParticipantPlacement;
     /** Small, side area stream 4 */
-    stream5Id?: string | null;
+    position5?: ParticipantPlacement;
 }
 
 export interface DualScreenLayout {
     type: VonageSessionLayoutType.DualScreen;
     splitDirection: "horizontal" | "vertical";
-    narrowStream: 1 | 2 | null;
+    narrowStream?: 1 | 2 | null;
     /** Large, focused area stream (Left / Top) */
-    stream1Id: string;
+    position1?: ParticipantPlacement;
     /** Large, focused area stream (Right / Bottom) */
-    stream2Id: string;
+    position2?: ParticipantPlacement;
     /** Small, side area stream 1 */
-    stream3Id?: string | null;
+    position3?: ParticipantPlacement;
     /** Small, side area stream 2 */
-    stream4Id?: string | null;
+    position4?: ParticipantPlacement;
     /** Small, side area stream 3 */
-    stream5Id?: string | null;
+    position5?: ParticipantPlacement;
     /** Small, side area stream 4 */
-    stream6Id?: string | null;
+    position6?: ParticipantPlacement;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

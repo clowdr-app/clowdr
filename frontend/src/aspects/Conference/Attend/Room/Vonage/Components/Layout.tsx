@@ -11,8 +11,9 @@ import {
     Heading,
     SimpleGrid,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as portals from "react-reverse-portal";
+import usePolling from "../../../../../Generic/usePolling";
 import useResizeObserver from "../../../../../Generic/useResizeObserver";
 import { useVonageLayout } from "../VonageLayoutProvider";
 import CameraPlaceholderImage from "./CameraPlaceholder";
@@ -24,10 +25,18 @@ export default function Layout({
     viewports,
     isRecordingMode,
     isBackstage,
+    streamActivities,
 }: {
     viewports: Viewport[];
     isRecordingMode: boolean;
     isBackstage: boolean;
+    streamActivities: Map<
+        string,
+        React.MutableRefObject<{
+            timestamp: number;
+            talking: boolean;
+        } | null>
+    >;
 }): JSX.Element {
     const layout = useVonageLayout();
     const visualLayout = useVisualLayout(layout.layout, isRecordingMode, viewports);
@@ -57,7 +66,6 @@ export default function Layout({
                     return undefined;
                 }
 
-                // TODO: Non-editable layout
                 return (
                     <AspectRatio as={Flex} justifyContent="center" w="100%" ratio={16 / 9}>
                         <Box>
@@ -79,7 +87,12 @@ export default function Layout({
                                     m={1}
                                 >
                                     <Box>
-                                        <portals.OutPortal node={viewport.component} />
+                                        <portals.OutPortal
+                                            node={viewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     </Box>
                                 </AspectRatio>
                             ))}
@@ -98,7 +111,12 @@ export default function Layout({
                         pos="absolute"
                         key={viewport.streamId ?? viewport.connectionId}
                     >
-                        <portals.OutPortal node={viewport.component} />
+                        <portals.OutPortal
+                            node={viewport.component}
+                            enableVideo={true}
+                            resolution="high"
+                            framerate={30}
+                        />
                     </Box>
                 ));
 
@@ -115,7 +133,12 @@ export default function Layout({
                             <Box>
                                 <Box w="100%" h="80%" bgColor="gray.500" top={0} left={0} pos="absolute">
                                     {visualLayout.screenshareViewport ? (
-                                        <portals.OutPortal node={visualLayout.screenshareViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.screenshareViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                 </Box>
                                 {sideBoxes}
@@ -136,7 +159,12 @@ export default function Layout({
                         key={viewport.streamId ?? viewport.connectionId}
                     >
                         <Box>
-                            <portals.OutPortal node={viewport.component} />
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
                         </Box>
                     </AspectRatio>
                 ));
@@ -154,7 +182,12 @@ export default function Layout({
                             <Box>
                                 <Box w="85%" h="100%" bgColor="gray.500" top={0} left="15%" pos="absolute">
                                     {visualLayout.screenshareViewport ? (
-                                        <portals.OutPortal node={visualLayout.screenshareViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.screenshareViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                 </Box>
                                 {sideBoxes}
@@ -176,7 +209,12 @@ export default function Layout({
                         >
                             <Box h="100%" w="100%" bgColor="gray.500">
                                 {visualLayout.viewport ? (
-                                    <portals.OutPortal node={visualLayout.viewport.component} />
+                                    <portals.OutPortal
+                                        node={visualLayout.viewport.component}
+                                        enableVideo={true}
+                                        resolution="high"
+                                        framerate={30}
+                                    />
                                 ) : undefined}
                                 <StreamChooser
                                     positionKey="position1"
@@ -202,7 +240,12 @@ export default function Layout({
                             <Flex w="100%" h="100%">
                                 <Box w="50%" h="100%" bgColor="gray.500" mr="1px" pos="relative">
                                     {visualLayout.leftViewport ? (
-                                        <portals.OutPortal node={visualLayout.leftViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.leftViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -212,7 +255,12 @@ export default function Layout({
                                 </Box>
                                 <Box w="50%" h="100%" bgColor="gray.500" ml="1px" pos="relative">
                                     {visualLayout.rightViewport ? (
-                                        <portals.OutPortal node={visualLayout.rightViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.rightViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position2"
@@ -239,7 +287,12 @@ export default function Layout({
                             <Box>
                                 <Box w="100%" h="100%" bgColor="gray.500" top={0} left={0} pos="absolute" zIndex={50}>
                                     {visualLayout.fullscreenViewport ? (
-                                        <portals.OutPortal node={visualLayout.fullscreenViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.fullscreenViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -258,7 +311,12 @@ export default function Layout({
                                 >
                                     <Box>
                                         {visualLayout.insetViewport ? (
-                                            <portals.OutPortal node={visualLayout.insetViewport.component} />
+                                            <portals.OutPortal
+                                                node={visualLayout.insetViewport.component}
+                                                enableVideo={true}
+                                                resolution="high"
+                                                framerate={30}
+                                            />
                                         ) : undefined}
                                         <StreamChooser
                                             positionKey="position2"
@@ -284,7 +342,12 @@ export default function Layout({
                         key={viewport.streamId ?? viewport.connectionId}
                     >
                         <Box>
-                            <portals.OutPortal node={viewport.component} />
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
                             <StreamChooser
                                 positionKey={"position" + (idx + 2)}
                                 centered={false}
@@ -330,7 +393,12 @@ export default function Layout({
                             <Box>
                                 <Box w="86%" h="100%" bgColor="gray.500" top={0} left="14%" pos="absolute">
                                     {visualLayout.largeAreaViewport ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -356,7 +424,12 @@ export default function Layout({
                         key={viewport.streamId ?? viewport.connectionId}
                     >
                         <Box>
-                            <portals.OutPortal node={viewport.component} />
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
                             <StreamChooser
                                 positionKey={"position" + (idx + 2)}
                                 centered={false}
@@ -402,7 +475,12 @@ export default function Layout({
                             <Box>
                                 <Box w="100%" h="75%" bgColor="gray.600" top={0} left={0} pos="absolute">
                                     {visualLayout.largeAreaViewport ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -428,7 +506,12 @@ export default function Layout({
                         key={viewport.streamId ?? viewport.connectionId}
                     >
                         <Box>
-                            <portals.OutPortal node={viewport.component} />
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
                             <StreamChooser
                                 positionKey={"position" + (idx + 3)}
                                 centered={false}
@@ -481,7 +564,12 @@ export default function Layout({
                                     pos="absolute"
                                 >
                                     {visualLayout.largeAreaViewport1 ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport1.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport1.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -498,7 +586,12 @@ export default function Layout({
                                     pos="absolute"
                                 >
                                     {visualLayout.largeAreaViewport2 ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport2.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport2.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position2"
@@ -524,7 +617,12 @@ export default function Layout({
                         key={viewport.streamId ?? viewport.connectionId}
                     >
                         <Box>
-                            <portals.OutPortal node={viewport.component} />
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
                             <StreamChooser
                                 positionKey={"position" + (idx + 3)}
                                 centered={false}
@@ -577,7 +675,12 @@ export default function Layout({
                                     pos="absolute"
                                 >
                                     {visualLayout.largeAreaViewport1 ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport1.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport1.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position1"
@@ -594,7 +697,12 @@ export default function Layout({
                                     pos="absolute"
                                 >
                                     {visualLayout.largeAreaViewport2 ? (
-                                        <portals.OutPortal node={visualLayout.largeAreaViewport2.component} />
+                                        <portals.OutPortal
+                                            node={visualLayout.largeAreaViewport2.component}
+                                            enableVideo={true}
+                                            resolution="high"
+                                            framerate={30}
+                                        />
                                     ) : undefined}
                                     <StreamChooser
                                         positionKey="position2"
@@ -635,42 +743,99 @@ export default function Layout({
             }
         }
     }, [containerResizeObserver]);
-    const overflowArea = useMemo(
-        () =>
-            visualLayout.overflowViewports.length > 0 ? (
-                <SimpleGrid columns={overflowAreaColumns} gap={2} mt={2}>
-                    {visualLayout.overflowViewports
-                        .filter((x) => x.type === "screen")
-                        .map((viewport) => (
-                            <GridItem
-                                as={AspectRatio}
-                                ratio={16 / 9}
-                                maxH="calc(90vh - 350px)"
-                                key={viewport.streamId ?? viewport.connectionId}
-                                pos="relative"
-                                width="100%"
-                                colSpan={overflowAreaColumns}
-                            >
-                                <portals.OutPortal node={viewport.component} />
-                            </GridItem>
-                        ))}
-                    {visualLayout.overflowViewports
-                        .filter((x) => x.type === "camera")
-                        .map((viewport) => (
-                            <GridItem
-                                as={AspectRatio}
-                                ratio={1}
-                                key={viewport.streamId ?? viewport.connectionId}
-                                pos="relative"
-                                width="100%"
-                            >
-                                <portals.OutPortal node={viewport.component} />
-                            </GridItem>
-                        ))}
-                </SimpleGrid>
-            ) : undefined,
-        [overflowAreaColumns, visualLayout.overflowViewports]
-    );
+
+    const isPresentationLayout = !!mainArea;
+    const [enabledStreamIds, setEnabledStreamIds] = useState<string[]>([]);
+    const computeEnabledStreamIds = useCallback(() => {
+        const cameraStreamIds = visualLayout.overflowViewports
+            .filter((x) => x.type === "camera" && !!x.streamId && !x.isSelf)
+            .map((x) => x.streamId) as string[];
+        const sortedStreamIds = cameraStreamIds.sort((x, y) => {
+            const xIsTalking = streamActivities.get(x)?.current;
+            const yIsTalking = streamActivities.get(y)?.current;
+            if (xIsTalking?.talking) {
+                if (yIsTalking?.talking) {
+                    return yIsTalking.timestamp - xIsTalking.timestamp;
+                } else {
+                    return -1;
+                }
+            } else if (yIsTalking?.talking) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        const limitedStreamIds = sortedStreamIds.slice(0, isPresentationLayout ? 4 : 10);
+        console.log("Restricted streams", limitedStreamIds);
+        setEnabledStreamIds((oldEnabledStreamIds) =>
+            oldEnabledStreamIds.length !== limitedStreamIds.length ||
+            limitedStreamIds.some((x) => !oldEnabledStreamIds.includes(x)) ||
+            oldEnabledStreamIds.some((x) => !limitedStreamIds.includes(x))
+                ? limitedStreamIds
+                : oldEnabledStreamIds
+        );
+    }, [streamActivities, visualLayout.overflowViewports, isPresentationLayout]);
+    usePolling(computeEnabledStreamIds, 250);
+    const overflowArea = useMemo(() => {
+        const cameraFeeds = visualLayout.overflowViewports.filter((x) => x.type === "camera");
+        return visualLayout.overflowViewports.length > 0 ? (
+            <SimpleGrid columns={overflowAreaColumns} gap={2} mt={2}>
+                {visualLayout.overflowViewports
+                    .filter((x) => x.type === "screen")
+                    .map((viewport) => (
+                        <GridItem
+                            as={AspectRatio}
+                            ratio={16 / 9}
+                            maxH="calc(90vh - 350px)"
+                            key={viewport.streamId ?? viewport.connectionId}
+                            pos="relative"
+                            width="100%"
+                            colSpan={overflowAreaColumns}
+                        >
+                            <portals.OutPortal
+                                node={viewport.component}
+                                enableVideo={true}
+                                resolution="high"
+                                framerate={30}
+                            />
+                        </GridItem>
+                    ))}
+                {cameraFeeds.map((viewport) => (
+                    <GridItem
+                        as={AspectRatio}
+                        ratio={1}
+                        key={viewport.streamId ?? viewport.connectionId}
+                        pos="relative"
+                        width="100%"
+                    >
+                        <portals.OutPortal
+                            node={viewport.component}
+                            enableVideo={
+                                !!viewport.streamId &&
+                                (viewport.isSelf ||
+                                    cameraFeeds.length <= 1 ||
+                                    enabledStreamIds.includes(viewport.streamId))
+                            }
+                            resolution={
+                                isPresentationLayout || enabledStreamIds.length > 10
+                                    ? "low"
+                                    : enabledStreamIds.length <= 5
+                                    ? "high"
+                                    : "normal"
+                            }
+                            framerate={
+                                isPresentationLayout || enabledStreamIds.length > 10
+                                    ? 7
+                                    : enabledStreamIds.length <= 5
+                                    ? 30
+                                    : 15
+                            }
+                        />
+                    </GridItem>
+                ))}
+            </SimpleGrid>
+        ) : undefined;
+    }, [overflowAreaColumns, visualLayout.overflowViewports, isPresentationLayout, enabledStreamIds]);
 
     return (
         <Box w="100%" h="auto" display="block" ref={containerRef} overflow="hidden">

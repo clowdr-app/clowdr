@@ -27,6 +27,7 @@ export default function useVisualLayout(
                         const priorityViewports = R.sortWith(
                             [
                                 (x, y) => {
+                                    // Based on the Vonage stream prioritization rules
                                     if (screenshareViewport) {
                                         const xIsPreferred =
                                             (screenshareViewport.streamId &&

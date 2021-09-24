@@ -67,6 +67,9 @@ export default function MyRecordingsPage(): JSX.Element {
                 <Heading as="h1" fontSize="4xl">
                     My Recordings
                 </Heading>
+                <Text>
+                    This page lists any recordings of video-chat events or social rooms that you have participated in.
+                </Text>
                 {response.loading && !response.data ? (
                     <HStack spacing={2}>
                         <Box>

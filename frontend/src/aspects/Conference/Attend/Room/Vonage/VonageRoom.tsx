@@ -1,8 +1,6 @@
 import { gql, useApolloClient } from "@apollo/client";
-import { Box, Flex, useBreakpointValue, useToast } from "@chakra-ui/react";
-import * as R from "ramda";
+import { Box, Flex } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFullScreenHandle } from "react-full-screen";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { validate } from "uuid";
@@ -15,22 +13,18 @@ import {
 import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
-import {
-    useVonageRoom,
-    VonageRoomState,
-    VonageRoomStateActionType,
-    VonageRoomStateProvider,
-} from "../../../../Vonage/useVonageRoom";
+import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
 import { RegistrantIdSpec, useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
 import type { DevicesProps } from "../VideoChat/PermissionInstructions";
-import CameraContainer from "./Components/CameraContainer";
 import { CameraViewport } from "./Components/CameraViewport";
 import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
+import SelfCameraComponent from "./Components/SelfCamera";
+import SelfScreenComponent from "./Components/SelfScreen";
 import { useVonageComputedState } from "./useVonageComputedState";
-import { StateType, VonageGlobalState } from "./VonageGlobalState";
+import { StateType } from "./VonageGlobalState";
 import { AvailableStream, useVonageLayout, VonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
@@ -392,22 +386,6 @@ function VonageRoomInner({
         registrant.displayName,
     ]);
 
-    const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
-        base: "low",
-        lg: "normal",
-    });
-    const receivingScreenShareCount = useMemo(() => streams.filter((s) => s.videoType === "screen").length, [streams]);
-    const allScreenShareCount = receivingScreenShareCount + (screen ? 1 : 0);
-    // THIS NEEDS REVISING - THE USER SHOULD HAVE CONTROL OVER THE MAXIMUM NUMBER OF VIDEO STREAMS
-    const [maxVideoStreams, setMaxVideoStreams] = useState<number>(allScreenShareCount ? 4 : 10);
-    const [cameraResolution, setCameraResolution] = useState<"low" | "normal" | "high">(
-        !isBackstageRoom && (allScreenShareCount || connections.length >= maxVideoStreams)
-            ? "low"
-            : resolutionBP ?? "normal"
-    );
-    // WE SHOULD ENABLE HIGH FRAMERATE FOR PRESENTERS IN A VIDEO-CHAT EVENT
-    const [cameraFramerate, setCameraFramerate] = useState<7 | 15 | 30>(isBackstageRoom ? 30 : 15);
-
     // Camera / microphone enable/disable control
     useEffect(() => {
         if (stop) {
@@ -461,197 +439,67 @@ function VonageRoomInner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stop]);
 
-    //////// THIS NEEDS A TOTAL RETHINK SO THAT ALL SUBSCRIBED STREAMS ARE
-    //////// POLLED AT THE SAME TIME AND DON'T GENERATE A BAZILLION OBJECTS
-    //////// EVERY TIME ONE THING CHANGES.
-    const [streamLastActive, setStreamLastActive] = useState<{ [streamId: string]: number }>({});
-    const setStreamActivity = useCallback((streamId: string, activity: boolean) => {
-        if (activity) {
-            setStreamLastActive((streamLastActiveData) => ({
-                ...streamLastActiveData,
-                [streamId]: Date.now(),
-            }));
-        }
-    }, []);
-
-    // THIS PROBABLY ISN'T NECESSARY - WE SHOULD GENERATE A DESCRIPTION OF EACH
-    // SUBSCRIBED STREAM TYPE AND JUST PASS THAT WITH THE ELEMENT INTO THE
-    // LAYOUT MAPPER.
-    const othersCameraStreams = useMemo(
-        () => streams.filter((s) => s.videoType === "camera" || !s.videoType),
-        [streams]
-    );
+    const streamActivities = useMemo<
+        Map<
+            string,
+            React.MutableRefObject<{
+                timestamp: number;
+                talking: boolean;
+            } | null>
+        >
+    >(() => new Map(), []);
 
     //////////////////// START ////////////////////
     //// ALL OF THIS NEEDS TO BE MOVED INTO AN INNER `STREAM-ELEMENT <-> VISUAL POSITION` MAPPING COMPONENT
 
-    // TODO: The activity system is currently broken
-    // TODO: Provide the layout system a way to force-enable videos depending on where they are in the layout
-    const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
-    useEffect(() => {
-        if (othersCameraStreams.length <= maxVideoStreams) {
-            setEnableStreams(null);
-        } else {
-            const streamTimestamps = R.toPairs<number>(streamLastActive);
-            // console.log(`${new Date().toISOString()}: Proceeding with computing enabled streams`, streamTimestamps);
-            const activeStreams = R.sortWith(
-                [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-                streamTimestamps
-            )
-                .map((pair) => pair[0])
-                .filter((streamId) =>
-                    othersCameraStreams.find((stream) => stream.streamId === streamId && stream.hasVideo)
-                );
-            const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
-
-            const remainingSlots = maxVideoStreams - selectedActiveStreams.length;
-            const topUpStreams = R.sortWith(
-                [R.ascend((s) => s.hasVideo), R.ascend((s) => s.connection.creationTime)],
-                othersCameraStreams.filter((s) => !selectedActiveStreams.includes(s.streamId))
-            ).map((s) => s.streamId);
-            const selectedTopUpStreams = topUpStreams.slice(0, Math.min(topUpStreams.length, remainingSlots));
-            selectedActiveStreams.push(...selectedTopUpStreams);
-
-            setEnableStreams((oldEnabledStreams) => {
-                if (!oldEnabledStreams) {
-                    // console.log("Active speakers changed (1)");
-                    return selectedActiveStreams;
-                }
-
-                if (
-                    selectedActiveStreams.length !== oldEnabledStreams.length ||
-                    oldEnabledStreams.some((x) => !selectedActiveStreams.includes(x)) ||
-                    selectedActiveStreams.some((x) => !oldEnabledStreams.includes(x))
-                ) {
-                    // console.log("Active speakers changed (2)");
-                    return selectedActiveStreams;
-                } else {
-                    return oldEnabledStreams;
-                }
-            });
-        }
-    }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, allScreenShareCount, streamLastActive]);
-
-    // TODO
-    // const [sortedStreams, setSortedStreams] = useState<OT.Stream[]>([]);
-    // const sortCameraStreamsWhileScreenSharing = useCallback(
-    //     (cameraStreams: OT.Stream[], enableStreams: string[] | null, maxVideoStreams: number): OT.Stream[] => {
-    //         if (enableStreams) {
-    //             // The number of videos exceeds the maximum, so we pull the active ones to the top
-    //             const screenConnections = streams
-    //                 .filter((stream) => stream.videoType === "screen")
-    //                 .map((x) => x.connection.connectionId);
-    //             const screenCameraStreams = R.sortWith(
-    //                 [R.ascend((s) => s.connection.creationTime)],
-    //                 cameraStreams.filter((x) => screenConnections.includes(x.connection.connectionId))
+    // // TODO: The activity system is currently broken
+    // // TODO: Provide the layout system a way to force-enable videos depending on where they are in the layout
+    // const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
+    // useEffect(() => {
+    //     if (othersCameraStreams.length <= maxVideoStreams) {
+    //         setEnableStreams(null);
+    //     } else {
+    //         const streamTimestamps = R.toPairs<number>(streamLastActive);
+    //         // console.log(`${new Date().toISOString()}: Proceeding with computing enabled streams`, streamTimestamps);
+    //         const activeStreams = R.sortWith(
+    //             [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
+    //             streamTimestamps
+    //         )
+    //             .map((pair) => pair[0])
+    //             .filter((streamId) =>
+    //                 othersCameraStreams.find((stream) => stream.streamId === streamId && stream.hasVideo)
     //             );
-    //             const screenCameraStreamIds = screenCameraStreams.map((x) => x.streamId);
-    //             const scsCount = screenCameraStreams.length;
+    //         const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
 
-    //             const currentStreamIds = cameraStreams.map((x) => x.streamId);
-    //             const existingActiveStreams = sortedStreams
-    //                 .slice(0, maxVideoStreams)
-    //                 .filter(
-    //                     (x) =>
-    //                         currentStreamIds.includes(x.streamId) &&
-    //                         enableStreams?.includes(x.streamId) &&
-    //                         !screenCameraStreamIds.includes(x.streamId)
-    //                 );
-    //             const existingActiveStreamIds = existingActiveStreams.map((x) => x.streamId);
-    //             const easCount = existingActiveStreams.length;
-    //             const newlyActiveStreams = cameraStreams.filter(
-    //                 (x) =>
-    //                     enableStreams?.includes(x.streamId) &&
-    //                     !existingActiveStreamIds.includes(x.streamId) &&
-    //                     !screenCameraStreamIds.includes(x.streamId)
-    //             );
+    //         const remainingSlots = maxVideoStreams - selectedActiveStreams.length;
+    //         const topUpStreams = R.sortWith(
+    //             [R.ascend((s) => s.hasVideo), R.ascend((s) => s.connection.creationTime)],
+    //             othersCameraStreams.filter((s) => !selectedActiveStreams.includes(s.streamId))
+    //         ).map((s) => s.streamId);
+    //         const selectedTopUpStreams = topUpStreams.slice(0, Math.min(topUpStreams.length, remainingSlots));
+    //         selectedActiveStreams.push(...selectedTopUpStreams);
 
-    //             const sortedNewlyActiveStreams = R.sortWith(
-    //                 [R.descend((x) => streamLastActive[x.streamId])],
-    //                 newlyActiveStreams
-    //             );
-    //             const nasCount = sortedNewlyActiveStreams.length;
-    //             const rest = R.sortWith(
-    //                 [R.ascend((s) => s.connection.creationTime)],
-    //                 cameraStreams.filter(
-    //                     (x) => !enableStreams?.includes(x.streamId) && !screenCameraStreamIds.includes(x.streamId)
-    //                 )
-    //             );
-    //             const restCount = rest.length;
-    //             console.log(`scs: ${scsCount}, eas: ${easCount}, nas: ${nasCount}, rest: ${restCount}`);
-    //             return screenCameraStreams.concat(sortedNewlyActiveStreams).concat(existingActiveStreams).concat(rest);
-    //         } else {
-    //             // The number of streams is within the maximum, so we put the sharer's camera first, then sort by creation
-    //             const screenConnections = streams
-    //                 .filter((stream) => stream.videoType === "screen")
-    //                 .map((x) => x.connection.connectionId);
-    //             const screenCameraStreams = R.sortWith(
-    //                 [R.ascend((s) => s.connection.creationTime)],
-    //                 cameraStreams.filter((x) => screenConnections.includes(x.connection.connectionId))
-    //             );
-    //             const rest = R.sortWith(
-    //                 [R.ascend((s) => s.connection.creationTime)],
-    //                 cameraStreams.filter((x) => !screenConnections.includes(x.connection.connectionId))
-    //             );
-    //             return screenCameraStreams.concat(rest);
-    //         }
-    //     },
-    //     [sortedStreams, streamLastActive, streams]
-    // );
+    //         setEnableStreams((oldEnabledStreams) => {
+    //             if (!oldEnabledStreams) {
+    //                 // console.log("Active speakers changed (1)");
+    //                 return selectedActiveStreams;
+    //             }
+
+    //             if (
+    //                 selectedActiveStreams.length !== oldEnabledStreams.length ||
+    //                 oldEnabledStreams.some((x) => !selectedActiveStreams.includes(x)) ||
+    //                 selectedActiveStreams.some((x) => !oldEnabledStreams.includes(x))
+    //             ) {
+    //                 // console.log("Active speakers changed (2)");
+    //                 return selectedActiveStreams;
+    //             } else {
+    //                 return oldEnabledStreams;
+    //             }
+    //         });
+    //     }
+    // }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, allScreenShareCount, streamLastActive]);
 
     ////////////////////  END  ////////////////////
-
-    // PRESUMABLY THIS FULL SCREEN STUFF SHOULD BE HANDLED WITHIN THE LAYOUT SYSTEM
-
-    const fullScreenHandle = useFullScreenHandle();
-    useEffect(() => {
-        if (!receivingScreenShareCount && fullScreenHandle.active) {
-            fullScreenHandle.exit().catch((e) => console.error("Failed to exit full screen", e));
-        }
-    }, [fullScreenHandle, receivingScreenShareCount]);
-
-    /* OKAY, SO ALL THIS ELEMENT GENERATOR CODE NEEDS RESTRUCTURING TO CREATE
-     * A SIMPLE LIST OF ELEMENTS AND SOME METADATA:
-     *      - Stream Id             (string)
-     *      - Associated Stream Ids (string[] - screenshares / cameras by the same participant)
-     *      - Video Type            (screen, camera)
-     *      - Is Self               (boolean)
-     *      - Joined At Time        (milliseconds)
-     *
-     *
-     * AND WE THEN COMBINE THAT WITH THE `layoutData` TO GENERATE THE FINAL
-     * LAYOUT.
-     *      - In the case of backstage layouts, we create a defined/headed
-     *        area for streams not being included in the broadcast.
-     *      - In the case of backstage layouts, if best-fit mode is chosen,
-     *        we attempt to replicate Vonage's rules.
-     *      - In the case of non-backstage layouts, if best-fit mode is chosen,
-     *        we use our own screenshares-first, then most-recent-speaker logic.
-     *      - Regardless, the overflow area uses the most-recent-speaker logic
-     *        to select visible streams.
-     *      - The user's own stream box should always be visible, either within
-     *        the main layout area or the first box in the overflow area.
-     *          - If not in backstage mode or in overflow area, possibly show an
-     *            indicator that they may not be visible if they haven't spoken
-     *            in a while.
-     *
-     *
-     * WE THEN NEED TO LAYER ON TWO LAYOUT CONTROLS:
-     *      1. The ability to choose the base layout type
-     *              - When choosing a layout, we should make it easy to tell
-     *                what that layout will be - possibly with little pictures.
-     *              - When switching base layout type, we use the stream1-N
-     *                names to re-assign streams to slots as appropriate.
-     *
-     *                Ideally, we should retain assignments for streams that
-     *                don't fit a slot in the selected layout until the user
-     *                saves the layout (or cancels).
-     *
-     *      2. If applicable, the ability to drag and drop streams into the
-     *         layout zones.
-     *              - If insufficient zones are filled, then when saving the
-     *                layout, we compute a nearest-approximation.
-     */
 
     const screenPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
     const cameraPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
@@ -718,6 +566,12 @@ function VonageRoomInner({
                 let portalNode = streamPortalNodesResult.get(stream.streamId);
                 if (!portalNode) {
                     const node = portals.createHtmlPortalNode();
+                    const activityRef = React.createRef<{
+                        timestamp: number;
+                        talking: boolean;
+                    } | null>();
+                    streamActivities.set(stream.streamId, activityRef);
+
                     portalNode = {
                         node,
                         element: (
@@ -725,14 +579,7 @@ function VonageRoomInner({
                                 <CameraViewport
                                     stream={stream}
                                     connection={stream.connection}
-                                    onUpdateIsTalking={(isTalking) => setStreamActivity(stream.streamId, isTalking)}
-                                    enableVideo={
-                                        stream.videoType === "screen" ||
-                                        !enableStreams ||
-                                        !!enableStreams.includes(stream.streamId)
-                                    }
-                                    resolution={stream.videoType === "screen" ? "high" : cameraResolution}
-                                    framerate={stream.videoType === "screen" ? 30 : cameraFramerate}
+                                    isTalkingRef={activityRef}
                                 />
                             </portals.InPortal>
                         ),
@@ -805,18 +652,19 @@ function VonageRoomInner({
         return result;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
-        camera?.stream,
-        cameraFramerate,
-        cameraPortalNode,
-        cameraResolution,
-        connections,
-        enableStreams,
-        screen?.stream,
-        screenPortalNode,
-        setStreamActivity,
-        streams,
-        userId,
+        // These are excluded because they cause an infinite loop
+        // that isn't necessary:
+        //      streamPortalNodes,
+        //      connectionPortalNodes,
         vonage.state,
+        screen?.stream,
+        camera?.stream,
+        cameraPortalNode,
+        screenPortalNode,
+        streams,
+        streamActivities,
+        connections,
+        userId,
     ]);
 
     return (
@@ -843,6 +691,7 @@ function VonageRoomInner({
                         viewports={viewports}
                         isRecordingMode={isBackstageRoom || isRecordingActive}
                         isBackstage={isBackstageRoom}
+                        streamActivities={streamActivities}
                     />
                 </Box>
             ) : undefined}
@@ -867,112 +716,5 @@ function VonageRoomInner({
                 />
             </portals.InPortal>
         </Box>
-    );
-}
-
-function SelfCameraComponent({
-    connected,
-    state,
-    vonage,
-    registrantId,
-    isBackstageRoom,
-}: {
-    connected: boolean;
-    state: VonageRoomState;
-    vonage: VonageGlobalState;
-    registrantId: string;
-    isBackstageRoom: boolean;
-}): JSX.Element {
-    const toast = useToast();
-
-    const cameraPublishContainerRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        async function fn() {
-            if (connected) {
-                try {
-                    await vonage.publishCamera(
-                        cameraPublishContainerRef.current as HTMLElement,
-                        state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                        state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
-                        // TODO: OR IN VIDEO-CHAT: PRESENTERS AND CHAIRS
-                        isBackstageRoom ? "1280x720" : "640x480"
-                    );
-                } catch (err) {
-                    console.error("Failed to publish camera or microphone", {
-                        err,
-                        cameraIntendedEnabled: state.cameraIntendedEnabled,
-                        microphoneIntendedEnabled: state.microphoneIntendedEnabled,
-                    });
-                }
-            }
-        }
-        fn();
-    }, [
-        connected,
-        state.cameraIntendedEnabled,
-        state.microphoneIntendedEnabled,
-        state.preferredCameraId,
-        state.preferredMicrophoneId,
-        toast,
-        vonage,
-        isBackstageRoom,
-    ]);
-
-    return (
-        <CameraViewport registrantId={registrantId} enableVideo={true}>
-            <CameraContainer ref={cameraPublishContainerRef} />
-        </CameraViewport>
-    );
-}
-
-function SelfScreenComponent({
-    connected,
-    state,
-    vonage,
-    registrantId,
-    screen,
-}: {
-    connected: boolean;
-    state: VonageRoomState;
-    vonage: VonageGlobalState;
-    registrantId: string;
-    screen: OT.Publisher | null;
-}): JSX.Element {
-    const toast = useToast();
-
-    const screenPublishContainerRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        async function fn() {
-            if (connected) {
-                if (state.screenShareIntendedEnabled && !screen) {
-                    try {
-                        await vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
-                    } catch (e) {
-                        console.error("Failed to publish screen", e);
-                        toast({
-                            status: "error",
-                            title: "Failed to share screen",
-                        });
-                    }
-                } else if (!state.screenShareIntendedEnabled && screen) {
-                    try {
-                        await vonage.unpublishScreen();
-                    } catch (e) {
-                        console.error("Failed to unpublish screen", e);
-                        toast({
-                            status: "error",
-                            title: "Failed to unshare screen",
-                        });
-                    }
-                }
-            }
-        }
-        fn();
-    }, [connected, state.screenShareIntendedEnabled, screen, toast, vonage]);
-
-    return (
-        <CameraViewport registrantId={registrantId} enableVideo={true}>
-            <CameraContainer ref={screenPublishContainerRef} />
-        </CameraViewport>
     );
 }

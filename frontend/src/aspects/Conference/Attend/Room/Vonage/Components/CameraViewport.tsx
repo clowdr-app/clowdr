@@ -1,10 +1,9 @@
 import { Box, Button } from "@chakra-ui/react";
 import type OT from "@opentok/client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useFullScreenHandle } from "react-full-screen";
 import { validate } from "uuid";
 import type { RegistrantDataFragment } from "../../../../../../generated/graphql";
-import usePolling from "../../../../../Generic/usePolling";
 import FAIcon from "../../../../../Icons/FAIcon";
 import { useRegistrant } from "../../../../RegistrantsContext";
 import { StateType } from "../VonageGlobalState";
@@ -25,9 +24,9 @@ export function CameraViewport({
     registrantId,
     stream,
     connection,
-    onUpdateIsTalking,
-    enableVideo,
-    resolution,
+    isTalkingRef,
+    enableVideo = true,
+    resolution = "normal",
     framerate: inputFramerate,
     children,
 }: {
@@ -37,7 +36,10 @@ export function CameraViewport({
     enableVideo?: boolean;
     resolution?: "low" | "normal" | "high";
     framerate?: 7 | 15 | 30;
-    onUpdateIsTalking?: (isTalking: boolean) => void;
+    isTalkingRef?: React.MutableRefObject<{
+        timestamp: number;
+        talking: boolean;
+    } | null>;
     children?: JSX.Element;
 }): JSX.Element {
     const fullScreen = useFullScreenHandle();
@@ -55,7 +57,7 @@ export function CameraViewport({
     const vonage = useVonageGlobalState();
     const [subscriber, setSubscriber] = useState<OT.Subscriber | null>(null);
 
-    const [streamHasAudio, setStreamHasAudio] = useState<boolean>(false);
+    const [streamHasAudio, setStreamHasAudio] = useState<boolean | undefined>(undefined);
     const [audioBlocked, setAudioBlocked] = useState<boolean>(false);
     const [videoStatus, setVideoStatus] = useState<VideoStatus | undefined>(
         stream ? { streamHasVideo: stream.hasVideo } : undefined
@@ -86,7 +88,7 @@ export function CameraViewport({
     }, [registrant, subscriber]);
 
     useEffect(() => {
-        if (subscriber && enableVideo !== undefined) {
+        if (subscriber) {
             try {
                 subscriber.subscribeToVideo(enableVideo);
             } catch (e) {
@@ -98,6 +100,7 @@ export function CameraViewport({
     useEffect(() => {
         try {
             if (subscriber && subscriber.stream?.hasVideo) {
+                console.log("Switching resolution and framerate: " + resolution + ", " + framerate);
                 subscriber.setPreferredResolution(
                     resolution === "low"
                         ? smallDimensions
@@ -232,7 +235,7 @@ export function CameraViewport({
             enableVideo={enableVideo}
             audioBlocked={audioBlocked}
             videoStatus={videoStatus}
-            onUpdateIsTalking={onUpdateIsTalking}
+            isTalkingRef={isTalkingRef}
             streamId={stream?.streamId}
             connectionId={connection?.connectionId}
             subscriber={subscriber}
@@ -261,10 +264,13 @@ export function CameraViewport({
 interface Props {
     registrant: RegistrantDataFragment | null;
     streamHasAudio?: boolean;
-    enableVideo?: boolean;
+    enableVideo: boolean;
     audioBlocked: boolean;
     videoStatus: VideoStatus | undefined;
-    onUpdateIsTalking?: (isTalking: boolean) => void;
+    isTalkingRef?: React.MutableRefObject<{
+        timestamp: number;
+        talking: boolean;
+    } | null>;
     streamId?: string;
     connectionId?: string;
     subscriber?: OT.Subscriber | null;
@@ -277,53 +283,57 @@ function CameraViewportInner({
     audioBlocked,
     enableVideo,
     videoStatus,
-    onUpdateIsTalking,
+    isTalkingRef,
     streamId,
     connectionId,
     subscriber,
     children,
 }: Props): JSX.Element {
-    const activityRef = React.useRef<null | { timestamp: number; talking: boolean }>(null);
     const [isTalking, setIsTalking] = useState<boolean>(false);
-    const pollCb = useCallback(() => {
-        const isTalking = activityRef.current?.talking ?? false;
-        setIsTalking(isTalking);
-        onUpdateIsTalking?.(isTalking);
-    }, [onUpdateIsTalking]);
-    usePolling(pollCb, 1500, true);
 
     useEffect(() => {
-        subscriber?.on("audioLevelUpdated", (event) => {
-            const now = Date.now();
-            // console.log("Audio level", event.audioLevel);
-            const activity = activityRef.current;
-            if (event.audioLevel > 0.05) {
-                if (!activity || now - activity.timestamp > 3000) {
-                    // was either not previously talking or last spoke a long time ago
-                    activityRef.current = { timestamp: now, talking: false };
-                } else if (activity.talking) {
-                    activity.timestamp = now;
-                } else if (now - activity.timestamp > 500) {
-                    // detected audio activity for more than 1s
-                    // for the first time.
-                    activity.talking = true;
+        if (isTalkingRef) {
+            const activityRef = isTalkingRef;
+            subscriber?.on("audioLevelUpdated", (event) => {
+                const now = Date.now();
+                // console.log("Audio level", event.audioLevel);
+                const activity = activityRef.current;
+                const wasTalking = !!activity?.talking;
+                if (event.audioLevel > 0.05) {
+                    if (!activity || now - activity.timestamp > 3000) {
+                        // was either not previously talking or last spoke a long time ago
+                        activityRef.current = { timestamp: now, talking: false };
+                    } else if (activity.talking) {
+                        activity.timestamp = now;
+                    } else if (now - activity.timestamp > 500) {
+                        // detected audio activity for more than 1s
+                        // for the first time.
+                        activity.talking = true;
+                    }
+                } else if (activityRef.current && activity && now - activity.timestamp > 3000) {
+                    // this event never seems to fire with an audioLevel of 0 but this
+                    // code is here just in case some browsers behave differently.
+                    activityRef.current.talking = false;
                 }
-            } else if (activityRef.current && activity && now - activity.timestamp > 3000) {
-                // this event never seems to fire with an audioLevel of 0 but this
-                // code is here just in case some browsers behave differently.
-                activityRef.current.talking = false;
-            }
-        });
 
-        subscriber?.on("videoDisabled", () => {
-            activityRef.current = null;
-        });
+                if (wasTalking !== activityRef.current?.talking) {
+                    setIsTalking(!!activityRef.current?.talking);
+                }
+            });
+        }
 
-        subscriber?.on("videoEnabled", () => {
-            activityRef.current = null;
-        });
-    }, [subscriber]);
+        return () => {
+            subscriber?.off("audioLevelUpdated");
+            subscriber?.off("videoDisabled");
+            subscriber?.off("videoEnabled");
+        };
+    }, [subscriber, isTalkingRef]);
 
+    const cameraHidden =
+        !!videoStatus &&
+        videoStatus.streamHasVideo &&
+        !enableVideo &&
+        (!videoStatus.error || videoStatus.error === "exceeds-max-streams");
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden" pos="absolute" top={0} left={0}>
             <CameraPlaceholderImage />
@@ -331,12 +341,7 @@ function CameraViewportInner({
             <CameraOverlay
                 registrant={registrant}
                 microphoneEnabled={streamHasAudio}
-                cameraHidden={
-                    !!videoStatus &&
-                    videoStatus.streamHasVideo &&
-                    !enableVideo &&
-                    (!videoStatus.error || videoStatus.error === "exceeds-max-streams")
-                }
+                cameraHidden={cameraHidden}
                 videoStatus={videoStatus}
                 audioBlocked={audioBlocked}
             />

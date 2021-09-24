@@ -63,14 +63,27 @@ export async function handleVonageSessionLayoutCreated(
     );
 
     const layout = convertLayout(layoutData);
+    let streamCount: number | undefined;
     try {
-        await applyVonageSessionLayout(newRow.vonageSessionId, layout);
-        await Vonage.signal(newRow.vonageSessionId, null, {
-            data: layoutData,
-            type: "layout-signal",
-        });
+        streamCount = await applyVonageSessionLayout(newRow.vonageSessionId, layout);
     } catch (err) {
         console.error("Failed to apply Vonage layout", {
+            err,
+            vonageSessionId: newRow.vonageSessionId,
+            vonageSessionLayoutId: newRow.id,
+            type: layoutData.type,
+        });
+    }
+
+    try {
+        if (streamCount) {
+            await Vonage.signal(newRow.vonageSessionId, null, {
+                data: { layout: layoutData, createdAt: Date.parse(newRow.created_at) },
+                type: "layout-signal",
+            });
+        }
+    } catch (err) {
+        console.error("Failed to send Vonage layout signal", {
             err,
             vonageSessionId: newRow.vonageSessionId,
             vonageSessionLayoutId: newRow.id,

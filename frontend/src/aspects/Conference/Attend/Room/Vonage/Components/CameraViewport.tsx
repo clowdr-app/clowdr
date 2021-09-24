@@ -100,7 +100,6 @@ export function CameraViewport({
     useEffect(() => {
         try {
             if (subscriber && subscriber.stream?.hasVideo) {
-                console.log("Switching resolution and framerate: " + resolution + ", " + framerate);
                 subscriber.setPreferredResolution(
                     resolution === "low"
                         ? smallDimensions

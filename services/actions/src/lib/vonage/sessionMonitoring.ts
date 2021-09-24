@@ -287,7 +287,8 @@ export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWeb
                 success = false;
             } else {
                 await callWithRetry(
-                    async () => await removeRoomParticipant(room.roomId, room.conferenceId, registrantId)
+                    async () =>
+                        await removeRoomParticipant(room.roomId, room.conferenceId, registrantId, payload.sessionId)
                 );
             }
         } catch (e) {

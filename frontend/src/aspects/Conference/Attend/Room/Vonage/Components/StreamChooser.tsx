@@ -15,7 +15,13 @@ export default function StreamChooser({
     positionKey: string;
     isRecordingMode: boolean;
 }): JSX.Element {
-    const { availableStreams, layout, updateLayout, saveLayout, layoutChooser_isOpen } = useVonageLayout();
+    const {
+        availableStreams,
+        layout: { layout },
+        updateLayout,
+        saveLayout,
+        layoutChooser_isOpen,
+    } = useVonageLayout();
 
     const changeLayout = useCallback(
         (connectionId: string | null, streamId?: string | null) => {
@@ -45,9 +51,9 @@ export default function StreamChooser({
                 }
             }
             if (!layoutChooser_isOpen) {
-                saveLayout(newLayout);
+                saveLayout({ layout: newLayout, createdAt: Date.now() });
             } else {
-                updateLayout(newLayout);
+                updateLayout({ layout: newLayout, createdAt: Date.now() });
             }
         },
         [layout, layoutChooser_isOpen, positionKey, saveLayout, updateLayout]
@@ -102,7 +108,7 @@ export default function StreamChooser({
                     </HStack>
                 </MenuButton>
                 <Portal>
-                    <MenuList>
+                    <MenuList zIndex={10000}>
                         <MenuItem
                             onClick={() => {
                                 changeLayout(null);

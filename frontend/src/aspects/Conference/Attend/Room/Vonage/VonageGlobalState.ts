@@ -1,4 +1,4 @@
-import { assertVonageSessionLayoutData, VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import { isVonageSessionLayoutData, VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -34,7 +34,7 @@ interface InitialisedStateData {
     onRecordingStarted: () => void;
     onRecordingStopped: () => void;
     onRecordingIdReceived: (recordingId: string) => void;
-    onLayoutReceived: (layoutData: VonageSessionLayoutData) => void;
+    onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
 }
 
 interface ConnectedStateData {
@@ -123,7 +123,7 @@ export class VonageGlobalState {
         onRecordingStarted: () => void,
         onRecordingStopped: () => void,
         onRecordingIdReceived: (recordingId: string) => void,
-        onLayoutReceived: (layoutData: VonageSessionLayoutData) => void
+        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -967,7 +967,19 @@ export class VonageGlobalState {
     private async onLayoutReceived(layoutData: any): Promise<void> {
         const release = await this.mutex.acquire();
         try {
-            assertVonageSessionLayoutData(layoutData);
+            if (
+                !layoutData ||
+                typeof layoutData !== "object" ||
+                !("layout" in layoutData) ||
+                !("createdAt" in layoutData) ||
+                !layoutData.layout ||
+                !layoutData.createdAt ||
+                typeof layoutData.createdAt !== "number" ||
+                !isVonageSessionLayoutData(layoutData)
+            ) {
+                throw new Error("Layout data is not valid");
+            }
+
             if (this.state.type === StateType.Initialised) {
                 this.state.onLayoutReceived(layoutData);
             } else if (this.state.type === StateType.Connected) {

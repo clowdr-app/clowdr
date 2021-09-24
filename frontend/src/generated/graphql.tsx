@@ -39630,7 +39630,7 @@ export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Ex
 }>;
 
 
-export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any> }> };
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any>, readonly created_at: any }> };
 
 export type InsertVonageSessionLayoutMutationVariables = Exact<{
   vonageSessionId: Scalars['String'];
@@ -45401,6 +45401,7 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
   ) {
     id
     layoutData
+    created_at
   }
 }
     `;

@@ -269,6 +269,14 @@ function VonageRoomInner({
             cancelJoin,
             completeJoinRef,
         });
+    const { setAvailableStreams, refetchLayout } = useVonageLayout();
+
+    useEffect(() => {
+        if (connected) {
+            refetchLayout();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connected]);
 
     useEffect(() => {
         if (!connected) {
@@ -306,7 +314,6 @@ function VonageRoomInner({
         [connections]
     );
     const registrants = useRegistrants(registrantIdSpecs);
-    const { setAvailableStreams } = useVonageLayout();
     useEffect(() => {
         const result: AvailableStream[] = [];
         if (vonage.state.type === StateType.Connected) {

@@ -39,7 +39,7 @@ export default function Layout({
     >;
 }): JSX.Element {
     const layout = useVonageLayout();
-    const visualLayout = useVisualLayout(layout.layout, isRecordingMode, viewports);
+    const visualLayout = useVisualLayout(layout.layout.layout, isRecordingMode, viewports);
 
     const isAlone = useMemo(
         () => viewports.reduce((acc, x) => acc + (x.type === "camera" ? 1 : 0), 0) <= 1,
@@ -764,7 +764,6 @@ export default function Layout({
             }
         });
         const limitedStreamIds = sortedStreamIds.slice(0, isPresentationLayout ? 4 : 10);
-        console.log("Restricted streams", limitedStreamIds);
         setEnabledStreamIds((oldEnabledStreamIds) =>
             oldEnabledStreamIds.length !== limitedStreamIds.length ||
             limitedStreamIds.some((x) => !oldEnabledStreamIds.includes(x)) ||

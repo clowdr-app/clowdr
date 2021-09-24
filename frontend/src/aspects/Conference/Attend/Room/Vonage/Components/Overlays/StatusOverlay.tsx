@@ -48,6 +48,7 @@ export default function CameraOverlay({
                 p={0}
                 my={1}
                 size="xs"
+                fontSize="75%"
                 background="none"
                 borderRadius={5}
                 overflow="hidden"
@@ -71,7 +72,7 @@ export default function CameraOverlay({
                 <HStack pr={2} bgColor="rgba(0,0,0,0.6)" maxWidth="100%">
                     {registrant?.profile?.photoURL_50x50 ? (
                         <Image
-                            w="2rem"
+                            w="1.5rem"
                             h="auto"
                             objectFit="cover"
                             objectPosition="center"
@@ -82,9 +83,9 @@ export default function CameraOverlay({
                         <FAIcon
                             iconStyle="s"
                             icon="cat"
-                            h="2rem"
-                            w="2rem"
-                            fontSize="24px"
+                            h="1.5rem"
+                            w="1.5rem"
+                            fontSize="18px"
                             color="white"
                             textAlign="center"
                         />

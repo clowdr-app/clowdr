@@ -13,7 +13,9 @@ export default function LayoutChooser(): JSX.Element {
         layoutChooser_isOpen: isOpen,
         layoutChooser_onClose: onClose,
     } = useVonageLayout();
-    const [initialLayout, setInitialLayout] = useState<VonageSessionLayoutData | null>(null);
+    const [initialLayout, setInitialLayout] = useState<{ layout: VonageSessionLayoutData; createdAt: number } | null>(
+        null
+    );
     useEffect(() => {
         if (isOpen && !initialLayout) {
             setInitialLayout(layout);
@@ -65,19 +67,19 @@ export default function LayoutChooser(): JSX.Element {
                     fontSize="2xl"
                     fontWeight="bold"
                     bgColor="gray.900"
-                    cursor={layout.type === VonageSessionLayoutType.BestFit ? "default" : "pointer"}
+                    cursor={layout.layout.type === VonageSessionLayoutType.BestFit ? "default" : "pointer"}
                     _hover={{
-                        bgColor: layout.type === VonageSessionLayoutType.BestFit ? "purple.400" : "gray.500",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.BestFit ? "purple.400" : "gray.500",
                     }}
                     _active={{
-                        bgColor: layout.type === VonageSessionLayoutType.BestFit ? "purple.400" : "gray.300",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.BestFit ? "purple.400" : "gray.300",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.BestFit}
+                    isDisabled={layout.layout.type === VonageSessionLayoutType.BestFit}
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.BestFit,
                             screenShareType: "verticalPresentation",
@@ -90,7 +92,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -115,19 +117,19 @@ export default function LayoutChooser(): JSX.Element {
                     p="5px"
                     m={2}
                     bgColor="gray.900"
-                    cursor={layout.type === VonageSessionLayoutType.Single ? "default" : "pointer"}
+                    cursor={layout.layout.type === VonageSessionLayoutType.Single ? "default" : "pointer"}
                     _hover={{
-                        bgColor: layout.type === VonageSessionLayoutType.Single ? "purple.400" : "gray.300",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.Single ? "purple.400" : "gray.300",
                     }}
                     _active={{
-                        bgColor: layout.type === VonageSessionLayoutType.Single ? "purple.400" : "gray.500",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.Single ? "purple.400" : "gray.500",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.Single}
+                    isDisabled={layout.layout.type === VonageSessionLayoutType.Single}
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.Single,
                         };
@@ -139,7 +141,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -155,19 +157,19 @@ export default function LayoutChooser(): JSX.Element {
                     p="5px"
                     m={2}
                     bgColor="gray.900"
-                    cursor={layout.type === VonageSessionLayoutType.Pair ? "default" : "pointer"}
+                    cursor={layout.layout.type === VonageSessionLayoutType.Pair ? "default" : "pointer"}
                     _hover={{
-                        bgColor: layout.type === VonageSessionLayoutType.Pair ? "purple.400" : "gray.300",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.Pair ? "purple.400" : "gray.300",
                     }}
                     _active={{
-                        bgColor: layout.type === VonageSessionLayoutType.Pair ? "purple.400" : "gray.500",
+                        bgColor: layout.layout.type === VonageSessionLayoutType.Pair ? "purple.400" : "gray.500",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.Pair}
+                    isDisabled={layout.layout.type === VonageSessionLayoutType.Pair}
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.Pair,
                         };
@@ -179,7 +181,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -196,19 +198,21 @@ export default function LayoutChooser(): JSX.Element {
                     p="5px"
                     m={2}
                     bgColor="gray.900"
-                    cursor={layout.type === VonageSessionLayoutType.PictureInPicture ? "default" : "pointer"}
+                    cursor={layout.layout.type === VonageSessionLayoutType.PictureInPicture ? "default" : "pointer"}
                     _hover={{
-                        bgColor: layout.type === VonageSessionLayoutType.PictureInPicture ? "purple.400" : "gray.300",
+                        bgColor:
+                            layout.layout.type === VonageSessionLayoutType.PictureInPicture ? "purple.400" : "gray.300",
                     }}
                     _active={{
-                        bgColor: layout.type === VonageSessionLayoutType.PictureInPicture ? "purple.400" : "gray.500",
+                        bgColor:
+                            layout.layout.type === VonageSessionLayoutType.PictureInPicture ? "purple.400" : "gray.500",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.PictureInPicture}
+                    isDisabled={layout.layout.type === VonageSessionLayoutType.PictureInPicture}
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.PictureInPicture,
                         };
@@ -220,7 +224,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -246,28 +250,28 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "left"
+                        layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "left"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "left"
+                            layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "left"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "left"
+                            layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "left"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "left"}
+                    isDisabled={layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "left"}
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.Fitted4,
                             side: "left",
@@ -280,7 +284,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -301,28 +305,30 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "bottom"
+                        layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "bottom"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "bottom"
+                            layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "bottom"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "bottom"
+                            layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "bottom"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
                     _disabled={{
                         bgColor: "purple.400",
                     }}
-                    isDisabled={layout.type === VonageSessionLayoutType.Fitted4 && layout.side === "bottom"}
+                    isDisabled={
+                        layout.layout.type === VonageSessionLayoutType.Fitted4 && layout.layout.side === "bottom"
+                    }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.Fitted4,
                             side: "bottom",
@@ -335,7 +341,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -357,25 +363,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === null &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === null &&
+                        layout.layout.splitDirection === "vertical"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === null &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === null &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === null &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === null &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -383,12 +389,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === null &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === null &&
+                        layout.layout.splitDirection === "vertical"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "vertical",
@@ -402,7 +408,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -424,25 +430,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 1 &&
+                        layout.layout.splitDirection === "vertical"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 1 &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 1 &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 1 &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 1 &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -450,12 +456,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 1 &&
+                        layout.layout.splitDirection === "vertical"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "vertical",
@@ -469,7 +475,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -491,25 +497,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 2 &&
+                        layout.layout.splitDirection === "vertical"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 2 &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 2 &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 2 &&
-                            layout.splitDirection === "vertical"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 2 &&
+                            layout.layout.splitDirection === "vertical"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -517,12 +523,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
-                        layout.splitDirection === "vertical"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 2 &&
+                        layout.layout.splitDirection === "vertical"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "vertical",
@@ -536,7 +542,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -559,25 +565,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === null &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === null &&
+                        layout.layout.splitDirection === "horizontal"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === null &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === null &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === null &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === null &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -585,12 +591,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === null &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === null &&
+                        layout.layout.splitDirection === "horizontal"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "horizontal",
@@ -604,7 +610,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -626,25 +632,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 2 &&
+                        layout.layout.splitDirection === "horizontal"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 1 &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 1 &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 1 &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 1 &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -652,12 +658,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 2 &&
+                        layout.layout.splitDirection === "horizontal"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "horizontal",
@@ -671,7 +677,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>
@@ -693,25 +699,25 @@ export default function LayoutChooser(): JSX.Element {
                     m={2}
                     bgColor="gray.900"
                     cursor={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 1 &&
+                        layout.layout.splitDirection === "horizontal"
                             ? "default"
                             : "pointer"
                     }
                     _hover={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 2 &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 2 &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.300",
                     }}
                     _active={{
                         bgColor:
-                            layout.type === VonageSessionLayoutType.DualScreen &&
-                            layout.narrowStream === 2 &&
-                            layout.splitDirection === "horizontal"
+                            layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                            layout.layout.narrowStream === 2 &&
+                            layout.layout.splitDirection === "horizontal"
                                 ? "purple.400"
                                 : "gray.500",
                     }}
@@ -719,12 +725,12 @@ export default function LayoutChooser(): JSX.Element {
                         bgColor: "purple.400",
                     }}
                     isDisabled={
-                        layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
-                        layout.splitDirection === "horizontal"
+                        layout.layout.type === VonageSessionLayoutType.DualScreen &&
+                        layout.layout.narrowStream === 1 &&
+                        layout.layout.splitDirection === "horizontal"
                     }
                     onClick={() => {
-                        const _layout: any = layout;
+                        const _layout: any = layout.layout;
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "horizontal",
@@ -738,7 +744,7 @@ export default function LayoutChooser(): JSX.Element {
                                 outputIdx++;
                             }
                         }
-                        updateLayout(outputLayout);
+                        updateLayout({ layout: outputLayout, createdAt: Date.now() });
                     }}
                 >
                     <chakra.svg w={160} h={90}>

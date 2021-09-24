@@ -227,7 +227,9 @@ export function useVonageComputedState({
                         onRecordingIdReceived?.(recordingId);
                     },
                     (layoutData) => {
-                        layout?.updateLayout(layoutData);
+                        if (layout?.layout?.createdAt > layoutData.createdAt) {
+                            layout?.updateLayout(layoutData);
+                        }
                     }
                 );
             } catch (e) {

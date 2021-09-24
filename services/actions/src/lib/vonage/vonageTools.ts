@@ -662,7 +662,7 @@ async function getOngoingArchiveIds(vonageSessionId: string): Promise<string[]> 
     );
 }
 
-export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLayout: VonageLayout): Promise<void> {
+export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLayout: VonageLayout): Promise<number> {
     const { streams, layout } = await sanitizeLayout(vonageSessionId, dirtyLayout);
     const laidOutStreamIds = Object.keys(layout.streamClasses);
     const streamsToClear = streams
@@ -755,6 +755,8 @@ export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLay
             }
         }
     }
+
+    return streams.length;
 }
 
 export async function sanitizeLayout(

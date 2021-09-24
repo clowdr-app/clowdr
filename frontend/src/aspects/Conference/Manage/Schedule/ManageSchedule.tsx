@@ -991,15 +991,16 @@ function EditableScheduleTable(): JSX.Element {
             },
         ],
         [
+            allowOngoingEventCreation,
             wholeSchedule.data?.room_Room,
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
-            shufflePeriodsResponse.data?.room_ShufflePeriod,
             conference.slug,
             roomOptions,
             roomModeOptions,
             itemOptions,
             exhibitionOptions,
+            shufflePeriodsResponse.data?.room_ShufflePeriod,
             shufflePeriodOptions,
         ]
     );
@@ -1083,7 +1084,7 @@ function EditableScheduleTable(): JSX.Element {
                 defaultToLast: false,
             },
         }),
-        [yellow]
+        [allowOngoingEventCreation, yellow]
     );
 
     const localTimeZone = useMemo(() => {

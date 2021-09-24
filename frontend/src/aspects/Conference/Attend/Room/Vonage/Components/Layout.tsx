@@ -67,24 +67,22 @@ export default function Layout({
                 }
 
                 return (
-                    <AspectRatio as={Flex} justifyContent="center" w="100%" ratio={16 / 9}>
-                        <Box>
+                    <AspectRatio justifyContent="center" w="100%" ratio={16 / 9}>
+                        <Flex w="100%" h="100%" flexWrap="wrap" overflow="hidden">
                             {visualLayout.viewports.map((viewport) => (
                                 <AspectRatio
                                     ratio={16 / 9}
                                     w={
                                         visualLayout.viewports.length === 1
                                             ? "100%"
-                                            : visualLayout.viewports.length === 2
-                                            ? "50%"
-                                            : visualLayout.viewports.length === 3
-                                            ? "33%"
-                                            : "25%"
+                                            : visualLayout.viewports.length === 2 || visualLayout.viewports.length === 3
+                                            ? "calc(50% - 10px)"
+                                            : "calc(25% - 10px)"
                                     }
                                     bgColor="gray.700"
                                     pos="relative"
                                     key={viewport.streamId ?? viewport.connectionId}
-                                    m={1}
+                                    m="5px"
                                 >
                                     <Box>
                                         <portals.OutPortal
@@ -96,7 +94,7 @@ export default function Layout({
                                     </Box>
                                 </AspectRatio>
                             ))}
-                        </Box>
+                        </Flex>
                     </AspectRatio>
                 );
             }

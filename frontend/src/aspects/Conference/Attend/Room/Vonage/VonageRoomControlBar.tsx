@@ -593,7 +593,7 @@ export function VonageRoomControlBar({
                     )
                 ) : undefined}
                 {/* TODO: Permissions */}
-                {vonage.state.type === StateType.Connected && canControlRecording ? (
+                {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
                     <Button
                         size="sm"
                         onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}

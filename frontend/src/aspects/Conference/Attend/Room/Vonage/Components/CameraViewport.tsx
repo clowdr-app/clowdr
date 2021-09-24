@@ -336,7 +336,7 @@ function CameraViewportInner({
         (!videoStatus.error || videoStatus.error === "exceeds-max-streams");
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden" pos="absolute" top={0} left={0}>
-            <CameraPlaceholderImage />
+            <CameraPlaceholderImage registrant={registrant} />
             {children}
             <CameraOverlay
                 registrant={registrant}

@@ -775,7 +775,7 @@ export default function Layout({
                 : oldEnabledStreamIds
         );
     }, [streamActivities, visualLayout.overflowViewports, isPresentationLayout]);
-    usePolling(computeEnabledStreamIds, 250);
+    usePolling(computeEnabledStreamIds, 1500);
     const overflowArea = useMemo(() => {
         const cameraFeeds = visualLayout.overflowViewports.filter((x) => x.type === "camera");
         return visualLayout.overflowViewports.length > 0 ? (

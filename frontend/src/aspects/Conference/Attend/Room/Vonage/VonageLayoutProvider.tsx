@@ -104,14 +104,6 @@ export function VonageLayoutProvider({
         [initialLayoutData, layoutData]
     );
 
-    useEffect(() => {
-        console.log("Layout info", {
-            currentLayout,
-            initialLayoutData,
-            queryData: result.data?.video_VonageSessionLayout?.[0],
-        });
-    }, [currentLayout, initialLayoutData, result.data?.video_VonageSessionLayout]);
-
     const [insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
     const { id: conferenceId } = useConference();

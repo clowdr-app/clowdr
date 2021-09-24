@@ -975,7 +975,7 @@ export class VonageGlobalState {
                 !layoutData.layout ||
                 !layoutData.createdAt ||
                 typeof layoutData.createdAt !== "number" ||
-                !isVonageSessionLayoutData(layoutData)
+                !isVonageSessionLayoutData(layoutData.layout)
             ) {
                 throw new Error("Layout data is not valid");
             }

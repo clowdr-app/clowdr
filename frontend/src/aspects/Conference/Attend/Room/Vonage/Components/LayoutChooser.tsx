@@ -627,7 +627,7 @@ export default function LayoutChooser(): JSX.Element {
                     bgColor="gray.900"
                     cursor={
                         layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
+                        layout.narrowStream === 2 &&
                         layout.splitDirection === "horizontal"
                             ? "default"
                             : "pointer"
@@ -653,7 +653,7 @@ export default function LayoutChooser(): JSX.Element {
                     }}
                     isDisabled={
                         layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 1 &&
+                        layout.narrowStream === 2 &&
                         layout.splitDirection === "horizontal"
                     }
                     onClick={() => {
@@ -661,7 +661,7 @@ export default function LayoutChooser(): JSX.Element {
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "horizontal",
-                            narrowStream: 1,
+                            narrowStream: 2,
                         };
                         let outputIdx = 1;
                         for (let idx = 1; idx <= 6; idx++) {
@@ -694,7 +694,7 @@ export default function LayoutChooser(): JSX.Element {
                     bgColor="gray.900"
                     cursor={
                         layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
+                        layout.narrowStream === 1 &&
                         layout.splitDirection === "horizontal"
                             ? "default"
                             : "pointer"
@@ -720,7 +720,7 @@ export default function LayoutChooser(): JSX.Element {
                     }}
                     isDisabled={
                         layout.type === VonageSessionLayoutType.DualScreen &&
-                        layout.narrowStream === 2 &&
+                        layout.narrowStream === 1 &&
                         layout.splitDirection === "horizontal"
                     }
                     onClick={() => {
@@ -728,7 +728,7 @@ export default function LayoutChooser(): JSX.Element {
                         const outputLayout: any = {
                             type: VonageSessionLayoutType.DualScreen,
                             splitDirection: "horizontal",
-                            narrowStream: 2,
+                            narrowStream: 1,
                         };
                         let outputIdx = 1;
                         for (let idx = 1; idx <= 6; idx++) {

@@ -430,7 +430,7 @@ export default function Layout({
                         <Box>
                             <portals.OutPortal node={viewport.component} />
                             <StreamChooser
-                                positionKey={"position" + (idx + 2)}
+                                positionKey={"position" + (idx + 3)}
                                 centered={false}
                                 isRecordingMode={isRecordingMode}
                             />
@@ -474,7 +474,7 @@ export default function Layout({
                             <Box>
                                 <Box
                                     w="86%"
-                                    h={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
+                                    h={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
                                     bgColor="gray.500"
                                     top={0}
                                     left="14%"
@@ -491,9 +491,9 @@ export default function Layout({
                                 </Box>
                                 <Box
                                     w="86%"
-                                    h={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
+                                    h={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
                                     bgColor="gray.500"
-                                    top={visualLayout.narrow === 2 ? "25%" : visualLayout.narrow === 1 ? "75%" : "50%"}
+                                    top={visualLayout.narrow === 1 ? "25%" : visualLayout.narrow === 2 ? "75%" : "50%"}
                                     left="14%"
                                     pos="absolute"
                                 >

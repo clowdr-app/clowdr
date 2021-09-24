@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
 import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import OpenTok from "opentok";
 import {
     CreateVonageParticipantStreamDocument,
     CreateVonageRoomRecordingDocument,
@@ -158,10 +159,15 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             rtmpId
         );
         try {
-            const layout = await getVonageLayout(broadcastDetails.vonageSessionId);
+            const dirtyLayoutData = await getVonageLayout(broadcastDetails.vonageSessionId);
+            const dirtyLayout = dirtyLayoutData ? convertLayout(dirtyLayoutData) : null;
+            const cleanLayout = dirtyLayout
+                ? await sanitizeLayout(broadcastDetails.vonageSessionId, dirtyLayout)
+                : null;
+
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
-                layout: layout
-                    ? convertLayout(layout).layout
+                layout: cleanLayout
+                    ? cleanLayout.layout.layout
                     : {
                           type: "bestFit",
                           screenshareType: "verticalPresentation",
@@ -326,7 +332,10 @@ export async function startRoomVonageArchiving(
     if (!existingArchive) {
         console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
         try {
-            const layout = await getVonageLayout(archiveDetails.vonageSessionId);
+            const dirtyLayoutData = await getVonageLayout(archiveDetails.vonageSessionId);
+            const dirtyLayout = dirtyLayoutData ? convertLayout(dirtyLayoutData) : null;
+            const cleanLayout = dirtyLayout ? await sanitizeLayout(archiveDetails.vonageSessionId, dirtyLayout) : null;
+
             const recordingResponse = await apolloClient.mutate({
                 mutation: CreateVonageRoomRecordingDocument,
                 variables: {
@@ -346,8 +355,8 @@ export async function startRoomVonageArchiving(
                     outputMode: "composed",
                     hasAudio: true,
                     hasVideo: true,
-                    layout: layout
-                        ? convertLayout(layout).layout
+                    layout: cleanLayout
+                        ? cleanLayout.layout.layout
                         : {
                               type: "bestFit",
                               screenshareType: "verticalPresentation",
@@ -588,7 +597,11 @@ export async function removeVonageParticipantStream(
 
 gql`
     query GetVonageSessionLayout($vonageSessionId: String!) {
-        video_VonageSessionLayout(where: { vonageSessionId: { _eq: $vonageSessionId } }) {
+        video_VonageSessionLayout(
+            where: { vonageSessionId: { _eq: $vonageSessionId } }
+            order_by: { created_at: desc }
+            limit: 1
+        ) {
             id
             layoutData
         }
@@ -649,30 +662,8 @@ async function getOngoingArchiveIds(vonageSessionId: string): Promise<string[]> 
     );
 }
 
-export async function applyVonageSessionLayout(vonageSessionId: string, layout: VonageLayout): Promise<void> {
-    const streams = await Vonage.listStreams(vonageSessionId);
-    if (!streams) {
-        console.error("Could not retrieve list of streams from Vonage", { vonageSessionId });
-        throw new Error("Could not retrieve list of streams from Vonage");
-    }
-
-    const invalidStreamClasses = Object.keys(layout.streamClasses).filter(
-        (streamId) => !streams.some((s) => s.id === streamId)
-    );
-
-    if (invalidStreamClasses.length) {
-        console.error(
-            "Cannot apply Vonage layout, found invalid streams",
-            JSON.stringify({
-                vonageSessionId,
-                invalidStreams: Object.entries(layout.streamClasses).filter(([streamId]) =>
-                    invalidStreamClasses.some((s) => s === streamId)
-                ),
-            })
-        );
-        throw new Error("Could not apply Vonage layout, found invalid streams");
-    }
-
+export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLayout: VonageLayout): Promise<void> {
+    const { streams, layout } = await sanitizeLayout(vonageSessionId, dirtyLayout);
     const laidOutStreamIds = Object.keys(layout.streamClasses);
     const streamsToClear = streams
         .filter((stream) => !laidOutStreamIds.includes(stream.id))
@@ -687,18 +678,19 @@ export async function applyVonageSessionLayout(vonageSessionId: string, layout: 
 
     try {
         const allStreamsTransform = streamsToClear.concat(streamsToSet);
-        console.info(
-            "Setting Vonage stream class list:" +
-                JSON.stringify(
-                    {
-                        vonageSessionId,
-                        classListArray: allStreamsTransform,
-                    },
-                    undefined,
-                    2
-                )
-        );
         if (allStreamsTransform.length > 0) {
+            console.info(
+                "Setting Vonage stream class list:" +
+                    JSON.stringify(
+                        {
+                            vonageSessionId,
+                            classListArray: allStreamsTransform,
+                        },
+                        undefined,
+                        2
+                    )
+            );
+
             await Vonage.setStreamClassLists(vonageSessionId, allStreamsTransform);
         }
     } catch (err) {
@@ -713,47 +705,80 @@ export async function applyVonageSessionLayout(vonageSessionId: string, layout: 
 
     // Update broadcasts
     const startedBroadcastIds = await getOngoingBroadcastIds(vonageSessionId);
-    console.log("Setting layout of Vonage broadcasts", { vonageSessionId, startedBroadcastIds });
-    for (const startedBroadcastId of startedBroadcastIds) {
-        try {
-            switch (layout.layout.type) {
-                case "bestFit":
-                    await Vonage.setBroadcastLayout(startedBroadcastId, "bestFit", null, layout.layout.screenShareType);
-                    break;
-                case "custom":
-                    await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
-                    break;
+    if (startedBroadcastIds.length > 0) {
+        console.log("Setting layout of Vonage broadcasts", { vonageSessionId, startedBroadcastIds });
+        for (const startedBroadcastId of startedBroadcastIds) {
+            try {
+                switch (layout.layout.type) {
+                    case "bestFit":
+                        await Vonage.setBroadcastLayout(
+                            startedBroadcastId,
+                            "bestFit",
+                            null,
+                            layout.layout.screenShareType
+                        );
+                        break;
+                    case "custom":
+                        await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
+                        break;
+                }
+            } catch (err) {
+                console.error("Failed to set layout for Vonage broadcast", {
+                    vonageSessionId,
+                    startedBroadcastId,
+                    err,
+                });
             }
-        } catch (err) {
-            console.error("Failed to set layout for Vonage broadcast", {
-                vonageSessionId,
-                startedBroadcastId,
-                err,
-            });
         }
     }
 
     // Update archives
     const startedArchiveIds = await getOngoingArchiveIds(vonageSessionId);
-    console.log("Setting layout of Vonage archives", { vonageSessionId, startedArchiveIds });
-    for (const startedArchiveId of startedArchiveIds) {
-        try {
-            switch (layout.layout.type) {
-                case "bestFit":
-                    await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
-                    break;
-                case "custom":
-                    await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
-                    break;
+    if (startedArchiveIds.length > 0) {
+        console.log("Setting layout of Vonage archives", { vonageSessionId, startedArchiveIds });
+        for (const startedArchiveId of startedArchiveIds) {
+            try {
+                switch (layout.layout.type) {
+                    case "bestFit":
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
+                        break;
+                    case "custom":
+                        await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
+                        break;
+                }
+            } catch (err) {
+                console.error("Failed to set layout for Vonage archive", {
+                    vonageSessionId,
+                    startedBroadcastId: startedArchiveId,
+                    err,
+                });
             }
-        } catch (err) {
-            console.error("Failed to set layout for Vonage archive", {
-                vonageSessionId,
-                startedBroadcastId: startedArchiveId,
-                err,
-            });
         }
     }
+}
+
+export async function sanitizeLayout(
+    vonageSessionId: string,
+    layout: VonageLayout
+): Promise<{ streams: OpenTok.Stream[]; layout: VonageLayout }> {
+    const result: VonageLayout = {
+        layout: { ...layout.layout },
+        streamClasses: { ...layout.streamClasses },
+    };
+
+    const streams = await Vonage.listStreams(vonageSessionId);
+    if (!streams) {
+        console.error("Could not retrieve list of streams from Vonage", { vonageSessionId });
+        throw new Error("Could not retrieve list of streams from Vonage");
+    }
+
+    Object.keys(result.streamClasses).forEach((streamId) => {
+        if (!streams.some((s) => s.id === streamId)) {
+            delete result.streamClasses[streamId];
+        }
+    });
+
+    return { streams, layout: result };
 }
 
 export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout {
@@ -812,7 +837,7 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
                     type: "custom",
                     stylesheet: `
                         stream.stream1 { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; z-index: 100;}
-                        stream.stream2 { position: absolute; width: 350px; height: 350px; right: 20px; bottom: 20px; z-index: 200; object-fit: cover; }
+                        stream.stream2 { position: absolute; width: 200px; height: 200px; right: 20px; bottom: 20px; z-index: 200; object-fit: cover; }
                     `,
                 },
                 streamClasses,
@@ -922,8 +947,8 @@ export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout
                             `
                             : layoutData.narrowStream === 2
                             ? `
-                                stream.stream1 { position: absolute; width: 25%; height: 75%; left: 0%; top: 0px; z-index: 100; }
-                                stream.stream2 { position: absolute; width: 75%; height: 75%; left: 75%; top: 0px; z-index: 100; }
+                                stream.stream1 { position: absolute; width: 75%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 25%; height: 75%; left: 75%; top: 0px; z-index: 100; }
                                 ${sideStreams}
                             `
                             : `

@@ -93,6 +93,7 @@ insert_permissions:
     - roomId
     - shufflePeriodId
     - startTime
+    - streamTextEventId
   role: user
 select_permissions:
 - permission:
@@ -142,6 +143,7 @@ select_permissions:
     - roomId
     - shufflePeriodId
     - startTime
+    - streamTextEventId
     - updated_at
     filter:
       _and:
@@ -188,6 +190,7 @@ update_permissions:
     - roomId
     - shufflePeriodId
     - startTime
+    - streamTextEventId
     filter:
       _and:
       - conference:

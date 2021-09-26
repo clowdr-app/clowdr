@@ -16,6 +16,7 @@ import { Twemoji } from "react-emoji-render";
 import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import EmojiFloatContainer from "../../../../Emoji/EmojiFloatContainer";
 import { useRealTime } from "../../../../Generic/useRealTime";
+import StreamTextCaptions from "../StreamTextCaptions";
 import { isEventNow, isEventSoon } from "./isEventAt";
 import { VonageBackstage } from "./VonageBackstage";
 
@@ -100,6 +101,7 @@ export default function Backstage({
             isSelected ? (
                 <Box mt={2} p={2} border={isNow ? "solid red" : undefined} borderWidth={4}>
                     {vonageBackstage}
+                    <StreamTextCaptions streamTextEventId={event.streamTextEventId} />
                     <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
                 </Box>
             ) : !isActive ? (

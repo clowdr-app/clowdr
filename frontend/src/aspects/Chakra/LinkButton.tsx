@@ -38,7 +38,7 @@ export function ExternalLinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnch
     return (
         <Link
             href={to}
-            isExternal={isExternal}
+            isExternal={isExternal ?? true}
             textDecoration="none !important"
             display="inline-block"
             {...linkProps}

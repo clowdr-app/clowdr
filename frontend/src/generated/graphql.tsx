@@ -30958,6 +30958,7 @@ export type Schedule_Event = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime: Scalars['timestamptz'];
+  readonly streamTextEventId?: Maybe<Scalars['String']>;
   readonly timingsUpdatedAt: Scalars['timestamptz'];
   readonly updatedAt: Scalars['timestamptz'];
 };
@@ -31648,6 +31649,7 @@ export type Schedule_Event_Bool_Exp = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   readonly shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
   readonly startTime?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly streamTextEventId?: Maybe<String_Comparison_Exp>;
   readonly timingsUpdatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -31690,6 +31692,7 @@ export type Schedule_Event_Insert_Input = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
+  readonly streamTextEventId?: Maybe<Scalars['String']>;
   readonly timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31709,6 +31712,7 @@ export type Schedule_Event_Max_Fields = {
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
+  readonly streamTextEventId?: Maybe<Scalars['String']>;
   readonly timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31727,6 +31731,7 @@ export type Schedule_Event_Max_Order_By = {
   readonly roomId?: Maybe<Order_By>;
   readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
+  readonly streamTextEventId?: Maybe<Order_By>;
   readonly timingsUpdatedAt?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -31746,6 +31751,7 @@ export type Schedule_Event_Min_Fields = {
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
+  readonly streamTextEventId?: Maybe<Scalars['String']>;
   readonly timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31764,6 +31770,7 @@ export type Schedule_Event_Min_Order_By = {
   readonly roomId?: Maybe<Order_By>;
   readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
+  readonly streamTextEventId?: Maybe<Order_By>;
   readonly timingsUpdatedAt?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -31818,6 +31825,7 @@ export type Schedule_Event_Order_By = {
   readonly shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
   readonly shufflePeriodId?: Maybe<Order_By>;
   readonly startTime?: Maybe<Order_By>;
+  readonly streamTextEventId?: Maybe<Order_By>;
   readonly timingsUpdatedAt?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
 };
@@ -31858,6 +31866,8 @@ export enum Schedule_Event_Select_Column {
   /** column name */
   StartTime = 'startTime',
   /** column name */
+  StreamTextEventId = 'streamTextEventId',
+  /** column name */
   TimingsUpdatedAt = 'timingsUpdatedAt',
   /** column name */
   UpdatedAt = 'updatedAt'
@@ -31879,6 +31889,7 @@ export type Schedule_Event_Set_Input = {
   readonly roomId?: Maybe<Scalars['uuid']>;
   readonly shufflePeriodId?: Maybe<Scalars['uuid']>;
   readonly startTime?: Maybe<Scalars['timestamptz']>;
+  readonly streamTextEventId?: Maybe<Scalars['String']>;
   readonly timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31957,6 +31968,8 @@ export enum Schedule_Event_Update_Column {
   ShufflePeriodId = 'shufflePeriodId',
   /** column name */
   StartTime = 'startTime',
+  /** column name */
+  StreamTextEventId = 'streamTextEventId',
   /** column name */
   TimingsUpdatedAt = 'timingsUpdatedAt',
   /** column name */
@@ -39683,9 +39696,9 @@ export type Room_GetEventsQueryVariables = Exact<{
 }>;
 
 
-export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> }> };
+export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> }> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
 export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -41326,6 +41339,21 @@ export type CreateContinuationModal_ProfileQueryVariables = Exact<{
 
 export type CreateContinuationModal_ProfileQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string }> };
 
+export type SelectEventStreamTextEventIdQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type SelectEventStreamTextEventIdQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly streamTextEventId?: Maybe<string> }> };
+
+export type UpdateEventStreamTextEventIdMutationVariables = Exact<{
+  eventId: Scalars['uuid'];
+  streamTextEventId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateEventStreamTextEventIdMutation = { readonly __typename?: 'mutation_root', readonly update_schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly streamTextEventId?: Maybe<string> }> };
+
 export type InsertEventProgramPersonMutationVariables = Exact<{
   newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input;
 }>;
@@ -42206,6 +42234,7 @@ export const Room_EventSummaryFragmentDoc = gql`
   intendedRoomModeName
   itemId
   exhibitionId
+  streamTextEventId
   shufflePeriod {
     ...ShufflePeriodData
   }
@@ -52636,6 +52665,80 @@ export function useCreateContinuationModal_ProfileLazyQuery(baseOptions?: Apollo
 export type CreateContinuationModal_ProfileQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileQuery>;
 export type CreateContinuationModal_ProfileLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileLazyQuery>;
 export type CreateContinuationModal_ProfileQueryResult = Apollo.QueryResult<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>;
+export const SelectEventStreamTextEventIdDocument = gql`
+    query SelectEventStreamTextEventId($eventId: uuid!) {
+  schedule_Event_by_pk(id: $eventId) {
+    id
+    streamTextEventId
+  }
+}
+    `;
+
+/**
+ * __useSelectEventStreamTextEventIdQuery__
+ *
+ * To run a query within a React component, call `useSelectEventStreamTextEventIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectEventStreamTextEventIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectEventStreamTextEventIdQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useSelectEventStreamTextEventIdQuery(baseOptions: Apollo.QueryHookOptions<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>(SelectEventStreamTextEventIdDocument, options);
+      }
+export function useSelectEventStreamTextEventIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>(SelectEventStreamTextEventIdDocument, options);
+        }
+export type SelectEventStreamTextEventIdQueryHookResult = ReturnType<typeof useSelectEventStreamTextEventIdQuery>;
+export type SelectEventStreamTextEventIdLazyQueryHookResult = ReturnType<typeof useSelectEventStreamTextEventIdLazyQuery>;
+export type SelectEventStreamTextEventIdQueryResult = Apollo.QueryResult<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>;
+export const UpdateEventStreamTextEventIdDocument = gql`
+    mutation UpdateEventStreamTextEventId($eventId: uuid!, $streamTextEventId: String) {
+  update_schedule_Event_by_pk(
+    pk_columns: {id: $eventId}
+    _set: {streamTextEventId: $streamTextEventId}
+  ) {
+    id
+    streamTextEventId
+  }
+}
+    `;
+export type UpdateEventStreamTextEventIdMutationFn = Apollo.MutationFunction<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>;
+
+/**
+ * __useUpdateEventStreamTextEventIdMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventStreamTextEventIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventStreamTextEventIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventStreamTextEventIdMutation, { data, loading, error }] = useUpdateEventStreamTextEventIdMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      streamTextEventId: // value for 'streamTextEventId'
+ *   },
+ * });
+ */
+export function useUpdateEventStreamTextEventIdMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>(UpdateEventStreamTextEventIdDocument, options);
+      }
+export type UpdateEventStreamTextEventIdMutationHookResult = ReturnType<typeof useUpdateEventStreamTextEventIdMutation>;
+export type UpdateEventStreamTextEventIdMutationResult = Apollo.MutationResult<UpdateEventStreamTextEventIdMutation>;
+export type UpdateEventStreamTextEventIdMutationOptions = Apollo.BaseMutationOptions<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>;
 export const InsertEventProgramPersonDocument = gql`
     mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
   insert_schedule_EventProgramPerson_one(

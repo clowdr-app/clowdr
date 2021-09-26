@@ -41,6 +41,7 @@ import RoomTimeAlert from "./RoomTimeAlert";
 import { Backstages } from "./Stream/Backstages";
 import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
+import StreamTextCaptions from "./StreamTextCaptions";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
 import { HlsPlayer } from "./Video/HlsPlayer";
 import { HlsPlayerV1 } from "./Video/HlsPlayerV1";
@@ -64,6 +65,7 @@ gql`
         intendedRoomModeName
         itemId
         exhibitionId
+        streamTextEventId
         shufflePeriod {
             ...ShufflePeriodData
         }
@@ -745,6 +747,7 @@ function RoomInner({
                                     }
                                 />
                             </Box>
+                            <StreamTextCaptions streamTextEventId={currentRoomEvent?.streamTextEventId} />
                             {contentEl}
                         </>
                     ) : undefined}

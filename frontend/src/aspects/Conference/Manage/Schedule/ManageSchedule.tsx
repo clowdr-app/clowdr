@@ -87,6 +87,7 @@ import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissio
 import { useConference } from "../../useConference";
 import BatchAddEventPeople from "./BatchAddEventPeople";
 import ContinuationsEditor from "./ContinuationsEditor";
+import EditStreamTextIntegration from "./EditStreamTextIntegration";
 import { EventProgramPersonsModal, requiresEventPeople } from "./EventProgramPersonsModal";
 
 gql`
@@ -1711,6 +1712,17 @@ function EventSecondaryEditor({
                                     </AccordionButton>
                                     <AccordionPanel>
                                         <ContinuationsEditor from={{ eventId: event.id }} itemId={event.itemId} />
+                                    </AccordionPanel>
+                                </AccordionItem>
+                                <AccordionItem key="streamtext">
+                                    <AccordionButton>
+                                        <Box flex="1" textAlign="left">
+                                            Embed StreamText.Net (CART)
+                                        </Box>
+                                        <AccordionIcon />
+                                    </AccordionButton>
+                                    <AccordionPanel>
+                                        <EditStreamTextIntegration eventId={event.id} />
                                     </AccordionPanel>
                                 </AccordionItem>
                             </Accordion>

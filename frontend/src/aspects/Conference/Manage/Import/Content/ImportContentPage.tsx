@@ -29,7 +29,28 @@ const presetJSONata_UnknownQuery = `
 
 const presetJSONata_CSVQuery_ProgramPeople = `
 (
-    $all := $[$not($."Content Id" = "")];
+    $allV1 := $[
+            $keys($)[$ = "Content Id"]
+        and $trim($."Content Id") != ""
+        and $trim($trim($."First Name") & ' ' & $trim($."Last Name")) != ""];
+    $allV2 := $[
+        $keys($)[$ = "Content Id 1"]
+        and $trim($."Content Id 1") != ""
+        and $trim($trim($."First Name") & ' ' & $trim($."Last Name")) != ""
+    ]
+        .$@$this
+        .$keys($this)[
+            $contains($, "Content Id") 
+            and $trim($lookup($this, $)) != ""
+        ].{
+        "First Name": $this."First Name",
+        "Last Name": $this."Last Name",
+        "Affiliation": $this."Affiliation",
+        "Email address": $this."Email address",
+        "Role": $this."Role",
+        "Content Id": $lookup($this, $)
+    };
+    $all := $append($allV1, $allV2);
     $distinctIds := $distinct($all."Content Id");
     {
         "originatingDatas": [$distinctIds.$@$ContentId.(
@@ -48,7 +69,7 @@ const presetJSONata_CSVQuery_ProgramPeople = `
             {
                 "originatingDataSourceId": $ContentId,
                 "people": [$people#$Priority.{
-                    "name_affiliation": $."First Name" & ' ' & $."Last Name" & '¦' & ($."Affiliation" ? $."Affiliation" : 'No affiliation'),
+                    "name_affiliation": $trim($trim($."First Name") & ' ' & $trim($."Last Name")) & '¦' & ($."Affiliation" ? $trim($."Affiliation") : ''),
                     "role": $uppercase(Role),
                     "priority": $Priority
                 }]
@@ -57,9 +78,9 @@ const presetJSONata_CSVQuery_ProgramPeople = `
         "exhibitions": [],
         "tags": [],
         "people": [$all.{
-            "name": $."First Name" & ' ' & $."Last Name",
-            "affiliation": Affiliation,
-            "email": $."Email address"
+            "name": $trim($trim($."First Name") & ' ' & $trim($."Last Name")),
+            "affiliation": Affiliation ? $trim(Affiliation) : "",
+            "email": $trim($."Email address")
         }]
     }
 )
@@ -79,8 +100,8 @@ const presetJSONata_CSVQuery_Content = `
         }],
         "items": [$all.{
             "originatingDataSourceId": $."Content Id",
-            "title": Title,
-            "shortTitle": $."Short title",
+            "title": $trim(Title),
+            "shortTitle": $trim($."Short title"),
             "typeName": $uppercase(Type) = "SESSION Q&A" ? "SESSION_Q_AND_A" : $uppercase(Type),
             "elements": [
                 {
@@ -174,9 +195,9 @@ const presetJSONata_CSVQuery_Content = `
                 "data": [],
                 "uploadsRemaining": 3
             }] : []),
-            "tagNames": ($."Tag 1?" != "" ? [$."Tag 1?"] : [])
-            ~> $append($."Tag 2?" != "" ? [$."Tag 2?"] : [])
-            ~> $append($."Tag 3?" != "" ? [$."Tag 3?"] : []),
+            "tagNames": ($."Tag 1?" and $trim($."Tag 1?") != "" ? [$trim($."Tag 1?")] : [])
+            ~> $append($."Tag 2?" and $trim($."Tag 2?") != "" ? [$trim($."Tag 2?")] : [])
+            ~> $append($."Tag 3?" and $trim($."Tag 3?") != "" ? [$trim($."Tag 3?")] : []),
             "exhibitionNames": ($."Exhibition?" != "" ? [$."Exhibition?"] : [])
         }],
         "exhibitions": [],
@@ -191,8 +212,8 @@ const presetJSONata_CSVQuery_Tags = `
     "originatingDatas": [],
     "items": [],
     "exhibitions": [],
-    "tags": [$.{
-        "name": $.Name,
+    "tags": [$[$trim($.Name) != ""].{
+        "name": $trim($.Name),
         "priority": $number($.Priority),
         "colour": $.Colour
     }],
@@ -204,8 +225,8 @@ const presetJSONata_CSVQuery_Exhibitions = `
 {
     "originatingDatas": [],
     "items": [],
-    "exhibitions": [$.{
-        "name": $.Name,
+    "exhibitions": [$[$trim($.Name) != ""].{
+        "name": $trim($.Name),
         "priority": $number($.Priority),
         "colour": $.Colour,
         "isHidden": $.Hidden

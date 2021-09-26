@@ -692,7 +692,6 @@ function findExistingPerson(
     const matchExact = isMatch_String_Exact();
     return (
         findMatch(ctx, elements, element, isMatch_Id("Person")) ??
-        findMatch(ctx, elements, element, isMatch_String_Exact("email")) ??
         findMatch(ctx, elements, element, (ctxInner, x, y) => {
             if (!x.name || !y.name) {
                 return false;

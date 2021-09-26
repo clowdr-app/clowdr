@@ -29,11 +29,24 @@ const presetJSONata_ScheduleCSVQuery = `
         "rooms": [$roomNames.{ "name": $ }],
         "events": [$all.(
             $timeZoneOffset := '+00:00';
-            $timeFormat := "[Y0001]-[M01]-[D01]T[H01]:[m01] [Z]";
-            $startAt := $."Start Time" & ' ' & $timeZoneOffset;
-            $endAt := $."End Time" & ' ' & $timeZoneOffset;
-            $startTime := $toMillis($startAt, $timeFormat);
-            $endTime := $toMillis($endAt, $timeFormat);
+
+            /* Without seconds */
+            $timeFormat1 := "[Y0001]-[M01]-[D01]T[H01]:[m01] [Z]";
+            $startAt1 := $."Start Time" & ' ' & $timeZoneOffset;
+            $endAt1 := $."End Time" & ' ' & $timeZoneOffset;
+            $startTime1 := $toMillis($startAt1, $timeFormat1);
+            $endTime1 := $toMillis($endAt1, $timeFormat1);
+
+            /* With seconds */
+            $timeFormat2 := "[Y0001]-[M01]-[D01]T[H01]:[m01]:[s01] [Z]";
+            $startAt2 := $."Start Time" & ' ' & $timeZoneOffset;
+            $endAt2 := $."End Time" & ' ' & $timeZoneOffset;
+            $startTime2 := $toMillis($startAt2, $timeFormat2);
+            $endTime2 := $toMillis($endAt2, $timeFormat2);
+
+            $startTime := $startTime1 ? $startTime1 : $startTime2;
+            $endTime := $endTime1 ? $endTime1 : $endTime2;
+
             $durationSeconds := ($endTime - $startTime) / 1000;
             $roomName := $."Room Name";
             $modeName := $.Mode ~> $uppercase ~> $replace(/ /, "_");

@@ -154,6 +154,7 @@ select_permissions:
                   _eq: CONFERENCE_VIEW
   role: unauthenticated
 - permission:
+    allow_aggregations: true
     columns:
     - chatId
     - conferenceId

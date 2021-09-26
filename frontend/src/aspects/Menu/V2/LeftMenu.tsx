@@ -1,8 +1,9 @@
+import { gql } from "@apollo/client";
 import { Box, Flex, Link, MenuDivider, MenuItem } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../generated/graphql";
+import { Permissions_Permission_Enum, useCountSwagBagsQuery } from "../../../generated/graphql";
 import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
@@ -20,12 +21,29 @@ import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import MenuButton from "./MenuButton";
 import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 
+gql`
+    query CountSwagBags($conferenceId: uuid!) {
+        content_Item_aggregate(where: { conferenceId: { _eq: $conferenceId }, typeName: { _eq: SWAG_BAG } }) {
+            aggregate {
+                count
+            }
+        }
+    }
+`;
+
 const colorScheme = "blue";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
+
+    const swagBagsResponse = useCountSwagBagsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        fetchPolicy: "cache-first",
+    });
 
     const { liveEventsByRoom } = useLiveEvents();
 
@@ -204,6 +222,12 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                                 My recordings
                             </MenuItem>
+                            {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
+                                <MenuItem as={ReactLink} to={`/conference/${conference.slug}/swag`}>
+                                    <FAIcon iconStyle="s" icon="gift" mr={2} aria-hidden={true} w="1.2em" />
+                                    My conference swag
+                                </MenuItem>
+                            ) : undefined}
                             <MenuItem
                                 ref={myBackstagesButtonRef as React.RefObject<HTMLButtonElement>}
                                 onClick={myBackstages_OnOpen}

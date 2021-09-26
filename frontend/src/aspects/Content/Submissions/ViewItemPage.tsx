@@ -11,6 +11,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import type { VideoFileBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import * as R from "ramda";
 import React from "react";
@@ -139,10 +140,37 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                                                             size="sm"
                                                             to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
                                                         >
-                                                            {element.data instanceof Array && element.data.length > 0
+                                                            {element.data &&
+                                                            element.data instanceof Array &&
+                                                            element.data.length > 0
                                                                 ? "Edit"
                                                                 : "Submit first version"}
                                                         </LinkButton>
+                                                        {(element.typeName ===
+                                                            Content_ElementType_Enum.VideoBroadcast ||
+                                                            element.typeName ===
+                                                                Content_ElementType_Enum.VideoCountdown ||
+                                                            element.typeName === Content_ElementType_Enum.VideoFile ||
+                                                            element.typeName === Content_ElementType_Enum.VideoFiller ||
+                                                            element.typeName ===
+                                                                Content_ElementType_Enum.VideoPrepublish ||
+                                                            element.typeName ===
+                                                                Content_ElementType_Enum.VideoSponsorsFiller ||
+                                                            element.typeName ===
+                                                                Content_ElementType_Enum.VideoTitles) &&
+                                                        element.data &&
+                                                        element.data instanceof Array &&
+                                                        element.data.length > 0 &&
+                                                        (element.data[element.data.length - 1].data as VideoFileBlob)
+                                                            ?.subtitles ? (
+                                                            <LinkButton
+                                                                colorScheme="purple"
+                                                                size="sm"
+                                                                to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
+                                                            >
+                                                                Edit subtitles
+                                                            </LinkButton>
+                                                        ) : undefined}
                                                         <Text fontSize="sm">
                                                             {element.uploadsRemaining} submission attempts remaining.
                                                         </Text>

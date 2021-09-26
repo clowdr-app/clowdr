@@ -1,7 +1,11 @@
+import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { detect } from "detect-browser";
+import * as R from "ramda";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
+import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
 import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
+import { useConference } from "../Conference/useConference";
 import { useRestorableState } from "../Generic/useRestorableState";
 
 export interface VonageRoomState {
@@ -114,16 +118,26 @@ const initialComputedState: VonageRoomComputedState = {
     audioTrack: null,
 };
 
+export interface VonageRoomSettings {
+    maximumSimultaneousScreenShares: number;
+}
+
 interface VonageRoomContext {
     state: VonageRoomState;
     computedState: VonageRoomComputedState;
     dispatch: Dispatch<VonageRoomStateAction>;
+    settings: VonageRoomSettings;
 }
+
+const defaultVonageRoomSettings: VonageRoomSettings = {
+    maximumSimultaneousScreenShares: 1,
+};
 
 export const VonageContext = React.createContext<VonageRoomContext>({
     state: initialRoomState,
     computedState: initialComputedState,
     dispatch: () => null,
+    settings: defaultVonageRoomSettings,
 });
 
 function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageRoomState {
@@ -200,6 +214,16 @@ function reducer(state: VonageRoomState, action: VonageRoomStateAction): VonageR
             return { ...state, screenShareIntendedEnabled: action.screenEnabled };
     }
 }
+
+gql`
+    query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) {
+        conference_Configuration_by_pk(conferenceId: $conferenceId, key: VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES) {
+            conferenceId
+            key
+            value
+        }
+    }
+`;
 
 export function VonageRoomStateProvider({
     onPermissionsProblem,
@@ -442,7 +466,34 @@ export function VonageRoomStateProvider({
         };
     }, [cameraTrack, microphoneTrack]);
 
-    const ctx = useMemo(() => ({ state, dispatch, computedState }), [computedState, state]);
+    const { id: conferenceId } = useConference();
+    const maxSimultaneousScreenSharesResponse = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
+        variables: {
+            conferenceId,
+        },
+    });
+
+    const settings = useMemo(
+        () =>
+            R.mergeWithKey<VonageRoomSettings, Partial<VonageRoomSettings>>(
+                (k, l, r) => {
+                    switch (k) {
+                        case "maximumSimultaneousScreenShares":
+                            return typeof r === "number" ? r : l;
+                        default:
+                            return r ?? l;
+                    }
+                },
+                defaultVonageRoomSettings,
+                {
+                    maximumSimultaneousScreenShares:
+                        maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk?.value ?? undefined,
+                }
+            ),
+        [maxSimultaneousScreenSharesResponse?.data?.conference_Configuration_by_pk]
+    );
+
+    const ctx = useMemo(() => ({ state, dispatch, computedState, settings }), [computedState, state, settings]);
 
     return <VonageContext.Provider value={ctx}>{children}</VonageContext.Provider>;
 }

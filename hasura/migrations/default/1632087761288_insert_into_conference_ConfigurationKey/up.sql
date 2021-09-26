@@ -1,0 +1,1 @@
+INSERT INTO "conference"."ConfigurationKey"("name", "description") VALUES (E'VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES', E'Integer. The maximum number of simultaneous screen shares allowed in Vonage video chats.');

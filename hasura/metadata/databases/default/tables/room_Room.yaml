@@ -68,6 +68,15 @@ object_relationships:
       remote_table:
         name: RoomRtmpOutput
         schema: video
+- name: vonageSessionLayout
+  using:
+    manual_configuration:
+      column_mapping:
+        publicVonageSessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageSessionLayout
+        schema: video
 array_relationships:
 - name: channelStackCreateJobs
   using:
@@ -120,6 +129,15 @@ array_relationships:
       table:
         name: RoomStats
         schema: analytics
+- name: vonageParticipantStreams
+  using:
+    manual_configuration:
+      column_mapping:
+        publicVonageSessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageParticipantStream
+        schema: video
 - name: vonageRecordings
   using:
     manual_configuration:

@@ -77,7 +77,6 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
                     id: data.id,
                     name: data.name,
                     originatingDataId: data.originatingDataId,
-                    participants: new Set(data.participants.map((x) => x.registrantId)),
                 },
             ])
         ),
@@ -122,6 +121,5 @@ export function deepCloneRoomDescriptor(room: RoomDescriptor): RoomDescriptor {
         id: room.id,
         name: room.name,
         originatingDataId: room.originatingDataId,
-        participants: new Set(room.participants),
     };
 }

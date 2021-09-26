@@ -13,8 +13,8 @@ import { getRoomByVonageSessionId } from "../room";
 import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";
 import Vonage from "./vonageClient";
 import {
-    addEventParticipantStream,
-    removeEventParticipantStream,
+    addVonageParticipantStream,
+    removeVonageParticipantStream,
     startEventBroadcast,
     startRoomVonageArchiving,
     stopRoomVonageArchiving,
@@ -287,7 +287,8 @@ export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWeb
                 success = false;
             } else {
                 await callWithRetry(
-                    async () => await removeRoomParticipant(room.roomId, room.conferenceId, registrantId)
+                    async () =>
+                        await removeRoomParticipant(room.roomId, room.conferenceId, registrantId, payload.sessionId)
                 );
             }
         } catch (e) {
@@ -304,7 +305,7 @@ export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWeb
     return success;
 }
 
-export async function addAndRemoveEventParticipantStreams(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
+export async function addAndRemoveVonageParticipantStreams(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
     let success = true;
 
     if (payload.event === "streamCreated") {
@@ -317,7 +318,7 @@ export async function addAndRemoveEventParticipantStreams(payload: SessionMonito
             const data = JSON.parse(payload.stream.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
             await callWithRetry(
-                async () => await addEventParticipantStream(payload.sessionId, registrantId, payload.stream)
+                async () => await addVonageParticipantStream(payload.sessionId, registrantId, payload.stream)
             );
         } catch (e) {
             console.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
@@ -335,7 +336,7 @@ export async function addAndRemoveEventParticipantStreams(payload: SessionMonito
             const data = JSON.parse(payload.stream.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
             await callWithRetry(
-                async () => await removeEventParticipantStream(payload.sessionId, registrantId, payload.stream)
+                async () => await removeVonageParticipantStream(payload.sessionId, registrantId, payload.stream)
             );
         } catch (e) {
             console.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);

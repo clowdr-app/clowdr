@@ -22,7 +22,7 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
 
     return (
         <VStack w="auto">
-            <Box position="relative">
+            <Box position="relative" mb={4}>
                 <Box position="absolute" width="100%" height="100%">
                     <Box
                         position="absolute"

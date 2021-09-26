@@ -191,16 +191,16 @@ export default function ExhibitionLayout({
     exhibition: ExhibitionWithContentFragment;
     hideLiveViewButton?: boolean;
 }): JSX.Element {
-    const sortedGroups = useMemo(
+    const sortedItems = useMemo(
         () => [...exhibition.items].sort((x, y) => maybeCompare(x.priority, y.priority, (a, b) => a - b)),
         [exhibition.items]
     );
     return (
         <Grid templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)"]} mt={0} gap={[2, 2, 4]}>
-            {sortedGroups.map((cgh) => (
+            {sortedItems.map((item) => (
                 <ItemTile
-                    key={cgh.id}
-                    item={cgh.item}
+                    key={item.id}
+                    item={item.item}
                     exhibitionColour={exhibition.colour}
                     hideLiveViewButton={hideLiveViewButton ?? false}
                 />

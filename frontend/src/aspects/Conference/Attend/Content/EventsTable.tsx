@@ -28,7 +28,7 @@ export function EventsTable({
                     Go to room
                 </LinkButton>
             ) : undefined}
-            <Table m={0} textAlign="left" variant="striped" w="auto" size="sm" colorScheme="blue">
+            <Table m={0} textAlign="left" w="auto" size="sm" colorScheme="blue">
                 <Thead>
                     <Tr>
                         {maybeRegistrant ? <Th p={0}></Th> : undefined}
@@ -93,7 +93,7 @@ function Event({
     return (
         <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "green.500" : "initial"}>
             {maybeRegistrant ? (
-                <Td p={0} pl={1}>
+                <Td p={1} bgColor="gray.900">
                     <StarEventButton eventIds={itemEvent.id} />
                 </Td>
             ) : undefined}

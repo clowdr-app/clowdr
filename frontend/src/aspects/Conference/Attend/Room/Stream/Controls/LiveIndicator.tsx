@@ -2,11 +2,13 @@ import { gql } from "@apollo/client";
 import {
     Badge,
     Button,
-    Heading,
     HStack,
     Modal,
     ModalBody,
+    ModalCloseButton,
     ModalContent,
+    ModalFooter,
+    ModalHeader,
     ModalOverlay,
     Stat,
     StatLabel,
@@ -22,7 +24,12 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
+import {
+    RoomEventDetailsFragment,
+    useLiveIndicator_GetElementQuery,
+    useLiveIndicator_GetLatestQuery,
+} from "../../../../../../generated/graphql";
+import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
 import StreamPreview from "./StreamPreview";
@@ -49,28 +56,28 @@ gql`
 `;
 
 export function LiveIndicator({
-    live,
-    now,
-    secondsUntilLive,
-    secondsUntilOffAir,
-    eventId,
     isConnected,
     hlsUri,
+    event,
 }: {
-    live: boolean;
-    now: number;
-    secondsUntilLive: number;
-    secondsUntilOffAir: number;
-    eventId: string;
     isConnected: boolean;
     hlsUri: string | undefined;
+    event: RoomEventDetailsFragment;
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const startTime = useMemo(() => Date.parse(event.startTime), [event.startTime]);
+    const endTime = useMemo(() => Date.parse(event.endTime), [event.endTime]);
+    const realNow = useRealTime(1000);
+    const now = realNow + 2000; // adjust for expected RTMP delay
+    const live = now >= startTime && now <= endTime;
+    const secondsUntilLive = (startTime - now) / 1000;
+    const secondsUntilOffAir = (endTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
     const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
         variables: {
-            eventId,
+            eventId: event.id,
         },
         pollInterval: 10000,
     });
@@ -224,25 +231,41 @@ export function LiveIndicator({
             <Modal isOpen={shouldModalBeOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
                 <ModalContent>
+                    <ModalHeader>
+                        You will be live the moment the indicator says &ldquo;Backstage is live&rdquo;.
+                    </ModalHeader>
+                    <ModalCloseButton />
                     <ModalBody>
-                        <VStack>
-                            <Heading fontSize="lg">
-                                You will be live the moment the indicator says &ldquo;Backstage is live&rdquo;.
-                            </Heading>
-                            <Text>Please avoid asking the audience when you are live.</Text>
-                            <Text>
-                                The audience sees the stream with a bit of lag - anywhere from 5 to 30 seconds depending
-                                on where they are in the world. So they can&apos;t give you real-time feedback about the
-                                stream. Also, if there were a technical glitch (meaning your stream was not live) you
-                                can trust that the audience will quickly start telling you via the chat.
-                            </Text>
-                            <Text>
-                                If the countdown says the backstage is live and you are connected, then you are live in
-                                front of the entire conference and should start your presentation or Q&amp;A session.
-                            </Text>
-                            <Text>(Also, please open the chat sidebar ahead of time, while you are off air.)</Text>
+                        <VStack alignItems="left" spacing={6}>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">The audience sees the stream with a bit of delay.</Text>
+                                <Text>
+                                    This is normally 5-30 seconds depending on where they are in the world. Don&apos;t
+                                    wait for the audience to tell you they can see you - or they will see you sitting
+                                    there silently for up to thirty seconds!
+                                </Text>
+                            </VStack>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">Pay attention to the countdown clock.</Text>
+                                <Text>
+                                    If it says the backstage is live, then you are live in front of the entire
+                                    conference and should start your presentation or Q&amp;A session.
+                                </Text>
+                            </VStack>
+                            <VStack alignItems="left" spacing={1}>
+                                <Text fontWeight="bold">Open the chat sidebar now.</Text>
+                                <Text>
+                                    It&apos;s a good idea to have the chat open so that you can read feedback from the
+                                    audience.
+                                </Text>
+                            </VStack>
                         </VStack>
                     </ModalBody>
+                    <ModalFooter>
+                        <Button size="sm" colorScheme="blue" onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         ),
@@ -305,16 +328,37 @@ export function LiveIndicator({
                                             : undefined
                                     }
                                     p="2px"
+                                    display="flex"
+                                    flexDir="column"
+                                    justifyContent="center"
                                 >
                                     <StatLabel>Time until start</StatLabel>
-                                    <StatNumber>{formatRemainingTime(secondsUntilLive)}</StatNumber>
+                                    <StatNumber
+                                        css={{
+                                            fontFeatureSettings: "tnum",
+                                            fontVariantNumeric: "tabular-nums",
+                                        }}
+                                    >
+                                        {formatRemainingTime(secondsUntilLive)}
+                                    </StatNumber>
                                 </Stat>
                             ) : (
                                 <></>
                             )}
                             {secondsUntilLive > 10 ? (
-                                <Button onClick={onOpen} h="auto" maxH="auto" p={3} colorScheme="blue" size="sm">
-                                    What should I do?
+                                <Button
+                                    onClick={onOpen}
+                                    h="auto"
+                                    maxH="auto"
+                                    p={3}
+                                    colorScheme="blue"
+                                    size="sm"
+                                    whiteSpace="normal"
+                                    wordWrap="break-word"
+                                    flexShrink={1}
+                                    maxW="15ch"
+                                >
+                                    How do I use the backstage?
                                 </Button>
                             ) : undefined}
                         </>

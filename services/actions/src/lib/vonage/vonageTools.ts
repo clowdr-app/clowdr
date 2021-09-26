@@ -1,17 +1,20 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
+import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import OpenTok from "opentok";
 import {
-    CreateEventParticipantStreamDocument,
+    CreateVonageParticipantStreamDocument,
     CreateVonageRoomRecordingDocument,
     GetEventBroadcastDetailsDocument,
-    GetEventByVonageSessionIdDocument,
     GetRoomArchiveDetailsDocument,
-    RemoveEventParticipantStreamDocument,
+    GetVonageSessionLayoutDocument,
+    RemoveVonageParticipantStreamDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { StreamData } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
+import { getRegistrantDetails } from "../authorisation";
 import { Chime, shortId } from "../aws/awsClient";
 import { getRoomParticipantDetails, removeRoomParticipant } from "../roomParticipant";
 import Vonage from "./vonageClient";
@@ -91,8 +94,8 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
     let broadcastDetails: EventBroadcastDetails;
     try {
         broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
-    } catch (e) {
-        console.error("Error retrieving Vonage broadcast details for event", e);
+    } catch (err) {
+        console.error("Error retrieving Vonage broadcast details for event", { eventId, err });
         return;
     }
 
@@ -108,7 +111,9 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
         return;
     }
 
-    let startedSessionBroadcasts = existingSessionBroadcasts?.filter((broadcast) => broadcast.status === "started");
+    let startedSessionBroadcasts = existingSessionBroadcasts?.filter(
+        (broadcast) => broadcast.status === "started" || broadcast.status === "paused"
+    );
 
     console.log(
         `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`,
@@ -154,11 +159,19 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
             rtmpId
         );
         try {
+            const dirtyLayoutData = await getVonageLayout(broadcastDetails.vonageSessionId);
+            const dirtyLayout = dirtyLayoutData ? convertLayout(dirtyLayoutData) : null;
+            const cleanLayout = dirtyLayout
+                ? await sanitizeLayout(broadcastDetails.vonageSessionId, dirtyLayout)
+                : null;
+
             const broadcast = await Vonage.startBroadcast(broadcastDetails.vonageSessionId, {
-                layout: {
-                    type: "bestFit",
-                    screenshareType: "verticalPresentation",
-                },
+                layout: cleanLayout
+                    ? cleanLayout.layout.layout
+                    : {
+                          type: "bestFit",
+                          screenshareType: "verticalPresentation",
+                      },
                 outputs: {
                     rtmp: [
                         {
@@ -207,7 +220,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
 
     for (const existingBroadcast of existingSessionBroadcasts) {
         try {
-            if (existingBroadcast.status === "started") {
+            if (existingBroadcast.status === "started" || existingBroadcast.status === "paused") {
                 await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
         } catch (e) {
@@ -319,6 +332,10 @@ export async function startRoomVonageArchiving(
     if (!existingArchive) {
         console.log("Starting archive for session", archiveDetails.vonageSessionId, roomId);
         try {
+            const dirtyLayoutData = await getVonageLayout(archiveDetails.vonageSessionId);
+            const dirtyLayout = dirtyLayoutData ? convertLayout(dirtyLayoutData) : null;
+            const cleanLayout = dirtyLayout ? await sanitizeLayout(archiveDetails.vonageSessionId, dirtyLayout) : null;
+
             const recordingResponse = await apolloClient.mutate({
                 mutation: CreateVonageRoomRecordingDocument,
                 variables: {
@@ -338,10 +355,12 @@ export async function startRoomVonageArchiving(
                     outputMode: "composed",
                     hasAudio: true,
                     hasVideo: true,
-                    layout: {
-                        type: "bestFit",
-                        screenshareType: "verticalPresentation",
-                    },
+                    layout: cleanLayout
+                        ? cleanLayout.layout.layout
+                        : {
+                              type: "bestFit",
+                              screenshareType: "verticalPresentation",
+                          },
                 })
             );
 
@@ -462,19 +481,19 @@ gql`
         }
     }
 
-    mutation CreateEventParticipantStream(
+    mutation CreateVonageParticipantStream(
         $registrantId: uuid!
         $conferenceId: uuid!
-        $eventId: uuid!
+        $vonageSessionId: String!
         $vonageConnectionId: String!
         $vonageStreamId: String!
         $vonageStreamType: String!
     ) {
-        insert_video_EventParticipantStream_one(
+        insert_video_VonageParticipantStream_one(
             object: {
                 registrantId: $registrantId
                 conferenceId: $conferenceId
-                eventId: $eventId
+                vonageSessionId: $vonageSessionId
                 vonageConnectionId: $vonageConnectionId
                 vonageStreamId: $vonageStreamId
                 vonageStreamType: $vonageStreamType
@@ -485,35 +504,23 @@ gql`
     }
 `;
 
-export async function addEventParticipantStream(
+export async function addVonageParticipantStream(
     sessionId: string,
     registrantId: string,
     stream: StreamData
 ): Promise<void> {
-    const eventResult = await apolloClient.query({
-        query: GetEventByVonageSessionIdDocument,
-        variables: {
-            sessionId,
-        },
-    });
-
-    if (eventResult.error || eventResult.errors) {
-        console.error("Error while retrieving event from Vonage session ID", sessionId, registrantId);
-        throw new Error("Error while retrieving event from Vonage session ID");
-    }
-
-    if (eventResult.data.schedule_Event.length !== 1) {
-        console.log("No event matching this session, skipping participant addition.", sessionId, registrantId);
-        return;
-    }
-
     try {
+        const registrant = await getRegistrantDetails(registrantId);
+        if (!registrant) {
+            throw new Error("Could not find registrant!");
+        }
+
         await apolloClient.mutate({
-            mutation: CreateEventParticipantStreamDocument,
+            mutation: CreateVonageParticipantStreamDocument,
             variables: {
                 registrantId,
-                conferenceId: eventResult.data.schedule_Event[0].conferenceId,
-                eventId: eventResult.data.schedule_Event[0].id,
+                conferenceId: registrant.conferenceId,
+                vonageSessionId: sessionId,
                 vonageConnectionId: stream.connection.id,
                 vonageStreamId: stream.id,
                 vonageStreamType: stream.videoType ?? "camera",
@@ -521,76 +528,439 @@ export async function addEventParticipantStream(
         });
     } catch (e) {
         // If there is already a row for this event, kick the previous connection before recording the new one
-        console.error(
-            "Error while adding event participant stream",
-            eventResult.data.schedule_Event[0].id,
-            registrantId,
-            stream.id,
-            e
-        );
-        throw new Error("Error while adding event participant stream");
+        console.error("Error while adding vonage participant stream", registrantId, stream.id, e);
+        throw new Error("Error while adding vonage participant stream");
     }
 }
 
 gql`
-    mutation RemoveEventParticipantStream(
+    mutation RemoveVonageParticipantStream(
         $registrantId: uuid!
         $conferenceId: uuid!
-        $eventId: uuid!
+        $vonageSessionId: String!
         $vonageConnectionId: String!
         $vonageStreamId: String!
+        $now: timestamptz!
     ) {
-        delete_video_EventParticipantStream(
+        update_video_VonageParticipantStream(
             where: {
                 registrantId: { _eq: $registrantId }
                 conferenceId: { _eq: $conferenceId }
-                eventId: { _eq: $eventId }
+                vonageSessionId: { _eq: $vonageSessionId }
                 vonageConnectionId: { _eq: $vonageConnectionId }
                 vonageStreamId: { _eq: $vonageStreamId }
+                stopped_at: { _is_null: true }
             }
+            _set: { stopped_at: $now }
         ) {
             affected_rows
         }
     }
 `;
 
-export async function removeEventParticipantStream(
+export async function removeVonageParticipantStream(
     sessionId: string,
     registrantId: string,
     stream: StreamData
 ): Promise<void> {
-    const eventResult = await apolloClient.query({
-        query: GetEventByVonageSessionIdDocument,
-        variables: {
-            sessionId,
-        },
-    });
-
-    if (eventResult.error || eventResult.errors) {
-        console.log("Could not retrieve event from Vonage session ID", sessionId, registrantId);
-        throw new Error("Could not retrieve event from Vonage session ID");
-    }
-
-    if (eventResult.data.schedule_Event.length !== 1) {
-        console.log("No event matching this session, skipping participant stream removal.", sessionId, registrantId);
-        return;
+    const registrant = await getRegistrantDetails(registrantId);
+    if (!registrant) {
+        throw new Error("Could not find registrant!");
     }
 
     const removeResult = await apolloClient.mutate({
-        mutation: RemoveEventParticipantStreamDocument,
+        mutation: RemoveVonageParticipantStreamDocument,
         variables: {
             registrantId,
-            conferenceId: eventResult.data.schedule_Event[0].conferenceId,
-            eventId: eventResult.data.schedule_Event[0].id,
+            conferenceId: registrant.conferenceId,
+            vonageSessionId: sessionId,
             vonageConnectionId: stream.connection.id,
             vonageStreamId: stream.id,
+            now: new Date().toISOString(),
         },
     });
 
     if (
-        !removeResult.data?.delete_video_EventParticipantStream?.affected_rows ||
-        removeResult.data.delete_video_EventParticipantStream.affected_rows === 0
+        !removeResult.data?.update_video_VonageParticipantStream?.affected_rows ||
+        removeResult.data.update_video_VonageParticipantStream.affected_rows === 0
     ) {
-        console.warn("Could not find participant stream to remove for event", sessionId, registrantId, stream.id);
+        console.warn(
+            "Could not find participant stream to remove for vonage session",
+            sessionId,
+            registrantId,
+            stream.id
+        );
+    }
+}
+
+///////////////////////////////////////////////////////
+
+gql`
+    query GetVonageSessionLayout($vonageSessionId: String!) {
+        video_VonageSessionLayout(
+            where: { vonageSessionId: { _eq: $vonageSessionId } }
+            order_by: { created_at: desc }
+            limit: 1
+        ) {
+            id
+            layoutData
+        }
+    }
+`;
+
+export async function getVonageLayout(vonageSessionId: string): Promise<VonageSessionLayoutData | null> {
+    const response = await apolloClient.query({
+        query: GetVonageSessionLayoutDocument,
+        variables: {
+            vonageSessionId,
+        },
+    });
+
+    return response.data.video_VonageSessionLayout[0]?.layoutData ?? null;
+}
+
+export interface VonageLayout {
+    streamClasses: {
+        [streamId: string]: string[];
+    };
+    layout: VonageLayoutCustom | VonageLayoutBuiltin;
+}
+
+export interface VonageLayoutCustom {
+    type: "custom";
+    stylesheet: string;
+}
+
+export interface VonageLayoutBuiltin {
+    type: "bestFit";
+    screenShareType: "verticalPresentation" | "horizontalPresentation";
+}
+
+async function getOngoingBroadcastIds(vonageSessionId: string): Promise<string[]> {
+    console.log("Getting list of Vonage broadcasts", { vonageSessionId });
+    const broadcasts = await Vonage.listBroadcasts({
+        sessionId: vonageSessionId,
+    });
+
+    return (
+        broadcasts
+            ?.filter((broadcast) => broadcast.status === "started" || broadcast.status === "paused")
+            .map((broadcast) => broadcast.id) ?? []
+    );
+}
+
+async function getOngoingArchiveIds(vonageSessionId: string): Promise<string[]> {
+    console.log("Getting list of Vonage archives", { vonageSessionId });
+    const archives = await Vonage.listArchives({
+        sessionId: vonageSessionId,
+    });
+
+    return (
+        archives
+            ?.filter((archive) => archive.status === "started" || archive.status === "paused")
+            .map((archive) => archive.id) ?? []
+    );
+}
+
+export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLayout: VonageLayout): Promise<number> {
+    const { streams, layout } = await sanitizeLayout(vonageSessionId, dirtyLayout);
+    const laidOutStreamIds = Object.keys(layout.streamClasses);
+    const streamsToClear = streams
+        .filter((stream) => !laidOutStreamIds.includes(stream.id))
+        .map((stream) => ({
+            id: stream.id,
+            layoutClassList: [] as string[],
+        }));
+    const streamsToSet = Object.entries(layout.streamClasses).map(([streamId, classes]) => ({
+        id: streamId,
+        layoutClassList: classes,
+    }));
+
+    try {
+        const allStreamsTransform = streamsToClear.concat(streamsToSet);
+        if (allStreamsTransform.length > 0) {
+            console.info(
+                "Setting Vonage stream class list:" +
+                    JSON.stringify(
+                        {
+                            vonageSessionId,
+                            classListArray: allStreamsTransform,
+                        },
+                        undefined,
+                        2
+                    )
+            );
+
+            await Vonage.setStreamClassLists(vonageSessionId, allStreamsTransform);
+        }
+    } catch (err) {
+        console.error("Error setting Vonage stream class list", {
+            vonageSessionId,
+            streamsToClear,
+            streamsToSet,
+            err,
+        });
+        throw err;
+    }
+
+    // Update broadcasts
+    const startedBroadcastIds = await getOngoingBroadcastIds(vonageSessionId);
+    if (startedBroadcastIds.length > 0) {
+        console.log("Setting layout of Vonage broadcasts", { vonageSessionId, startedBroadcastIds });
+        for (const startedBroadcastId of startedBroadcastIds) {
+            try {
+                switch (layout.layout.type) {
+                    case "bestFit":
+                        await Vonage.setBroadcastLayout(
+                            startedBroadcastId,
+                            "bestFit",
+                            null,
+                            layout.layout.screenShareType
+                        );
+                        break;
+                    case "custom":
+                        await Vonage.setBroadcastLayout(startedBroadcastId, "custom", layout.layout.stylesheet, null);
+                        break;
+                }
+            } catch (err) {
+                console.error("Failed to set layout for Vonage broadcast", {
+                    vonageSessionId,
+                    startedBroadcastId,
+                    err,
+                });
+            }
+        }
+    }
+
+    // Update archives
+    const startedArchiveIds = await getOngoingArchiveIds(vonageSessionId);
+    if (startedArchiveIds.length > 0) {
+        console.log("Setting layout of Vonage archives", { vonageSessionId, startedArchiveIds });
+        for (const startedArchiveId of startedArchiveIds) {
+            try {
+                switch (layout.layout.type) {
+                    case "bestFit":
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
+                        break;
+                    case "custom":
+                        await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);
+                        break;
+                }
+            } catch (err) {
+                console.error("Failed to set layout for Vonage archive", {
+                    vonageSessionId,
+                    startedBroadcastId: startedArchiveId,
+                    err,
+                });
+            }
+        }
+    }
+
+    return streams.length;
+}
+
+export async function sanitizeLayout(
+    vonageSessionId: string,
+    layout: VonageLayout
+): Promise<{ streams: OpenTok.Stream[]; layout: VonageLayout }> {
+    const result: VonageLayout = {
+        layout: { ...layout.layout },
+        streamClasses: { ...layout.streamClasses },
+    };
+
+    const streams = await Vonage.listStreams(vonageSessionId);
+    if (!streams) {
+        console.error("Could not retrieve list of streams from Vonage", { vonageSessionId });
+        throw new Error("Could not retrieve list of streams from Vonage");
+    }
+
+    Object.keys(result.streamClasses).forEach((streamId) => {
+        if (!streams.some((s) => s.id === streamId)) {
+            delete result.streamClasses[streamId];
+        }
+    });
+
+    return { streams, layout: result };
+}
+
+export function convertLayout(layoutData: VonageSessionLayoutData): VonageLayout {
+    switch (layoutData.type) {
+        case VonageSessionLayoutType.BestFit:
+            return {
+                layout: {
+                    type: "bestFit",
+                    screenShareType: layoutData.screenShareType,
+                },
+                streamClasses: {},
+            };
+        case VonageSessionLayoutType.Single: {
+            const streamClasses: Record<string, Array<string>> = {};
+            if (layoutData.position1 && "streamId" in layoutData.position1) {
+                streamClasses[layoutData.position1.streamId] = ["stream1"];
+            }
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        "stream.stream1 { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }",
+                },
+                streamClasses,
+            };
+        }
+        case VonageSessionLayoutType.Pair: {
+            const streamClasses: Record<string, Array<string>> = {};
+            if (layoutData.position1 && "streamId" in layoutData.position1) {
+                streamClasses[layoutData.position1.streamId] = ["stream1"];
+            }
+            if (layoutData.position2 && "streamId" in layoutData.position2) {
+                streamClasses[layoutData.position2.streamId] = ["stream2"];
+            }
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet: `
+                        stream.stream1 { position: absolute; width: 50%; height: 100%; left: 0px; top: 0px; }
+                        stream.stream2 { position: absolute; width: 50%; height: 100%; right: 0px; top: 0px; }
+                    `,
+                },
+                streamClasses,
+            };
+        }
+        case VonageSessionLayoutType.PictureInPicture: {
+            const streamClasses: Record<string, Array<string>> = {};
+            if (layoutData.position1 && "streamId" in layoutData.position1) {
+                streamClasses[layoutData.position1.streamId] = ["stream1"];
+            }
+            if (layoutData.position2 && "streamId" in layoutData.position2) {
+                streamClasses[layoutData.position2.streamId] = ["stream2"];
+            }
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet: `
+                        stream.stream1 { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; z-index: 100;}
+                        stream.stream2 { position: absolute; width: 200px; height: 200px; right: 20px; bottom: 20px; z-index: 200; object-fit: cover; }
+                    `,
+                },
+                streamClasses,
+            };
+        }
+        case VonageSessionLayoutType.Fitted4: {
+            const streamClasses: Record<string, Array<string>> = {};
+            if (layoutData.position1 && "streamId" in layoutData.position1) {
+                streamClasses[layoutData.position1.streamId] = ["stream1"];
+            }
+            if (layoutData.position2 && "streamId" in layoutData.position2) {
+                streamClasses[layoutData.position2.streamId] = ["stream2"];
+            }
+            if (layoutData.position3 && "streamId" in layoutData.position3) {
+                streamClasses[layoutData.position3.streamId] = ["stream3"];
+            }
+            if (layoutData.position4 && "streamId" in layoutData.position4) {
+                streamClasses[layoutData.position4.streamId] = ["stream4"];
+            }
+            if (layoutData.position5 && "streamId" in layoutData.position5) {
+                streamClasses[layoutData.position5.streamId] = ["stream5"];
+            }
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        layoutData.side === "left"
+                            ? `
+                                stream.stream1 { position: absolute; width: 85.9375%; height: 100%; left: 14.0625%; top: 0px; z-index: 100;}
+                                stream.stream2 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 0%; z-index: 200; object-fit: cover; }
+                                stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 25%; z-index: 200; object-fit: cover; }
+                                stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 50%; z-index: 200; object-fit: cover; }
+                                stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 75%; z-index: 200; object-fit: cover; }
+                            `
+                            : `
+                                stream.stream1 { position: absolute; width: 100%; height: 75%; left: 0px; top: 0px; z-index: 100;}
+                                stream.stream2 { position: absolute; width: 14.0625%; height: 25%; left: 21.875%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 35.9375%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 50%; bottom: 0px; z-index: 200; object-fit: cover; }
+                                stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 64.0625%; bottom: 0px; z-index: 200; object-fit: cover; }
+                            `,
+                },
+                streamClasses,
+            };
+        }
+        case VonageSessionLayoutType.DualScreen: {
+            const sideStreams =
+                layoutData.splitDirection === "horizontal"
+                    ? `
+                        stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 0%; z-index: 200; object-fit: cover; }
+                        stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 25%; z-index: 200; object-fit: cover; }
+                        stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 50%; z-index: 200; object-fit: cover; }
+                        stream.stream6 { position: absolute; width: 14.0625%; height: 25%; left: 0px; top: 75%; z-index: 200; object-fit: cover; }
+                    `
+                    : `
+                        stream.stream3 { position: absolute; width: 14.0625%; height: 25%; left: 21.875%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream4 { position: absolute; width: 14.0625%; height: 25%; left: 35.9375%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream5 { position: absolute; width: 14.0625%; height: 25%; left: 50%; bottom: 0px; z-index: 200; object-fit: cover; }
+                        stream.stream6 { position: absolute; width: 14.0625%; height: 25%; left: 64.0625%; bottom: 0px; z-index: 200; object-fit: cover; }
+                    `;
+            const streamClasses: Record<string, Array<string>> = {};
+            if (layoutData.position1 && "streamId" in layoutData.position1) {
+                streamClasses[layoutData.position1.streamId] = ["stream1"];
+            }
+            if (layoutData.position2 && "streamId" in layoutData.position2) {
+                streamClasses[layoutData.position2.streamId] = ["stream2"];
+            }
+            if (layoutData.position3 && "streamId" in layoutData.position3) {
+                streamClasses[layoutData.position3.streamId] = ["stream3"];
+            }
+            if (layoutData.position4 && "streamId" in layoutData.position4) {
+                streamClasses[layoutData.position4.streamId] = ["stream4"];
+            }
+            if (layoutData.position5 && "streamId" in layoutData.position5) {
+                streamClasses[layoutData.position5.streamId] = ["stream5"];
+            }
+            if (layoutData.position6 && "streamId" in layoutData.position6) {
+                streamClasses[layoutData.position6.streamId] = ["stream6"];
+            }
+            return {
+                layout: {
+                    type: "custom",
+                    stylesheet:
+                        layoutData.splitDirection === "horizontal"
+                            ? layoutData.narrowStream === 1
+                                ? `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 25%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 75%; left: 14.0625%; top: 25%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                                : layoutData.narrowStream === 2
+                                ? `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 75%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 25%; left: 14.0625%; top: 75%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                                : `
+                                    stream.stream1 { position: absolute; width: 85.9375%; height: 50%; left: 14.0625%; top: 0%; z-index: 100; }
+                                    stream.stream2 { position: absolute; width: 85.9375%; height: 50%; left: 14.0625%; top: 50%; z-index: 100; }
+                                    ${sideStreams}
+                                `
+                            : layoutData.narrowStream === 1
+                            ? `
+                                stream.stream1 { position: absolute; width: 25%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 75%; height: 75%; left: 25%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `
+                            : layoutData.narrowStream === 2
+                            ? `
+                                stream.stream1 { position: absolute; width: 75%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 25%; height: 75%; left: 75%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `
+                            : `
+                                stream.stream1 { position: absolute; width: 50%; height: 75%; left: 0%; top: 0px; z-index: 100; }
+                                stream.stream2 { position: absolute; width: 50%; height: 75%; left: 50%; top: 0px; z-index: 100; }
+                                ${sideStreams}
+                            `,
+                },
+                streamClasses,
+            };
+        }
     }
 }

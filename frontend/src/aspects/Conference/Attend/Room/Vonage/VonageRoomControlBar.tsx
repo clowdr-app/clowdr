@@ -14,7 +14,6 @@ import {
     Heading,
     HStack,
     Spinner,
-    Stack,
     Tag,
     TagLabel,
     TagLeftIcon,
@@ -22,6 +21,7 @@ import {
     Tooltip,
     useDisclosure,
     VStack,
+    Wrap,
 } from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,9 +29,11 @@ import { useToggleVonageRecordingStateMutation } from "../../../../../generated/
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { DevicesProps, devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
+import LayoutChooser from "./Components/LayoutChooser";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
+import { useVonageLayout } from "./VonageLayoutProvider";
 
 gql`
     mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
@@ -55,7 +57,7 @@ export function VonageRoomControlBar({
     isBackstage,
     canControlRecording,
 }: {
-    onJoinRoom: () => void;
+    onJoinRoom: () => Promise<void>;
     onLeaveRoom: () => void;
     onCancelJoinRoom?: () => void;
     joining: boolean;
@@ -67,8 +69,9 @@ export function VonageRoomControlBar({
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
 }): JSX.Element {
-    const { state, dispatch } = useVonageRoom();
+    const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
+    const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
 
     const [toggleVonageRecording, toggleVonageRecordingResponse] = useToggleVonageRecordingStateMutation();
 
@@ -358,11 +361,11 @@ export function VonageRoomControlBar({
         });
     }, [dispatch]);
 
-    const receivingScreenShare = useMemo(
+    const receivingScreenShareCount = useMemo(
         () =>
             vonage.state.type === StateType.Connected
-                ? vonage.state.streams.find((s) => s.videoType === "screen")
-                : false,
+                ? vonage.state.streams.filter((s) => s.videoType === "screen").length
+                : 0,
         [vonage.state]
     );
 
@@ -407,17 +410,28 @@ export function VonageRoomControlBar({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRecordingActive]);
 
+    const buttonsDirection = vonage.state.type === StateType.Connected ? "row" : "column";
+
+    useEffect(() => {
+        if (vonage.state.type !== StateType.Connected) {
+            layoutChooser_onClose();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vonage.state.type]);
+
     return (
         <>
-            <Stack
+            <Wrap
                 p={2}
-                direction={vonage.state.type === StateType.Connected ? "row" : "column"}
+                direction={buttonsDirection}
                 justifyContent="center"
-                alignItems="stretch"
+                alignItems="center"
                 flexWrap="wrap"
-                gridRowGap={vonage.state.type === StateType.Connected ? 2 : undefined}
+                gridRowGap={buttonsDirection === "row" ? 2 : undefined}
             >
                 <Button
+                    size="sm"
+                    flexGrow={buttonsDirection === "row" ? 1 : 0}
                     isLoading={isOpening}
                     leftIcon={<SettingsIcon />}
                     onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
@@ -427,57 +441,126 @@ export function VonageRoomControlBar({
                     Choose microphone / camera
                 </Button>
                 {state.microphoneStream && state.microphoneIntendedEnabled ? (
-                    <Button onClick={stopMicrophone} colorScheme="purple" isDisabled={joining}>
+                    <Button
+                        size="sm"
+                        flexGrow={buttonsDirection === "row" ? 1 : 0}
+                        onClick={stopMicrophone}
+                        colorScheme="purple"
+                        isDisabled={joining}
+                    >
                         <FAIcon icon="microphone" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Mute</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startMicrophone} isDisabled={joining} colorScheme="blue">
+                    <Button
+                        size="sm"
+                        flexGrow={buttonsDirection === "row" ? 1 : 0}
+                        isLoading={isOpening}
+                        onClick={startMicrophone}
+                        isDisabled={joining}
+                        colorScheme="blue"
+                    >
                         <FAIcon icon="microphone-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
                     </Button>
                 )}
                 {state.cameraStream && state.cameraIntendedEnabled ? (
-                    <Button onClick={stopCamera} colorScheme="purple" isDisabled={joining}>
+                    <Button
+                        size="sm"
+                        flexGrow={buttonsDirection === "row" ? 1 : 0}
+                        onClick={stopCamera}
+                        colorScheme="purple"
+                        isDisabled={joining}
+                    >
                         <FAIcon icon="video" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Stop video</span>
                     </Button>
                 ) : (
-                    <Button isLoading={isOpening} onClick={startCamera} isDisabled={joining} colorScheme="blue">
+                    <Button
+                        size="sm"
+                        flexGrow={buttonsDirection === "row" ? 1 : 0}
+                        isLoading={isOpening}
+                        onClick={startCamera}
+                        isDisabled={joining}
+                        colorScheme="blue"
+                    >
                         <FAIcon icon="video-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
                     </Button>
                 )}
-                {vonage.state.type === StateType.Connected && receivingScreenShare ? (
-                    <Tag size="sm" variant="outline" colorScheme="blue" px={2} py="4px" ml={1} mr="auto" maxW="190px">
-                        <TagLeftIcon as={CheckCircleIcon} />
-                        <TagLabel whiteSpace="normal">Someone else is sharing their screen at the moment</TagLabel>
-                    </Tag>
-                ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
-                    <Button onClick={stopScreenShare} mr="auto" colorScheme="red" isDisabled={joining}>
-                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
-                    </Button>
-                ) : vonage.state.type === StateType.Connected &&
-                  vonage.state.initialisedState.screenSharingSupported ? (
-                    <Button onClick={startScreenShare} mr="auto" isDisabled={joining} colorScheme="blue">
-                        <FAIcon icon="desktop" iconStyle="s" mr="auto" />
-                        <span style={{ marginLeft: "1rem" }}>Share screen</span>
-                    </Button>
-                ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
-                    <Tag size="md" variant="outline" colorScheme="blue">
-                        <TagLeftIcon as={CheckCircleIcon} />
-                        <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
-                    </Tag>
-                ) : (
-                    <Tag size="md" variant="outline" colorScheme="red">
-                        <TagLeftIcon as={NotAllowedIcon} />
-                        <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
-                    </Tag>
-                )}
+                {settings.maximumSimultaneousScreenShares ? (
+                    vonage.state.type === StateType.Connected &&
+                    receivingScreenShareCount >= settings.maximumSimultaneousScreenShares ? (
+                        <Tag
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            size="sm"
+                            variant="outline"
+                            colorScheme="blue"
+                            px={2}
+                            py="4px"
+                            ml={1}
+                            mr="auto"
+                            maxW="190px"
+                        >
+                            <TagLeftIcon as={CheckCircleIcon} />
+                            <TagLabel whiteSpace="normal">
+                                {settings.maximumSimultaneousScreenShares === 1
+                                    ? "Someone else is sharing their screen at the moment"
+                                    : "No more screens can be shared at the moment"}
+                            </TagLabel>
+                        </Tag>
+                    ) : vonage.state.type === StateType.Connected && state.screenShareIntendedEnabled ? (
+                        <Button
+                            size="sm"
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            onClick={stopScreenShare}
+                            mr="auto"
+                            colorScheme="red"
+                            isDisabled={joining}
+                        >
+                            <FAIcon icon="desktop" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
+                        </Button>
+                    ) : vonage.state.type === StateType.Connected &&
+                      vonage.state.initialisedState.screenSharingSupported ? (
+                        <Button
+                            size="sm"
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            onClick={startScreenShare}
+                            mr="auto"
+                            isDisabled={joining}
+                            colorScheme="blue"
+                        >
+                            <FAIcon icon="desktop" iconStyle="s" />
+                            <span style={{ marginLeft: "1rem" }}>Share screen</span>
+                        </Button>
+                    ) : vonage.state.type === StateType.Initialised && vonage.state.screenSharingSupported ? (
+                        <Tag
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            size="sm"
+                            variant="outline"
+                            colorScheme="blue"
+                        >
+                            <TagLeftIcon as={CheckCircleIcon} />
+                            <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
+                        </Tag>
+                    ) : (
+                        <Tag
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            size="sm"
+                            variant="outline"
+                            colorScheme="red"
+                        >
+                            <TagLeftIcon as={NotAllowedIcon} />
+                            <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
+                        </Tag>
+                    )
+                ) : undefined}
                 {vonage.state.type === StateType.Connected && !isBackstage ? (
                     canControlRecording ? (
                         <Button
+                            size="sm"
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
                             colorScheme="blue"
                             onClick={() => {
                                 if (vonage.state.type === StateType.Connected) {
@@ -495,7 +578,12 @@ export function VonageRoomControlBar({
                             {isRecordingActive ? "Stop recording" : "Start recording"}
                         </Button>
                     ) : (
-                        <Tag size="md" variant="outline" colorScheme="blue">
+                        <Tag
+                            flexGrow={buttonsDirection === "row" ? 1 : 0}
+                            size="sm"
+                            variant="outline"
+                            colorScheme="blue"
+                        >
                             {isRecordingActive ? (
                                 <TagLabel overflow="visible">Recording</TagLabel>
                             ) : (
@@ -504,8 +592,23 @@ export function VonageRoomControlBar({
                         </Tag>
                     )
                 ) : undefined}
+                {/* TODO: Permissions */}
+                {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (
+                    <Button
+                        size="sm"
+                        onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
+                        colorScheme={layoutChooser_isOpen ? "purple" : "blue"}
+                    >
+                        {layoutChooser_isOpen ? "Cancel" : "Layout"}
+                    </Button>
+                ) : undefined}
                 {vonage.state.type === StateType.Connected ? (
-                    <Button colorScheme="purple" onClick={onLeaveRoom}>
+                    <Button
+                        size="sm"
+                        flexGrow={buttonsDirection === "row" ? 1 : 0}
+                        colorScheme="purple"
+                        onClick={onLeaveRoom}
+                    >
                         Leave Room
                     </Button>
                 ) : (
@@ -554,7 +657,7 @@ export function VonageRoomControlBar({
                         </Box>
                     </Tooltip>
                 )}
-            </Stack>
+            </Wrap>
             <DeviceChooserModal
                 cameraId={
                     state.cameraStream?.getVideoTracks()[0].getSettings().deviceId ?? state.preferredCameraId ?? null
@@ -613,6 +716,7 @@ export function VonageRoomControlBar({
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <LayoutChooser />
         </>
     );
 }

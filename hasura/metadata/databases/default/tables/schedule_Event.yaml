@@ -60,13 +60,6 @@ array_relationships:
       table:
         name: EventTag
         schema: schedule
-- name: participantStreams
-  using:
-    foreign_key_constraint_on:
-      column: eventId
-      table:
-        name: EventParticipantStream
-        schema: video
 insert_permissions:
 - permission:
     backend_only: false

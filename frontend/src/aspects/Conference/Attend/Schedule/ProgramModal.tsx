@@ -413,7 +413,11 @@ export function ScheduleModal({
                             <TabPanel w="100%" h="100%" overflowY="auto">
                                 <ExhibitionsGrid />
                             </TabPanel>
-                            {anySponsors ? <TabPanel>{sponsors}</TabPanel> : undefined}
+                            {anySponsors ? (
+                                <TabPanel w="100%" h="100%" overflowY="auto">
+                                    {sponsors}
+                                </TabPanel>
+                            ) : undefined}
                             <TabPanel w="100%" h="100%" overflowY="auto">
                                 <SearchPanel changeSearch={changeSearch} />
                             </TabPanel>

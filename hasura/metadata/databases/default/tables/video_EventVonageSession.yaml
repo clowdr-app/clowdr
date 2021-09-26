@@ -13,6 +13,34 @@ object_relationships:
 - name: event
   using:
     foreign_key_constraint_on: eventId
+array_relationships:
+- name: layouts
+  using:
+    manual_configuration:
+      column_mapping:
+        sessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageSessionLayout
+        schema: video
+- name: participantStreams
+  using:
+    manual_configuration:
+      column_mapping:
+        sessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageParticipantStream
+        schema: video
+- name: recordings
+  using:
+    manual_configuration:
+      column_mapping:
+        sessionId: vonageSessionId
+      insertion_order: null
+      remote_table:
+        name: VonageRoomRecording
+        schema: video
 select_permissions:
 - permission:
     columns:
@@ -41,72 +69,3 @@ select_permissions:
                 - CONFERENCE_VIEW
                 - CONFERENCE_MANAGE_SCHEDULE
   role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - layoutData
-    filter:
-      _or:
-      - conference:
-          _and:
-          - slug:
-              _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_SCHEDULE
-      - _and:
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-        - event:
-            eventPeople:
-              _and:
-              - person:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-              - eventPersonRole:
-                  name:
-                    _in:
-                    - CHAIR
-                    - PRESENTER
-  role: user
-event_triggers:
-- definition:
-    enable_manual: true
-    update:
-      columns:
-      - layoutData
-  headers:
-  - name: x-hasura-event-secret
-    value_from_env: EVENT_SECRET
-  name: EventVonageSessionUpdated
-  retry_conf:
-    interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
-  webhook: "{{ACTION_BASE_URL}}/eventVonageSession/updated"

@@ -48,17 +48,48 @@ export function VonageBackstage({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const [getEventVonageToken] = useGetEventVonageTokenMutation({
-        variables: {
-            eventId,
-        },
-    });
-
     const result = useGetEventDetailsQuery({
         variables: {
             eventId,
         },
         fetchPolicy: "network-only",
+    });
+
+    return (
+        <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
+            {(event: RoomEventDetailsFragment) => (
+                <EventVonageRoomInner
+                    event={event}
+                    isRaiseHandPreJoin={isRaiseHandPreJoin}
+                    isRaiseHandWaiting={isRaiseHandWaiting}
+                    completeJoinRef={completeJoinRef}
+                    onLeave={onLeave}
+                    hlsUri={hlsUri}
+                />
+            )}
+        </ApolloQueryWrapper>
+    );
+}
+
+export function EventVonageRoomInner({
+    event,
+    isRaiseHandPreJoin = false,
+    isRaiseHandWaiting,
+    completeJoinRef,
+    onLeave,
+    hlsUri,
+}: {
+    event: RoomEventDetailsFragment;
+    isRaiseHandPreJoin?: boolean;
+    isRaiseHandWaiting?: boolean;
+    completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
+    onLeave?: () => void;
+    hlsUri: string | undefined;
+}): JSX.Element {
+    const [getEventVonageToken] = useGetEventVonageTokenMutation({
+        variables: {
+            eventId: event.id,
+        },
     });
 
     const getAccessToken = useCallback(async () => {
@@ -72,31 +103,27 @@ export function VonageBackstage({
     const sharedRoomContext = useSharedRoomContext();
 
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
-            {(event: RoomEventDetailsFragment) => (
-                <VStack justifyContent="stretch" w="100%">
-                    {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
-                    <Box w="100%">
-                        {event.eventVonageSession && sharedRoomContext ? (
-                            <portals.OutPortal
-                                node={sharedRoomContext.vonagePortalNode}
-                                eventId={event.id}
-                                vonageSessionId={event.eventVonageSession.sessionId}
-                                getAccessToken={getAccessToken}
-                                disable={false}
-                                isBackstageRoom={true}
-                                raiseHandPrejoinEventId={isRaiseHandPreJoin ? eventId : null}
-                                isRaiseHandWaiting={isRaiseHandWaiting}
-                                requireMicrophoneOrCamera={isRaiseHandPreJoin}
-                                completeJoinRef={completeJoinRef}
-                                onLeave={onLeave}
-                            />
-                        ) : (
-                            <>No room session available.</>
-                        )}
-                    </Box>
-                </VStack>
-            )}
-        </ApolloQueryWrapper>
+        <VStack justifyContent="stretch" w="100%">
+            {!isRaiseHandPreJoin ? <BackstageControls event={event} hlsUri={hlsUri} /> : undefined}
+            <Box w="100%">
+                {event.eventVonageSession && sharedRoomContext ? (
+                    <portals.OutPortal
+                        node={sharedRoomContext.vonagePortalNode}
+                        eventId={event.id}
+                        vonageSessionId={event.eventVonageSession.sessionId}
+                        getAccessToken={getAccessToken}
+                        disable={false}
+                        isBackstageRoom={true}
+                        raiseHandPrejoinEventId={isRaiseHandPreJoin ? event.id : null}
+                        isRaiseHandWaiting={isRaiseHandWaiting}
+                        requireMicrophoneOrCamera={isRaiseHandPreJoin}
+                        completeJoinRef={completeJoinRef}
+                        onLeave={onLeave}
+                    />
+                ) : (
+                    <>No room session available.</>
+                )}
+            </Box>
+        </VStack>
     );
 }

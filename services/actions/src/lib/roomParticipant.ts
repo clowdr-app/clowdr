@@ -1,8 +1,11 @@
 import { gql } from "@apollo/client/core";
+import { VonageSessionLayoutData, VonageSessionLayoutType } from "../../../../shared/build/vonage";
 import {
+    CountRoomParticipantsDocument,
     CreateRoomParticipantDocument,
     DeleteRoomParticipantsCreatedBeforeDocument,
     GetRoomParticipantDetailsDocument,
+    InsertVonageSessionLayoutDocument,
     RemoveRoomParticipantDocument,
     RoomParticipantFragment,
 } from "../generated/graphql";
@@ -103,9 +106,28 @@ gql`
             affected_rows
         }
     }
+
+    query CountRoomParticipants($roomId: uuid!) {
+        room_Participant_aggregate(where: { roomId: { _eq: $roomId } }) {
+            aggregate {
+                count
+            }
+        }
+    }
+
+    mutation InsertVonageSessionLayout($object: video_VonageSessionLayout_insert_input!) {
+        insert_video_VonageSessionLayout_one(object: $object) {
+            id
+        }
+    }
 `;
 
-export async function removeRoomParticipant(roomId: string, conferenceId: string, registrantId: string): Promise<void> {
+export async function removeRoomParticipant(
+    roomId: string,
+    conferenceId: string,
+    registrantId: string,
+    vonageSessionId?: string
+): Promise<void> {
     try {
         const removeResult = await apolloClient.mutate({
             mutation: RemoveRoomParticipantDocument,
@@ -121,6 +143,28 @@ export async function removeRoomParticipant(roomId: string, conferenceId: string
             removeResult.data.delete_room_Participant.affected_rows === 0
         ) {
             console.warn("Could not find participant to remove for room", { roomId, registrantId });
+        } else if (vonageSessionId) {
+            const response = await apolloClient.query({
+                query: CountRoomParticipantsDocument,
+                variables: {
+                    roomId,
+                },
+            });
+            if (response.data.room_Participant_aggregate.aggregate?.count === 0) {
+                await apolloClient.mutate({
+                    mutation: InsertVonageSessionLayoutDocument,
+                    variables: {
+                        object: {
+                            conferenceId,
+                            vonageSessionId,
+                            layoutData: {
+                                type: VonageSessionLayoutType.BestFit,
+                                screenShareType: "verticalPresentation",
+                            } as VonageSessionLayoutData,
+                        },
+                    },
+                });
+            }
         }
     } catch (err) {
         console.error("Failed to remove RoomParticipant record", { roomId, conferenceId, registrantId, err });

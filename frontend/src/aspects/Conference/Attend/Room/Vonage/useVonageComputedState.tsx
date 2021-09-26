@@ -4,6 +4,7 @@ import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { StateType, VonageGlobalState } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
+import { useVonageLayout } from "./VonageLayoutProvider";
 
 const standaloneToast = createStandaloneToast({ theme });
 
@@ -19,7 +20,6 @@ export function useVonageComputedState({
     cancelJoin,
     completeJoinRef,
     isBackstageRoom,
-    cameraPublishContainerRef,
 }: {
     getAccessToken: () => Promise<string>;
     vonageSessionId: string;
@@ -32,7 +32,6 @@ export function useVonageComputedState({
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     isBackstageRoom: boolean;
-    cameraPublishContainerRef: React.RefObject<HTMLDivElement>;
 }): {
     vonage: VonageGlobalState;
     connected: boolean;
@@ -45,7 +44,8 @@ export function useVonageComputedState({
     leaveRoom: () => Promise<void>;
 } {
     const vonage = useVonageGlobalState();
-    const { dispatch, state } = useVonageRoom();
+    const { dispatch } = useVonageRoom();
+    const layout = useVonageLayout();
 
     const [connected, setConnected] = useState<boolean>(false);
     const [streams, setStreams] = useState<OT.Stream[]>([]);
@@ -93,6 +93,17 @@ export function useVonageComputedState({
                     screenEnabled: false,
                 });
             }
+
+            if (reason === "forceUnpublished") {
+                standaloneToast({
+                    title: "Screenshare stopped",
+                    description: "Your screenshare has been stopped by a moderator.",
+                    status: "warning",
+                    duration: 20000,
+                    isClosable: true,
+                    position: "top",
+                });
+            }
         },
         [dispatch, vonage.screen]
     );
@@ -107,31 +118,6 @@ export function useVonageComputedState({
             try {
                 await vonage.connectToSession();
                 onRoomJoined?.(true);
-                (window as any).vonage = vonage;
-                if (cameraPublishContainerRef.current) {
-                    try {
-                        await vonage.publishCamera(
-                            cameraPublishContainerRef.current,
-                            state.cameraIntendedEnabled ? state.preferredCameraId : null,
-                            state.microphoneIntendedEnabled ? state.preferredMicrophoneId : null,
-                            isBackstageRoom ? "1280x720" : "640x480"
-                        );
-                    } catch (err) {
-                        console.error("Failed to auto-publish on joining room", { err });
-                        dispatch({
-                            type: VonageRoomStateActionType.SetCameraIntendedState,
-                            cameraEnabled: false,
-                            explicitlyDisabled: true,
-                            onError: undefined,
-                        });
-                        dispatch({
-                            type: VonageRoomStateActionType.SetMicrophoneIntendedState,
-                            microphoneEnabled: false,
-                            explicitlyDisabled: true,
-                            onError: undefined,
-                        });
-                    }
-                }
             } catch (e) {
                 if (e !== "Declined to be recorded") {
                     console.error("Failed to join room", e);
@@ -151,21 +137,7 @@ export function useVonageComputedState({
         } else {
             await doJoinRoom();
         }
-    }, [
-        beginJoin,
-        cancelJoin,
-        completeJoinRef,
-        vonage,
-        onRoomJoined,
-        cameraPublishContainerRef,
-        state.cameraIntendedEnabled,
-        state.preferredCameraId,
-        state.microphoneIntendedEnabled,
-        state.preferredMicrophoneId,
-        isBackstageRoom,
-        dispatch,
-        toast,
-    ]);
+    }, [beginJoin, cancelJoin, completeJoinRef, vonage, onRoomJoined, toast]);
 
     const leaveRoom = useCallback(async () => {
         if (connected) {
@@ -253,6 +225,11 @@ export function useVonageComputedState({
                     },
                     (recordingId) => {
                         onRecordingIdReceived?.(recordingId);
+                    },
+                    (layoutData) => {
+                        if (layout.layout.createdAt < layoutData.createdAt) {
+                            layout?.updateLayout(layoutData);
+                        }
                     }
                 );
             } catch (e) {

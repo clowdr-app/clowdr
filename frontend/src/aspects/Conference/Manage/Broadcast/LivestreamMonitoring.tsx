@@ -109,11 +109,11 @@ gql`
         eventVonageSession {
             id
             sessionId
-        }
-        participantStreams {
-            id
-            registrantId
-            vonageStreamType
+            participantStreams {
+                id
+                registrantId
+                vonageStreamType
+            }
         }
     }
 `;
@@ -176,12 +176,12 @@ export default function LivestreamMonitoring(): JSX.Element {
                             const userId = eventPerson.person.registrant?.userId ?? undefined;
                             const isCameraOrMicConnected =
                                 !!registrantId &&
-                                event.participantStreams.some(
+                                !!event.eventVonageSession?.participantStreams.some(
                                     (x) => x.registrantId === registrantId && x.vonageStreamType === "camera"
                                 );
                             const isScreenshareConnected =
                                 !!registrantId &&
-                                event.participantStreams.some(
+                                !!event.eventVonageSession?.participantStreams.some(
                                     (x) => x.registrantId === registrantId && x.vonageStreamType === "screen"
                                 );
                             return {
@@ -680,12 +680,12 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                                     const isPresent = userId && presences.has(userId);
                                     const isCameraOrMicConnected =
                                         !!registrantId &&
-                                        event.participantStreams.some(
+                                        !!event.eventVonageSession?.participantStreams.some(
                                             (x) => x.registrantId === registrantId && x.vonageStreamType === "camera"
                                         );
                                     const isScreenshareConnected =
                                         !!registrantId &&
-                                        event.participantStreams.some(
+                                        !!event.eventVonageSession?.participantStreams.some(
                                             (x) => x.registrantId === registrantId && x.vonageStreamType === "screen"
                                         );
                                     return (
@@ -828,7 +828,6 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
             event.name,
             event.item,
             event.eventPeople,
-            event.participantStreams,
             startDate,
             endDate,
             conference.slug,

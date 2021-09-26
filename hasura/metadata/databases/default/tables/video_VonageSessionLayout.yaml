@@ -1,0 +1,164 @@
+table:
+  name: VonageSessionLayout
+  schema: video
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
+- name: eventVonageSession
+  using:
+    manual_configuration:
+      column_mapping:
+        vonageSessionId: sessionId
+      insertion_order: null
+      remote_table:
+        name: EventVonageSession
+        schema: video
+array_relationships:
+- name: rooms
+  using:
+    manual_configuration:
+      column_mapping:
+        vonageSessionId: publicVonageSessionId
+      insertion_order: null
+      remote_table:
+        name: Room
+        schema: room
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - eventVonageSession:
+            _and:
+            - event:
+                eventPeople:
+                  person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+        - _and:
+          - _not:
+              eventVonageSession: {}
+          - rooms:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _or:
+                - managementModeName:
+                    _eq: PUBLIC
+                - _and:
+                  - managementModeName:
+                      _in:
+                      - PRIVATE
+                      - DM
+                      - MANAGED
+                  - roomPeople:
+                      _and:
+                      - registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SCHEDULE
+                - CONFERENCE_VIEW
+    columns:
+    - conferenceId
+    - layoutData
+    - vonageSessionId
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - vonageSessionId
+    - conferenceId
+    - layoutData
+    filter:
+      _and:
+      - conference:
+          slug:
+            _eq: X-Hasura-Conference-Slug
+      - _or:
+        - eventVonageSession:
+            _and:
+            - event:
+                eventPeople:
+                  person:
+                    registrant:
+                      userId:
+                        _eq: X-Hasura-User-Id
+            - conference:
+                slug:
+                  _eq: X-Hasura-Conference-Slug
+        - _and:
+          - _not:
+              eventVonageSession: {}
+          - rooms:
+              _and:
+              - conference:
+                  slug:
+                    _eq: X-Hasura-Conference-Slug
+              - _or:
+                - managementModeName:
+                    _eq: PUBLIC
+                - _and:
+                  - managementModeName:
+                      _in:
+                      - PRIVATE
+                      - DM
+                      - MANAGED
+                  - roomPeople:
+                      _and:
+                      - registrant:
+                          userId:
+                            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: FlatUserPermission
+            schema: public
+          _where:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - slug:
+                _eq: X-Hasura-Conference-Slug
+            - permission_name:
+                _in:
+                - CONFERENCE_MANAGE_SCHEDULE
+                - CONFERENCE_VIEW
+  role: user
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: VonageSessionLayoutInserted
+  retry_conf:
+    interval_sec: 10
+    num_retries: 1
+    timeout_sec: 5
+  webhook: "{{ACTION_BASE_URL}}/vonageSessionLayout/inserted"

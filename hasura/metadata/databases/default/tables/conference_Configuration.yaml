@@ -92,6 +92,7 @@ select_permissions:
           - ENABLE_BACKSTAGE_STREAM_PREVIEW
           - SPONSORS_LABEL
           - DISABLE_NEARBY_EVENTS
+          - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
   role: user
 update_permissions:
 - permission:

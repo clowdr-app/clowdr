@@ -252,7 +252,9 @@ export function AddEventProgramPerson_RegistrantModal({
                                     }
                                     mb={4}
                                 >
-                                    {roleOptions}
+                                    {roleOptions.filter(
+                                        (x) => x.props.value !== Schedule_EventProgramPersonRole_Enum.Participant
+                                    )}
                                 </Select>
                             </>
                         ) : (
@@ -411,13 +413,19 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                             onBlur={onBlur}
                             ref={ref as LegacyRef<HTMLSelectElement>}
                         >
-                            {roleOptions.map((option) => {
-                                return (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                );
-                            })}
+                            {roleOptions
+                                .filter(
+                                    (x) =>
+                                        value === Schedule_EventProgramPersonRole_Enum.Participant ||
+                                        x.value !== Schedule_EventProgramPersonRole_Enum.Participant
+                                )
+                                .map((option) => {
+                                    return (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    );
+                                })}
                         </Select>
                     );
                 },

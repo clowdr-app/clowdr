@@ -15,8 +15,6 @@ import {
     ListItem,
     Text,
     UnorderedList,
-    useColorModeValue,
-    useToken,
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -52,9 +50,6 @@ export function Backstages({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
-    const backgroundColour = useColorModeValue(gray100, gray900);
-
     const sortedEvents = useMemo(
         () =>
             R.sortWith(
@@ -232,7 +227,7 @@ export function Backstages({
     return useMemo(
         () =>
             showBackstage ? (
-                <Box pos="relative" display={showBackstage ? "block" : "none"} background={backgroundColour} p={5}>
+                <Box pos="relative" display={showBackstage ? "block" : "none"} p={5}>
                     {heading}
                     {welcomeInfo}
                     {backstages}
@@ -242,14 +237,6 @@ export function Backstages({
             ) : (
                 <></>
             ),
-        [
-            backgroundColour,
-            videoChatForPermissionReset,
-            backstages,
-            heading,
-            showBackstage,
-            exitBackstageButton,
-            welcomeInfo,
-        ]
+        [videoChatForPermissionReset, backstages, heading, showBackstage, exitBackstageButton, welcomeInfo]
     );
 }

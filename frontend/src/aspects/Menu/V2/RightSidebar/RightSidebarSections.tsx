@@ -1,9 +1,7 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip } from "@chakra-ui/react";
+import { TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
-import { FAIcon } from "../../../Icons/FAIcon";
-import PageCountText from "../../../Realtime/PageCountText";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
 import { ChatsPanel } from "./Panels/ChatsPanel";
 import { ItemChatPanel } from "./Panels/ItemChatPanel";
@@ -11,7 +9,6 @@ import { PresencePanel } from "./Panels/PresencePanel";
 import { RaiseHandPanel } from "./Panels/RaiseHandPanel";
 import { RoomChatPanel } from "./Panels/RoomChatPanel";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurrentTab";
-import { ToggleChatsButton } from "./ToggleChatsButton";
 
 function RightSidebarSections_Inner({
     confSlug,
@@ -59,28 +56,11 @@ function RightSidebarSections_Inner({
     );
     const closeChatCb = useRef<(() => void) | null>(null);
 
-    const [pageChatUnread, setPageChatUnread] = useState<string>("");
-    const [chatsUnread, setChatsUnread] = useState<string>("");
-    const setPageChatUnreadCount = useCallback(
-        (count: string) => {
-            externalSetPageChatUnreadCount(count);
-            setPageChatUnread(count);
-        },
-        [externalSetPageChatUnreadCount]
-    );
-    const setChatsUnreadCount = useCallback(
-        (count: string) => {
-            externalSetChatsUnreadCount(count);
-            setChatsUnread(count);
-        },
-        [externalSetChatsUnreadCount]
-    );
-
     useEffect(() => {
         if (!roomId && !itemId) {
-            setPageChatUnreadCount("");
+            externalSetPageChatUnreadCount("");
         }
-    }, [itemId, roomId, setPageChatUnreadCount]);
+    }, [itemId, roomId, externalSetPageChatUnreadCount]);
 
     const roomPanel = useMemo(
         () =>
@@ -88,11 +68,11 @@ function RightSidebarSections_Inner({
                 <RoomChatPanel
                     roomId={roomId}
                     onChatIdLoaded={setPageChatId}
-                    setUnread={setPageChatUnreadCount}
+                    setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!roomId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [currentTab, roomId, setPageChatUnreadCount, isVisible]
+        [currentTab, roomId, externalSetPageChatUnreadCount, isVisible]
     );
     const itemPanel = useMemo(
         () =>
@@ -101,11 +81,11 @@ function RightSidebarSections_Inner({
                     itemId={itemId}
                     onChatIdLoaded={setPageChatId}
                     confSlug={confSlug}
-                    setUnread={setPageChatUnreadCount}
+                    setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!itemId && currentTab === RightSidebarTabs.PageChat}
                 />
             ),
-        [confSlug, currentTab, itemId, setPageChatUnreadCount, isVisible]
+        [confSlug, currentTab, itemId, externalSetPageChatUnreadCount, isVisible]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -119,11 +99,11 @@ function RightSidebarSections_Inner({
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
                 closeChat={closeChatCb}
-                setUnread={setChatsUnreadCount}
+                setUnread={externalSetChatsUnreadCount}
                 isVisible={isVisible && currentTab === RightSidebarTabs.Chats}
             />
         ),
-        [confSlug, currentTab, pageChatId, switchToPageChat, isVisible, setChatsUnreadCount]
+        [confSlug, currentTab, pageChatId, switchToPageChat, isVisible, externalSetChatsUnreadCount]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
@@ -153,68 +133,8 @@ function RightSidebarSections_Inner({
                 width="100%"
                 height="100%"
                 onChange={onChangeTab}
+                pt={1}
             >
-                <TabList py={2} flexWrap="wrap">
-                    <ToggleChatsButton ml={2} size="xs" mr={2} />
-                    <Tooltip label="Chat for this page">
-                        <Tab
-                            ml={"auto"}
-                            px={2}
-                            isDisabled={!roomId && !itemId}
-                            _disabled={{
-                                opacity: 0.5,
-                            }}
-                            aria-label="Chat for this page"
-                            borderRadius="full"
-                        >
-                            <FAIcon iconStyle="s" icon="comment" />
-                            {pageChatUnread !== "" ? <>&nbsp;({pageChatUnread})</> : ""}
-                        </Tab>
-                    </Tooltip>
-                    <Tooltip label="Raise your hand to join a stream">
-                        <Tab
-                            ml={2}
-                            px={2}
-                            isDisabled={!roomId}
-                            _disabled={{
-                                opacity: 0.5,
-                            }}
-                            fontSize="lg"
-                            borderRadius="full"
-                            aria-label="Raise your hand to join a stream"
-                        >
-                            <FAIcon iconStyle="s" icon="hand-paper" ml="-3px" />
-                        </Tab>
-                    </Tooltip>
-                    <Tooltip label="All my chats">
-                        <Tab ml={2} px={2} fontSize="lg" borderRadius="full" aria-label="All my chats">
-                            <FAIcon iconStyle="s" icon="comments" />
-                            {chatsUnread !== "" ? <>&nbsp;({chatsUnread})</> : ""}
-                        </Tab>
-                    </Tooltip>
-                    <Tooltip label="Who is viewing this page">
-                        <Tab
-                            mx={2}
-                            px={2}
-                            mr="auto"
-                            fontSize="lg"
-                            borderRadius="full"
-                            aria-label="List of users viewing this page"
-                        >
-                            <FAIcon iconStyle="s" icon="users" />
-                            <>
-                                &nbsp;
-                                <PageCountText
-                                    fontSize="inherit"
-                                    lineHeight="inherit"
-                                    path={location.pathname}
-                                    noIcon={true}
-                                />
-                            </>
-                        </Tab>
-                    </Tooltip>
-                </TabList>
-
                 <TabPanels textAlign="left" display="flex" flexDir="row" flex="1" overflow="hidden">
                     {roomPanel ? (
                         <TabPanel p={0} w="100%" h="100%">

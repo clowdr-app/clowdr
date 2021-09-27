@@ -1,11 +1,13 @@
 import { Box, Flex, HStack, MenuItem, useBreakpointValue, useColorMode, useColorModeValue } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
+import type { Schedule_EventProgramPersonRole_Enum } from "../../../generated/graphql";
 import LoginButton from "../../Auth/Buttons/LoginButton";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import FAIcon from "../../Icons/FAIcon";
+import { useRaiseHandState } from "../../RaiseHand/RaiseHandProvider";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { useMainMenu } from "../V1/MainMenu/MainMenuState";
 import MenuButton from "./MenuButton";
@@ -14,6 +16,8 @@ import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebar/Righ
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
 const colorScheme = "purple";
+const selectedColorScheme = "gray";
+
 export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.Element {
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
@@ -24,7 +28,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     const colorMode = useColorMode();
     const maybeUser = useMaybeCurrentUser()?.user;
 
-    const { setCurrentTab } = useRightSidebarCurrentTab();
+    const { currentTab, setCurrentTab } = useRightSidebarCurrentTab();
 
     const [pageChatUnreadCount, setPageChatUnreadCount] = useState<string>("");
     const [chatsUnreadCount, setChatsUnreadCount] = useState<string>("");
@@ -51,6 +55,49 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     );
     const isExpanded = !!useBreakpointValue({ base: _isExpanded && !isRightBarOpen, "2xl": _isExpanded });
     const isExpandedEnabled = useBreakpointValue({ base: !isRightBarOpen, "2xl": true });
+
+    const raiseHand = useRaiseHandState();
+    const [currentEventId, setCurrentEventId] = useState<{
+        eventId: string;
+        userRole: Schedule_EventProgramPersonRole_Enum;
+    } | null>(null);
+    const [isBackstage, setIsBackstage] = useState<boolean>(false);
+    const [raisedHandUserIds, setRaisedHandUserIds] = useState<string[] | null>(null);
+    useEffect(() => {
+        const unsubscribe = raiseHand.CurrentEventId.subscribe(setCurrentEventId);
+        return () => {
+            unsubscribe();
+        };
+    }, [raiseHand.CurrentEventId]);
+
+    useEffect(() => {
+        const unsubscribe = raiseHand.IsBackstage.subscribe(setIsBackstage);
+        return () => {
+            unsubscribe();
+        };
+    }, [raiseHand.IsBackstage]);
+
+    useEffect(() => {
+        const unobserve = currentEventId
+            ? raiseHand.observe(currentEventId.eventId, (update) => {
+                  if ("userIds" in update) {
+                      setRaisedHandUserIds(update.userIds);
+                  }
+              })
+            : () => {
+                  // Intentionally empty
+              };
+
+        return () => {
+            unobserve();
+        };
+    }, [currentEventId, raiseHand]);
+
+    useEffect(() => {
+        setRaisedHandUserIds(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [path]);
+
     return (
         <HStack h="100%" w="100%" justifyContent="stretch" spacing={0}>
             <Box
@@ -96,15 +143,30 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                     <>
                         <Route path={`${path}/item/`}>
                             <MenuButton
-                                label="Chat here"
+                                label={
+                                    (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? "Close " : "") +
+                                    "Chat here"
+                                }
                                 iconStyle="s"
-                                icon="comment"
+                                icon={
+                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
+                                        ? "chevron-right"
+                                        : "comment"
+                                }
                                 borderRadius={0}
-                                colorScheme={colorScheme}
+                                colorScheme={
+                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
+                                        ? selectedColorScheme
+                                        : colorScheme
+                                }
                                 side="right"
                                 onClick={() => {
-                                    setCurrentTab(RightSidebarTabs.PageChat);
-                                    onRightBarOpen();
+                                    if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen) {
+                                        onRightBarClose();
+                                    } else {
+                                        setCurrentTab(RightSidebarTabs.PageChat);
+                                        onRightBarOpen();
+                                    }
                                 }}
                                 mb={1}
                                 showLabel={isExpanded}
@@ -116,15 +178,30 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         </Route>
                         <Route path={`${path}/room/`}>
                             <MenuButton
-                                label="Chat here"
+                                label={
+                                    (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? "Close " : "") +
+                                    "Chat here"
+                                }
                                 iconStyle="s"
-                                icon="comment"
+                                icon={
+                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
+                                        ? "chevron-right"
+                                        : "comment"
+                                }
                                 borderRadius={0}
-                                colorScheme={colorScheme}
+                                colorScheme={
+                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
+                                        ? selectedColorScheme
+                                        : colorScheme
+                                }
                                 side="right"
                                 onClick={() => {
-                                    setCurrentTab(RightSidebarTabs.PageChat);
-                                    onRightBarOpen();
+                                    if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen) {
+                                        onRightBarClose();
+                                    } else {
+                                        setCurrentTab(RightSidebarTabs.PageChat);
+                                        onRightBarOpen();
+                                    }
                                 }}
                                 mb={1}
                                 showLabel={isExpanded}
@@ -133,31 +210,64 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     {pageChatUnreadCount}
                                 </Box>
                             </MenuButton>
-                            <MenuButton
-                                label="Raise hand"
-                                iconStyle="s"
-                                icon="hand-paper"
-                                borderRadius={0}
-                                colorScheme={colorScheme}
-                                side="right"
-                                onClick={() => {
-                                    setCurrentTab(RightSidebarTabs.RaiseHand);
-                                    onRightBarOpen();
-                                }}
-                                mb={1}
-                                showLabel={isExpanded}
-                            />
+                            {isBackstage || currentEventId ? (
+                                <MenuButton
+                                    label={
+                                        (currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen ? "Close " : "") +
+                                        "Raise hand"
+                                    }
+                                    iconStyle="s"
+                                    icon={
+                                        currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen
+                                            ? "chevron-right"
+                                            : "hand-paper"
+                                    }
+                                    borderRadius={0}
+                                    colorScheme={
+                                        currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen
+                                            ? selectedColorScheme
+                                            : colorScheme
+                                    }
+                                    side="right"
+                                    onClick={() => {
+                                        if (currentTab === RightSidebarTabs.RaiseHand && isRightBarOpen) {
+                                            onRightBarClose();
+                                        } else {
+                                            setCurrentTab(RightSidebarTabs.RaiseHand);
+                                            onRightBarOpen();
+                                        }
+                                    }}
+                                    mb={1}
+                                    showLabel={isExpanded}
+                                >
+                                    <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                        {raisedHandUserIds?.length ?? 0}
+                                    </Box>
+                                </MenuButton>
+                            ) : undefined}
                         </Route>
                         <MenuButton
-                            label="My chats"
+                            label={
+                                (currentTab === RightSidebarTabs.Chats && isRightBarOpen ? "Close " : "") + "My chats"
+                            }
                             iconStyle="s"
-                            icon="comments"
+                            icon={
+                                currentTab === RightSidebarTabs.Chats && isRightBarOpen ? "chevron-right" : "comments"
+                            }
                             borderRadius={0}
-                            colorScheme={colorScheme}
+                            colorScheme={
+                                currentTab === RightSidebarTabs.Chats && isRightBarOpen
+                                    ? selectedColorScheme
+                                    : colorScheme
+                            }
                             side="right"
                             onClick={() => {
-                                setCurrentTab(RightSidebarTabs.Chats);
-                                onRightBarOpen();
+                                if (currentTab === RightSidebarTabs.Chats && isRightBarOpen) {
+                                    onRightBarClose();
+                                } else {
+                                    setCurrentTab(RightSidebarTabs.Chats);
+                                    onRightBarOpen();
+                                }
                             }}
                             mb={1}
                             showLabel={isExpanded}
@@ -167,15 +277,28 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             </Box>
                         </MenuButton>
                         <MenuButton
-                            label="Who's here"
+                            label={
+                                (currentTab === RightSidebarTabs.Presence && isRightBarOpen ? "Close " : "") +
+                                "Who's here"
+                            }
                             iconStyle="s"
-                            icon="users"
+                            icon={
+                                currentTab === RightSidebarTabs.Presence && isRightBarOpen ? "chevron-right" : "users"
+                            }
                             borderRadius={0}
-                            colorScheme={colorScheme}
+                            colorScheme={
+                                currentTab === RightSidebarTabs.Presence && isRightBarOpen
+                                    ? selectedColorScheme
+                                    : colorScheme
+                            }
                             side="right"
                             onClick={() => {
-                                setCurrentTab(RightSidebarTabs.Presence);
-                                onRightBarOpen();
+                                if (currentTab === RightSidebarTabs.Presence && isRightBarOpen) {
+                                    onRightBarClose();
+                                } else {
+                                    setCurrentTab(RightSidebarTabs.Presence);
+                                    onRightBarOpen();
+                                }
                             }}
                             mb="auto"
                             showLabel={isExpanded}

@@ -98,7 +98,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoUrl:
             case Content_ElementType_Enum.AudioUrl:
                 return (
-                    <AspectRatio ratio={16 / 9} w="100%" maxW="800px" maxH="90vh" m={2}>
+                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" m={2}>
                         <ReactPlayer
                             url={latestVersion.data.url}
                             style={{ maxWidth: "100%", position: "absolute", top: 0, left: 0 }}
@@ -173,7 +173,11 @@ function ElementInner({
             case Content_ElementType_Enum.VideoPrepublish:
             case Content_ElementType_Enum.VideoSponsorsFiller:
             case Content_ElementType_Enum.VideoTitles:
-                return <VideoElement elementId={elementId} elementData={latestVersion.data} />;
+                return (
+                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" m={2}>
+                        <VideoElement elementId={elementId} elementData={latestVersion.data} />
+                    </AspectRatio>
+                );
 
             case Content_ElementType_Enum.PaperUrl:
                 return (

@@ -110,7 +110,7 @@ export default function Backstage({
                     This event has now finished. Once you close this backstage, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [isActive, isNow, isSelected, vonageBackstage, roomChatId]
+        [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId]
     );
 
     return (

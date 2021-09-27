@@ -125,10 +125,14 @@ export function ItemElements({
     itemData,
     linkToItem,
     children,
+    dontFilterOutVideos = false,
+    noHeading = false,
 }: {
     itemData: ItemElements_ItemDataFragment;
     linkToItem?: boolean;
     children?: React.ReactNode | React.ReactNodeArray;
+    dontFilterOutVideos?: boolean;
+    noHeading?: boolean;
 }): JSX.Element {
     useTrackView(true, itemData.id, "Item", 3000);
 
@@ -157,23 +161,31 @@ export function ItemElements({
     }, [itemData.elements]);
 
     const filteredElements = useMemo(() => {
-        return itemData.elements.filter(
-            (element) =>
-                ![
-                    Content_ElementType_Enum.PaperUrl,
-                    Content_ElementType_Enum.PaperLink,
-                    Content_ElementType_Enum.PaperFile,
-                    Content_ElementType_Enum.Zoom,
-                    Content_ElementType_Enum.VideoBroadcast,
-                    Content_ElementType_Enum.VideoPrepublish,
-                    Content_ElementType_Enum.VideoFile,
-                ].includes(element.typeName)
-        );
-    }, [itemData.elements]);
+        return itemData.elements.filter((element) => {
+            if (
+                element.typeName !== Content_ElementType_Enum.PaperUrl &&
+                element.typeName !== Content_ElementType_Enum.PaperLink &&
+                element.typeName !== Content_ElementType_Enum.PaperFile &&
+                element.typeName !== Content_ElementType_Enum.Zoom
+            ) {
+                if (
+                    dontFilterOutVideos ||
+                    (element.typeName !== Content_ElementType_Enum.VideoBroadcast &&
+                        element.typeName !== Content_ElementType_Enum.VideoPrepublish &&
+                        element.typeName !== Content_ElementType_Enum.VideoFile)
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }, [dontFilterOutVideos, itemData.elements]);
 
     return (
-        <Box textAlign="left" mt={5} mb={2} maxW="100%" overflow="hidden">
-            {linkToItem ? (
+        <Box textAlign="left" mt={5} mb={2} w="100%" overflow="hidden">
+            {noHeading ? (
+                <TagList my={3} tags={itemData.itemTags} />
+            ) : linkToItem ? (
                 <LinkButton
                     to={`/conference/${conference.slug}/item/${itemData.id}`}
                     width="auto"

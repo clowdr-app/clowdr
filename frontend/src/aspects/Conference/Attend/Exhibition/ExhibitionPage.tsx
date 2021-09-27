@@ -1,17 +1,22 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import {
     ExhibitionWithContentFragment,
     ItemEventFragment,
+    Permissions_Permission_Enum,
     useSelectExhibitionQuery,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { FAIcon } from "../../../Icons/FAIcon";
+import PageCountText from "../../../Realtime/PageCountText";
 import { useTitle } from "../../../Utils/useTitle";
-import { Element } from "../Content/Element/Element";
+import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
 import { EventsTable } from "../Content/EventsTable";
+import { ItemElements } from "../Content/ItemElements";
 import ExhibitionLayout from "./ExhibitionLayout";
 
 gql`
@@ -69,9 +74,8 @@ gql`
         conferenceId
         descriptiveItem {
             id
-            elements(where: { isHidden: { _eq: false }, typeName: { _in: [ABSTRACT, TEXT] } }) {
-                ...ElementData
-            }
+            ...ItemElements_ItemData
+            ...ItemPage_ItemRooms
         }
         items {
             id
@@ -103,31 +107,74 @@ function ExhibitionPageInner({
     events: readonly ItemEventFragment[];
 }): JSX.Element {
     const title = useTitle(exhibition.name);
+    const conference = useConference();
+
+    const descriptiveItemDiscussionRoom = useMemo(
+        () => exhibition.descriptiveItem?.rooms[0],
+        [exhibition.descriptiveItem?.rooms]
+    );
 
     return (
-        <>
+        <VStack spacing={4} alignItems="flex-start" mt={4}>
             {title}
-            <Heading as="h1" id="page-heading" pt={2}>
+            <Heading as="h1" id="page-heading" pt={2} w="100%" textAlign="left">
                 <Circle size="0.7em" bg={exhibition.colour} display="inline-block" verticalAlign="middle" mr="0.4em" />
                 <chakra.span verticalAlign="text-bottom" mr="1.1em">
                     {exhibition.name}
                 </chakra.span>
                 {/*TODO: Link to live event for this exhibition if any.*/}
             </Heading>
-            <VStack>
-                {exhibition.descriptiveItem && exhibition.descriptiveItem.elements.length
-                    ? exhibition.descriptiveItem.elements.map((element) => (
-                          <Element key={element.id} element={element} />
-                      ))
-                    : undefined}
-                <Text w="auto" textAlign="left" p={0}>
-                    <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
-                    Times are shown in your local timezone.
-                </Text>
-                <EventsTable events={events} includeRoom={true} />
+            <VStack alignItems="flex-start" w="100%">
+                {exhibition.descriptiveItem && exhibition.descriptiveItem.elements.length ? (
+                    <ItemElements itemData={exhibition.descriptiveItem} dontFilterOutVideos={true} noHeading={true}>
+                        <RequireAtLeastOnePermissionWrapper
+                            permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}
+                        >
+                            {descriptiveItemDiscussionRoom ? (
+                                <LinkButton
+                                    width="100%"
+                                    to={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                    size="lg"
+                                    colorScheme="blue"
+                                    height="auto"
+                                    py={2}
+                                    mb={2}
+                                    linkProps={{ mr: 2 }}
+                                >
+                                    <VStack spacing={0}>
+                                        <Text>
+                                            <FAIcon
+                                                iconStyle="s"
+                                                icon="video"
+                                                mr={2}
+                                                fontSize="90%"
+                                                verticalAlign="middle"
+                                            />{" "}
+                                            <chakra.span verticalAlign="middle" pb={0.7}>
+                                                Discussion room
+                                            </chakra.span>
+                                        </Text>
+                                        <PageCountText
+                                            path={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                        />
+                                    </VStack>
+                                </LinkButton>
+                            ) : undefined}
+                        </RequireAtLeastOnePermissionWrapper>
+                    </ItemElements>
+                ) : undefined}
+                {events.length > 0 ? (
+                    <>
+                        <Text w="auto" textAlign="left" p={0}>
+                            <FAIcon iconStyle="s" icon="clock" mr={2} mb={1} />
+                            Times are shown in your local timezone.
+                        </Text>
+                        <EventsTable events={events} includeRoom={true} />
+                    </>
+                ) : undefined}
             </VStack>
             <ExhibitionLayout exhibition={exhibition} />
-        </>
+        </VStack>
     );
 }
 

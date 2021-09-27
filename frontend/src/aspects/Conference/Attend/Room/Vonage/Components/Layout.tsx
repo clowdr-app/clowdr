@@ -67,7 +67,7 @@ export default function Layout({
                 }
 
                 return (
-                    <AspectRatio justifyContent="center" w="100%" ratio={16 / 9}>
+                    <AspectRatio justifyContent="center" w="min(100%, 90vh * (16 / 9))" maxW="100%" ratio={16 / 9}>
                         <Flex w="100%" h="100%" flexWrap="wrap" overflow="hidden">
                             {visualLayout.viewports.map((viewport) => (
                                 <AspectRatio

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
+import { Redirect } from "react-router-dom";
 import {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
@@ -12,6 +13,7 @@ import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../useConference";
 import { ItemElements } from "./ItemElements";
 import { ItemEvents } from "./ItemEvents";
 import { ItemLive } from "./ItemLive";
@@ -22,6 +24,9 @@ gql`
         content_Item_by_pk(id: $itemId) {
             ...ItemElements_ItemData
             ...ItemPage_ItemRooms
+            descriptionOfExhibitions {
+                id
+            }
         }
         schedule_Event(
             where: { _or: [{ itemId: { _eq: $itemId } }, { exhibition: { items: { itemId: { _eq: $itemId } } } }] }
@@ -60,6 +65,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const title = useTitle(result.data?.content_Item_by_pk?.title ?? "Unknown content item");
+    const conference = useConference();
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -78,10 +84,19 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                 {(
                     itemData: ItemElements_ItemDataFragment & {
                         events: readonly ItemEventFragment[];
+                        descriptionOfExhibitions: readonly { id: string }[];
                     } & ItemPage_ItemRoomsFragment
                 ) => {
                     if (!itemData.title) {
                         return <PageNotFound />;
+                    }
+
+                    if (itemData.descriptionOfExhibitions.length === 1) {
+                        return (
+                            <Redirect
+                                to={`/conference/${conference.slug}/exhibition/${itemData.descriptionOfExhibitions[0].id}`}
+                            />
+                        );
                     }
 
                     return (

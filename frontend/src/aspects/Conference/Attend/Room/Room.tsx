@@ -634,9 +634,8 @@ function RoomInner({
                     ) : (
                         <Center>
                             <AspectRatio
-                                w="100%"
-                                maxW="800px"
-                                maxH="90vh"
+                                w="min(100%, 90vh * (16 / 9))"
+                                maxW="100%"
                                 ratio={16 / 9}
                                 border="3px solid"
                                 borderColor="gray.400"

@@ -35,6 +35,7 @@ export default function PlaceholderImage({
             top="0"
             left="0"
             src={registrant?.profile.photoURL_350x350}
+            overflow="hidden"
             alt={`Profile picture of ${registrant?.displayName}`}
             opacity={0.8}
             zIndex={zIndex}

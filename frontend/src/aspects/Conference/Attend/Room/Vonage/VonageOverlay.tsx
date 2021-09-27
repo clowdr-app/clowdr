@@ -82,6 +82,7 @@ export function VonageOverlay({
                             objectFit="cover"
                             objectPosition="center"
                             src={registrant?.profile.photoURL_50x50}
+                            overflow="hidden"
                             alt={`Profile picture of ${registrant?.displayName}`}
                         />
                     ) : (

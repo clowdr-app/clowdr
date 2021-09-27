@@ -34,6 +34,7 @@ function RegistrantTile({
                     aria-describedby={`registrant-trigger-${registrant.id}`}
                     src={registrant.profile.photoURL_50x50}
                     m={1}
+                    overflow="hidden"
                     alt={`Profile picture of ${registrant.displayName}`}
                 />
             ) : (

@@ -94,6 +94,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                 h="100%"
                                 src={registrant.profile.photoURL_350x350}
                                 fallbackSrc="https://via.placeholder.com/350"
+                                overflow="hidden"
                                 alt={`Profile picture of ${registrant.displayName}`}
                             />
                         ) : (

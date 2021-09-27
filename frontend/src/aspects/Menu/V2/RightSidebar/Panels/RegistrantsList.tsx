@@ -23,6 +23,7 @@ function RegistrantTile({ registrant, onClick }: { registrant: Registrant; onCli
                     ml={2}
                     aria-describedby={`registrant-trigger-${registrant.id}`}
                     src={registrant.profile.photoURL_50x50}
+                    overflow="hidden"
                     alt={`Profile picture of ${registrant.displayName}`}
                 />
             ) : (

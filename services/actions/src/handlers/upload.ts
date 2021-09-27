@@ -259,11 +259,25 @@ async function getItemByToken(magicToken: string): Promise<ItemByToken | { error
 
 gql`
     query GetUploaders($elementId: uuid!) {
-        content_Uploader(where: { elementId: { _eq: $elementId } }) {
-            name
+        content_Element_by_pk(id: $elementId) {
             id
-            email
             conferenceId
+            item {
+                id
+                itemPeople(
+                    where: {
+                        person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] }
+                        roleName: { _in: ["AUTHOR", "PRESENTER", "DISCUSSANT"] }
+                    }
+                ) {
+                    id
+                    person {
+                        id
+                        name
+                        email
+                    }
+                }
+            }
         }
     }
 `;
@@ -281,9 +295,9 @@ async function sendSubmittedEmail(
         },
     });
 
-    if (uploaders.data.content_Uploader.length > 0) {
-        const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
-            const htmlContents = `<p>Dear ${uploader.name},</p>
+    if (uploaders.data.content_Element_by_pk?.item.itemPeople.length) {
+        const emails: Email_Insert_Input[] = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
+            const htmlContents = `<p>Dear ${person.name},</p>
 <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
 <p>Our systems will now start processing your content. For videos, we will process your video and then auto-generate subtitles.</p>
 <p>For video submissions, you will receive two further emails:</p>
@@ -300,15 +314,15 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
-                recipientName: uploader.name,
-                emailAddress: uploader.email,
+                recipientName: person.name,
+                emailAddress: person.email,
                 reason: "item_submitted",
                 subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
                 htmlContents,
             };
         });
 
-        await insertEmails(emails, uploaders.data.content_Uploader[0].conferenceId);
+        await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId);
     }
 }
 
@@ -771,7 +785,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                         .filter(isNotUndefined),
                 },
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error(
                 `Could not process jobs: ${emailsRecords
                     .map((x) => x.jobId)
@@ -788,7 +802,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                         },
                     });
                 });
-            } catch (e) {
+            } catch (e: any) {
                 console.error(`Could not unmark failed emails: ${e.toString()}`);
             }
         }

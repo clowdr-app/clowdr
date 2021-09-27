@@ -14,9 +14,7 @@ import {
     Email_Insert_Input,
     FindMatchingProgramPersonForUploaderDocument,
     GetElementDetailsDocument,
-    GetUploadableElementDocument,
     GetUploadAgreementDocument,
-    GetUploadersForElementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
@@ -176,21 +174,21 @@ gql`
             item {
                 id
                 title
+                itemPeople(
+                    where: {
+                        person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] }
+                        roleName: { _in: ["AUTHOR", "PRESENTER", "DISCUSSANT"] }
+                    }
+                ) {
+                    id
+                    person {
+                        id
+                        name
+                        email
+                        accessToken
+                    }
+                }
             }
-        }
-    }
-    query GetUploadersForElement($elementId: uuid!) {
-        content_Uploader(where: { element: { id: { _eq: $elementId } } }) {
-            name
-            id
-            email
-        }
-    }
-
-    query GetUploadableElement($elementId: uuid!) {
-        content_Element_by_pk(id: $elementId) {
-            accessToken
-            id
         }
     }
 `;
@@ -204,32 +202,14 @@ async function trySendTranscriptionEmail(elementId: string) {
             },
         });
 
-        const uploaders = await apolloClient.query({
-            query: GetUploadersForElementDocument,
-            variables: {
-                elementId,
-            },
-        });
-
-        const uploadableElementResult = await apolloClient.query({
-            query: GetUploadableElementDocument,
-            variables: {
-                elementId,
-            },
-        });
-
-        if (!uploadableElementResult.data.content_Element_by_pk) {
+        if (!elementDetails.data.content_Element_by_pk) {
             throw new Error("Could not find the specified element");
         }
-
-        const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
 
         const element = elementDetails.data.content_Element_by_pk;
         if (!element) {
             throw new Error("Could not find Element while sending");
         }
-
-        const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
 
         let emailTemplates: EmailTemplate_BaseConfig | null = await getConferenceConfiguration(
             element.conference.id,
@@ -240,9 +220,13 @@ async function trySendTranscriptionEmail(elementId: string) {
             emailTemplates = null;
         }
 
-        const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
+        const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
+            const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}`;
+
             const view: EmailView_SubtitlesGenerated = {
-                uploader,
+                uploader: {
+                    name: person.name,
+                },
                 file: {
                     name: element.name,
                 },
@@ -268,8 +252,8 @@ async function trySendTranscriptionEmail(elementId: string) {
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
             return {
-                recipientName: uploader.name,
-                emailAddress: uploader.email,
+                recipientName: person.name,
+                emailAddress: person.email,
                 reason: "item_transcription_succeeded",
                 subject,
                 htmlContents,
@@ -291,32 +275,17 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
         },
     });
 
-    const uploaders = await apolloClient.query({
-        query: GetUploadersForElementDocument,
-        variables: {
-            elementId,
-        },
-    });
-
-    const uploadableElementResult = await apolloClient.query({
-        query: GetUploadableElementDocument,
-        variables: {
-            elementId,
-        },
-    });
-
-    if (!uploadableElementResult.data.content_Element_by_pk) {
+    if (!elementDetails.data.content_Element_by_pk) {
         console.error("Could not find the specified element");
         return;
     }
 
-    const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
+    const element = elementDetails.data.content_Element_by_pk;
+    const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
+        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
-    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
-
-    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
-        const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>Your item ${elementName} (${elementDetails.data.content_Element_by_pk?.item.title}) at ${elementDetails.data.content_Element_by_pk?.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
+        const htmlContents = `<p>Dear ${person.name},</p>
+<p>Your item ${elementName} (${element.item.title}) at ${element.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your ${elementType}.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
 <p>After this time, subtitles will be automatically embedded into the ${elementType} files and moved into the content delivery system - they will no longer be editable.</p>
@@ -327,18 +296,17 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
-            recipientName: uploader.name,
-            emailAddress: uploader.email,
+            recipientName: person.name,
+            emailAddress: person.email,
             reason: "item_transcription_failed",
-            subject: `Midspace: Submission ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `Midspace: Submission ERROR: Failed to generate subtitles for ${elementName} at ${element.conference.name}`,
             htmlContents,
         };
     });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id: ${elementId}.</p>
-<p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
+<p>Here's the content item id / element id: /item/${element.item.id}/element/${elementId}.</p>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
@@ -365,32 +333,18 @@ async function trySendTranscodeFailedEmail(
         },
     });
 
-    const uploaders = await apolloClient.query({
-        query: GetUploadersForElementDocument,
-        variables: {
-            elementId,
-        },
-    });
-
-    const uploadableElementResult = await apolloClient.query({
-        query: GetUploadableElementDocument,
-        variables: {
-            elementId,
-        },
-    });
-
-    if (!uploadableElementResult.data.content_Element_by_pk) {
+    if (!elementDetails.data.content_Element_by_pk) {
         console.error("Could not find the specified element");
         return;
     }
 
-    const uploadableElement = uploadableElementResult.data.content_Element_by_pk;
+    const element = elementDetails.data.content_Element_by_pk;
 
-    const magicItemLink = `{[FRONTEND_HOST]}/upload/${uploadableElement.id}/${uploadableElement.accessToken}`;
+    const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
+        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
-    const emails: Email_Insert_Input[] = uploaders.data.content_Uploader.map((uploader) => {
-        const htmlContents = `<p>Dear ${uploader.name},</p>
-<p>There was a problem processing <b>${elementName}</b> (${elementDetails.data.content_Element_by_pk?.item.title}) for ${elementDetails.data.content_Element_by_pk?.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
+        const htmlContents = `<p>Dear ${person.name},</p>
+<p>There was a problem processing <b>${elementName}</b> (${element.item.title}) for ${element.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
 <p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
@@ -400,18 +354,17 @@ The Midspace team
 <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
         return {
-            recipientName: uploader.name,
-            emailAddress: uploader.email,
+            recipientName: person.name,
+            emailAddress: person.email,
             reason: "item_transcode_failed",
-            subject: `Midspace: Submission ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
+            subject: `Midspace: Submission ERROR: Failed to process ${elementName} at ${element.conference.name}`,
             htmlContents,
         };
     });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id: ${elementId}.</p>
-<p>Here's the magic link: <a href="${magicItemLink}">${magicItemLink}</a></p>
+<p>Here's the content item id / element id: /item/${element.item.id}/element/${elementId}.</p>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",

@@ -278,7 +278,7 @@ export async function processEmailsJobQueue(): Promise<void> {
                         };
                         await callWithRetry(() => sgMail.send(msg));
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error(`Could not send email ${email.id}: ${e.toString()}`);
                     return email.id;
                 }
@@ -295,7 +295,7 @@ export async function processEmailsJobQueue(): Promise<void> {
                     },
                 });
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error(`Could not unmark failed emails: ${e.toString()}`);
         }
     } else {

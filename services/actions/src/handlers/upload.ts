@@ -694,6 +694,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 reason: "upload-request",
                 subject,
             };
+            conferenceId = job.uploader.conference.id;
 
             result = { email: newEmail, uploaderId: job.uploader.id, jobId: job.id };
         } else if (job.person) {
@@ -737,6 +738,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 reason: "upload-request",
                 subject,
             };
+            conferenceId = job.person.conference.id;
 
             result = { email: newEmail, personId: job.person.id, jobId: job.id };
         }

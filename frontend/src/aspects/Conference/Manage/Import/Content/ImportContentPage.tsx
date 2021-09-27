@@ -120,10 +120,10 @@ const presetJSONata_CSVQuery_Content = `
                     "uploadsRemaining": $."Is abstract uploadable" = "Yes" ? 3 : 0
                 }
             ] 
-            ~> $append($."Link to webpage - name?" != "" ? [{
+            ~> $append($trim($."Link to webpage - name?") != "" ? [{
                 "typeName": "PAPER_LINK",
                 "isHidden": false,
-                "name": $."Link to webpage - name?",
+                "name": $trim($."Link to webpage - name?"),
                 "data": [{
                     "createdAt": $millis(),
                     "createdBy": "importer",
@@ -136,10 +136,10 @@ const presetJSONata_CSVQuery_Content = `
                 }],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Link to PDF - name?" != "" ? [{
+            ~> $append($trim($."Link to PDF - name?") != "" ? [{
                 "typeName": "PAPER_LINK",
                 "isHidden": false,
-                "name": $."Link to PDF - name?",
+                "name": $trim($."Link to PDF - name?"),
                 "data": [{
                     "createdAt": $millis(),
                     "createdBy": "importer",
@@ -152,7 +152,7 @@ const presetJSONata_CSVQuery_Content = `
                 }],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Zoom URL?" != "" ? [{
+            ~> $append($trim($."Zoom URL?") != "" ? [{
                 "typeName": "ZOOM",
                 "isHidden": true,
                 "name": "Zoom",
@@ -167,31 +167,31 @@ const presetJSONata_CSVQuery_Content = `
                 }],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Video 1 (Name)" != "" ? [{
+            ~> $append($trim($."Video 1 (Name)") != "" ? [{
                 "typeName": "VIDEO_BROADCAST",
                 "isHidden": false,
-                "name": $."Video 1 (Name)",
+                "name": $trim($."Video 1 (Name)"),
                 "data": [],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Video 2 (Name)" != "" ? [{
+            ~> $append($trim($."Video 2 (Name)") != "" ? [{
                 "typeName": "VIDEO_BROADCAST",
                 "isHidden": false,
-                "name": $."Video 2 (Name)",
+                "name": $trim($."Video 2 (Name)"),
                 "data": [],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Slides?" != "" ? [{
+            ~> $append($trim($."Slides?") != "" ? [{
                 "typeName": "PAPER_FILE",
                 "isHidden": false,
-                "name": $."Slides?",
+                "name": $trim($."Slides?"),
                 "data": [],
                 "uploadsRemaining": 3
             }] : [])
-            ~> $append($."Uploadable PDF name?" != "" ? [{
+            ~> $append($trim($."Uploadable PDF name?") != "" ? [{
                 "typeName": "PAPER_FILE",
                 "isHidden": false,
-                "name": $."Uploadable PDF name?",
+                "name": $trim($."Uploadable PDF name?"),
                 "data": [],
                 "uploadsRemaining": 3
             }] : []),

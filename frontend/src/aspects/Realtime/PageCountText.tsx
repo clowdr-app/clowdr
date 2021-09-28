@@ -7,8 +7,10 @@ import { usePresenceState } from "./PresenceStateProvider";
 export default function PageCountText({
     path,
     noIcon,
+    noTooltip = false,
+    noBrackets = false,
     ...props
-}: { noIcon?: boolean; path: string } & TextProps): JSX.Element {
+}: { noIcon?: boolean; noTooltip?: boolean; noBrackets?: boolean; path: string } & TextProps): JSX.Element {
     const presence = usePresenceState();
     const [pageCount, setPageCount] = useState<number | null>(null);
     const mConference = useMaybeConference();
@@ -23,23 +25,33 @@ export default function PageCountText({
         ? `${pageCount} user${pageCount !== 1 ? "s" : ""} with an open tab here`
         : undefined;
 
+    const innerEl = (
+        <>
+            {!noIcon ? (
+                <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
+            ) : undefined}
+            <chakra.span
+                verticalAlign={!noIcon ? "middle" : undefined}
+                ml={!noIcon ? 2 : undefined}
+                fontWeight={!noIcon ? "bold" : undefined}
+            >
+                {noIcon && !noBrackets ? "(" : ""}
+                {pageCount}
+                {noIcon && !noBrackets ? ")" : ""}
+            </chakra.span>
+        </>
+    );
+
     return pageCountLabel ? (
-        <Tooltip label={pageCountLabel}>
-            <Box fontSize="1rem" {...props}>
-                {!noIcon ? (
-                    <FAIcon aria-label={pageCountLabel} iconStyle="s" icon="eye" verticalAlign="middle" />
-                ) : undefined}
-                <chakra.span
-                    verticalAlign={!noIcon ? "middle" : undefined}
-                    ml={!noIcon ? 2 : undefined}
-                    fontWeight={!noIcon ? "bold" : undefined}
-                >
-                    {noIcon ? "(" : ""}
-                    {pageCount}
-                    {noIcon ? ")" : ""}
-                </chakra.span>
-            </Box>
-        </Tooltip>
+        noTooltip ? (
+            innerEl
+        ) : (
+            <Tooltip label={pageCountLabel}>
+                <Box fontSize="1rem" {...props}>
+                    {innerEl}
+                </Box>
+            </Tooltip>
+        )
     ) : (
         <></>
     );

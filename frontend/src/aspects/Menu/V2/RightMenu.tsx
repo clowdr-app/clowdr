@@ -8,6 +8,7 @@ import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant
 import { useRestorableState } from "../../Generic/useRestorableState";
 import FAIcon from "../../Icons/FAIcon";
 import { useRaiseHandState } from "../../RaiseHand/RaiseHandProvider";
+import PageCountText from "../../Realtime/PageCountText";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { useMainMenu } from "../V1/MainMenu/MainMenuState";
 import MenuButton from "./MenuButton";
@@ -281,7 +282,18 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             }}
                             mb="auto"
                             showLabel={isExpanded}
-                        />
+                        >
+                            <Box pos="absolute" top={1} right={1} fontSize="xs">
+                                <PageCountText
+                                    fontSize="inherit"
+                                    lineHeight="inherit"
+                                    path={location.pathname}
+                                    noIcon
+                                    noBrackets
+                                    noTooltip
+                                />
+                            </Box>
+                        </MenuButton>
                     </>
                 ) : undefined}
                 {maybeUser ? (

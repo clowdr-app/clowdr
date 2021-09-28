@@ -127,6 +127,7 @@ function ItemTile({
             boxShadow={shadow}
             color={textColour}
             p={[1, 2, 4]}
+            overflow="hidden"
         >
             <HStack spacing={2}>
                 <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
@@ -196,7 +197,7 @@ export default function ExhibitionLayout({
         [exhibition.items]
     );
     return (
-        <Grid templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)"]} mt={0} gap={[2, 2, 4]}>
+        <Grid templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)"]} mt={0} gap={[2, 2, 4]} w="100%">
             {sortedItems.map((item) => (
                 <ItemTile
                     key={item.id}

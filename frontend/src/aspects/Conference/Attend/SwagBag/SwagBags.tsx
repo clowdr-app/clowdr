@@ -240,9 +240,20 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
             borderColour="gray.400"
             borderTop="1px solid"
             justifyContent="center"
+            overflow="hidden"
+            minW={350}
+            maxW={800}
         >
-            <Flex w="100%" minW={350} maxW={800} flexDir="column" alignItems="center" p={[2, 2, 4]}>
-                <Heading as="h2" fontSize="2xl" textAlign={logoElement ? "center" : "left"} pt={2} mb={4}>
+            <Flex w="100%" flexDir="column" alignItems="center" p={[2, 2, 4]}>
+                <Heading
+                    as="h2"
+                    fontSize="2xl"
+                    textAlign={logoElement ? "center" : "left"}
+                    pt={2}
+                    mb={4}
+                    w="100%"
+                    whiteSpace="normal"
+                >
                     {logoUrl ? (
                         <Image
                             src={logoUrl}
@@ -259,7 +270,7 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                     )}
                 </Heading>
                 {primaryElement && <Element element={primaryElement} />}
-                <HStack mt={4} spacing={2} flexWrap="wrap">
+                <HStack mt={4} spacing={2} flexWrap="wrap" w="100%">
                     <LinkButton colorScheme="purple" to={itemUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="link" mr={2} />
                         <Text as="span" ml={1}>

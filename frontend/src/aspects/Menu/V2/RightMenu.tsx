@@ -35,16 +35,6 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     const [chatsUnreadCount, setChatsUnreadCount] = useState<string>("");
     const [pageChatAvailable, setPageChatAvailable] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen && !pageChatAvailable) {
-            setCurrentTab(RightSidebarTabs.Presence);
-        } else if (pageChatAvailable) {
-            onRightBarOpen();
-            setCurrentTab(RightSidebarTabs.PageChat);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageChatAvailable]);
-
     const rightSections = useMemo(
         () =>
             maybeConference?.slug && maybeRegistrant ? (
@@ -68,6 +58,18 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
     );
     const isExpanded = !!useBreakpointValue({ base: _isExpanded && !isRightBarOpen, "2xl": _isExpanded });
     const isExpandedEnabled = useBreakpointValue({ base: !isRightBarOpen, "2xl": true });
+
+    useEffect(() => {
+        if (!_isExpanded) {
+            if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen && !pageChatAvailable) {
+                setCurrentTab(RightSidebarTabs.Presence);
+            } else if (pageChatAvailable) {
+                onRightBarOpen();
+                setCurrentTab(RightSidebarTabs.PageChat);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pageChatAvailable]);
 
     const raiseHand = useRaiseHandState();
     const [currentEventId, setCurrentEventId] = useState<{

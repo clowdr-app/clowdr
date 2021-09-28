@@ -26,13 +26,16 @@ function RightSidebarSections_Inner({
     const { path } = useRouteMatch();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
-    const conferenceLandingPageMatch = useRouteMatch<{ itemId: string }>({ exact: true, path });
+    const conferenceLandingPageMatch = useRouteMatch({
+        exact: true,
+        path: `/conference/${confSlug}`,
+    });
     const exhibitionMatch = useRouteMatch<{ exhibitionId: string }>(`${path}/exhibition/:exhibitionId`);
     const roomId = roomMatch?.params?.roomId;
     const itemOrExhibitionId =
-        itemMatch?.params?.itemId ?? exhibitionMatch?.params?.exhibitionId ?? conferenceLandingPageMatch
-            ? "LANDING_PAGE"
-            : undefined;
+        itemMatch?.params?.itemId ??
+        exhibitionMatch?.params?.exhibitionId ??
+        (conferenceLandingPageMatch ? "LANDING_PAGE" : undefined);
     const [pageChatId, setPageChatId] = useState<string | null>(null);
 
     const chatState = useGlobalChatState();

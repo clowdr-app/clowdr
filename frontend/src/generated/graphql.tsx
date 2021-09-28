@@ -41799,6 +41799,13 @@ export type GetItemChatIdQueryVariables = Exact<{
 
 export type GetItemChatIdQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
+export type GetConferenceLandingPageItemIdQueryVariables = Exact<{
+  conferenceSlug: Scalars['String'];
+}>;
+
+
+export type GetConferenceLandingPageItemIdQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> };
+
 export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -54651,6 +54658,44 @@ export function useGetItemChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetItemChatIdQueryHookResult = ReturnType<typeof useGetItemChatIdQuery>;
 export type GetItemChatIdLazyQueryHookResult = ReturnType<typeof useGetItemChatIdLazyQuery>;
 export type GetItemChatIdQueryResult = Apollo.QueryResult<GetItemChatIdQuery, GetItemChatIdQueryVariables>;
+export const GetConferenceLandingPageItemIdDocument = gql`
+    query GetConferenceLandingPageItemId($conferenceSlug: String!) {
+  content_Item(
+    where: {typeName: {_eq: LANDING_PAGE}, conference: {slug: {_eq: $conferenceSlug}}}
+    limit: 1
+  ) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetConferenceLandingPageItemIdQuery__
+ *
+ * To run a query within a React component, call `useGetConferenceLandingPageItemIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConferenceLandingPageItemIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConferenceLandingPageItemIdQuery({
+ *   variables: {
+ *      conferenceSlug: // value for 'conferenceSlug'
+ *   },
+ * });
+ */
+export function useGetConferenceLandingPageItemIdQuery(baseOptions: Apollo.QueryHookOptions<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>(GetConferenceLandingPageItemIdDocument, options);
+      }
+export function useGetConferenceLandingPageItemIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>(GetConferenceLandingPageItemIdDocument, options);
+        }
+export type GetConferenceLandingPageItemIdQueryHookResult = ReturnType<typeof useGetConferenceLandingPageItemIdQuery>;
+export type GetConferenceLandingPageItemIdLazyQueryHookResult = ReturnType<typeof useGetConferenceLandingPageItemIdLazyQuery>;
+export type GetConferenceLandingPageItemIdQueryResult = Apollo.QueryResult<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>;
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
   vapidPublicKey {

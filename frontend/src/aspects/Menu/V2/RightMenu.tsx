@@ -42,7 +42,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
             setCurrentTab(RightSidebarTabs.PageChat);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentTab, isRightBarOpen, pageChatAvailable]);
+    }, [pageChatAvailable]);
 
     const rightSections = useMemo(
         () =>

@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useGetItemChatIdQuery } from "../../../../../generated/graphql";
+import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
@@ -23,9 +23,73 @@ gql`
             chatId
         }
     }
+
+    query GetConferenceLandingPageItemId($conferenceSlug: String!) {
+        content_Item(
+            where: { typeName: { _eq: LANDING_PAGE }, conference: { slug: { _eq: $conferenceSlug } } }
+            limit: 1
+        ) {
+            id
+        }
+    }
 `;
 
 export function ItemChatPanel({
+    itemOrExhibitionId,
+    ...props
+}: {
+    itemOrExhibitionId: string;
+    confSlug: string;
+    onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: string) => void;
+    setPageChatAvailable: (isAvailable: boolean) => void;
+    isVisible: boolean;
+}): JSX.Element {
+    if (itemOrExhibitionId === "LANDING_PAGE") {
+        return <LandingPageChatPanel {...props} />;
+    } else {
+        return <ItemChatPanelInner itemOrExhibitionId={itemOrExhibitionId} {...props} />;
+    }
+}
+
+function LandingPageChatPanel({
+    confSlug,
+    setPageChatAvailable,
+    ...props
+}: {
+    confSlug: string;
+    onChatIdLoaded: (chatId: string) => void;
+    setUnread: (v: string) => void;
+    setPageChatAvailable: (isAvailable: boolean) => void;
+    isVisible: boolean;
+}) {
+    const response = useGetConferenceLandingPageItemIdQuery({
+        variables: {
+            conferenceSlug: confSlug,
+        },
+    });
+
+    useEffect(() => {
+        if (!response.loading && !response.data?.content_Item?.length) {
+            setPageChatAvailable(false);
+        }
+    }, [response.data?.content_Item?.length, response.loading, setPageChatAvailable]);
+
+    if (response.data?.content_Item?.length) {
+        return (
+            <ItemChatPanelInner
+                itemOrExhibitionId={response.data.content_Item[0].id}
+                confSlug={confSlug}
+                setPageChatAvailable={setPageChatAvailable}
+                {...props}
+            />
+        );
+    } else {
+        return <></>;
+    }
+}
+
+function ItemChatPanelInner({
     itemOrExhibitionId,
     confSlug,
     onChatIdLoaded,

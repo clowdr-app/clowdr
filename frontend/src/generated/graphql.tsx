@@ -41771,12 +41771,12 @@ export type CreateDmMutationVariables = Exact<{
 
 export type CreateDmMutation = { readonly __typename?: 'mutation_root', readonly createRoomDm?: Maybe<{ readonly __typename?: 'CreateRoomDmOutput', readonly message?: Maybe<string>, readonly roomId?: Maybe<any>, readonly chatId?: Maybe<any> }> };
 
-export type GetItemChatIdQueryVariables = Exact<{
+export type GetItemChatId_V1QueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type GetItemChatIdQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
+export type GetItemChatId_V1Query = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
 export type GetRoomChatIdQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -41791,6 +41791,13 @@ export type CountSwagBagsQueryVariables = Exact<{
 
 
 export type CountSwagBagsQuery = { readonly __typename?: 'query_root', readonly content_Item_aggregate: { readonly __typename?: 'content_Item_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'content_Item_aggregate_fields', readonly count: number }> } };
+
+export type GetItemChatIdQueryVariables = Exact<{
+  itemOrExhibitionId: Scalars['uuid'];
+}>;
+
+
+export type GetItemChatIdQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly chatId?: Maybe<any> }> };
 
 export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -54492,8 +54499,8 @@ export function useCreateDmMutation(baseOptions?: Apollo.MutationHookOptions<Cre
 export type CreateDmMutationHookResult = ReturnType<typeof useCreateDmMutation>;
 export type CreateDmMutationResult = Apollo.MutationResult<CreateDmMutation>;
 export type CreateDmMutationOptions = Apollo.BaseMutationOptions<CreateDmMutation, CreateDmMutationVariables>;
-export const GetItemChatIdDocument = gql`
-    query GetItemChatId($itemId: uuid!) {
+export const GetItemChatId_V1Document = gql`
+    query GetItemChatId_V1($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
     id
     title
@@ -54503,32 +54510,32 @@ export const GetItemChatIdDocument = gql`
     `;
 
 /**
- * __useGetItemChatIdQuery__
+ * __useGetItemChatId_V1Query__
  *
- * To run a query within a React component, call `useGetItemChatIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetItemChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetItemChatId_V1Query` and pass it any options that fit your needs.
+ * When your component renders, `useGetItemChatId_V1Query` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetItemChatIdQuery({
+ * const { data, loading, error } = useGetItemChatId_V1Query({
  *   variables: {
  *      itemId: // value for 'itemId'
  *   },
  * });
  */
-export function useGetItemChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
+export function useGetItemChatId_V1Query(baseOptions: Apollo.QueryHookOptions<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
+        return Apollo.useQuery<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>(GetItemChatId_V1Document, options);
       }
-export function useGetItemChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
+export function useGetItemChatId_V1LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
+          return Apollo.useLazyQuery<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>(GetItemChatId_V1Document, options);
         }
-export type GetItemChatIdQueryHookResult = ReturnType<typeof useGetItemChatIdQuery>;
-export type GetItemChatIdLazyQueryHookResult = ReturnType<typeof useGetItemChatIdLazyQuery>;
-export type GetItemChatIdQueryResult = Apollo.QueryResult<GetItemChatIdQuery, GetItemChatIdQueryVariables>;
+export type GetItemChatId_V1QueryHookResult = ReturnType<typeof useGetItemChatId_V1Query>;
+export type GetItemChatId_V1LazyQueryHookResult = ReturnType<typeof useGetItemChatId_V1LazyQuery>;
+export type GetItemChatId_V1QueryResult = Apollo.QueryResult<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>;
 export const GetRoomChatIdDocument = gql`
     query GetRoomChatId($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -54605,6 +54612,45 @@ export function useCountSwagBagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type CountSwagBagsQueryHookResult = ReturnType<typeof useCountSwagBagsQuery>;
 export type CountSwagBagsLazyQueryHookResult = ReturnType<typeof useCountSwagBagsLazyQuery>;
 export type CountSwagBagsQueryResult = Apollo.QueryResult<CountSwagBagsQuery, CountSwagBagsQueryVariables>;
+export const GetItemChatIdDocument = gql`
+    query GetItemChatId($itemOrExhibitionId: uuid!) {
+  content_Item(
+    where: {_or: [{id: {_eq: $itemOrExhibitionId}}, {descriptionOfExhibitions: {id: {_eq: $itemOrExhibitionId}}}]}
+  ) {
+    id
+    title
+    chatId
+  }
+}
+    `;
+
+/**
+ * __useGetItemChatIdQuery__
+ *
+ * To run a query within a React component, call `useGetItemChatIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetItemChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetItemChatIdQuery({
+ *   variables: {
+ *      itemOrExhibitionId: // value for 'itemOrExhibitionId'
+ *   },
+ * });
+ */
+export function useGetItemChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
+      }
+export function useGetItemChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
+        }
+export type GetItemChatIdQueryHookResult = ReturnType<typeof useGetItemChatIdQuery>;
+export type GetItemChatIdLazyQueryHookResult = ReturnType<typeof useGetItemChatIdLazyQuery>;
+export type GetItemChatIdQueryResult = Apollo.QueryResult<GetItemChatIdQuery, GetItemChatIdQueryVariables>;
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
   vapidPublicKey {

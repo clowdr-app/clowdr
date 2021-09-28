@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
@@ -9,8 +9,15 @@ import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import FAIcon from "../../../../Icons/FAIcon";
 
 gql`
-    query GetItemChatId($itemId: uuid!) {
-        content_Item_by_pk(id: $itemId) {
+    query GetItemChatId($itemOrExhibitionId: uuid!) {
+        content_Item(
+            where: {
+                _or: [
+                    { id: { _eq: $itemOrExhibitionId } }
+                    { descriptionOfExhibitions: { id: { _eq: $itemOrExhibitionId } } }
+                ]
+            }
+        ) {
             id
             title
             chatId
@@ -19,39 +26,40 @@ gql`
 `;
 
 export function ItemChatPanel({
-    itemId,
+    itemOrExhibitionId,
     confSlug,
     onChatIdLoaded,
     setUnread,
+    setPageChatAvailable,
     isVisible,
 }: {
-    itemId: string;
+    itemOrExhibitionId: string;
     confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
+    setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const { loading, error, data } = useGetItemChatIdQuery({
         variables: {
-            itemId,
+            itemOrExhibitionId,
         },
     });
+    const chatId = useMemo(() => data?.content_Item.find((x) => x?.chatId)?.chatId, [data?.content_Item]);
 
     const globalChatState = useGlobalChatState();
     const [chat, setChat] = useState<ChatState | null | undefined>();
     useEffect(() => {
         let unsubscribe: undefined | (() => void);
-        if (!loading) {
-            if (data?.content_Item_by_pk?.chatId) {
-                unsubscribe = globalChatState.observeChatId(data.content_Item_by_pk.chatId, setChat);
-            } else {
-                setChat(null);
-            }
+        if (chatId) {
+            unsubscribe = globalChatState.observeChatId(chatId, setChat);
+        } else {
+            setChat(null);
         }
         return () => {
             unsubscribe?.();
         };
-    }, [data?.content_Item_by_pk?.chatId, globalChatState, loading]);
+    }, [chatId, globalChatState]);
 
     useEffect(() => {
         if (chat?.Id) {
@@ -84,6 +92,10 @@ export function ItemChatPanel({
     }, [chat, isVisible]);
 
     const history = useHistory();
+
+    useEffect(() => {
+        setPageChatAvailable(!error && chat !== null);
+    }, [chat, chatId, error, setPageChatAvailable]);
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;

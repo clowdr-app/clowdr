@@ -32,6 +32,17 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
 
     const [pageChatUnreadCount, setPageChatUnreadCount] = useState<string>("");
     const [chatsUnreadCount, setChatsUnreadCount] = useState<string>("");
+    const [pageChatAvailable, setPageChatAvailable] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen && !pageChatAvailable) {
+            setCurrentTab(RightSidebarTabs.Presence);
+        } else if (pageChatAvailable) {
+            onRightBarOpen();
+            setCurrentTab(RightSidebarTabs.PageChat);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentTab, isRightBarOpen, pageChatAvailable]);
 
     const rightSections = useMemo(
         () =>
@@ -41,6 +52,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                     onClose={onRightBarClose}
                     externalSetPageChatUnreadCount={setPageChatUnreadCount}
                     externalSetChatsUnreadCount={setChatsUnreadCount}
+                    externalSetPageChatAvailable={setPageChatAvailable}
                     isVisible={isVisible}
                 />
             ) : undefined,
@@ -141,7 +153,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 {!maybeUser ? <LoginButton asMenuButtonV2 showLabel={isExpanded} /> : undefined}
                 {maybeConference?.slug && maybeRegistrant ? (
                     <>
-                        <Route path={`${path}/item/`}>
+                        {pageChatAvailable ? (
                             <MenuButton
                                 label={
                                     (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? "Close " : "") +
@@ -175,41 +187,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                                     {pageChatUnreadCount}
                                 </Box>
                             </MenuButton>
-                        </Route>
+                        ) : undefined}
                         <Route path={`${path}/room/`}>
-                            <MenuButton
-                                label={
-                                    (currentTab === RightSidebarTabs.PageChat && isRightBarOpen ? "Close " : "") +
-                                    "Chat here"
-                                }
-                                iconStyle="s"
-                                icon={
-                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
-                                        ? "chevron-right"
-                                        : "comment"
-                                }
-                                borderRadius={0}
-                                colorScheme={
-                                    currentTab === RightSidebarTabs.PageChat && isRightBarOpen
-                                        ? selectedColorScheme
-                                        : colorScheme
-                                }
-                                side="right"
-                                onClick={() => {
-                                    if (currentTab === RightSidebarTabs.PageChat && isRightBarOpen) {
-                                        onRightBarClose();
-                                    } else {
-                                        setCurrentTab(RightSidebarTabs.PageChat);
-                                        onRightBarOpen();
-                                    }
-                                }}
-                                mb={1}
-                                showLabel={isExpanded}
-                            >
-                                <Box pos="absolute" top={1} right={1} fontSize="xs">
-                                    {pageChatUnreadCount}
-                                </Box>
-                            </MenuButton>
                             {isBackstage || currentEventId ? (
                                 <MenuButton
                                     label={

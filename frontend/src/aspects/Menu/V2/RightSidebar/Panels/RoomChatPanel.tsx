@@ -20,11 +20,13 @@ export function RoomChatPanel({
     roomId,
     onChatIdLoaded,
     setUnread,
+    setPageChatAvailable,
     isVisible,
 }: {
     roomId: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
+    setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const { loading, error, data } = useGetRoomChatIdQuery({
@@ -78,6 +80,10 @@ export function RoomChatPanel({
             }
         };
     }, [chat, isVisible]);
+
+    useEffect(() => {
+        setPageChatAvailable(!error && chat !== null);
+    }, [chat, error, setPageChatAvailable]);
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;

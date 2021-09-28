@@ -2,14 +2,14 @@ import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useGetItemChatIdQuery } from "../../../../generated/graphql";
+import { useGetItemChatId_V1Query } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
 import type { ChatState } from "../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
 import FAIcon from "../../../Icons/FAIcon";
 
 gql`
-    query GetItemChatId($itemId: uuid!) {
+    query GetItemChatId_V1($itemId: uuid!) {
         content_Item_by_pk(id: $itemId) {
             id
             title
@@ -29,7 +29,7 @@ export function ItemChatPanel({
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
 }): JSX.Element {
-    const { loading, error, data } = useGetItemChatIdQuery({
+    const { loading, error, data } = useGetItemChatId_V1Query({
         variables: {
             itemId,
         },

@@ -14,25 +14,28 @@ function RightSidebarSections_Inner({
     confSlug,
     externalSetPageChatUnreadCount,
     externalSetChatsUnreadCount,
+    externalSetPageChatAvailable,
     isVisible,
 }: {
     confSlug: string;
     externalSetPageChatUnreadCount: (count: string) => void;
     externalSetChatsUnreadCount: (count: string) => void;
+    externalSetPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const { path } = useRouteMatch();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
+    const exhibitionMatch = useRouteMatch<{ exhibitionId: string }>(`${path}/exhibition/:exhibitionId`);
     const roomId = roomMatch?.params?.roomId;
-    const itemId = itemMatch?.params?.itemId;
+    const itemOrExhibitionId = itemMatch?.params?.itemId ?? exhibitionMatch?.params?.exhibitionId;
     const [pageChatId, setPageChatId] = useState<string | null>(null);
 
     const chatState = useGlobalChatState();
     const { currentTab, setCurrentTab } = useRightSidebarCurrentTab();
 
     useEffect(() => {
-        if (roomId || itemId) {
+        if (roomId || itemOrExhibitionId) {
             setCurrentTab(RightSidebarTabs.PageChat);
         } else {
             setPageChatId(null);
@@ -42,7 +45,7 @@ function RightSidebarSections_Inner({
             );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemId, roomId]);
+    }, [itemOrExhibitionId, roomId]);
 
     const tabIndex = currentTab - 1;
 
@@ -57,10 +60,10 @@ function RightSidebarSections_Inner({
     const closeChatCb = useRef<(() => void) | null>(null);
 
     useEffect(() => {
-        if (!roomId && !itemId) {
+        if (!roomId && !itemOrExhibitionId) {
             externalSetPageChatUnreadCount("");
         }
-    }, [itemId, roomId, externalSetPageChatUnreadCount]);
+    }, [itemOrExhibitionId, roomId, externalSetPageChatUnreadCount]);
 
     const roomPanel = useMemo(
         () =>
@@ -70,22 +73,31 @@ function RightSidebarSections_Inner({
                     onChatIdLoaded={setPageChatId}
                     setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!roomId && currentTab === RightSidebarTabs.PageChat}
+                    setPageChatAvailable={externalSetPageChatAvailable}
                 />
             ),
-        [currentTab, roomId, externalSetPageChatUnreadCount, isVisible]
+        [currentTab, roomId, externalSetPageChatUnreadCount, isVisible, externalSetPageChatAvailable]
     );
     const itemPanel = useMemo(
         () =>
-            itemId && (
+            itemOrExhibitionId && (
                 <ItemChatPanel
-                    itemId={itemId}
+                    itemOrExhibitionId={itemOrExhibitionId}
                     onChatIdLoaded={setPageChatId}
                     confSlug={confSlug}
                     setUnread={externalSetPageChatUnreadCount}
-                    isVisible={isVisible && !!itemId && currentTab === RightSidebarTabs.PageChat}
+                    isVisible={isVisible && !!itemOrExhibitionId && currentTab === RightSidebarTabs.PageChat}
+                    setPageChatAvailable={externalSetPageChatAvailable}
                 />
             ),
-        [confSlug, currentTab, itemId, externalSetPageChatUnreadCount, isVisible]
+        [
+            confSlug,
+            currentTab,
+            itemOrExhibitionId,
+            externalSetPageChatUnreadCount,
+            isVisible,
+            externalSetPageChatAvailable,
+        ]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -166,12 +178,14 @@ export default function RightSidebarSections({
     confSlug,
     externalSetPageChatUnreadCount,
     externalSetChatsUnreadCount,
+    externalSetPageChatAvailable,
     isVisible,
 }: {
     confSlug: string;
     onClose: () => void;
     externalSetPageChatUnreadCount: (count: string) => void;
     externalSetChatsUnreadCount: (count: string) => void;
+    externalSetPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
@@ -183,6 +197,7 @@ export default function RightSidebarSections({
                     confSlug={confSlug}
                     externalSetPageChatUnreadCount={externalSetPageChatUnreadCount}
                     externalSetChatsUnreadCount={externalSetChatsUnreadCount}
+                    externalSetPageChatAvailable={externalSetPageChatAvailable}
                     isVisible={isVisible}
                 />
             );

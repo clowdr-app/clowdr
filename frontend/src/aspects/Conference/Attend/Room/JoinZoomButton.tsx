@@ -48,8 +48,8 @@ export default function JoinZoomButton({
             h="auto"
             lineHeight="150%"
             fontSize="1.5em"
-            colorScheme="purple"
-            color="white"
+            colorScheme="PrimaryActionButton"
+            color="PrimaryActionButton.textColor"
             borderRadius="2xl"
             shadow={shadow}
             animation={`${zoomButtonBgKeyframes} 10s ease-in-out infinite`}

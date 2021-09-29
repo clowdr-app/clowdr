@@ -5,7 +5,7 @@ import { useMainMenu } from "../../V1/MainMenu/MainMenuState";
 
 export function ToggleChatsButton(props: ButtonProps): JSX.Element {
     const mainMenu = useMainMenu();
-    const rightColorScheme = "purple";
+    const rightColorScheme = "RightMenu";
     const rightBackgroundColour = useColorModeValue(`${rightColorScheme}.200`, `${rightColorScheme}.600`);
     const rightForegroundColour = useColorModeValue("black", "white");
 

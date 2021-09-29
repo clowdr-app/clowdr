@@ -172,7 +172,7 @@ export default function RoomListPage(): JSX.Element {
             <HStack flexWrap="wrap" justifyContent="center" mt={2} w="100%">
                 <LinkButton
                     to={`/conference/${conference.slug}/shuffle`}
-                    colorScheme="blue"
+                    colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"
                 >
@@ -181,7 +181,7 @@ export default function RoomListPage(): JSX.Element {
                 </LinkButton>
                 <LinkButton
                     to={`/conference/${conference.slug}/registrants`}
-                    colorScheme="purple"
+                    colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"
                 >
@@ -195,7 +195,7 @@ export default function RoomListPage(): JSX.Element {
                 )}
             </ApolloQueryWrapper>
             <HStack flexWrap="wrap" justifyContent="center" mt={2}>
-                <Button onClick={onOpen} colorScheme="purple">
+                <Button onClick={onOpen} colorScheme="PrimaryActionButton">
                     Create new room
                 </Button>
             </HStack>

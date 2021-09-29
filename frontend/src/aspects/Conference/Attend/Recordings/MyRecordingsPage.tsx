@@ -58,7 +58,10 @@ export default function MyRecordingsPage(): JSX.Element {
         fetchPolicy: "network-only",
     });
 
-    const bgColor = useColorModeValue("gray.200", "gray.700");
+    const bgColor = useColorModeValue(
+        "MyRecordings.tileBackgroundColor-light",
+        "MyRecordings.tileBackgroundColor-dark"
+    );
 
     return (
         <>
@@ -147,13 +150,13 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             to={`https://${bucket}.s3-${
                                                                 import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
                                                             }.amazonaws.com/${key}`}
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                         >
                                                             Download
                                                         </ExternalLinkButton>
                                                     ) : save.recording.endedAt ? (
                                                         <Tag
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                             size="lg"
                                                             variant="outline"
                                                             whiteSpace="nowrap"
@@ -165,7 +168,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                         <LinkButton
                                                             linkProps={{ m: "3px" }}
                                                             to={`/conference/${conference.slug}/room/${save.recording.room.id}`}
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                         >
                                                             Go to room
                                                         </LinkButton>

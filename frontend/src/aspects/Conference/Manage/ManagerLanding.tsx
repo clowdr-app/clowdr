@@ -103,7 +103,7 @@ export default function ManagerLandingPage(): JSX.Element {
                     icon="lock"
                     description="Manage sets of permissions that can be assigned to groups."
                     permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
                 <RestrictedDashboardButton
                     to="groups"
@@ -114,7 +114,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageRoles,
                         Permissions_Permission_Enum.ConferenceManageGroups,
                     ]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
                 <RestrictedDashboardButton
                     to="registrants"
@@ -126,7 +126,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageGroups,
                         Permissions_Permission_Enum.ConferenceManageAttendees,
                     ]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
                 <RestrictedDashboardButton
                     to="content"

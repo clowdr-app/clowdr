@@ -55,10 +55,11 @@ gql`
 
 function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
     const conference = useConference();
-    const borderColour = useColorModeValue("gray.300", "gray.600");
+    const borderColour = useColorModeValue("Exhibition.tileBorderColor-light", "Exhibition.tileBorderColor-dark");
 
     const { colorMode } = useColorMode();
-    const baseBgColour = colorMode === "light" ? "gray.200" : "gray.600";
+    const baseBgColour =
+        colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";
     const baseGrey = useToken("colors", baseBgColour);
     const baseColour = useMemo(
         () => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey),
@@ -78,9 +79,9 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     const bgColour_Hover_IsDark = useMemo(() => bgColour_Hover.isDark(), [bgColour_Hover]);
     const bgColour_Active_IsDark = useMemo(() => bgColour_Active.isDark(), [bgColour_Active]);
 
-    const textColour = bgColour_IsDark ? "white" : "black";
-    const textColour_Hover = bgColour_Hover_IsDark ? "white" : "black";
-    const textColour_Active = bgColour_Active_IsDark ? "white" : "black";
+    const textColour = bgColour_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
+    const textColour_Hover = bgColour_Hover_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
+    const textColour_Active = bgColour_Active_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
 
     const shadow = useColorModeValue("md", "light-md");
 

@@ -79,7 +79,7 @@ function InnerManageImport(): JSX.Element {
                     icon="users"
                     description="Import your registrants, organisers and other users."
                     permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
             </Flex>
         </RequireAtLeastOnePermissionWrapper>

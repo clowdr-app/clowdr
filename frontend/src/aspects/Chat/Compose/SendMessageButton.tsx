@@ -5,9 +5,15 @@ import { useChatConfiguration } from "../Configuration";
 import SendLockoutButton from "./SendLockoutButton";
 
 export function SendMessageButton({ sendFailed, ...props }: { sendFailed: boolean } & ButtonProps): JSX.Element {
-    const colour = useColorModeValue("blue.600", "blue.200");
-    const focusColour = "purple.400";
-    const activeColour = useColorModeValue("purple.600", "purple.200");
+    const colour = useColorModeValue("ChatSendMessageButton.color-light", "ChatSendMessageButton.color-dark");
+    const focusColour = useColorModeValue(
+        "ChatSendMessageButton.focusColor-light",
+        "ChatSendMessageButton.focusColor-dark"
+    );
+    const activeColour = useColorModeValue(
+        "ChatSendMessageButton.activeColor-light",
+        "ChatSendMessageButton.activeColor-dark"
+    );
     const finishingTransform = "translate(100%, -50%) rotate(50deg) scale(0%)";
     const [wasJustClicked, setWasJustClicked] = useState<boolean>(false);
 
@@ -34,7 +40,7 @@ export function SendMessageButton({ sendFailed, ...props }: { sendFailed: boolea
         <SendLockoutButton
             sendFailed={sendFailed}
             aria-label="Send"
-            colorScheme="blue"
+            colorScheme="ChatSendMessageButton"
             background="none"
             color={colour}
             _hover={{}}

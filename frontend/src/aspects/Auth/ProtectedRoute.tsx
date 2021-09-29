@@ -39,7 +39,7 @@ export default function ProtectedRoute({
                     <Button
                         onClick={() => logout({ returnTo })}
                         leftIcon={<FAIcon iconStyle="s" icon="sign-out-alt" aria-hidden={true} />}
-                        colorScheme="red"
+                        colorScheme="ProtectedRoute"
                         role="menuitem"
                         aria-label="Log out"
                     >

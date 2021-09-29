@@ -75,7 +75,7 @@ function ReportMessageDialog({
                             Cancel
                         </Button>
                         <Button
-                            colorScheme="red"
+                            colorScheme="DestructiveActionButton"
                             isDisabled={!reason.length}
                             onClick={() => onClose({ type: type as Chat_FlagType_Enum, reason })}
                             ml={3}

@@ -24,15 +24,21 @@ export default function ExhibitionNameList({
 
 function ExhibitionButton({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
     const conference = useConference();
-    const borderColour = useColorModeValue("gray.300", "gray.600");
+    const borderColour = useColorModeValue(
+        "ItemExhibitionLinkButton.borderColor-light",
+        "ItemExhibitionLinkButton.borderColor-dark"
+    );
 
     const { colorMode } = useColorMode();
-    const baseBgColour = colorMode === "light" ? "gray.200" : "gray.600";
+    const baseBgColour =
+        colorMode === "light"
+            ? "ItemExhibitionLinkButton.defaultBackgroundColor-light"
+            : "ItemExhibitionLinkButton.defaultBackgroundColor-dark";
     const baseGrey = useToken("colors", baseBgColour);
-    const baseColour = useMemo(() => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey), [
-        baseGrey,
-        exhibition.colour,
-    ]);
+    const baseColour = useMemo(
+        () => (Color(exhibition.colour).getAlpha() !== 0 ? exhibition.colour : baseGrey),
+        [baseGrey, exhibition.colour]
+    );
     const bgColour = useMemo(() => Color(baseColour), [baseColour]);
     const bgColour_Hover = useMemo(
         () => (colorMode === "light" ? Color(baseColour).darken(15) : Color(baseColour).lighten(15)),
@@ -47,9 +53,15 @@ function ExhibitionButton({ exhibition }: { exhibition: ExhibitionSummaryFragmen
     const bgColour_Hover_IsDark = useMemo(() => bgColour_Hover.isDark(), [bgColour_Hover]);
     const bgColour_Active_IsDark = useMemo(() => bgColour_Active.isDark(), [bgColour_Active]);
 
-    const textColour = bgColour_IsDark ? "white" : "black";
-    const textColour_Hover = bgColour_Hover_IsDark ? "white" : "black";
-    const textColour_Active = bgColour_Active_IsDark ? "white" : "black";
+    const textColour = bgColour_IsDark
+        ? "ItemExhibitionLinkButton.textColor-light"
+        : "ItemExhibitionLinkButton.textColor-dark";
+    const textColour_Hover = bgColour_Hover_IsDark
+        ? "ItemExhibitionLinkButton.textColor-Hover-light"
+        : "ItemExhibitionLinkButton.textColor-Hover-dark";
+    const textColour_Active = bgColour_Active_IsDark
+        ? "ItemExhibitionLinkButton.textColor-Active-light"
+        : "ItemExhibitionLinkButton.textColor-Active-dark";
 
     const shadow = useColorModeValue("md", "light-md");
     return (

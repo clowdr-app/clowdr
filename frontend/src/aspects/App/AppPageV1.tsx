@@ -22,8 +22,6 @@ export default function AppPageV1(): JSX.Element {
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
 
-    const bgColour = useColorModeValue("gray.50", "gray.900");
-
     const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const leftDefaultVisible = useBreakpointValue({
         base: false,
@@ -121,8 +119,11 @@ export default function AppPageV1(): JSX.Element {
     ]);
     const isSchedulePage = locationMatchSchedule !== null;
 
-    const centerBgColour = useColorModeValue("gray.100", "gray.800");
-    const borderColour = useColorModeValue("gray.200", "gray.600");
+    const centerBgColour = useColorModeValue(
+        "AppPageV1.centerColumnBackground-light",
+        "AppPageV1.centerColumnBackground-light"
+    );
+    const borderColour = useColorModeValue("AppPageV1.centerColumnBorders-light", "AppPageV1.centerColumnBorders-dark");
     const centerBar = (
         <Box
             overflowX="hidden"
@@ -172,7 +173,6 @@ export default function AppPageV1(): JSX.Element {
             direction="column-reverse"
             justifyContent="center"
             alignItems="center"
-            backgroundColor={bgColour}
         >
             <MainMenu state={mainMenuState}>
                 <Flex w="100%" h="100%" overflow="hidden">

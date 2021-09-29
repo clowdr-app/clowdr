@@ -45,7 +45,7 @@ export default function NewUserLandingPage({ conferenceName }: { conferenceName?
                         </Heading>
                         <ExternalLinkButton
                             to="https://midspace.app"
-                            colorScheme="blue"
+                            colorScheme="pink"
                             size="lg"
                             linkProps={{ "aria-label": "Learn more about Midspace on our marketing website" }}
                         >

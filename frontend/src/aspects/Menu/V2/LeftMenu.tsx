@@ -31,12 +31,12 @@ gql`
     }
 `;
 
-const colorScheme = "blue";
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
+    const colorScheme = "LeftMenu";
 
     const swagBagsResponse = useCountSwagBagsQuery({
         variables: {
@@ -99,7 +99,13 @@ export default function LeftMenu(): JSX.Element {
     );
     return (
         <>
-            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="blue.600">
+            <Flex
+                flexDir="column"
+                justifyContent="center"
+                alignItems="flex-start"
+                h="100%"
+                bgColor="LeftMenuButton.600"
+            >
                 <MenuButton
                     label={isExpanded ? "Collapse menu" : "Expand menu"}
                     iconStyle="s"
@@ -139,7 +145,7 @@ export default function LeftMenu(): JSX.Element {
                         iconStyle="s"
                         icon="podcast"
                         borderBottomRadius={0}
-                        colorScheme="red"
+                        colorScheme="LiveActionButton"
                         side="left"
                         ref={liveNowButtonRef as React.RefObject<HTMLButtonElement>}
                         onClick={liveNow_OnOpen}

@@ -717,7 +717,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                                                                             size="xs"
                                                                             aria-label="preview title and description"
                                                                             title="Preview title and description"
-                                                                            colorScheme="blue"
+                                                                            colorScheme="pink"
                                                                             style={{ marginLeft: "auto" }}
                                                                         >
                                                                             <FAIcon

@@ -48,7 +48,7 @@ export function ItemLive({
                     width="100%"
                     to={`/conference/${conference.slug}/room/${currentRoom.id}`}
                     size="lg"
-                    colorScheme="blue"
+                    colorScheme="PrimaryActionButton"
                     height="auto"
                     py={2}
                     mb={2}
@@ -82,7 +82,7 @@ export function ItemLive({
                     to={`/conference/${conference.slug}/room/${event.roomId}`}
                     key={event.id}
                     size="lg"
-                    colorScheme="red"
+                    colorScheme="LiveActionButton"
                     height="auto"
                     py={2}
                     mb={2}
@@ -96,29 +96,6 @@ export function ItemLive({
                     </VStack>
                 </LinkButton>
             ))}
-            {/* {nextEvent ? (
-                <LinkButton
-                    width="100%"
-                    to={`/conference/${conference.slug}/room/${nextEvent.roomId}`}
-                    size="sm"
-                    colorScheme="teal"
-                    height="auto"
-                    py={2}
-                    mb={2}
-                >
-                    <HStack spacing={2}>
-                        <FAIcon iconStyle="s" icon="calendar" mr={2} fontSize="90%" verticalAlign="middle" />{" "}
-                        <chakra.span verticalAlign="middle" pb={0.7}>
-                            Room for next event
-                        </chakra.span>
-                        <chakra.span verticalAlign="middle" pb={0.7} fontSize="sm" fontStyle="italic">
-                            ({formatRelative(Date.parse(nextEvent.startTime), now)})
-                        </chakra.span>
-                    </HStack>
-                </LinkButton>
-            ) : (
-                <></>
-            )} */}
         </Flex>
     );
 }

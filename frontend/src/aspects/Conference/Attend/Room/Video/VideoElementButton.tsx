@@ -38,8 +38,8 @@ export function VideoElementButton({
                     iconStyle="s"
                     icon="play-circle"
                     fontSize="5xl"
-                    color={isSelected ? "purple.500" : undefined}
-                    _groupHover={{ color: "purple.500" }}
+                    color={isSelected ? "PrimaryActionButton.500" : undefined}
+                    _groupHover={{ color: "PrimaryActionButton.500" }}
                     transition="color 0.3s ease-in-out"
                 />
             </VStack>

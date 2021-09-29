@@ -15,9 +15,10 @@ export default function ProfileBadge({
     return (
         <Badge
             borderRadius={2}
+            colorScheme="ProfileBadge-Default"
             backgroundColor={badge.colour.length > 0 && badge.colour !== "rgba(0,0,0,0)" ? badge.colour : undefined}
             borderColor={badge.colour}
-            color={Color(badge.colour).isDark() ? "gray.50" : "gray.900"}
+            color={Color(badge.colour).isDark() ? "ProfileBadge.textColor-dark" : "ProfileBadge.textColor-light"}
             variant="subtle"
             cursor={onClick ? "pointer" : undefined}
             onClick={onClick}

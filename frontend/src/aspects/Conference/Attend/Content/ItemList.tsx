@@ -85,8 +85,14 @@ export function TagButton({
     withBorder?: boolean;
 }): JSX.Element {
     const colour = tag.colour.replace(/\s/g, "").endsWith("0)") ? undefined : tag.colour;
-    const defaultCollapsedBgColour = useColorModeValue("blue.200", "blue.700");
-    const defaultExpandedBgColour = useColorModeValue("blue.300", "gray.500");
+    const defaultCollapsedBgColour = useColorModeValue(
+        "TagBrowser-Tag.defaultBackgroundColor-Unselected-light",
+        "TagBrowser-Tag.defaultBackgroundColor-Unselected-dark"
+    );
+    const defaultExpandedBgColour = useColorModeValue(
+        "TagBrowser-Tag.defaultBackgroundColor-Selected-light",
+        "TagBrowser-Tag.defaultBackgroundColor-Selected-dark"
+    );
     const colourMode = useColorMode();
     const isDark = useMemo(
         () => (colour ? Color(colour).isDark() : colourMode.colorMode === "dark"),
@@ -113,13 +119,17 @@ export function TagButton({
     const shadow = useColorModeValue("md", "light-md");
     return setOpenId ? (
         <Button
-            colorScheme="blue"
+            colorScheme="pink"
             isActive={isExpanded}
             aria-expanded={isExpanded}
             padding={[1, 1, 1]}
             whiteSpace="normal"
             margin={0}
-            color={(isExpanded && isExpandedDark) || (!isExpanded && isDark) ? "white" : "black"}
+            color={
+                (isExpanded && isExpandedDark) || (!isExpanded && isDark)
+                    ? "TagBrowser-Tag.textColor-light"
+                    : "TagBrowser-Tag.textColor-dark"
+            }
             height="auto"
             borderWidth={2}
             borderColor={isExpanded ? expandedBgColour : collapsedBgColour}
@@ -150,7 +160,11 @@ export function TagButton({
             padding={[1, 1, 1]}
             whiteSpace="normal"
             margin={0}
-            color={(isExpanded && isExpandedDark) || (!isExpanded && isDark) ? "white" : "black"}
+            color={
+                (isExpanded && isExpandedDark) || (!isExpanded && isDark)
+                    ? "TagBrowser-Tag.textColor-light"
+                    : "TagBrowser-Tag.textColor-dark"
+            }
             height="auto"
             borderWidth={withBorder && !isExpanded ? 1 : 2}
             borderColor={withBorder || isExpanded ? expandedBgColour : collapsedBgColour}
@@ -177,7 +191,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
             flexDir="column"
             width="100%"
             height="100%"
-            colorScheme="gray"
+            colorScheme="TagBrowser-Item"
             shadow={shadow}
             fontSize="0.9em"
         >

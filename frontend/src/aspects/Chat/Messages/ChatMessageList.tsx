@@ -125,8 +125,14 @@ function MessageList({
         setLastRenderTime(-1);
     }, [chatId]);
 
-    const scrollbarColour = useColorModeValue("gray.500", "gray.200");
-    const scrollbarBackground = useColorModeValue("gray.200", "gray.500");
+    const scrollbarColour = useColorModeValue(
+        "ChatMessageList.scrollbarHandleColor-light",
+        "ChatMessageList.scrollbarHandleColor-dark"
+    );
+    const scrollbarBackground = useColorModeValue(
+        "ChatMessageList.scrollbarBackgroundColor-light",
+        "ChatMessageList.scrollbarBackgroundColor-dark"
+    );
     const scrollbarColourT = useToken("colors", scrollbarColour);
     const scrollbarBackgroundT = useToken("colors", scrollbarBackground);
 
@@ -236,7 +242,7 @@ function MessageList({
                 fontStyle="italic"
                 borderBottomWidth={1}
                 borderBottomStyle="solid"
-                borderBottomColor="gray.400"
+                borderBottomColor="ChatMessageList.endReachedBorderColor"
             >
                 (No more messages)
             </Heading>
@@ -255,7 +261,7 @@ function MessageList({
                     fontStyle="italic"
                     borderBottomWidth={1}
                     borderBottomStyle="solid"
-                    borderBottomColor="gray.400"
+                    borderBottomColor="ChatMessageList.endReachedBorderColor"
                 >
                     <Button
                         size="xs"

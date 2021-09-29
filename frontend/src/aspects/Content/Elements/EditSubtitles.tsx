@@ -169,7 +169,7 @@ export default function EditSubtitles({
                             </Box>
                         </Alert>
                         <VStack alignItems="stretch" flex={1} width="min-content" minWidth="30ch">
-                            <DownloadButton to={subtitlesUrl} colorScheme="blue" w="100%">
+                            <DownloadButton to={subtitlesUrl} colorScheme="SecondaryActionButton" w="100%">
                                 Download .SRT file
                             </DownloadButton>
                             {filesContent.length ? (
@@ -188,7 +188,7 @@ export default function EditSubtitles({
                                     <Button
                                         aria-label="Reset chosen .SRT file"
                                         title="Reset chosen .SRT file"
-                                        color="red.400"
+                                        color="DestructiveActionButton.400"
                                         onClick={clear}
                                     >
                                         <FAIcon iconStyle="s" icon="times" />
@@ -196,7 +196,7 @@ export default function EditSubtitles({
                                     <Button
                                         aria-label="Finish uploading chosen .SRT file"
                                         title="Finish uploading chosen .SRT file"
-                                        colorScheme="green"
+                                        colorScheme="ConfirmButton"
                                         isLoading={uploadingSrt}
                                         onClick={async () => {
                                             try {
@@ -222,7 +222,7 @@ export default function EditSubtitles({
                             ) : (
                                 <HStack>
                                     <Button
-                                        colorScheme="green"
+                                        colorScheme="PrimaryActionButton"
                                         leftIcon={<FAIcon iconStyle="s" icon="file-upload" />}
                                         onClick={openFileSelector}
                                         flex={1}
@@ -248,7 +248,7 @@ export default function EditSubtitles({
                                                     <Button
                                                         my={1}
                                                         size="sm"
-                                                        color="red.400"
+                                                        color="DestructiveActionButton.400"
                                                         onClick={clear}
                                                         leftIcon={<FAIcon iconStyle="s" icon="times" />}
                                                     >

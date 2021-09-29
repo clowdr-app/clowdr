@@ -106,7 +106,7 @@ function ParticipantGridItem({
                     icon={icon ?? "video"}
                     iconStyle="s"
                     fontSize="0.5rem"
-                    color={iconColor ?? "purple.400"}
+                    color={iconColor ?? "PrimaryActionButton.400"}
                     mr={1}
                 />
                 <Text whiteSpace="normal">{registrant?.displayName ?? "Loading"}</Text>

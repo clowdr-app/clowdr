@@ -188,7 +188,7 @@ export default function UploadFileForm({
                                     <ListItem key={file.id}>
                                         {file.name}{" "}
                                         <Button onClick={() => uppy?.removeFile(file.id)}>
-                                            <FAIcon iconStyle="s" icon="times" color="red.400" />
+                                            <FAIcon iconStyle="s" icon="times" color="DestructiveActionButton.400" />
                                         </Button>
                                     </ListItem>
                                 ))}
@@ -224,7 +224,7 @@ export default function UploadFileForm({
                             <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 alignSelf="flex-start"
-                                colorScheme="purple"
+                                colorScheme="ConfirmButton"
                                 isLoading={isSubmitting}
                                 type="submit"
                                 isDisabled={!isValid || files.length !== 1}

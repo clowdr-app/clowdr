@@ -55,7 +55,10 @@ function ElementInner({
                 return <SponsorBooths />;
             case Content_ElementType_Enum.ExploreProgramButton:
                 return (
-                    <Button colorScheme="purple" onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Tags)}>
+                    <Button
+                        colorScheme="PrimaryActionButton"
+                        onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Tags)}
+                    >
                         <FAIcon iconStyle="s" icon="tags" mr={2} />
                         Browse content
                     </Button>
@@ -63,7 +66,7 @@ function ElementInner({
             case Content_ElementType_Enum.ExploreScheduleButton:
                 return (
                     <Button
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         onClick={() => scheduleModal.onOpen(undefined, ProgramModalTab.Schedule)}
                     >
                         <FAIcon iconStyle="s" icon="calendar" mr={2} />
@@ -85,7 +88,7 @@ function ElementInner({
                 );
             case Content_ElementType_Enum.Zoom:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="purple">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         Go to {name}
                     </ExternalLinkButton>
                 );
@@ -118,7 +121,11 @@ function ElementInner({
                         return <VideoElement elementId={elementId} elementData={latestVersion.data} />;
                     } else {
                         return (
-                            <ExternalLinkButton to={latestVersion.data.s3Url} isExternal={true} colorScheme="blue">
+                            <ExternalLinkButton
+                                to={latestVersion.data.s3Url}
+                                isExternal={true}
+                                colorScheme="PrimaryActionButton"
+                            >
                                 {name}
                             </ExternalLinkButton>
                         );
@@ -167,7 +174,11 @@ function ElementInner({
             case Content_ElementType_Enum.LinkButton:
                 return (
                     <HStack>
-                        <ExternalLinkButton colorScheme="purple" to={latestVersion.data.url} linkProps={{ mx: "auto" }}>
+                        <ExternalLinkButton
+                            colorScheme="PrimaryActionButton"
+                            to={latestVersion.data.url}
+                            linkProps={{ mx: "auto" }}
+                        >
                             {latestVersion.data.text}
                         </ExternalLinkButton>
                     </HStack>
@@ -187,13 +198,13 @@ function ElementInner({
 
             case Content_ElementType_Enum.PaperUrl:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         Open {name}
                     </ExternalLinkButton>
                 );
             case Content_ElementType_Enum.PaperLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
@@ -207,7 +218,7 @@ function ElementInner({
                         import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
                     }.amazonaws.com/${bucket}/${key}`;
                     return (
-                        <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
+                        <ExternalLinkButton to={url} isExternal={true} colorScheme="PrimaryActionButton">
                             Open {name}
                         </ExternalLinkButton>
                     );
@@ -217,7 +228,7 @@ function ElementInner({
             }
             case Content_ElementType_Enum.PosterUrl:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="red">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         Open {name}
                     </ExternalLinkButton>
                 );
@@ -251,7 +262,7 @@ function ElementInner({
                         );
                     } else {
                         return (
-                            <ExternalLinkButton to={url} isExternal={true} colorScheme="blue">
+                            <ExternalLinkButton to={url} isExternal={true} colorScheme="PrimaryActionButton">
                                 Open {name}
                             </ExternalLinkButton>
                         );
@@ -263,14 +274,14 @@ function ElementInner({
 
             case Content_ElementType_Enum.VideoLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
 
             case Content_ElementType_Enum.AudioLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="blue">
+                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );

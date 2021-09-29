@@ -64,7 +64,12 @@ export default function ContinuationActiveChoice({
                         </Text>
                         {timeRemaining > 0 ? (
                             <Box>
-                                <CircularProgress size="40px" color="blue.400" value={timeRemaining} max={timeMax}>
+                                <CircularProgress
+                                    size="40px"
+                                    color="SecondaryActionButton.400"
+                                    value={timeRemaining}
+                                    max={timeMax}
+                                >
                                     <CircularProgressLabel>{Math.round(timeRemaining / 1000)}s</CircularProgressLabel>
                                 </CircularProgress>
                             </Box>

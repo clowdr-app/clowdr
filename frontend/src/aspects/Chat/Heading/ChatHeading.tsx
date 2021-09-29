@@ -47,8 +47,8 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                     h="auto"
                                     minH="100%"
                                     borderRadius="0"
-                                    colorScheme="purple"
-                                    fontSize="1em"
+                                    colorScheme="ChatPinButton"
+                                    fontSize="0.8em"
                                     m={0}
                                 />
                             </ChatPinnedQueryProvider>
@@ -67,8 +67,8 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                     h="auto"
                                     minH="100%"
                                     borderRadius="0"
-                                    colorScheme="yellow"
-                                    fontSize="1em"
+                                    colorScheme="ChatSubscribeButton"
+                                    fontSize="0.8em"
                                     m={0}
                                 />
                             </ChatSubscribedQueryProvider>
@@ -76,7 +76,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                 <MenuButton
                                     as={Button}
                                     size="xs"
-                                    fontSize="1em"
+                                    fontSize="0.8em"
                                     aria-label="Adjust spacing around chat content"
                                     pb="4px"
                                     opacity={0.8}
@@ -87,6 +87,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                         opacity: 1,
                                     }}
                                     transition="opacity 0.2s ease-in-out"
+                                    colorScheme="ChatSettingsButton"
                                 >
                                     <FAIcon iconStyle="s" icon="cog" />
                                 </MenuButton>

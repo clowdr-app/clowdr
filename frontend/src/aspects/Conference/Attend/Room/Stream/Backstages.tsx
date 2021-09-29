@@ -165,8 +165,8 @@ export function Backstages({
                     <>
                         <Button
                             variant="outline"
-                            borderColor="red.600"
-                            color="red.600"
+                            borderColor="DestructiveActionButton.600"
+                            color="DestructiveActionButton.600"
                             onClick={() => setIsWatchStreamConfirmOpen(true)}
                             mt={4}
                         >
@@ -194,7 +194,7 @@ export function Backstages({
                                             Cancel
                                         </Button>
                                         <Button
-                                            colorScheme="red"
+                                            colorScheme="DestructiveActionButton"
                                             onClick={() =>
                                                 currentRoomEventId
                                                     ? setWatchStreamForEventId(currentRoomEventId)
@@ -212,8 +212,8 @@ export function Backstages({
                 ) : (
                     <Button
                         variant="outline"
-                        borderColor="red.600"
-                        color="red.600"
+                        borderColor="DestructiveActionButton.600"
+                        color="DestructiveActionButton.600"
                         onClick={() => setWatchStreamForEventId(nextRoomEventId)}
                         mt={4}
                     >

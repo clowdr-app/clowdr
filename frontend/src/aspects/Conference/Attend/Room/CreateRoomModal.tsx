@@ -174,7 +174,7 @@ export function CreateRoomModal({
                                 <ModalFooter>
                                     <Button
                                         mt={4}
-                                        colorScheme="purple"
+                                        colorScheme="PrimaryActionButton"
                                         isLoading={props.isSubmitting}
                                         type="submit"
                                         isDisabled={!props.isValid}

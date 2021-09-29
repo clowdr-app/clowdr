@@ -53,8 +53,8 @@ function BadgeColourModal({
             <></>
         );
 
-    const previewLightBgColour = useColorModeValue("gray.50", "gray.800");
-    const previewDarkBgColour = useColorModeValue("gray.800", "gray.50");
+    const previewLightBgColour = useColorModeValue("AppPageV2.pageBackground-light", "AppPageV2.pageBackground-dark");
+    const previewDarkBgColour = useColorModeValue("AppPageV2.pageBackground-dark", "AppPageV2.pageBackground-light");
 
     return (
         <Modal isOpen={!!badge} onClose={onClose} isCentered>
@@ -82,7 +82,7 @@ function BadgeColourModal({
                     </Center>
                 </ModalBody>
                 <ModalFooter>
-                    <Button colorScheme="green" onClick={() => onClose()}>
+                    <Button colorScheme="ConfirmButton" onClick={() => onClose()}>
                         Done
                     </Button>
                 </ModalFooter>
@@ -104,6 +104,7 @@ function BadgeInputInner({
 }): JSX.Element {
     const inputRef = useRef<HTMLInputElement>(null);
     const badgeSettingColourOf = badges.find((badge) => badge.name === settingColourOf);
+    const badgeInputBorderColor = useColorModeValue("Input.borderColor-light", "Input.borderColor-dark");
     return (
         <>
             <FormControl maxW={450}>
@@ -124,7 +125,7 @@ function BadgeInputInner({
                                         mb={2}
                                         mr={2}
                                         key={example}
-                                        colorScheme="gray"
+                                        colorScheme="ProfileBadge-Default"
                                         variant="outline"
                                         fontSize="0.8rem"
                                         cursor="pointer"
@@ -156,7 +157,7 @@ function BadgeInputInner({
                         <Box
                             fontSize="0.8rem"
                             display="block"
-                            borderColor="gray.400"
+                            borderColor={badgeInputBorderColor}
                             borderWidth={1}
                             borderStyle="solid"
                             borderRadius={10}

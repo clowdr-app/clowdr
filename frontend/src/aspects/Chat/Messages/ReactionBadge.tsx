@@ -16,8 +16,12 @@ export default function ReactionBadge({
     onClick?: () => void;
     currentRegistrantId?: string;
 } & BadgeProps): JSX.Element {
-    const color = useColorModeValue("gray.900", "gray.50");
-    const borderColor = useColorModeValue("gray.400", "gray.500");
+    const color = useColorModeValue("ChatReaction.textColor-light", "ChatReaction.textColor-dark");
+    const borderColor = useColorModeValue("ChatReaction.borderColor-light", "ChatReaction.borderColor-dark");
+    const defaultBgColor = useColorModeValue(
+        "ChatReaction.backgroundColor-Sender-light",
+        "ChatReaction.backgroundColor-Sender-dark"
+    );
     const senderIdObjs = useMemo(() => senderIds.map((x) => ({ registrant: x })), [senderIds]);
     const registrants = useRegistrants(senderIdObjs);
     const names = useMemo(() => {
@@ -25,12 +29,13 @@ export default function ReactionBadge({
             .reduce((acc, registrant) => acc + ", " + registrant.displayName, "")
             .slice(2);
     }, [registrants]);
-    const grey = useColorModeValue("gray.300", "gray.500");
     return (
         <Tooltip label={names} fontSize="xs" whiteSpace="normal" overflow="auto">
             <Badge
                 color={color}
-                backgroundColor={currentRegistrantId && senderIds.includes(currentRegistrantId) ? grey : "none"}
+                backgroundColor={
+                    currentRegistrantId && senderIds.includes(currentRegistrantId) ? defaultBgColor : "none"
+                }
                 border="1px solid"
                 borderColor={borderColor}
                 variant="subtle"

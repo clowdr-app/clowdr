@@ -9,9 +9,12 @@ export function InsertEmojiButton({
     onSelect,
     ...props
 }: Omit<ButtonProps, "onClick" | "onSelect"> & { onSelect?: (emoji: EmojiData) => void }): JSX.Element {
-    const colour = useColorModeValue("blue.600", "blue.200");
-    const focusColour = "yellow.500";
-    const activeColour = "yellow.500";
+    const colour = useColorModeValue("ChatAddEmojiButton.color-light", "ChatAddEmojiButton.color-dark");
+    const focusColour = useColorModeValue("ChatAddEmojiButton.focusColor-light", "ChatAddEmojiButton.focusColor-dark");
+    const activeColour = useColorModeValue(
+        "ChatAddEmojiButton.activeColor-light",
+        "ChatAddEmojiButton.activeColor-dark"
+    );
 
     const config = useChatConfiguration();
     const emojiMart = useEmojiPicker();

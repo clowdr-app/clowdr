@@ -1407,7 +1407,7 @@ function ExpandableList<T>({
                             ) : undefined}
                         </UnorderedList>
                         {items.length > limit + 1 ? (
-                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="pink">
                                 {isOpen ? "Show fewer" : "Show all"}
                             </Button>
                         ) : undefined}
@@ -1415,7 +1415,7 @@ function ExpandableList<T>({
                 ) : (
                     <VStack spacing={6} alignItems="flex-start">
                         {items.length > limit + 1 ? (
-                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="pink">
                                 {isOpen ? "Show fewer" : "Show all"}
                             </Button>
                         ) : undefined}

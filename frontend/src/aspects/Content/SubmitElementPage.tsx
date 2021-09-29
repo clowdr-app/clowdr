@@ -225,7 +225,11 @@ export default function SubmitElementPage({
                 <Heading as="h1" id="page-heading" fontSize="4xl" textAlign="left">
                     {person ? `Welcome ${person.name}` : "Submission"}
                 </Heading>
-                <LinkButton to={`/submissions/${magicToken}/item/${itemId}`} colorScheme="purple" size="md">
+                <LinkButton
+                    to={`/submissions/${magicToken}/item/${itemId}`}
+                    colorScheme="PrimaryActionButton"
+                    size="md"
+                >
                     <FAIcon iconStyle="s" icon="arrow-left" mr={2} /> Back to submission
                 </LinkButton>
                 {uploadableElement && (

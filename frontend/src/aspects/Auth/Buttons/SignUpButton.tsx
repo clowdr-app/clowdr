@@ -34,7 +34,11 @@ export default function SignupButton({
     return isAuthenticated ? (
         <></>
     ) : asMenuItem ? (
-        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme={colorScheme ?? "purple"}>
+        <MenuItem
+            size={size ?? "sm"}
+            onClick={() => loginWithRedirect(opts)}
+            colorScheme={colorScheme ?? "LeftMenuButton"}
+        >
             Sign Up
         </MenuItem>
     ) : (
@@ -42,7 +46,7 @@ export default function SignupButton({
             isLoading={isLoading}
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "purple"}
+            colorScheme={colorScheme ?? "SignUpButtonWithinPage"}
         >
             Sign Up
         </Button>

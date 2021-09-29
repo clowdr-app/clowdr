@@ -269,7 +269,7 @@ export default function ManageName(): JSX.Element {
                             </Field>
                             <Button
                                 mt={4}
-                                colorScheme="purple"
+                                colorScheme="ConfirmButton"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || !dirty}

@@ -110,9 +110,18 @@ function MyBackstages(): JSX.Element {
         [eventsGroupedByDay, now]
     );
 
-    const redBg = useColorModeValue("red.300", "red.600");
-    const greenBg = useColorModeValue("purple.300", "purple.600");
-    const orangeBg = useColorModeValue("yellow.300", "yellow.600");
+    const liveNowBg = useColorModeValue(
+        "MyBackstages.liveNowBackgroundColor-light",
+        "MyBackstages.liveNowBackgroundColor-dark"
+    );
+    const availableNowBg = useColorModeValue(
+        "MyBackstages.backstageAvailableBackgroundColor-light",
+        "MyBackstages.backstageAvailableBackgroundColor-dark"
+    );
+    const availableSoon = useColorModeValue(
+        "MyBackstages.availableSoonBackgroundColor-light",
+        "MyBackstages.availableSoonBackgroundColor-dark"
+    );
     const myBackstagesNotice = useMemo(
         () =>
             "myBackstagesNotice" in conference &&
@@ -165,7 +174,7 @@ function MyBackstages(): JSX.Element {
                                                 </HStack>
                                             </AccordionButton>
                                             <AccordionPanel>
-                                                <Table size="sm" colorScheme="blue">
+                                                <Table size="sm" colorScheme="MyBackstages">
                                                     <Thead>
                                                         <Tr>
                                                             <Th maxW="7em">You are needed</Th>
@@ -192,11 +201,11 @@ function MyBackstages(): JSX.Element {
                                                                     key={x.id}
                                                                     backgroundColor={
                                                                         isLive
-                                                                            ? redBg
+                                                                            ? liveNowBg
                                                                             : isNow
-                                                                            ? greenBg
+                                                                            ? availableNowBg
                                                                             : isSoon
-                                                                            ? orangeBg
+                                                                            ? availableSoon
                                                                             : undefined
                                                                     }
                                                                 >
@@ -212,7 +221,11 @@ function MyBackstages(): JSX.Element {
                                                                                     maxW: "100%",
                                                                                 }}
                                                                                 textAlign="center"
-                                                                                colorScheme={isLive ? "red" : "purple"}
+                                                                                colorScheme={
+                                                                                    isLive
+                                                                                        ? "LiveActionButton"
+                                                                                        : "PrimaryActionButton"
+                                                                                }
                                                                                 size="lg"
                                                                                 p={2}
                                                                                 flexDir="column"

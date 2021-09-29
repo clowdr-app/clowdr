@@ -167,7 +167,7 @@ export default function ShuffleQueueTile({
                     </Heading>
                     <ButtonGroup ml={2} isAttached variant="outline">
                         {/* <Tooltip label="Info">
-                            <Button size="xs" aria-label="Info" colorScheme="blue">
+                            <Button size="xs" aria-label="Info" colorScheme="pink">
                                 <FAIcon iconStyle="s" icon="info" />
                             </Button>
                         </Tooltip>

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
+import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
@@ -43,10 +44,15 @@ import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
 export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
+    const { setTheme } = useConferenceTheme();
     const mUser = useMaybeCurrentUser();
     const mRegistrant = useMaybeCurrentRegistrant();
 
     const { path } = useRouteMatch();
+
+    useEffect(() => {
+        setTheme(conference.themeComponentColors?.[0]?.value);
+    }, [conference.themeComponentColors, setTheme]);
 
     return (
         <Switch>

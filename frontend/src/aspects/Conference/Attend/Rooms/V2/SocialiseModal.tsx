@@ -178,7 +178,7 @@ export default function SocialiseModal({
                     <ModalBody display="flex" justifyContent="center" overflow="hidden">
                         <Tabs
                             variant="enclosed-colored"
-                            colorScheme="purple"
+                            colorScheme="PrimaryActionButton"
                             isLazy
                             h="auto"
                             w="100%"
@@ -207,7 +207,7 @@ export default function SocialiseModal({
                                     <ActiveSocialRooms excludeLiveEventRooms />
                                     <InactiveSocialRooms />
                                     <Flex mt={4} justifyContent="center">
-                                        <Button onClick={createRoom_OnOpen} colorScheme="purple">
+                                        <Button onClick={createRoom_OnOpen} colorScheme="PrimaryActionButton">
                                             Create new room
                                         </Button>
                                     </Flex>

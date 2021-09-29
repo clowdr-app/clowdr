@@ -404,7 +404,7 @@ const defaultRenderers: {
                     {editMode.opts?.format === BooleanFieldFormat.switch ? (
                         <Switch
                             isChecked={value}
-                            colorScheme="blue"
+                            colorScheme="pink"
                             onChange={(ev) => editMode.onChange(ev.target.checked)}
                             aria-label={editMode.label}
                             disabled={editMode.isDisabled}
@@ -412,7 +412,7 @@ const defaultRenderers: {
                     ) : (
                         <Checkbox
                             isChecked={value}
-                            colorScheme="blue"
+                            colorScheme="pink"
                             onChange={(ev) => editMode.onChange(ev.target.checked)}
                             aria-label={editMode.label}
                             disabled={editMode.isDisabled}
@@ -1210,7 +1210,7 @@ function CRUDCreateButton<T, PK extends keyof T>({
 
     return (
         <>
-            <Button onClick={onOpen} disabled={isDisabled} colorScheme="blue">
+            <Button onClick={onOpen} disabled={isDisabled} colorScheme="pink">
                 Create new
             </Button>
 
@@ -1751,7 +1751,7 @@ export default function CRUDTable<T, PK extends keyof T>(props: Readonly<CRUDTab
                         />
                     ) : undefined}
                     <Button
-                        colorScheme="blue"
+                        colorScheme="pink"
                         onClick={() => {
                             if (selectedKeys.size > 0) {
                                 setSelectedKeys(new Set());

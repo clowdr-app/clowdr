@@ -252,7 +252,7 @@ export function MainMenuProgram(): JSX.Element {
                 size="sm"
                 to={`/conference/${conference.slug}/schedule`}
                 width="100%"
-                colorScheme="blue"
+                colorScheme="pink"
             >
                 <FAIcon icon="calendar" iconStyle="r" mr={3} />
                 Whole Schedule

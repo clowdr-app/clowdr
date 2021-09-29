@@ -88,7 +88,7 @@ export default function DayList({
                 <Button
                     m={0}
                     borderRadius={0}
-                    colorScheme="red"
+                    colorScheme="LiveActionButton"
                     onClick={() => {
                         scrollToNow?.f();
                     }}
@@ -98,7 +98,7 @@ export default function DayList({
                 </Button>
             ) : undefined}
             <Menu>
-                <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
+                <MenuButton as={Button} colorScheme="PrimaryActionButton" rightIcon={<ChevronDownIcon />}>
                     Jump to day
                 </MenuButton>
                 <MenuList maxH="30vh" overflow="auto">

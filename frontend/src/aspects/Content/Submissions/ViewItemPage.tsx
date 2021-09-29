@@ -98,7 +98,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                         <Heading as="h1" fontSize="4xl" textAlign="left">
                             {person ? `Welcome ${person.name}` : "Submission"}
                         </Heading>
-                        <LinkButton to={`/submissions/${magicToken}`} colorScheme="purple" size="md">
+                        <LinkButton to={`/submissions/${magicToken}`} colorScheme="SecondaryActionButton" size="md">
                             <FAIcon iconStyle="s" icon="arrow-left" mr={2} /> Back to submissions
                         </LinkButton>
                         {item ? (
@@ -136,7 +136,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                                                 {element.uploadsRemaining ? (
                                                     <HStack spacing={4}>
                                                         <LinkButton
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                             size="sm"
                                                             to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
                                                         >
@@ -164,7 +164,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                                                         (element.data[element.data.length - 1].data as VideoFileBlob)
                                                             ?.subtitles ? (
                                                             <LinkButton
-                                                                colorScheme="purple"
+                                                                colorScheme="PrimaryActionButton"
                                                                 size="sm"
                                                                 to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
                                                             >
@@ -184,7 +184,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
                                                   element.typeName === Content_ElementType_Enum.VideoTitles ? (
                                                     <HStack spacing={4}>
                                                         <LinkButton
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                             size="sm"
                                                             to={`/submissions/${magicToken}/item/${itemId}/element/${element.id}`}
                                                         >

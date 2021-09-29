@@ -41,8 +41,11 @@ export function RoomContent({
     currentlySelectedVideoElementId?: string;
     onChooseVideo?: (elementId: string) => void;
 }): JSX.Element {
-    const bgColour = useColorModeValue("purple.100", "purple.900");
-    const nextBgColour = useColorModeValue("gray.200", "gray.700");
+    const bgColour = useColorModeValue(
+        "Room.currentEventBackgroundColor-light",
+        "Room.currentEventBackgroundColor-dark"
+    );
+    const nextBgColour = useColorModeValue("Room.nextEventBackgroundColor-light", "Room.nextEventBackgroundColor-dark");
 
     const currentRegistrant = useCurrentRegistrant();
 
@@ -102,7 +105,7 @@ export function RoomContent({
                             <Text>Ends {formatRelative(Date.parse(currentRoomEvent.endTime), now5s)}</Text>
                         ) : undefined}
                         {currentEventRole ? (
-                            <Tag colorScheme="purple" my={2}>
+                            <Tag colorScheme="Room-CurrentEventRoleLabel" my={2}>
                                 {currentEventRole}
                             </Tag>
                         ) : undefined}
@@ -145,7 +148,7 @@ export function RoomContent({
                     <HStack justifyContent="space-between" mb={2}>
                         <Text>Starts {formatRelative(Date.parse(nextRoomEvent.startTime), now5s)}</Text>
                         {nextEventRole ? (
-                            <Tag colorScheme="gray" my={2} textTransform="none">
+                            <Tag colorScheme="Room-NextEventRoleLabel" my={2} textTransform="none">
                                 You are {nextEventRole}
                             </Tag>
                         ) : undefined}

@@ -67,8 +67,6 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     { startOfDayTime, sortedRooms, sortedTags, eventFilter, timezone, renderImmediately }: Props,
     ref
 ): JSX.Element {
-    const endOfDayTime = useMemo(() => startOfDayTime.endOf("day"), [startOfDayTime]);
-
     const [isVisible, setIsVisible] = useState<boolean>(renderImmediately);
     const [isRendered, setIsRendered] = useState<boolean>(renderImmediately);
 
@@ -76,8 +74,8 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     const hourBoundaryBorderColor = useColorModeValue("gray.400", "gray.500");
     const eventBorderColor = useColorModeValue("gray.600", "gray.300");
     const eventBoxBgColor = useColorModeValue("gray.100", "gray.700");
-    const weekHeadingBgColor = useColorModeValue("purple.300", "purple.700");
-    const dayHeadingBgColor = useColorModeValue("blue.400", "blue.500");
+    const weekHeadingBgColor = useColorModeValue("PrimaryActionButton.300", "PrimaryActionButton.700");
+    const dayHeadingBgColor = useColorModeValue("SecondaryActionButton.400", "SecondaryActionButton.500");
 
     const conference = useConference();
     const lwDayEventsQueryObj: QueryHookOptions<

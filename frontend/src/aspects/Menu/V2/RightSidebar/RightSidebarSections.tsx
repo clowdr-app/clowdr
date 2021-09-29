@@ -145,7 +145,7 @@ function RightSidebarSections_Inner({
                 variant="solid-rounded"
                 align="center"
                 size="sm"
-                colorScheme="purple"
+                colorScheme="RightMenu"
                 index={tabIndex}
                 overflow="hidden"
                 display="flex"

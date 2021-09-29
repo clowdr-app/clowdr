@@ -1,4 +1,4 @@
-import { chakra, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { chakra, Table, Tbody, Td, Text, Th, Thead, Tr, useColorModeValue, VStack } from "@chakra-ui/react";
 import { formatDistanceStrict } from "date-fns";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -24,11 +24,11 @@ export function EventsTable({
     return (
         <VStack spacing={2} alignItems="flex-start">
             {roomId ? (
-                <LinkButton colorScheme="blue" to={`/conference/${conference.slug}/room/${roomId}`}>
+                <LinkButton colorScheme="SecondaryActionButton" to={`/conference/${conference.slug}/room/${roomId}`}>
                     Go to room
                 </LinkButton>
             ) : undefined}
-            <Table m={0} textAlign="left" w="auto" size="sm" colorScheme="blue">
+            <Table m={0} textAlign="left" w="auto" size="sm" colorScheme="EventsTable">
                 <Thead>
                     <Tr>
                         {maybeRegistrant ? <Th p={0}></Th> : undefined}
@@ -93,10 +93,14 @@ function Event({
         return now < endMillis && now > startMillis - 5 * 60 * 1000;
     }, [endMillis, now, startMillis]);
 
+    const happeningSoonBgColor = useColorModeValue(
+        "EventsTable.happeningSoonBackgroundColor-light",
+        "EventsTable.happeningSoonBackgroundColor-dark"
+    );
     return (
-        <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? "green.500" : "initial"}>
+        <Tr p={2} my={2} w="auto" backgroundColor={happeningSoonOrNow ? happeningSoonBgColor : "initial"}>
             {maybeRegistrant ? (
-                <Td p={1} bgColor="gray.900">
+                <Td p={1} bgColor="EventsTable.starEventCellBackgroundColor">
                     <StarEventButton eventIds={itemEvent.id} />
                 </Td>
             ) : undefined}
@@ -121,7 +125,7 @@ function Event({
                             maxH="unset"
                             h="auto"
                             py={1}
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                             linkProps={{ maxH: "unset" }}
                         >
                             <Twemoji className="twemoji" text={itemEvent.room?.name ?? "Private room"} />
@@ -144,7 +148,7 @@ function Event({
                                 maxH="unset"
                                 h="auto"
                                 py={1}
-                                colorScheme="blue"
+                                colorScheme="SecondaryActionButton"
                                 linkProps={{ maxH: "unset" }}
                             >
                                 <Twemoji className="twemoji" text={itemEvent.item.title} />
@@ -163,7 +167,7 @@ function Event({
                                     maxH="unset"
                                     h="auto"
                                     py={1}
-                                    colorScheme="blue"
+                                    colorScheme="SecondaryActionButton"
                                     linkProps={{ maxH: "unset" }}
                                 >
                                     View exhibition
@@ -186,7 +190,7 @@ function Event({
                             maxH="unset"
                             h="auto"
                             py={1}
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                             linkProps={{ maxH: "unset" }}
                         >
                             View exhibition

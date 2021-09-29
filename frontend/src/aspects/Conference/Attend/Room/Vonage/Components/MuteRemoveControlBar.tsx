@@ -25,7 +25,7 @@ export default function MuteRemoveControlBar({
                 w="calc(100% - 20px)"
                 h="calc(100% - 8.5ex)"
                 overflow="hidden"
-                colorScheme="blue"
+                colorScheme="DestructionActionButton"
                 flexWrap="wrap"
                 gridRowGap={1}
                 spacing={1}

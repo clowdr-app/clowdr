@@ -303,7 +303,7 @@ export function ChatsPanel({
                                 <Tooltip key="back-button" label="Back to chats list">
                                     <Button
                                         size="xs"
-                                        colorScheme="purple"
+                                        colorScheme="SecondaryActionButton"
                                         onClick={() => setCurrentChatId(null)}
                                         aria-label="Return to all chats list"
                                     >
@@ -315,7 +315,7 @@ export function ChatsPanel({
                                         <Button
                                             key="room-button"
                                             size="xs"
-                                            colorScheme="blue"
+                                            colorScheme="PrimaryActionButton"
                                             onClick={() =>
                                                 history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
                                             }

@@ -636,7 +636,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                         </Box>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button colorScheme="pink" mr={3} onClick={onClose}>
                             Done
                         </Button>
                     </ModalFooter>

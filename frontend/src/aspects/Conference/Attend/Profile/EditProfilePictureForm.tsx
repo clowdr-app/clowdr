@@ -269,7 +269,7 @@ export default function EditProfilePitureForm({
                                             isLoading={isDeleting}
                                             pos="absolute"
                                             aria-label="Remove profile picture"
-                                            colorScheme="red"
+                                            colorScheme="DestructiveActionButton"
                                             top={2}
                                             right={2}
                                             onClick={(ev) => {
@@ -328,7 +328,7 @@ export default function EditProfilePitureForm({
 
                             <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || files.length !== 1}

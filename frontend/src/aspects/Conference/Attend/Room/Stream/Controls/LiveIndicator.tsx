@@ -262,7 +262,7 @@ export function LiveIndicator({
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="sm" colorScheme="blue" onClick={onClose}>
+                        <Button size="sm" colorScheme="PrimaryActionButton" onClick={onClose}>
                             Close
                         </Button>
                     </ModalFooter>
@@ -277,7 +277,7 @@ export function LiveIndicator({
                 <>
                     <Badge
                         fontSize={isConnected ? "lg" : "md"}
-                        colorScheme="red"
+                        colorScheme="Backstage-LiveIndicator-OnAirLabel"
                         fontWeight="bold"
                         p="1em"
                         display="flex"
@@ -297,13 +297,19 @@ export function LiveIndicator({
                         <>
                             <Badge
                                 fontSize="lg"
-                                colorScheme="blue"
+                                colorScheme="Backstage-LiveIndicator-OffAirLabel"
                                 fontWeight="bold"
                                 p={4}
                                 backgroundColor={
-                                    secondsUntilLive < 10 ? (secondsUntilLive % 2 >= 1 ? "red" : "black") : undefined
+                                    secondsUntilLive < 10
+                                        ? secondsUntilLive % 2 >= 1
+                                            ? "Backstage-LiveIndicator-10sCountdown.backgroundColor1"
+                                            : "Backstage-LiveIndicator-10sCountdown.backgroundColor2"
+                                        : undefined
                                 }
-                                color={secondsUntilLive < 10 ? "white" : undefined}
+                                color={
+                                    secondsUntilLive < 10 ? "Backstage-LiveIndicator-10sCountdown.textColor" : undefined
+                                }
                                 display="flex"
                                 justifyContent="center"
                                 alignItems="center"
@@ -319,12 +325,16 @@ export function LiveIndicator({
                                     ml="auto"
                                     flexGrow={1}
                                     textAlign="center"
-                                    color={secondsUntilLive < 10 ? "white" : undefined}
+                                    color={
+                                        secondsUntilLive < 10
+                                            ? "Backstage-LiveIndicator-10sCountdown.textColor"
+                                            : undefined
+                                    }
                                     backgroundColor={
                                         secondsUntilLive < 10
                                             ? secondsUntilLive % 2 >= 1
-                                                ? "red"
-                                                : "black"
+                                                ? "Backstage-LiveIndicator-10sCountdown.backgroundColor1"
+                                                : "Backstage-LiveIndicator-10sCountdown.backgroundColor2"
                                             : undefined
                                     }
                                     p="2px"
@@ -351,7 +361,7 @@ export function LiveIndicator({
                                     h="auto"
                                     maxH="auto"
                                     p={3}
-                                    colorScheme="blue"
+                                    colorScheme="SecondaryActionButton"
                                     size="sm"
                                     whiteSpace="normal"
                                     wordWrap="break-word"
@@ -363,7 +373,7 @@ export function LiveIndicator({
                             ) : undefined}
                         </>
                     ) : (
-                        <Badge fontSize="lg" colorScheme="blue" fontWeight="bold" p={4}>
+                        <Badge fontSize="lg" colorScheme="SecondaryActionButton" fontWeight="bold" p={4}>
                             <Text>Backstage is off air</Text>
                         </Badge>
                     )}

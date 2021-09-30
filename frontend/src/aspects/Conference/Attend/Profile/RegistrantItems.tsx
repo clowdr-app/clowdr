@@ -55,6 +55,21 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                     </List>
                 </>
             ) : undefined}
+            {items?.DISCUSSANT?.length ? (
+                <>
+                    <Divider pt={4} />
+                    <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
+                        Discussant of:
+                    </Heading>
+                    <List pt={4} spacing={3} w="100%" px={2}>
+                        {items.DISCUSSANT.map((item) => (
+                            <ListItem key={item.id} w="100%">
+                                <SearchResult_Item item={item} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </>
+            ) : undefined}
             {items?.CHAIR?.length ? (
                 <>
                     <Divider pt={4} />
@@ -63,6 +78,21 @@ export default function RegistrantItems({ registrantId }: { registrantId: string
                     </Heading>
                     <List pt={4} spacing={3} w="100%" px={2}>
                         {items.CHAIR.map((item) => (
+                            <ListItem key={item.id} w="100%">
+                                <SearchResult_Item item={item} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </>
+            ) : undefined}
+            {items?.["SESSION ORGANIZER"]?.length ? (
+                <>
+                    <Divider pt={4} />
+                    <Heading as="h3" pt={4} textAlign="left" fontSize="lg" alignSelf="flex-start">
+                        Session organizer of:
+                    </Heading>
+                    <List pt={4} spacing={3} w="100%" px={2}>
+                        {items["SESSION ORGANIZER"].map((item) => (
                             <ListItem key={item.id} w="100%">
                                 <SearchResult_Item item={item} />
                             </ListItem>

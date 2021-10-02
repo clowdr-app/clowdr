@@ -83,7 +83,10 @@ function Event({
     }, [startMillis]);
 
     const duration = useMemo(() => {
-        return formatDistanceStrict(new Date(startMillis), new Date(endMillis));
+        return formatDistanceStrict(new Date(startMillis), new Date(endMillis), {
+            addSuffix: false,
+            unit: "minute",
+        });
     }, [endMillis, startMillis]);
 
     const happeningSoonOrNow = useMemo(() => {

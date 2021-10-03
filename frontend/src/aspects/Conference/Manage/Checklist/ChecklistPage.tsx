@@ -49,10 +49,10 @@ gql`
             name
         }
 
-        itemsWithUnlinkedProgramPeople: content_Item(
+        itemsWithNoLinkedProgramPeople: content_Item(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                itemPeople: { person: { registrantId: { _is_null: true } } }
+                _not: { itemPeople: { person: { registrantId: { _is_null: false } } } }
             }
         ) {
             id
@@ -476,18 +476,18 @@ export default function ChecklistPage(): JSX.Element {
     const itemsWithPeopleNotLinkedToRegistrant = useMemo(() => {
         return (
             <ChecklistItem
-                title="Items with people not linked to a registrant"
+                title="Items with no people linked to a registrant"
                 status="info"
-                description="This information is sometimes useful to identify items where people have not been fully linked to registrants. There are likely to be a significant number of these since it is normal for second, third, etc authors to not be registered for the conference."
+                description="This information is sometimes useful to identify items where people have not been fully linked to registrants."
                 action={{
                     title: "Manage Program People",
                     url: "people",
                 }}
-                ok={checklistResponse.data?.itemsWithUnlinkedProgramPeople.length === 0}
+                ok={checklistResponse.data?.itemsWithNoLinkedProgramPeople.length === 0}
             >
-                <Text>The following Content Items have Program People that are not linked to a Registrant:</Text>
+                <Text>The following Content Items have no Program People that are linked to a Registrant:</Text>
                 <ExpandableList
-                    items={checklistResponse.data?.itemsWithUnlinkedProgramPeople}
+                    items={checklistResponse.data?.itemsWithNoLinkedProgramPeople}
                     sortBy={(x) => x.title ?? "<ERROR>"}
                     groupBy={(x) => x.itemTags[0]?.tagId ?? "<No tag>"}
                     nameGroup={(tagId) =>
@@ -512,7 +512,7 @@ export default function ChecklistPage(): JSX.Element {
                 </ExpandableList>
             </ChecklistItem>
         );
-    }, [checklistResponse.data?.allTags, checklistResponse.data?.itemsWithUnlinkedProgramPeople]);
+    }, [checklistResponse.data?.allTags, checklistResponse.data?.itemsWithNoLinkedProgramPeople]);
 
     const requiredPeopleNotLinkedToRegistrant = useMemo(() => {
         return (

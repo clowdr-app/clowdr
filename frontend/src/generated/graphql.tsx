@@ -52258,7 +52258,10 @@ export type AddEventPeople_InsertProgramPeopleMutationResult = Apollo.MutationRe
 export type AddEventPeople_InsertProgramPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>;
 export const AddEventPeople_InsertEventPeopleDocument = gql`
     mutation AddEventPeople_InsertEventPeople($objects: [schedule_EventProgramPerson_insert_input!]!) {
-  insert_schedule_EventProgramPerson(objects: $objects) {
+  insert_schedule_EventProgramPerson(
+    objects: $objects
+    on_conflict: {constraint: EventProgramPerson_eventId_personId_roleName_key, update_columns: []}
+  ) {
     returning {
       ...EventProgramPersonInfo
     }

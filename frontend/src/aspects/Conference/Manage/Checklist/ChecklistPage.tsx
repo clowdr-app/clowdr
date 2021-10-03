@@ -12,6 +12,7 @@ import {
     Box,
     Button,
     chakra,
+    Divider,
     Grid,
     GridItem,
     Heading,
@@ -31,7 +32,7 @@ import {
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { PropsWithChildren, useMemo } from "react";
+import React, { Fragment, PropsWithChildren, useMemo } from "react";
 import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -43,6 +44,35 @@ import { useConference } from "../../useConference";
 
 gql`
     query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
+        allTags: collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
+            id
+            name
+        }
+
+        itemsWithUnlinkedProgramPeople: content_Item(
+            where: {
+                conferenceId: { _eq: $conferenceId }
+                itemPeople: { person: { registrantId: { _is_null: true } } }
+            }
+        ) {
+            id
+            title
+            itemTags(limit: 1) {
+                id
+                tagId
+            }
+            itemPeople(where: { person: { registrantId: { _is_null: true } } }) {
+                id
+                roleName
+                person: personWithAccessToken {
+                    id
+                    name
+                    affiliation
+                    email
+                }
+            }
+        }
+
         requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPersonWithAccessToken(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -442,6 +472,47 @@ export default function ChecklistPage(): JSX.Element {
             </ChecklistItem>
         );
     }, [checklistResponse.data?.emptyExhibitions]);
+
+    const itemsWithPeopleNotLinkedToRegistrant = useMemo(() => {
+        return (
+            <ChecklistItem
+                title="Items with people not linked to a registrant"
+                status="info"
+                description="This information is sometimes useful to identify items where people have not been fully linked to registrants. There are likely to be a significant number of these since it is normal for second, third, etc authors to not be registered for the conference."
+                action={{
+                    title: "Manage Program People",
+                    url: "people",
+                }}
+                ok={checklistResponse.data?.itemsWithUnlinkedProgramPeople.length === 0}
+            >
+                <Text>The following Content Items have Program People that are not linked to a Registrant:</Text>
+                <ExpandableList
+                    items={checklistResponse.data?.itemsWithUnlinkedProgramPeople}
+                    sortBy={(x) => x.title ?? "<ERROR>"}
+                    groupBy={(x) => x.itemTags[0]?.tagId ?? "<No tag>"}
+                    nameGroup={(tagId) =>
+                        checklistResponse.data?.allTags.find((x) => x.id === tagId)?.name ?? "Unknown tag: " + tagId
+                    }
+                >
+                    {(x) => (
+                        <>
+                            <chakra.span>{x.title}</chakra.span>
+                            <UnorderedList pl={4}>
+                                {x.itemPeople.map((itemPerson) => (
+                                    <ListItem key={itemPerson.id}>
+                                        {itemPerson.person?.name}{" "}
+                                        {itemPerson.person?.affiliation ? `(${itemPerson.person?.affiliation})` : ""}{" "}
+                                        {itemPerson.person?.email ? `<${itemPerson.person?.email}>` : ""} (
+                                        {itemPerson.roleName})
+                                    </ListItem>
+                                ))}
+                            </UnorderedList>
+                        </>
+                    )}
+                </ExpandableList>
+            </ChecklistItem>
+        );
+    }, [checklistResponse.data?.allTags, checklistResponse.data?.itemsWithUnlinkedProgramPeople]);
 
     const requiredPeopleNotLinkedToRegistrant = useMemo(() => {
         return (
@@ -1209,6 +1280,8 @@ export default function ChecklistPage(): JSX.Element {
                                 People
                             </Heading>
                         </GridItem>
+                        <GridItem colSpan={defaultColSpan}>{itemsWithPeopleNotLinkedToRegistrant}</GridItem>
+                        <GridItem colSpan={defaultColSpan}></GridItem>
                         <GridItem colSpan={defaultColSpan}>{requiredPeopleNotLinkedToRegistrant}</GridItem>
                         <GridItem colSpan={defaultColSpan}></GridItem>
                         <GridItem colSpan={defaultColSpan}>{requiredPeopleNotRegistered}</GridItem>
@@ -1301,34 +1374,88 @@ function ExpandableList<T>({
     items: unsortedItems,
     children,
     sortBy,
+    groupBy,
+    nameGroup,
     limit = 10,
 }: {
     items?: readonly T[] | null;
     children: (item: T) => JSX.Element;
     sortBy: (item: T) => R.Ord;
+    groupBy?: (item: T) => string;
+    nameGroup?: (key: string) => string;
     limit?: number;
 }): JSX.Element {
     const { isOpen, onToggle } = useDisclosure();
 
     const items = useMemo(() => unsortedItems && R.sortBy(sortBy, unsortedItems), [unsortedItems, sortBy]);
+    const groupedItems = useMemo(() => groupBy && items && R.groupBy(groupBy, items), [groupBy, items]);
 
     if (items) {
         return (
             <>
                 <Text>({items?.length} items)</Text>
-                <UnorderedList spacing={2}>
-                    {(isOpen ? items : items.length > limit + 1 ? items.slice(0, limit) : items).map((x, idx) => (
-                        <ListItem key={idx}>{children(x)}</ListItem>
-                    ))}
-                    {!isOpen && items.length > limit + 1 ? (
-                        <ListItem>and {items.length - limit} more.</ListItem>
-                    ) : undefined}
-                </UnorderedList>
-                {items.length > limit + 1 ? (
-                    <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
-                        {isOpen ? "Show fewer" : "Show all"}
-                    </Button>
-                ) : undefined}
+                {!groupedItems ? (
+                    <>
+                        <UnorderedList spacing={2}>
+                            {(isOpen ? items : items.length > limit + 1 ? items.slice(0, limit) : items).map(
+                                (x, idx) => (
+                                    <ListItem key={idx}>{children(x)}</ListItem>
+                                )
+                            )}
+                            {!isOpen && items.length > limit + 1 ? (
+                                <ListItem>and {items.length - limit} more.</ListItem>
+                            ) : undefined}
+                        </UnorderedList>
+                        {items.length > limit + 1 ? (
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                                {isOpen ? "Show fewer" : "Show all"}
+                            </Button>
+                        ) : undefined}
+                    </>
+                ) : (
+                    <VStack spacing={6} alignItems="flex-start">
+                        {items.length > limit + 1 ? (
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                                {isOpen ? "Show fewer" : "Show all"}
+                            </Button>
+                        ) : undefined}
+                        {Object.keys(groupedItems)
+                            .sort((x, y) => {
+                                const xName = nameGroup ? nameGroup(x) : x;
+                                const yName = nameGroup ? nameGroup(y) : y;
+                                return xName.localeCompare(yName);
+                            })
+                            .map((groupKey) => {
+                                const groupItems = groupedItems[groupKey];
+                                return (
+                                    <Fragment key={groupKey}>
+                                        <Heading as="h5" fontSize="md" textAlign="left">
+                                            {nameGroup ? nameGroup(groupKey) : groupKey}
+                                        </Heading>
+                                        <UnorderedList spacing={2}>
+                                            {(isOpen
+                                                ? groupItems
+                                                : items.length > limit + 1
+                                                ? groupItems.slice(0, 5)
+                                                : groupItems
+                                            ).map((x, idx) => (
+                                                <ListItem key={idx}>{children(x)}</ListItem>
+                                            ))}
+                                            {!isOpen && groupItems.length > limit + 1 ? (
+                                                <ListItem>and {groupItems.length - 5} more.</ListItem>
+                                            ) : undefined}
+                                        </UnorderedList>
+                                        <Divider />
+                                    </Fragment>
+                                );
+                            })}
+                        {items.length > limit + 1 ? (
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                                {isOpen ? "Show fewer" : "Show all"}
+                            </Button>
+                        ) : undefined}
+                    </VStack>
+                )}
             </>
         );
     }
@@ -1370,7 +1497,7 @@ function ChecklistItem({
                                 ? "Resolution"
                                 : status === "warning"
                                 ? "Recommendation"
-                                : "Summary of livestream durations"}
+                                : "Information"}
                         </Box>
                     </AccordionButton>
                     <AccordionPanel>

@@ -23,6 +23,7 @@ import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
+import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
 import { AvailableStream, useVonageLayout, VonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
@@ -238,6 +239,8 @@ function VonageRoomInner({
     const currentRegistrant = useCurrentRegistrant();
     const [saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
 
+    const [playVideoElementId, setPlayVideoElementId] = useState<string | null>(null);
+
     const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
     const onRecordingStarted = useCallback(() => {
         setIsRecordingActive(true);
@@ -258,8 +261,10 @@ function VonageRoomInner({
     );
 
     const onPlayVideoReceived = useCallback((elementId: string) => {
-        // TODO
-        console.log("Play video", { elementId });
+        setPlayVideoElementId(null);
+        setTimeout(() => {
+            setPlayVideoElementId(elementId);
+        }, 50 + Math.random() * 100);
     }, []);
 
     const { state, dispatch } = useVonageRoom();
@@ -290,6 +295,7 @@ function VonageRoomInner({
     useEffect(() => {
         if (!connected) {
             setIsRecordingActive(false);
+            setPlayVideoElementId(null);
         }
     }, [connected]);
 
@@ -650,6 +656,7 @@ function VonageRoomInner({
                     eventId={eventId}
                 />
             </Flex>
+            {connected && playVideoElementId ? <VideoChatVideoPlayer elementId={playVideoElementId} /> : undefined}
             {connected ? (
                 <Box position="relative" width="100%">
                     <Layout

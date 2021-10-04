@@ -228,9 +228,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
                                 <Text fontSize="lg" fontWeight="bold">
                                     Use your invite code
                                 </Text>
-                                <Text fontSize="sm">
-                                    After confirming your email address, you may be asked for your invite code.
-                                </Text>
+                                <Text fontSize="sm">After logging in, you may be asked for your invite code.</Text>
                             </VStack>
                         </HStack>
                     </ListItem>

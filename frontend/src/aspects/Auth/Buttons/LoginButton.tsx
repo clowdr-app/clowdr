@@ -41,7 +41,7 @@ export default function LoginButton({
             iconStyle="s"
             icon="sign-in-alt"
             borderRadius={0}
-            colorScheme="LeftMenuButton"
+            colorScheme="RightMenuButton"
             side="right"
             onClick={() => loginWithRedirect(opts)}
             mb={1}
@@ -51,7 +51,7 @@ export default function LoginButton({
         <MenuItem
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "LeftMenuButton"}
+            colorScheme={colorScheme ?? "RightMenuButton"}
         >
             Log In
         </MenuItem>

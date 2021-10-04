@@ -61,6 +61,7 @@ gql`
         ) {
             id
             roomId
+            enableRecording
         }
     }
 `;

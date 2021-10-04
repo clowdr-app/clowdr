@@ -94,19 +94,21 @@ export async function startArchiveIfOngoingEvent(payload: SessionMonitoringWebho
 
     const ongoingMatchingEvent = ongoingMatchingEvents.data.schedule_Event[0];
 
-    console.log("Vonage session has ongoing matching event, ensuring archive is started", payload.sessionId);
+    if (ongoingMatchingEvent.enableRecording) {
+        console.log("Vonage session has ongoing matching event, ensuring archive is started", payload.sessionId);
 
-    let registrantId: string | undefined;
-    if (payload.event === "connectionCreated") {
-        const data = JSON.parse(payload.connection.data);
-        const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
-        registrantId = _registrantId;
-    } else if (payload.event === "streamCreated") {
-        const data = JSON.parse(payload.stream.connection.data);
-        const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
-        registrantId = _registrantId;
+        let registrantId: string | undefined;
+        if (payload.event === "connectionCreated") {
+            const data = JSON.parse(payload.connection.data);
+            const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
+            registrantId = _registrantId;
+        } else if (payload.event === "streamCreated") {
+            const data = JSON.parse(payload.stream.connection.data);
+            const { registrantId: _registrantId } = assertType<CustomConnectionData>(data);
+            registrantId = _registrantId;
+        }
+        await startVonageArchive(ongoingMatchingEvent.roomId, ongoingMatchingEvent.id, payload.sessionId, registrantId);
     }
-    await startVonageArchive(ongoingMatchingEvent.roomId, ongoingMatchingEvent.id, payload.sessionId, registrantId);
 
     return true;
 }

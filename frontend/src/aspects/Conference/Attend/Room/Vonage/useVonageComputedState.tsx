@@ -16,6 +16,7 @@ export function useVonageComputedState({
     onRecordingStarted,
     onRecordingStopped,
     onRecordingIdReceived,
+    onPlayVideoReceived,
     beginJoin,
     cancelJoin,
     completeJoinRef,
@@ -28,6 +29,7 @@ export function useVonageComputedState({
     onRecordingStarted?: () => void;
     onRecordingStopped?: () => void;
     onRecordingIdReceived?: (recordingId: string) => void;
+    onPlayVideoReceived?: (elementId: string) => void;
     beginJoin?: () => void;
     cancelJoin?: () => void;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
@@ -230,6 +232,9 @@ export function useVonageComputedState({
                         if (layout.layout.createdAt < layoutData.createdAt) {
                             layout?.updateLayout(layoutData);
                         }
+                    },
+                    (elementId) => {
+                        onPlayVideoReceived?.(elementId);
                     }
                 );
             } catch (e) {

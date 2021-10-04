@@ -39871,6 +39871,13 @@ export type GetRoomVonageSessionIdQueryVariables = Exact<{
 
 export type GetRoomVonageSessionIdQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly publicVonageSessionId?: Maybe<string> }> };
 
+export type GetEventVideosQueryVariables = Exact<{
+  eventId: Scalars['uuid'];
+}>;
+
+
+export type GetEventVideosQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> } }> }> }> };
+
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Exact<{
   vonageSessionId: Scalars['String'];
 }>;
@@ -45716,6 +45723,68 @@ export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
 export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
 export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
+export const GetEventVideosDocument = gql`
+    query GetEventVideos($eventId: uuid!) {
+  schedule_Event_by_pk(id: $eventId) {
+    id
+    item {
+      id
+      title
+      elements(
+        where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE]}, hasBeenSubmitted: {_eq: true}}
+      ) {
+        id
+        name
+      }
+    }
+    exhibition {
+      id
+      items {
+        id
+        priority
+        item {
+          id
+          title
+          elements(
+            where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE]}, hasBeenSubmitted: {_eq: true}}
+          ) {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetEventVideosQuery__
+ *
+ * To run a query within a React component, call `useGetEventVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventVideosQuery({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useGetEventVideosQuery(baseOptions: Apollo.QueryHookOptions<GetEventVideosQuery, GetEventVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEventVideosQuery, GetEventVideosQueryVariables>(GetEventVideosDocument, options);
+      }
+export function useGetEventVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventVideosQuery, GetEventVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEventVideosQuery, GetEventVideosQueryVariables>(GetEventVideosDocument, options);
+        }
+export type GetEventVideosQueryHookResult = ReturnType<typeof useGetEventVideosQuery>;
+export type GetEventVideosLazyQueryHookResult = ReturnType<typeof useGetEventVideosLazyQuery>;
+export type GetEventVideosQueryResult = Apollo.QueryResult<GetEventVideosQuery, GetEventVideosQueryVariables>;
 export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
   video_VonageSessionLayout(

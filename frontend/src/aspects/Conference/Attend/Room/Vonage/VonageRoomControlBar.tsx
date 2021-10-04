@@ -30,6 +30,7 @@ import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
 import { DevicesProps, devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
 import LayoutChooser from "./Components/LayoutChooser";
+import PlayVideoMenuButton from "./Components/PlayVideoMenu";
 import DeviceChooserModal from "./DeviceChooserModal";
 import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
@@ -56,6 +57,7 @@ export function VonageRoomControlBar({
     isRecordingActive,
     isBackstage,
     canControlRecording,
+    eventId,
 }: {
     onJoinRoom: () => Promise<void>;
     onLeaveRoom: () => void;
@@ -68,6 +70,7 @@ export function VonageRoomControlBar({
     isBackstage: boolean;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    eventId?: string;
 }): JSX.Element {
     const { state, dispatch, settings } = useVonageRoom();
     const vonage = useVonageGlobalState();
@@ -591,6 +594,9 @@ export function VonageRoomControlBar({
                             )}
                         </Tag>
                     )
+                ) : undefined}
+                {vonage.state.type === StateType.Connected && eventId && canControlRecording && !isBackstage ? (
+                    <PlayVideoMenuButton eventId={eventId} />
                 ) : undefined}
                 {/* TODO: Permissions */}
                 {vonage.state.type === StateType.Connected && (isBackstage || canControlRecording) ? (

@@ -23,6 +23,7 @@ import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
 import SelfCameraComponent from "./Components/SelfCamera";
 import SelfScreenComponent from "./Components/SelfScreen";
+import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
 import { AvailableStream, useVonageLayout, VonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
@@ -193,6 +194,7 @@ export function VonageRoom({
                             }
                             onPermissionsProblem={onPermissionsProblem}
                             canControlRecording={canControlRecording}
+                            eventId={eventId ?? undefined}
                         />
                     </VonageLayoutProvider>
                 ) : undefined}
@@ -215,6 +217,7 @@ function VonageRoomInner({
     completeJoinRef,
     onPermissionsProblem,
     canControlRecording,
+    eventId,
 }: {
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -229,11 +232,14 @@ function VonageRoomInner({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    eventId?: string;
 }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const currentRegistrant = useCurrentRegistrant();
     const [saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
+
+    const [playVideoElementId, setPlayVideoElementId] = useState<string | null>(null);
 
     const [isRecordingActive, setIsRecordingActive] = useState<boolean>(false);
     const onRecordingStarted = useCallback(() => {
@@ -254,6 +260,13 @@ function VonageRoomInner({
         [currentRegistrant.id, saveVonageRoomRecording]
     );
 
+    const onPlayVideoReceived = useCallback((elementId: string) => {
+        setPlayVideoElementId(null);
+        setTimeout(() => {
+            setPlayVideoElementId(elementId);
+        }, 50 + Math.random() * 100);
+    }, []);
+
     const { state, dispatch } = useVonageRoom();
     const { vonage, connected, connections, streams, screen, camera, joining, leaveRoom, joinRoom } =
         useVonageComputedState({
@@ -268,6 +281,7 @@ function VonageRoomInner({
             beginJoin,
             cancelJoin,
             completeJoinRef,
+            onPlayVideoReceived,
         });
     const { setAvailableStreams, refetchLayout } = useVonageLayout();
 
@@ -281,6 +295,7 @@ function VonageRoomInner({
     useEffect(() => {
         if (!connected) {
             setIsRecordingActive(false);
+            setPlayVideoElementId(null);
         }
     }, [connected]);
 
@@ -455,58 +470,6 @@ function VonageRoomInner({
             } | null>
         >
     >(() => new Map(), []);
-
-    //////////////////// START ////////////////////
-    //// ALL OF THIS NEEDS TO BE MOVED INTO AN INNER `STREAM-ELEMENT <-> VISUAL POSITION` MAPPING COMPONENT
-
-    // // TODO: The activity system is currently broken
-    // // TODO: Provide the layout system a way to force-enable videos depending on where they are in the layout
-    // const [enableStreams, setEnableStreams] = useState<string[] | null>(null);
-    // useEffect(() => {
-    //     if (othersCameraStreams.length <= maxVideoStreams) {
-    //         setEnableStreams(null);
-    //     } else {
-    //         const streamTimestamps = R.toPairs<number>(streamLastActive);
-    //         // console.log(`${new Date().toISOString()}: Proceeding with computing enabled streams`, streamTimestamps);
-    //         const activeStreams = R.sortWith(
-    //             [R.descend((pair) => pair[1]), R.ascend((pair) => pair[0])],
-    //             streamTimestamps
-    //         )
-    //             .map((pair) => pair[0])
-    //             .filter((streamId) =>
-    //                 othersCameraStreams.find((stream) => stream.streamId === streamId && stream.hasVideo)
-    //             );
-    //         const selectedActiveStreams = activeStreams.slice(0, Math.min(activeStreams.length, maxVideoStreams));
-
-    //         const remainingSlots = maxVideoStreams - selectedActiveStreams.length;
-    //         const topUpStreams = R.sortWith(
-    //             [R.ascend((s) => s.hasVideo), R.ascend((s) => s.connection.creationTime)],
-    //             othersCameraStreams.filter((s) => !selectedActiveStreams.includes(s.streamId))
-    //         ).map((s) => s.streamId);
-    //         const selectedTopUpStreams = topUpStreams.slice(0, Math.min(topUpStreams.length, remainingSlots));
-    //         selectedActiveStreams.push(...selectedTopUpStreams);
-
-    //         setEnableStreams((oldEnabledStreams) => {
-    //             if (!oldEnabledStreams) {
-    //                 // console.log("Active speakers changed (1)");
-    //                 return selectedActiveStreams;
-    //             }
-
-    //             if (
-    //                 selectedActiveStreams.length !== oldEnabledStreams.length ||
-    //                 oldEnabledStreams.some((x) => !selectedActiveStreams.includes(x)) ||
-    //                 selectedActiveStreams.some((x) => !oldEnabledStreams.includes(x))
-    //             ) {
-    //                 // console.log("Active speakers changed (2)");
-    //                 return selectedActiveStreams;
-    //             } else {
-    //                 return oldEnabledStreams;
-    //             }
-    //         });
-    //     }
-    // }, [maxVideoStreams, othersCameraStreams, othersCameraStreams.length, allScreenShareCount, streamLastActive]);
-
-    ////////////////////  END  ////////////////////
 
     const screenPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
     const cameraPortalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
@@ -690,8 +653,10 @@ function VonageRoomInner({
                     isRecordingActive={isRecordingActive}
                     isBackstage={isBackstageRoom}
                     canControlRecording={canControlRecording}
+                    eventId={eventId}
                 />
             </Flex>
+            {connected && playVideoElementId ? <VideoChatVideoPlayer elementId={playVideoElementId} /> : undefined}
             {connected ? (
                 <Box position="relative" width="100%">
                     <Layout

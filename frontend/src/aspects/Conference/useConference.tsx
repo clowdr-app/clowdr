@@ -39,6 +39,12 @@ gql`
                 registrantId
             }
         }
+
+        myBackstagesNotice: configurations(where: { key: { _eq: MY_BACKSTAGES_NOTICE } }) {
+            conferenceId
+            key
+            value
+        }
     }
 
     fragment PublicConferenceInfo on conference_Conference {

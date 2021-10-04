@@ -35,6 +35,7 @@ import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { Markdown } from "../../../Text/Markdown";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
@@ -112,11 +113,21 @@ function MyBackstages(): JSX.Element {
     const redBg = useColorModeValue("red.300", "red.600");
     const greenBg = useColorModeValue("purple.300", "purple.600");
     const orangeBg = useColorModeValue("yellow.300", "yellow.600");
+    const myBackstagesNotice = useMemo(
+        () =>
+            "myBackstagesNotice" in conference &&
+            conference.myBackstagesNotice.length > 0 &&
+            conference.myBackstagesNotice[0]?.value?.length
+                ? conference.myBackstagesNotice[0].value
+                : undefined,
+        [conference]
+    );
     return (
         <>
-            <Text pb={2}>
+            {myBackstagesNotice ? <Markdown>{myBackstagesNotice}</Markdown> : undefined}
+            <Text pb={2} pt={myBackstagesNotice ? 2 : undefined}>
                 If you are an author, chair or presenter, below is the list of your backstages for current and future
-                events. You should join your backstage when it is available.
+                live-stream (not video-chat) events. You should join your backstage when it is available.
             </Text>
             <Text pb={4}>
                 Backstages are only available for live-stream events. If you are presenting at a video-chat event, you

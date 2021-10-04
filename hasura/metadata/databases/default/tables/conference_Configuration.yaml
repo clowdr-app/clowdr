@@ -93,6 +93,7 @@ select_permissions:
           - SPONSORS_LABEL
           - DISABLE_NEARBY_EVENTS
           - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
+          - MY_BACKSTAGES_NOTICE
   role: user
 update_permissions:
 - permission:

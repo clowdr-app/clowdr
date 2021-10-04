@@ -361,7 +361,7 @@ export function ScheduleModal({
                         display="flex"
                         flexDir="column"
                         variant="enclosed-colored"
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         index={selectedTabIndex}
                         onChange={setSelectedTabFromIndex}
                     >

@@ -336,7 +336,7 @@ function RoomInner({
                 isClosable: true,
                 title: "You are a presenter of an event starting now",
                 description: (
-                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="purple" mt={2}>
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="PrimaryActionButton" mt={2}>
                         Go to the backstage
                     </Button>
                 ),
@@ -355,7 +355,7 @@ function RoomInner({
                 isClosable: true,
                 title: "You are a presenter of the next event",
                 description: (
-                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="purple" mt={2}>
+                    <Button onClick={() => setWatchStreamForEventId(null)} colorScheme="PrimaryActionButton" mt={2}>
                         Go to the backstage
                     </Button>
                 ),
@@ -578,7 +578,7 @@ function RoomInner({
         [roomDetails.shuffleRooms]
     );
 
-    const bgColour = useColorModeValue("gray.200", "gray.700");
+    const bgColour = useColorModeValue("Room.videoChatBackgroundColor-light", "Room.videoChatBackgroundColor-dark");
 
     // Note: A video chat might be shown in a sponsor booth. That booth may
     //       have an upcoming broadcast or Zoom event. Thus it's possible

@@ -59,7 +59,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                     Permissions_Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="purple">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -68,7 +68,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                     ? ""
                                     : `/${registrant.id}`
                             }`}
-                            colorScheme="blue"
+                            colorScheme="PrimaryActionButton"
                         >
                             Edit profile
                         </LinkButton>
@@ -131,7 +131,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                         }${registrant.profile.affiliationURL}`}
                                     >
                                         <Badge
-                                            colorScheme="blue"
+                                            colorScheme="Profile-AffiliationLink"
                                             variant="outline"
                                             fontSize="1rem"
                                             pt={1}
@@ -148,7 +148,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                                     </Link>
                                 ) : registrant.profile.affiliation ? (
                                     <Badge
-                                        colorScheme="blue"
+                                        colorScheme="Profile-AffiliationLink"
                                         variant="outline"
                                         fontSize="1rem"
                                         pt={1}

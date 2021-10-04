@@ -436,7 +436,7 @@ export function VonageRoomControlBar({
                     leftIcon={<SettingsIcon />}
                     onClick={() => onOpen(true, !joining || !requireMicrophoneOrCamera)}
                     isDisabled={joining}
-                    colorScheme="blue"
+                    colorScheme="SecondaryActionButton"
                 >
                     Choose microphone / camera
                 </Button>
@@ -445,7 +445,7 @@ export function VonageRoomControlBar({
                         size="sm"
                         flexGrow={buttonsDirection === "row" ? 1 : 0}
                         onClick={stopMicrophone}
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         isDisabled={joining}
                     >
                         <FAIcon icon="microphone" iconStyle="s" />
@@ -458,7 +458,7 @@ export function VonageRoomControlBar({
                         isLoading={isOpening}
                         onClick={startMicrophone}
                         isDisabled={joining}
-                        colorScheme="blue"
+                        colorScheme="SecondaryActionButton"
                     >
                         <FAIcon icon="microphone-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Unmute</span>
@@ -469,7 +469,7 @@ export function VonageRoomControlBar({
                         size="sm"
                         flexGrow={buttonsDirection === "row" ? 1 : 0}
                         onClick={stopCamera}
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         isDisabled={joining}
                     >
                         <FAIcon icon="video" iconStyle="s" />
@@ -482,7 +482,7 @@ export function VonageRoomControlBar({
                         isLoading={isOpening}
                         onClick={startCamera}
                         isDisabled={joining}
-                        colorScheme="blue"
+                        colorScheme="SecondaryActionButton"
                     >
                         <FAIcon icon="video-slash" iconStyle="s" />
                         <span style={{ marginLeft: "1rem" }}>Start video</span>
@@ -495,7 +495,7 @@ export function VonageRoomControlBar({
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
                             size="sm"
                             variant="outline"
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                             px={2}
                             py="4px"
                             ml={1}
@@ -515,7 +515,7 @@ export function VonageRoomControlBar({
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
                             onClick={stopScreenShare}
                             mr="auto"
-                            colorScheme="red"
+                            colorScheme="DestructiveActionButton"
                             isDisabled={joining}
                         >
                             <FAIcon icon="desktop" iconStyle="s" />
@@ -529,7 +529,7 @@ export function VonageRoomControlBar({
                             onClick={startScreenShare}
                             mr="auto"
                             isDisabled={joining}
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                         >
                             <FAIcon icon="desktop" iconStyle="s" />
                             <span style={{ marginLeft: "1rem" }}>Share screen</span>
@@ -539,7 +539,7 @@ export function VonageRoomControlBar({
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
                             size="sm"
                             variant="outline"
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                         >
                             <TagLeftIcon as={CheckCircleIcon} />
                             <TagLabel whiteSpace="normal">Screen sharing available after you join</TagLabel>
@@ -549,7 +549,7 @@ export function VonageRoomControlBar({
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
                             size="sm"
                             variant="outline"
-                            colorScheme="red"
+                            colorScheme="SecondaryActionButton"
                         >
                             <TagLeftIcon as={NotAllowedIcon} />
                             <TagLabel whiteSpace="normal">Screen sharing is not supported by your browser</TagLabel>
@@ -561,7 +561,7 @@ export function VonageRoomControlBar({
                         <Button
                             size="sm"
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                             onClick={() => {
                                 if (vonage.state.type === StateType.Connected) {
                                     setRecentlyToggledRecording(true);
@@ -582,7 +582,7 @@ export function VonageRoomControlBar({
                             flexGrow={buttonsDirection === "row" ? 1 : 0}
                             size="sm"
                             variant="outline"
-                            colorScheme="blue"
+                            colorScheme="SecondaryActionButton"
                         >
                             {isRecordingActive ? (
                                 <TagLabel overflow="visible">Recording</TagLabel>
@@ -597,7 +597,7 @@ export function VonageRoomControlBar({
                     <Button
                         size="sm"
                         onClick={layoutChooser_isOpen ? layoutChooser_onClose : layoutChooser_onOpen}
-                        colorScheme={layoutChooser_isOpen ? "purple" : "blue"}
+                        colorScheme={layoutChooser_isOpen ? "PrimaryActionButton" : "SecondaryActionButton"}
                     >
                         {layoutChooser_isOpen ? "Cancel" : "Layout"}
                     </Button>
@@ -606,7 +606,7 @@ export function VonageRoomControlBar({
                     <Button
                         size="sm"
                         flexGrow={buttonsDirection === "row" ? 1 : 0}
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         onClick={onLeaveRoom}
                     >
                         Leave Room
@@ -625,7 +625,7 @@ export function VonageRoomControlBar({
                             <Button
                                 w="100%"
                                 size="xl"
-                                colorScheme={joining ? "yellow" : "purple"}
+                                colorScheme={joining ? "yellow" : "PrimaryActionButton"}
                                 h="auto"
                                 py={4}
                                 variant="glowing"
@@ -707,7 +707,7 @@ export function VonageRoomControlBar({
                             </Button>
                             <Button
                                 ref={recordingAlert_LeastDestructiveRef}
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                                 onClick={() => onRecordingAlertClose()}
                             >
                                 Ok, stay connected

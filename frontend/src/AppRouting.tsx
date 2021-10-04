@@ -7,6 +7,7 @@ import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
 import ProtectedRoute from "./aspects/Auth/ProtectedRoute";
 import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
+import { useConferenceTheme } from "./aspects/Chakra/ChakraCustomProvider";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
 import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
@@ -27,6 +28,12 @@ import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
 
 export default function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
+    const { setTheme } = useConferenceTheme();
+    useEffect(() => {
+        if (!confSlug) {
+            setTheme(undefined);
+        }
+    }, [confSlug, setTheme]);
     return (
         <Switch>
             <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />

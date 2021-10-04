@@ -123,7 +123,7 @@ export default function UploadLinkForm({
                             />
                             <Button
                                 mt={4}
-                                colorScheme="purple"
+                                colorScheme="ConfirmButton"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || !dirty}

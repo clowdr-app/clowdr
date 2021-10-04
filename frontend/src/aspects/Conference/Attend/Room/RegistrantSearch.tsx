@@ -84,7 +84,7 @@ export function RegistrantSearch({
                             p={0}
                             mr={3}
                             size="sm"
-                            colorScheme="purple"
+                            colorScheme="PrimaryActionButton"
                             isDisabled={option.inRoom}
                         >
                             <FAIcon icon={option.inRoom ? "check-circle" : "plus-circle"} iconStyle="s" />

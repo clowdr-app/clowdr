@@ -316,7 +316,7 @@ function ModalInner({
                         Close
                     </Button>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="pink"
                         size="sm"
                         mr={3}
                         onClick={() => {

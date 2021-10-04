@@ -92,7 +92,7 @@ export default function ListConferencesView(): JSX.Element {
                 {renderConferenceList(
                     ViewIcon,
                     user.registrants,
-                    <LinkButton to="/join" colorScheme="blue" marginRight={0}>
+                    <LinkButton to="/join" colorScheme="pink" marginRight={0}>
                         Use invite code
                     </LinkButton>,
                     ""

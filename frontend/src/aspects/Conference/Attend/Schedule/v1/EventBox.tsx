@@ -165,7 +165,7 @@ export default function EventBox({
         }
     }, [content.data, getContent, isOpen, event.itemId]);
 
-    const borderColour = useColorModeValue("purple.200", "purple.800");
+    const borderColour = useColorModeValue("PrimaryActionButton.200", "PrimaryActionButton.800");
     return (
         <>
             <Button

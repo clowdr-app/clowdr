@@ -31,7 +31,10 @@ export default function UseInviteOrCreateView(): JSX.Element {
             <NewConferenceForm />
         </VStack>
     );
-    const dividerColor = useColorModeValue("gray.200", "gray.700");
+    const dividerColor = useColorModeValue(
+        "UseOrCreateInviteView.dividerColor-light",
+        "UseOrCreateInviteView.dividerColor-dark"
+    );
     return (
         <Stack
             direction={["column", "column", "row"]}

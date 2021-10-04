@@ -54,7 +54,7 @@ import { useMaybeReceiveMessageQueries } from "./ReceiveMessageQueries";
 //             <Tag
 //                 aria-label="Find out about chat reflection"
 //                 color="white"
-//                 backgroundColor="blue.700"
+//                 backgroundColor="pink.700"
 //                 borderLeftRadius={0}
 //                 fontSize="inherit"
 //                 py={2}
@@ -99,7 +99,8 @@ function MessageBody({
     const pictureSize = Math.round(pictureSizeMinPx + pictureSizeRange * scaleFactor);
 
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);
-    const timeColour = useColorModeValue("gray.600", "gray.400");
+    const timeColour = useColorModeValue("ChatMessage.timeColor-light", "ChatMessage.timeColor-dark");
+    const nameColour = useColorModeValue("ChatMessage.nameColor-light", "ChatMessage.nameColor-dark");
     const timeFormat: Intl.DateTimeFormatOptions = useMemo(
         () => ({
             weekday: "short",
@@ -160,7 +161,7 @@ function MessageBody({
                         : undefined
                 }
             >
-                <Text as="span" fontSize={smallFontSize} color={timeColour}>
+                <Text as="span" fontSize={smallFontSize} color={nameColour}>
                     {registrant?.displayName ?? " "}
                 </Text>
                 {registrant?.profile?.badges && registrant.profile.badges.length > 0 ? (
@@ -168,7 +169,7 @@ function MessageBody({
                 ) : undefined}
             </HStack>
         ),
-        [registrant?.displayName, registrant?.profile?.badges, config.spacing, smallFontSize, timeColour]
+        [registrant?.displayName, registrant?.profile?.badges, config.spacing, smallFontSize, nameColour]
     );
 
     const controls = useMemo(
@@ -242,7 +243,7 @@ function MessageBody({
                             fontSize={smallFontSize}
                             p={config.spacing}
                             m={config.spacing}
-                            colorScheme="purple"
+                            colorScheme="ChatMessageAnswerAgainButton"
                             w="auto"
                             h="auto"
                             onClick={() => {
@@ -263,7 +264,7 @@ function MessageBody({
                             fontSize={smallFontSize}
                             p={config.spacing}
                             m={config.spacing}
-                            colorScheme="blue"
+                            colorScheme="ChatMessageAnswerButton"
                             w="auto"
                             h="auto"
                             onClick={() => {
@@ -411,8 +412,16 @@ export default function MessageBox({
     const isQuestion = message.type === Chat_MessageType_Enum.Question;
     const isAnswer = message.type === Chat_MessageType_Enum.Answer;
     const bgColour = useColorModeValue(
-        isQuestion ? "blue.50" : isAnswer ? "green.50" : "white",
-        isQuestion ? "blue.900" : isAnswer ? "green.900" : "gray.900"
+        isQuestion
+            ? "ChatMessage.questionBgColor-light"
+            : isAnswer
+            ? "ChatMessage.answerBgColor-light"
+            : "ChatMessage.messageBgColor-light",
+        isQuestion
+            ? "ChatMessage.questionBgColor-dark"
+            : isAnswer
+            ? "ChatMessage.answerBgColor-dark"
+            : "ChatMessage.messageBgColor-dark"
     );
 
     const createdAt = useMemo(() => new Date(message.created_at), [message.created_at]);

@@ -27,6 +27,7 @@ import {
     useMultiStyleConfig,
     useStyles,
     useTheme,
+    useToken,
 } from "@chakra-ui/react";
 import React from "react";
 import Select, { components as selectComponents, MenuProps, Props as SelectProps, Theme } from "react-select";
@@ -282,8 +283,8 @@ export default function MultiSelect({
     ...props
 }: SelectProps<{ label: string; value: string }, true>): JSX.Element {
     const chakraTheme = useTheme();
-
-    const placeholderColor = useColorModeValue(chakraTheme.colors.gray[400], chakraTheme.colors.whiteAlpha[400]);
+    const placeholderColorChakra = useColorModeValue("Input.textColor-light", "Input.textColor-dark");
+    const placeholderColor = useToken("colors", placeholderColorChakra);
 
     const th =
         typeof theme === "function"

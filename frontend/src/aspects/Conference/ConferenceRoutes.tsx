@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
+import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
@@ -37,16 +38,22 @@ import ManageRooms from "./Manage/ManageRooms";
 import ManageRegistrants from "./Manage/Registrants/ManageRegistrants";
 import ManageSchedule from "./Manage/Schedule/ManageSchedule";
 import ManageShuffle from "./Manage/Shuffle/ManageShuffle";
+import ManageTheme from "./Manage/Theme/ManageTheme";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import { useConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
 export default function ConferenceRoutes(): JSX.Element {
     const conference = useConference();
+    const { setTheme } = useConferenceTheme();
     const mUser = useMaybeCurrentUser();
     const mRegistrant = useMaybeCurrentRegistrant();
 
     const { path } = useRouteMatch();
+
+    useEffect(() => {
+        setTheme(conference.themeComponentColors?.[0]?.value);
+    }, [conference.themeComponentColors, setTheme]);
 
     return (
         <Switch>
@@ -143,6 +150,9 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
             <Route path={`${path}/manage/support`}>
                 <PageNotImplemented />
+            </Route>
+            <Route path={`${path}/manage/theme`}>
+                <ManageTheme />
             </Route>
 
             <Route

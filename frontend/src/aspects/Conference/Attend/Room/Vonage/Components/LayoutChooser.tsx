@@ -32,7 +32,7 @@ export default function LayoutChooser(): JSX.Element {
         <VStack pt={4} mb={4} bgColor="gray.200">
             <ButtonGroup flexWrap="wrap" alignItems="center" justifyContent="center" gridRowGap={2}>
                 <Button
-                    colorScheme="blue"
+                    colorScheme="DestructiveActionButton"
                     size="lg"
                     onClick={() => {
                         onClose();
@@ -42,7 +42,7 @@ export default function LayoutChooser(): JSX.Element {
                 </Button>
                 <Button
                     size="lg"
-                    colorScheme="green"
+                    colorScheme="ConfirmButton"
                     isDisabled={initialLayout === layout}
                     onClick={() => {
                         saveLayout();

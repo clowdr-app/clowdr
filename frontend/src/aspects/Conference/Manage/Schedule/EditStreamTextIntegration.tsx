@@ -120,7 +120,7 @@ function EditStreamTextIntegrationInner({
             </FormControl>
             <ButtonGroup>
                 <Button
-                    colorScheme="blue"
+                    colorScheme="pink"
                     onClick={() => {
                         update(null);
                     }}

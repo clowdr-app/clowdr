@@ -219,7 +219,7 @@ export default function CreatePollOptionsModal({
                                             />
                                             {config.pollConfig.answerLength?.min !== undefined &&
                                             option.length < config.pollConfig.answerLength.min ? (
-                                                <Text as="span" color="red.400" fontSize="0.9em">
+                                                <Text as="span" color="FormInputError.textColor" fontSize="0.9em">
                                                     Minimum {config.pollConfig.answerLength.min} characters.
                                                 </Text>
                                             ) : undefined}
@@ -247,12 +247,12 @@ export default function CreatePollOptionsModal({
                                 </OrderedList>
                             </FormControl>
                             {options.length < minNumOptions ? (
-                                <Text as="p" color="red.400">
+                                <Text as="p" color="FormInputError.textColor">
                                     Please create at least {minNumOptions} option{minNumOptions !== 1 ? "s" : ""}
                                 </Text>
                             ) : undefined}
                             {options.length >= maxNumOptions ? (
-                                <Text as="p" color="blue.400">
+                                <Text as="p" color="FormInputError.textColor">
                                     Maximum {maxNumOptions} option{maxNumOptions !== 1 ? "s" : ""}
                                 </Text>
                             ) : undefined}
@@ -319,17 +319,7 @@ export default function CreatePollOptionsModal({
                                 <Box>
                                     <SendLockoutButton
                                         sendFailed={sendFailed}
-                                        backgroundColor="blue.500"
-                                        color="white"
-                                        _hover={{
-                                            backgroundColor: "blue.600",
-                                        }}
-                                        _focus={{
-                                            backgroundColor: "blue.600",
-                                        }}
-                                        _active={{
-                                            backgroundColor: "blue.800",
-                                        }}
+                                        colorScheme="ChatSendMessageButton"
                                         onClick={() => {
                                             onSend({
                                                 options,

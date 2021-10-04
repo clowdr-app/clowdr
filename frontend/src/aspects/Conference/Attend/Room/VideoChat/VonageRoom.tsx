@@ -207,7 +207,7 @@ export function VideoChatVonageRoom({
                                 onClick={() => {
                                     completeGetAccessToken.current?.resolve();
                                 }}
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                             >
                                 Join
                             </Button>

@@ -64,11 +64,6 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                             <Heading as="h3" fontWeight="normal" fontStyle="italic" fontSize="md" textAlign="left">
                                 Active social &amp; discussion rooms
                             </Heading>
-                            {/* <ButtonGroup ml="auto">
-                                    <Button onClick={onCreateRoomOpen} colorScheme="purple" size="xs">
-                                        <FAIcon icon="plus-square" iconStyle="s" />
-                                    </Button>
-                                </ButtonGroup> */}
                         </Flex>
                     </RoomList>
                 )}
@@ -78,7 +73,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                 to={`/conference/${confSlug}/rooms`}
                 linkProps={{ width: "100%", mt: 2, px: 1 }}
                 width="100%"
-                colorScheme="purple"
+                colorScheme="PrimaryActionButton"
                 borderRadius={0}
             >
                 <FAIcon icon="mug-hot" iconStyle="s" mr={3} />
@@ -202,7 +197,7 @@ export function LeftSidebarConferenceSections_Inner({
                     linkProps={{ width: "60%", height: 10, mt: 2, mb: 4, px: 2 }}
                     width="100%"
                     height="100%"
-                    colorScheme="purple"
+                    colorScheme="PrimaryActionButton"
                     borderRadius={0}
                 >
                     <FAIcon icon="user-friends" iconStyle="s" mr={3} />

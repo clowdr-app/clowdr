@@ -544,7 +544,7 @@ Please contact our tech support to investigate the issue shown below.`,
                     </Field>
                     <Button
                         mt={4}
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         isLoading={props.isSubmitting}
                         type="submit"
                         isDisabled={!props.isValid}

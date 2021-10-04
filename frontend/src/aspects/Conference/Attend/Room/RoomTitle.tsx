@@ -54,7 +54,7 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                     ml={5}
                     maxWidth="20rem"
                     mt={5}
-                    bgColor="white"
+                    bgColor="Room.sponsorLogoBackgroundColor"
                     p={5}
                     borderRadius="md"
                 />

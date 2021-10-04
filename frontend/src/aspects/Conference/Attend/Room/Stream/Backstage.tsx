@@ -35,15 +35,18 @@ export default function Backstage({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const [gray100, gray900] = useToken("colors", ["gray.100", "gray.900"]);
-    const greyBorderColour = useColorModeValue(gray900, gray100);
+    const offAirColor = useColorModeValue("Backstage.offAirBorderColor-light", "Backstage.offAirBorderColor-dark");
+    const offAirBorderColour = useToken("colors", offAirColor);
+
+    const onAirColor = useColorModeValue("Backstage.onAirBorderColor-light", "Backstage.onAirBorderColor-dark");
+    const onAirBorderColour = useToken("colors", onAirColor);
 
     const now = useRealTime(5000);
     const isNow = isEventNow(now, event);
     const isSoon = isEventSoon(now, event);
     const isActive = isNow || isSoon;
     const category = isNow ? "Happening now" : isSoon ? "Starting soon" : "Ended";
-    const borderColour = isNow ? "red" : greyBorderColour;
+    const borderColour = isNow ? onAirBorderColour : offAirBorderColour;
     const title = event?.item ? `${event.item.title}${event.name.length ? ` (${event.name})` : ""}` : event.name;
     const isSelected = event.id === selectedEventId;
     const summaryInfo = useMemo(
@@ -72,7 +75,7 @@ export default function Backstage({
                     </Text>
                 </VStack>
                 <Button
-                    colorScheme={isSelected ? "red" : "purple"}
+                    colorScheme={isSelected ? "DestructiveActionButton" : "PrimaryActionButton"}
                     onClick={() => (isSelected ? setSelectedEventId(null) : setSelectedEventId(event.id))}
                     height="min-content"
                     py={4}
@@ -99,7 +102,7 @@ export default function Backstage({
     const area = useMemo(
         () =>
             isSelected ? (
-                <Box mt={2} p={2} border={isNow ? "solid red" : undefined} borderWidth={4}>
+                <Box mt={2} p={2} border={isNow ? "solid " + onAirBorderColour : undefined} borderWidth={4}>
                     {vonageBackstage}
                     <StreamTextCaptions streamTextEventId={event.streamTextEventId} />
                     <EmojiFloatContainer chatId={roomChatId ?? ""} xDurationMs={4000} yDurationMs={10000} />
@@ -110,7 +113,7 @@ export default function Backstage({
                     This event has now finished. Once you close this backstage, you will not be able to rejoin it.
                 </Alert>
             ) : undefined,
-        [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId]
+        [isActive, isNow, isSelected, vonageBackstage, roomChatId, event.streamTextEventId, onAirBorderColour]
     );
 
     return (

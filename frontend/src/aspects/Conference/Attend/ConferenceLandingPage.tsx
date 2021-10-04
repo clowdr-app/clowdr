@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Box, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import {
@@ -61,6 +61,11 @@ function ConferenceLandingPageInner(): JSX.Element {
         [item?.elements]
     );
 
+    const bgColor = useColorModeValue(
+        "ConferenceLandingPage.backgroundColor-light",
+        "ConferenceLandingPage.backgroundColor-dark"
+    );
+
     if (!item) {
         return (
             <Box>
@@ -83,17 +88,15 @@ function ConferenceLandingPageInner(): JSX.Element {
     }
 
     return (
-        <>
+        <Box w="100%" mx={[2, 2, 4]} bgColor={bgColor} pb="40px" minH="100vh">
             {title}
             {!hasAbstract ? (
                 <Heading as="h1" id="page-heading" mt={2}>
                     {conference.shortName}
                 </Heading>
-            ) : (
-                <Box h="0">&nbsp;</Box>
-            )}
+            ) : undefined}
             <ElementsGridLayout elements={item.elements} textJustification="center" />
-        </>
+        </Box>
     );
 }
 

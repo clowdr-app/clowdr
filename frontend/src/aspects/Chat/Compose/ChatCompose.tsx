@@ -43,6 +43,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
     });
 
     const [sendFailed, setSendFailed] = useState<string | number | null>(null);
+    const failedToSend_BgColor = useColorModeValue("ChatError.backgroundColor-light", "ChatError.backgroundColor-dark");
+    const failedToSend_TextColor = useColorModeValue("ChatError.textColor-light", "ChatError.textColor-dark");
     useEffect(() => {
         let tId: number | undefined;
         if (composeCtx.sendError && sendFailed === null) {
@@ -53,8 +55,8 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                             Sorry, your message failed to send. Please try again in a moment. If the error noted below
                             persists, please contact our technical support.
                         </Text>
-                        <Text as="pre">
-                            <Code color="black">{composeCtx.sendError}</Code>
+                        <Text as="pre" bgColor={failedToSend_BgColor}>
+                            <Code color={failedToSend_TextColor}>{composeCtx.sendError}</Code>
                         </Text>
                     </VStack>
                 ),
@@ -73,7 +75,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 clearTimeout(tId);
             }
         };
-    }, [composeCtx, composeCtx.sendError, sendFailed, toast]);
+    }, [composeCtx, composeCtx.sendError, failedToSend_BgColor, failedToSend_TextColor, sendFailed, toast]);
 
     useEffect(() => {
         if (
@@ -92,8 +94,11 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         setWasSending(composeCtx.isSending);
     }, [composeCtx.isSending, wasSending]);
 
-    const borderColour = useColorModeValue("gray.700", "gray.300");
-    const borderColourFaded = useColorModeValue("gray.300", "gray.500");
+    const borderColour = useColorModeValue("ChatCompose.borderColor-light", "ChatCompose.borderColor-dark");
+    const borderColourFaded = useColorModeValue(
+        "ChatCompose.borderColorFaded-light",
+        "ChatCompose.borderColorFaded-dark"
+    );
     return (
         <VStack
             spacing={0}

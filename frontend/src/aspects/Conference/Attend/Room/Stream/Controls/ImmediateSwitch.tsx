@@ -259,7 +259,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                                     </Field>
                                     <Button
                                         mt={4}
-                                        colorScheme="purple"
+                                        colorScheme="PrimaryActionButton"
                                         isLoading={props.isSubmitting || !enableSwitchButton}
                                         type="submit"
                                         isDisabled={!props.isValid || disable}
@@ -294,7 +294,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                                 No
                             </Button>
                             <Button
-                                colorScheme="red"
+                                colorScheme="ConfirmButton"
                                 ml={3}
                                 isLoading={!switchAction}
                                 onClick={async () => {

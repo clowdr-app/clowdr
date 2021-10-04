@@ -22,7 +22,7 @@ export default function LogoutButton({
             iconStyle="s"
             icon="sign-out-alt"
             borderRadius={0}
-            colorScheme="purple"
+            colorScheme="LeftMenuButton"
             side="right"
             onClick={() => logout({ returnTo })}
             mb={1}
@@ -37,7 +37,7 @@ export default function LogoutButton({
             <Button
                 size="sm"
                 onClick={() => logout({ returnTo })}
-                colorScheme="red"
+                colorScheme="LogoutButtonWithinPage"
                 role="menuitem"
                 aria-label="Log out"
             >

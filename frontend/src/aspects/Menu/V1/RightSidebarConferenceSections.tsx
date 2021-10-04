@@ -119,7 +119,7 @@ function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }
             variant="solid-rounded"
             align="center"
             size="sm"
-            colorScheme="purple"
+            colorScheme="PrimaryActionButton"
             index={tabIndex}
             overflow="hidden"
             display="flex"

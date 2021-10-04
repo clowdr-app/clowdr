@@ -1245,8 +1245,8 @@ export class GlobalChatState {
                                     return (
                                         <VStack
                                             alignItems="flex-start"
-                                            bgColor="purple.800"
-                                            color="gray.50"
+                                            bgColor="Notification.backgroundColor"
+                                            color="Notification.textColor"
                                             w="auto"
                                             h="auto"
                                             p={5}
@@ -1282,7 +1282,7 @@ export class GlobalChatState {
                                             <ButtonGroup isAttached>
                                                 {openChatInSidebar && notification.chatId ? (
                                                     <Button
-                                                        colorScheme="purple"
+                                                        colorScheme="PrimaryActionButton"
                                                         onClick={() => {
                                                             props.onClose();
                                                             if (notification.chatId) {
@@ -1296,7 +1296,7 @@ export class GlobalChatState {
                                                 ) : undefined}
                                                 {notification.linkURL ? (
                                                     <Button
-                                                        colorScheme="blue"
+                                                        colorScheme="SecondaryActionButton"
                                                         onClick={() => {
                                                             props.onClose();
                                                             if (notification.linkURL) {

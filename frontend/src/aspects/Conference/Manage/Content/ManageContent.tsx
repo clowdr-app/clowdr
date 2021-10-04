@@ -1278,7 +1278,7 @@ export default function ManageContentV2(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
             <Heading as="h2" id="page-heading" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">

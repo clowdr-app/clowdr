@@ -96,7 +96,11 @@ export default function PageNotFound(): JSX.Element {
                 )}
                 <ButtonGroup pt={2} spacing={4} w="100%" flexWrap="wrap" alignItems="center" justifyContent="center">
                     {!registered && maybeConference?.registrationURL.length ? (
-                        <ExternalLinkButton to={maybeConference.registrationURL[0].value} colorScheme="purple" mr={2}>
+                        <ExternalLinkButton
+                            to={maybeConference.registrationURL[0].value}
+                            colorScheme="PrimaryActionButton"
+                            mr={2}
+                        >
                             <FAIcon iconStyle="s" icon="link" mr={2} />
                             Go to registration
                             <ExternalLinkIcon ml={1} />
@@ -111,7 +115,7 @@ export default function PageNotFound(): JSX.Element {
                             (!registered && maybeConference?.registrationURL.length) ||
                             maybeConference?.supportAddress.length
                                 ? "gray"
-                                : "purple"
+                                : "PrimaryActionButton"
                         }
                     >
                         <FAIcon iconStyle="s" icon="home" mr={2} />
@@ -120,7 +124,9 @@ export default function PageNotFound(): JSX.Element {
                     {maybeConference?.supportAddress.length ? (
                         <ExternalLinkButton
                             to={`mailto:${maybeConference.supportAddress[0].value}`}
-                            colorScheme={!registered && maybeConference?.registrationURL.length ? "gray" : "purple"}
+                            colorScheme={
+                                !registered && maybeConference?.registrationURL.length ? "gray" : "PrimaryActionButton"
+                            }
                             ml={2}
                         >
                             <FAIcon iconStyle="s" icon="envelope" mr={2} />

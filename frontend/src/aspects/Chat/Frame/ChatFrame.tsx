@@ -59,7 +59,7 @@ export function ChatFrame({ isVisible, ...rest }: { isVisible: RefObject<boolean
                         config.permissions.canAnswer ||
                         config.permissions.canPoll) ? (
                         <>
-                            {/* <ChatTypingIndicators flex="0 0 auto" /> */}
+                            {/* TODO: <ChatTypingIndicators flex="0 0 auto" /> */}
                             <SendMessageQueriesProvider>
                                 <ComposeContextProvider setAnsweringQuestionSIdRef={setAnsweringQuestionSIdRef}>
                                     <ChatCompose role="region" aria-label="Compose message" flex="0 0 auto" />

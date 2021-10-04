@@ -126,7 +126,7 @@ export default function TimeBar({
 }): JSX.Element {
     const markers = useGenerateMarkers("100%", "20%", false, true, true);
 
-    const bgColor = useColorModeValue("purple.100", "purple.700");
+    const bgColor = useColorModeValue("PrimaryActionButton.100", "PrimaryActionButton.700");
     return (
         <Box
             position="relative"

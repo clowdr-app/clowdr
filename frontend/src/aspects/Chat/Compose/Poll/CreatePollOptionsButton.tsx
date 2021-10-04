@@ -16,9 +16,15 @@ export function CreatePollOptionsButton({
     }>;
     sendFailed: boolean;
 }): JSX.Element {
-    const colour = useColorModeValue("blue.600", "blue.200");
-    const focusColour = "yellow.500";
-    const activeColour = "yellow.500";
+    const colour = useColorModeValue("ChatSendMessageButton.color-light", "ChatSendMessageButton.color-dark");
+    const focusColour = useColorModeValue(
+        "ChatSendMessageButton.focusColor-light",
+        "ChatSendMessageButton.focusColor-dark"
+    );
+    const activeColour = useColorModeValue(
+        "ChatSendMessageButton.activeColor-light",
+        "ChatSendMessageButton.activeColor-dark"
+    );
 
     const config = useChatConfiguration();
     const compose = useComposeContext();

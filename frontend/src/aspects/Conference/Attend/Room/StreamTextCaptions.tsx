@@ -10,8 +10,8 @@ export default function StreamTextCaptions({
 }: {
     streamTextEventId: string | undefined | null;
 }): JSX.Element {
-    const streamTextBgColour = useColorModeValue("gray.50", "gray.900");
-    const streamTextFgColour = useColorModeValue("black", "white");
+    const streamTextBgColour = useColorModeValue("StreamText.backgroundColor-light", "StreamText.backgroundColor-dark");
+    const streamTextFgColour = useColorModeValue("StreamText.foregroundColor-light", "StreamText.foregroundColor-dark");
     const streamTextBgColourRaw = useToken("colors", streamTextBgColour);
     const streamTextFgColourRaw = useToken("colors", streamTextFgColour);
     const [enableStreamTextCaptions, setEnableStreamTextCaptions] = useRestorableState<boolean>(
@@ -37,7 +37,7 @@ export default function StreamTextCaptions({
                     >
                         {enableStreamTextCaptions ? (
                             <Button
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                                 size="sm"
                                 mr={[0, 0, 2]}
                                 onClick={() => {
@@ -50,7 +50,7 @@ export default function StreamTextCaptions({
                             </Button>
                         ) : (
                             <Button
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                                 size="sm"
                                 mr={[0, 0, 2]}
                                 onClick={() => {
@@ -69,7 +69,7 @@ export default function StreamTextCaptions({
                             isExternal
                             to={src}
                             w="100%"
-                            colorScheme="purple"
+                            colorScheme="PrimaryActionButton"
                             size="sm"
                             linkProps={{ ml: [0, 0, 2] }}
                             aria-label="Open StreamText.Net live captions in a new window"

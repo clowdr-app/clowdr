@@ -10,16 +10,18 @@ function MessageTypeButton({
     shouldHighlight,
     ...props
 }: ButtonProps & { messageType: Chat_MessageType_Enum; shouldHighlight: boolean }): JSX.Element {
-    const color = useColorModeValue("white", "black");
+    const color = useColorModeValue(
+        "MessageTypeSelectorButton.textColor-Selected-light",
+        "MessageTypeSelectorButton.textColor-Selected-dark"
+    );
     return (
-        // <Button  w="auto" h="auto" m={0} background="none" borderRadius={0}>
         <Button
             minW="auto"
             minH="0"
             py={0}
             size="xs"
             borderRadius="2em"
-            colorScheme="purple"
+            colorScheme="MessageTypeSelectorButton"
             color={shouldHighlight ? color : undefined}
             variant={shouldHighlight ? "solid" : "outline"}
             {...props}
@@ -40,7 +42,7 @@ export function MessageTypeButtons({ isDisabled, ...props }: StackProps & { isDi
             fontSize={config.fontSizeRange.value}
             justifyContent="center"
             alignItems="center"
-            colorScheme="purple"
+            colorScheme="MessageTypeSelectorButton"
             pt={1}
             pb={2}
             {...props}

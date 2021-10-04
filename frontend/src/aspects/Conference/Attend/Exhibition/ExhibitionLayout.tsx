@@ -43,7 +43,8 @@ function ItemTile({
     const conference = useConference();
 
     const { colorMode } = useColorMode();
-    const baseBgColour = colorMode === "light" ? "blue.300" : "blue.600";
+    const baseBgColour =
+        colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";
     const baseGrey = useToken("colors", baseBgColour);
     const baseColour = useMemo(
         () => (Color(exhibitionColour).getAlpha() !== 0 ? exhibitionColour : baseGrey),
@@ -61,7 +62,7 @@ function ItemTile({
         return c;
     }, [baseColour, colorMode]);
     const bgColour_IsDark = useMemo(() => bgColour.isDark(), [bgColour]);
-    const textColour = bgColour_IsDark ? "white" : "black";
+    const textColour = bgColour_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
 
     const primaryItem: ElementDataFragment | undefined = useMemo(() => {
         const sortOrder = [
@@ -136,7 +137,7 @@ function ItemTile({
                 </Heading>
                 {liveRoomUrl && !hideLiveViewButton ? (
                     <LinkButton
-                        colorScheme="red"
+                        colorScheme="LiveActionButton"
                         to={liveRoomUrl}
                         title={"Event is happening now. Go to room"}
                         textDecoration="none"
@@ -160,7 +161,7 @@ function ItemTile({
                 w="100%"
             >
                 {discussionRoomUrl ? (
-                    <LinkButton colorScheme="blue" to={discussionRoomUrl} textDecoration="none">
+                    <LinkButton colorScheme="PrimaryActionButton" to={discussionRoomUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
                             Video room
@@ -168,7 +169,7 @@ function ItemTile({
                         <PageCountText path={discussionRoomUrl} fontSize="inherit" />
                     </LinkButton>
                 ) : undefined}
-                <LinkButton colorScheme="purple" to={itemUrl} textDecoration="none">
+                <LinkButton colorScheme="SecondaryActionButton" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />
                     <Text as="span" ml={1} mr={2}>
                         Find out more

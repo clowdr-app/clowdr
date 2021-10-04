@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Badge, Button, HStack, Text, TextProps, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Badge, Button, HStack, Text, TextProps, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type {
@@ -98,7 +98,6 @@ export function AuthorList({
                     gridRowGap={rowSpacing}
                     wrap="wrap"
                     alignItems="flex-start"
-                    mt={authorEls.length > 0 ? groupSpacing : undefined}
                 >
                     {presenterEls}
                 </HStack>
@@ -110,6 +109,7 @@ export function AuthorList({
                     gridRowGap={rowSpacing}
                     wrap="wrap"
                     alignItems="flex-start"
+                    mt={authorEls.length > 0 ? groupSpacing : undefined}
                 >
                     {authorEls}
                 </HStack>
@@ -213,7 +213,25 @@ export function AuthorInner({
     badgeColour?: string;
     registrant: RegistrantDataFragment | null;
 }): JSX.Element {
-    const bgColor = useColorModeValue("gray.100", "gray.800");
+    const bgColor = useColorModeValue(
+        "ProgramPersonTile.backgroundColor-light",
+        "ProgramPersonTile.backgroundColor-dark"
+    );
+    const color = useColorModeValue("ProgramPersonTile.textColor-light", "ProgramPersonTile.textColor-dark");
+    const badgeColorDefault = useToken(
+        "colors",
+        (programPersonData.roleName.toUpperCase() === "AUTHOR"
+            ? "ProgramPersonTileRoleNameBadge.authorColor"
+            : programPersonData.roleName.toUpperCase() === "CHAIR"
+            ? "ProgramPersonTileRoleNameBadge.chairColor"
+            : programPersonData.roleName.toUpperCase() === "PRESENTER"
+            ? "ProgramPersonTileRoleNameBadge.presenterColor"
+            : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
+            ? "ProgramPersonTileRoleNameBadge.discussantColor"
+            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
+            : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
+    );
     return registrant?.profile ? (
         <ChatProfileModalProvider>
             <AuthorWithProfileContent
@@ -229,6 +247,7 @@ export function AuthorInner({
             textAlign="left"
             justifyContent="flex-start"
             alignItems="flex-start"
+            color={color}
             bgColor={bgColor}
             p={2}
             borderRadius="lg"
@@ -244,17 +263,7 @@ export function AuthorInner({
                 </Text>
             ) : undefined}
             {!hideRole ? (
-                <Badge
-                    ml="2"
-                    colorScheme={
-                        badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
-                            ? "purple"
-                            : programPersonData.roleName.toUpperCase() === "CHAIR"
-                            ? "yellow"
-                            : "red"
-                    }
-                    verticalAlign="initial"
-                >
+                <Badge ml="2" colorScheme={badgeColour ?? badgeColorDefault} verticalAlign="initial">
                     {programPersonData.roleName}
                 </Badge>
             ) : undefined}
@@ -276,12 +285,31 @@ function AuthorWithProfileContent({
     profile: ProfileDataFragment;
 }) {
     const profileModal = useChatProfileModal();
-    const bgColor = useColorModeValue("gray.100", "gray.800");
+    const bgColor = useColorModeValue(
+        "ProgramPersonTile.backgroundColor-light",
+        "ProgramPersonTile.backgroundColor-dark"
+    );
+    const color = useColorModeValue("ProgramPersonTile.textColor-light", "ProgramPersonTile.textColor-dark");
+    const badgeColorDefault = useToken(
+        "colors",
+        (programPersonData.roleName.toUpperCase() === "AUTHOR"
+            ? "ProgramPersonTileRoleNameBadge.authorColor"
+            : programPersonData.roleName.toUpperCase() === "CHAIR"
+            ? "ProgramPersonTileRoleNameBadge.chairColor"
+            : programPersonData.roleName.toUpperCase() === "PRESENTER"
+            ? "ProgramPersonTileRoleNameBadge.presenterColor"
+            : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
+            ? "ProgramPersonTileRoleNameBadge.discussantColor"
+            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
+            : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
+    );
     return (
         <HStack
             textAlign="left"
             justifyContent="flex-start"
             alignItems="flex-start"
+            color={color}
             bgColor={bgColor}
             p={2}
             borderRadius="lg"
@@ -325,16 +353,7 @@ function AuthorWithProfileContent({
                     </Text>
                 ) : undefined}
                 {!hideRole ? (
-                    <Badge
-                        colorScheme={
-                            badgeColour ?? programPersonData.roleName.toUpperCase() === "AUTHOR"
-                                ? "purple"
-                                : programPersonData.roleName.toUpperCase() === "CHAIR"
-                                ? "yellow"
-                                : "red"
-                        }
-                        verticalAlign="initial"
-                    >
+                    <Badge colorScheme={badgeColour ?? badgeColorDefault} verticalAlign="initial">
                         {programPersonData.roleName}
                     </Badge>
                 ) : undefined}

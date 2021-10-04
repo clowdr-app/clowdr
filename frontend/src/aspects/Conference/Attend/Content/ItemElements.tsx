@@ -195,9 +195,7 @@ export function ItemElements({
                     maxW="100%"
                 >
                     <VStack alignItems="flex-start" maxW="100%">
-                        <Text colorScheme="purple" mb={2}>
-                            {formatItemTypeNameForDisplay(itemData.typeName)}
-                        </Text>
+                        <Text mb={2}>{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
                         <Heading
                             as="h2"
                             size="md"
@@ -212,9 +210,7 @@ export function ItemElements({
                 </LinkButton>
             ) : (
                 <>
-                    <Text colorScheme="purple" mb={2}>
-                        {formatItemTypeNameForDisplay(itemData.typeName)}
-                    </Text>
+                    <Text mb={2}>{formatItemTypeNameForDisplay(itemData.typeName)}</Text>
                     <Heading as="h2" size="md" textAlign="left">
                         <Twemoji className="twemoji" text={itemData.title} />
                     </Heading>
@@ -231,7 +227,12 @@ export function ItemElements({
             )}
             {children}
             <AuthorList programPeopleData={itemData.itemPeople ?? []} />
-            <HStack alignItems="flex-start" flexWrap="wrap" mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}>
+            <HStack
+                alignItems="flex-start"
+                flexWrap="wrap"
+                mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}
+                gridRowGap={2}
+            >
                 <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
                     {zoomDetailsEls}
                 </RequireAtLeastOnePermissionWrapper>

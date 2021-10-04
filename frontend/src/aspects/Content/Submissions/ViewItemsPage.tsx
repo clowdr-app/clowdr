@@ -68,13 +68,6 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
                                 Submissions to Midspace
                             </Heading>
                         ) : undefined}
-                        <Alert colorScheme="purple" flexDir="column" alignItems="flex-start">
-                            <AlertTitle>We&apos;ve made submissions easier!</AlertTitle>
-                            <AlertDescription>
-                                Our submissions process has been improved, to show you all the submissions requested
-                                from you at once, rather than a separate email and page for every piece of content.
-                            </AlertDescription>
-                        </Alert>
                         {itemsResponse.error ? (
                             <Alert status="error" flexDir="column">
                                 <AlertTitle>An error has occurred. Please try refreshing.</AlertTitle>
@@ -99,7 +92,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
                                                 .map((itemPerson) => (
                                                     <ListItem key={itemPerson.id}>
                                                         <LinkButton
-                                                            colorScheme="purple"
+                                                            colorScheme="PrimaryActionButton"
                                                             to={`/submissions/${magicToken}/item/${itemPerson.item?.id}`}
                                                             whiteSpace="normal"
                                                             h="auto"

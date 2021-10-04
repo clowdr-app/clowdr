@@ -41,14 +41,18 @@ export default function LoginButton({
             iconStyle="s"
             icon="sign-in-alt"
             borderRadius={0}
-            colorScheme="purple"
+            colorScheme="LeftMenuButton"
             side="right"
             onClick={() => loginWithRedirect(opts)}
             mb={1}
             showLabel={showLabel}
         />
     ) : asMenuItem ? (
-        <MenuItem size={size ?? "sm"} onClick={() => loginWithRedirect(opts)} colorScheme={colorScheme ?? "purple"}>
+        <MenuItem
+            size={size ?? "sm"}
+            onClick={() => loginWithRedirect(opts)}
+            colorScheme={colorScheme ?? "LeftMenuButton"}
+        >
             Log In
         </MenuItem>
     ) : (
@@ -56,7 +60,7 @@ export default function LoginButton({
             isLoading={isLoading}
             size={size ?? "sm"}
             onClick={() => loginWithRedirect(opts)}
-            colorScheme={colorScheme ?? "purple"}
+            colorScheme={colorScheme ?? "LoginButtonWithinPage"}
         >
             Log In
         </Button>

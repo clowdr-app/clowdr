@@ -169,7 +169,7 @@ function QueuedShufflePeriodBox({
                 <>
                     <LinkButton
                         to={`/conference/${conference.slug}/room/${lastEntry.shuffleRoom.roomId}`}
-                        colorScheme="purple"
+                        colorScheme="PrimaryActionButton"
                         h="auto"
                         p={4}
                     >
@@ -187,7 +187,7 @@ function QueuedShufflePeriodBox({
         } else {
             return (
                 <>
-                    <Button isLoading={isJoining} colorScheme="purple" onClick={joinShuffleQueue}>
+                    <Button isLoading={isJoining} colorScheme="PrimaryActionButton" onClick={joinShuffleQueue}>
                         Join the queue
                     </Button>
                     {timeTextEl}
@@ -210,7 +210,7 @@ function QueuedShufflePeriodBox({
         const joinedQueueAt = Date.parse(lastEntry.created_at);
         const timeWaiting = now - joinedQueueAt;
         const progress = (timeWaiting / (period.waitRoomMaxDurationSeconds * 1000)) * 100;
-        const colour = progress < 50 ? "purple.400" : progress < 75 ? "yellow.400" : "red.400";
+        const colour = progress < 50 ? "PrimaryActionButton.400" : progress < 75 ? "yellow.400" : "red.400";
         const progressEl = (
             <CircularProgress
                 capIsRound
@@ -326,7 +326,7 @@ export function ShufflePeriodBox({ period }: { period: ShufflePeriodDataFragment
             return (
                 <>
                     {now > startAt - 5 * 60 * 1000 ? (
-                        <Button isLoading={isJoining} colorScheme="purple" onClick={joinShuffleQueue}>
+                        <Button isLoading={isJoining} colorScheme="PrimaryActionButton" onClick={joinShuffleQueue}>
                             Join the queue
                         </Button>
                     ) : undefined}

@@ -191,7 +191,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                 <WrapItem>
                     <Box>
                         {meetingStatus === MeetingStatus.Succeeded ? (
-                            <Button colorScheme="purple" onClick={onLeaveRoom}>
+                            <Button colorScheme="DestructiveActionButton" onClick={onLeaveRoom}>
                                 Leave Room
                             </Button>
                         ) : undefined}
@@ -202,7 +202,9 @@ export function ChimeRoomControlBar(): JSX.Element {
                         <Button
                             onClick={toggleMute}
                             isDisabled={!audioInputs.selectedDevice}
-                            colorScheme={muted || !audioInputs.selectedDevice ? "blue" : "purple"}
+                            colorScheme={
+                                muted || !audioInputs.selectedDevice ? "SecondaryActionButton" : "PrimaryActionButton"
+                            }
                         >
                             {muted || !audioInputs.selectedDevice ? (
                                 <>
@@ -224,7 +226,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pl={0}
                                 pr={3}
                                 aria-label="Choose microphone"
-                                colorScheme="blue"
+                                colorScheme="SecondaryActionButton"
                             />
                             <MenuList zIndex="300">
                                 {audioInputs.devices.map((device) => (
@@ -249,7 +251,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                         <Button
                             onClick={toggleVideoWrapper}
                             isDisabled={!videoInputs.selectedDevice}
-                            colorScheme={!videoInputs.selectedDevice ? "blue" : "purple"}
+                            colorScheme={!videoInputs.selectedDevice ? "SecondaryActionButton" : "PrimaryActionButton"}
                         >
                             {isVideoEnabled && videoInputs.selectedDevice ? (
                                 <>
@@ -271,7 +273,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 pl={0}
                                 pr={3}
                                 aria-label="Choose camera"
-                                colorScheme="blue"
+                                colorScheme="SecondaryActionButton"
                             />
                             <MenuList zIndex="300">
                                 {videoInputs.devices.map((device) => (
@@ -306,14 +308,18 @@ export function ChimeRoomControlBar(): JSX.Element {
                     <WrapItem>
                         {meetingStatus === MeetingStatus.Succeeded ? (
                             isLocalUserSharing ? (
-                                <Button onClick={() => toggleContentShare()} colorScheme="blue">
+                                <Button onClick={() => toggleContentShare()} colorScheme="SecondaryActionButton">
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Stop sharing</span>
                                     </>
                                 </Button>
                             ) : isLocalShareLoading ? (
-                                <Button onClick={() => toggleContentShare()} isLoading={true} colorScheme="blue">
+                                <Button
+                                    onClick={() => toggleContentShare()}
+                                    isLoading={true}
+                                    colorScheme="SecondaryActionButton"
+                                >
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>
@@ -323,7 +329,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                 <Tag
                                     size="sm"
                                     variant="outline"
-                                    colorScheme="blue"
+                                    colorScheme="SecondaryActionButton"
                                     px={2}
                                     py="4px"
                                     ml={1}
@@ -336,7 +342,7 @@ export function ChimeRoomControlBar(): JSX.Element {
                                     </TagLabel>
                                 </Tag>
                             ) : (
-                                <Button onClick={() => toggleContentShare()} colorScheme="blue">
+                                <Button onClick={() => toggleContentShare()} colorScheme="PrimaryActionButton">
                                     <>
                                         <FAIcon icon="desktop" iconStyle="s" />
                                         <span style={{ marginLeft: "1rem" }}>Share screen</span>

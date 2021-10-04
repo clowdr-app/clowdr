@@ -1,4 +1,4 @@
-import { Button, Code, HStack, StackProps, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
+import { Button, Code, HStack, StackProps, Text, Tooltip, useColorModeValue, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
@@ -108,6 +108,8 @@ export default function MessageControls({
         message.type,
     ]);
 
+    const failed_BgColor = useColorModeValue("ChatError.backgroundColor-light", "ChatError.backgroundColor-dark");
+    const failed_TextColor = useColorModeValue("ChatError.textColor-light", "ChatError.textColor-dark");
     return (
         <HStack
             w="50%"
@@ -125,7 +127,7 @@ export default function MessageControls({
             }}
         >
             {(isOwnMessage || canEdit) && isPollOpen
-                ? buttonF("Close poll to new votes", "vote-yea", "cyan.400", async () => {
+                ? buttonF("Close poll to new votes", "vote-yea", "ChatManagePollButton.color", async () => {
                       await message.addReaction({
                           data: {},
                           symbol: "<Poll Closed>",
@@ -134,7 +136,7 @@ export default function MessageControls({
                   })
                 : undefined}
             {(isOwnMessage || canEdit) && !isPollOpen && isPollIncomplete
-                ? buttonF("Complete poll to reveal results", "poll", "cyan.400", async () => {
+                ? buttonF("Complete poll to reveal results", "poll", "ChatManagePollButton.color", async () => {
                       await message.addReaction({
                           data: {},
                           symbol: "<Poll Complete>",
@@ -144,7 +146,7 @@ export default function MessageControls({
                   })
                 : undefined}
             {!hideReactions
-                ? buttonF("Add reaction", "grin", "yellow.400", () => {
+                ? buttonF("Add reaction", "grin", "ChatAddReactionButton.color", () => {
                       emojiPicker.open(async (data) => {
                           const emoji = (data as any).native as string;
                           if (!usedReactions.includes(emoji)) {
@@ -158,12 +160,12 @@ export default function MessageControls({
                   })
                 : undefined}
             {/* {isOwnMessage || canEdit
-                ? buttonF("Edit message", "edit", "blue.400", () => {
+                ? buttonF("Edit message", "edit", "ChatEditMessageButton.color", () => {
                       alert("TODO"); // TODO
                   })
                 : undefined} */}
             {isOwnMessage || canDelete
-                ? buttonF("Delete message", "trash-alt", "red.400", async () => {
+                ? buttonF("Delete message", "trash-alt", "DestructiveActionButton.400", async () => {
                       try {
                           await message.delete();
                           toast({
@@ -173,7 +175,7 @@ export default function MessageControls({
                               isClosable: true,
                               position: "bottom-right",
                           });
-                      } catch (e) {
+                      } catch (e: any) {
                           toast({
                               title: "Failed to delete",
                               status: "error",
@@ -181,8 +183,8 @@ export default function MessageControls({
                               description: (
                                   <VStack alignItems="flex-start">
                                       <Text as="p">Please try again in a few minutes.</Text>
-                                      <Text as="pre">
-                                          <Code color="black">{e.message ?? e.toString()}</Code>
+                                      <Text as="pre" bgColor={failed_BgColor}>
+                                          <Code color={failed_TextColor}>{e.message ?? e.toString()}</Code>
                                       </Text>
                                   </VStack>
                               ),

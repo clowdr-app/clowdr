@@ -209,7 +209,7 @@ function ItemChatPanelInner({
                     <Tooltip key="room-button" label="Go to video room">
                         <Button
                             size="xs"
-                            colorScheme="blue"
+                            colorScheme="PrimaryActionButton"
                             onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
                             aria-label="Go to video room for this chat"
                         >

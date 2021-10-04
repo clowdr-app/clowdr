@@ -58,7 +58,7 @@ function RegistrantTile({
             <ButtonGroup isAttached flex="0 1 30%">
                 <Button
                     size="xs"
-                    colorScheme="purple"
+                    colorScheme="ConfirmButton"
                     borderRadius="full"
                     isDisabled={!registrant.userId}
                     isLoading={changing}
@@ -73,7 +73,7 @@ function RegistrantTile({
                 </Button>
                 <Button
                     size="xs"
-                    colorScheme="yellow"
+                    colorScheme="DestructiveActionButton"
                     borderRadius="full"
                     variant="outline"
                     isDisabled={!registrant.userId}

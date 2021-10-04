@@ -149,7 +149,7 @@ export default function UploadTextForm({
                             />
                             <Button
                                 my={4}
-                                colorScheme="purple"
+                                colorScheme="ConfirmButton"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || !dirty}

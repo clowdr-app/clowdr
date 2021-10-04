@@ -1235,7 +1235,7 @@ export default function ChecklistPage(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
@@ -1407,7 +1407,7 @@ function ExpandableList<T>({
                             ) : undefined}
                         </UnorderedList>
                         {items.length > limit + 1 ? (
-                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="pink">
                                 {isOpen ? "Show fewer" : "Show all"}
                             </Button>
                         ) : undefined}
@@ -1415,7 +1415,7 @@ function ExpandableList<T>({
                 ) : (
                     <VStack spacing={6} alignItems="flex-start">
                         {items.length > limit + 1 ? (
-                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="blue">
+                            <Button size="sm" onClick={onToggle} variant="outline" colorScheme="pink">
                                 {isOpen ? "Show fewer" : "Show all"}
                             </Button>
                         ) : undefined}

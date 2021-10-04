@@ -57,7 +57,7 @@ export default function UXChoiceDialog(): JSX.Element {
                     <AlertDialogFooter>
                         <HStack pt={2}>
                             <Button
-                                colorScheme="blue"
+                                colorScheme="pink"
                                 onClick={() => {
                                     setChoice(UXChoice.V1);
                                     onClose();

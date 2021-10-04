@@ -82,7 +82,7 @@ export default function OldAccessFormatRedirectionPage({
                                 {response.data.content_Uploader.map((uploader) => (
                                     <ListItem key={uploader.id}>
                                         <Button
-                                            colorScheme="purple"
+                                            colorScheme="PrimaryActionButton"
                                             isLoading={accessToken.loading}
                                             onClick={async () => {
                                                 try {

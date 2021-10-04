@@ -10,13 +10,13 @@ export default function ManagerLandingPage(): JSX.Element {
     const title = useTitle(`Manage ${conference.shortName}`);
 
     const green = useColorModeValue("purple.500", "purple.200");
-    const red = useColorModeValue("blue.500", "blue.200");
+    const red = useColorModeValue("pink.500", "pink.200");
 
     const greenHover = useColorModeValue("purple.600", "purple.300");
-    const redHover = useColorModeValue("blue.600", "blue.300");
+    const redHover = useColorModeValue("pink.600", "pink.300");
 
     const greenFocus = useColorModeValue("purple.700", "purple.400");
-    const redFocus = useColorModeValue("blue.700", "blue.400");
+    const redFocus = useColorModeValue("pink.700", "pink.400");
     return (
         <>
             {title}
@@ -97,14 +97,14 @@ export default function ManagerLandingPage(): JSX.Element {
                         bgGradient: `linear(${greenFocus} 20%, ${redFocus} 80%)`,
                     }}
                 />
-                <RestrictedDashboardButton
+                {/* <RestrictedDashboardButton
                     to="roles"
                     name="Permissions"
                     icon="lock"
                     description="Manage sets of permissions that can be assigned to groups."
                     permissions={[Permissions_Permission_Enum.ConferenceManageRoles]}
-                    colorScheme="blue"
-                />
+                    colorScheme="pink"
+                /> */}
                 <RestrictedDashboardButton
                     to="groups"
                     name="Groups"
@@ -114,7 +114,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageRoles,
                         Permissions_Permission_Enum.ConferenceManageGroups,
                     ]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
                 <RestrictedDashboardButton
                     to="registrants"
@@ -126,7 +126,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageGroups,
                         Permissions_Permission_Enum.ConferenceManageAttendees,
                     ]}
-                    colorScheme="blue"
+                    colorScheme="pink"
                 />
                 <RestrictedDashboardButton
                     to="content"
@@ -165,6 +165,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     description="Moderate conversations."
                     permissions={[Permissions_Permission_Enum.ConferenceModerateAttendees]}
                     colorScheme="purple"
+                />
+                <RestrictedDashboardButton
+                    to="theme"
+                    name="Theme"
+                    icon="palette"
+                    description="Customise the theme for attendees."
+                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
+                    colorScheme="orange"
                 />
                 <RestrictedDashboardButton
                     to="email"

@@ -322,23 +322,22 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                         <Image
                             src={logoUrl}
                             alt={bag.title}
-                            ml={5}
                             maxWidth="20rem"
-                            mt={5}
                             bgColor="white"
                             p={5}
                             borderRadius="md"
+                            display="inline-block"
                         />
                     ) : (
                         bag.title
                     )}
                 </Heading>
-                <VStack spacing={4}>
+                <VStack spacing={4} w="100%">
                     {primaryElement && <Element element={primaryElement} />}
                     {secondaryElement && <Element element={secondaryElement} />}
                 </VStack>
                 <HStack mt={4} spacing={2} flexWrap="wrap" w="100%">
-                    <LinkButton colorScheme="purple" to={itemUrl} textDecoration="none">
+                    <LinkButton colorScheme="PrimaryActionButton" to={itemUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="link" mr={2} />
                         <Text as="span" ml={1}>
                             Find out more

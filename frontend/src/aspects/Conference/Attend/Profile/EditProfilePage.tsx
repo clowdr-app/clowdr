@@ -410,15 +410,15 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {registrant.userId === currentUser.user.id && !registrant.profile.hasBeenEdited ? (
                     <Alert status="warning" variant="top-accent" flexWrap="wrap">
                         <AlertIcon />
-                        <AlertTitle>Edit required</AlertTitle>
+                        <AlertTitle>Please make an edit</AlertTitle>
                         <AlertDescription mt={2}>
-                            Please edit at least one part of your profile before proceeding to the rest of the
-                            conference.
+                            Please edit at least one part of your profile before proceeding. For example, you might like
+                            to upload a profile picture or add a badge.
                         </AlertDescription>
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="purple">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="PrimaryActionButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -427,7 +427,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                     ? `/conference/${conference.slug}/profile/view`
                                     : `/conference/${conference.slug}/profile/view/${registrant.id}`
                             }
-                            colorScheme="gray"
+                            colorScheme="PrimaryActionButton"
                         >
                             View profile
                         </LinkButton>
@@ -450,7 +450,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                 }}
                             />
                         </FormControl>
-                        <Button colorScheme="purple" onClick={() => setIsEditingName(false)}>
+                        <Button colorScheme="ConfirmButton" onClick={() => setIsEditingName(false)}>
                             Save
                         </Button>
                     </VStack>
@@ -465,7 +465,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             aria-label="Edit name"
                             icon={<EditIcon />}
                             variant="outline"
-                            colorScheme="blue"
+                            colorScheme="PrimaryActionButton"
                             onClick={() => setIsEditingName(true)}
                         />
                     </Heading>
@@ -506,7 +506,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="purple">
+                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -515,7 +515,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                                     ? `/conference/${conference.slug}/profile/view`
                                     : `/conference/${conference.slug}/profile/view/${registrant.id}`
                             }
-                            colorScheme="gray"
+                            colorScheme="SecondaryActionButton"
                         >
                             View profile
                         </LinkButton>

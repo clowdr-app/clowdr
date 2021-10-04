@@ -18,7 +18,7 @@ export default function DownloadCalendarButton({
     return (
         <Button
             aria-label="Download calendar file"
-            colorScheme="purple"
+            colorScheme="PrimaryActionButton"
             {...props}
             onClick={() => {
                 const convertedEvents: EventAttributes[] = events().map((event) => {

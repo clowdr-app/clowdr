@@ -16,14 +16,13 @@ import MoreOptionsMenuButton from "./MoreOptionsMenuButton";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebar/RightSidebarCurrentTab";
 import RightSidebarSections from "./RightSidebar/RightSidebarSections";
 
-const colorScheme = "purple";
-const selectedColorScheme = "gray";
-
 export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.Element {
     const { isRightBarOpen, onRightBarOpen, onRightBarClose } = useMainMenu();
     const maybeConference = useMaybeConference();
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const { path } = useRouteMatch();
+    const colorScheme = "RightMenu";
+    const selectedColorScheme = "gray";
     // const { onOpen: onOpenUXChoice } = useUXChoice();
 
     const colorMode = useColorMode();
@@ -49,7 +48,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
             ) : undefined,
         [maybeConference?.slug, maybeRegistrant, onRightBarClose, isVisible]
     );
-    const purpleBg = useColorModeValue("purple.50", "purple.900");
+    const sidebarBg = useColorModeValue(`${colorScheme}.50`, `${colorScheme}.900`);
     const [_isExpanded, setIsExpanded] = useRestorableState<boolean>(
         "RightMenu_IsExpanded",
         true,
@@ -120,7 +119,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 w="100%"
                 h="100%"
                 zIndex={0}
-                bgColor={purpleBg}
+                bgColor={sidebarBg}
             >
                 {rightSections}
             </Box>
@@ -130,7 +129,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                 alignItems="flex-end"
                 zIndex={1}
                 h="100%"
-                bgColor="purple.700"
+                bgColor={`${colorScheme}.700`}
             >
                 <MenuButton
                     label={isExpanded ? "Collapse menu" : "Expand menu"}

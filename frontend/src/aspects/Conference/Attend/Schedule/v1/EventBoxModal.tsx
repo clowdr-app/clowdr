@@ -181,7 +181,7 @@ export default function EventBoxModal({
                         {isLive ? (
                             <LinkButton
                                 mx={2}
-                                colorScheme={"red"}
+                                colorScheme="LiveActionButton"
                                 to={roomUrl}
                                 title={`Event is happening now. Go to room ${roomName}`}
                                 textDecoration="none"
@@ -195,7 +195,7 @@ export default function EventBoxModal({
                         ) : (
                             <LinkButton
                                 mx={2}
-                                colorScheme="purple"
+                                colorScheme="PrimaryActionButton"
                                 to={roomUrl}
                                 title={`Event is later. Go to room ${roomName}`}
                                 textDecoration="none"
@@ -226,7 +226,7 @@ export default function EventBoxModal({
                     {exhibitionUrl || itemUrl ? (
                         <LinkButton
                             my={1}
-                            colorScheme="purple"
+                            colorScheme="PrimaryActionButton"
                             to={exhibitionUrl ?? itemUrl}
                             title={exhibitionUrl || itemUrl ? "Find out more" : `Go to room ${roomName}`}
                             textDecoration="none"

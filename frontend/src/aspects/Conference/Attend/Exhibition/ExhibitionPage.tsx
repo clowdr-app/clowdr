@@ -135,7 +135,7 @@ function ExhibitionPageInner({
                                     width="100%"
                                     to={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
                                     size="lg"
-                                    colorScheme="blue"
+                                    colorScheme="PrimaryActionButton"
                                     height="auto"
                                     py={2}
                                     mb={2}

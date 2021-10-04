@@ -92,13 +92,13 @@ export default function StreamPreview({
                 <Text fontSize="sm" fontWeight="bold">
                     Connection trouble?
                 </Text>
-                <Button colorScheme="purple" size="xs" onClick={() => setEnabled(false)}>
+                <Button colorScheme="PrimaryActionButton" size="xs" onClick={() => setEnabled(false)}>
                     Try disabling preview
                 </Button>
             </HStack>
         </Box>
     ) : isLive && !enabled ? (
-        <Button colorScheme="purple" size="md" onClick={() => setEnabled(true)}>
+        <Button colorScheme="PrimaryActionButton" size="md" onClick={() => setEnabled(true)}>
             Enable stream preview
         </Button>
     ) : (

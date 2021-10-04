@@ -73,7 +73,7 @@ export default function ManageModeration(): JSX.Element {
         >
             <Box w="100%">
                 {title}
-                <Heading as="h1" size="xl">
+                <Heading mt={4} as="h1" size="xl">
                     Manage {conference.shortName}
                 </Heading>
                 <Heading id="page-heading" as="h2" size="lg" fontStyle="italic" mt={2}>

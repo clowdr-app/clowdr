@@ -81,7 +81,7 @@ export default function ManageName(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
+            <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
             </Heading>
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
@@ -269,7 +269,7 @@ export default function ManageName(): JSX.Element {
                             </Field>
                             <Button
                                 mt={4}
-                                colorScheme="purple"
+                                colorScheme="ConfirmButton"
                                 isLoading={props.isSubmitting}
                                 type="submit"
                                 isDisabled={!props.isValid || !dirty}

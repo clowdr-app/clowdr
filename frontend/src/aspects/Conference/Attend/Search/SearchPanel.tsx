@@ -180,7 +180,7 @@ export default function SearchPanel({
                 <Tooltip label={search.length < 3 ? "Minimum length 3" : ""}>
                     <div>
                         <Button
-                            colorScheme="purple"
+                            colorScheme="PrimaryActionButton"
                             aria-label="Search"
                             isLoading={eventsResponse.loading || itemsResponse.loading || peopleResponse.loading}
                             isDisabled={search.length < 3}

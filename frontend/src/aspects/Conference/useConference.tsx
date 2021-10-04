@@ -80,6 +80,11 @@ gql`
             key
             value
         }
+        themeComponentColors: configurations(where: { key: { _eq: THEME_COMPONENT_COLORS } }) {
+            conferenceId
+            key
+            value
+        }
 
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData

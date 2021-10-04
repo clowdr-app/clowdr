@@ -272,7 +272,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 doSave("", "");
                             }}
                             isDisabled={!rtmpOutput || isUpdating}
-                            colorScheme="blue"
+                            colorScheme="pink"
                         >
                             Clear
                         </Button>

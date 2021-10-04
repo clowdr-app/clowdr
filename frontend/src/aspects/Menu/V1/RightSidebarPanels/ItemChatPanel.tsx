@@ -120,7 +120,7 @@ export function ItemChatPanel({
                         <Button
                             key="room-button"
                             size="xs"
-                            colorScheme="blue"
+                            colorScheme="PrimaryActionButton"
                             onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
                             aria-label="Go to video room for this chat"
                         >

@@ -332,7 +332,7 @@ export default function ImportPanel({
                 </Alert>
             ) : undefined}
             <Box overflowX="auto" maxW="100%" w="100%">
-                <Table colorScheme="blue" variant="striped">
+                <Table colorScheme="pink" variant="striped">
                     <Thead>
                         <Th>Name</Th>
                         <Th>Email</Th>

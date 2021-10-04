@@ -38,6 +38,7 @@ import ManageRooms from "./Manage/ManageRooms";
 import ManageRegistrants from "./Manage/Registrants/ManageRegistrants";
 import ManageSchedule from "./Manage/Schedule/ManageSchedule";
 import ManageShuffle from "./Manage/Shuffle/ManageShuffle";
+import ManageTheme from "./Manage/Theme/ManageTheme";
 import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
 import { useConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
@@ -149,6 +150,9 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
             <Route path={`${path}/manage/support`}>
                 <PageNotImplemented />
+            </Route>
+            <Route path={`${path}/manage/theme`}>
+                <ManageTheme />
             </Route>
 
             <Route

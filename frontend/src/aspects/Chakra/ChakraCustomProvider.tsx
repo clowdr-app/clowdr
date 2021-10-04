@@ -67,7 +67,7 @@ const colors = extendTheme({
     },
 }).colors;
 
-export const theme = extendTheme({
+const baseThemeExtensions = {
     radii: {
         none: "0",
         sm: "0",
@@ -79,7 +79,6 @@ export const theme = extendTheme({
         "3xl": "0.75rem",
         full: "9999px",
     },
-    colors: applyComponentColorTheme(colors, componentMap),
     shadows: {
         outline: defaultOutline_AsBoxShadow,
         "light-md": "0 4px 6px -1px rgba(255, 255, 255, 0.1),0 2px 4px -1px rgba(255, 255, 255, 0.04)",
@@ -100,7 +99,7 @@ export const theme = extendTheme({
         },
         Popover: {
             parts: ["popper"],
-            baseStyle: (props) => ({
+            baseStyle: (props: any) => ({
                 popper: {
                     zIndex: 10,
                     maxW: props.width ? props.width : "xs",
@@ -109,7 +108,9 @@ export const theme = extendTheme({
             }),
         },
     },
-});
+};
+
+export const theme = extendTheme(baseThemeExtensions);
 
 interface ConferenceThemeContext {
     theme: Partial<ComponentMap> | undefined;
@@ -131,13 +132,13 @@ export default function ChakraCustomProvider({
     const finalTheme = useMemo(
         () =>
             conferenceComponentMap
-                ? extendTheme(theme, {
+                ? extendTheme<any>(baseThemeExtensions, {
                       colors: applyComponentColorTheme(
                           applyComponentColorTheme(colors, componentMap),
                           conferenceComponentMap
                       ),
                   })
-                : theme,
+                : extendTheme<any>(baseThemeExtensions),
         [conferenceComponentMap]
     );
     const ctx = useMemo(

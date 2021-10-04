@@ -28,9 +28,14 @@ export default function AppPageV2(): JSX.Element {
         path: "/",
         exact: true,
     });
+    const locationMatchConferenceRoot = useRouteMatch({
+        path: `/conference/${conference?.slug}`,
+        exact: true,
+    });
     const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
     const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
     const isRootPage = locationMatchRoot !== null;
+    const isConferenceRootPage = locationMatchConferenceRoot !== null;
     const isRoomPage = locationMatchRoom !== null;
     const isItemPage = locationMatchItem !== null;
 
@@ -110,14 +115,14 @@ export default function AppPageV2(): JSX.Element {
             css={{
                 ["scrollbarWidth"]: "thin",
             }}
-            ml={isAppLandingPage ? 0 : [2, 2, 2, 4]}
-            mr={isAppLandingPage ? 0 : rightVisible ? 0 : [2, 2, 2, 4]}
-            pr={isAppLandingPage ? 0 : rightVisible ? 2 : 0}
+            ml={isAppLandingPage || isConferenceRootPage ? 0 : [2, 2, 2, 4]}
+            mr={isAppLandingPage || isConferenceRootPage ? 0 : rightVisible ? 0 : [2, 2, 2, 4]}
+            pr={isAppLandingPage || isConferenceRootPage ? 0 : rightVisible ? 2 : 0}
         >
             <VStack
                 spacing={5}
                 width="100%"
-                mb={isAppLandingPage ? 0 : "40px"}
+                mb={isAppLandingPage || isConferenceRootPage ? 0 : "40px"}
                 role="region"
                 aria-labelledby="page-heading"
             >

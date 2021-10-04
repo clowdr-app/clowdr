@@ -1,6 +1,9 @@
 import type { ComponentMap } from "./Types";
 
 const componentMap: ComponentMap = {
+    ConferenceLandingPage: {
+        backgroundColor: { light: "", dark: "" },
+    },
     AppPageV1: {
         centerColumnBackground: {
             light: "gray.100",

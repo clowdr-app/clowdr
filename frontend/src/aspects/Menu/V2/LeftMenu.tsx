@@ -36,7 +36,7 @@ export default function LeftMenu(): JSX.Element {
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
-    const colorScheme = "LeftMenu";
+    const colorScheme = "LeftMenuButton";
 
     const swagBagsResponse = useCountSwagBagsQuery({
         variables: {
@@ -99,13 +99,7 @@ export default function LeftMenu(): JSX.Element {
     );
     return (
         <>
-            <Flex
-                flexDir="column"
-                justifyContent="center"
-                alignItems="flex-start"
-                h="100%"
-                bgColor="LeftMenuButton.600"
-            >
+            <Flex flexDir="column" justifyContent="center" alignItems="flex-start" h="100%" bgColor="LeftMenu.600">
                 <MenuButton
                     label={isExpanded ? "Collapse menu" : "Expand menu"}
                     iconStyle="s"

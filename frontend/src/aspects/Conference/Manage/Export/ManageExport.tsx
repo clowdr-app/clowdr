@@ -19,7 +19,7 @@ export default function ManageExport(): JSX.Element {
             componentIfDenied={<PageNotFound />}
         >
             {title}
-            <Heading as="h1" fontSize="4xl">
+            <Heading mt={4} as="h1" fontSize="4xl">
                 Manage {conference.shortName}
             </Heading>
             <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">

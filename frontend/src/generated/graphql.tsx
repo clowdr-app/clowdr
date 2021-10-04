@@ -41565,6 +41565,14 @@ export type DeleteShufflePeriodMutationVariables = Exact<{
 
 export type DeleteShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly delete_room_ShufflePeriod_by_pk?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any }> };
 
+export type UpsertConferenceThemeMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  value: Scalars['jsonb'];
+}>;
+
+
+export type UpsertConferenceThemeMutation = { readonly __typename?: 'mutation_root', readonly insert_conference_Configuration_one?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+
 export type ConferenceTakenQueryVariables = Exact<{
   name: Scalars['String'];
   shortName: Scalars['String'];
@@ -53575,6 +53583,45 @@ export function useDeleteShufflePeriodMutation(baseOptions?: Apollo.MutationHook
 export type DeleteShufflePeriodMutationHookResult = ReturnType<typeof useDeleteShufflePeriodMutation>;
 export type DeleteShufflePeriodMutationResult = Apollo.MutationResult<DeleteShufflePeriodMutation>;
 export type DeleteShufflePeriodMutationOptions = Apollo.BaseMutationOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
+export const UpsertConferenceThemeDocument = gql`
+    mutation UpsertConferenceTheme($conferenceId: uuid!, $value: jsonb!) {
+  insert_conference_Configuration_one(
+    object: {conferenceId: $conferenceId, key: THEME_COMPONENT_COLORS, value: $value}
+    on_conflict: {constraint: Configuration_pkey, update_columns: [value]}
+  ) {
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+export type UpsertConferenceThemeMutationFn = Apollo.MutationFunction<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>;
+
+/**
+ * __useUpsertConferenceThemeMutation__
+ *
+ * To run a mutation, you first call `useUpsertConferenceThemeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertConferenceThemeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertConferenceThemeMutation, { data, loading, error }] = useUpsertConferenceThemeMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useUpsertConferenceThemeMutation(baseOptions?: Apollo.MutationHookOptions<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>(UpsertConferenceThemeDocument, options);
+      }
+export type UpsertConferenceThemeMutationHookResult = ReturnType<typeof useUpsertConferenceThemeMutation>;
+export type UpsertConferenceThemeMutationResult = Apollo.MutationResult<UpsertConferenceThemeMutation>;
+export type UpsertConferenceThemeMutationOptions = Apollo.BaseMutationOptions<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>;
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   conference_Conference(

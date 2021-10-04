@@ -89,7 +89,7 @@ export function ChatHeading({ ...rest }: BoxProps): JSX.Element {
                                     transition="opacity 0.2s ease-in-out"
                                     colorScheme="ChatSettingsButton"
                                 >
-                                    <FAIcon iconStyle="s" icon="cog" />
+                                    <FAIcon iconStyle="s" icon="cog" mt={1} />
                                 </MenuButton>
                                 <MenuList fontSize="sm" minW="unset" zIndex={1000}>
                                     <MenuOptionGroup

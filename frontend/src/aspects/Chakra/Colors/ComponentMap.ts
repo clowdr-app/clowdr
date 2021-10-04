@@ -38,7 +38,7 @@ const componentMap: ComponentMap = {
         textColor: "white",
     },
     SecondaryActionButton: generateColorScheme("pink"),
-    LiveActionButton: generateColorScheme("green"),
+    LiveActionButton: generateColorScheme("red"),
     DestructiveActionButton: generateColorScheme("red"),
     "ProfileBadge-Default": generateColorScheme("gray"),
     ProfileBadge: {

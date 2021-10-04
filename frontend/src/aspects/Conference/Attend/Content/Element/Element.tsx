@@ -127,15 +127,17 @@ function ElementInner({
                 break;
             case Content_ElementType_Enum.ImageUrl:
                 return (
-                    <Image
-                        src={latestVersion.data.url}
-                        style={{ maxWidth: "100%" }}
-                        alt={
-                            latestVersion.data.title?.length
-                                ? latestVersion.data.title
-                                : "Off-site image - no caption provided"
-                        }
-                    />
+                    <Box>
+                        <Image
+                            src={latestVersion.data.url}
+                            style={{ maxWidth: "100%" }}
+                            alt={
+                                latestVersion.data.title?.length
+                                    ? latestVersion.data.title
+                                    : "Off-site image - no caption provided"
+                            }
+                        />
+                    </Box>
                 );
             case Content_ElementType_Enum.ImageFile:
                 try {
@@ -144,14 +146,18 @@ function ElementInner({
                         throw new Error("Missing S3 URI component");
                     }
                     return (
-                        <Image
-                            src={`https://${bucket}.s3-${
-                                import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                            }.amazonaws.com/${key}`}
-                            alt={
-                                latestVersion.data.altText?.length ? latestVersion.data.altText : "No caption provided"
-                            }
-                        />
+                        <Box>
+                            <Image
+                                src={`https://${bucket}.s3-${
+                                    import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                                }.amazonaws.com/${key}`}
+                                alt={
+                                    latestVersion.data.altText?.length
+                                        ? latestVersion.data.altText
+                                        : "No caption provided"
+                                }
+                            />
+                        </Box>
                     );
                 } catch (e) {
                     return <>Invalid image URL.</>;
@@ -232,14 +238,16 @@ function ElementInner({
                         key.endsWith(".webp")
                     ) {
                         return (
-                            <Image
-                                src={url}
-                                alt={
-                                    latestVersion.data.altText?.length
-                                        ? latestVersion.data.altText
-                                        : "No caption provided"
-                                }
-                            />
+                            <Box>
+                                <Image
+                                    src={url}
+                                    alt={
+                                        latestVersion.data.altText?.length
+                                            ? latestVersion.data.altText
+                                            : "No caption provided"
+                                    }
+                                />
+                            </Box>
                         );
                     } else {
                         return (

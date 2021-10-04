@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Flex, Heading, HStack, Image, Text } from "@chakra-ui/react";
+import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import {
     ElementBaseType,
     ElementBlob,
@@ -94,10 +94,10 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
             Content_ElementType_Enum.VideoFile,
             Content_ElementType_Enum.VideoPrepublish,
             Content_ElementType_Enum.VideoUrl,
-            Content_ElementType_Enum.PosterFile,
-            Content_ElementType_Enum.PosterUrl,
             Content_ElementType_Enum.ImageFile,
             Content_ElementType_Enum.ImageUrl,
+            Content_ElementType_Enum.PosterFile,
+            Content_ElementType_Enum.PosterUrl,
             Content_ElementType_Enum.Abstract,
             Content_ElementType_Enum.Text,
         ];
@@ -152,6 +152,70 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
             )
             .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
     }, [bag.elements]);
+    const secondaryElement: ElementDataFragment | undefined = useMemo(() => {
+        const sortOrder = [
+            Content_ElementType_Enum.Abstract,
+            Content_ElementType_Enum.Text,
+            Content_ElementType_Enum.ImageFile,
+            Content_ElementType_Enum.ImageUrl,
+            Content_ElementType_Enum.PosterFile,
+            Content_ElementType_Enum.PosterUrl,
+            Content_ElementType_Enum.VideoBroadcast,
+            Content_ElementType_Enum.VideoFile,
+            Content_ElementType_Enum.VideoPrepublish,
+            Content_ElementType_Enum.VideoUrl,
+        ];
+
+        return bag.elements
+            .filter((x) => {
+                if (!sortOrder.includes(x.typeName) || x.id === primaryElement?.id) {
+                    return false;
+                }
+
+                if (
+                    (x.typeName === Content_ElementType_Enum.ImageFile ||
+                        x.typeName === Content_ElementType_Enum.ImageUrl) &&
+                    x.layoutData
+                ) {
+                    const data = x.layoutData as LayoutDataBlob;
+                    if (
+                        (data.contentType === Content_ElementType_Enum.ImageFile ||
+                            data.contentType === Content_ElementType_Enum.ImageUrl) &&
+                        data.isLogo
+                    ) {
+                        return false;
+                    }
+                }
+
+                const dataBlob = x.data as ElementDataBlob;
+                if (dataBlob.length) {
+                    const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
+                    switch (latestVersion.baseType) {
+                        case ElementBaseType.Component:
+                            return true;
+                        case ElementBaseType.File:
+                            return !!latestVersion.s3Url?.length;
+                        case ElementBaseType.Link:
+                            return !!latestVersion.text?.length && !!latestVersion.url?.length;
+                        case ElementBaseType.Text:
+                            return !!latestVersion.text?.length;
+                        case ElementBaseType.URL:
+                            return !!latestVersion.url?.length;
+                        case ElementBaseType.Video:
+                            return !!latestVersion.s3Url?.length;
+                    }
+                }
+                return false;
+            })
+            .sort((x, y) =>
+                maybeCompare(
+                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (a, b) => a - b
+                )
+            )
+            .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
+    }, [bag.elements, primaryElement]);
 
     const linkButtonElement = useMemo(() => {
         const possibleElements = bag.elements
@@ -269,7 +333,10 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                         bag.title
                     )}
                 </Heading>
-                {primaryElement && <Element element={primaryElement} />}
+                <VStack spacing={4}>
+                    {primaryElement && <Element element={primaryElement} />}
+                    {secondaryElement && <Element element={secondaryElement} />}
+                </VStack>
                 <HStack mt={4} spacing={2} flexWrap="wrap" w="100%">
                     <LinkButton colorScheme="purple" to={itemUrl} textDecoration="none">
                         <FAIcon iconStyle="s" icon="link" mr={2} />

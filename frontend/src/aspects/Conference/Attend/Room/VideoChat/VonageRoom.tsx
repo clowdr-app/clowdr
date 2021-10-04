@@ -169,6 +169,7 @@ export function VideoChatVonageRoom({
                 getAccessToken={getAccessToken}
                 isBackstageRoom={false}
                 canControlRecording={!eventId || isChairOrOrganizer}
+                eventId={eventId}
             />
             <AlertDialog
                 isOpen={completeGetAccessToken.current !== undefined}

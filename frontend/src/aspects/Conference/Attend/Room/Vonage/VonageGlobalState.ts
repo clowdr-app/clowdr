@@ -35,6 +35,7 @@ interface InitialisedStateData {
     onRecordingStopped: () => void;
     onRecordingIdReceived: (recordingId: string) => void;
     onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void;
+    onPlayVideoReceived: (elementId: string) => void;
 }
 
 interface ConnectedStateData {
@@ -123,7 +124,8 @@ export class VonageGlobalState {
         onRecordingStarted: () => void,
         onRecordingStopped: () => void,
         onRecordingIdReceived: (recordingId: string) => void,
-        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void
+        onLayoutReceived: (layoutData: { layout: VonageSessionLayoutData; createdAt: number }) => void,
+        onPlayVideoReceived: (elementId: string) => void
     ): Promise<void> {
         const release = await this.mutex.acquire();
         try {
@@ -159,6 +161,7 @@ export class VonageGlobalState {
                 onRecordingStopped,
                 onRecordingIdReceived,
                 onLayoutReceived,
+                onPlayVideoReceived,
             };
         } catch (e) {
             console.error("VonageGlobalState: initialiseState failure", e);
@@ -239,6 +242,11 @@ export class VonageGlobalState {
             session.on("signal:layout-signal", (event: any) =>
                 this.onLayoutReceived(event.data).catch((e) =>
                     console.error("VonageGlobalState: error handling layout signal", e)
+                )
+            );
+            session.on("signal:play-video", (event: any) =>
+                this.onPlayVideoReceived(event.data).catch((e) =>
+                    console.error("VonageGlobalState: error handling play video signal", e)
                 )
             );
 
@@ -990,6 +998,42 @@ export class VonageGlobalState {
             throw e;
         } finally {
             release();
+        }
+    }
+
+    private async onPlayVideoReceived(elementId: any): Promise<void> {
+        const release = await this.mutex.acquire();
+        try {
+            if (!elementId || typeof elementId !== "string") {
+                throw new Error("Layout data is not valid");
+            }
+
+            if (this.state.type === StateType.Initialised) {
+                this.state.onPlayVideoReceived(elementId);
+            } else if (this.state.type === StateType.Connected) {
+                this.state.initialisedState.onPlayVideoReceived(elementId);
+            }
+        } catch (e) {
+            console.error("VonageGlobalState: onPlayVideoReceived failure", e);
+            throw e;
+        } finally {
+            release();
+        }
+    }
+
+    public async startPlayingVideo(elementId: string): Promise<void> {
+        if (this.state.type === StateType.Connected) {
+            this.state.session.signal(
+                {
+                    type: "play-video",
+                    data: elementId,
+                },
+                (err) => {
+                    if (err) {
+                        console.error("Error sending play video signal", err);
+                    }
+                }
+            );
         }
     }
 

@@ -217,7 +217,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
             title: string,
             type?: string,
             leftAddon?: string,
-            stripPrefixes?: string[]
+            stripPrefixes?: string[],
+            helperText?: string
         ) => {
             const v = editingRegistrant.profile[fieldName] as string | number | undefined;
             return (
@@ -229,8 +230,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                         <InputGroup>
                             {leftAddon ? <InputLeftAddon>{leftAddon}</InputLeftAddon> : undefined}
                             <NumberInput
-                                min={type === "timezone" ? -12 : undefined}
-                                max={type === "timezone" ? +12 : undefined}
+                                min={type === "timezone" ? -24 : undefined}
+                                max={type === "timezone" ? +24 : undefined}
                                 precision={1}
                                 allowMouseWheel
                                 value={(v as number | undefined)?.toFixed(1) ?? ""}
@@ -308,6 +309,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                             />
                         </InputGroup>
                     )}
+                    {helperText && <FormHelperText>{helperText}</FormHelperText>}
                 </FormControl>
             );
         },
@@ -363,7 +365,15 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
         [textField]
     );
     const timezoneField = useMemo(
-        () => textField("timezoneUTCOffset", "Timezone Offset", "timezone", "UTC"),
+        () =>
+            textField(
+                "timezoneUTCOffset",
+                "Timezone Offset",
+                "timezone",
+                "UTC",
+                undefined,
+                "This does not change how the schedule is shown to you in Midspace. The schedule always displays in your local timezone according to your computer's settings."
+            ),
         [textField]
     );
 

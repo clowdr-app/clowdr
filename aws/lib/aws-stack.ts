@@ -25,6 +25,7 @@ export class AwsStack extends cdk.Stack {
         /** Service roles **/
         const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
         const mediaPackageServiceRole = this.createMediaPackageServiceRole(bucket);
+        const mediaConvertServiceRole = this.createMediaConvertServiceRole(bucket);
 
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
@@ -106,21 +107,7 @@ export class AwsStack extends cdk.Stack {
         /* Service Roles */
         mediaLiveServiceRole.grantPassRole(actionsUser);
         mediaPackageServiceRole.grantPassRole(actionsUser);
-
-        // Create a role to be used by MediaConvert
-        const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
-            assumedBy: new iam.ServicePrincipal("mediaconvert.amazonaws.com"),
-        });
-        mediaConvertAccessRole.grantPassRole(actionsUser);
-        bucket.grantReadWrite(mediaConvertAccessRole);
-
-        mediaConvertAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["apigateway:*"],
-                resources: ["*"],
-                effect: iam.Effect.ALLOW,
-            })
-        );
+        mediaConvertServiceRole.grantPassRole(actionsUser);
 
         // Create a role to be used by Transcribe
         const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
@@ -171,32 +158,8 @@ export class AwsStack extends cdk.Stack {
         // Transcoding notifications
         const mediaConvertNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
         mediaConvertNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
-        });
-        mediaConvertNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        mediaConvertNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "SNS:Subscribe",
-                    "SNS:ListSubscriptionsByTopic",
-                    "SNS:DeleteTopic",
-                    "SNS:GetTopicAttributes",
-                    "SNS:Publish",
-                    "SNS:RemovePermission",
-                    "SNS:AddPermission",
-                    "SNS:Receive",
-                    "SNS:SetTopicAttributes",
-                ],
-                principals: [
-                    new iam.ServicePrincipal("events.amazonaws.com"),
-                    new iam.ArnPrincipal(mediaConvertAccessRole.roleArn),
-                ],
-                resources: [mediaConvertNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
         mediaConvertNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
@@ -338,7 +301,7 @@ export class AwsStack extends cdk.Stack {
         });
 
         new cdk.CfnOutput(this, "MediaConvertServiceRoleArn", {
-            value: mediaConvertAccessRole.roleArn,
+            value: mediaConvertServiceRole.roleArn,
         });
 
         new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
@@ -510,5 +473,24 @@ export class AwsStack extends cdk.Stack {
         );
 
         return mediaPackageAccessRole;
+    }
+
+    /**
+     * @returns a service role for AWS MediaConvert
+     */
+    private createMediaConvertServiceRole(bucket: s3.Bucket): iam.Role {
+        const mediaConvertAccessRole = new iam.Role(this, "MediaConvertRole", {
+            assumedBy: new iam.ServicePrincipal("mediaconvert.amazonaws.com"),
+        });
+        bucket.grantReadWrite(mediaConvertAccessRole);
+        mediaConvertAccessRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["apigateway:*"],
+                resources: ["*"],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+
+        return mediaConvertAccessRole;
     }
 }

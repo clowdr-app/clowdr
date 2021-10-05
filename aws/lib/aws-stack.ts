@@ -16,7 +16,11 @@ export class AwsStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
 
+        /** S3 **/
         const bucket = this.createContentS3Bucket();
+
+        /** Shared policies **/
+        const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
 
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
@@ -26,13 +30,7 @@ export class AwsStack extends cdk.Stack {
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaPackageFullAccess"));
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
-        actionsUser.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["transcribe:*"],
-                effect: iam.Effect.ALLOW,
-                resources: ["*"],
-            })
-        );
+        actionsUser.addManagedPolicy(transcribeFullAccessPolicy);
         actionsUser.addToPolicy(
             new iam.PolicyStatement({
                 actions: [
@@ -532,5 +530,21 @@ export class AwsStack extends cdk.Stack {
         });
 
         return bucket;
+    }
+
+    /**
+     * @returns a policy that grants full access to Amazon Transcribe.
+     */
+    private createTranscribeFullAccessPolicy(): iam.IManagedPolicy {
+        return new iam.ManagedPolicy(this, "TranscribeFullAccessPolicy", {
+            description: "Full access to all Amazon Transcribe resources.",
+            statements: [
+                new iam.PolicyStatement({
+                    actions: ["transcribe:*"],
+                    effect: iam.Effect.ALLOW,
+                    resources: ["*"],
+                }),
+            ],
+        });
     }
 }

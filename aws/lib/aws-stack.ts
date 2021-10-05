@@ -26,6 +26,7 @@ export class AwsStack extends cdk.Stack {
         const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
         const mediaPackageServiceRole = this.createMediaPackageServiceRole(bucket);
         const mediaConvertServiceRole = this.createMediaConvertServiceRole(bucket);
+        const transcribeServiceRole = this.createTranscribeServiceRole(bucket);
 
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
@@ -108,13 +109,7 @@ export class AwsStack extends cdk.Stack {
         mediaLiveServiceRole.grantPassRole(actionsUser);
         mediaPackageServiceRole.grantPassRole(actionsUser);
         mediaConvertServiceRole.grantPassRole(actionsUser);
-
-        // Create a role to be used by Transcribe
-        const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
-            assumedBy: new iam.ServicePrincipal("transcribe.amazonaws.com"),
-        });
-        transcribeAccessRole.grantPassRole(actionsUser);
-        bucket.grantReadWrite(transcribeAccessRole);
+        transcribeServiceRole.grantPassRole(actionsUser);
 
         /* Elastic Transcoder */
         const elasticTranscoderServiceRole = new iam.Role(this, "ElasticTranscoderServiceRole", {
@@ -313,7 +308,7 @@ export class AwsStack extends cdk.Stack {
         });
 
         new cdk.CfnOutput(this, "TranscribeServiceRoleArn", {
-            value: transcribeAccessRole.roleArn,
+            value: transcribeServiceRole.roleArn,
         });
 
         new cdk.CfnOutput(this, "ElasticTranscoderServiceRoleArn", {
@@ -492,5 +487,17 @@ export class AwsStack extends cdk.Stack {
         );
 
         return mediaConvertAccessRole;
+    }
+
+    /**
+     * @returns a service role for Amazon Transcribe
+     */
+    private createTranscribeServiceRole(bucket: s3.Bucket): iam.Role {
+        const transcribeAccessRole = new iam.Role(this, "TranscribeRole", {
+            assumedBy: new iam.ServicePrincipal("transcribe.amazonaws.com"),
+        });
+        bucket.grantReadWrite(transcribeAccessRole);
+
+        return transcribeAccessRole;
     }
 }

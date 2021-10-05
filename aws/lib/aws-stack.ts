@@ -16,24 +16,26 @@ export class AwsStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
 
-        /** S3 **/
+        /* S3 */
         const bucket = this.createContentS3Bucket();
 
-        /** Shared policies **/
+        /* IAM */
+
+        // Managed policies
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
         const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy(
             props.env?.region ?? "*",
             props.env?.account ?? "*"
         );
 
-        /** Service roles **/
+        // Service roles
         const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
         const mediaPackageServiceRole = this.createMediaPackageServiceRole(bucket);
         const mediaConvertServiceRole = this.createMediaConvertServiceRole(bucket);
         const transcribeServiceRole = this.createTranscribeServiceRole(bucket);
         const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(bucket);
 
-        // Create user account to be used by the actions service
+        // IAM user
         const actionsUser = new iam.User(this, "ActionsUser", {});
 
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AWSElementalMediaLiveFullAccess"));
@@ -84,12 +86,12 @@ export class AwsStack extends cdk.Stack {
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
         this.addTranscribeEventRule(transcribeNotificationsTopic);
 
-        /** MediaLive **/
+        /* MediaLive */
         const inputSecurityGroup = new ml.CfnInputSecurityGroup(this, "InputSecurityGroup", {
             whitelistRules: [{ cidr: "0.0.0.1/0" }],
         });
 
-        /** Outputs **/
+        /* Outputs */
 
         // S3
         this.createOutput("AWS_CONTENT_BUCKET_ID", bucket.bucketName);

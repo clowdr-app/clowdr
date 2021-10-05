@@ -108,9 +108,6 @@ export class AwsStack extends cdk.Stack {
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
         this.addTranscribeEventRule(transcribeNotificationsTopic);
 
-        // Elastic Transcoder notifications
-        elasticTranscoderNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
-
         /* Elemental */
         const inputSecurityGroup = new ml.CfnInputSecurityGroup(this, "InputSecurityGroup", {
             whitelistRules: [{ cidr: "0.0.0.1/0" }],

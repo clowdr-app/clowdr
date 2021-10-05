@@ -16,6 +16,8 @@ export class AwsStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: AwsStackProps) {
         super(scope, id, props);
 
+        const bucket = this.createContentS3Bucket();
+
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
 
@@ -96,34 +98,8 @@ export class AwsStack extends cdk.Stack {
         });
 
         /* S3 */
-
-        // Create S3 bucket for content items
-        const bucket = new s3.Bucket(this, "ContentBucket", {
-            blockPublicAccess: {
-                blockPublicAcls: true,
-                blockPublicPolicy: false,
-                ignorePublicAcls: true,
-                restrictPublicBuckets: false,
-            },
-        });
-
         bucket.grantPut(actionsUser);
         bucket.grantReadWrite(actionsUser);
-        bucket.grantPublicAccess();
-        bucket.addCorsRule({
-            allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
-            allowedOrigins: ["*"],
-            exposedHeaders: ["ETag"],
-            maxAge: 3000,
-            allowedHeaders: ["Authorization", "x-amz-date", "x-amz-content-sha256", "content-type"],
-        });
-        bucket.addCorsRule({
-            allowedHeaders: [],
-            allowedMethods: [HttpMethods.GET],
-            allowedOrigins: ["*"],
-            exposedHeaders: [],
-            maxAge: 3000,
-        });
 
         /* Service Roles */
 
@@ -523,5 +499,38 @@ export class AwsStack extends cdk.Stack {
 
         // Elemental
         new cdk.CfnOutput(this, "MediaLiveInputSecurityGroupId", { value: inputSecurityGroup.ref });
+    }
+
+    /**
+     * @returns a publicly-accessible S3 bucket for content storage.
+     */
+    private createContentS3Bucket(): s3.Bucket {
+        const bucket = new s3.Bucket(this, "ContentBucket", {
+            blockPublicAccess: {
+                blockPublicAcls: true,
+                blockPublicPolicy: false,
+                ignorePublicAcls: true,
+                restrictPublicBuckets: false,
+            },
+        });
+
+        bucket.grantPublicAccess();
+
+        bucket.addCorsRule({
+            allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.POST],
+            allowedOrigins: ["*"],
+            exposedHeaders: ["ETag"],
+            maxAge: 3000,
+            allowedHeaders: ["Authorization", "x-amz-date", "x-amz-content-sha256", "content-type"],
+        });
+        bucket.addCorsRule({
+            allowedHeaders: [],
+            allowedMethods: [HttpMethods.GET],
+            allowedOrigins: ["*"],
+            exposedHeaders: [],
+            maxAge: 3000,
+        });
+
+        return bucket;
     }
 }

@@ -22,6 +22,9 @@ export class AwsStack extends cdk.Stack {
         /** Shared policies **/
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
 
+        /** Service roles **/
+        const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
+
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
 
@@ -100,61 +103,7 @@ export class AwsStack extends cdk.Stack {
         bucket.grantReadWrite(actionsUser);
 
         /* Service Roles */
-
-        // Create a role to be used by the MediaLive service when performing actions
-        const mediaLiveAccessRole = new iam.Role(this, "MediaLiveRole", {
-            assumedBy: new iam.ServicePrincipal("medialive.amazonaws.com"),
-        });
-
-        // Allow the actions user to pass the MediaLiveRole to MediaLive
-        mediaLiveAccessRole.grantPassRole(actionsUser);
-        bucket.grantReadWrite(mediaLiveAccessRole);
-
-        mediaLiveAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "mediastore:ListContainers",
-                    "mediastore:PutObject",
-                    "mediastore:GetObject",
-                    "mediastore:DeleteObject",
-                    "mediastore:DescribeObject",
-                ],
-                resources: ["*"],
-                effect: iam.Effect.ALLOW,
-            })
-        );
-        mediaLiveAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents",
-                    "logs:DescribeLogStreams",
-                    "logs:DescribeLogGroups",
-                ],
-                resources: ["arn:aws:logs:*:*:*"],
-                effect: iam.Effect.ALLOW,
-            })
-        );
-        mediaLiveAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "mediaconnect:ManagedDescribeFlow",
-                    "mediaconnect:ManagedAddOutput",
-                    "mediaconnect:ManagedRemoveOutput",
-                ],
-                resources: ["*"],
-                effect: iam.Effect.ALLOW,
-            })
-        );
-        mediaLiveAccessRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["mediapackage:DescribeChannel"],
-                resources: ["*"],
-                effect: iam.Effect.ALLOW,
-            })
-        );
-        mediaLiveAccessRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+        mediaLiveServiceRole.grantPassRole(actionsUser);
 
         // Create a role to be used by MediaPackage
         const mediaPackageAccessRole = new iam.Role(this, "MediaPackageRole", {
@@ -292,32 +241,8 @@ export class AwsStack extends cdk.Stack {
         // MediaLive channel notifications
         const mediaLiveNotificationsTopic = new sns.Topic(this, "MediaLiveNotifications");
         mediaLiveNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ArnPrincipal(mediaLiveAccessRole.roleArn),
-        });
-        mediaLiveNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        mediaLiveNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "SNS:Subscribe",
-                    "SNS:ListSubscriptionsByTopic",
-                    "SNS:DeleteTopic",
-                    "SNS:GetTopicAttributes",
-                    "SNS:Publish",
-                    "SNS:RemovePermission",
-                    "SNS:AddPermission",
-                    "SNS:Receive",
-                    "SNS:SetTopicAttributes",
-                ],
-                principals: [
-                    new iam.ServicePrincipal("events.amazonaws.com"),
-                    new iam.ArnPrincipal(mediaLiveAccessRole.roleArn),
-                ],
-                resources: [mediaLiveNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
         mediaLiveNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
@@ -455,7 +380,7 @@ export class AwsStack extends cdk.Stack {
         });
 
         new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
-            value: mediaLiveAccessRole.roleArn,
+            value: mediaLiveServiceRole.roleArn,
         });
 
         new cdk.CfnOutput(this, "MediaPackageRoleArn", {
@@ -546,5 +471,64 @@ export class AwsStack extends cdk.Stack {
                 }),
             ],
         });
+    }
+
+    /**
+     * @returns a service role for AWS MediaLive
+     */
+    private createMediaLiveServiceRole(sourceBucket: s3.Bucket): iam.Role {
+        const role = new iam.Role(this, "MediaLiveRole", {
+            assumedBy: new iam.ServicePrincipal("medialive.amazonaws.com"),
+        });
+
+        sourceBucket.grantReadWrite(role);
+
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "mediastore:ListContainers",
+                    "mediastore:PutObject",
+                    "mediastore:GetObject",
+                    "mediastore:DeleteObject",
+                    "mediastore:DescribeObject",
+                ],
+                resources: ["*"],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "logs:DescribeLogStreams",
+                    "logs:DescribeLogGroups",
+                ],
+                resources: ["arn:aws:logs:*:*:*"],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "mediaconnect:ManagedDescribeFlow",
+                    "mediaconnect:ManagedAddOutput",
+                    "mediaconnect:ManagedRemoveOutput",
+                ],
+                resources: ["*"],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["mediapackage:DescribeChannel"],
+                resources: ["*"],
+                effect: iam.Effect.ALLOW,
+            })
+        );
+        role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+
+        return role;
     }
 }

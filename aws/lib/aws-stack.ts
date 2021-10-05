@@ -105,20 +105,7 @@ export class AwsStack extends cdk.Stack {
 
         this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
         this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
-
-        // MediaPackage harvest notifications
-        mediaPackageHarvestNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
-        });
-        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
-        const mediaPackageHarvestEventRule = new events.Rule(this, "MediaPackageHarvestEventRule", {
-            enabled: true,
-        });
-        mediaPackageHarvestEventRule.addEventPattern({
-            source: ["aws.mediapackage"],
-            detailType: ["MediaPackage HarvestJob Notification"],
-        });
-        mediaPackageHarvestEventRule.addTarget(new targets.SnsTopic(mediaPackageHarvestNotificationsTopic));
+        this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
 
         // Transcribe notifications
         transcribeNotificationsTopic.grantPublish({
@@ -536,5 +523,20 @@ export class AwsStack extends cdk.Stack {
         rule.addTarget(new targets.SnsTopic(target));
         const logGroup = new logs.LogGroup(this, "MediaLiveLogGroup", {});
         rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
+    }
+
+    private addMediaPackageEventRule(mediaPackageHarvestNotificationTopic: sns.ITopic): void {
+        mediaPackageHarvestNotificationTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
+        const rule = new events.Rule(this, "MediaPackageHarvestEventRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.mediapackage"],
+            detailType: ["MediaPackage HarvestJob Notification"],
+        });
+        rule.addTarget(new targets.SnsTopic(mediaPackageHarvestNotificationTopic));
     }
 }

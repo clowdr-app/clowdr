@@ -113,72 +113,39 @@ export class AwsStack extends cdk.Stack {
             whitelistRules: [{ cidr: "0.0.0.1/0" }],
         });
 
-        /* Outputs */
-        new cdk.CfnOutput(this, "BucketId", {
-            value: bucket.bucketName,
-        });
+        /** Outputs **/
 
-        // Actions service access key
-        new cdk.CfnOutput(this, "ActionsUserAccessKeyId", {
-            value: accessKey.ref,
-        });
+        // S3
+        this.createOutput("AWS_CONTENT_BUCKET_ID", bucket.bucketName);
 
-        new cdk.CfnOutput(this, "ActionsUserSecretAccessKey", {
-            value: accessKey.attrSecretAccessKey,
-        });
+        // IAM
+        this.createOutput("AWS_ACTIONS_USER_ACCESS_KEY_ID", accessKey.ref);
+        this.createOutput("AWS_ACTIONS_USER_SECRET_ACCESS_KEY", accessKey.attrSecretAccessKey);
 
         // Service roles
-        new cdk.CfnOutput(this, "ChimeManagerRoleArn", {
-            value: chimeManagerRole.roleArn,
-        });
-
-        new cdk.CfnOutput(this, "MediaConvertServiceRoleArn", {
-            value: mediaConvertServiceRole.roleArn,
-        });
-
-        new cdk.CfnOutput(this, "MediaLiveServiceRoleArn", {
-            value: mediaLiveServiceRole.roleArn,
-        });
-
-        new cdk.CfnOutput(this, "MediaPackageRoleArn", {
-            value: mediaPackageServiceRole.roleArn,
-        });
-
-        new cdk.CfnOutput(this, "TranscribeServiceRoleArn", {
-            value: transcribeServiceRole.roleArn,
-        });
-
-        new cdk.CfnOutput(this, "ElasticTranscoderServiceRoleArn", {
-            value: elasticTranscoderServiceRole.roleArn,
-        });
+        this.createOutput("AWS_CHIME_MANAGER_ROLE_ARN", chimeManagerRole.roleArn);
+        this.createOutput("AWS_MEDIACONVERT_SERVICE_ROLE_ARN", mediaConvertServiceRole.roleArn);
+        this.createOutput("AWS_MEDIALIVE_SERVICE_ROLE_ARN", mediaLiveServiceRole.roleArn);
+        this.createOutput("AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN", mediaPackageServiceRole.roleArn);
+        this.createOutput("AWS_TRANSCRIBE_SERVICE_ROLE_ARN", transcribeServiceRole.roleArn);
+        this.createOutput("AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN", elasticTranscoderServiceRole.roleArn);
 
         // SNS topics
-        new cdk.CfnOutput(this, "CloudFormationNotificationsTopic", {
-            value: cloudFormationNotificationsTopic.topicArn,
-        });
+        this.createOutput("AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN", cloudFormationNotificationsTopic.topicArn);
+        this.createOutput("AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN", cloudFormationNotificationsTopic.topicArn);
+        this.createOutput("AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN", transcribeNotificationsTopic.topicArn);
+        this.createOutput(
+            "AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN",
+            elasticTranscoderNotificationsTopic.topicArn
+        );
+        this.createOutput("AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN", mediaLiveNotificationsTopic.topicArn);
+        this.createOutput(
+            "AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN",
+            mediaPackageHarvestNotificationsTopic.topicArn
+        );
 
-        new cdk.CfnOutput(this, "TranscodeNotificationsTopic", {
-            value: mediaConvertNotificationsTopic.topicArn,
-        });
-
-        new cdk.CfnOutput(this, "TranscribeNotificationsTopic", {
-            value: transcribeNotificationsTopic.topicArn,
-        });
-
-        new cdk.CfnOutput(this, "ElasticTranscoderNotificationsTopic", {
-            value: elasticTranscoderNotificationsTopic.topicArn,
-        });
-
-        new cdk.CfnOutput(this, "MediaLiveNotificationsTopic", {
-            value: mediaLiveNotificationsTopic.topicArn,
-        });
-
-        new cdk.CfnOutput(this, "MediaPackageHarvestNotificationsTopic", {
-            value: mediaPackageHarvestNotificationsTopic.topicArn,
-        });
-
-        // Elemental
-        new cdk.CfnOutput(this, "MediaLiveInputSecurityGroupId", { value: inputSecurityGroup.ref });
+        // MediaLive
+        this.createOutput("AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID", inputSecurityGroup.ref);
     }
 
     /**
@@ -537,5 +504,11 @@ export class AwsStack extends cdk.Stack {
         rule.addTarget(new targets.SnsTopic(transcribeNotificationTopic));
         const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
         rule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
+    }
+
+    private createOutput(id: string, value: string): void {
+        new cdk.CfnOutput(this, id, {
+            value,
+        });
     }
 }

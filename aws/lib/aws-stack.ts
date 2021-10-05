@@ -104,23 +104,7 @@ export class AwsStack extends cdk.Stack {
         ]);
 
         this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
-
-        // MediaLive channel notifications
-        mediaLiveNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
-        });
-
-        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
-        const mediaLiveEventRule = new events.Rule(this, "MediaLiveEventRule", {
-            enabled: true,
-        });
-        mediaLiveEventRule.addEventPattern({
-            source: ["aws.medialive"],
-        });
-        mediaLiveEventRule.addTarget(new targets.SnsTopic(mediaLiveNotificationsTopic));
-
-        const mediaLiveLogGroup = new logs.LogGroup(this, "MediaLiveLogGroup", {});
-        mediaLiveEventRule.addTarget(new targets.CloudWatchLogGroup(mediaLiveLogGroup));
+        this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
 
         // MediaPackage harvest notifications
         mediaPackageHarvestNotificationsTopic.grantPublish({
@@ -534,6 +518,23 @@ export class AwsStack extends cdk.Stack {
         });
         rule.addTarget(new targets.SnsTopic(target));
         const logGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
+        rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
+    }
+
+    private addMediaLiveEventRule(target: sns.ITopic): void {
+        target.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
+        const rule = new events.Rule(this, "MediaLiveEventRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.medialive"],
+        });
+        rule.addTarget(new targets.SnsTopic(target));
+        const logGroup = new logs.LogGroup(this, "MediaLiveLogGroup", {});
         rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
     }
 }

@@ -86,23 +86,9 @@ export class AwsStack extends cdk.Stack {
         elasticTranscoderServiceRole.grantPassRole(actionsUser);
 
         /* Notifications and webhooks */
+        const cloudFormationNotificationsTopic = this.createCloudFormationNotificationTopic();
 
-        // CloudFormation notifications
-        const cloudFormationNotificationsTopic = new sns.Topic(this, "CloudFormationNotifications");
-        cloudFormationNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("cloudformation.amazonaws.com"),
-        });
-        cloudFormationNotificationsTopic.grantPublish({
-            grantPrincipal: actionsUser,
-        });
-        cloudFormationNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
-                resources: [cloudFormationNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
+        this.createAndAddSubscriptionPolicy(actionsUser.node.id, actionsUser, [cloudFormationNotificationsTopic]);
 
         // Transcoding notifications
         const mediaConvertNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
@@ -516,5 +502,34 @@ export class AwsStack extends cdk.Stack {
         chimeFullAccessPolicy.attachToRole(chimeManagerRole);
 
         return chimeManagerRole;
+    }
+
+    /**
+     * @summary Create and attach a policy allowing the identity to subscribe to the listed topics.
+     * @param id A scope-unique id for this policy.
+     */
+    private createAndAddSubscriptionPolicy(id: string, identity: iam.IIdentity, topics: sns.Topic[]): void {
+        const policy = new iam.ManagedPolicy(this, `SNSAllowSubscription${id}Policy`, {
+            statements: [
+                new iam.PolicyStatement({
+                    actions: ["SNS:Subscribe"],
+                    effect: iam.Effect.ALLOW,
+                    principals: [identity],
+                    resources: topics.map((topic) => topic.topicArn),
+                }),
+            ],
+        });
+        identity.addManagedPolicy(policy);
+    }
+
+    /**
+     * @returns an SNS topic that can receive notifications from CloudFormation.
+     */
+    private createCloudFormationNotificationTopic(): sns.Topic {
+        const topic = new sns.Topic(this, "CloudFormationNotifications");
+        topic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("cloudformation.amazonaws.com"),
+        });
+        return topic;
     }
 }

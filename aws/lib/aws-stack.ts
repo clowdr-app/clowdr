@@ -21,6 +21,10 @@ export class AwsStack extends cdk.Stack {
 
         /** Shared policies **/
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
+        const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy(
+            props.env?.region ?? "*",
+            props.env?.account ?? "*"
+        );
 
         /** Service roles **/
         const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
@@ -38,35 +42,7 @@ export class AwsStack extends cdk.Stack {
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"));
         actionsUser.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonElasticTranscoder_FullAccess"));
         actionsUser.addManagedPolicy(transcribeFullAccessPolicy);
-        actionsUser.addToPolicy(
-            new iam.PolicyStatement({
-                actions: [
-                    "cloudformation:CreateChangeSet",
-                    "cloudformation:CreateStack",
-                    "cloudformation:DeleteStack",
-                    "cloudformation:DeleteChangeSet",
-                    "cloudformation:DescribeChangeSet",
-                    "cloudformation:DescribeStacks",
-                    "cloudformation:DescribeStackEvents",
-                    "cloudformation:DescribeStackResources",
-                    "cloudformation:ExecuteChangeSet",
-                    "cloudformation:GetTemplate",
-                    "cloudformation:ValidateTemplate",
-                ],
-                effect: iam.Effect.ALLOW,
-                resources: [
-                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/room-*/*`,
-                    `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/CDKToolkit/*`,
-                ],
-            })
-        );
-        actionsUser.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["s3:*Object", "s3:ListBucket", "s3:GetBucketLocation"],
-                effect: iam.Effect.ALLOW,
-                resources: ["arn:aws:s3:::cdktoolkit-stagingbucket-*"],
-            })
-        );
+        actionsUser.addManagedPolicy(channelStackAdministratorPolicy);
 
         const chimeManagerRole = this.createChimeManagerRole(actionsUser);
 
@@ -108,7 +84,7 @@ export class AwsStack extends cdk.Stack {
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
         this.addTranscribeEventRule(transcribeNotificationsTopic);
 
-        /* Elemental */
+        /** MediaLive **/
         const inputSecurityGroup = new ml.CfnInputSecurityGroup(this, "InputSecurityGroup", {
             whitelistRules: [{ cidr: "0.0.0.1/0" }],
         });
@@ -192,6 +168,39 @@ export class AwsStack extends cdk.Stack {
                     actions: ["transcribe:*"],
                     effect: iam.Effect.ALLOW,
                     resources: ["*"],
+                }),
+            ],
+        });
+    }
+
+    private createChannelStackAdministratorPolicy(region: string, account: string): iam.IManagedPolicy {
+        return new iam.ManagedPolicy(this, "ChannelStackAdministratorPolicy", {
+            description: "Full access to create/destroy/introspect channel stacks with Cfn/CDK.",
+            statements: [
+                new iam.PolicyStatement({
+                    actions: [
+                        "cloudformation:CreateChangeSet",
+                        "cloudformation:CreateStack",
+                        "cloudformation:DeleteStack",
+                        "cloudformation:DeleteChangeSet",
+                        "cloudformation:DescribeChangeSet",
+                        "cloudformation:DescribeStacks",
+                        "cloudformation:DescribeStackEvents",
+                        "cloudformation:DescribeStackResources",
+                        "cloudformation:ExecuteChangeSet",
+                        "cloudformation:GetTemplate",
+                        "cloudformation:ValidateTemplate",
+                    ],
+                    effect: iam.Effect.ALLOW,
+                    resources: [
+                        `arn:aws:cloudformation:${region}:${account}:stack/room-*/*`,
+                        `arn:aws:cloudformation:${region}:${account}:stack/CDKToolkit/*`,
+                    ],
+                }),
+                new iam.PolicyStatement({
+                    actions: ["s3:*Object", "s3:ListBucket", "s3:GetBucketLocation"],
+                    effect: iam.Effect.ALLOW,
+                    resources: ["arn:aws:s3:::cdktoolkit-stagingbucket-*"],
                 }),
             ],
         });

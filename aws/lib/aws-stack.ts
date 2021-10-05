@@ -106,22 +106,7 @@ export class AwsStack extends cdk.Stack {
         this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
         this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);
-
-        // Transcribe notifications
-        transcribeNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("transcribe.amazonaws.com"),
-        });
-
-        const transcribeEventRule = new events.Rule(this, "TranscribeEventRule", {
-            enabled: true,
-        });
-        transcribeEventRule.addEventPattern({
-            source: ["aws.transcribe"],
-            detailType: ["Transcribe Job State Change"],
-        });
-        transcribeEventRule.addTarget(new targets.SnsTopic(transcribeNotificationsTopic));
-        const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
-        transcribeEventRule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
+        this.addTranscribeEventRule(transcribeNotificationsTopic);
 
         // Elastic Transcoder notifications
         elasticTranscoderNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
@@ -538,5 +523,22 @@ export class AwsStack extends cdk.Stack {
             detailType: ["MediaPackage HarvestJob Notification"],
         });
         rule.addTarget(new targets.SnsTopic(mediaPackageHarvestNotificationTopic));
+    }
+
+    private addTranscribeEventRule(transcribeNotificationTopic: sns.ITopic): void {
+        transcribeNotificationTopic.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("transcribe.amazonaws.com"));
+        const rule = new events.Rule(this, "TranscribeEventRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.transcribe"],
+            detailType: ["Transcribe Job State Change"],
+        });
+        rule.addTarget(new targets.SnsTopic(transcribeNotificationTopic));
+        const transcribeLogGroup = new logs.LogGroup(this, "TranscribeLogGroup", {});
+        rule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
     }
 }

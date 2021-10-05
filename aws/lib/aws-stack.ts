@@ -68,35 +68,7 @@ export class AwsStack extends cdk.Stack {
             })
         );
 
-        const chimeFullAccessPolicy = new iam.Policy(this, "ChimeFullAccess");
-        chimeFullAccessPolicy.addStatements(
-            new iam.PolicyStatement({
-                actions: [
-                    "chime:CreateMeeting",
-                    "chime:DeleteMeeting",
-                    "chime:GetMeeting",
-                    "chime:ListMeetings",
-                    "chime:CreateAttendee",
-                    "chime:BatchCreateAttendee",
-                    "chime:DeleteAttendee",
-                    "chime:GetAttendee",
-                    "chime:ListAttendees",
-                    "chime:ListAttendeeTags",
-                    "chime:ListMeetingTags",
-                    "chime:ListTagsForResource",
-                    "chime:TagAttendee",
-                    "chime:TagMeeting",
-                    "chime:TagResource",
-                    "chime:UntagAttendee",
-                    "chime:UntagMeeting",
-                    "chime:UntagResource",
-                ],
-                effect: iam.Effect.ALLOW,
-                resources: ["*"],
-            })
-        );
-        const chimeManagerRole = new iam.Role(this, "ChimeManager", { assumedBy: actionsUser });
-        chimeFullAccessPolicy.attachToRole(chimeManagerRole);
+        const chimeManagerRole = this.createChimeManagerRole(actionsUser);
 
         const accessKey = new iam.CfnAccessKey(this, "accessKey", {
             userName: actionsUser.userName,
@@ -506,5 +478,43 @@ export class AwsStack extends cdk.Stack {
         );
 
         return elasticTranscoderServiceRole;
+    }
+
+    /**
+     * @param assumedBy the principal that can assume the created role.
+     * @returns a role that has full access to Chime resources.
+     */
+    private createChimeManagerRole(assumedBy: iam.IPrincipal): iam.IRole {
+        const chimeFullAccessPolicy = new iam.Policy(this, "ChimeFullAccess");
+        chimeFullAccessPolicy.addStatements(
+            new iam.PolicyStatement({
+                actions: [
+                    "chime:CreateMeeting",
+                    "chime:DeleteMeeting",
+                    "chime:GetMeeting",
+                    "chime:ListMeetings",
+                    "chime:CreateAttendee",
+                    "chime:BatchCreateAttendee",
+                    "chime:DeleteAttendee",
+                    "chime:GetAttendee",
+                    "chime:ListAttendees",
+                    "chime:ListAttendeeTags",
+                    "chime:ListMeetingTags",
+                    "chime:ListTagsForResource",
+                    "chime:TagAttendee",
+                    "chime:TagMeeting",
+                    "chime:TagResource",
+                    "chime:UntagAttendee",
+                    "chime:UntagMeeting",
+                    "chime:UntagResource",
+                ],
+                effect: iam.Effect.ALLOW,
+                resources: ["*"],
+            })
+        );
+        const chimeManagerRole = new iam.Role(this, "ChimeManager", { assumedBy });
+        chimeFullAccessPolicy.attachToRole(chimeManagerRole);
+
+        return chimeManagerRole;
     }
 }

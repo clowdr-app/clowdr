@@ -27,6 +27,7 @@ export class AwsStack extends cdk.Stack {
         const mediaPackageServiceRole = this.createMediaPackageServiceRole(bucket);
         const mediaConvertServiceRole = this.createMediaConvertServiceRole(bucket);
         const transcribeServiceRole = this.createTranscribeServiceRole(bucket);
+        const elasticTranscoderServiceRole = this.createElasticTranscoderServiceRole(bucket);
 
         // Create user account to be used by the actions service
         const actionsUser = new iam.User(this, "ActionsUser", {});
@@ -110,25 +111,6 @@ export class AwsStack extends cdk.Stack {
         mediaPackageServiceRole.grantPassRole(actionsUser);
         mediaConvertServiceRole.grantPassRole(actionsUser);
         transcribeServiceRole.grantPassRole(actionsUser);
-
-        /* Elastic Transcoder */
-        const elasticTranscoderServiceRole = new iam.Role(this, "ElasticTranscoderServiceRole", {
-            assumedBy: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
-        });
-        elasticTranscoderServiceRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["s3:Put*", "s3:ListBucket", "s3:*MultipartUpload*", "s3:Get*"],
-                effect: iam.Effect.ALLOW,
-                resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
-            })
-        );
-        elasticTranscoderServiceRole.addToPolicy(
-            new iam.PolicyStatement({
-                actions: ["s3:*Delete*", "s3:*Policy*", "sns:*Remove*", "sns:*Delete*", "sns:*Permission*"],
-                effect: iam.Effect.DENY,
-                resources: ["*"],
-            })
-        );
         elasticTranscoderServiceRole.grantPassRole(actionsUser);
 
         /* Notifications and webhooks */
@@ -264,7 +246,7 @@ export class AwsStack extends cdk.Stack {
         elasticTranscoderNotificationsTopic.addToResourcePolicy(
             new iam.PolicyStatement({
                 actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
+                principals: [actionsUser],
                 resources: [elasticTranscoderNotificationsTopic.topicArn],
                 effect: iam.Effect.ALLOW,
             })
@@ -499,5 +481,30 @@ export class AwsStack extends cdk.Stack {
         bucket.grantReadWrite(transcribeAccessRole);
 
         return transcribeAccessRole;
+    }
+
+    /**
+     * @returns a service role for Elastic Transcode.
+     */
+    private createElasticTranscoderServiceRole(bucket: s3.Bucket): iam.Role {
+        const elasticTranscoderServiceRole = new iam.Role(this, "ElasticTranscoderServiceRole", {
+            assumedBy: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
+        });
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:Put*", "s3:ListBucket", "s3:*MultipartUpload*", "s3:Get*"],
+                effect: iam.Effect.ALLOW,
+                resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
+            })
+        );
+        elasticTranscoderServiceRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:*Delete*", "s3:*Policy*", "sns:*Remove*", "sns:*Delete*", "sns:*Permission*"],
+                effect: iam.Effect.DENY,
+                resources: ["*"],
+            })
+        );
+
+        return elasticTranscoderServiceRole;
     }
 }

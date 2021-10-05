@@ -87,23 +87,26 @@ export class AwsStack extends cdk.Stack {
 
         /* Notifications and webhooks */
         const cloudFormationNotificationsTopic = this.createCloudFormationNotificationTopic();
+        const mediaConvertNotificationsTopic = this.createMediaConvertNotificationTopic();
+        const mediaLiveNotificationsTopic = this.createMediaLiveNotificationTopic();
+        const mediaPackageHarvestNotificationsTopic = this.createMediaPackageHarvestNotificationTopic();
+        const transcribeNotificationsTopic = this.createTranscribeNotificationTopic();
+        const elasticTranscoderNotificationsTopic =
+            this.createElasticTranscoderNotificationTopic(elasticTranscoderServiceRole);
 
-        this.createAndAddSubscriptionPolicy(actionsUser.node.id, actionsUser, [cloudFormationNotificationsTopic]);
+        this.createAndAddSubscriptionPolicy(actionsUser.node.id, actionsUser, [
+            cloudFormationNotificationsTopic,
+            mediaConvertNotificationsTopic,
+            mediaLiveNotificationsTopic,
+            mediaPackageHarvestNotificationsTopic,
+            transcribeNotificationsTopic,
+            elasticTranscoderNotificationsTopic,
+        ]);
 
         // Transcoding notifications
-        const mediaConvertNotificationsTopic = new sns.Topic(this, "TranscodeNotifications");
         mediaConvertNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        mediaConvertNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
-                resources: [mediaConvertNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
-
         events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
         const mediaConvertEventRule = new events.Rule(this, "TranscodeEventRule", {
             enabled: true,
@@ -123,18 +126,9 @@ export class AwsStack extends cdk.Stack {
         mediaConvertEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
 
         // MediaLive channel notifications
-        const mediaLiveNotificationsTopic = new sns.Topic(this, "MediaLiveNotifications");
         mediaLiveNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        mediaLiveNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
-                resources: [mediaLiveNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
 
         events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("medialive.amazonaws.com"));
         const mediaLiveEventRule = new events.Rule(this, "MediaLiveEventRule", {
@@ -149,18 +143,9 @@ export class AwsStack extends cdk.Stack {
         mediaLiveEventRule.addTarget(new targets.CloudWatchLogGroup(mediaLiveLogGroup));
 
         // MediaPackage harvest notifications
-        const mediaPackageHarvestNotificationsTopic = new sns.Topic(this, "MediaPackageHarvestNotifications");
         mediaPackageHarvestNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
         });
-        mediaPackageHarvestNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
-                resources: [mediaPackageHarvestNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
         events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediapackage.amazonaws.com"));
         const mediaPackageHarvestEventRule = new events.Rule(this, "MediaPackageHarvestEventRule", {
             enabled: true,
@@ -172,18 +157,9 @@ export class AwsStack extends cdk.Stack {
         mediaPackageHarvestEventRule.addTarget(new targets.SnsTopic(mediaPackageHarvestNotificationsTopic));
 
         // Transcribe notifications
-        const transcribeNotificationsTopic = new sns.Topic(this, "TranscribeNotifications");
         transcribeNotificationsTopic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("transcribe.amazonaws.com"),
         });
-        transcribeNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [new iam.ArnPrincipal(actionsUser.userArn)],
-                resources: [transcribeNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
 
         const transcribeEventRule = new events.Rule(this, "TranscribeEventRule", {
             enabled: true,
@@ -197,18 +173,6 @@ export class AwsStack extends cdk.Stack {
         transcribeEventRule.addTarget(new targets.CloudWatchLogGroup(transcribeLogGroup));
 
         // Elastic Transcoder notifications
-        const elasticTranscoderNotificationsTopic = new sns.Topic(this, "ElasticTranscoderNotifications");
-        elasticTranscoderNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("elastictranscoder.amazonaws.com"),
-        });
-        elasticTranscoderNotificationsTopic.addToResourcePolicy(
-            new iam.PolicyStatement({
-                actions: ["SNS:Subscribe"],
-                principals: [actionsUser],
-                resources: [elasticTranscoderNotificationsTopic.topicArn],
-                effect: iam.Effect.ALLOW,
-            })
-        );
         elasticTranscoderNotificationsTopic.grantPublish(elasticTranscoderServiceRole);
 
         /* Elemental */
@@ -530,6 +494,44 @@ export class AwsStack extends cdk.Stack {
         topic.grantPublish({
             grantPrincipal: new iam.ServicePrincipal("cloudformation.amazonaws.com"),
         });
+        return topic;
+    }
+
+    /**
+     * @returns an SNS topic for MediaConvert notifications.
+     */
+    private createMediaConvertNotificationTopic(): sns.Topic {
+        return new sns.Topic(this, "TranscodeNotifications");
+    }
+
+    /**
+     * @returns an SNS topic for MediaLive notifications.
+     */
+    private createMediaLiveNotificationTopic(): sns.Topic {
+        return new sns.Topic(this, "MediaLiveNotifications");
+    }
+
+    /**
+     * @returns an SNS topic for MediaPackage notifications.
+     */
+    private createMediaPackageHarvestNotificationTopic(): sns.Topic {
+        return new sns.Topic(this, "MediaPackageHarvestNotifications");
+    }
+
+    /**
+     * @returns an SNS topic for Amazon Transcribe notifications.
+     */
+    private createTranscribeNotificationTopic(): sns.Topic {
+        return new sns.Topic(this, "TranscribeNotifications");
+    }
+
+    /**
+     * @param elasticTranscoderServiceRole a role to be granted permission to publish to the created topic.
+     * @returns an SNS topic for Elastic Transcoder pipeline notifications.
+     */
+    private createElasticTranscoderNotificationTopic(elasticTranscoderServiceRole: iam.IPrincipal): sns.Topic {
+        const topic = new sns.Topic(this, "ElasticTranscoderNotifications");
+        topic.grantPublish(elasticTranscoderServiceRole);
         return topic;
     }
 }

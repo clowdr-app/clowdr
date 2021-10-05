@@ -103,27 +103,7 @@ export class AwsStack extends cdk.Stack {
             elasticTranscoderNotificationsTopic,
         ]);
 
-        // Transcoding notifications
-        mediaConvertNotificationsTopic.grantPublish({
-            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
-        });
-        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
-        const mediaConvertEventRule = new events.Rule(this, "TranscodeEventRule", {
-            enabled: true,
-        });
-        mediaConvertEventRule.addEventPattern({
-            source: ["aws.mediaconvert"],
-            detailType: ["MediaConvert Job State Change"],
-            detail: {
-                userMetadata: {
-                    environment: [props.stackPrefix],
-                },
-            },
-        });
-        mediaConvertEventRule.addTarget(new targets.SnsTopic(mediaConvertNotificationsTopic));
-
-        const transcodeLogGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
-        mediaConvertEventRule.addTarget(new targets.CloudWatchLogGroup(transcodeLogGroup));
+        this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
 
         // MediaLive channel notifications
         mediaLiveNotificationsTopic.grantPublish({
@@ -533,5 +513,27 @@ export class AwsStack extends cdk.Stack {
         const topic = new sns.Topic(this, "ElasticTranscoderNotifications");
         topic.grantPublish(elasticTranscoderServiceRole);
         return topic;
+    }
+
+    private addMediaConvertEventRule(target: sns.ITopic, stackPrefix: string): void {
+        target.grantPublish({
+            grantPrincipal: new iam.ServicePrincipal("events.amazonaws.com"),
+        });
+        events.EventBus.grantAllPutEvents(new iam.ServicePrincipal("mediaconvert.amazonaws.com"));
+        const rule = new events.Rule(this, "TranscodeEventRule", {
+            enabled: true,
+        });
+        rule.addEventPattern({
+            source: ["aws.mediaconvert"],
+            detailType: ["MediaConvert Job State Change"],
+            detail: {
+                userMetadata: {
+                    environment: [stackPrefix],
+                },
+            },
+        });
+        rule.addTarget(new targets.SnsTopic(target));
+        const logGroup = new logs.LogGroup(this, "TranscodeLogGroup", {});
+        rule.addTarget(new targets.CloudWatchLogGroup(logGroup));
     }
 }

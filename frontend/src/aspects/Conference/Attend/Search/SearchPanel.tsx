@@ -183,7 +183,7 @@ export default function SearchPanel({
                             colorScheme="PrimaryActionButton"
                             aria-label="Search"
                             isLoading={eventsResponse.loading || itemsResponse.loading || peopleResponse.loading}
-                            isDisabled={search.length < 3 || true}
+                            isDisabled={search.length < 3}
                             onClick={() => {
                                 switch (searchType) {
                                     case "events":

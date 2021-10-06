@@ -45,6 +45,7 @@ export default function useVisualLayout(
                                     }
                                     return 0;
                                 },
+                                (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
                                 (x, y) => x.joinedAt - y.joinedAt,
                             ],
                             viewports.filter((vp) => vp.type !== "screen")
@@ -61,7 +62,13 @@ export default function useVisualLayout(
                             ),
                         };
                     } else {
-                        const priorityViewports = R.sortBy((x) => x.joinedAt, viewports).slice(0, 16);
+                        const priorityViewports = R.sortWith(
+                            [
+                                (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
+                                (x, y) => x.joinedAt - y.joinedAt,
+                            ],
+                            viewports
+                        ).slice(0, 16);
                         result = {
                             type: VisualLayoutType.BestFit_NoScreenshare,
                             viewports: priorityViewports,

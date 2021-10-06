@@ -30,7 +30,7 @@ function ParticipantsProvider_Polling({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: 30000,
+        pollInterval: 1200000,
         fetchPolicy: "network-only",
     });
 

@@ -1,6 +1,6 @@
 import { Divider, Heading, List, ListItem, Spinner, Text, useDisclosure } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ProfileModal from "../../../../Conference/Attend/Registrant/ProfileModal";
 import { RegistrantIdSpec, useRegistrant, useRegistrants } from "../../../../Conference/RegistrantsContext";
@@ -12,7 +12,10 @@ import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { RegistrantsList } from "./RegistrantsList";
 
 function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
+    const [totalUserIds, setTotalUserIds] = useState<number>(0);
     const [userIds, setUserIds] = useState<RegistrantIdSpec[]>([]);
+    const updateTimeoutId = useRef<number | undefined>(undefined);
+    const totalUserIdsRef = useRef<number>(0);
     const presence = usePresenceState();
     const mConference = useMaybeConference();
     const location = useLocation();
@@ -28,10 +31,37 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
     );
 
     useEffect(() => {
-        return presence.observePage(location.pathname, mConference?.slug, (ids) => {
-            setUserIds([...ids.values()].map((x) => ({ user: x })));
+        const unobserve = presence.observePage(location.pathname, mConference?.slug, (ids) => {
+            setTotalUserIds(ids.size);
+
+            if (!updateTimeoutId.current) {
+                const update = () => {
+                    const reducedIds: string[] = [...ids];
+                    while (reducedIds.length > 70) {
+                        const index = Math.round(Math.random() * (reducedIds.length - 1));
+                        reducedIds.splice(index, 1);
+                    }
+                    setUserIds(reducedIds.map((x) => ({ user: x })));
+                    totalUserIdsRef.current = ids.size;
+                    updateTimeoutId.current = undefined;
+                };
+                if (totalUserIdsRef.current === 0) {
+                    update();
+                } else {
+                    updateTimeoutId.current = setTimeout(update as TimerHandler, 60000);
+                }
+            }
         });
-    }, [location.pathname, mConference?.slug, presence]);
+
+        return () => {
+            unobserve();
+
+            if (updateTimeoutId.current) {
+                clearTimeout(updateTimeoutId.current);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname, mConference?.slug, presence, updateTimeoutId, totalUserIdsRef]);
 
     const registrants = useRegistrants(userIds);
     const sortedRegistrants = useMemo(() => R.sortBy((x) => x.displayName, registrants), [registrants]);
@@ -39,7 +69,7 @@ function PresencePanel_WithoutConnectedParticipants(): JSX.Element {
     return (
         <>
             <Text fontStyle="italic" fontSize="sm" mb={2}>
-                {sortedRegistrants.length} users with at least one tab open on this page.
+                {totalUserIds} users with at least one tab open on this page.
             </Text>
             <RegistrantsList
                 searchedRegistrants={sortedRegistrants as Registrant[]}

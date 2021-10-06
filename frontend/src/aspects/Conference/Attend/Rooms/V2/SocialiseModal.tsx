@@ -15,10 +15,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useContext, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
 import FAIcon from "../../../../Icons/FAIcon";
+import { EnableRoomParticipantsPollingContext } from "../../../../Room/EnableRoomParticipantsPollingContext";
 import { ShuffleWaiting } from "../../../../ShuffleRooms/WaitingPage";
 import { useConference } from "../../../useConference";
 import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
@@ -60,6 +61,7 @@ export function SocialiseModalProvider({ children }: React.PropsWithChildren<any
         (x) => x,
         (x) => x as SocialiseModalTab
     );
+    const { setPaused } = useContext(EnableRoomParticipantsPollingContext);
 
     const doOnOpen = useCallback(
         (tab?: SocialiseModalTab) => {
@@ -67,18 +69,24 @@ export function SocialiseModalProvider({ children }: React.PropsWithChildren<any
             if (tab) {
                 setSelectedTab(tab);
             }
+            setPaused(false);
         },
-        [onOpen, setSelectedTab]
+        [onOpen, setPaused, setSelectedTab]
     );
+
+    const doOnClose = useCallback(() => {
+        setPaused(true);
+        onClose();
+    }, [setPaused, onClose]);
 
     const ctx: SocialiseModalContext = useMemo(
         () => ({
             finalFocusRef: socialiseButtonRef,
             isOpen,
             onOpen: doOnOpen,
-            onClose,
+            onClose: doOnClose,
         }),
-        [doOnOpen, isOpen, onClose]
+        [doOnOpen, isOpen, doOnClose]
     );
 
     const maybeRegistrant = useMaybeCurrentRegistrant();
@@ -89,7 +97,7 @@ export function SocialiseModalProvider({ children }: React.PropsWithChildren<any
             {maybeRegistrant ? (
                 <SocialiseModal
                     isOpen={isOpen}
-                    onClose={onClose}
+                    onClose={doOnClose}
                     finalFocusRef={socialiseButtonRef}
                     selectedTab={selectedTab}
                     setSelectedTab={setSelectedTab}

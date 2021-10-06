@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
-import React from "react";
+import React, { PropsWithChildren, useContext } from "react";
 import { useGetAllRoomParticipantsQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
+import { EnableRoomParticipantsPollingContext } from "./EnableRoomParticipantsPollingContext";
 import { RoomParticipantsContext } from "./useRoomParticipants";
 
 gql`
@@ -20,17 +21,14 @@ gql`
     }
 `;
 
-function ParticipantsProvider_Polling({
-    children,
-}: {
-    children: string | React.ReactNode | React.ReactNodeArray;
-}): JSX.Element {
+function ParticipantsProvider_Polling({ children }: PropsWithChildren<Record<string, unknown>>): JSX.Element {
     const conference = useConference();
+    const { paused } = useContext(EnableRoomParticipantsPollingContext);
     const { loading, error, data } = useGetAllRoomParticipantsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: 1200000,
+        pollInterval: paused ? undefined : 10000,
         fetchPolicy: "network-only",
     });
 
@@ -39,11 +37,7 @@ function ParticipantsProvider_Polling({
     return <RoomParticipantsContext.Provider value={value}>{children}</RoomParticipantsContext.Provider>;
 }
 
-export default function ParticipantsProvider({
-    children,
-}: {
-    children: string | React.ReactNode | React.ReactNodeArray;
-}): JSX.Element {
+export default function ParticipantsProvider({ children }: PropsWithChildren<Record<string, unknown>>): JSX.Element {
     const mRegistrant = useMaybeCurrentRegistrant();
     if (!mRegistrant) {
         return <RoomParticipantsContext.Provider value={[]}>{children}</RoomParticipantsContext.Provider>;

@@ -22,6 +22,7 @@ import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import { LiveEventsProvider } from "./aspects/LiveEvents/LiveEvents";
 import { RightSidebarCurrentTabProvider } from "./aspects/Menu/V2/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
+import { EnableRoomParticipantsPollingProvider } from "./aspects/Room/EnableRoomParticipantsPollingContext";
 import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
@@ -87,22 +88,24 @@ function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
                                         <RaiseHandProvider>
                                             <AttendeesContextProvider>
                                                 <LiveEventsProvider>
-                                                    <RoomParticipantsProvider>
-                                                        <ScheduleModalProvider>
-                                                            <LiveProgramRoomsModalProvider>
-                                                                <StarredEventsModalProvider>
-                                                                    <MyBackstagesModalProvider>
-                                                                        <SocialiseModalProvider>
-                                                                            {/* <ShuffleRoomsQueueMonitor /> */}
-                                                                            <SharedRoomContextProvider>
-                                                                                {page}
-                                                                            </SharedRoomContextProvider>
-                                                                        </SocialiseModalProvider>
-                                                                    </MyBackstagesModalProvider>
-                                                                </StarredEventsModalProvider>
-                                                            </LiveProgramRoomsModalProvider>
-                                                        </ScheduleModalProvider>
-                                                    </RoomParticipantsProvider>
+                                                    <EnableRoomParticipantsPollingProvider>
+                                                        <RoomParticipantsProvider>
+                                                            <ScheduleModalProvider>
+                                                                <LiveProgramRoomsModalProvider>
+                                                                    <StarredEventsModalProvider>
+                                                                        <MyBackstagesModalProvider>
+                                                                            <SocialiseModalProvider>
+                                                                                {/* <ShuffleRoomsQueueMonitor /> */}
+                                                                                <SharedRoomContextProvider>
+                                                                                    {page}
+                                                                                </SharedRoomContextProvider>
+                                                                            </SocialiseModalProvider>
+                                                                        </MyBackstagesModalProvider>
+                                                                    </StarredEventsModalProvider>
+                                                                </LiveProgramRoomsModalProvider>
+                                                            </ScheduleModalProvider>
+                                                        </RoomParticipantsProvider>
+                                                    </EnableRoomParticipantsPollingProvider>
                                                 </LiveEventsProvider>
                                             </AttendeesContextProvider>
                                         </RaiseHandProvider>

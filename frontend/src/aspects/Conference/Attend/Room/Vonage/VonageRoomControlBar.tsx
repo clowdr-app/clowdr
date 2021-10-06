@@ -28,7 +28,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { DevicesProps, devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
+import { devicesToFriendlyName } from "../VideoChat/PermissionInstructions";
+import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import LayoutChooser from "./Components/LayoutChooser";
 import PlayVideoMenuButton from "./Components/PlayVideoMenu";
 import DeviceChooserModal from "./DeviceChooserModal";
@@ -201,7 +202,7 @@ export function VonageRoomControlBar({
                             try {
                                 await navigator.mediaDevices.getUserMedia({ video });
                                 gotVideoPermission = true;
-                            } catch (err) {
+                            } catch (err: any) {
                                 // if you try to get user media while mic/cam are active, you run into an error
                                 const msg = err.toString();
                                 if (err.name === "NotFoundError") {
@@ -215,7 +216,7 @@ export function VonageRoomControlBar({
                             try {
                                 await navigator.mediaDevices.getUserMedia({ audio });
                                 gotAudioPermission = true;
-                            } catch (err) {
+                            } catch (err: any) {
                                 // if you try to get user media while mic/cam are active, you run into an error
                                 const msg = err.toString();
                                 if (err.name === "NotFoundError") {

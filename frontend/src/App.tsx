@@ -9,6 +9,7 @@ import AppPageV2 from "./aspects/App/AppPageV2";
 import { AppSettingsProvider } from "./aspects/App/AppSettingsProvider";
 import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/MyBackstages";
+import { PermissionInstructionsProvider } from "./aspects/Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModal";
 import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
@@ -96,9 +97,11 @@ function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
                                                                         <MyBackstagesModalProvider>
                                                                             <SocialiseModalProvider>
                                                                                 {/* <ShuffleRoomsQueueMonitor /> */}
-                                                                                <SharedRoomContextProvider>
-                                                                                    {page}
-                                                                                </SharedRoomContextProvider>
+                                                                                <PermissionInstructionsProvider>
+                                                                                    <SharedRoomContextProvider>
+                                                                                        {page}
+                                                                                    </SharedRoomContextProvider>
+                                                                                </PermissionInstructionsProvider>
                                                                             </SocialiseModalProvider>
                                                                         </MyBackstagesModalProvider>
                                                                     </StarredEventsModalProvider>

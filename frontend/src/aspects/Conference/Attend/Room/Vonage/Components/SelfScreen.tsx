@@ -1,6 +1,7 @@
 import { useToast } from "@chakra-ui/react";
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import type { VonageRoomState } from "../../../../../Vonage/useVonageRoom";
+import { PermissionInstructionsContext } from "../../VideoChat/PermissionInstructionsContext";
 import CameraContainer from "../Components/CameraContainer";
 import { CameraViewport } from "../Components/CameraViewport";
 import type { VonageGlobalState } from "../VonageGlobalState";
@@ -19,6 +20,7 @@ export default function SelfScreenComponent({
     screen: OT.Publisher | null;
 }): JSX.Element {
     const toast = useToast();
+    const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 
     const screenPublishContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -27,18 +29,15 @@ export default function SelfScreenComponent({
                 if (state.screenShareIntendedEnabled && !screen) {
                     try {
                         await vonage.publishScreen(screenPublishContainerRef.current as HTMLElement);
-                    } catch (e) {
-                        console.error("Failed to publish screen", e);
-                        toast({
-                            status: "error",
-                            title: "Failed to share screen",
-                        });
+                    } catch (err) {
+                        console.error("Failed to publish screen", { err });
+                        onPermissionsProblem({ screen: true }, "Failed to publish screen");
                     }
                 } else if (!state.screenShareIntendedEnabled && screen) {
                     try {
                         await vonage.unpublishScreen();
-                    } catch (e) {
-                        console.error("Failed to unpublish screen", e);
+                    } catch (err) {
+                        console.error("Failed to unpublish screen", { err });
                         toast({
                             status: "error",
                             title: "Failed to unshare screen",
@@ -48,7 +47,7 @@ export default function SelfScreenComponent({
             }
         }
         fn();
-    }, [connected, state.screenShareIntendedEnabled, screen, toast, vonage]);
+    }, [connected, state.screenShareIntendedEnabled, screen, toast, vonage, onPermissionsProblem]);
 
     return (
         <CameraViewport registrantId={registrantId} enableVideo={true}>

@@ -4,7 +4,7 @@ import { detect } from "detect-browser";
 import * as R from "ramda";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
 import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
-import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
+import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { useConference } from "../Conference/useConference";
 import { useRestorableState } from "../Generic/useRestorableState";
 

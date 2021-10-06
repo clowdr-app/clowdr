@@ -1,6 +1,6 @@
 import { gql, useApolloClient } from "@apollo/client";
 import { Box, Flex } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { validate } from "uuid";
@@ -17,7 +17,7 @@ import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } fro
 import { RegistrantIdSpec, useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
-import type { DevicesProps } from "../VideoChat/PermissionInstructions";
+import { DevicesProps, PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
 import { CameraViewport } from "./Components/CameraViewport";
 import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
@@ -68,7 +68,6 @@ export function VonageRoom({
     requireMicrophoneOrCamera = false,
     completeJoinRef,
     onLeave,
-    onPermissionsProblem,
     canControlRecording,
 }: {
     eventId: string | null;
@@ -81,7 +80,6 @@ export function VonageRoom({
     requireMicrophoneOrCamera?: boolean;
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onLeave?: () => void;
-    onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
     layout?: VonageLayout;
 }): JSX.Element {
@@ -98,6 +96,8 @@ export function VonageRoom({
 
     const [deleteEventParticipant] = useDeleteEventParticipantMutation();
     const apolloClient = useApolloClient();
+
+    const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 
     return (
         <VonageRoomStateProvider onPermissionsProblem={onPermissionsProblem}>

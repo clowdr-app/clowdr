@@ -2,14 +2,10 @@ import { Heading, Image, Link, List, ListItem, Text } from "@chakra-ui/react";
 import { detect } from "detect-browser";
 import React, { useMemo } from "react";
 import chromeImage from "./images/chrome-permissions.png";
+import chromeScreenShareImage from "./images/chrome-screenshare.png";
 import firefoxImage from "./images/firefox-permissions.png";
 import safariImage from "./images/safari-permissions.png";
-
-export type DevicesProps = {
-    camera?: boolean;
-    microphone?: boolean;
-    screen?: boolean;
-};
+import type { DevicesProps } from "./PermissionInstructionsContext";
 
 export function devicesToFriendlyName(devices: DevicesProps, connective = "or"): string {
     const selectedDevices = Object.entries(devices)
@@ -38,6 +34,8 @@ export function PermissionInstructions({ ...props }: DevicesProps): JSX.Element 
                 return <PermissionInstructionsChrome {...props} />;
             case "firefox":
                 return <PermissionInstructionsFirefox {...props} />;
+            case "safari":
+                return <PermissionInstructionsSafari {...props} />;
             default:
                 return <PermissionInstructionsOther {...props} />;
         }
@@ -66,24 +64,47 @@ const imageProps = { mx: "5%", my: 4, w: "auto", maxW: "90%", boxShadow: "lg", r
 export function PermissionInstructionsChrome(devices: DevicesProps): JSX.Element {
     return (
         <>
-            <Text>
-                It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
-                Update your settings by clicking the icon in the address bar and setting the Camera and Microphone
-                permissions to Allow.
-            </Text>
-            <Image
-                {...imageProps}
-                src={chromeImage}
-                maxH="50vh"
-                alt="Use the permissions controls in the left end of the Chrome address bar to manage camera and microphone permissions."
-            />
-            <Text>
-                If you need more help, see the{" "}
-                <Link isExternal href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop">
-                    official Google Chrome instructions
-                </Link>
-                .
-            </Text>
+            {devices.camera || devices.microphone ? (
+                <>
+                    <Text>
+                        It seems that your web browser is not allowing Midspace to access the{" "}
+                        {devicesToFriendlyName(devices)}. Update your settings by clicking the icon in the address bar
+                        and setting the Camera and Microphone permissions to Allow.
+                    </Text>
+                    <Image
+                        {...imageProps}
+                        src={chromeImage}
+                        maxH="50vh"
+                        alt="Use the permissions controls in the left end of the Chrome address bar to manage camera and microphone permissions."
+                    />
+                    <Text>
+                        If you need more help, see the{" "}
+                        <Link
+                            isExternal
+                            href="https://support.google.com/chrome/answer/2693767?co=GENIE.Platform%3DDesktop"
+                        >
+                            official Google Chrome instructions
+                        </Link>
+                        .
+                    </Text>
+                </>
+            ) : undefined}
+            {devices.screen ? (
+                <>
+                    <Text>
+                        The screen could not be shared. Did you click <em>Cancel</em>?
+                    </Text>
+                    <Text>
+                        To share, choose a screen, window or tab and click the <em>Share</em> button.
+                    </Text>
+                    <Image
+                        {...imageProps}
+                        src={chromeScreenShareImage}
+                        maxH="50vh"
+                        alt="The Chrome 'Choose what to share' dialog, showing the list of tabs that can be shared."
+                    />
+                </>
+            ) : undefined}
         </>
     );
 }
@@ -117,14 +138,14 @@ export function PermissionInstructionsFirefox(devices: DevicesProps): JSX.Elemen
     );
 }
 
-export function PemissionInstructionsSafari(devices: DevicesProps): JSX.Element {
+export function PermissionInstructionsSafari(devices: DevicesProps): JSX.Element {
     return (
         <>
             <Text>
                 It seems that your web browser is not allowing Midspace to access the {devicesToFriendlyName(devices)}.
                 You may need to tell Safari to allow this. Open <em>Safari &rarr; Preferences...</em> and go to the{" "}
-                <em>Website</em> tab. Choose &lsquo;Allow&rsquo; for {window.location.host ?? "Midspace"} for{" "}
-                {devicesToFriendlyName(devices, "and")}.
+                <em>Website</em> tab. Choose to &lsquo;Allow&rsquo; access to the{" "}
+                {devicesToFriendlyName(devices, "and")} on <em>{window.location.host ?? "Midspace"}</em>.
             </Text>
             <Image
                 {...imageProps}
@@ -157,7 +178,11 @@ function PermissionInstructionsMacOs(devices: DevicesProps): JSX.Element {
             </Heading>
             <Text>
                 macOS will not allow your browser to access the {devicesToFriendlyName(devices)} unless you have given
-                permission to do so. You may find the following helpful:
+                permission to do so.{" "}
+                {devices.screen
+                    ? "Permissions controls for screen recording were introduced in macOS Catalina (10.15). "
+                    : ""}
+                You may find the following helpful:
             </Text>
             <List>
                 <ListItem>

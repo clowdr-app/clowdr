@@ -64,7 +64,7 @@ function ItemTile({
     const bgColour_IsDark = useMemo(() => bgColour.isDark(), [bgColour]);
     const textColour = bgColour_IsDark ? "Exhibition.textColor-dark" : "Exhibition.textColor-light";
 
-    const primaryItem: ElementDataFragment | undefined = useMemo(() => {
+    const primaryItems: ElementDataFragment[] = useMemo(() => {
         const sortOrder = [
             Content_ElementType_Enum.VideoBroadcast,
             Content_ElementType_Enum.VideoFile,
@@ -74,12 +74,14 @@ function ItemTile({
             Content_ElementType_Enum.PosterUrl,
             Content_ElementType_Enum.ImageFile,
             Content_ElementType_Enum.ImageUrl,
-            Content_ElementType_Enum.Abstract,
-            Content_ElementType_Enum.Text,
         ];
 
         return [...item.elements]
             .filter((x) => {
+                if (!sortOrder.includes(x.typeName)) {
+                    return false;
+                }
+
                 const dataBlob = x.data as ElementDataBlob;
                 if (dataBlob.length) {
                     const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
@@ -100,7 +102,39 @@ function ItemTile({
                 }
                 return false;
             })
-            .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName))[0];
+            .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName));
+    }, [item.elements]);
+
+    const secondaryItems: ElementDataFragment[] = useMemo(() => {
+        const sortOrder = [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text];
+
+        return [...item.elements]
+            .filter((x) => {
+                if (!sortOrder.includes(x.typeName)) {
+                    return false;
+                }
+
+                const dataBlob = x.data as ElementDataBlob;
+                if (dataBlob.length) {
+                    const latestVersion: ElementBlob = dataBlob[dataBlob.length - 1].data;
+                    switch (latestVersion.baseType) {
+                        case ElementBaseType.Component:
+                            return true;
+                        case ElementBaseType.File:
+                            return !!latestVersion.s3Url?.length;
+                        case ElementBaseType.Link:
+                            return !!latestVersion.text?.length && !!latestVersion.url?.length;
+                        case ElementBaseType.Text:
+                            return !!latestVersion.text?.length;
+                        case ElementBaseType.URL:
+                            return !!latestVersion.url?.length;
+                        case ElementBaseType.Video:
+                            return !!latestVersion.s3Url?.length;
+                    }
+                }
+                return false;
+            })
+            .sort((x, y) => sortOrder.indexOf(x.typeName) - sortOrder.indexOf(y.typeName));
     }, [item.elements]);
 
     const now = useRealTime(30000);
@@ -150,7 +184,18 @@ function ItemTile({
                     </LinkButton>
                 ) : undefined}
             </HStack>
-            {primaryItem && <Element element={primaryItem} />}
+            {primaryItems.length > 0 ? <Element element={primaryItems[0]} /> : undefined}
+            {primaryItems.length > 1 ? (
+                <LinkButton to={itemUrl} my={4} colorScheme="PrimaryActionButton" linkProps={{ alignSelf: "center" }}>
+                    <FAIcon iconStyle="s" icon="video" mr={2} />
+                    View {primaryItems.length - 1} more videos and images
+                </LinkButton>
+            ) : undefined}
+            <Box mt={primaryItems.length === 1 ? 4 : undefined}>
+                {secondaryItems.map((item) => (
+                    <Element key={item.id} element={item} />
+                ))}
+            </Box>
             <HStack
                 my={4}
                 spacing={4}

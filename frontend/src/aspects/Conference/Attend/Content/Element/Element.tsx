@@ -178,6 +178,9 @@ function ElementInner({
                             colorScheme="PrimaryActionButton"
                             to={latestVersion.data.url}
                             linkProps={{ mx: "auto" }}
+                            whiteSpace="normal"
+                            h="auto"
+                            py={2}
                         >
                             <FAIcon iconStyle="s" icon="link" mr={2} />
                             {latestVersion.data.text}
@@ -205,7 +208,14 @@ function ElementInner({
                 );
             case Content_ElementType_Enum.PaperLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                    <ExternalLinkButton
+                        to={latestVersion.data.url}
+                        isExternal={true}
+                        colorScheme="PrimaryActionButton"
+                        whiteSpace="normal"
+                        h="auto"
+                        py={2}
+                    >
                         <FAIcon iconStyle="s" icon="link" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>
@@ -276,7 +286,14 @@ function ElementInner({
 
             case Content_ElementType_Enum.VideoLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                    <ExternalLinkButton
+                        to={latestVersion.data.url}
+                        isExternal={true}
+                        colorScheme="PrimaryActionButton"
+                        whiteSpace="normal"
+                        h="auto"
+                        py={2}
+                    >
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>
@@ -284,7 +301,14 @@ function ElementInner({
 
             case Content_ElementType_Enum.AudioLink:
                 return (
-                    <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                    <ExternalLinkButton
+                        to={latestVersion.data.url}
+                        isExternal={true}
+                        colorScheme="PrimaryActionButton"
+                        whiteSpace="normal"
+                        h="auto"
+                        py={2}
+                    >
                         <FAIcon iconStyle="s" icon="volume-up" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>

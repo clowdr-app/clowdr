@@ -18,5 +18,11 @@
         idle_timeout: 180
         max_connections: 225
         retries: 3
+    - database_url:
+        from_env: POSTGRES_REPLICA_2_DATABASE_URL
+      pool_settings:
+        idle_timeout: 180
+        max_connections: 225
+        retries: 3
   tables: "!include default/tables/tables.yaml"
   functions: "!include default/functions/functions.yaml"

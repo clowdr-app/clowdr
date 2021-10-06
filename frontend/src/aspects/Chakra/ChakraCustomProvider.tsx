@@ -68,6 +68,7 @@ const colors = extendTheme({
 }).colors;
 
 const baseThemeExtensions = {
+    colors: applyComponentColorTheme(colors, componentMap),
     radii: {
         none: "0",
         sm: "0",

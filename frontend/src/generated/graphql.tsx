@@ -3097,17 +3097,6 @@ export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
   readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Inc_Input = {
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Insert_Input = {
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ElementTotalViews_Max_Fields = {
   readonly __typename?: 'analytics_mat_ElementTotalViews_max_fields';
@@ -3120,15 +3109,6 @@ export type Analytics_Mat_ElementTotalViews_Min_Fields = {
   readonly __typename?: 'analytics_mat_ElementTotalViews_min_fields';
   readonly elementId?: Maybe<Scalars['uuid']>;
   readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_ElementTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_ElementTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
@@ -3144,12 +3124,6 @@ export enum Analytics_Mat_ElementTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Set_Input = {
-  readonly elementId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
@@ -3245,17 +3219,6 @@ export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
   readonly totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Inc_Input = {
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Insert_Input = {
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ItemTotalViews_Max_Fields = {
   readonly __typename?: 'analytics_mat_ItemTotalViews_max_fields';
@@ -3268,15 +3231,6 @@ export type Analytics_Mat_ItemTotalViews_Min_Fields = {
   readonly __typename?: 'analytics_mat_ItemTotalViews_min_fields';
   readonly itemId?: Maybe<Scalars['uuid']>;
   readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_ItemTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_ItemTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
@@ -3292,12 +3246,6 @@ export enum Analytics_Mat_ItemTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Set_Input = {
-  readonly itemId?: Maybe<Scalars['uuid']>;
-  readonly totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
@@ -3378,11 +3326,6 @@ export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Append_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-};
-
 /** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
 export type Analytics_Mat_RoomPresence_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Analytics_Mat_RoomPresence_Bool_Exp>>;
@@ -3392,29 +3335,6 @@ export type Analytics_Mat_RoomPresence_Bool_Exp = {
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly name?: Maybe<String_Comparison_Exp>;
-};
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Analytics_Mat_RoomPresence_Delete_At_Path_Input = {
-  readonly count?: Maybe<ReadonlyArray<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Analytics_Mat_RoomPresence_Delete_Elem_Input = {
-  readonly count?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Analytics_Mat_RoomPresence_Delete_Key_Input = {
-  readonly count?: Maybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Insert_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -3433,26 +3353,12 @@ export type Analytics_Mat_RoomPresence_Min_Fields = {
   readonly name?: Maybe<Scalars['String']>;
 };
 
-/** response of any mutation on the table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Mutation_Response = {
-  readonly __typename?: 'analytics_mat_RoomPresence_mutation_response';
-  /** number of rows affected by the mutation */
-  readonly affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  readonly returning: ReadonlyArray<Analytics_Mat_RoomPresence>;
-};
-
 /** Ordering options when selecting data from "analytics.mat_RoomPresence". */
 export type Analytics_Mat_RoomPresence_Order_By = {
   readonly count?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Prepend_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "analytics.mat_RoomPresence" */
@@ -3466,14 +3372,6 @@ export enum Analytics_Mat_RoomPresence_Select_Column {
   /** column name */
   Name = 'name'
 }
-
-/** input type for updating data in table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Set_Input = {
-  readonly count?: Maybe<Scalars['jsonb']>;
-  readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly id?: Maybe<Scalars['uuid']>;
-  readonly name?: Maybe<Scalars['String']>;
-};
 
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
@@ -10875,10 +10773,12 @@ export type Content_Element_Order_By = {
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly data?: Maybe<Order_By>;
+  readonly hasBeenSubmitted?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly isHidden?: Maybe<Order_By>;
   readonly item?: Maybe<Content_Item_Order_By>;
   readonly itemId?: Maybe<Order_By>;
+  readonly itemTitle?: Maybe<Order_By>;
   readonly layoutData?: Maybe<Order_By>;
   readonly name?: Maybe<Order_By>;
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -10889,6 +10789,7 @@ export type Content_Element_Order_By = {
   readonly type?: Maybe<Content_ElementType_Order_By>;
   readonly typeName?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadersCount?: Maybe<Order_By>;
   readonly uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
   readonly uploadsRemaining?: Maybe<Order_By>;
   readonly youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
@@ -12295,6 +12196,7 @@ export type Content_ItemProgramPerson_On_Conflict = {
 export type Content_ItemProgramPerson_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
+  readonly hasSubmissionRequestBeenSent?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly item?: Maybe<Content_Item_Order_By>;
   readonly itemId?: Maybe<Order_By>;
@@ -12938,6 +12840,7 @@ export type Content_Item_Order_By = {
   readonly descriptionOfExhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
   readonly elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
   readonly events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+  readonly hasUnsubmittedElements?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
   readonly itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -15652,12 +15555,6 @@ export type Mutation_Root = {
   readonly delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** delete single row from the table: "analytics.RoomStats" */
   readonly delete_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** delete data from the table: "analytics.mat_ElementTotalViews" */
-  readonly delete_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_ItemTotalViews" */
-  readonly delete_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_RoomPresence" */
-  readonly delete_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** delete data from the table: "chat.Chat" */
   readonly delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -16031,18 +15928,6 @@ export type Mutation_Root = {
   readonly insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.RoomStats" */
   readonly insert_analytics_RoomStats_one?: Maybe<Analytics_RoomStats>;
-  /** insert data into the table: "analytics.mat_ElementTotalViews" */
-  readonly insert_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ElementTotalViews" */
-  readonly insert_analytics_mat_ElementTotalViews_one?: Maybe<Analytics_Mat_ElementTotalViews>;
-  /** insert data into the table: "analytics.mat_ItemTotalViews" */
-  readonly insert_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ItemTotalViews" */
-  readonly insert_analytics_mat_ItemTotalViews_one?: Maybe<Analytics_Mat_ItemTotalViews>;
-  /** insert data into the table: "analytics.mat_RoomPresence" */
-  readonly insert_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_RoomPresence" */
-  readonly insert_analytics_mat_RoomPresence_one?: Maybe<Analytics_Mat_RoomPresence>;
   /** insert data into the table: "chat.Chat" */
   readonly insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -16440,12 +16325,6 @@ export type Mutation_Root = {
   readonly update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** update single row of the table: "analytics.RoomStats" */
   readonly update_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** update data of the table: "analytics.mat_ElementTotalViews" */
-  readonly update_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_ItemTotalViews" */
-  readonly update_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_RoomPresence" */
-  readonly update_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** update data of the table: "chat.Chat" */
   readonly update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -16888,24 +16767,6 @@ export type Mutation_RootDelete_Analytics_RoomStatsArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Analytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ElementTotalViewsArgs = {
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ItemTotalViewsArgs = {
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_RoomPresenceArgs = {
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -18047,42 +17908,6 @@ export type Mutation_RootInsert_Analytics_RoomStatsArgs = {
 export type Mutation_RootInsert_Analytics_RoomStats_OneArgs = {
   object: Analytics_RoomStats_Insert_Input;
   on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViewsArgs = {
-  objects: ReadonlyArray<Analytics_Mat_ElementTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViews_OneArgs = {
-  object: Analytics_Mat_ElementTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViewsArgs = {
-  objects: ReadonlyArray<Analytics_Mat_ItemTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViews_OneArgs = {
-  object: Analytics_Mat_ItemTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresenceArgs = {
-  objects: ReadonlyArray<Analytics_Mat_RoomPresence_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresence_OneArgs = {
-  object: Analytics_Mat_RoomPresence_Insert_Input;
 };
 
 
@@ -19514,34 +19339,6 @@ export type Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs = {
   _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
   _set?: Maybe<Analytics_RoomStats_Set_Input>;
   pk_columns: Analytics_RoomStats_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ElementTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ElementTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ElementTotalViews_Set_Input>;
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ItemTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ItemTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ItemTotalViews_Set_Input>;
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_RoomPresenceArgs = {
-  _append?: Maybe<Analytics_Mat_RoomPresence_Append_Input>;
-  _delete_at_path?: Maybe<Analytics_Mat_RoomPresence_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Analytics_Mat_RoomPresence_Delete_Elem_Input>;
-  _delete_key?: Maybe<Analytics_Mat_RoomPresence_Delete_Key_Input>;
-  _prepend?: Maybe<Analytics_Mat_RoomPresence_Prepend_Input>;
-  _set?: Maybe<Analytics_Mat_RoomPresence_Set_Input>;
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -25838,6 +25635,7 @@ export type Registrant_Invitation_Order_By = {
   readonly confirmationCode?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+  readonly hash?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly inviteCode?: Maybe<Order_By>;
   readonly invitedEmailAddress?: Maybe<Order_By>;
@@ -26708,6 +26506,7 @@ export type Registrant_Registrant_Order_By = {
   readonly groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
+  readonly inviteSent?: Maybe<Order_By>;
   readonly profile?: Maybe<Registrant_Profile_Order_By>;
   readonly programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
   readonly roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -28919,6 +28718,7 @@ export type Room_Room_Order_By = {
   readonly currentModeName?: Maybe<Order_By>;
   readonly events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly isProgramRoom?: Maybe<Order_By>;
   readonly livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
   readonly managementMode?: Maybe<Room_ManagementMode_Order_By>;
   readonly managementModeName?: Maybe<Order_By>;
@@ -39955,9 +39755,9 @@ export type RoomTile_GetRoomQueryVariables = Exact<{
 }>;
 
 
-export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
+export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
 
-export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
+export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
 
 export type RoomTile_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
@@ -42472,14 +42272,6 @@ export const RoomTile_RoomFragmentDoc = gql`
   originatingItem {
     id
     title
-    itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
-      id
-      roleName
-      person {
-        id
-        registrantId
-      }
-    }
   }
   originatingEventId
   events(where: {id: {_eq: $eventId}}) @include(if: $withEvent) {

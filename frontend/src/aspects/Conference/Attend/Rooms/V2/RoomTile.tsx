@@ -23,14 +23,6 @@ gql`
         originatingItem {
             id
             title
-            itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
-                id
-                roleName
-                person {
-                    id
-                    registrantId
-                }
-            }
         }
         originatingEventId
         events(where: { id: { _eq: $eventId } }) @include(if: $withEvent) {

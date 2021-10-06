@@ -18,13 +18,11 @@ gql`
     fragment RoomTile_Room on room_Room {
         id
         name
-        priority
         managementModeName
         originatingItem {
             id
             title
         }
-        originatingEventId
         events(where: { id: { _eq: $eventId } }) @include(if: $withEvent) {
             ...RoomTile_Event
         }

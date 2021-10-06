@@ -39755,9 +39755,9 @@ export type RoomTile_GetRoomQueryVariables = Exact<{
 }>;
 
 
-export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
+export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
 
-export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingEventId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
+export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
 
 export type RoomTile_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
@@ -42267,13 +42267,11 @@ export const RoomTile_RoomFragmentDoc = gql`
     fragment RoomTile_Room on room_Room {
   id
   name
-  priority
   managementModeName
   originatingItem {
     id
     title
   }
-  originatingEventId
   events(where: {id: {_eq: $eventId}}) @include(if: $withEvent) {
     ...RoomTile_Event
   }

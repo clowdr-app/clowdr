@@ -28,7 +28,7 @@ function ParticipantsProvider_Polling({ children }: PropsWithChildren<Record<str
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: paused ? undefined : 60000,
+        pollInterval: paused ? 0 : 60000,
         fetchPolicy: "network-only",
     });
 

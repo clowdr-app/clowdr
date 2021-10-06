@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
-import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack } from "@chakra-ui/react";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import {
@@ -12,6 +13,7 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
 import { AuthorList } from "./AuthorList";
@@ -141,6 +143,13 @@ export function ItemElements({
     const zoomDetailsEls = useMemo(() => {
         return itemData.elements
             .filter((element) => element.typeName === Content_ElementType_Enum.Zoom)
+            .sort((x, y) =>
+                maybeCompare(
+                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (a, b) => a - b
+                )
+            )
             .map((item) => {
                 return <Element key={item.id} element={item} />;
             });
@@ -154,6 +163,13 @@ export function ItemElements({
                     Content_ElementType_Enum.PaperLink,
                     Content_ElementType_Enum.PaperFile,
                 ].includes(element.typeName)
+            )
+            .sort((x, y) =>
+                maybeCompare(
+                    (x.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (y.layoutData as LayoutDataBlob | undefined)?.priority,
+                    (a, b) => a - b
+                )
             )
             .map((item) => {
                 return <Element key={item.id} element={item} />;
@@ -227,17 +243,17 @@ export function ItemElements({
             )}
             {children}
             <AuthorList programPeopleData={itemData.itemPeople ?? []} />
-            <HStack
+            <VStack
                 alignItems="flex-start"
                 flexWrap="wrap"
                 mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}
-                gridRowGap={2}
+                spacing={2}
             >
                 <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
                     {zoomDetailsEls}
                 </RequireAtLeastOnePermissionWrapper>
                 {stackableEls}
-            </HStack>
+            </VStack>
             <ElementsGridLayout elements={filteredElements} />
         </Box>
     );

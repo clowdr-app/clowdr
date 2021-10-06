@@ -179,6 +179,7 @@ function ElementInner({
                             to={latestVersion.data.url}
                             linkProps={{ mx: "auto" }}
                         >
+                            <FAIcon iconStyle="s" icon="link" mr={2} />
                             {latestVersion.data.text}
                         </ExternalLinkButton>
                     </HStack>
@@ -205,6 +206,7 @@ function ElementInner({
             case Content_ElementType_Enum.PaperLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                        <FAIcon iconStyle="s" icon="link" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
@@ -275,6 +277,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                        <FAIcon iconStyle="s" icon="video" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );
@@ -282,6 +285,7 @@ function ElementInner({
             case Content_ElementType_Enum.AudioLink:
                 return (
                     <ExternalLinkButton to={latestVersion.data.url} isExternal={true} colorScheme="PrimaryActionButton">
+                        <FAIcon iconStyle="s" icon="volume-up" mr={2} />
                         {latestVersion.data.text}
                     </ExternalLinkButton>
                 );

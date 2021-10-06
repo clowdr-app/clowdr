@@ -271,13 +271,15 @@ function assignColumns(frames: Frame[]): Frame[] {
         const maxParallelRooms = frames.reduce((acc, frame) => Math.max(acc, frame.items.length), 0);
 
         for (let frameIdx = 1; frameIdx < frames.length; frameIdx++) {
-            const previousFrame = frames[frameIdx - 1];
+            // const previousFrame = frames[frameIdx - 1];
             const currentFrame = frames[frameIdx];
-            // Assign same columns as previous frame
-            for (const item of currentFrame.items) {
-                item.column =
-                    previousFrame.items.find((itemY) => itemY.session.room.id === item.session.room.id)?.column ?? -1;
-            }
+
+            // // Assign same columns as previous frame
+            // for (const item of currentFrame.items) {
+            //     item.column =
+            //         previousFrame.items.find((itemY) => itemY.session.room.id === item.session.room.id)?.column ?? -1;
+            // }
+
             const usedColumns = new Set(currentFrame.items.map((x) => x.column));
             const availableColumns = Array.from({ length: maxParallelRooms }, (_x, i) => i).filter(
                 (y) => !usedColumns.has(y)

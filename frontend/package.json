@@ -51,6 +51,7 @@
         "@types/video.js": "^7.3.26",
         "@types/videojs-contrib-quality-levels": "^2.0.1",
         "@types/videojs-hls-quality-selector": "^1.1.0",
+        "@ungap/weakrefs": "^0.2.0",
         "@uppy/aws-s3-multipart": "^2.0.2",
         "@uppy/core": "^2.0.1",
         "@uppy/drag-drop": "^2.0.1",

@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
+import { WeakRef } from "@ungap/weakrefs";
 import { detect } from "detect-browser";
 import * as R from "ramda";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";

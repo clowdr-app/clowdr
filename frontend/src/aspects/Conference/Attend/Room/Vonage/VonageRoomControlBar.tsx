@@ -205,7 +205,7 @@ export function VonageRoomControlBar({
                             } catch (err: any) {
                                 // if you try to get user media while mic/cam are active, you run into an error
                                 const msg = err.toString();
-                                if (err.name === "NotFoundError") {
+                                if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
                                     console.warn("No devices found by getUserMedia", { err, video });
                                 } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
                                     throw err;
@@ -219,7 +219,7 @@ export function VonageRoomControlBar({
                             } catch (err: any) {
                                 // if you try to get user media while mic/cam are active, you run into an error
                                 const msg = err.toString();
-                                if (err.name === "NotFoundError") {
+                                if (err.name === "NotFoundError" || err.name === "OverconstrainedError") {
                                     console.warn("No devices found by getUserMedia", { err, audio });
                                 } else if (!msg.includes("Concurrent") || !msg.includes("limit")) {
                                     throw err;
@@ -236,7 +236,8 @@ export function VonageRoomControlBar({
                         showCamera: video,
                         showMicrophone: audio,
                     });
-                } catch (e) {
+                } catch (err) {
+                    console.log("Could not list device choices", { err });
                     onPermissionsProblem(
                         { camera: video, microphone: audio },
                         `Could not list choices of ${devicesToFriendlyName(

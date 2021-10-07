@@ -108,7 +108,7 @@ export class AwsStack extends cdk.Stack {
         // SNS topics
         this.createOutput("CloudFormationNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
         this.createOutput("TranscodeNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
-        this.createOutput("NotificationsTopicArn", transcribeNotificationsTopic.topicArn);
+        this.createOutput("TranscribeNotificationsTopicArn", transcribeNotificationsTopic.topicArn);
         this.createOutput("ElasticTranscoderNotificationsTopicArn", elasticTranscoderNotificationsTopic.topicArn);
         this.createOutput("MediaLiveNotificationsTopicArn", mediaLiveNotificationsTopic.topicArn);
         this.createOutput("MediaPackageHarvestNotificationsTopicArn", mediaPackageHarvestNotificationsTopic.topicArn);

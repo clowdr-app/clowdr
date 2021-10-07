@@ -119,7 +119,7 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
                         <Box>
                             <Text textAlign="left">
                                 {errorMsg === "Invitation already used"
-                                    ? "The invitation code (shown below) has already been used. Perhaps you are logged into the wrong account? If you believe somebody else has used your invite code, please contact your conference organiser."
+                                    ? "The invitation code (shown below) has already been used. If you have an existing account, please try logging in (you don't need to use the invite code a second time). If you believe somebody else has used your invite code, please contact your conference organiser."
                                     : "We were unable to accept your invitation. Please contact technical support with a copy of the error message (shown above) and your invite code (shown below)."}
                             </Text>
                             <Code

@@ -1,25 +1,25 @@
-# Clowdr: AWS
+# Midspace: AWS
 
-AWS infrastructure-as-code for the Clowdr app.
+AWS infrastructure-as-code for the Midspace app.
 
 ## Pre-requisites
 
 1. An [AWS](https://aws.amazon.com/) account.
+   - See [Setting up AWS](#setting-up-aws).
 1. The [AWS CLI](https://aws.amazon.com/cli/)
-   - Follow the AWS CLI Documentation to configure the CLI with credentials for
-     your personal admin account.
-   - If you are using MFA, set up
-     [aws-mfa](https://github.com/broamski/aws-mfa) so that you can easily
-     generate credentials.
-   - Configure your `~/.aws/config` file to specify the region you want to
-     deploy to by default.
+   - Configure the CLI with your AWS credentials. See [Setting up AWS](#aws-cli-setup).
+1. Install [aws-vault](https://github.com/99designs/aws-vault).
+   - This is a utility which allows you to log in, generate temporary credentials, store them securely and pass them into other applications.
+   - On macOS, install with `brew install aws-vault`.
 
 ## Setting up
 
-1. Install the CDK CLI: `npm install -g aws-cdk`
 1. `cd` into the `aws` folder
 1. Install npm modules: `npm i`
-1. Configure `cdk.context.json` according to [AWS Configuration](#aws-configuration) below
+1. Configure an env file for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
+   - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
+   - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file.
+1. Bootstrap your AWS account by running the `Bootstrap AWS account` VSCode task.
 
 ### Deploying the main AWS stacks
 
@@ -27,101 +27,71 @@ The stack `<prefix>-main` deploys the main infrastructure for the Clowdr app (e.
 
 The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
 
-1. Run `cdk deploy --all` to deploy the Clowdr infrastructure to your account
-   - `<prefix>` is the value you have chosen for `clowdr/stackPrefix`
+1. Run the `Deploy to AWS` VSCode task to deploy the Midspace infrastructure to your account. You will be asked
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
 
-<!--
-Note: OpenShot support is currently disabled
+## Setting up AWS
 
-### Deploying the OpenShot AWS stack
+There are many ways to set up an AWS account, and the choices you make are critical for security. If you plan to run a 'production' Midspace instance, we highly recommend that you do your own research. Here are some suggestions:
 
-The stack `<prefix>-openshot` deploys the infrastructure required for the OpenShot Cloud API. It requires some manually-created resources as inputs, so we manage its lifecycle separately from the main stack.
+- A useful template for structuring AWS accounts: _[How to configure a production-grade AWS account structure using Gruntwork AWS Landing Zone](https://gruntwork.io/guides/foundations/how-to-configure-production-grade-aws-account-structure/#what-is-an-aws-account-structure)_
+- If you choose to use IAM users + assume role + a bastion account, you should use something like [aws-vault](https://github.com/99designs/aws-vault) to increase the security of credential storage.
+- You may also choose to use AWS SSO (our recommended method). This avoids storing any long-term credentials on disk.
+  - We recommend using separate AWS SSO accounts for admin activities and development work. This ensure that you are doing development work in a relatively low-privilege context.
+- Make use of AWS Organizations, and consider using AWS Control Tower.
+- Do not deploy any infrastructure in the root/management account.
+- Do not use root users for day-to-day work.
+- MFA is absolutely critical. Make sure it is enforced.
 
-1. Generate a new EC2 key pair.
-   - This will be used to access the OpenShot Cloud API EC2 instance.
-   - Make a note of the name of the key pair.
-   - Save the private key in a safe place in case you need to SSH into the OpenShot instance later.
-1. Use AWS Certificate Manager to generate a certificate for a domain of your choice where the OpenShot Cloud API will be hosted.
-   - Make a note of the ARN of the certificate.
-1. Run `cdk deploy <prefix>-openshot` to deploy the OpenShot stack to AWS.
+## AWS CLI Setup
 
-### Connecting to the OpenShot instance for manual setup
+You may wish to deploy multiple instances of Midspace (e.g. personal sandbox, staging, production). Each instance must be associated with a different named profile in the AWS CLI config.
 
-The OpenShot AWS infrastructure is structured to ensure that the OpenShot instance is only accessible via HTTPS on port 443. To achieve this, we put the OpenShot instance into an private VPC subnet. We then spin up an Application Load Balancer and use it to proxy the HTTP (port 80) endpoint on the OpenShot instance to a public HTTPS (port 443) endpoint.
+### Method 1 (recommended)
 
-However, we also need to access the OpenShot instance via SSH for some manual configuration tasks. To do this, we spin up a 'bastion host' in the public subnet. This is a small instance that simply acts as an SSH jump box into the private subnet.
+This method is strongly recommended because it only ever stores temporary credentials on your local disk.
 
-Instead of keeping a permanent list of known keys on the bastion host, we use EC2 Instance Connect to connect to the bastion and then SSH Agent Forwarding to use our pre-created key pair (see above) to jump into the OpenShot instance.
+1. Set up AWS SSO for your AWS Organization.
 
-We won't detail SSH Agent Forwarding in much detail here. The recommended setup for Windows users is to use KeePass and KeeAgent as an SSH agent, and Windows' built-in OpenSSH as SSH client. PuTTY will also work.
+   - If you are using a sub-account of a larger organisation, this should have been done for you. You should request SSO login details from your administrator.
+   - Make sure to configure and note your _User Portal URL_. This is where you log in and is also referred to as the `sso_start_url`.
+   - Note: in future we plan to provide ready-made SCP policies to help you set this up securely.
+   - Each SSO user should have the `AWSAdministratorAccess` permission set on the accounts it can deploy Midspace to.
 
-1. Generate a temporary key pair by running `ssh-keygen -t rsa -f temp`
-1. Push the temporary public key to the bastion host by running `aws ec2-instance-connect send-ssh-public-key --instance-id <bastion host instance ID> --availability-zone <e.g. eu-west-1a> --instance-os-user ec2-user --ssh-public-key file://temp.pub`
-   - The instance can be retrieved either from the EC2 console or from the CDK output
-1. Now you have 60 seconds to connect to the bastion host before the public key is erased. Run `ssh -i temp ec2-user@<bastion host DNS name> -A`
-   - `-A` enables agent forwarding
-   - The host DNS name can be retrieved either from the EC2 console or from the CDK output
-1. Last, we can connect to the OpenShot instance itself. Run `ssh ubuntu@<OpenShot instance private DNS>` at the bastion host terminal.
-   - The OpenShot instance private DNS name can be retrieved either from the EC2 console or from the CDK output
+1. Add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for your SSO user. For example:
 
-### Setting up the OpenShot instance
+   ```ini
+   [profile sandbox]
+   sso_start_url = https://myorg.awsapps.com/start
+   sso_region = eu-west-1
+   region = eu-west-1
+   sso_account_id = 123456789000
+   sso_role_name = AWSAdministratorAccess
+   ```
 
-To set up the OpenShot instance, we need to run through a wizard at the terminal. Once you are connected to the instance, run `config-openshot-cloud` [as per the OpenShot Cloud API documentation](https://cloud.openshot.org/doc/getting_started.html).
+   You will need to modify this example configuration to match your desired setup.
 
-Choose the following options:
+1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox` (replacing `sandbox` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
+1. You can now run AWS CLI commands like so: `aws-vault exec sandbox -- aws s3 ls`.
 
-- Role: both
-- Cloud username: cloud-admin
-- Cloud password: choose a secure password and make a note of it
-- AWS Access Key ID: `OpenShotAccessKeyId` from the CDK output
-- AWS Secret Access Key: `OpenShotSecretAccessKey` from the CDK output
-- AWS SQS Queue: `OpenShotAPIExportQueueName` from the CDK output
-- AWS Region: the region you are deploying to (e.g. `eu-west-1`)
-- Cloud API Public URL: `OpenShotLoadBalancerDnsName` from the CDK output
+### Method 2 (not recommended)
 
-You can test that the instance is running by going to `https://<load balancer DNS name>/doc/`. Just accept the certificate error for this test.
+This method is not recommended because it stores long-term credentials on your local disk.
 
-Now point the domain for which you generated the certificate at the load balancer. This step will vary depending on how your DNS is set up.
+1. Create an IAM user with `AdministratorAccess` or similar permissions.
 
-Go to `https://<your domain>/cloud-admin/` and log in with the username and password created above. Use the admin panel to create a new user account with API-only access.
+   - You will use this IAM user to deploy your infrastructure, so it needs to be able to perform all of the required actions (e.g. creating S3 buckets, modifying IAM users, CloudFormation and so on.)
+   - It is _strongly_ recommended to enable MFA for this user.
 
-#### Patching the OpenShot instance
+1. Follow the AWS CLI documentation to configure your `~/.aws/credentials` file for this IAM user.
 
-In order to make webhooks work properly, we will modify the code on the OpenShot instance slightly. Open the file `~/api_app/video_queue/worker.py` and find the two lines that read:
+   - If you are using MFA, set up
+     [aws-mfa](https://github.com/broamski/aws-mfa) so that you can easily
+     generate credentials.
+   - With aws-mfa, you can specify (for example) a `sandbox-long-term` profile if you want the profile to be called `sandbox` when you actually use it.
 
-```python
-r = post(webhook_url, data=export_json_all)
-```
-
-Change them both to:
-
-```python
-r = post(webhook_url, json=export_json_all)
-```
-
-We do this to ensure that the webhook is called with a JSON body rather than a URL encoded body (which omits the nested JSON data).
-
-Now run `sudo supervisorctl restart all` to restart the worker processes.
-
-## SSH Tips
-
-You can create an SSH config file to make it easier to connect to the OpenShot instance. For example:
-
-```
-Host clowdr_bastion
-	HostName <bastion instance DNS name>
-	User ec2-user
-	IdentityFile ~/temp
-	ForwardAgent yes
-
-Host clowdr_openshot
-	HostName <OpenShot instance private DNS name>
-	ProxyJump clowdr_bastion
-	User ubuntu
-```
-
-If you are using Windows, you currently need to [patch SSH](https://github.com/microsoft/vscode-remote-release/issues/18#issuecomment-507258777) for this to work. -->
+1. Configure your `~/.aws/config` file to specify the region you want to
+   deploy to by default.
 
 ## Useful commands
 
@@ -131,13 +101,3 @@ If you are using Windows, you currently need to [patch SSH](https://github.com/m
 - `cdk deploy` deploy this stack to your default AWS account/region
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
-
-## AWS Configuration
-
-| Key                           | Value                                                                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------ |
-| clowdr/stackPrefix            | Prefix to be prepended to stack names (choose a unique name for each development environment)          |
-| clowdr/region                 | Name of the AWS region to deploy to (e.g. eu-west-1)                                                   |
-| clowdr/account                | ID of the AWS account to deploy to                                                                     |
-| clowdr/openShotKeyPairName    | Name of the key pair you created earlier. Will be used for SSH access to the OpenShot API EC2 instance |
-| clowdr/openShotCertificateArn | ARN of the certificate you created for your domain that will host the OpenShot API.                    |

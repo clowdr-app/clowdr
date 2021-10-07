@@ -23,10 +23,7 @@ export class AwsStack extends cdk.Stack {
 
         // Managed policies
         const transcribeFullAccessPolicy = this.createTranscribeFullAccessPolicy();
-        const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy(
-            props.env?.region ?? "*",
-            props.env?.account ?? "*"
-        );
+        const channelStackAdministratorPolicy = this.createChannelStackAdministratorPolicy();
 
         // Service roles
         const mediaLiveServiceRole = this.createMediaLiveServiceRole(bucket);
@@ -94,36 +91,30 @@ export class AwsStack extends cdk.Stack {
         /* Outputs */
 
         // S3
-        this.createOutput("AWS_CONTENT_BUCKET_ID", bucket.bucketName);
+        this.createOutput("ContentBucketId", bucket.bucketName);
 
         // IAM
-        this.createOutput("AWS_ACTIONS_USER_ACCESS_KEY_ID", accessKey.ref);
-        this.createOutput("AWS_ACTIONS_USER_SECRET_ACCESS_KEY", accessKey.attrSecretAccessKey);
+        this.createOutput("ActionsUserAccessKeyId", accessKey.ref);
+        this.createOutput("ActionsUserSecretAccessKey", accessKey.attrSecretAccessKey);
 
         // Service roles
-        this.createOutput("AWS_CHIME_MANAGER_ROLE_ARN", chimeManagerRole.roleArn);
-        this.createOutput("AWS_MEDIACONVERT_SERVICE_ROLE_ARN", mediaConvertServiceRole.roleArn);
-        this.createOutput("AWS_MEDIALIVE_SERVICE_ROLE_ARN", mediaLiveServiceRole.roleArn);
-        this.createOutput("AWS_MEDIAPACKAGE_SERVICE_ROLE_ARN", mediaPackageServiceRole.roleArn);
-        this.createOutput("AWS_TRANSCRIBE_SERVICE_ROLE_ARN", transcribeServiceRole.roleArn);
-        this.createOutput("AWS_ELASTIC_TRANSCODER_SERVICE_ROLE_ARN", elasticTranscoderServiceRole.roleArn);
+        this.createOutput("ChimeManagerRoleArn", chimeManagerRole.roleArn);
+        this.createOutput("MediaConvertServiceRoleArn", mediaConvertServiceRole.roleArn);
+        this.createOutput("MediaLiveServiceRoleArn", mediaLiveServiceRole.roleArn);
+        this.createOutput("MediaPackageServiceRoleArn", mediaPackageServiceRole.roleArn);
+        this.createOutput("TranscribeServiceRoleArn", transcribeServiceRole.roleArn);
+        this.createOutput("ElasticTranscoderServiceRoleArn", elasticTranscoderServiceRole.roleArn);
 
         // SNS topics
-        this.createOutput("AWS_CLOUDFORMATION_NOTIFICATIONS_TOPIC_ARN", cloudFormationNotificationsTopic.topicArn);
-        this.createOutput("AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN", cloudFormationNotificationsTopic.topicArn);
-        this.createOutput("AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN", transcribeNotificationsTopic.topicArn);
-        this.createOutput(
-            "AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN",
-            elasticTranscoderNotificationsTopic.topicArn
-        );
-        this.createOutput("AWS_MEDIALIVE_NOTIFICATIONS_TOPIC_ARN", mediaLiveNotificationsTopic.topicArn);
-        this.createOutput(
-            "AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN",
-            mediaPackageHarvestNotificationsTopic.topicArn
-        );
+        this.createOutput("CloudFormationNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
+        this.createOutput("TranscodeNotificationsTopicArn", cloudFormationNotificationsTopic.topicArn);
+        this.createOutput("NotificationsTopicArn", transcribeNotificationsTopic.topicArn);
+        this.createOutput("ElasticTranscoderNotificationsTopicArn", elasticTranscoderNotificationsTopic.topicArn);
+        this.createOutput("MediaLiveNotificationsTopicArn", mediaLiveNotificationsTopic.topicArn);
+        this.createOutput("MediaPackageHarvestNotificationsTopicArn", mediaPackageHarvestNotificationsTopic.topicArn);
 
         // MediaLive
-        this.createOutput("AWS_MEDIALIVE_INPUT_SECURITY_GROUP_ID", inputSecurityGroup.ref);
+        this.createOutput("MediaLiveInputSecurityGroupId", inputSecurityGroup.ref);
     }
 
     /**
@@ -175,7 +166,7 @@ export class AwsStack extends cdk.Stack {
         });
     }
 
-    private createChannelStackAdministratorPolicy(region: string, account: string): iam.IManagedPolicy {
+    private createChannelStackAdministratorPolicy(): iam.IManagedPolicy {
         return new iam.ManagedPolicy(this, "ChannelStackAdministratorPolicy", {
             description: "Full access to create/destroy/introspect channel stacks with Cfn/CDK.",
             statements: [
@@ -195,8 +186,8 @@ export class AwsStack extends cdk.Stack {
                     ],
                     effect: iam.Effect.ALLOW,
                     resources: [
-                        `arn:aws:cloudformation:${region}:${account}:stack/room-*/*`,
-                        `arn:aws:cloudformation:${region}:${account}:stack/CDKToolkit/*`,
+                        `arn:aws:cloudformation:${this.region}:${this.account}:stack/room-*/*`,
+                        `arn:aws:cloudformation:${this.region}:${this.account}:stack/CDKToolkit/*`,
                     ],
                 }),
                 new iam.PolicyStatement({
@@ -389,7 +380,6 @@ export class AwsStack extends cdk.Stack {
                 new iam.PolicyStatement({
                     actions: ["SNS:Subscribe"],
                     effect: iam.Effect.ALLOW,
-                    principals: [identity],
                     resources: topics.map((topic) => topic.topicArn),
                 }),
             ],

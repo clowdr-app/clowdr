@@ -273,6 +273,61 @@
             "dependsOrder": "parallel",
             "isBackground": true,
             "problemMatcher": []
+        },
+        // Bootstrap AWS
+        {
+            "label": "Bootstrap AWS account",
+            "detail": "AWS CDK requires the account to be 'bootstrapped' first.",
+            "type": "shell",
+            "isBackground": true,
+            "command": "aws-vault",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/aws"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": [
+                "exec",
+                "${input:aws-profile-name}",
+                "--",
+                "npm",
+                "exec",
+                "--",
+                "cross-env",
+                "DOTENV_CONFIG_PATH='.env.${input:aws-profile-name}'",
+                "cdk",
+                "bootstrap"
+            ]
+        },
+        // Deploy to AWS
+        {
+            "label": "Deploy to AWS",
+            "detail": "Deploy all CDK stacks to an AWS account. You will be asked which profile you want to deploy to.",
+            "type": "shell",
+            "isBackground": true,
+            "command": "aws-vault",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/aws"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": [
+                "exec",
+                "${input:aws-profile-name}",
+                "--",
+                "npm",
+                "exec",
+                "--",
+                "cross-env",
+                "DOTENV_CONFIG_PATH='.env.${input:aws-profile-name}'",
+                "cdk",
+                "deploy",
+                "--all"
+            ]
         }
     ],
     "inputs": [
@@ -280,6 +335,12 @@
             "id": "docker-project-name",
             "description": "Docker project name",
             "default": "clowdr",
+            "type": "promptString"
+        },
+        {
+            "id": "aws-profile-name",
+            "description": "AWS profile name",
+            "default": "sandbox",
             "type": "promptString"
         }
     ]

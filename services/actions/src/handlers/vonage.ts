@@ -658,7 +658,7 @@ export async function handleToggleVonageRecordingState(
         if (!ongoingArchive) {
             await startVonageArchive(room.id, eventId, args.vonageSessionId, registrantId);
         } else {
-            await stopRoomVonageArchiving(room.id, eventId);
+            await stopRoomVonageArchiving(room.id, eventId, true);
         }
 
         return {

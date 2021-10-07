@@ -5,6 +5,7 @@ import OpenTok from "opentok";
 import {
     CreateVonageParticipantStreamDocument,
     CreateVonageRoomRecordingDocument,
+    DisableEventRecordingFlagDocument,
     GetEventBroadcastDetailsDocument,
     GetRoomArchiveDetailsDocument,
     GetVonageSessionLayoutDocument,
@@ -390,7 +391,19 @@ export async function startRoomVonageArchiving(
     }
 }
 
-export async function stopRoomVonageArchiving(roomId: string, eventId: string | undefined): Promise<void> {
+gql`
+    mutation DisableEventRecordingFlag($eventId: uuid!) {
+        update_schedule_Event_by_pk(pk_columns: { id: $eventId }, _set: { enableRecording: false }) {
+            id
+        }
+    }
+`;
+
+export async function stopRoomVonageArchiving(
+    roomId: string,
+    eventId: string | undefined,
+    disableRecording = false
+): Promise<void> {
     let archiveDetails: RoomArchiveDetails;
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
@@ -412,10 +425,25 @@ export async function stopRoomVonageArchiving(roomId: string, eventId: string | 
     }
 
     for (const existingArchive of existingSessionArchives) {
+        if (eventId && disableRecording) {
+            try {
+                await callWithRetry(() =>
+                    apolloClient.mutate({
+                        mutation: DisableEventRecordingFlagDocument,
+                        variables: {
+                            eventId,
+                        },
+                    })
+                );
+            } catch (e) {
+                console.error("Could not disable recording for event", roomId, eventId, e);
+            }
+        }
+
         try {
             if (existingArchive.status === "started" || existingArchive.status === "paused") {
                 if (existingArchive.name.startsWith(roomId) && existingArchive.name.split("/")[1] === eventId) {
-                    await callWithRetry(async () => await Vonage.stopArchive(existingArchive.id));
+                    await callWithRetry(() => Vonage.stopArchive(existingArchive.id));
                 }
             }
         } catch (e) {

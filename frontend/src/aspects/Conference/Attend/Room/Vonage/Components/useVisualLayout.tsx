@@ -22,7 +22,7 @@ export default function useVisualLayout(
                     if (viewports.some((vp) => vp.type === "screen")) {
                         const screenshareViewport = R.sortBy(
                             (x) => x.joinedAt,
-                            viewports.filter((vp) => vp.type === "screen")
+                            viewports.filter((vp) => vp.type === "screen" && vp.streamId)
                         )[0];
                         const priorityViewports = R.sortWith(
                             [
@@ -48,7 +48,7 @@ export default function useVisualLayout(
                                 (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
                                 (x, y) => x.joinedAt - y.joinedAt,
                             ],
-                            viewports.filter((vp) => vp.type !== "screen")
+                            viewports.filter((vp) => vp.type !== "screen" && vp.streamId)
                         ).slice(0, 5);
                         result = {
                             type:
@@ -62,12 +62,9 @@ export default function useVisualLayout(
                             ),
                         };
                     } else {
-                        const priorityViewports = R.sortWith(
-                            [
-                                (x, y) => (x.streamId && y.streamId ? 0 : x.streamId ? -1 : y.streamId ? 1 : 0),
-                                (x, y) => x.joinedAt - y.joinedAt,
-                            ],
-                            viewports
+                        const priorityViewports = R.sortBy(
+                            (x) => x.joinedAt,
+                            viewports.filter((x) => x.streamId)
                         ).slice(0, 16);
                         result = {
                             type: VisualLayoutType.BestFit_NoScreenshare,

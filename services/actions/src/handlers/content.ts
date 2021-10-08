@@ -224,7 +224,7 @@ async function trySendTranscriptionEmail(elementId: string) {
             const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}`;
 
             const view: EmailView_SubtitlesGenerated = {
-                uploader: {
+                person: {
                     name: person.name,
                 },
                 file: {

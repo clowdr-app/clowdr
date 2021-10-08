@@ -21,7 +21,7 @@ The Midspace team
  * The view available when rendering the subtitles generated email. Default template is {@link EMAIL_TEMPLATE_SUBTITLES_GENERATED}.
  */
 export interface EmailView_SubtitlesGenerated {
-    uploader: {
+    person: {
         name: string;
     };
     file: {

@@ -52,7 +52,10 @@ const queuesLockKey = `locks:writebackMessages:${process.env.DYNO}`;
 
 gql`
     mutation InsertChatMessages($objects: [chat_Message_insert_input!]!) {
-        insert_chat_Message(objects: $objects, on_conflict: { constraint: Message_sId_key, update_columns: [] }) {
+        insert_chat_Message(
+            objects: $objects
+            on_conflict: { constraint: Message_sId_key, update_columns: [updated_at] }
+        ) {
             returning {
                 sId
             }

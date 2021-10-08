@@ -52,7 +52,10 @@ const queuesLockKey = `locks:writebackReactions:${process.env.DYNO}`;
 
 gql`
     mutation InsertChatReactions($objects: [chat_Reaction_insert_input!]!) {
-        insert_chat_Reaction(objects: $objects, on_conflict: { constraint: Reaction_sId_key, update_columns: [] }) {
+        insert_chat_Reaction(
+            objects: $objects
+            on_conflict: { constraint: Reaction_sId_key, update_columns: [updated_at] }
+        ) {
             returning {
                 sId
             }

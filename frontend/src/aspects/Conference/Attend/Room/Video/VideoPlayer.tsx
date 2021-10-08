@@ -30,9 +30,13 @@ import { VideoElement } from "../../Content/Element/VideoElement";
 export function VideoPlayer({
     elementId,
     mode = "USER_DRIVEN",
+    onPlay,
+    onPause,
 }: {
     elementId: string;
     mode?: "USER_DRIVEN" | "CONTROLLED";
+    onPlay?: () => void;
+    onPause?: () => void;
 }): JSX.Element {
     gql`
         query VideoPlayer_GetElement($elementId: uuid!) {
@@ -174,8 +178,17 @@ export function VideoPlayer({
                                     <VideoElement
                                         elementId={elementId}
                                         elementData={videoElementBlob}
-                                        onFinish={() => setFinished(true)}
-                                        onPlay={() => setFinished(false)}
+                                        onPause={() => {
+                                            onPause?.();
+                                        }}
+                                        onFinish={() => {
+                                            onPause?.();
+                                            setFinished(true);
+                                        }}
+                                        onPlay={() => {
+                                            onPlay?.();
+                                            setFinished(false);
+                                        }}
                                     />
                                 </>
                             ) : undefined}

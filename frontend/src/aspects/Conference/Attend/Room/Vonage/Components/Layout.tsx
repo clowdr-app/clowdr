@@ -75,8 +75,10 @@ export default function Layout({
                                     w={
                                         visualLayout.viewports.length === 1
                                             ? "100%"
-                                            : visualLayout.viewports.length === 2 || visualLayout.viewports.length === 3
+                                            : visualLayout.viewports.length <= 4
                                             ? "calc(50% - 10px)"
+                                            : visualLayout.viewports.length <= 9
+                                            ? "calc(33% - 10px)"
                                             : "calc(25% - 10px)"
                                     }
                                     bgColor="gray.700"

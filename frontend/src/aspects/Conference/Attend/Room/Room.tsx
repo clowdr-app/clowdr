@@ -270,10 +270,20 @@ function RoomInner({
     const showDefaultVideoChatRoom = useMemo(
         () =>
             !roomDetails.isProgramRoom ||
-            !currentRoomEvent ||
+            (!currentRoomEvent &&
+                (!nextRoomEvent ||
+                    nextRoomEvent.intendedRoomModeName !== Room_Mode_Enum.Zoom ||
+                    zoomEventStartsAt - now30s > 10 * 60 * 1000)) ||
             currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
             (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
-        [currentRoomEvent, roomDetails.isProgramRoom, roomDetails.originatingItem?.typeName]
+        [
+            currentRoomEvent,
+            nextRoomEvent,
+            now30s,
+            roomDetails.isProgramRoom,
+            roomDetails.originatingItem?.typeName,
+            zoomEventStartsAt,
+        ]
     );
 
     const maybeZoomUrl = useMemo(() => {
@@ -581,7 +591,7 @@ function RoomInner({
     //       have an upcoming broadcast or Zoom event. Thus it's possible
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
-    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt);
+    const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt - 10 * 60 * 1000);
     // const currentRoomEventEndTime = useMemo(
     //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
     //     [currentRoomEvent]

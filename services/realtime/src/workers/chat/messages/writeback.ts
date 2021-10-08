@@ -92,6 +92,10 @@ async function processInsertQueue() {
         type: msg.actionMsg.type,
     }));
 
+    if (insertObjects.length === 0) {
+        return;
+    }
+
     try {
         const response = await testMode<InsertChatMessagesResponse>(
             async (apolloClient) => {
@@ -365,44 +369,46 @@ async function processDeleteQueue() {
     let failedSecond: Delayed<UnackedMessageInfo>[] = [];
 
     try {
-        const response = await testMode<DeleteChatMessagesResponse>(
-            async (apolloClient) => {
-                return apolloClient.mutate({
-                    mutation: DeleteChatMessagesDocument,
-                    variables: {
-                        messageIds: processNow.map((x) => x.actionMsg.sId),
-                    },
-                });
-            },
-            async () => {
-                return {
-                    data: {
-                        delete_chat_Message: {
-                            returning: [
-                                {
-                                    sId: processNow.map((x) => x.actionMsg.sId),
-                                },
-                            ],
+        if (processNow.length > 0) {
+            const response = await testMode<DeleteChatMessagesResponse>(
+                async (apolloClient) => {
+                    return apolloClient.mutate({
+                        mutation: DeleteChatMessagesDocument,
+                        variables: {
+                            messageIds: processNow.map((x) => x.actionMsg.sId),
                         },
-                    },
-                };
-            }
-        );
+                    });
+                },
+                async () => {
+                    return {
+                        data: {
+                            delete_chat_Message: {
+                                returning: [
+                                    {
+                                        sId: processNow.map((x) => x.actionMsg.sId),
+                                    },
+                                ],
+                            },
+                        },
+                    };
+                }
+            );
 
-        completed = processNow.filter(
-            (deleteAction) =>
-                !!response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId)
-        );
-        failedFirst = processNow.filter(
-            (deleteAction) =>
-                !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
-                deleteAction.delayUntil === -1
-        );
-        failedSecond = processNow.filter(
-            (deleteAction) =>
-                !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
-                deleteAction.delayUntil !== -1
-        );
+            completed = processNow.filter(
+                (deleteAction) =>
+                    !!response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId)
+            );
+            failedFirst = processNow.filter(
+                (deleteAction) =>
+                    !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
+                    deleteAction.delayUntil === -1
+            );
+            failedSecond = processNow.filter(
+                (deleteAction) =>
+                    !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
+                    deleteAction.delayUntil !== -1
+            );
+        }
     } catch (e) {
         console.error(`Error processing chat message delete: ${JSON.stringify(e, null, 2)}`);
     }

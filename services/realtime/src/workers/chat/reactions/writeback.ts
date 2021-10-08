@@ -91,6 +91,10 @@ async function processInsertQueue() {
         symbol: msg.actionRct.symbol,
     }));
 
+    if (insertObjects.length === 0) {
+        return;
+    }
+
     try {
         const response = await testMode<InsertChatReactionsResponse>(
             async (apolloClient) => {
@@ -367,44 +371,48 @@ async function processDeleteQueue() {
     let failedSecond: Delayed<UnackedReactionInfo>[] = [];
 
     try {
-        const response = await testMode<DeleteChatReactionsResponse>(
-            async (apolloClient) => {
-                return apolloClient.mutate({
-                    mutation: DeleteChatReactionsDocument,
-                    variables: {
-                        reactionIds: processNow.map((x) => x.actionRct.sId),
-                    },
-                });
-            },
-            async () => {
-                return {
-                    data: {
-                        delete_chat_Reaction: {
-                            returning: [
-                                {
-                                    sId: processNow.map((x) => x.actionRct.sId),
-                                },
-                            ],
+        if (processNow.length > 0) {
+            const response = await testMode<DeleteChatReactionsResponse>(
+                async (apolloClient) => {
+                    return apolloClient.mutate({
+                        mutation: DeleteChatReactionsDocument,
+                        variables: {
+                            reactionIds: processNow.map((x) => x.actionRct.sId),
                         },
-                    },
-                };
-            }
-        );
+                    });
+                },
+                async () => {
+                    return {
+                        data: {
+                            delete_chat_Reaction: {
+                                returning: [
+                                    {
+                                        sId: processNow.map((x) => x.actionRct.sId),
+                                    },
+                                ],
+                            },
+                        },
+                    };
+                }
+            );
 
-        completed = processNow.filter(
-            (deleteAction) =>
-                !!response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
-        );
-        failedFirst = processNow.filter(
-            (deleteAction) =>
-                !response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId) &&
-                deleteAction.delayUntil === -1
-        );
-        failedSecond = processNow.filter(
-            (deleteAction) =>
-                !response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId) &&
-                deleteAction.delayUntil !== -1
-        );
+            completed = processNow.filter(
+                (deleteAction) =>
+                    !!response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
+            );
+            failedFirst = processNow.filter(
+                (deleteAction) =>
+                    !response.data?.delete_chat_Reaction?.returning?.some(
+                        (x) => x.sId === deleteAction.actionRct.sId
+                    ) && deleteAction.delayUntil === -1
+            );
+            failedSecond = processNow.filter(
+                (deleteAction) =>
+                    !response.data?.delete_chat_Reaction?.returning?.some(
+                        (x) => x.sId === deleteAction.actionRct.sId
+                    ) && deleteAction.delayUntil !== -1
+            );
+        }
     } catch (e) {
         console.error(`Error processing chat reaction delete: ${JSON.stringify(e, null, 2)}`);
     }

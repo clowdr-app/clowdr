@@ -62,14 +62,14 @@ This method is strongly recommended because it only ever stores temporary creden
 
    ```ini
    [profile sandbox]
-   sso_start_url = https://myorg.awsapps.com/start
+   sso_start_url = https://midspace.awsapps.com/start
    sso_region = eu-west-1
    region = eu-west-1
    sso_account_id = 123456789000
    sso_role_name = AWSAdministratorAccess
    ```
 
-   You will need to modify this example configuration to match your desired setup.
+   You will need to modify this example configuration to match your desired setup. The `sso_start_url` will be in the AWS Single Sign-On invitation email you received, and the `sso_account_id` is in your AWS account settings page after you've logged in.
 
 1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox` (replacing `sandbox` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
 1. You can now run AWS CLI commands like so: `aws-vault exec sandbox -- aws s3 ls`.

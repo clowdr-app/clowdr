@@ -37,6 +37,10 @@ parts of the platform, follow all the steps below.
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
      `.vscode/extensions` folder. VSCode may offer to install them automatically.
+   - If using Windows:
+     1. Install [Git command line](https://git-scm.com/download/win) if you haven't already.
+     1. Open or restart VSCode, and open a terminal with menu Terminal -> New Terminal
+     1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
 2. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
 3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
 4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)

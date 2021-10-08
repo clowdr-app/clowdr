@@ -64,7 +64,7 @@ export default function RoomTimeAlert({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 ? (
+            {secondsUntilBroadcastEvent > 0 && secondsUntilBroadcastEvent < 180 && !eventIsOngoing ? (
                 <Alert status="info" pos="sticky" top={0} zIndex={1000}>
                     <AlertIcon />
                     <AlertDescription>

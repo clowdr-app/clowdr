@@ -167,7 +167,7 @@ export function RoomContent({
             !nextRoomEvent &&
             roomDetails.isProgramRoom &&
             roomDetails.originatingItem?.typeName !== Content_ItemType_Enum.Sponsor ? (
-                <Text p={5}>No events in this room in the near future.</Text>
+                <Text p={5}>No events in this room in the next hour.</Text>
             ) : (
                 <></>
             )}

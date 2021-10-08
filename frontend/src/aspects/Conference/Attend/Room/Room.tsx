@@ -270,13 +270,10 @@ function RoomInner({
     const showDefaultVideoChatRoom = useMemo(
         () =>
             !roomDetails.isProgramRoom ||
+            !currentRoomEvent ||
             currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat ||
-            (!currentRoomEvent &&
-                nextRoomEvent &&
-                nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
-                Date.parse(nextRoomEvent.startTime) <= now30s + 20 * 60 * 1000) ||
             (!currentRoomEvent && roomDetails.originatingItem?.typeName === Content_ItemType_Enum.Sponsor),
-        [currentRoomEvent, nextRoomEvent, now30s, roomDetails.isProgramRoom, roomDetails.originatingItem?.typeName]
+        [currentRoomEvent, roomDetails.isProgramRoom, roomDetails.originatingItem?.typeName]
     );
 
     const maybeZoomUrl = useMemo(() => {
@@ -585,20 +582,20 @@ function RoomInner({
     //       for the video chat to be closing even when there is no ongoing
     //       breakout event.
     const nonVideoChatEventStartsAt = Math.min(broadcastEventStartsAt, zoomEventStartsAt);
-    const currentRoomEventEndTime = useMemo(
-        () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
-        [currentRoomEvent]
-    );
-    const breakoutEventEndsAt = useMemo(
-        () =>
-            currentRoomEventEndTime &&
-            currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
-            nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.VideoChat
-                ? currentRoomEventEndTime
-                : Number.POSITIVE_INFINITY,
-        [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, nextRoomEvent?.intendedRoomModeName]
-    );
-    const breakoutRoomClosesAt = Math.min(breakoutEventEndsAt, nonVideoChatEventStartsAt);
+    // const currentRoomEventEndTime = useMemo(
+    //     () => (currentRoomEvent ? Date.parse(currentRoomEvent.endTime) : undefined),
+    //     [currentRoomEvent]
+    // );
+    // const breakoutEventEndsAt = useMemo(
+    //     () =>
+    //         currentRoomEventEndTime &&
+    //         currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoChat &&
+    //         nextRoomEvent?.intendedRoomModeName !== Room_Mode_Enum.VideoChat
+    //             ? currentRoomEventEndTime
+    //             : Number.POSITIVE_INFINITY,
+    //     [currentRoomEvent?.intendedRoomModeName, currentRoomEventEndTime, nextRoomEvent?.intendedRoomModeName]
+    // );
+    const breakoutRoomClosesAt = nonVideoChatEventStartsAt; // Math.min(breakoutEventEndsAt, nonVideoChatEventStartsAt);
 
     const startsSoonEl = useMemo(
         () => (

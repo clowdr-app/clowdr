@@ -1,10 +1,10 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import gql from 'graphql-tag';
+import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -8330,8 +8330,6 @@ export enum Conference_ConfigurationKey_Enum {
   BackgroundVideos = 'BACKGROUND_VIDEOS',
   /** A string representing the app version. Changing this causes the user's browsers to refresh. */
   ClowdrAppVersion = 'CLOWDR_APP_VERSION',
-  /** Boolean. Disable the "All times for this content" section of the Item pages. */
-  DisableAllEventsForItem = 'DISABLE_ALL_EVENTS_FOR_ITEM',
   /** Boolean. Disable the "Events around this content" section of the Item pages. */
   DisableNearbyEvents = 'DISABLE_NEARBY_EVENTS',
   EmailTemplateSubmissionRequest = 'EMAIL_TEMPLATE_SUBMISSION_REQUEST',
@@ -8344,8 +8342,6 @@ export enum Conference_ConfigurationKey_Enum {
   FillerVideos = 'FILLER_VIDEOS',
   /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
   FrontendHost = 'FRONTEND_HOST',
-  /** String. Name for hidden exhibitions. Default: "Exhibition" */
-  HiddenExhibitionsLabel = 'HIDDEN_EXHIBITIONS_LABEL',
   /** An image to be displayed if AWS MediaLive loses input. */
   InputLossSlate = 'INPUT_LOSS_SLATE',
   /** Additional text for the My Backstages modal. */
@@ -8366,8 +8362,6 @@ export enum Conference_ConfigurationKey_Enum {
   UploadAgreement = 'UPLOAD_AGREEMENT',
   /** The time in milliseconds since the UNIX epoch, as a string. */
   UploadCutoffTimestamp = 'UPLOAD_CUTOFF_TIMESTAMP',
-  /** String. Name for visible exhibitions. Default: "Exhibition" */
-  VisibleExhibitionsLabel = 'VISIBLE_EXHIBITIONS_LABEL',
   /** Integer. The maximum number of simultaneous screen shares allowed in Vonage video chats. */
   VonageMaxSimultaneousScreenShares = 'VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES'
 }
@@ -14212,8 +14206,8 @@ export type Job_Queues_CustomEmailJob = {
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
+  readonly htmlBody: Scalars['String'];
   readonly id: Scalars['uuid'];
-  readonly markdownBody: Scalars['String'];
   readonly processed: Scalars['Boolean'];
   readonly registrantIds: Scalars['jsonb'];
   readonly subject: Scalars['String'];
@@ -14261,8 +14255,8 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly htmlBody?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
-  readonly markdownBody?: Maybe<String_Comparison_Exp>;
   readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly registrantIds?: Maybe<Jsonb_Comparison_Exp>;
   readonly subject?: Maybe<String_Comparison_Exp>;
@@ -14295,8 +14289,8 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly registrantIds?: Maybe<Scalars['jsonb']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -14308,8 +14302,8 @@ export type Job_Queues_CustomEmailJob_Max_Fields = {
   readonly __typename?: 'job_queues_CustomEmailJob_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14319,8 +14313,8 @@ export type Job_Queues_CustomEmailJob_Min_Fields = {
   readonly __typename?: 'job_queues_CustomEmailJob_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14346,8 +14340,8 @@ export type Job_Queues_CustomEmailJob_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
+  readonly htmlBody?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
-  readonly markdownBody?: Maybe<Order_By>;
   readonly processed?: Maybe<Order_By>;
   readonly registrantIds?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
@@ -14371,9 +14365,9 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  Id = 'id',
+  HtmlBody = 'htmlBody',
   /** column name */
-  MarkdownBody = 'markdownBody',
+  Id = 'id',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -14388,8 +14382,8 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
 export type Job_Queues_CustomEmailJob_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
-  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly registrantIds?: Maybe<Scalars['jsonb']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -14403,9 +14397,9 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  Id = 'id',
+  HtmlBody = 'htmlBody',
   /** column name */
-  MarkdownBody = 'markdownBody',
+  Id = 'id',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -35272,8 +35266,6 @@ export enum System_ConfigurationKey_Enum {
   DefaultFrontendHost = 'DEFAULT_FRONTEND_HOST',
   /** Default backend platform for video rooms */
   DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
-  /** Templates for emails sent by the application. */
-  EmailTemplates = 'EMAIL_TEMPLATES',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
   HostOrganisationName = 'HOST_ORGANISATION_NAME',
   /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -39363,7 +39355,7 @@ export type ConferenceLandingPageItemQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> }> };
+export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }> }> };
 
 export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
 
@@ -39372,15 +39364,15 @@ export type ItemElements_GetItemQueryVariables = Exact<{
 }>;
 
 
-export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> }> };
+export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }> }> };
 
 export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
 
-export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> };
+export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }> };
 
 export type ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } };
 
-export type ItemExhibitionDataFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } };
+export type ItemExhibitionDataFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } };
 
 export type ItemRoomEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
@@ -39409,7 +39401,7 @@ export type GetItemQueryVariables = Exact<{
 }>;
 
 
-export type GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly descriptionOfExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
+export type GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly descriptionOfExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
 
 export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
 
@@ -39435,14 +39427,14 @@ export type ContinuationChoices_RoomsQuery = { readonly __typename?: 'query_root
 
 export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
 
-export type ExhibitionWithContentFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> };
+export type ExhibitionWithContentFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> };
 
 export type SelectExhibitionQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
+export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
 
 export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> };
 
@@ -40988,7 +40980,7 @@ export type InsertInvitationEmailJobsMutationVariables = Exact<{
 export type InsertInvitationEmailJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_InvitationEmailJob?: Maybe<{ readonly __typename?: 'job_queues_InvitationEmailJob_mutation_response', readonly affected_rows: number }> };
 
 export type ManagePeople_InsertCustomEmailJobMutationVariables = Exact<{
-  markdownBody: Scalars['String'];
+  htmlBody: Scalars['String'];
   subject: Scalars['String'];
   conferenceId: Scalars['uuid'];
   registrantIds: Scalars['jsonb'];
@@ -41444,18 +41436,18 @@ export type ConferenceBySlug_WithUserQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceBySlug_WithUserQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableAllTimesForThisItem: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly visibleExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly hiddenExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }>, readonly registrants: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any, readonly groupId: any, readonly registrantId: any, readonly group: { readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }>, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }>, readonly myBackstagesNotice: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> }> };
+export type ConferenceBySlug_WithUserQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }>, readonly registrants: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any, readonly groupId: any, readonly registrantId: any, readonly group: { readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }>, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }>, readonly myBackstagesNotice: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> }> };
 
 export type ConferenceBySlug_WithoutUserQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
 
 
-export type ConferenceBySlug_WithoutUserQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableAllTimesForThisItem: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly visibleExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly hiddenExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }> }> };
+export type ConferenceBySlug_WithoutUserQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }> }> };
 
 export type AuthdConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly registrants: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any, readonly groupId: any, readonly registrantId: any, readonly group: { readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> } }>, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }>, readonly myBackstagesNotice: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
 
-export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableAllTimesForThisItem: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly visibleExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly hiddenExhibitionsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }> };
+export type PublicConferenceInfoFragment = { readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string, readonly createdBy: string, readonly supportAddress: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly registrationURL: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly scheduleViewVersion: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly sponsorsLabel: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly disableNearbyEvents: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly themeComponentColors: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly publicGroups: ReadonlyArray<{ readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> }> };
 
 export type GroupDataFragment = { readonly __typename?: 'permissions_Group', readonly enabled: boolean, readonly id: any, readonly includeUnauthenticated: boolean, readonly name: string, readonly conferenceId: any, readonly groupRoles: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRole', readonly id: any, readonly roleId: any, readonly groupId: any, readonly role: { readonly __typename?: 'permissions_Role', readonly id: any, readonly name: string, readonly conferenceId: any, readonly rolePermissions: ReadonlyArray<{ readonly __typename?: 'permissions_RolePermission', readonly permissionName: Permissions_Permission_Enum, readonly id: any, readonly roleId: any }> } }> };
 
@@ -41914,17 +41906,35 @@ export const ItemTagDataFragmentDoc = gql`
   }
 }
     `;
+export const ExhibitionSummaryFragmentDoc = gql`
+    fragment ExhibitionSummary on collection_Exhibition {
+  id
+  name
+  colour
+  priority
+  items {
+    id
+    item {
+      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
+        ...ProgramPersonData
+      }
+      itemTags {
+        ...ItemTagData
+      }
+    }
+  }
+}
+    ${ProgramPersonDataFragmentDoc}
+${ItemTagDataFragmentDoc}`;
 export const ItemExhibitionDataFragmentDoc = gql`
     fragment ItemExhibitionData on content_ItemExhibition {
   id
+  itemId
   exhibition {
-    id
-    name
-    priority
-    colour
+    ...ExhibitionSummary
   }
 }
-    `;
+    ${ExhibitionSummaryFragmentDoc}`;
 export const ItemElements_ItemDataFragmentDoc = gql`
     fragment ItemElements_ItemData on content_Item {
   id
@@ -42026,26 +42036,6 @@ export const ExhibitionWithContentFragmentDoc = gql`
     ${ItemElements_ItemDataFragmentDoc}
 ${ItemPage_ItemRoomsFragmentDoc}
 ${ExhibitionItemFragmentDoc}`;
-export const ExhibitionSummaryFragmentDoc = gql`
-    fragment ExhibitionSummary on collection_Exhibition {
-  id
-  name
-  colour
-  priority
-  items {
-    id
-    item {
-      itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
-        ...ProgramPersonData
-      }
-      itemTags {
-        ...ItemTagData
-      }
-    }
-  }
-}
-    ${ProgramPersonDataFragmentDoc}
-${ItemTagDataFragmentDoc}`;
 export const MyBackstages_EventFragmentDoc = gql`
     fragment MyBackstages_Event on schedule_Event {
   id
@@ -43488,13 +43478,6 @@ export const PublicConferenceInfoFragmentDoc = gql`
     key
     value
   }
-  disableAllTimesForThisItem: configurations(
-    where: {key: {_eq: DISABLE_ALL_EVENTS_FOR_ITEM}}
-  ) {
-    conferenceId
-    key
-    value
-  }
   disableNearbyEvents: configurations(where: {key: {_eq: DISABLE_NEARBY_EVENTS}}) {
     conferenceId
     key
@@ -43502,20 +43485,6 @@ export const PublicConferenceInfoFragmentDoc = gql`
   }
   themeComponentColors: configurations(
     where: {key: {_eq: THEME_COMPONENT_COLORS}}
-  ) {
-    conferenceId
-    key
-    value
-  }
-  visibleExhibitionsLabel: configurations(
-    where: {key: {_eq: VISIBLE_EXHIBITIONS_LABEL}}
-  ) {
-    conferenceId
-    key
-    value
-  }
-  hiddenExhibitionsLabel: configurations(
-    where: {key: {_eq: HIDDEN_EXHIBITIONS_LABEL}}
   ) {
     conferenceId
     key
@@ -43676,33 +43645,9 @@ export const GetSlugForUrlDocument = gql`
 }
     `;
 
-/**
- * __useGetSlugForUrlQuery__
- *
- * To run a query within a React component, call `useGetSlugForUrlQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSlugForUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSlugForUrlQuery({
- *   variables: {
- *      url: // value for 'url'
- *   },
- * });
- */
-export function useGetSlugForUrlQuery(baseOptions: Apollo.QueryHookOptions<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>(GetSlugForUrlDocument, options);
-      }
-export function useGetSlugForUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>(GetSlugForUrlDocument, options);
-        }
-export type GetSlugForUrlQueryHookResult = ReturnType<typeof useGetSlugForUrlQuery>;
-export type GetSlugForUrlLazyQueryHookResult = ReturnType<typeof useGetSlugForUrlLazyQuery>;
-export type GetSlugForUrlQueryResult = Apollo.QueryResult<GetSlugForUrlQuery, GetSlugForUrlQueryVariables>;
+export function useGetSlugForUrlQuery(options: Omit<Urql.UseQueryArgs<GetSlugForUrlQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetSlugForUrlQuery>({ query: GetSlugForUrlDocument, ...options });
+};
 export const InitialChatStateDocument = gql`
     query InitialChatState($registrantId: uuid!) {
   chat_Pin(where: {registrantId: {_eq: $registrantId}}) {
@@ -43715,33 +43660,9 @@ export const InitialChatStateDocument = gql`
 }
     ${InitialChatState_ChatFragmentDoc}`;
 
-/**
- * __useInitialChatStateQuery__
- *
- * To run a query within a React component, call `useInitialChatStateQuery` and pass it any options that fit your needs.
- * When your component renders, `useInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useInitialChatStateQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, options);
-      }
-export function useInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InitialChatStateQuery, InitialChatStateQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, options);
-        }
-export type InitialChatStateQueryHookResult = ReturnType<typeof useInitialChatStateQuery>;
-export type InitialChatStateLazyQueryHookResult = ReturnType<typeof useInitialChatStateLazyQuery>;
-export type InitialChatStateQueryResult = Apollo.QueryResult<InitialChatStateQuery, InitialChatStateQueryVariables>;
+export function useInitialChatStateQuery(options: Omit<Urql.UseQueryArgs<InitialChatStateQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<InitialChatStateQuery>({ query: InitialChatStateDocument, ...options });
+};
 export const SelectInitialChatStateDocument = gql`
     query SelectInitialChatState($chatId: uuid!, $registrantId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {
@@ -43750,34 +43671,9 @@ export const SelectInitialChatStateDocument = gql`
 }
     ${InitialChatState_ChatFragmentDoc}`;
 
-/**
- * __useSelectInitialChatStateQuery__
- *
- * To run a query within a React component, call `useSelectInitialChatStateQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectInitialChatStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectInitialChatStateQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useSelectInitialChatStateQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, options);
-      }
-export function useSelectInitialChatStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(SelectInitialChatStateDocument, options);
-        }
-export type SelectInitialChatStateQueryHookResult = ReturnType<typeof useSelectInitialChatStateQuery>;
-export type SelectInitialChatStateLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStateLazyQuery>;
-export type SelectInitialChatStateQueryResult = Apollo.QueryResult<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>;
+export function useSelectInitialChatStateQuery(options: Omit<Urql.UseQueryArgs<SelectInitialChatStateQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectInitialChatStateQuery>({ query: SelectInitialChatStateDocument, ...options });
+};
 export const SelectInitialChatStatesDocument = gql`
     query SelectInitialChatStates($chatIds: [uuid!]!, $registrantId: uuid!) {
   chat_Chat(where: {id: {_in: $chatIds}}) {
@@ -43786,34 +43682,9 @@ export const SelectInitialChatStatesDocument = gql`
 }
     ${InitialChatState_ChatFragmentDoc}`;
 
-/**
- * __useSelectInitialChatStatesQuery__
- *
- * To run a query within a React component, call `useSelectInitialChatStatesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectInitialChatStatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectInitialChatStatesQuery({
- *   variables: {
- *      chatIds: // value for 'chatIds'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useSelectInitialChatStatesQuery(baseOptions: Apollo.QueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, options);
-      }
-export function useSelectInitialChatStatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(SelectInitialChatStatesDocument, options);
-        }
-export type SelectInitialChatStatesQueryHookResult = ReturnType<typeof useSelectInitialChatStatesQuery>;
-export type SelectInitialChatStatesLazyQueryHookResult = ReturnType<typeof useSelectInitialChatStatesLazyQuery>;
-export type SelectInitialChatStatesQueryResult = Apollo.QueryResult<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>;
+export function useSelectInitialChatStatesQuery(options: Omit<Urql.UseQueryArgs<SelectInitialChatStatesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectInitialChatStatesQuery>({ query: SelectInitialChatStatesDocument, ...options });
+};
 export const SubscribeChatDocument = gql`
     mutation SubscribeChat($chatId: uuid!, $registrantId: uuid!) {
   insert_chat_Subscription(
@@ -43827,33 +43698,10 @@ export const SubscribeChatDocument = gql`
   }
 }
     `;
-export type SubscribeChatMutationFn = Apollo.MutationFunction<SubscribeChatMutation, SubscribeChatMutationVariables>;
 
-/**
- * __useSubscribeChatMutation__
- *
- * To run a mutation, you first call `useSubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [subscribeChatMutation, { data, loading, error }] = useSubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useSubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeChatMutation, SubscribeChatMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, options);
-      }
-export type SubscribeChatMutationHookResult = ReturnType<typeof useSubscribeChatMutation>;
-export type SubscribeChatMutationResult = Apollo.MutationResult<SubscribeChatMutation>;
-export type SubscribeChatMutationOptions = Apollo.BaseMutationOptions<SubscribeChatMutation, SubscribeChatMutationVariables>;
+export function useSubscribeChatMutation() {
+  return Urql.useMutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument);
+};
 export const UnsubscribeChatDocument = gql`
     mutation UnsubscribeChat($chatId: uuid!, $registrantId: uuid!) {
   delete_chat_Subscription_by_pk(chatId: $chatId, registrantId: $registrantId) {
@@ -43862,33 +43710,10 @@ export const UnsubscribeChatDocument = gql`
   }
 }
     `;
-export type UnsubscribeChatMutationFn = Apollo.MutationFunction<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
 
-/**
- * __useUnsubscribeChatMutation__
- *
- * To run a mutation, you first call `useUnsubscribeChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnsubscribeChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unsubscribeChatMutation, { data, loading, error }] = useUnsubscribeChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useUnsubscribeChatMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument, options);
-      }
-export type UnsubscribeChatMutationHookResult = ReturnType<typeof useUnsubscribeChatMutation>;
-export type UnsubscribeChatMutationResult = Apollo.MutationResult<UnsubscribeChatMutation>;
-export type UnsubscribeChatMutationOptions = Apollo.BaseMutationOptions<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>;
+export function useUnsubscribeChatMutation() {
+  return Urql.useMutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(UnsubscribeChatDocument);
+};
 export const PinChatDocument = gql`
     mutation PinChat($chatId: uuid!, $registrantId: uuid!) {
   insert_chat_Pin(
@@ -43902,33 +43727,10 @@ export const PinChatDocument = gql`
   }
 }
     `;
-export type PinChatMutationFn = Apollo.MutationFunction<PinChatMutation, PinChatMutationVariables>;
 
-/**
- * __usePinChatMutation__
- *
- * To run a mutation, you first call `usePinChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePinChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [pinChatMutation, { data, loading, error }] = usePinChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function usePinChatMutation(baseOptions?: Apollo.MutationHookOptions<PinChatMutation, PinChatMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, options);
-      }
-export type PinChatMutationHookResult = ReturnType<typeof usePinChatMutation>;
-export type PinChatMutationResult = Apollo.MutationResult<PinChatMutation>;
-export type PinChatMutationOptions = Apollo.BaseMutationOptions<PinChatMutation, PinChatMutationVariables>;
+export function usePinChatMutation() {
+  return Urql.useMutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument);
+};
 export const UnpinChatDocument = gql`
     mutation UnpinChat($chatId: uuid!, $registrantId: uuid!) {
   delete_chat_Pin_by_pk(chatId: $chatId, registrantId: $registrantId) {
@@ -43937,33 +43739,10 @@ export const UnpinChatDocument = gql`
   }
 }
     `;
-export type UnpinChatMutationFn = Apollo.MutationFunction<UnpinChatMutation, UnpinChatMutationVariables>;
 
-/**
- * __useUnpinChatMutation__
- *
- * To run a mutation, you first call `useUnpinChatMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnpinChatMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unpinChatMutation, { data, loading, error }] = useUnpinChatMutation({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useUnpinChatMutation(baseOptions?: Apollo.MutationHookOptions<UnpinChatMutation, UnpinChatMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, options);
-      }
-export type UnpinChatMutationHookResult = ReturnType<typeof useUnpinChatMutation>;
-export type UnpinChatMutationResult = Apollo.MutationResult<UnpinChatMutation>;
-export type UnpinChatMutationOptions = Apollo.BaseMutationOptions<UnpinChatMutation, UnpinChatMutationVariables>;
+export function useUnpinChatMutation() {
+  return Urql.useMutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument);
+};
 export const SelectMessagesPageDocument = gql`
     query SelectMessagesPage($chatId: uuid!, $startAtIndex: Int!, $maxCount: Int!) {
   chat_Message(
@@ -43976,35 +43755,9 @@ export const SelectMessagesPageDocument = gql`
 }
     ${ChatMessageDataFragmentDoc}`;
 
-/**
- * __useSelectMessagesPageQuery__
- *
- * To run a query within a React component, call `useSelectMessagesPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectMessagesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectMessagesPageQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *      startAtIndex: // value for 'startAtIndex'
- *      maxCount: // value for 'maxCount'
- *   },
- * });
- */
-export function useSelectMessagesPageQuery(baseOptions: Apollo.QueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, options);
-      }
-export function useSelectMessagesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(SelectMessagesPageDocument, options);
-        }
-export type SelectMessagesPageQueryHookResult = ReturnType<typeof useSelectMessagesPageQuery>;
-export type SelectMessagesPageLazyQueryHookResult = ReturnType<typeof useSelectMessagesPageLazyQuery>;
-export type SelectMessagesPageQueryResult = Apollo.QueryResult<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>;
+export function useSelectMessagesPageQuery(options: Omit<Urql.UseQueryArgs<SelectMessagesPageQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectMessagesPageQuery>({ query: SelectMessagesPageDocument, ...options });
+};
 export const InsertChatFlagDocument = gql`
     mutation InsertChatFlag($messageSId: uuid!, $registrantId: uuid!, $type: chat_FlagType_enum!, $reason: String!) {
   insert_chat_Flag_one(
@@ -44014,35 +43767,10 @@ export const InsertChatFlagDocument = gql`
   }
 }
     ${ChatFlagDataFragmentDoc}`;
-export type InsertChatFlagMutationFn = Apollo.MutationFunction<InsertChatFlagMutation, InsertChatFlagMutationVariables>;
 
-/**
- * __useInsertChatFlagMutation__
- *
- * To run a mutation, you first call `useInsertChatFlagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertChatFlagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertChatFlagMutation, { data, loading, error }] = useInsertChatFlagMutation({
- *   variables: {
- *      messageSId: // value for 'messageSId'
- *      registrantId: // value for 'registrantId'
- *      type: // value for 'type'
- *      reason: // value for 'reason'
- *   },
- * });
- */
-export function useInsertChatFlagMutation(baseOptions?: Apollo.MutationHookOptions<InsertChatFlagMutation, InsertChatFlagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(InsertChatFlagDocument, options);
-      }
-export type InsertChatFlagMutationHookResult = ReturnType<typeof useInsertChatFlagMutation>;
-export type InsertChatFlagMutationResult = Apollo.MutationResult<InsertChatFlagMutation>;
-export type InsertChatFlagMutationOptions = Apollo.BaseMutationOptions<InsertChatFlagMutation, InsertChatFlagMutationVariables>;
+export function useInsertChatFlagMutation() {
+  return Urql.useMutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(InsertChatFlagDocument);
+};
 export const GetChatPathDocument = gql`
     query GetChatPath($chatId: uuid!) {
   chat_Chat_by_pk(id: $chatId) {
@@ -44057,33 +43785,9 @@ export const GetChatPathDocument = gql`
 }
     `;
 
-/**
- * __useGetChatPathQuery__
- *
- * To run a query within a React component, call `useGetChatPathQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetChatPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetChatPathQuery({
- *   variables: {
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useGetChatPathQuery(baseOptions: Apollo.QueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, options);
-      }
-export function useGetChatPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatPathQuery, GetChatPathQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetChatPathQuery, GetChatPathQueryVariables>(GetChatPathDocument, options);
-        }
-export type GetChatPathQueryHookResult = ReturnType<typeof useGetChatPathQuery>;
-export type GetChatPathLazyQueryHookResult = ReturnType<typeof useGetChatPathLazyQuery>;
-export type GetChatPathQueryResult = Apollo.QueryResult<GetChatPathQuery, GetChatPathQueryVariables>;
+export function useGetChatPathQuery(options: Omit<Urql.UseQueryArgs<GetChatPathQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetChatPathQuery>({ query: GetChatPathDocument, ...options });
+};
 export const ConferenceLandingPageItemDocument = gql`
     query ConferenceLandingPageItem($conferenceId: uuid!) {
   content_Item(
@@ -44094,33 +43798,9 @@ export const ConferenceLandingPageItemDocument = gql`
 }
     ${ItemElements_ItemDataFragmentDoc}`;
 
-/**
- * __useConferenceLandingPageItemQuery__
- *
- * To run a query within a React component, call `useConferenceLandingPageItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceLandingPageItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceLandingPageItemQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConferenceLandingPageItemQuery(baseOptions: Apollo.QueryHookOptions<ConferenceLandingPageItemQuery, ConferenceLandingPageItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceLandingPageItemQuery, ConferenceLandingPageItemQueryVariables>(ConferenceLandingPageItemDocument, options);
-      }
-export function useConferenceLandingPageItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceLandingPageItemQuery, ConferenceLandingPageItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceLandingPageItemQuery, ConferenceLandingPageItemQueryVariables>(ConferenceLandingPageItemDocument, options);
-        }
-export type ConferenceLandingPageItemQueryHookResult = ReturnType<typeof useConferenceLandingPageItemQuery>;
-export type ConferenceLandingPageItemLazyQueryHookResult = ReturnType<typeof useConferenceLandingPageItemLazyQuery>;
-export type ConferenceLandingPageItemQueryResult = Apollo.QueryResult<ConferenceLandingPageItemQuery, ConferenceLandingPageItemQueryVariables>;
+export function useConferenceLandingPageItemQuery(options: Omit<Urql.UseQueryArgs<ConferenceLandingPageItemQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceLandingPageItemQuery>({ query: ConferenceLandingPageItemDocument, ...options });
+};
 export const ItemElements_GetItemDocument = gql`
     query ItemElements_GetItem($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
@@ -44129,33 +43809,9 @@ export const ItemElements_GetItemDocument = gql`
 }
     ${ItemElements_ItemDataFragmentDoc}`;
 
-/**
- * __useItemElements_GetItemQuery__
- *
- * To run a query within a React component, call `useItemElements_GetItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useItemElements_GetItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useItemElements_GetItemQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useItemElements_GetItemQuery(baseOptions: Apollo.QueryHookOptions<ItemElements_GetItemQuery, ItemElements_GetItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ItemElements_GetItemQuery, ItemElements_GetItemQueryVariables>(ItemElements_GetItemDocument, options);
-      }
-export function useItemElements_GetItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemElements_GetItemQuery, ItemElements_GetItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ItemElements_GetItemQuery, ItemElements_GetItemQueryVariables>(ItemElements_GetItemDocument, options);
-        }
-export type ItemElements_GetItemQueryHookResult = ReturnType<typeof useItemElements_GetItemQuery>;
-export type ItemElements_GetItemLazyQueryHookResult = ReturnType<typeof useItemElements_GetItemLazyQuery>;
-export type ItemElements_GetItemQueryResult = Apollo.QueryResult<ItemElements_GetItemQuery, ItemElements_GetItemQueryVariables>;
+export function useItemElements_GetItemQuery(options: Omit<Urql.UseQueryArgs<ItemElements_GetItemQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ItemElements_GetItemQuery>({ query: ItemElements_GetItemDocument, ...options });
+};
 export const ContentOfTagDocument = gql`
     query ContentOfTag($id: uuid!) {
   content_ItemTag(where: {tagId: {_eq: $id}}) {
@@ -44164,33 +43820,9 @@ export const ContentOfTagDocument = gql`
 }
     ${ItemList_ItemTagDataFragmentDoc}`;
 
-/**
- * __useContentOfTagQuery__
- *
- * To run a query within a React component, call `useContentOfTagQuery` and pass it any options that fit your needs.
- * When your component renders, `useContentOfTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useContentOfTagQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useContentOfTagQuery(baseOptions: Apollo.QueryHookOptions<ContentOfTagQuery, ContentOfTagQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, options);
-      }
-export function useContentOfTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentOfTagQuery, ContentOfTagQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, options);
-        }
-export type ContentOfTagQueryHookResult = ReturnType<typeof useContentOfTagQuery>;
-export type ContentOfTagLazyQueryHookResult = ReturnType<typeof useContentOfTagLazyQuery>;
-export type ContentOfTagQueryResult = Apollo.QueryResult<ContentOfTagQuery, ContentOfTagQueryVariables>;
+export function useContentOfTagQuery(options: Omit<Urql.UseQueryArgs<ContentOfTagQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ContentOfTagQuery>({ query: ContentOfTagDocument, ...options });
+};
 export const TagsDocument = gql`
     query Tags($conferenceId: uuid!) {
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -44199,33 +43831,9 @@ export const TagsDocument = gql`
 }
     ${ItemList_TagInfoFragmentDoc}`;
 
-/**
- * __useTagsQuery__
- *
- * To run a query within a React component, call `useTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useTagsQuery(baseOptions: Apollo.QueryHookOptions<TagsQuery, TagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TagsQuery, TagsQueryVariables>(TagsDocument, options);
-      }
-export function useTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsQuery, TagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TagsQuery, TagsQueryVariables>(TagsDocument, options);
-        }
-export type TagsQueryHookResult = ReturnType<typeof useTagsQuery>;
-export type TagsLazyQueryHookResult = ReturnType<typeof useTagsLazyQuery>;
-export type TagsQueryResult = Apollo.QueryResult<TagsQuery, TagsQueryVariables>;
+export function useTagsQuery(options: Omit<Urql.UseQueryArgs<TagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<TagsQuery>({ query: TagsDocument, ...options });
+};
 export const GetItemDocument = gql`
     query GetItem($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
@@ -44245,33 +43853,9 @@ export const GetItemDocument = gql`
 ${ItemPage_ItemRoomsFragmentDoc}
 ${ItemEventFragmentDoc}`;
 
-/**
- * __useGetItemQuery__
- *
- * To run a query within a React component, call `useGetItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetItemQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useGetItemQuery(baseOptions: Apollo.QueryHookOptions<GetItemQuery, GetItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetItemQuery, GetItemQueryVariables>(GetItemDocument, options);
-      }
-export function useGetItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemQuery, GetItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetItemQuery, GetItemQueryVariables>(GetItemDocument, options);
-        }
-export type GetItemQueryHookResult = ReturnType<typeof useGetItemQuery>;
-export type GetItemLazyQueryHookResult = ReturnType<typeof useGetItemLazyQuery>;
-export type GetItemQueryResult = Apollo.QueryResult<GetItemQuery, GetItemQueryVariables>;
+export function useGetItemQuery(options: Omit<Urql.UseQueryArgs<GetItemQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetItemQuery>({ query: GetItemDocument, ...options });
+};
 export const ContinuationChoices_ContinuationsDocument = gql`
     query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
   schedule_Continuation(
@@ -44294,35 +43878,9 @@ export const ContinuationChoices_ContinuationsDocument = gql`
 }
     ${ContinuationChoices_ContinuationFragmentDoc}`;
 
-/**
- * __useContinuationChoices_ContinuationsQuery__
- *
- * To run a query within a React component, call `useContinuationChoices_ContinuationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useContinuationChoices_ContinuationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useContinuationChoices_ContinuationsQuery({
- *   variables: {
- *      fromId: // value for 'fromId'
- *      nowStart: // value for 'nowStart'
- *      nowEnd: // value for 'nowEnd'
- *   },
- * });
- */
-export function useContinuationChoices_ContinuationsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>(ContinuationChoices_ContinuationsDocument, options);
-      }
-export function useContinuationChoices_ContinuationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>(ContinuationChoices_ContinuationsDocument, options);
-        }
-export type ContinuationChoices_ContinuationsQueryHookResult = ReturnType<typeof useContinuationChoices_ContinuationsQuery>;
-export type ContinuationChoices_ContinuationsLazyQueryHookResult = ReturnType<typeof useContinuationChoices_ContinuationsLazyQuery>;
-export type ContinuationChoices_ContinuationsQueryResult = Apollo.QueryResult<ContinuationChoices_ContinuationsQuery, ContinuationChoices_ContinuationsQueryVariables>;
+export function useContinuationChoices_ContinuationsQuery(options: Omit<Urql.UseQueryArgs<ContinuationChoices_ContinuationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ContinuationChoices_ContinuationsQuery>({ query: ContinuationChoices_ContinuationsDocument, ...options });
+};
 export const ContinuationChoices_RoomsDocument = gql`
     query ContinuationChoices_Rooms($ids: [uuid!]!) {
   content_Item(where: {id: {_in: $ids}}) {
@@ -44342,33 +43900,9 @@ export const ContinuationChoices_RoomsDocument = gql`
 }
     `;
 
-/**
- * __useContinuationChoices_RoomsQuery__
- *
- * To run a query within a React component, call `useContinuationChoices_RoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useContinuationChoices_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useContinuationChoices_RoomsQuery({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useContinuationChoices_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>(ContinuationChoices_RoomsDocument, options);
-      }
-export function useContinuationChoices_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>(ContinuationChoices_RoomsDocument, options);
-        }
-export type ContinuationChoices_RoomsQueryHookResult = ReturnType<typeof useContinuationChoices_RoomsQuery>;
-export type ContinuationChoices_RoomsLazyQueryHookResult = ReturnType<typeof useContinuationChoices_RoomsLazyQuery>;
-export type ContinuationChoices_RoomsQueryResult = Apollo.QueryResult<ContinuationChoices_RoomsQuery, ContinuationChoices_RoomsQueryVariables>;
+export function useContinuationChoices_RoomsQuery(options: Omit<Urql.UseQueryArgs<ContinuationChoices_RoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ContinuationChoices_RoomsQuery>({ query: ContinuationChoices_RoomsDocument, ...options });
+};
 export const SelectExhibitionDocument = gql`
     query SelectExhibition($id: uuid!) {
   collection_Exhibition_by_pk(id: $id) {
@@ -44381,33 +43915,9 @@ export const SelectExhibitionDocument = gql`
     ${ExhibitionWithContentFragmentDoc}
 ${ItemEventFragmentDoc}`;
 
-/**
- * __useSelectExhibitionQuery__
- *
- * To run a query within a React component, call `useSelectExhibitionQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectExhibitionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectExhibitionQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useSelectExhibitionQuery(baseOptions: Apollo.QueryHookOptions<SelectExhibitionQuery, SelectExhibitionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectExhibitionQuery, SelectExhibitionQueryVariables>(SelectExhibitionDocument, options);
-      }
-export function useSelectExhibitionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExhibitionQuery, SelectExhibitionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectExhibitionQuery, SelectExhibitionQueryVariables>(SelectExhibitionDocument, options);
-        }
-export type SelectExhibitionQueryHookResult = ReturnType<typeof useSelectExhibitionQuery>;
-export type SelectExhibitionLazyQueryHookResult = ReturnType<typeof useSelectExhibitionLazyQuery>;
-export type SelectExhibitionQueryResult = Apollo.QueryResult<SelectExhibitionQuery, SelectExhibitionQueryVariables>;
+export function useSelectExhibitionQuery(options: Omit<Urql.UseQueryArgs<SelectExhibitionQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectExhibitionQuery>({ query: SelectExhibitionDocument, ...options });
+};
 export const SelectAllExhibitionsDocument = gql`
     query SelectAllExhibitions($conferenceId: uuid!) {
   collection_Exhibition(
@@ -44418,33 +43928,9 @@ export const SelectAllExhibitionsDocument = gql`
 }
     ${ExhibitionSummaryFragmentDoc}`;
 
-/**
- * __useSelectAllExhibitionsQuery__
- *
- * To run a query within a React component, call `useSelectAllExhibitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllExhibitionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllExhibitionsQuery, SelectAllExhibitionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllExhibitionsQuery, SelectAllExhibitionsQueryVariables>(SelectAllExhibitionsDocument, options);
-      }
-export function useSelectAllExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllExhibitionsQuery, SelectAllExhibitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllExhibitionsQuery, SelectAllExhibitionsQueryVariables>(SelectAllExhibitionsDocument, options);
-        }
-export type SelectAllExhibitionsQueryHookResult = ReturnType<typeof useSelectAllExhibitionsQuery>;
-export type SelectAllExhibitionsLazyQueryHookResult = ReturnType<typeof useSelectAllExhibitionsLazyQuery>;
-export type SelectAllExhibitionsQueryResult = Apollo.QueryResult<SelectAllExhibitionsQuery, SelectAllExhibitionsQueryVariables>;
+export function useSelectAllExhibitionsQuery(options: Omit<Urql.UseQueryArgs<SelectAllExhibitionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllExhibitionsQuery>({ query: SelectAllExhibitionsDocument, ...options });
+};
 export const RegistrantByIdDocument = gql`
     query RegistrantById($conferenceId: uuid!, $registrantId: uuid!) {
   registrant_Registrant(
@@ -44455,34 +43941,9 @@ export const RegistrantByIdDocument = gql`
 }
     ${RegistrantDataFragmentDoc}`;
 
-/**
- * __useRegistrantByIdQuery__
- *
- * To run a query within a React component, call `useRegistrantByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useRegistrantByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRegistrantByIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useRegistrantByIdQuery(baseOptions: Apollo.QueryHookOptions<RegistrantByIdQuery, RegistrantByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RegistrantByIdQuery, RegistrantByIdQueryVariables>(RegistrantByIdDocument, options);
-      }
-export function useRegistrantByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RegistrantByIdQuery, RegistrantByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RegistrantByIdQuery, RegistrantByIdQueryVariables>(RegistrantByIdDocument, options);
-        }
-export type RegistrantByIdQueryHookResult = ReturnType<typeof useRegistrantByIdQuery>;
-export type RegistrantByIdLazyQueryHookResult = ReturnType<typeof useRegistrantByIdLazyQuery>;
-export type RegistrantByIdQueryResult = Apollo.QueryResult<RegistrantByIdQuery, RegistrantByIdQueryVariables>;
+export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
+};
 export const UpdateProfileDocument = gql`
     mutation UpdateProfile($registrantId: uuid!, $profile: registrant_Profile_set_input = {}) {
   update_registrant_Profile_by_pk(
@@ -44493,33 +43954,10 @@ export const UpdateProfileDocument = gql`
   }
 }
     ${ProfileDataFragmentDoc}`;
-export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
 
-/**
- * __useUpdateProfileMutation__
- *
- * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      profile: // value for 'profile'
- *   },
- * });
- */
-export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, options);
-      }
-export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
-export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
-export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
+export function useUpdateProfileMutation() {
+  return Urql.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument);
+};
 export const UpdateRegistrantDisplayNameDocument = gql`
     mutation UpdateRegistrantDisplayName($registrantId: uuid!, $name: String!) {
   update_registrant_Registrant_by_pk(
@@ -44530,33 +43968,10 @@ export const UpdateRegistrantDisplayNameDocument = gql`
   }
 }
     ${RegistrantDataFragmentDoc}`;
-export type UpdateRegistrantDisplayNameMutationFn = Apollo.MutationFunction<UpdateRegistrantDisplayNameMutation, UpdateRegistrantDisplayNameMutationVariables>;
 
-/**
- * __useUpdateRegistrantDisplayNameMutation__
- *
- * To run a mutation, you first call `useUpdateRegistrantDisplayNameMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRegistrantDisplayNameMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRegistrantDisplayNameMutation, { data, loading, error }] = useUpdateRegistrantDisplayNameMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useUpdateRegistrantDisplayNameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRegistrantDisplayNameMutation, UpdateRegistrantDisplayNameMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRegistrantDisplayNameMutation, UpdateRegistrantDisplayNameMutationVariables>(UpdateRegistrantDisplayNameDocument, options);
-      }
-export type UpdateRegistrantDisplayNameMutationHookResult = ReturnType<typeof useUpdateRegistrantDisplayNameMutation>;
-export type UpdateRegistrantDisplayNameMutationResult = Apollo.MutationResult<UpdateRegistrantDisplayNameMutation>;
-export type UpdateRegistrantDisplayNameMutationOptions = Apollo.BaseMutationOptions<UpdateRegistrantDisplayNameMutation, UpdateRegistrantDisplayNameMutationVariables>;
+export function useUpdateRegistrantDisplayNameMutation() {
+  return Urql.useMutation<UpdateRegistrantDisplayNameMutation, UpdateRegistrantDisplayNameMutationVariables>(UpdateRegistrantDisplayNameDocument);
+};
 export const SubmitProfilePhotoDocument = gql`
     mutation SubmitProfilePhoto($registrantId: uuid!, $s3URL: String!) {
   updateProfilePhoto(registrantId: $registrantId, s3URL: $s3URL) {
@@ -44566,33 +43981,10 @@ export const SubmitProfilePhotoDocument = gql`
   }
 }
     `;
-export type SubmitProfilePhotoMutationFn = Apollo.MutationFunction<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
 
-/**
- * __useSubmitProfilePhotoMutation__
- *
- * To run a mutation, you first call `useSubmitProfilePhotoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubmitProfilePhotoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [submitProfilePhotoMutation, { data, loading, error }] = useSubmitProfilePhotoMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      s3URL: // value for 's3URL'
- *   },
- * });
- */
-export function useSubmitProfilePhotoMutation(baseOptions?: Apollo.MutationHookOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>(SubmitProfilePhotoDocument, options);
-      }
-export type SubmitProfilePhotoMutationHookResult = ReturnType<typeof useSubmitProfilePhotoMutation>;
-export type SubmitProfilePhotoMutationResult = Apollo.MutationResult<SubmitProfilePhotoMutation>;
-export type SubmitProfilePhotoMutationOptions = Apollo.BaseMutationOptions<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>;
+export function useSubmitProfilePhotoMutation() {
+  return Urql.useMutation<SubmitProfilePhotoMutation, SubmitProfilePhotoMutationVariables>(SubmitProfilePhotoDocument);
+};
 export const RegistrantEventsWithBackstagesDocument = gql`
     query RegistrantEventsWithBackstages($registrantId: uuid!) {
   schedule_Event(
@@ -44603,33 +43995,9 @@ export const RegistrantEventsWithBackstagesDocument = gql`
 }
     ${MyBackstages_EventFragmentDoc}`;
 
-/**
- * __useRegistrantEventsWithBackstagesQuery__
- *
- * To run a query within a React component, call `useRegistrantEventsWithBackstagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useRegistrantEventsWithBackstagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRegistrantEventsWithBackstagesQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useRegistrantEventsWithBackstagesQuery(baseOptions: Apollo.QueryHookOptions<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>(RegistrantEventsWithBackstagesDocument, options);
-      }
-export function useRegistrantEventsWithBackstagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>(RegistrantEventsWithBackstagesDocument, options);
-        }
-export type RegistrantEventsWithBackstagesQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesQuery>;
-export type RegistrantEventsWithBackstagesLazyQueryHookResult = ReturnType<typeof useRegistrantEventsWithBackstagesLazyQuery>;
-export type RegistrantEventsWithBackstagesQueryResult = Apollo.QueryResult<RegistrantEventsWithBackstagesQuery, RegistrantEventsWithBackstagesQueryVariables>;
+export function useRegistrantEventsWithBackstagesQuery(options: Omit<Urql.UseQueryArgs<RegistrantEventsWithBackstagesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RegistrantEventsWithBackstagesQuery>({ query: RegistrantEventsWithBackstagesDocument, ...options });
+};
 export const ProfilePage_ItemsDocument = gql`
     query ProfilePage_Items($registrantId: uuid!) {
   content_Item(
@@ -44640,33 +44008,9 @@ export const ProfilePage_ItemsDocument = gql`
 }
     ${SearchPanel_ItemFragmentDoc}`;
 
-/**
- * __useProfilePage_ItemsQuery__
- *
- * To run a query within a React component, call `useProfilePage_ItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useProfilePage_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProfilePage_ItemsQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useProfilePage_ItemsQuery(baseOptions: Apollo.QueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
-      }
-export function useProfilePage_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>(ProfilePage_ItemsDocument, options);
-        }
-export type ProfilePage_ItemsQueryHookResult = ReturnType<typeof useProfilePage_ItemsQuery>;
-export type ProfilePage_ItemsLazyQueryHookResult = ReturnType<typeof useProfilePage_ItemsLazyQuery>;
-export type ProfilePage_ItemsQueryResult = Apollo.QueryResult<ProfilePage_ItemsQuery, ProfilePage_ItemsQueryVariables>;
+export function useProfilePage_ItemsQuery(options: Omit<Urql.UseQueryArgs<ProfilePage_ItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ProfilePage_ItemsQuery>({ query: ProfilePage_ItemsDocument, ...options });
+};
 export const MyRecordingsDocument = gql`
     query MyRecordings($registrantId: uuid!) {
   registrant_SavedVonageRoomRecording(
@@ -44688,33 +44032,9 @@ export const MyRecordingsDocument = gql`
 }
     `;
 
-/**
- * __useMyRecordingsQuery__
- *
- * To run a query within a React component, call `useMyRecordingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyRecordingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyRecordingsQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useMyRecordingsQuery(baseOptions: Apollo.QueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
-      }
-export function useMyRecordingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyRecordingsQuery, MyRecordingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MyRecordingsQuery, MyRecordingsQueryVariables>(MyRecordingsDocument, options);
-        }
-export type MyRecordingsQueryHookResult = ReturnType<typeof useMyRecordingsQuery>;
-export type MyRecordingsLazyQueryHookResult = ReturnType<typeof useMyRecordingsLazyQuery>;
-export type MyRecordingsQueryResult = Apollo.QueryResult<MyRecordingsQuery, MyRecordingsQueryVariables>;
+export function useMyRecordingsQuery(options: Omit<Urql.UseQueryArgs<MyRecordingsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MyRecordingsQuery>({ query: MyRecordingsDocument, ...options });
+};
 export const SelectRegistrantsDocument = gql`
     query SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(
@@ -44726,33 +44046,9 @@ export const SelectRegistrantsDocument = gql`
 }
     ${RegistrantDataFragmentDoc}`;
 
-/**
- * __useSelectRegistrantsQuery__
- *
- * To run a query within a React component, call `useSelectRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
-      }
-export function useSelectRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>(SelectRegistrantsDocument, options);
-        }
-export type SelectRegistrantsQueryHookResult = ReturnType<typeof useSelectRegistrantsQuery>;
-export type SelectRegistrantsLazyQueryHookResult = ReturnType<typeof useSelectRegistrantsLazyQuery>;
-export type SelectRegistrantsQueryResult = Apollo.QueryResult<SelectRegistrantsQuery, SelectRegistrantsQueryVariables>;
+export function useSelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SelectRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectRegistrantsQuery>({ query: SelectRegistrantsDocument, ...options });
+};
 export const SearchRegistrantsDocument = gql`
     query SearchRegistrants($conferenceId: uuid!, $search: String!) {
   registrant_Registrant(
@@ -44764,34 +44060,9 @@ export const SearchRegistrantsDocument = gql`
 }
     ${RegistrantDataFragmentDoc}`;
 
-/**
- * __useSearchRegistrantsQuery__
- *
- * To run a query within a React component, call `useSearchRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useSearchRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
-      }
-export function useSearchRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, options);
-        }
-export type SearchRegistrantsQueryHookResult = ReturnType<typeof useSearchRegistrantsQuery>;
-export type SearchRegistrantsLazyQueryHookResult = ReturnType<typeof useSearchRegistrantsLazyQuery>;
-export type SearchRegistrantsQueryResult = Apollo.QueryResult<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>;
+export function useSearchRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SearchRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchRegistrantsQuery>({ query: SearchRegistrantsDocument, ...options });
+};
 export const Registrant_RegistrantCreateRoomDocument = gql`
     mutation registrant_RegistrantCreateRoom($conferenceId: uuid!, $name: String!, $managementModeName: room_ManagementMode_enum!) {
   insert_room_Room_one(
@@ -44801,34 +44072,10 @@ export const Registrant_RegistrantCreateRoomDocument = gql`
   }
 }
     ${RoomListRoomDetailsFragmentDoc}`;
-export type Registrant_RegistrantCreateRoomMutationFn = Apollo.MutationFunction<Registrant_RegistrantCreateRoomMutation, Registrant_RegistrantCreateRoomMutationVariables>;
 
-/**
- * __useRegistrant_RegistrantCreateRoomMutation__
- *
- * To run a mutation, you first call `useRegistrant_RegistrantCreateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRegistrant_RegistrantCreateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [registrantRegistrantCreateRoomMutation, { data, loading, error }] = useRegistrant_RegistrantCreateRoomMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      name: // value for 'name'
- *      managementModeName: // value for 'managementModeName'
- *   },
- * });
- */
-export function useRegistrant_RegistrantCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<Registrant_RegistrantCreateRoomMutation, Registrant_RegistrantCreateRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Registrant_RegistrantCreateRoomMutation, Registrant_RegistrantCreateRoomMutationVariables>(Registrant_RegistrantCreateRoomDocument, options);
-      }
-export type Registrant_RegistrantCreateRoomMutationHookResult = ReturnType<typeof useRegistrant_RegistrantCreateRoomMutation>;
-export type Registrant_RegistrantCreateRoomMutationResult = Apollo.MutationResult<Registrant_RegistrantCreateRoomMutation>;
-export type Registrant_RegistrantCreateRoomMutationOptions = Apollo.BaseMutationOptions<Registrant_RegistrantCreateRoomMutation, Registrant_RegistrantCreateRoomMutationVariables>;
+export function useRegistrant_RegistrantCreateRoomMutation() {
+  return Urql.useMutation<Registrant_RegistrantCreateRoomMutation, Registrant_RegistrantCreateRoomMutationVariables>(Registrant_RegistrantCreateRoomDocument);
+};
 export const Room_GetEventsDocument = gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
   schedule_Event(
@@ -44839,35 +44086,9 @@ export const Room_GetEventsDocument = gql`
 }
     ${Room_EventSummaryFragmentDoc}`;
 
-/**
- * __useRoom_GetEventsQuery__
- *
- * To run a query within a React component, call `useRoom_GetEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoom_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoom_GetEventsQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *      now: // value for 'now'
- *      cutoff: // value for 'cutoff'
- *   },
- * });
- */
-export function useRoom_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<Room_GetEventsQuery, Room_GetEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Room_GetEventsQuery, Room_GetEventsQueryVariables>(Room_GetEventsDocument, options);
-      }
-export function useRoom_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetEventsQuery, Room_GetEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Room_GetEventsQuery, Room_GetEventsQueryVariables>(Room_GetEventsDocument, options);
-        }
-export type Room_GetEventsQueryHookResult = ReturnType<typeof useRoom_GetEventsQuery>;
-export type Room_GetEventsLazyQueryHookResult = ReturnType<typeof useRoom_GetEventsLazyQuery>;
-export type Room_GetEventsQueryResult = Apollo.QueryResult<Room_GetEventsQuery, Room_GetEventsQueryVariables>;
+export function useRoom_GetEventsQuery(options: Omit<Urql.UseQueryArgs<Room_GetEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Room_GetEventsQuery>({ query: Room_GetEventsDocument, ...options });
+};
 export const Room_GetDefaultVideoRoomBackendDocument = gql`
     query Room_GetDefaultVideoRoomBackend {
   system_Configuration_by_pk(key: DEFAULT_VIDEO_ROOM_BACKEND) {
@@ -44876,32 +44097,9 @@ export const Room_GetDefaultVideoRoomBackendDocument = gql`
 }
     `;
 
-/**
- * __useRoom_GetDefaultVideoRoomBackendQuery__
- *
- * To run a query within a React component, call `useRoom_GetDefaultVideoRoomBackendQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoom_GetDefaultVideoRoomBackendQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoom_GetDefaultVideoRoomBackendQuery({
- *   variables: {
- *   },
- * });
- */
-export function useRoom_GetDefaultVideoRoomBackendQuery(baseOptions?: Apollo.QueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
-      }
-export function useRoom_GetDefaultVideoRoomBackendLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>(Room_GetDefaultVideoRoomBackendDocument, options);
-        }
-export type Room_GetDefaultVideoRoomBackendQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendQuery>;
-export type Room_GetDefaultVideoRoomBackendLazyQueryHookResult = ReturnType<typeof useRoom_GetDefaultVideoRoomBackendLazyQuery>;
-export type Room_GetDefaultVideoRoomBackendQueryResult = Apollo.QueryResult<Room_GetDefaultVideoRoomBackendQuery, Room_GetDefaultVideoRoomBackendQueryVariables>;
+export function useRoom_GetDefaultVideoRoomBackendQuery(options: Omit<Urql.UseQueryArgs<Room_GetDefaultVideoRoomBackendQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Room_GetDefaultVideoRoomBackendQuery>({ query: Room_GetDefaultVideoRoomBackendDocument, ...options });
+};
 export const AddParticipantToRoomDocument = gql`
     mutation AddParticipantToRoom($registrantId: uuid!, $roomId: uuid!) {
   insert_room_RoomPerson_one(
@@ -44911,33 +44109,10 @@ export const AddParticipantToRoomDocument = gql`
   }
 }
     `;
-export type AddParticipantToRoomMutationFn = Apollo.MutationFunction<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
 
-/**
- * __useAddParticipantToRoomMutation__
- *
- * To run a mutation, you first call `useAddParticipantToRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddParticipantToRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addParticipantToRoomMutation, { data, loading, error }] = useAddParticipantToRoomMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useAddParticipantToRoomMutation(baseOptions?: Apollo.MutationHookOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>(AddParticipantToRoomDocument, options);
-      }
-export type AddParticipantToRoomMutationHookResult = ReturnType<typeof useAddParticipantToRoomMutation>;
-export type AddParticipantToRoomMutationResult = Apollo.MutationResult<AddParticipantToRoomMutation>;
-export type AddParticipantToRoomMutationOptions = Apollo.BaseMutationOptions<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>;
+export function useAddParticipantToRoomMutation() {
+  return Urql.useMutation<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>(AddParticipantToRoomDocument);
+};
 export const RoomPage_GetRoomDetailsDocument = gql`
     query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -44946,34 +44121,9 @@ export const RoomPage_GetRoomDetailsDocument = gql`
 }
     ${RoomPage_RoomDetailsFragmentDoc}`;
 
-/**
- * __useRoomPage_GetRoomDetailsQuery__
- *
- * To run a query within a React component, call `useRoomPage_GetRoomDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomPage_GetRoomDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoomPage_GetRoomDetailsQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useRoomPage_GetRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>(RoomPage_GetRoomDetailsDocument, options);
-      }
-export function useRoomPage_GetRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>(RoomPage_GetRoomDetailsDocument, options);
-        }
-export type RoomPage_GetRoomDetailsQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsQuery>;
-export type RoomPage_GetRoomDetailsLazyQueryHookResult = ReturnType<typeof useRoomPage_GetRoomDetailsLazyQuery>;
-export type RoomPage_GetRoomDetailsQueryResult = Apollo.QueryResult<RoomPage_GetRoomDetailsQuery, RoomPage_GetRoomDetailsQueryVariables>;
+export function useRoomPage_GetRoomDetailsQuery(options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
+};
 export const RoomPage_GetRoomChannelStackDocument = gql`
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
   video_ChannelStack(where: {roomId: {_eq: $roomId}}) {
@@ -44982,33 +44132,9 @@ export const RoomPage_GetRoomChannelStackDocument = gql`
 }
     ${RoomPage_RoomChannelStackFragmentDoc}`;
 
-/**
- * __useRoomPage_GetRoomChannelStackQuery__
- *
- * To run a query within a React component, call `useRoomPage_GetRoomChannelStackQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomPage_GetRoomChannelStackQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoomPage_GetRoomChannelStackQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useRoomPage_GetRoomChannelStackQuery(baseOptions: Apollo.QueryHookOptions<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>(RoomPage_GetRoomChannelStackDocument, options);
-      }
-export function useRoomPage_GetRoomChannelStackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>(RoomPage_GetRoomChannelStackDocument, options);
-        }
-export type RoomPage_GetRoomChannelStackQueryHookResult = ReturnType<typeof useRoomPage_GetRoomChannelStackQuery>;
-export type RoomPage_GetRoomChannelStackLazyQueryHookResult = ReturnType<typeof useRoomPage_GetRoomChannelStackLazyQuery>;
-export type RoomPage_GetRoomChannelStackQueryResult = Apollo.QueryResult<RoomPage_GetRoomChannelStackQuery, RoomPage_GetRoomChannelStackQueryVariables>;
+export function useRoomPage_GetRoomChannelStackQuery(options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomChannelStackQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RoomPage_GetRoomChannelStackQuery>({ query: RoomPage_GetRoomChannelStackDocument, ...options });
+};
 export const GetEventVonageDetailsDocument = gql`
     query GetEventVonageDetails($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -45021,33 +44147,9 @@ export const GetEventVonageDetailsDocument = gql`
 }
     `;
 
-/**
- * __useGetEventVonageDetailsQuery__
- *
- * To run a query within a React component, call `useGetEventVonageDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEventVonageDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEventVonageDetailsQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventVonageDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>(GetEventVonageDetailsDocument, options);
-      }
-export function useGetEventVonageDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>(GetEventVonageDetailsDocument, options);
-        }
-export type GetEventVonageDetailsQueryHookResult = ReturnType<typeof useGetEventVonageDetailsQuery>;
-export type GetEventVonageDetailsLazyQueryHookResult = ReturnType<typeof useGetEventVonageDetailsLazyQuery>;
-export type GetEventVonageDetailsQueryResult = Apollo.QueryResult<GetEventVonageDetailsQuery, GetEventVonageDetailsQueryVariables>;
+export function useGetEventVonageDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventVonageDetailsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetEventVonageDetailsQuery>({ query: GetEventVonageDetailsDocument, ...options });
+};
 export const RoomSponsorContent_GetElementsDocument = gql`
     query RoomSponsorContent_GetElements($itemId: uuid!) {
   content_Item(where: {id: {_eq: $itemId}, typeName: {_eq: SPONSOR}}) {
@@ -45056,33 +44158,9 @@ export const RoomSponsorContent_GetElementsDocument = gql`
 }
     ${RoomSponsorContent_ItemDataFragmentDoc}`;
 
-/**
- * __useRoomSponsorContent_GetElementsQuery__
- *
- * To run a query within a React component, call `useRoomSponsorContent_GetElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomSponsorContent_GetElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoomSponsorContent_GetElementsQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useRoomSponsorContent_GetElementsQuery(baseOptions: Apollo.QueryHookOptions<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>(RoomSponsorContent_GetElementsDocument, options);
-      }
-export function useRoomSponsorContent_GetElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>(RoomSponsorContent_GetElementsDocument, options);
-        }
-export type RoomSponsorContent_GetElementsQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetElementsQuery>;
-export type RoomSponsorContent_GetElementsLazyQueryHookResult = ReturnType<typeof useRoomSponsorContent_GetElementsLazyQuery>;
-export type RoomSponsorContent_GetElementsQueryResult = Apollo.QueryResult<RoomSponsorContent_GetElementsQuery, RoomSponsorContent_GetElementsQueryVariables>;
+export function useRoomSponsorContent_GetElementsQuery(options: Omit<Urql.UseQueryArgs<RoomSponsorContent_GetElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RoomSponsorContent_GetElementsQuery>({ query: RoomSponsorContent_GetElementsDocument, ...options });
+};
 export const GetVonageParticipantStreamsDocument = gql`
     subscription GetVonageParticipantStreams($eventId: uuid!) {
   video_VonageParticipantStream(
@@ -45093,28 +44171,9 @@ export const GetVonageParticipantStreamsDocument = gql`
 }
     ${VonageParticipantStreamDetailsFragmentDoc}`;
 
-/**
- * __useGetVonageParticipantStreamsSubscription__
- *
- * To run a query within a React component, call `useGetVonageParticipantStreamsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useGetVonageParticipantStreamsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetVonageParticipantStreamsSubscription({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetVonageParticipantStreamsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetVonageParticipantStreamsSubscription, GetVonageParticipantStreamsSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<GetVonageParticipantStreamsSubscription, GetVonageParticipantStreamsSubscriptionVariables>(GetVonageParticipantStreamsDocument, options);
-      }
-export type GetVonageParticipantStreamsSubscriptionHookResult = ReturnType<typeof useGetVonageParticipantStreamsSubscription>;
-export type GetVonageParticipantStreamsSubscriptionResult = Apollo.SubscriptionResult<GetVonageParticipantStreamsSubscription>;
+export function useGetVonageParticipantStreamsSubscription<TData = GetVonageParticipantStreamsSubscription>(options: Omit<Urql.UseSubscriptionArgs<GetVonageParticipantStreamsSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<GetVonageParticipantStreamsSubscription, TData>) {
+  return Urql.useSubscription<GetVonageParticipantStreamsSubscription, TData, GetVonageParticipantStreamsSubscriptionVariables>({ query: GetVonageParticipantStreamsDocument, ...options }, handler);
+};
 export const ImmediateSwitch_GetElementsDocument = gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -45149,33 +44208,9 @@ export const ImmediateSwitch_GetElementsDocument = gql`
 }
     `;
 
-/**
- * __useImmediateSwitch_GetElementsQuery__
- *
- * To run a query within a React component, call `useImmediateSwitch_GetElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useImmediateSwitch_GetElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useImmediateSwitch_GetElementsQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useImmediateSwitch_GetElementsQuery(baseOptions: Apollo.QueryHookOptions<ImmediateSwitch_GetElementsQuery, ImmediateSwitch_GetElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ImmediateSwitch_GetElementsQuery, ImmediateSwitch_GetElementsQueryVariables>(ImmediateSwitch_GetElementsDocument, options);
-      }
-export function useImmediateSwitch_GetElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ImmediateSwitch_GetElementsQuery, ImmediateSwitch_GetElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ImmediateSwitch_GetElementsQuery, ImmediateSwitch_GetElementsQueryVariables>(ImmediateSwitch_GetElementsDocument, options);
-        }
-export type ImmediateSwitch_GetElementsQueryHookResult = ReturnType<typeof useImmediateSwitch_GetElementsQuery>;
-export type ImmediateSwitch_GetElementsLazyQueryHookResult = ReturnType<typeof useImmediateSwitch_GetElementsLazyQuery>;
-export type ImmediateSwitch_GetElementsQueryResult = Apollo.QueryResult<ImmediateSwitch_GetElementsQuery, ImmediateSwitch_GetElementsQueryVariables>;
+export function useImmediateSwitch_GetElementsQuery(options: Omit<Urql.UseQueryArgs<ImmediateSwitch_GetElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ImmediateSwitch_GetElementsQuery>({ query: ImmediateSwitch_GetElementsDocument, ...options });
+};
 export const ImmediateSwitch_CreateDocument = gql`
     mutation ImmediateSwitch_Create($data: jsonb!, $eventId: uuid!, $conferenceId: uuid!) {
   insert_video_ImmediateSwitch_one(
@@ -45185,34 +44220,10 @@ export const ImmediateSwitch_CreateDocument = gql`
   }
 }
     `;
-export type ImmediateSwitch_CreateMutationFn = Apollo.MutationFunction<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>;
 
-/**
- * __useImmediateSwitch_CreateMutation__
- *
- * To run a mutation, you first call `useImmediateSwitch_CreateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useImmediateSwitch_CreateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [immediateSwitchCreateMutation, { data, loading, error }] = useImmediateSwitch_CreateMutation({
- *   variables: {
- *      data: // value for 'data'
- *      eventId: // value for 'eventId'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useImmediateSwitch_CreateMutation(baseOptions?: Apollo.MutationHookOptions<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>(ImmediateSwitch_CreateDocument, options);
-      }
-export type ImmediateSwitch_CreateMutationHookResult = ReturnType<typeof useImmediateSwitch_CreateMutation>;
-export type ImmediateSwitch_CreateMutationResult = Apollo.MutationResult<ImmediateSwitch_CreateMutation>;
-export type ImmediateSwitch_CreateMutationOptions = Apollo.BaseMutationOptions<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>;
+export function useImmediateSwitch_CreateMutation() {
+  return Urql.useMutation<ImmediateSwitch_CreateMutation, ImmediateSwitch_CreateMutationVariables>(ImmediateSwitch_CreateDocument);
+};
 export const LiveIndicator_GetLatestDocument = gql`
     query LiveIndicator_GetLatest($eventId: uuid!) {
   video_ImmediateSwitch(
@@ -45227,33 +44238,9 @@ export const LiveIndicator_GetLatestDocument = gql`
 }
     `;
 
-/**
- * __useLiveIndicator_GetLatestQuery__
- *
- * To run a query within a React component, call `useLiveIndicator_GetLatestQuery` and pass it any options that fit your needs.
- * When your component renders, `useLiveIndicator_GetLatestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLiveIndicator_GetLatestQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useLiveIndicator_GetLatestQuery(baseOptions: Apollo.QueryHookOptions<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(LiveIndicator_GetLatestDocument, options);
-      }
-export function useLiveIndicator_GetLatestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(LiveIndicator_GetLatestDocument, options);
-        }
-export type LiveIndicator_GetLatestQueryHookResult = ReturnType<typeof useLiveIndicator_GetLatestQuery>;
-export type LiveIndicator_GetLatestLazyQueryHookResult = ReturnType<typeof useLiveIndicator_GetLatestLazyQuery>;
-export type LiveIndicator_GetLatestQueryResult = Apollo.QueryResult<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>;
+export function useLiveIndicator_GetLatestQuery(options: Omit<Urql.UseQueryArgs<LiveIndicator_GetLatestQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<LiveIndicator_GetLatestQuery>({ query: LiveIndicator_GetLatestDocument, ...options });
+};
 export const LiveIndicator_GetElementDocument = gql`
     query LiveIndicator_GetElement($elementId: uuid!) {
   content_Element_by_pk(id: $elementId) {
@@ -45263,33 +44250,9 @@ export const LiveIndicator_GetElementDocument = gql`
 }
     `;
 
-/**
- * __useLiveIndicator_GetElementQuery__
- *
- * To run a query within a React component, call `useLiveIndicator_GetElementQuery` and pass it any options that fit your needs.
- * When your component renders, `useLiveIndicator_GetElementQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLiveIndicator_GetElementQuery({
- *   variables: {
- *      elementId: // value for 'elementId'
- *   },
- * });
- */
-export function useLiveIndicator_GetElementQuery(baseOptions: Apollo.QueryHookOptions<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>(LiveIndicator_GetElementDocument, options);
-      }
-export function useLiveIndicator_GetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>(LiveIndicator_GetElementDocument, options);
-        }
-export type LiveIndicator_GetElementQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementQuery>;
-export type LiveIndicator_GetElementLazyQueryHookResult = ReturnType<typeof useLiveIndicator_GetElementLazyQuery>;
-export type LiveIndicator_GetElementQueryResult = Apollo.QueryResult<LiveIndicator_GetElementQuery, LiveIndicator_GetElementQueryVariables>;
+export function useLiveIndicator_GetElementQuery(options: Omit<Urql.UseQueryArgs<LiveIndicator_GetElementQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<LiveIndicator_GetElementQuery>({ query: LiveIndicator_GetElementDocument, ...options });
+};
 export const EnableBackstageStreamPreviewDocument = gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
   conference_Configuration_by_pk(
@@ -45303,33 +44266,9 @@ export const EnableBackstageStreamPreviewDocument = gql`
 }
     `;
 
-/**
- * __useEnableBackstageStreamPreviewQuery__
- *
- * To run a query within a React component, call `useEnableBackstageStreamPreviewQuery` and pass it any options that fit your needs.
- * When your component renders, `useEnableBackstageStreamPreviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useEnableBackstageStreamPreviewQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useEnableBackstageStreamPreviewQuery(baseOptions: Apollo.QueryHookOptions<EnableBackstageStreamPreviewQuery, EnableBackstageStreamPreviewQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<EnableBackstageStreamPreviewQuery, EnableBackstageStreamPreviewQueryVariables>(EnableBackstageStreamPreviewDocument, options);
-      }
-export function useEnableBackstageStreamPreviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnableBackstageStreamPreviewQuery, EnableBackstageStreamPreviewQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<EnableBackstageStreamPreviewQuery, EnableBackstageStreamPreviewQueryVariables>(EnableBackstageStreamPreviewDocument, options);
-        }
-export type EnableBackstageStreamPreviewQueryHookResult = ReturnType<typeof useEnableBackstageStreamPreviewQuery>;
-export type EnableBackstageStreamPreviewLazyQueryHookResult = ReturnType<typeof useEnableBackstageStreamPreviewLazyQuery>;
-export type EnableBackstageStreamPreviewQueryResult = Apollo.QueryResult<EnableBackstageStreamPreviewQuery, EnableBackstageStreamPreviewQueryVariables>;
+export function useEnableBackstageStreamPreviewQuery(options: Omit<Urql.UseQueryArgs<EnableBackstageStreamPreviewQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<EnableBackstageStreamPreviewQuery>({ query: EnableBackstageStreamPreviewDocument, ...options });
+};
 export const GetEventDetailsDocument = gql`
     query GetEventDetails($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -45338,33 +44277,9 @@ export const GetEventDetailsDocument = gql`
 }
     ${RoomEventDetailsFragmentDoc}`;
 
-/**
- * __useGetEventDetailsQuery__
- *
- * To run a query within a React component, call `useGetEventDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEventDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEventDetailsQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetEventDetailsQuery, GetEventDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEventDetailsQuery, GetEventDetailsQueryVariables>(GetEventDetailsDocument, options);
-      }
-export function useGetEventDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventDetailsQuery, GetEventDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEventDetailsQuery, GetEventDetailsQueryVariables>(GetEventDetailsDocument, options);
-        }
-export type GetEventDetailsQueryHookResult = ReturnType<typeof useGetEventDetailsQuery>;
-export type GetEventDetailsLazyQueryHookResult = ReturnType<typeof useGetEventDetailsLazyQuery>;
-export type GetEventDetailsQueryResult = Apollo.QueryResult<GetEventDetailsQuery, GetEventDetailsQueryVariables>;
+export function useGetEventDetailsQuery(options: Omit<Urql.UseQueryArgs<GetEventDetailsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetEventDetailsQuery>({ query: GetEventDetailsDocument, ...options });
+};
 export const VideoPlayer_GetElementDocument = gql`
     query VideoPlayer_GetElement($elementId: uuid!) {
   content_Element_by_pk(id: $elementId) {
@@ -45381,33 +44296,9 @@ export const VideoPlayer_GetElementDocument = gql`
 }
     `;
 
-/**
- * __useVideoPlayer_GetElementQuery__
- *
- * To run a query within a React component, call `useVideoPlayer_GetElementQuery` and pass it any options that fit your needs.
- * When your component renders, `useVideoPlayer_GetElementQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVideoPlayer_GetElementQuery({
- *   variables: {
- *      elementId: // value for 'elementId'
- *   },
- * });
- */
-export function useVideoPlayer_GetElementQuery(baseOptions: Apollo.QueryHookOptions<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>(VideoPlayer_GetElementDocument, options);
-      }
-export function useVideoPlayer_GetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>(VideoPlayer_GetElementDocument, options);
-        }
-export type VideoPlayer_GetElementQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementQuery>;
-export type VideoPlayer_GetElementLazyQueryHookResult = ReturnType<typeof useVideoPlayer_GetElementLazyQuery>;
-export type VideoPlayer_GetElementQueryResult = Apollo.QueryResult<VideoPlayer_GetElementQuery, VideoPlayer_GetElementQueryVariables>;
+export function useVideoPlayer_GetElementQuery(options: Omit<Urql.UseQueryArgs<VideoPlayer_GetElementQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<VideoPlayer_GetElementQuery>({ query: VideoPlayer_GetElementDocument, ...options });
+};
 export const GetRoomChimeDataDocument = gql`
     mutation GetRoomChimeData($roomId: uuid!) {
   joinRoomChimeSession(roomId: $roomId) {
@@ -45417,32 +44308,10 @@ export const GetRoomChimeDataDocument = gql`
   }
 }
     `;
-export type GetRoomChimeDataMutationFn = Apollo.MutationFunction<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
 
-/**
- * __useGetRoomChimeDataMutation__
- *
- * To run a mutation, you first call `useGetRoomChimeDataMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetRoomChimeDataMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getRoomChimeDataMutation, { data, loading, error }] = useGetRoomChimeDataMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomChimeDataMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument, options);
-      }
-export type GetRoomChimeDataMutationHookResult = ReturnType<typeof useGetRoomChimeDataMutation>;
-export type GetRoomChimeDataMutationResult = Apollo.MutationResult<GetRoomChimeDataMutation>;
-export type GetRoomChimeDataMutationOptions = Apollo.BaseMutationOptions<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>;
+export function useGetRoomChimeDataMutation() {
+  return Urql.useMutation<GetRoomChimeDataMutation, GetRoomChimeDataMutationVariables>(GetRoomChimeDataDocument);
+};
 export const GetEventVonageTokenDocument = gql`
     mutation GetEventVonageToken($eventId: uuid!) {
   joinEventVonageSession(eventId: $eventId) {
@@ -45451,32 +44320,10 @@ export const GetEventVonageTokenDocument = gql`
   }
 }
     `;
-export type GetEventVonageTokenMutationFn = Apollo.MutationFunction<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
 
-/**
- * __useGetEventVonageTokenMutation__
- *
- * To run a mutation, you first call `useGetEventVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetEventVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getEventVonageTokenMutation, { data, loading, error }] = useGetEventVonageTokenMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument, options);
-      }
-export type GetEventVonageTokenMutationHookResult = ReturnType<typeof useGetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationResult = Apollo.MutationResult<GetEventVonageTokenMutation>;
-export type GetEventVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>;
+export function useGetEventVonageTokenMutation() {
+  return Urql.useMutation<GetEventVonageTokenMutation, GetEventVonageTokenMutationVariables>(GetEventVonageTokenDocument);
+};
 export const GetRoomVonageTokenDocument = gql`
     mutation GetRoomVonageToken($roomId: uuid!) {
   joinRoomVonageSession(roomId: $roomId) {
@@ -45486,32 +44333,10 @@ export const GetRoomVonageTokenDocument = gql`
   }
 }
     `;
-export type GetRoomVonageTokenMutationFn = Apollo.MutationFunction<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
 
-/**
- * __useGetRoomVonageTokenMutation__
- *
- * To run a mutation, you first call `useGetRoomVonageTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetRoomVonageTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getRoomVonageTokenMutation, { data, loading, error }] = useGetRoomVonageTokenMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomVonageTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument, options);
-      }
-export type GetRoomVonageTokenMutationHookResult = ReturnType<typeof useGetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationResult = Apollo.MutationResult<GetRoomVonageTokenMutation>;
-export type GetRoomVonageTokenMutationOptions = Apollo.BaseMutationOptions<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>;
+export function useGetRoomVonageTokenMutation() {
+  return Urql.useMutation<GetRoomVonageTokenMutation, GetRoomVonageTokenMutationVariables>(GetRoomVonageTokenDocument);
+};
 export const GetRoomVonageSessionIdDocument = gql`
     query GetRoomVonageSessionId($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -45521,33 +44346,9 @@ export const GetRoomVonageSessionIdDocument = gql`
 }
     `;
 
-/**
- * __useGetRoomVonageSessionIdQuery__
- *
- * To run a query within a React component, call `useGetRoomVonageSessionIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomVonageSessionIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRoomVonageSessionIdQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomVonageSessionIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
-      }
-export function useGetRoomVonageSessionIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(GetRoomVonageSessionIdDocument, options);
-        }
-export type GetRoomVonageSessionIdQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdQuery>;
-export type GetRoomVonageSessionIdLazyQueryHookResult = ReturnType<typeof useGetRoomVonageSessionIdLazyQuery>;
-export type GetRoomVonageSessionIdQueryResult = Apollo.QueryResult<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>;
+export function useGetRoomVonageSessionIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomVonageSessionIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetRoomVonageSessionIdQuery>({ query: GetRoomVonageSessionIdDocument, ...options });
+};
 export const GetEventVideosDocument = gql`
     query GetEventVideos($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -45583,33 +44384,9 @@ export const GetEventVideosDocument = gql`
 }
     `;
 
-/**
- * __useGetEventVideosQuery__
- *
- * To run a query within a React component, call `useGetEventVideosQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEventVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEventVideosQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useGetEventVideosQuery(baseOptions: Apollo.QueryHookOptions<GetEventVideosQuery, GetEventVideosQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEventVideosQuery, GetEventVideosQueryVariables>(GetEventVideosDocument, options);
-      }
-export function useGetEventVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventVideosQuery, GetEventVideosQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEventVideosQuery, GetEventVideosQueryVariables>(GetEventVideosDocument, options);
-        }
-export type GetEventVideosQueryHookResult = ReturnType<typeof useGetEventVideosQuery>;
-export type GetEventVideosLazyQueryHookResult = ReturnType<typeof useGetEventVideosLazyQuery>;
-export type GetEventVideosQueryResult = Apollo.QueryResult<GetEventVideosQuery, GetEventVideosQueryVariables>;
+export function useGetEventVideosQuery(options: Omit<Urql.UseQueryArgs<GetEventVideosQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetEventVideosQuery>({ query: GetEventVideosDocument, ...options });
+};
 export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
   video_VonageSessionLayout(
@@ -45624,33 +44401,9 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
 }
     `;
 
-/**
- * __useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery__
- *
- * To run a query within a React component, call `useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery` and pass it any options that fit your needs.
- * When your component renders, `useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
- *   variables: {
- *      vonageSessionId: // value for 'vonageSessionId'
- *   },
- * });
- */
-export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(baseOptions: Apollo.QueryHookOptions<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>(VonageLayoutProvider_GetLatestVonageSessionLayoutDocument, options);
-      }
-export function useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>(VonageLayoutProvider_GetLatestVonageSessionLayoutDocument, options);
-        }
-export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery>;
-export type VonageLayoutProvider_GetLatestVonageSessionLayoutLazyQueryHookResult = ReturnType<typeof useVonageLayoutProvider_GetLatestVonageSessionLayoutLazyQuery>;
-export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryResult = Apollo.QueryResult<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery, VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>;
+export function useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery(options: Omit<Urql.UseQueryArgs<VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<VonageLayoutProvider_GetLatestVonageSessionLayoutQuery>({ query: VonageLayoutProvider_GetLatestVonageSessionLayoutDocument, ...options });
+};
 export const InsertVonageSessionLayoutDocument = gql`
     mutation InsertVonageSessionLayout($vonageSessionId: String!, $conferenceId: uuid!, $layoutData: jsonb!) {
   insert_video_VonageSessionLayout(
@@ -45660,34 +44413,10 @@ export const InsertVonageSessionLayoutDocument = gql`
   }
 }
     `;
-export type InsertVonageSessionLayoutMutationFn = Apollo.MutationFunction<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
 
-/**
- * __useInsertVonageSessionLayoutMutation__
- *
- * To run a mutation, you first call `useInsertVonageSessionLayoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertVonageSessionLayoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertVonageSessionLayoutMutation, { data, loading, error }] = useInsertVonageSessionLayoutMutation({
- *   variables: {
- *      vonageSessionId: // value for 'vonageSessionId'
- *      conferenceId: // value for 'conferenceId'
- *      layoutData: // value for 'layoutData'
- *   },
- * });
- */
-export function useInsertVonageSessionLayoutMutation(baseOptions?: Apollo.MutationHookOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>(InsertVonageSessionLayoutDocument, options);
-      }
-export type InsertVonageSessionLayoutMutationHookResult = ReturnType<typeof useInsertVonageSessionLayoutMutation>;
-export type InsertVonageSessionLayoutMutationResult = Apollo.MutationResult<InsertVonageSessionLayoutMutation>;
-export type InsertVonageSessionLayoutMutationOptions = Apollo.BaseMutationOptions<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>;
+export function useInsertVonageSessionLayoutMutation() {
+  return Urql.useMutation<InsertVonageSessionLayoutMutation, InsertVonageSessionLayoutMutationVariables>(InsertVonageSessionLayoutDocument);
+};
 export const DeleteEventParticipantDocument = gql`
     mutation DeleteEventParticipant($eventId: uuid!, $registrantId: uuid!) {
   delete_schedule_EventProgramPerson(
@@ -45699,33 +44428,10 @@ export const DeleteEventParticipantDocument = gql`
   }
 }
     `;
-export type DeleteEventParticipantMutationFn = Apollo.MutationFunction<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
 
-/**
- * __useDeleteEventParticipantMutation__
- *
- * To run a mutation, you first call `useDeleteEventParticipantMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteEventParticipantMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteEventParticipantMutation, { data, loading, error }] = useDeleteEventParticipantMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useDeleteEventParticipantMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>(DeleteEventParticipantDocument, options);
-      }
-export type DeleteEventParticipantMutationHookResult = ReturnType<typeof useDeleteEventParticipantMutation>;
-export type DeleteEventParticipantMutationResult = Apollo.MutationResult<DeleteEventParticipantMutation>;
-export type DeleteEventParticipantMutationOptions = Apollo.BaseMutationOptions<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>;
+export function useDeleteEventParticipantMutation() {
+  return Urql.useMutation<DeleteEventParticipantMutation, DeleteEventParticipantMutationVariables>(DeleteEventParticipantDocument);
+};
 export const SaveVonageRoomRecordingDocument = gql`
     mutation SaveVonageRoomRecording($recordingId: uuid!, $registrantId: uuid!) {
   insert_registrant_SavedVonageRoomRecording_one(
@@ -45739,33 +44445,10 @@ export const SaveVonageRoomRecordingDocument = gql`
   }
 }
     `;
-export type SaveVonageRoomRecordingMutationFn = Apollo.MutationFunction<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
 
-/**
- * __useSaveVonageRoomRecordingMutation__
- *
- * To run a mutation, you first call `useSaveVonageRoomRecordingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSaveVonageRoomRecordingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [saveVonageRoomRecordingMutation, { data, loading, error }] = useSaveVonageRoomRecordingMutation({
- *   variables: {
- *      recordingId: // value for 'recordingId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useSaveVonageRoomRecordingMutation(baseOptions?: Apollo.MutationHookOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>(SaveVonageRoomRecordingDocument, options);
-      }
-export type SaveVonageRoomRecordingMutationHookResult = ReturnType<typeof useSaveVonageRoomRecordingMutation>;
-export type SaveVonageRoomRecordingMutationResult = Apollo.MutationResult<SaveVonageRoomRecordingMutation>;
-export type SaveVonageRoomRecordingMutationOptions = Apollo.BaseMutationOptions<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>;
+export function useSaveVonageRoomRecordingMutation() {
+  return Urql.useMutation<SaveVonageRoomRecordingMutation, SaveVonageRoomRecordingMutationVariables>(SaveVonageRoomRecordingDocument);
+};
 export const ToggleVonageRecordingStateDocument = gql`
     mutation ToggleVonageRecordingState($vonageSessionId: String!, $recordingActive: Boolean!) {
   toggleVonageRecordingState(
@@ -45777,33 +44460,10 @@ export const ToggleVonageRecordingStateDocument = gql`
   }
 }
     `;
-export type ToggleVonageRecordingStateMutationFn = Apollo.MutationFunction<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
 
-/**
- * __useToggleVonageRecordingStateMutation__
- *
- * To run a mutation, you first call `useToggleVonageRecordingStateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleVonageRecordingStateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleVonageRecordingStateMutation, { data, loading, error }] = useToggleVonageRecordingStateMutation({
- *   variables: {
- *      vonageSessionId: // value for 'vonageSessionId'
- *      recordingActive: // value for 'recordingActive'
- *   },
- * });
- */
-export function useToggleVonageRecordingStateMutation(baseOptions?: Apollo.MutationHookOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>(ToggleVonageRecordingStateDocument, options);
-      }
-export type ToggleVonageRecordingStateMutationHookResult = ReturnType<typeof useToggleVonageRecordingStateMutation>;
-export type ToggleVonageRecordingStateMutationResult = Apollo.MutationResult<ToggleVonageRecordingStateMutation>;
-export type ToggleVonageRecordingStateMutationOptions = Apollo.BaseMutationOptions<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>;
+export function useToggleVonageRecordingStateMutation() {
+  return Urql.useMutation<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>(ToggleVonageRecordingStateDocument);
+};
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
@@ -45821,34 +44481,9 @@ export const GetAllRoomsDocument = gql`
 }
     ${RoomListRoomDetailsFragmentDoc}`;
 
-/**
- * __useGetAllRoomsQuery__
- *
- * To run a query within a React component, call `useGetAllRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useGetAllRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
-      }
-export function useGetAllRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomsQuery, GetAllRoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllRoomsQuery, GetAllRoomsQueryVariables>(GetAllRoomsDocument, options);
-        }
-export type GetAllRoomsQueryHookResult = ReturnType<typeof useGetAllRoomsQuery>;
-export type GetAllRoomsLazyQueryHookResult = ReturnType<typeof useGetAllRoomsLazyQuery>;
-export type GetAllRoomsQueryResult = Apollo.QueryResult<GetAllRoomsQuery, GetAllRoomsQueryVariables>;
+export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
+};
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!, $registrantId: uuid!) {
   socialOrDiscussionRooms: room_Room(
@@ -45866,36 +44501,9 @@ export const GetAllTodaysRoomsDocument = gql`
 }
     ${RoomListRoomDetailsFragmentDoc}`;
 
-/**
- * __useGetAllTodaysRoomsQuery__
- *
- * To run a query within a React component, call `useGetAllTodaysRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllTodaysRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllTodaysRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      todayStart: // value for 'todayStart'
- *      todayEnd: // value for 'todayEnd'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useGetAllTodaysRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
-      }
-export function useGetAllTodaysRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>(GetAllTodaysRoomsDocument, options);
-        }
-export type GetAllTodaysRoomsQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsQuery>;
-export type GetAllTodaysRoomsLazyQueryHookResult = ReturnType<typeof useGetAllTodaysRoomsLazyQuery>;
-export type GetAllTodaysRoomsQueryResult = Apollo.QueryResult<GetAllTodaysRoomsQuery, GetAllTodaysRoomsQueryVariables>;
+export function useGetAllTodaysRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllTodaysRoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
+};
 export const GetSocialRoomsDocument = gql`
     query GetSocialRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
@@ -45907,34 +44515,9 @@ export const GetSocialRoomsDocument = gql`
 }
     ${SocialRoomFragmentDoc}`;
 
-/**
- * __useGetSocialRoomsQuery__
- *
- * To run a query within a React component, call `useGetSocialRoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSocialRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSocialRoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useGetSocialRoomsQuery(baseOptions: Apollo.QueryHookOptions<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>(GetSocialRoomsDocument, options);
-      }
-export function useGetSocialRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>(GetSocialRoomsDocument, options);
-        }
-export type GetSocialRoomsQueryHookResult = ReturnType<typeof useGetSocialRoomsQuery>;
-export type GetSocialRoomsLazyQueryHookResult = ReturnType<typeof useGetSocialRoomsLazyQuery>;
-export type GetSocialRoomsQueryResult = Apollo.QueryResult<GetSocialRoomsQuery, GetSocialRoomsQueryVariables>;
+export function useGetSocialRoomsQuery(options: Omit<Urql.UseQueryArgs<GetSocialRoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetSocialRoomsQuery>({ query: GetSocialRoomsDocument, ...options });
+};
 export const RoomTile_GetRoomDocument = gql`
     query RoomTile_GetRoom($roomId: uuid!, $withEvent: Boolean!, $eventId: uuid) {
   room_Room_by_pk(id: $roomId) {
@@ -45943,35 +44526,9 @@ export const RoomTile_GetRoomDocument = gql`
 }
     ${RoomTile_RoomFragmentDoc}`;
 
-/**
- * __useRoomTile_GetRoomQuery__
- *
- * To run a query within a React component, call `useRoomTile_GetRoomQuery` and pass it any options that fit your needs.
- * When your component renders, `useRoomTile_GetRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRoomTile_GetRoomQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *      withEvent: // value for 'withEvent'
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useRoomTile_GetRoomQuery(baseOptions: Apollo.QueryHookOptions<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, options);
-      }
-export function useRoomTile_GetRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, options);
-        }
-export type RoomTile_GetRoomQueryHookResult = ReturnType<typeof useRoomTile_GetRoomQuery>;
-export type RoomTile_GetRoomLazyQueryHookResult = ReturnType<typeof useRoomTile_GetRoomLazyQuery>;
-export type RoomTile_GetRoomQueryResult = Apollo.QueryResult<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>;
+export function useRoomTile_GetRoomQuery(options: Omit<Urql.UseQueryArgs<RoomTile_GetRoomQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RoomTile_GetRoomQuery>({ query: RoomTile_GetRoomDocument, ...options });
+};
 export const GetSponsorBoothsDocument = gql`
     query GetSponsorBooths($conferenceId: uuid!) {
   content_Item(
@@ -45983,33 +44540,9 @@ export const GetSponsorBoothsDocument = gql`
 }
     ${SponsorBoothsList_ItemFragmentDoc}`;
 
-/**
- * __useGetSponsorBoothsQuery__
- *
- * To run a query within a React component, call `useGetSponsorBoothsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSponsorBoothsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSponsorBoothsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetSponsorBoothsQuery(baseOptions: Apollo.QueryHookOptions<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>(GetSponsorBoothsDocument, options);
-      }
-export function useGetSponsorBoothsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>(GetSponsorBoothsDocument, options);
-        }
-export type GetSponsorBoothsQueryHookResult = ReturnType<typeof useGetSponsorBoothsQuery>;
-export type GetSponsorBoothsLazyQueryHookResult = ReturnType<typeof useGetSponsorBoothsLazyQuery>;
-export type GetSponsorBoothsQueryResult = Apollo.QueryResult<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>;
+export function useGetSponsorBoothsQuery(options: Omit<Urql.UseQueryArgs<GetSponsorBoothsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetSponsorBoothsQuery>({ query: GetSponsorBoothsDocument, ...options });
+};
 export const Schedule_HappeningSoonDocument = gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
   room_Room(
@@ -46038,35 +44571,9 @@ ${Schedule_ItemFieldsFragmentDoc}
 ${Schedule_ProgramPersonFragmentDoc}
 ${Schedule_TagFragmentDoc}`;
 
-/**
- * __useSchedule_HappeningSoonQuery__
- *
- * To run a query within a React component, call `useSchedule_HappeningSoonQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_HappeningSoonQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_HappeningSoonQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      startBefore: // value for 'startBefore'
- *      endAfter: // value for 'endAfter'
- *   },
- * });
- */
-export function useSchedule_HappeningSoonQuery(baseOptions: Apollo.QueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
-      }
-export function useSchedule_HappeningSoonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>(Schedule_HappeningSoonDocument, options);
-        }
-export type Schedule_HappeningSoonQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonQuery>;
-export type Schedule_HappeningSoonLazyQueryHookResult = ReturnType<typeof useSchedule_HappeningSoonLazyQuery>;
-export type Schedule_HappeningSoonQueryResult = Apollo.QueryResult<Schedule_HappeningSoonQuery, Schedule_HappeningSoonQueryVariables>;
+export function useSchedule_HappeningSoonQuery(options: Omit<Urql.UseQueryArgs<Schedule_HappeningSoonQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Schedule_HappeningSoonQuery>({ query: Schedule_HappeningSoonDocument, ...options });
+};
 export const StarEventButton_GetStarsDocument = gql`
     query StarEventButton_GetStars($eventIds: [uuid!]!, $registrantId: uuid!) {
   schedule_StarredEvent(
@@ -46077,34 +44584,9 @@ export const StarEventButton_GetStarsDocument = gql`
 }
     ${StarredEventFragmentDoc}`;
 
-/**
- * __useStarEventButton_GetStarsQuery__
- *
- * To run a query within a React component, call `useStarEventButton_GetStarsQuery` and pass it any options that fit your needs.
- * When your component renders, `useStarEventButton_GetStarsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStarEventButton_GetStarsQuery({
- *   variables: {
- *      eventIds: // value for 'eventIds'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useStarEventButton_GetStarsQuery(baseOptions: Apollo.QueryHookOptions<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>(StarEventButton_GetStarsDocument, options);
-      }
-export function useStarEventButton_GetStarsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>(StarEventButton_GetStarsDocument, options);
-        }
-export type StarEventButton_GetStarsQueryHookResult = ReturnType<typeof useStarEventButton_GetStarsQuery>;
-export type StarEventButton_GetStarsLazyQueryHookResult = ReturnType<typeof useStarEventButton_GetStarsLazyQuery>;
-export type StarEventButton_GetStarsQueryResult = Apollo.QueryResult<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>;
+export function useStarEventButton_GetStarsQuery(options: Omit<Urql.UseQueryArgs<StarEventButton_GetStarsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<StarEventButton_GetStarsQuery>({ query: StarEventButton_GetStarsDocument, ...options });
+};
 export const StarEventButton_InsertStarsDocument = gql`
     mutation StarEventButton_InsertStars($objects: [schedule_StarredEvent_insert_input!]!) {
   insert_schedule_StarredEvent(objects: $objects) {
@@ -46114,32 +44596,10 @@ export const StarEventButton_InsertStarsDocument = gql`
   }
 }
     ${StarredEventFragmentDoc}`;
-export type StarEventButton_InsertStarsMutationFn = Apollo.MutationFunction<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>;
 
-/**
- * __useStarEventButton_InsertStarsMutation__
- *
- * To run a mutation, you first call `useStarEventButton_InsertStarsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useStarEventButton_InsertStarsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [starEventButtonInsertStarsMutation, { data, loading, error }] = useStarEventButton_InsertStarsMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useStarEventButton_InsertStarsMutation(baseOptions?: Apollo.MutationHookOptions<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>(StarEventButton_InsertStarsDocument, options);
-      }
-export type StarEventButton_InsertStarsMutationHookResult = ReturnType<typeof useStarEventButton_InsertStarsMutation>;
-export type StarEventButton_InsertStarsMutationResult = Apollo.MutationResult<StarEventButton_InsertStarsMutation>;
-export type StarEventButton_InsertStarsMutationOptions = Apollo.BaseMutationOptions<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>;
+export function useStarEventButton_InsertStarsMutation() {
+  return Urql.useMutation<StarEventButton_InsertStarsMutation, StarEventButton_InsertStarsMutationVariables>(StarEventButton_InsertStarsDocument);
+};
 export const StarEventButton_DeleteStarsDocument = gql`
     mutation StarEventButton_DeleteStars($ids: [uuid!]!) {
   delete_schedule_StarredEvent(where: {id: {_in: $ids}}) {
@@ -46149,32 +44609,10 @@ export const StarEventButton_DeleteStarsDocument = gql`
   }
 }
     `;
-export type StarEventButton_DeleteStarsMutationFn = Apollo.MutationFunction<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>;
 
-/**
- * __useStarEventButton_DeleteStarsMutation__
- *
- * To run a mutation, you first call `useStarEventButton_DeleteStarsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useStarEventButton_DeleteStarsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [starEventButtonDeleteStarsMutation, { data, loading, error }] = useStarEventButton_DeleteStarsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useStarEventButton_DeleteStarsMutation(baseOptions?: Apollo.MutationHookOptions<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>(StarEventButton_DeleteStarsDocument, options);
-      }
-export type StarEventButton_DeleteStarsMutationHookResult = ReturnType<typeof useStarEventButton_DeleteStarsMutation>;
-export type StarEventButton_DeleteStarsMutationResult = Apollo.MutationResult<StarEventButton_DeleteStarsMutation>;
-export type StarEventButton_DeleteStarsMutationOptions = Apollo.BaseMutationOptions<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>;
+export function useStarEventButton_DeleteStarsMutation() {
+  return Urql.useMutation<StarEventButton_DeleteStarsMutation, StarEventButton_DeleteStarsMutationVariables>(StarEventButton_DeleteStarsDocument);
+};
 export const StarredEvents_SelectEventIdsDocument = gql`
     query StarredEvents_SelectEventIds($registrantId: uuid!) {
   schedule_StarredEvent(where: {registrantId: {_eq: $registrantId}}) {
@@ -46188,33 +44626,9 @@ export const StarredEvents_SelectEventIdsDocument = gql`
 }
     ${StarredEventFragmentDoc}`;
 
-/**
- * __useStarredEvents_SelectEventIdsQuery__
- *
- * To run a query within a React component, call `useStarredEvents_SelectEventIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useStarredEvents_SelectEventIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStarredEvents_SelectEventIdsQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useStarredEvents_SelectEventIdsQuery(baseOptions: Apollo.QueryHookOptions<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(StarredEvents_SelectEventIdsDocument, options);
-      }
-export function useStarredEvents_SelectEventIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(StarredEvents_SelectEventIdsDocument, options);
-        }
-export type StarredEvents_SelectEventIdsQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventIdsQuery>;
-export type StarredEvents_SelectEventIdsLazyQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventIdsLazyQuery>;
-export type StarredEvents_SelectEventIdsQueryResult = Apollo.QueryResult<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>;
+export function useStarredEvents_SelectEventIdsQuery(options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventIdsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<StarredEvents_SelectEventIdsQuery>({ query: StarredEvents_SelectEventIdsDocument, ...options });
+};
 export const StarredEvents_SelectEventsDocument = gql`
     query StarredEvents_SelectEvents($eventIds: [uuid!]!, $conferenceId: uuid!) {
   room_Room(where: {events: {id: {_in: $eventIds}}}) {
@@ -46239,34 +44653,9 @@ ${Schedule_ItemFieldsFragmentDoc}
 ${Schedule_ProgramPersonFragmentDoc}
 ${Schedule_TagFragmentDoc}`;
 
-/**
- * __useStarredEvents_SelectEventsQuery__
- *
- * To run a query within a React component, call `useStarredEvents_SelectEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useStarredEvents_SelectEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStarredEvents_SelectEventsQuery({
- *   variables: {
- *      eventIds: // value for 'eventIds'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useStarredEvents_SelectEventsQuery(baseOptions: Apollo.QueryHookOptions<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>(StarredEvents_SelectEventsDocument, options);
-      }
-export function useStarredEvents_SelectEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>(StarredEvents_SelectEventsDocument, options);
-        }
-export type StarredEvents_SelectEventsQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsQuery>;
-export type StarredEvents_SelectEventsLazyQueryHookResult = ReturnType<typeof useStarredEvents_SelectEventsLazyQuery>;
-export type StarredEvents_SelectEventsQueryResult = Apollo.QueryResult<StarredEvents_SelectEventsQuery, StarredEvents_SelectEventsQueryVariables>;
+export function useStarredEvents_SelectEventsQuery(options: Omit<Urql.UseQueryArgs<StarredEvents_SelectEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<StarredEvents_SelectEventsQuery>({ query: StarredEvents_SelectEventsDocument, ...options });
+};
 export const Schedule_SelectItemDocument = gql`
     query Schedule_SelectItem($id: uuid!) {
   content_Item_by_pk(id: $id) {
@@ -46275,33 +44664,9 @@ export const Schedule_SelectItemDocument = gql`
 }
     ${Schedule_ItemFragmentDoc}`;
 
-/**
- * __useSchedule_SelectItemQuery__
- *
- * To run a query within a React component, call `useSchedule_SelectItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_SelectItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_SelectItemQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useSchedule_SelectItemQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
-      }
-export function useSchedule_SelectItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, options);
-        }
-export type Schedule_SelectItemQueryHookResult = ReturnType<typeof useSchedule_SelectItemQuery>;
-export type Schedule_SelectItemLazyQueryHookResult = ReturnType<typeof useSchedule_SelectItemLazyQuery>;
-export type Schedule_SelectItemQueryResult = Apollo.QueryResult<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>;
+export function useSchedule_SelectItemQuery(options: Omit<Urql.UseQueryArgs<Schedule_SelectItemQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Schedule_SelectItemQuery>({ query: Schedule_SelectItemDocument, ...options });
+};
 export const Schedule_SelectSummariesDocument = gql`
     query Schedule_SelectSummaries($conferenceId: uuid!) {
   room_Room(
@@ -46328,33 +44693,9 @@ ${Schedule_ItemFieldsFragmentDoc}
 ${Schedule_ProgramPersonFragmentDoc}
 ${Schedule_TagFragmentDoc}`;
 
-/**
- * __useSchedule_SelectSummariesQuery__
- *
- * To run a query within a React component, call `useSchedule_SelectSummariesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSchedule_SelectSummariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSchedule_SelectSummariesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSchedule_SelectSummariesQuery(baseOptions: Apollo.QueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
-      }
-export function useSchedule_SelectSummariesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>(Schedule_SelectSummariesDocument, options);
-        }
-export type Schedule_SelectSummariesQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesQuery>;
-export type Schedule_SelectSummariesLazyQueryHookResult = ReturnType<typeof useSchedule_SelectSummariesLazyQuery>;
-export type Schedule_SelectSummariesQueryResult = Apollo.QueryResult<Schedule_SelectSummariesQuery, Schedule_SelectSummariesQueryVariables>;
+export function useSchedule_SelectSummariesQuery(options: Omit<Urql.UseQueryArgs<Schedule_SelectSummariesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Schedule_SelectSummariesQuery>({ query: Schedule_SelectSummariesDocument, ...options });
+};
 export const ScheduleV2_DayLightweightEventsDocument = gql`
     query ScheduleV2_DayLightweightEvents($conferenceId: uuid!, $startOfDay: timestamptz!, $endOfDay: timestamptz!, $filter: schedule_Event_bool_exp!) {
   schedule_Event(
@@ -46365,36 +44706,9 @@ export const ScheduleV2_DayLightweightEventsDocument = gql`
 }
     ${ScheduleV2_LightweightEventFragmentDoc}`;
 
-/**
- * __useScheduleV2_DayLightweightEventsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_DayLightweightEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_DayLightweightEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_DayLightweightEventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      startOfDay: // value for 'startOfDay'
- *      endOfDay: // value for 'endOfDay'
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useScheduleV2_DayLightweightEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>(ScheduleV2_DayLightweightEventsDocument, options);
-      }
-export function useScheduleV2_DayLightweightEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>(ScheduleV2_DayLightweightEventsDocument, options);
-        }
-export type ScheduleV2_DayLightweightEventsQueryHookResult = ReturnType<typeof useScheduleV2_DayLightweightEventsQuery>;
-export type ScheduleV2_DayLightweightEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_DayLightweightEventsLazyQuery>;
-export type ScheduleV2_DayLightweightEventsQueryResult = Apollo.QueryResult<ScheduleV2_DayLightweightEventsQuery, ScheduleV2_DayLightweightEventsQueryVariables>;
+export function useScheduleV2_DayLightweightEventsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ScheduleV2_DayLightweightEventsQuery>({ query: ScheduleV2_DayLightweightEventsDocument, ...options });
+};
 export const ScheduleV2_DayEventsDocument = gql`
     query ScheduleV2_DayEvents($eventIds: [uuid!]!) {
   schedule_Event(where: {id: {_in: $eventIds}}) {
@@ -46403,33 +44717,9 @@ export const ScheduleV2_DayEventsDocument = gql`
 }
     ${ScheduleV2_EventFragmentDoc}`;
 
-/**
- * __useScheduleV2_DayEventsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_DayEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_DayEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_DayEventsQuery({
- *   variables: {
- *      eventIds: // value for 'eventIds'
- *   },
- * });
- */
-export function useScheduleV2_DayEventsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>(ScheduleV2_DayEventsDocument, options);
-      }
-export function useScheduleV2_DayEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>(ScheduleV2_DayEventsDocument, options);
-        }
-export type ScheduleV2_DayEventsQueryHookResult = ReturnType<typeof useScheduleV2_DayEventsQuery>;
-export type ScheduleV2_DayEventsLazyQueryHookResult = ReturnType<typeof useScheduleV2_DayEventsLazyQuery>;
-export type ScheduleV2_DayEventsQueryResult = Apollo.QueryResult<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables>;
+export function useScheduleV2_DayEventsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ScheduleV2_DayEventsQuery>({ query: ScheduleV2_DayEventsDocument, ...options });
+};
 export const ScheduleV2_RoomsDocument = gql`
     query ScheduleV2_Rooms($conferenceId: uuid!) {
   room_Room(where: {conferenceId: {_eq: $conferenceId}, events: {}}) {
@@ -46438,33 +44728,9 @@ export const ScheduleV2_RoomsDocument = gql`
 }
     ${ScheduleV2_RoomFragmentDoc}`;
 
-/**
- * __useScheduleV2_RoomsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_RoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_RoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useScheduleV2_RoomsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
-      }
-export function useScheduleV2_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>(ScheduleV2_RoomsDocument, options);
-        }
-export type ScheduleV2_RoomsQueryHookResult = ReturnType<typeof useScheduleV2_RoomsQuery>;
-export type ScheduleV2_RoomsLazyQueryHookResult = ReturnType<typeof useScheduleV2_RoomsLazyQuery>;
-export type ScheduleV2_RoomsQueryResult = Apollo.QueryResult<ScheduleV2_RoomsQuery, ScheduleV2_RoomsQueryVariables>;
+export function useScheduleV2_RoomsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_RoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ScheduleV2_RoomsQuery>({ query: ScheduleV2_RoomsDocument, ...options });
+};
 export const ScheduleV2_TagsDocument = gql`
     query ScheduleV2_Tags($conferenceId: uuid!) {
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -46473,33 +44739,9 @@ export const ScheduleV2_TagsDocument = gql`
 }
     ${ScheduleV2_TagFragmentDoc}`;
 
-/**
- * __useScheduleV2_TagsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_TagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_TagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_TagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useScheduleV2_TagsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>(ScheduleV2_TagsDocument, options);
-      }
-export function useScheduleV2_TagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>(ScheduleV2_TagsDocument, options);
-        }
-export type ScheduleV2_TagsQueryHookResult = ReturnType<typeof useScheduleV2_TagsQuery>;
-export type ScheduleV2_TagsLazyQueryHookResult = ReturnType<typeof useScheduleV2_TagsLazyQuery>;
-export type ScheduleV2_TagsQueryResult = Apollo.QueryResult<ScheduleV2_TagsQuery, ScheduleV2_TagsQueryVariables>;
+export function useScheduleV2_TagsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_TagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ScheduleV2_TagsQuery>({ query: ScheduleV2_TagsDocument, ...options });
+};
 export const ScheduleV2_AllEvents_ParamsDocument = gql`
     query ScheduleV2_AllEvents_Params($conferenceId: uuid!) {
   earliestStartingEvent: schedule_Event(
@@ -46521,33 +44763,9 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
 }
     `;
 
-/**
- * __useScheduleV2_AllEvents_ParamsQuery__
- *
- * To run a query within a React component, call `useScheduleV2_AllEvents_ParamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useScheduleV2_AllEvents_ParamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useScheduleV2_AllEvents_ParamsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useScheduleV2_AllEvents_ParamsQuery(baseOptions: Apollo.QueryHookOptions<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>(ScheduleV2_AllEvents_ParamsDocument, options);
-      }
-export function useScheduleV2_AllEvents_ParamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>(ScheduleV2_AllEvents_ParamsDocument, options);
-        }
-export type ScheduleV2_AllEvents_ParamsQueryHookResult = ReturnType<typeof useScheduleV2_AllEvents_ParamsQuery>;
-export type ScheduleV2_AllEvents_ParamsLazyQueryHookResult = ReturnType<typeof useScheduleV2_AllEvents_ParamsLazyQuery>;
-export type ScheduleV2_AllEvents_ParamsQueryResult = Apollo.QueryResult<ScheduleV2_AllEvents_ParamsQuery, ScheduleV2_AllEvents_ParamsQueryVariables>;
+export function useScheduleV2_AllEvents_ParamsQuery(options: Omit<Urql.UseQueryArgs<ScheduleV2_AllEvents_ParamsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ScheduleV2_AllEvents_ParamsQuery>({ query: ScheduleV2_AllEvents_ParamsDocument, ...options });
+};
 export const SearchPanel_ItemsDocument = gql`
     query SearchPanel_Items($conferenceId: uuid!, $search: String!) {
   content_searchItems(args: {conferenceId: $conferenceId, search: $search}) {
@@ -46556,34 +44774,9 @@ export const SearchPanel_ItemsDocument = gql`
 }
     ${SearchPanel_ItemFragmentDoc}`;
 
-/**
- * __useSearchPanel_ItemsQuery__
- *
- * To run a query within a React component, call `useSearchPanel_ItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchPanel_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchPanel_ItemsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useSearchPanel_ItemsQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>(SearchPanel_ItemsDocument, options);
-      }
-export function useSearchPanel_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>(SearchPanel_ItemsDocument, options);
-        }
-export type SearchPanel_ItemsQueryHookResult = ReturnType<typeof useSearchPanel_ItemsQuery>;
-export type SearchPanel_ItemsLazyQueryHookResult = ReturnType<typeof useSearchPanel_ItemsLazyQuery>;
-export type SearchPanel_ItemsQueryResult = Apollo.QueryResult<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>;
+export function useSearchPanel_ItemsQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_ItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchPanel_ItemsQuery>({ query: SearchPanel_ItemsDocument, ...options });
+};
 export const SearchPanel_EventsDocument = gql`
     query SearchPanel_Events($conferenceId: uuid!, $search: String!) {
   schedule_searchEvents(
@@ -46595,34 +44788,9 @@ export const SearchPanel_EventsDocument = gql`
 }
     ${SearchPanel_EventFragmentDoc}`;
 
-/**
- * __useSearchPanel_EventsQuery__
- *
- * To run a query within a React component, call `useSearchPanel_EventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchPanel_EventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchPanel_EventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useSearchPanel_EventsQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>(SearchPanel_EventsDocument, options);
-      }
-export function useSearchPanel_EventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>(SearchPanel_EventsDocument, options);
-        }
-export type SearchPanel_EventsQueryHookResult = ReturnType<typeof useSearchPanel_EventsQuery>;
-export type SearchPanel_EventsLazyQueryHookResult = ReturnType<typeof useSearchPanel_EventsLazyQuery>;
-export type SearchPanel_EventsQueryResult = Apollo.QueryResult<SearchPanel_EventsQuery, SearchPanel_EventsQueryVariables>;
+export function useSearchPanel_EventsQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_EventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchPanel_EventsQuery>({ query: SearchPanel_EventsDocument, ...options });
+};
 export const SearchPanel_PeopleDocument = gql`
     query SearchPanel_People($conferenceId: uuid!, $search: String!) {
   collection_searchProgramPerson(
@@ -46633,34 +44801,9 @@ export const SearchPanel_PeopleDocument = gql`
 }
     ${SearchPanel_PersonFragmentDoc}`;
 
-/**
- * __useSearchPanel_PeopleQuery__
- *
- * To run a query within a React component, call `useSearchPanel_PeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchPanel_PeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchPanel_PeopleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useSearchPanel_PeopleQuery(baseOptions: Apollo.QueryHookOptions<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>(SearchPanel_PeopleDocument, options);
-      }
-export function useSearchPanel_PeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>(SearchPanel_PeopleDocument, options);
-        }
-export type SearchPanel_PeopleQueryHookResult = ReturnType<typeof useSearchPanel_PeopleQuery>;
-export type SearchPanel_PeopleLazyQueryHookResult = ReturnType<typeof useSearchPanel_PeopleLazyQuery>;
-export type SearchPanel_PeopleQueryResult = Apollo.QueryResult<SearchPanel_PeopleQuery, SearchPanel_PeopleQueryVariables>;
+export function useSearchPanel_PeopleQuery(options: Omit<Urql.UseQueryArgs<SearchPanel_PeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchPanel_PeopleQuery>({ query: SearchPanel_PeopleDocument, ...options });
+};
 export const SelectSwagBagsDocument = gql`
     query SelectSwagBags($conferenceId: uuid!) {
   content_Item(
@@ -46671,33 +44814,9 @@ export const SelectSwagBagsDocument = gql`
 }
     ${SwagBagFragmentDoc}`;
 
-/**
- * __useSelectSwagBagsQuery__
- *
- * To run a query within a React component, call `useSelectSwagBagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectSwagBagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectSwagBagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectSwagBagsQuery(baseOptions: Apollo.QueryHookOptions<SelectSwagBagsQuery, SelectSwagBagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectSwagBagsQuery, SelectSwagBagsQueryVariables>(SelectSwagBagsDocument, options);
-      }
-export function useSelectSwagBagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectSwagBagsQuery, SelectSwagBagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectSwagBagsQuery, SelectSwagBagsQueryVariables>(SelectSwagBagsDocument, options);
-        }
-export type SelectSwagBagsQueryHookResult = ReturnType<typeof useSelectSwagBagsQuery>;
-export type SelectSwagBagsLazyQueryHookResult = ReturnType<typeof useSelectSwagBagsLazyQuery>;
-export type SelectSwagBagsQueryResult = Apollo.QueryResult<SelectSwagBagsQuery, SelectSwagBagsQueryVariables>;
+export function useSelectSwagBagsQuery(options: Omit<Urql.UseQueryArgs<SelectSwagBagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectSwagBagsQuery>({ query: SelectSwagBagsDocument, ...options });
+};
 export const ConferenceStatsDocument = gql`
     query ConferenceStats($id: uuid!) {
   conference_Conference_by_pk(id: $id) {
@@ -46757,33 +44876,9 @@ export const ConferenceStatsDocument = gql`
 }
     `;
 
-/**
- * __useConferenceStatsQuery__
- *
- * To run a query within a React component, call `useConferenceStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceStatsQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useConferenceStatsQuery(baseOptions: Apollo.QueryHookOptions<ConferenceStatsQuery, ConferenceStatsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceStatsQuery, ConferenceStatsQueryVariables>(ConferenceStatsDocument, options);
-      }
-export function useConferenceStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceStatsQuery, ConferenceStatsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceStatsQuery, ConferenceStatsQueryVariables>(ConferenceStatsDocument, options);
-        }
-export type ConferenceStatsQueryHookResult = ReturnType<typeof useConferenceStatsQuery>;
-export type ConferenceStatsLazyQueryHookResult = ReturnType<typeof useConferenceStatsLazyQuery>;
-export type ConferenceStatsQueryResult = Apollo.QueryResult<ConferenceStatsQuery, ConferenceStatsQueryVariables>;
+export function useConferenceStatsQuery(options: Omit<Urql.UseQueryArgs<ConferenceStatsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceStatsQuery>({ query: ConferenceStatsDocument, ...options });
+};
 export const GetChannelStacksDocument = gql`
     query GetChannelStacks($conferenceId: uuid!) {
   room_Room(where: {channelStack: {}, conferenceId: {_eq: $conferenceId}}) {
@@ -46798,33 +44893,9 @@ export const GetChannelStacksDocument = gql`
 }
     `;
 
-/**
- * __useGetChannelStacksQuery__
- *
- * To run a query within a React component, call `useGetChannelStacksQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetChannelStacksQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetChannelStacksQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetChannelStacksQuery(baseOptions: Apollo.QueryHookOptions<GetChannelStacksQuery, GetChannelStacksQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetChannelStacksQuery, GetChannelStacksQueryVariables>(GetChannelStacksDocument, options);
-      }
-export function useGetChannelStacksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChannelStacksQuery, GetChannelStacksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetChannelStacksQuery, GetChannelStacksQueryVariables>(GetChannelStacksDocument, options);
-        }
-export type GetChannelStacksQueryHookResult = ReturnType<typeof useGetChannelStacksQuery>;
-export type GetChannelStacksLazyQueryHookResult = ReturnType<typeof useGetChannelStacksLazyQuery>;
-export type GetChannelStacksQueryResult = Apollo.QueryResult<GetChannelStacksQuery, GetChannelStacksQueryVariables>;
+export function useGetChannelStacksQuery(options: Omit<Urql.UseQueryArgs<GetChannelStacksQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetChannelStacksQuery>({ query: GetChannelStacksDocument, ...options });
+};
 export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -46833,33 +44904,9 @@ export const ConferenceConfiguration_GetConferenceConfigurationsDocument = gql`
 }
     ${ConferenceConfiguration_ConferenceConfigurationsFragmentDoc}`;
 
-/**
- * __useConferenceConfiguration_GetConferenceConfigurationsQuery__
- *
- * To run a query within a React component, call `useConferenceConfiguration_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceConfiguration_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceConfiguration_GetConferenceConfigurationsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConferenceConfiguration_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>(ConferenceConfiguration_GetConferenceConfigurationsDocument, options);
-      }
-export function useConferenceConfiguration_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>(ConferenceConfiguration_GetConferenceConfigurationsDocument, options);
-        }
-export type ConferenceConfiguration_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useConferenceConfiguration_GetConferenceConfigurationsQuery>;
-export type ConferenceConfiguration_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConferenceConfiguration_GetConferenceConfigurationsLazyQuery>;
-export type ConferenceConfiguration_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConferenceConfiguration_GetConferenceConfigurationsQuery, ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>;
+export function useConferenceConfiguration_GetConferenceConfigurationsQuery(options: Omit<Urql.UseQueryArgs<ConferenceConfiguration_GetConferenceConfigurationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceConfiguration_GetConferenceConfigurationsQuery>({ query: ConferenceConfiguration_GetConferenceConfigurationsDocument, ...options });
+};
 export const Conference_Configuration_UpdateConferenceConfigurationsDocument = gql`
     mutation conference_Configuration_UpdateConferenceConfigurations($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!, $value: jsonb!) {
   update_conference_Configuration_by_pk(
@@ -46872,34 +44919,10 @@ export const Conference_Configuration_UpdateConferenceConfigurationsDocument = g
   }
 }
     `;
-export type Conference_Configuration_UpdateConferenceConfigurationsMutationFn = Apollo.MutationFunction<Conference_Configuration_UpdateConferenceConfigurationsMutation, Conference_Configuration_UpdateConferenceConfigurationsMutationVariables>;
 
-/**
- * __useConference_Configuration_UpdateConferenceConfigurationsMutation__
- *
- * To run a mutation, you first call `useConference_Configuration_UpdateConferenceConfigurationsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useConference_Configuration_UpdateConferenceConfigurationsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [conferenceConfigurationUpdateConferenceConfigurationsMutation, { data, loading, error }] = useConference_Configuration_UpdateConferenceConfigurationsMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      key: // value for 'key'
- *      value: // value for 'value'
- *   },
- * });
- */
-export function useConference_Configuration_UpdateConferenceConfigurationsMutation(baseOptions?: Apollo.MutationHookOptions<Conference_Configuration_UpdateConferenceConfigurationsMutation, Conference_Configuration_UpdateConferenceConfigurationsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Conference_Configuration_UpdateConferenceConfigurationsMutation, Conference_Configuration_UpdateConferenceConfigurationsMutationVariables>(Conference_Configuration_UpdateConferenceConfigurationsDocument, options);
-      }
-export type Conference_Configuration_UpdateConferenceConfigurationsMutationHookResult = ReturnType<typeof useConference_Configuration_UpdateConferenceConfigurationsMutation>;
-export type Conference_Configuration_UpdateConferenceConfigurationsMutationResult = Apollo.MutationResult<Conference_Configuration_UpdateConferenceConfigurationsMutation>;
-export type Conference_Configuration_UpdateConferenceConfigurationsMutationOptions = Apollo.BaseMutationOptions<Conference_Configuration_UpdateConferenceConfigurationsMutation, Conference_Configuration_UpdateConferenceConfigurationsMutationVariables>;
+export function useConference_Configuration_UpdateConferenceConfigurationsMutation() {
+  return Urql.useMutation<Conference_Configuration_UpdateConferenceConfigurationsMutation, Conference_Configuration_UpdateConferenceConfigurationsMutationVariables>(Conference_Configuration_UpdateConferenceConfigurationsDocument);
+};
 export const EventVonageControls_GetEventsDocument = gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
   schedule_Event(
@@ -46915,33 +44938,9 @@ export const EventVonageControls_GetEventsDocument = gql`
 }
     `;
 
-/**
- * __useEventVonageControls_GetEventsQuery__
- *
- * To run a query within a React component, call `useEventVonageControls_GetEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useEventVonageControls_GetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useEventVonageControls_GetEventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useEventVonageControls_GetEventsQuery(baseOptions: Apollo.QueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, options);
-      }
-export function useEventVonageControls_GetEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>(EventVonageControls_GetEventsDocument, options);
-        }
-export type EventVonageControls_GetEventsQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsQuery>;
-export type EventVonageControls_GetEventsLazyQueryHookResult = ReturnType<typeof useEventVonageControls_GetEventsLazyQuery>;
-export type EventVonageControls_GetEventsQueryResult = Apollo.QueryResult<EventVonageControls_GetEventsQuery, EventVonageControls_GetEventsQueryVariables>;
+export function useEventVonageControls_GetEventsQuery(options: Omit<Urql.UseQueryArgs<EventVonageControls_GetEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<EventVonageControls_GetEventsQuery>({ query: EventVonageControls_GetEventsDocument, ...options });
+};
 export const EventVonageControls_StopEventBroadcastDocument = gql`
     mutation EventVonageControls_StopEventBroadcast($eventId: uuid!) {
   stopEventBroadcast(eventId: $eventId) {
@@ -46949,32 +44948,10 @@ export const EventVonageControls_StopEventBroadcastDocument = gql`
   }
 }
     `;
-export type EventVonageControls_StopEventBroadcastMutationFn = Apollo.MutationFunction<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
 
-/**
- * __useEventVonageControls_StopEventBroadcastMutation__
- *
- * To run a mutation, you first call `useEventVonageControls_StopEventBroadcastMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEventVonageControls_StopEventBroadcastMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [eventVonageControlsStopEventBroadcastMutation, { data, loading, error }] = useEventVonageControls_StopEventBroadcastMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useEventVonageControls_StopEventBroadcastMutation(baseOptions?: Apollo.MutationHookOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>(EventVonageControls_StopEventBroadcastDocument, options);
-      }
-export type EventVonageControls_StopEventBroadcastMutationHookResult = ReturnType<typeof useEventVonageControls_StopEventBroadcastMutation>;
-export type EventVonageControls_StopEventBroadcastMutationResult = Apollo.MutationResult<EventVonageControls_StopEventBroadcastMutation>;
-export type EventVonageControls_StopEventBroadcastMutationOptions = Apollo.BaseMutationOptions<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>;
+export function useEventVonageControls_StopEventBroadcastMutation() {
+  return Urql.useMutation<EventVonageControls_StopEventBroadcastMutation, EventVonageControls_StopEventBroadcastMutationVariables>(EventVonageControls_StopEventBroadcastDocument);
+};
 export const MonitorLivestreamsDocument = gql`
     query MonitorLivestreams($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
   liveEvents: schedule_Event(
@@ -46993,35 +44970,9 @@ export const MonitorLivestreamsDocument = gql`
     ${MonitorLivestreams_EventFragmentDoc}
 ${MonitorLivestreams_PrerecEventFragmentDoc}`;
 
-/**
- * __useMonitorLivestreamsQuery__
- *
- * To run a query within a React component, call `useMonitorLivestreamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMonitorLivestreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMonitorLivestreamsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      now: // value for 'now'
- *      later: // value for 'later'
- *   },
- * });
- */
-export function useMonitorLivestreamsQuery(baseOptions: Apollo.QueryHookOptions<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>(MonitorLivestreamsDocument, options);
-      }
-export function useMonitorLivestreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>(MonitorLivestreamsDocument, options);
-        }
-export type MonitorLivestreamsQueryHookResult = ReturnType<typeof useMonitorLivestreamsQuery>;
-export type MonitorLivestreamsLazyQueryHookResult = ReturnType<typeof useMonitorLivestreamsLazyQuery>;
-export type MonitorLivestreamsQueryResult = Apollo.QueryResult<MonitorLivestreamsQuery, MonitorLivestreamsQueryVariables>;
+export function useMonitorLivestreamsQuery(options: Omit<Urql.UseQueryArgs<MonitorLivestreamsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MonitorLivestreamsQuery>({ query: MonitorLivestreamsDocument, ...options });
+};
 export const CreateConferencePrepareJobDocument = gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
   insert_conference_PrepareJob_one(object: {conferenceId: $conferenceId}) {
@@ -47030,32 +44981,10 @@ export const CreateConferencePrepareJobDocument = gql`
   }
 }
     `;
-export type CreateConferencePrepareJobMutationFn = Apollo.MutationFunction<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
 
-/**
- * __useCreateConferencePrepareJobMutation__
- *
- * To run a mutation, you first call `useCreateConferencePrepareJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConferencePrepareJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createConferencePrepareJobMutation, { data, loading, error }] = useCreateConferencePrepareJobMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateConferencePrepareJobMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument, options);
-      }
-export type CreateConferencePrepareJobMutationHookResult = ReturnType<typeof useCreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationResult = Apollo.MutationResult<CreateConferencePrepareJobMutation>;
-export type CreateConferencePrepareJobMutationOptions = Apollo.BaseMutationOptions<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>;
+export function useCreateConferencePrepareJobMutation() {
+  return Urql.useMutation<CreateConferencePrepareJobMutation, CreateConferencePrepareJobMutationVariables>(CreateConferencePrepareJobDocument);
+};
 export const ConferencePrepareJobSubscriptionDocument = gql`
     subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
   conference_PrepareJob(
@@ -47078,28 +45007,9 @@ export const ConferencePrepareJobSubscriptionDocument = gql`
 }
     `;
 
-/**
- * __useConferencePrepareJobSubscriptionSubscription__
- *
- * To run a query within a React component, call `useConferencePrepareJobSubscriptionSubscription` and pass it any options that fit your needs.
- * When your component renders, `useConferencePrepareJobSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConferencePrepareJobSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<ConferencePrepareJobSubscriptionSubscription, ConferencePrepareJobSubscriptionSubscriptionVariables>(ConferencePrepareJobSubscriptionDocument, options);
-      }
-export type ConferencePrepareJobSubscriptionSubscriptionHookResult = ReturnType<typeof useConferencePrepareJobSubscriptionSubscription>;
-export type ConferencePrepareJobSubscriptionSubscriptionResult = Apollo.SubscriptionResult<ConferencePrepareJobSubscriptionSubscription>;
+export function useConferencePrepareJobSubscriptionSubscription<TData = ConferencePrepareJobSubscriptionSubscription>(options: Omit<Urql.UseSubscriptionArgs<ConferencePrepareJobSubscriptionSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<ConferencePrepareJobSubscriptionSubscription, TData>) {
+  return Urql.useSubscription<ConferencePrepareJobSubscriptionSubscription, TData, ConferencePrepareJobSubscriptionSubscriptionVariables>({ query: ConferencePrepareJobSubscriptionDocument, ...options }, handler);
+};
 export const ManageModeration_SelectFlagsDocument = gql`
     query ManageModeration_SelectFlags($conferenceId: uuid!) {
   chat_Flag(where: {message: {chat: {conferenceId: {_eq: $conferenceId}}}}) {
@@ -47108,33 +45018,9 @@ export const ManageModeration_SelectFlagsDocument = gql`
 }
     ${ManageModeration_ChatFlagFragmentDoc}`;
 
-/**
- * __useManageModeration_SelectFlagsQuery__
- *
- * To run a query within a React component, call `useManageModeration_SelectFlagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageModeration_SelectFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageModeration_SelectFlagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageModeration_SelectFlagsQuery(baseOptions: Apollo.QueryHookOptions<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>(ManageModeration_SelectFlagsDocument, options);
-      }
-export function useManageModeration_SelectFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>(ManageModeration_SelectFlagsDocument, options);
-        }
-export type ManageModeration_SelectFlagsQueryHookResult = ReturnType<typeof useManageModeration_SelectFlagsQuery>;
-export type ManageModeration_SelectFlagsLazyQueryHookResult = ReturnType<typeof useManageModeration_SelectFlagsLazyQuery>;
-export type ManageModeration_SelectFlagsQueryResult = Apollo.QueryResult<ManageModeration_SelectFlagsQuery, ManageModeration_SelectFlagsQueryVariables>;
+export function useManageModeration_SelectFlagsQuery(options: Omit<Urql.UseQueryArgs<ManageModeration_SelectFlagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageModeration_SelectFlagsQuery>({ query: ManageModeration_SelectFlagsDocument, ...options });
+};
 export const ManageModeration_UpdateFlagDocument = gql`
     mutation ManageModeration_UpdateFlag($flagId: Int!, $update: chat_Flag_set_input!) {
   update_chat_Flag_by_pk(pk_columns: {id: $flagId}, _set: $update) {
@@ -47142,33 +45028,10 @@ export const ManageModeration_UpdateFlagDocument = gql`
   }
 }
     ${ChatFlagDataFragmentDoc}`;
-export type ManageModeration_UpdateFlagMutationFn = Apollo.MutationFunction<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>;
 
-/**
- * __useManageModeration_UpdateFlagMutation__
- *
- * To run a mutation, you first call `useManageModeration_UpdateFlagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageModeration_UpdateFlagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageModerationUpdateFlagMutation, { data, loading, error }] = useManageModeration_UpdateFlagMutation({
- *   variables: {
- *      flagId: // value for 'flagId'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageModeration_UpdateFlagMutation(baseOptions?: Apollo.MutationHookOptions<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>(ManageModeration_UpdateFlagDocument, options);
-      }
-export type ManageModeration_UpdateFlagMutationHookResult = ReturnType<typeof useManageModeration_UpdateFlagMutation>;
-export type ManageModeration_UpdateFlagMutationResult = Apollo.MutationResult<ManageModeration_UpdateFlagMutation>;
-export type ManageModeration_UpdateFlagMutationOptions = Apollo.BaseMutationOptions<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>;
+export function useManageModeration_UpdateFlagMutation() {
+  return Urql.useMutation<ManageModeration_UpdateFlagMutation, ManageModeration_UpdateFlagMutationVariables>(ManageModeration_UpdateFlagDocument);
+};
 export const PreshowChecklistDocument = gql`
     query PreshowChecklist($conferenceId: uuid!, $now: timestamptz!) {
   allTags: collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -47474,34 +45337,9 @@ export const PreshowChecklistDocument = gql`
 }
     `;
 
-/**
- * __usePreshowChecklistQuery__
- *
- * To run a query within a React component, call `usePreshowChecklistQuery` and pass it any options that fit your needs.
- * When your component renders, `usePreshowChecklistQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePreshowChecklistQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      now: // value for 'now'
- *   },
- * });
- */
-export function usePreshowChecklistQuery(baseOptions: Apollo.QueryHookOptions<PreshowChecklistQuery, PreshowChecklistQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PreshowChecklistQuery, PreshowChecklistQueryVariables>(PreshowChecklistDocument, options);
-      }
-export function usePreshowChecklistLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreshowChecklistQuery, PreshowChecklistQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PreshowChecklistQuery, PreshowChecklistQueryVariables>(PreshowChecklistDocument, options);
-        }
-export type PreshowChecklistQueryHookResult = ReturnType<typeof usePreshowChecklistQuery>;
-export type PreshowChecklistLazyQueryHookResult = ReturnType<typeof usePreshowChecklistLazyQuery>;
-export type PreshowChecklistQueryResult = Apollo.QueryResult<PreshowChecklistQuery, PreshowChecklistQueryVariables>;
+export function usePreshowChecklistQuery(options: Omit<Urql.UseQueryArgs<PreshowChecklistQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PreshowChecklistQuery>({ query: PreshowChecklistDocument, ...options });
+};
 export const ManageContent_SelectAllItemsDocument = gql`
     query ManageContent_SelectAllItems($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -47510,33 +45348,9 @@ export const ManageContent_SelectAllItemsDocument = gql`
 }
     ${ManageContent_ItemFragmentDoc}`;
 
-/**
- * __useManageContent_SelectAllItemsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllItemsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllItemsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>(ManageContent_SelectAllItemsDocument, options);
-      }
-export function useManageContent_SelectAllItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>(ManageContent_SelectAllItemsDocument, options);
-        }
-export type ManageContent_SelectAllItemsQueryHookResult = ReturnType<typeof useManageContent_SelectAllItemsQuery>;
-export type ManageContent_SelectAllItemsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllItemsLazyQuery>;
-export type ManageContent_SelectAllItemsQueryResult = Apollo.QueryResult<ManageContent_SelectAllItemsQuery, ManageContent_SelectAllItemsQueryVariables>;
+export function useManageContent_SelectAllItemsQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectAllItemsQuery>({ query: ManageContent_SelectAllItemsDocument, ...options });
+};
 export const ManageContent_SelectItemsForExportDocument = gql`
     query ManageContent_SelectItemsForExport($itemIds: [uuid!]!) {
   content_Item(where: {id: {_in: $itemIds}}) {
@@ -47545,33 +45359,9 @@ export const ManageContent_SelectItemsForExportDocument = gql`
 }
     ${ManageContent_ItemForExportFragmentDoc}`;
 
-/**
- * __useManageContent_SelectItemsForExportQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectItemsForExportQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectItemsForExportQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectItemsForExportQuery({
- *   variables: {
- *      itemIds: // value for 'itemIds'
- *   },
- * });
- */
-export function useManageContent_SelectItemsForExportQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemsForExportQuery, ManageContent_SelectItemsForExportQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectItemsForExportQuery, ManageContent_SelectItemsForExportQueryVariables>(ManageContent_SelectItemsForExportDocument, options);
-      }
-export function useManageContent_SelectItemsForExportLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemsForExportQuery, ManageContent_SelectItemsForExportQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectItemsForExportQuery, ManageContent_SelectItemsForExportQueryVariables>(ManageContent_SelectItemsForExportDocument, options);
-        }
-export type ManageContent_SelectItemsForExportQueryHookResult = ReturnType<typeof useManageContent_SelectItemsForExportQuery>;
-export type ManageContent_SelectItemsForExportLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemsForExportLazyQuery>;
-export type ManageContent_SelectItemsForExportQueryResult = Apollo.QueryResult<ManageContent_SelectItemsForExportQuery, ManageContent_SelectItemsForExportQueryVariables>;
+export function useManageContent_SelectItemsForExportQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemsForExportQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectItemsForExportQuery>({ query: ManageContent_SelectItemsForExportDocument, ...options });
+};
 export const ManageContent_SelectItemDocument = gql`
     query ManageContent_SelectItem($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
@@ -47584,33 +45374,9 @@ export const ManageContent_SelectItemDocument = gql`
     ${ManageContent_ItemSecondaryFragmentDoc}
 ${ManageContent_ElementFragmentDoc}`;
 
-/**
- * __useManageContent_SelectItemQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectItemQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectItemQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useManageContent_SelectItemQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>(ManageContent_SelectItemDocument, options);
-      }
-export function useManageContent_SelectItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>(ManageContent_SelectItemDocument, options);
-        }
-export type ManageContent_SelectItemQueryHookResult = ReturnType<typeof useManageContent_SelectItemQuery>;
-export type ManageContent_SelectItemLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemLazyQuery>;
-export type ManageContent_SelectItemQueryResult = Apollo.QueryResult<ManageContent_SelectItemQuery, ManageContent_SelectItemQueryVariables>;
+export function useManageContent_SelectItemQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectItemQuery>({ query: ManageContent_SelectItemDocument, ...options });
+};
 export const ManageContent_SelectItemPeopleDocument = gql`
     query ManageContent_SelectItemPeople($itemId: uuid!) {
   content_ItemProgramPerson(where: {itemId: {_eq: $itemId}}) {
@@ -47619,33 +45385,9 @@ export const ManageContent_SelectItemPeopleDocument = gql`
 }
     ${ManageContent_ItemProgramPersonFragmentDoc}`;
 
-/**
- * __useManageContent_SelectItemPeopleQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectItemPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectItemPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectItemPeopleQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useManageContent_SelectItemPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
-      }
-export function useManageContent_SelectItemPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>(ManageContent_SelectItemPeopleDocument, options);
-        }
-export type ManageContent_SelectItemPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleQuery>;
-export type ManageContent_SelectItemPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemPeopleLazyQuery>;
-export type ManageContent_SelectItemPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectItemPeopleQuery, ManageContent_SelectItemPeopleQueryVariables>;
+export function useManageContent_SelectItemPeopleQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectItemPeopleQuery>({ query: ManageContent_SelectItemPeopleDocument, ...options });
+};
 export const ManageContent_InsertItemDocument = gql`
     mutation ManageContent_InsertItem($item: content_Item_insert_input!, $itemTags: [content_ItemTag_insert_input!]!) {
   insert_content_Item_one(object: $item) {
@@ -47658,33 +45400,10 @@ export const ManageContent_InsertItemDocument = gql`
   }
 }
     ${ManageContent_ItemFragmentDoc}`;
-export type ManageContent_InsertItemMutationFn = Apollo.MutationFunction<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>;
 
-/**
- * __useManageContent_InsertItemMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertItemMutation, { data, loading, error }] = useManageContent_InsertItemMutation({
- *   variables: {
- *      item: // value for 'item'
- *      itemTags: // value for 'itemTags'
- *   },
- * });
- */
-export function useManageContent_InsertItemMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>(ManageContent_InsertItemDocument, options);
-      }
-export type ManageContent_InsertItemMutationHookResult = ReturnType<typeof useManageContent_InsertItemMutation>;
-export type ManageContent_InsertItemMutationResult = Apollo.MutationResult<ManageContent_InsertItemMutation>;
-export type ManageContent_InsertItemMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>;
+export function useManageContent_InsertItemMutation() {
+  return Urql.useMutation<ManageContent_InsertItemMutation, ManageContent_InsertItemMutationVariables>(ManageContent_InsertItemDocument);
+};
 export const ManageContent_UpdateItemDocument = gql`
     mutation ManageContent_UpdateItem($id: uuid!, $item: content_Item_set_input!, $tags: [content_ItemTag_insert_input!]!, $tagIds: [uuid!]!) {
   insert_content_ItemTag(
@@ -47706,35 +45425,10 @@ export const ManageContent_UpdateItemDocument = gql`
 }
     ${ManageContent_ItemTagFragmentDoc}
 ${ManageContent_ItemFragmentDoc}`;
-export type ManageContent_UpdateItemMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>;
 
-/**
- * __useManageContent_UpdateItemMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateItemMutation, { data, loading, error }] = useManageContent_UpdateItemMutation({
- *   variables: {
- *      id: // value for 'id'
- *      item: // value for 'item'
- *      tags: // value for 'tags'
- *      tagIds: // value for 'tagIds'
- *   },
- * });
- */
-export function useManageContent_UpdateItemMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>(ManageContent_UpdateItemDocument, options);
-      }
-export type ManageContent_UpdateItemMutationHookResult = ReturnType<typeof useManageContent_UpdateItemMutation>;
-export type ManageContent_UpdateItemMutationResult = Apollo.MutationResult<ManageContent_UpdateItemMutation>;
-export type ManageContent_UpdateItemMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>;
+export function useManageContent_UpdateItemMutation() {
+  return Urql.useMutation<ManageContent_UpdateItemMutation, ManageContent_UpdateItemMutationVariables>(ManageContent_UpdateItemDocument);
+};
 export const ManageContent_DeleteItemsDocument = gql`
     mutation ManageContent_DeleteItems($ids: [uuid!]!) {
   delete_content_Item(where: {id: {_in: $ids}}) {
@@ -47744,32 +45438,10 @@ export const ManageContent_DeleteItemsDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteItemsMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>;
 
-/**
- * __useManageContent_DeleteItemsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteItemsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteItemsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteItemsMutation, { data, loading, error }] = useManageContent_DeleteItemsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteItemsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>(ManageContent_DeleteItemsDocument, options);
-      }
-export type ManageContent_DeleteItemsMutationHookResult = ReturnType<typeof useManageContent_DeleteItemsMutation>;
-export type ManageContent_DeleteItemsMutationResult = Apollo.MutationResult<ManageContent_DeleteItemsMutation>;
-export type ManageContent_DeleteItemsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>;
+export function useManageContent_DeleteItemsMutation() {
+  return Urql.useMutation<ManageContent_DeleteItemsMutation, ManageContent_DeleteItemsMutationVariables>(ManageContent_DeleteItemsDocument);
+};
 export const ManageContent_SelectAllTagsDocument = gql`
     query ManageContent_SelectAllTags($conferenceId: uuid!) {
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -47778,33 +45450,9 @@ export const ManageContent_SelectAllTagsDocument = gql`
 }
     ${ManageContent_TagFragmentDoc}`;
 
-/**
- * __useManageContent_SelectAllTagsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllTagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllTagsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
-      }
-export function useManageContent_SelectAllTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>(ManageContent_SelectAllTagsDocument, options);
-        }
-export type ManageContent_SelectAllTagsQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsQuery>;
-export type ManageContent_SelectAllTagsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllTagsLazyQuery>;
-export type ManageContent_SelectAllTagsQueryResult = Apollo.QueryResult<ManageContent_SelectAllTagsQuery, ManageContent_SelectAllTagsQueryVariables>;
+export function useManageContent_SelectAllTagsQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllTagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectAllTagsQuery>({ query: ManageContent_SelectAllTagsDocument, ...options });
+};
 export const ManageContent_SelectAllExhibitionsDocument = gql`
     query ManageContent_SelectAllExhibitions($conferenceId: uuid!) {
   collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -47813,33 +45461,9 @@ export const ManageContent_SelectAllExhibitionsDocument = gql`
 }
     ${ManageContent_ExhibitionFragmentDoc}`;
 
-/**
- * __useManageContent_SelectAllExhibitionsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectAllExhibitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectAllExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectAllExhibitionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectAllExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>(ManageContent_SelectAllExhibitionsDocument, options);
-      }
-export function useManageContent_SelectAllExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>(ManageContent_SelectAllExhibitionsDocument, options);
-        }
-export type ManageContent_SelectAllExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsQuery>;
-export type ManageContent_SelectAllExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectAllExhibitionsLazyQuery>;
-export type ManageContent_SelectAllExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectAllExhibitionsQuery, ManageContent_SelectAllExhibitionsQueryVariables>;
+export function useManageContent_SelectAllExhibitionsQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectAllExhibitionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectAllExhibitionsQuery>({ query: ManageContent_SelectAllExhibitionsDocument, ...options });
+};
 export const SelectAllContentDocument = gql`
     query SelectAllContent($conferenceId: uuid!) {
   content_Item(
@@ -47868,33 +45492,9 @@ ${OriginatingDataInfoFragmentDoc}
 ${TagInfoFragmentDoc}
 ${ExhibitionInfoFragmentDoc}`;
 
-/**
- * __useSelectAllContentQuery__
- *
- * To run a query within a React component, call `useSelectAllContentQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllContentQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllContentQuery(baseOptions: Apollo.QueryHookOptions<SelectAllContentQuery, SelectAllContentQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllContentQuery, SelectAllContentQueryVariables>(SelectAllContentDocument, options);
-      }
-export function useSelectAllContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllContentQuery, SelectAllContentQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllContentQuery, SelectAllContentQueryVariables>(SelectAllContentDocument, options);
-        }
-export type SelectAllContentQueryHookResult = ReturnType<typeof useSelectAllContentQuery>;
-export type SelectAllContentLazyQueryHookResult = ReturnType<typeof useSelectAllContentLazyQuery>;
-export type SelectAllContentQueryResult = Apollo.QueryResult<SelectAllContentQuery, SelectAllContentQueryVariables>;
+export function useSelectAllContentQuery(options: Omit<Urql.UseQueryArgs<SelectAllContentQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllContentQuery>({ query: SelectAllContentDocument, ...options });
+};
 export const InsertDeleteItemsDocument = gql`
     mutation InsertDeleteItems($newGroups: [content_Item_insert_input!]!, $deleteGroupIds: [uuid!]!) {
   insert_content_Item(objects: $newGroups) {
@@ -47909,33 +45509,10 @@ export const InsertDeleteItemsDocument = gql`
   }
 }
     ${ItemFullNestedInfoFragmentDoc}`;
-export type InsertDeleteItemsMutationFn = Apollo.MutationFunction<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>;
 
-/**
- * __useInsertDeleteItemsMutation__
- *
- * To run a mutation, you first call `useInsertDeleteItemsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertDeleteItemsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertDeleteItemsMutation, { data, loading, error }] = useInsertDeleteItemsMutation({
- *   variables: {
- *      newGroups: // value for 'newGroups'
- *      deleteGroupIds: // value for 'deleteGroupIds'
- *   },
- * });
- */
-export function useInsertDeleteItemsMutation(baseOptions?: Apollo.MutationHookOptions<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>(InsertDeleteItemsDocument, options);
-      }
-export type InsertDeleteItemsMutationHookResult = ReturnType<typeof useInsertDeleteItemsMutation>;
-export type InsertDeleteItemsMutationResult = Apollo.MutationResult<InsertDeleteItemsMutation>;
-export type InsertDeleteItemsMutationOptions = Apollo.BaseMutationOptions<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>;
+export function useInsertDeleteItemsMutation() {
+  return Urql.useMutation<InsertDeleteItemsMutation, InsertDeleteItemsMutationVariables>(InsertDeleteItemsDocument);
+};
 export const InsertElementsDocument = gql`
     mutation InsertElements($newElements: [content_Element_insert_input!]!) {
   insert_content_Element(objects: $newElements) {
@@ -47945,32 +45522,10 @@ export const InsertElementsDocument = gql`
   }
 }
     ${ElementInfoFragmentDoc}`;
-export type InsertElementsMutationFn = Apollo.MutationFunction<InsertElementsMutation, InsertElementsMutationVariables>;
 
-/**
- * __useInsertElementsMutation__
- *
- * To run a mutation, you first call `useInsertElementsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertElementsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertElementsMutation, { data, loading, error }] = useInsertElementsMutation({
- *   variables: {
- *      newElements: // value for 'newElements'
- *   },
- * });
- */
-export function useInsertElementsMutation(baseOptions?: Apollo.MutationHookOptions<InsertElementsMutation, InsertElementsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertElementsMutation, InsertElementsMutationVariables>(InsertElementsDocument, options);
-      }
-export type InsertElementsMutationHookResult = ReturnType<typeof useInsertElementsMutation>;
-export type InsertElementsMutationResult = Apollo.MutationResult<InsertElementsMutation>;
-export type InsertElementsMutationOptions = Apollo.BaseMutationOptions<InsertElementsMutation, InsertElementsMutationVariables>;
+export function useInsertElementsMutation() {
+  return Urql.useMutation<InsertElementsMutation, InsertElementsMutationVariables>(InsertElementsDocument);
+};
 export const InsertOriginatingDatasDocument = gql`
     mutation InsertOriginatingDatas($newDatas: [conference_OriginatingData_insert_input!]!) {
   insert_conference_OriginatingData(objects: $newDatas) {
@@ -47980,32 +45535,10 @@ export const InsertOriginatingDatasDocument = gql`
   }
 }
     ${OriginatingDataInfoFragmentDoc}`;
-export type InsertOriginatingDatasMutationFn = Apollo.MutationFunction<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>;
 
-/**
- * __useInsertOriginatingDatasMutation__
- *
- * To run a mutation, you first call `useInsertOriginatingDatasMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertOriginatingDatasMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertOriginatingDatasMutation, { data, loading, error }] = useInsertOriginatingDatasMutation({
- *   variables: {
- *      newDatas: // value for 'newDatas'
- *   },
- * });
- */
-export function useInsertOriginatingDatasMutation(baseOptions?: Apollo.MutationHookOptions<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>(InsertOriginatingDatasDocument, options);
-      }
-export type InsertOriginatingDatasMutationHookResult = ReturnType<typeof useInsertOriginatingDatasMutation>;
-export type InsertOriginatingDatasMutationResult = Apollo.MutationResult<InsertOriginatingDatasMutation>;
-export type InsertOriginatingDatasMutationOptions = Apollo.BaseMutationOptions<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>;
+export function useInsertOriginatingDatasMutation() {
+  return Urql.useMutation<InsertOriginatingDatasMutation, InsertOriginatingDatasMutationVariables>(InsertOriginatingDatasDocument);
+};
 export const DeleteOriginatingDatasDocument = gql`
     mutation DeleteOriginatingDatas($deleteDataIds: [uuid!]!) {
   delete_conference_OriginatingData(where: {id: {_in: $deleteDataIds}}) {
@@ -48015,32 +45548,10 @@ export const DeleteOriginatingDatasDocument = gql`
   }
 }
     `;
-export type DeleteOriginatingDatasMutationFn = Apollo.MutationFunction<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>;
 
-/**
- * __useDeleteOriginatingDatasMutation__
- *
- * To run a mutation, you first call `useDeleteOriginatingDatasMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOriginatingDatasMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteOriginatingDatasMutation, { data, loading, error }] = useDeleteOriginatingDatasMutation({
- *   variables: {
- *      deleteDataIds: // value for 'deleteDataIds'
- *   },
- * });
- */
-export function useDeleteOriginatingDatasMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>(DeleteOriginatingDatasDocument, options);
-      }
-export type DeleteOriginatingDatasMutationHookResult = ReturnType<typeof useDeleteOriginatingDatasMutation>;
-export type DeleteOriginatingDatasMutationResult = Apollo.MutationResult<DeleteOriginatingDatasMutation>;
-export type DeleteOriginatingDatasMutationOptions = Apollo.BaseMutationOptions<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>;
+export function useDeleteOriginatingDatasMutation() {
+  return Urql.useMutation<DeleteOriginatingDatasMutation, DeleteOriginatingDatasMutationVariables>(DeleteOriginatingDatasDocument);
+};
 export const InsertTagsDocument = gql`
     mutation InsertTags($newTags: [collection_Tag_insert_input!]!) {
   insert_collection_Tag(objects: $newTags) {
@@ -48050,32 +45561,10 @@ export const InsertTagsDocument = gql`
   }
 }
     ${TagInfoFragmentDoc}`;
-export type InsertTagsMutationFn = Apollo.MutationFunction<InsertTagsMutation, InsertTagsMutationVariables>;
 
-/**
- * __useInsertTagsMutation__
- *
- * To run a mutation, you first call `useInsertTagsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertTagsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertTagsMutation, { data, loading, error }] = useInsertTagsMutation({
- *   variables: {
- *      newTags: // value for 'newTags'
- *   },
- * });
- */
-export function useInsertTagsMutation(baseOptions?: Apollo.MutationHookOptions<InsertTagsMutation, InsertTagsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertTagsMutation, InsertTagsMutationVariables>(InsertTagsDocument, options);
-      }
-export type InsertTagsMutationHookResult = ReturnType<typeof useInsertTagsMutation>;
-export type InsertTagsMutationResult = Apollo.MutationResult<InsertTagsMutation>;
-export type InsertTagsMutationOptions = Apollo.BaseMutationOptions<InsertTagsMutation, InsertTagsMutationVariables>;
+export function useInsertTagsMutation() {
+  return Urql.useMutation<InsertTagsMutation, InsertTagsMutationVariables>(InsertTagsDocument);
+};
 export const InsertExhibitionsDocument = gql`
     mutation InsertExhibitions($newExhibitions: [collection_Exhibition_insert_input!]!) {
   insert_collection_Exhibition(objects: $newExhibitions) {
@@ -48085,32 +45574,10 @@ export const InsertExhibitionsDocument = gql`
   }
 }
     ${ExhibitionInfoFragmentDoc}`;
-export type InsertExhibitionsMutationFn = Apollo.MutationFunction<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>;
 
-/**
- * __useInsertExhibitionsMutation__
- *
- * To run a mutation, you first call `useInsertExhibitionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertExhibitionsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertExhibitionsMutation, { data, loading, error }] = useInsertExhibitionsMutation({
- *   variables: {
- *      newExhibitions: // value for 'newExhibitions'
- *   },
- * });
- */
-export function useInsertExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>(InsertExhibitionsDocument, options);
-      }
-export type InsertExhibitionsMutationHookResult = ReturnType<typeof useInsertExhibitionsMutation>;
-export type InsertExhibitionsMutationResult = Apollo.MutationResult<InsertExhibitionsMutation>;
-export type InsertExhibitionsMutationOptions = Apollo.BaseMutationOptions<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>;
+export function useInsertExhibitionsMutation() {
+  return Urql.useMutation<InsertExhibitionsMutation, InsertExhibitionsMutationVariables>(InsertExhibitionsDocument);
+};
 export const DeleteTagsDocument = gql`
     mutation DeleteTags($deleteTagIds: [uuid!]!) {
   delete_collection_Tag(where: {id: {_in: $deleteTagIds}}) {
@@ -48120,32 +45587,10 @@ export const DeleteTagsDocument = gql`
   }
 }
     `;
-export type DeleteTagsMutationFn = Apollo.MutationFunction<DeleteTagsMutation, DeleteTagsMutationVariables>;
 
-/**
- * __useDeleteTagsMutation__
- *
- * To run a mutation, you first call `useDeleteTagsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteTagsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteTagsMutation, { data, loading, error }] = useDeleteTagsMutation({
- *   variables: {
- *      deleteTagIds: // value for 'deleteTagIds'
- *   },
- * });
- */
-export function useDeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTagsMutation, DeleteTagsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteTagsMutation, DeleteTagsMutationVariables>(DeleteTagsDocument, options);
-      }
-export type DeleteTagsMutationHookResult = ReturnType<typeof useDeleteTagsMutation>;
-export type DeleteTagsMutationResult = Apollo.MutationResult<DeleteTagsMutation>;
-export type DeleteTagsMutationOptions = Apollo.BaseMutationOptions<DeleteTagsMutation, DeleteTagsMutationVariables>;
+export function useDeleteTagsMutation() {
+  return Urql.useMutation<DeleteTagsMutation, DeleteTagsMutationVariables>(DeleteTagsDocument);
+};
 export const DeleteExhibitionsDocument = gql`
     mutation DeleteExhibitions($deleteExhibitionIds: [uuid!]!) {
   delete_collection_Exhibition(where: {id: {_in: $deleteExhibitionIds}}) {
@@ -48155,32 +45600,10 @@ export const DeleteExhibitionsDocument = gql`
   }
 }
     `;
-export type DeleteExhibitionsMutationFn = Apollo.MutationFunction<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>;
 
-/**
- * __useDeleteExhibitionsMutation__
- *
- * To run a mutation, you first call `useDeleteExhibitionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteExhibitionsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteExhibitionsMutation, { data, loading, error }] = useDeleteExhibitionsMutation({
- *   variables: {
- *      deleteExhibitionIds: // value for 'deleteExhibitionIds'
- *   },
- * });
- */
-export function useDeleteExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>(DeleteExhibitionsDocument, options);
-      }
-export type DeleteExhibitionsMutationHookResult = ReturnType<typeof useDeleteExhibitionsMutation>;
-export type DeleteExhibitionsMutationResult = Apollo.MutationResult<DeleteExhibitionsMutation>;
-export type DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>;
+export function useDeleteExhibitionsMutation() {
+  return Urql.useMutation<DeleteExhibitionsMutation, DeleteExhibitionsMutationVariables>(DeleteExhibitionsDocument);
+};
 export const InsertProgramPeopleDocument = gql`
     mutation InsertProgramPeople($newPeople: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
   insert_collection_ProgramPersonWithAccessToken(objects: $newPeople) {
@@ -48190,32 +45613,10 @@ export const InsertProgramPeopleDocument = gql`
   }
 }
     ${ProgramPersonInfoFragmentDoc}`;
-export type InsertProgramPeopleMutationFn = Apollo.MutationFunction<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>;
 
-/**
- * __useInsertProgramPeopleMutation__
- *
- * To run a mutation, you first call `useInsertProgramPeopleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertProgramPeopleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertProgramPeopleMutation, { data, loading, error }] = useInsertProgramPeopleMutation({
- *   variables: {
- *      newPeople: // value for 'newPeople'
- *   },
- * });
- */
-export function useInsertProgramPeopleMutation(baseOptions?: Apollo.MutationHookOptions<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>(InsertProgramPeopleDocument, options);
-      }
-export type InsertProgramPeopleMutationHookResult = ReturnType<typeof useInsertProgramPeopleMutation>;
-export type InsertProgramPeopleMutationResult = Apollo.MutationResult<InsertProgramPeopleMutation>;
-export type InsertProgramPeopleMutationOptions = Apollo.BaseMutationOptions<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>;
+export function useInsertProgramPeopleMutation() {
+  return Urql.useMutation<InsertProgramPeopleMutation, InsertProgramPeopleMutationVariables>(InsertProgramPeopleDocument);
+};
 export const DeleteProgramPeopleDocument = gql`
     mutation DeleteProgramPeople($deletePersonIds: [uuid!]!) {
   delete_collection_ProgramPersonWithAccessToken(
@@ -48227,32 +45628,10 @@ export const DeleteProgramPeopleDocument = gql`
   }
 }
     `;
-export type DeleteProgramPeopleMutationFn = Apollo.MutationFunction<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>;
 
-/**
- * __useDeleteProgramPeopleMutation__
- *
- * To run a mutation, you first call `useDeleteProgramPeopleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteProgramPeopleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteProgramPeopleMutation, { data, loading, error }] = useDeleteProgramPeopleMutation({
- *   variables: {
- *      deletePersonIds: // value for 'deletePersonIds'
- *   },
- * });
- */
-export function useDeleteProgramPeopleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>(DeleteProgramPeopleDocument, options);
-      }
-export type DeleteProgramPeopleMutationHookResult = ReturnType<typeof useDeleteProgramPeopleMutation>;
-export type DeleteProgramPeopleMutationResult = Apollo.MutationResult<DeleteProgramPeopleMutation>;
-export type DeleteProgramPeopleMutationOptions = Apollo.BaseMutationOptions<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>;
+export function useDeleteProgramPeopleMutation() {
+  return Urql.useMutation<DeleteProgramPeopleMutation, DeleteProgramPeopleMutationVariables>(DeleteProgramPeopleDocument);
+};
 export const UpdateItemDocument = gql`
     mutation UpdateItem($newItems: [content_Element_insert_input!]!, $newGroupTags: [content_ItemTag_insert_input!]!, $newGroupExhibitions: [content_ItemExhibition_insert_input!]!, $groupId: uuid!, $typeName: content_ItemType_enum!, $originatingDataId: uuid = null, $shortTitle: String = null, $title: String!, $deleteItemIds: [uuid!]!, $deleteGroupTagIds: [uuid!]!, $deleteGroupExhibitionIds: [uuid!]!, $newGroupPeople: [content_ItemProgramPerson_insert_input!]!, $deleteGroupPeopleIds: [uuid!]!) {
   insert_content_Element(objects: $newItems) {
@@ -48309,44 +45688,10 @@ ${ItemTagInfoFragmentDoc}
 ${ItemExhibitionInfoFragmentDoc}
 ${ItemPersonInfoFragmentDoc}
 ${ItemFullNestedInfoFragmentDoc}`;
-export type UpdateItemMutationFn = Apollo.MutationFunction<UpdateItemMutation, UpdateItemMutationVariables>;
 
-/**
- * __useUpdateItemMutation__
- *
- * To run a mutation, you first call `useUpdateItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateItemMutation, { data, loading, error }] = useUpdateItemMutation({
- *   variables: {
- *      newItems: // value for 'newItems'
- *      newGroupTags: // value for 'newGroupTags'
- *      newGroupExhibitions: // value for 'newGroupExhibitions'
- *      groupId: // value for 'groupId'
- *      typeName: // value for 'typeName'
- *      originatingDataId: // value for 'originatingDataId'
- *      shortTitle: // value for 'shortTitle'
- *      title: // value for 'title'
- *      deleteItemIds: // value for 'deleteItemIds'
- *      deleteGroupTagIds: // value for 'deleteGroupTagIds'
- *      deleteGroupExhibitionIds: // value for 'deleteGroupExhibitionIds'
- *      newGroupPeople: // value for 'newGroupPeople'
- *      deleteGroupPeopleIds: // value for 'deleteGroupPeopleIds'
- *   },
- * });
- */
-export function useUpdateItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateItemMutation, UpdateItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateItemMutation, UpdateItemMutationVariables>(UpdateItemDocument, options);
-      }
-export type UpdateItemMutationHookResult = ReturnType<typeof useUpdateItemMutation>;
-export type UpdateItemMutationResult = Apollo.MutationResult<UpdateItemMutation>;
-export type UpdateItemMutationOptions = Apollo.BaseMutationOptions<UpdateItemMutation, UpdateItemMutationVariables>;
+export function useUpdateItemMutation() {
+  return Urql.useMutation<UpdateItemMutation, UpdateItemMutationVariables>(UpdateItemDocument);
+};
 export const UpdateElementDocument = gql`
     mutation UpdateElement($id: uuid!, $typeName: content_ElementType_enum!, $layoutData: jsonb = null, $name: String!, $data: jsonb!, $isHidden: Boolean!, $originatingDataId: uuid = null, $uploadsRemaining: Int = null) {
   update_content_Element_by_pk(
@@ -48357,39 +45702,10 @@ export const UpdateElementDocument = gql`
   }
 }
     ${ElementInfoFragmentDoc}`;
-export type UpdateElementMutationFn = Apollo.MutationFunction<UpdateElementMutation, UpdateElementMutationVariables>;
 
-/**
- * __useUpdateElementMutation__
- *
- * To run a mutation, you first call `useUpdateElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateElementMutation, { data, loading, error }] = useUpdateElementMutation({
- *   variables: {
- *      id: // value for 'id'
- *      typeName: // value for 'typeName'
- *      layoutData: // value for 'layoutData'
- *      name: // value for 'name'
- *      data: // value for 'data'
- *      isHidden: // value for 'isHidden'
- *      originatingDataId: // value for 'originatingDataId'
- *      uploadsRemaining: // value for 'uploadsRemaining'
- *   },
- * });
- */
-export function useUpdateElementMutation(baseOptions?: Apollo.MutationHookOptions<UpdateElementMutation, UpdateElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateElementMutation, UpdateElementMutationVariables>(UpdateElementDocument, options);
-      }
-export type UpdateElementMutationHookResult = ReturnType<typeof useUpdateElementMutation>;
-export type UpdateElementMutationResult = Apollo.MutationResult<UpdateElementMutation>;
-export type UpdateElementMutationOptions = Apollo.BaseMutationOptions<UpdateElementMutation, UpdateElementMutationVariables>;
+export function useUpdateElementMutation() {
+  return Urql.useMutation<UpdateElementMutation, UpdateElementMutationVariables>(UpdateElementDocument);
+};
 export const UpdateGroupPersonDocument = gql`
     mutation UpdateGroupPerson($id: uuid!, $roleName: String!, $priority: Int = null) {
   update_content_ItemProgramPerson_by_pk(
@@ -48400,34 +45716,10 @@ export const UpdateGroupPersonDocument = gql`
   }
 }
     ${ItemPersonInfoFragmentDoc}`;
-export type UpdateGroupPersonMutationFn = Apollo.MutationFunction<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>;
 
-/**
- * __useUpdateGroupPersonMutation__
- *
- * To run a mutation, you first call `useUpdateGroupPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateGroupPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateGroupPersonMutation, { data, loading, error }] = useUpdateGroupPersonMutation({
- *   variables: {
- *      id: // value for 'id'
- *      roleName: // value for 'roleName'
- *      priority: // value for 'priority'
- *   },
- * });
- */
-export function useUpdateGroupPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>(UpdateGroupPersonDocument, options);
-      }
-export type UpdateGroupPersonMutationHookResult = ReturnType<typeof useUpdateGroupPersonMutation>;
-export type UpdateGroupPersonMutationResult = Apollo.MutationResult<UpdateGroupPersonMutation>;
-export type UpdateGroupPersonMutationOptions = Apollo.BaseMutationOptions<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>;
+export function useUpdateGroupPersonMutation() {
+  return Urql.useMutation<UpdateGroupPersonMutation, UpdateGroupPersonMutationVariables>(UpdateGroupPersonDocument);
+};
 export const UpdateGroupExhibitionDocument = gql`
     mutation UpdateGroupExhibition($id: uuid!, $priority: Int = null, $layout: jsonb = null) {
   update_content_ItemExhibition_by_pk(
@@ -48438,34 +45730,10 @@ export const UpdateGroupExhibitionDocument = gql`
   }
 }
     ${ItemExhibitionInfoFragmentDoc}`;
-export type UpdateGroupExhibitionMutationFn = Apollo.MutationFunction<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>;
 
-/**
- * __useUpdateGroupExhibitionMutation__
- *
- * To run a mutation, you first call `useUpdateGroupExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateGroupExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateGroupExhibitionMutation, { data, loading, error }] = useUpdateGroupExhibitionMutation({
- *   variables: {
- *      id: // value for 'id'
- *      priority: // value for 'priority'
- *      layout: // value for 'layout'
- *   },
- * });
- */
-export function useUpdateGroupExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>(UpdateGroupExhibitionDocument, options);
-      }
-export type UpdateGroupExhibitionMutationHookResult = ReturnType<typeof useUpdateGroupExhibitionMutation>;
-export type UpdateGroupExhibitionMutationResult = Apollo.MutationResult<UpdateGroupExhibitionMutation>;
-export type UpdateGroupExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>;
+export function useUpdateGroupExhibitionMutation() {
+  return Urql.useMutation<UpdateGroupExhibitionMutation, UpdateGroupExhibitionMutationVariables>(UpdateGroupExhibitionDocument);
+};
 export const UpdatePersonDocument = gql`
     mutation UpdatePerson($id: uuid!, $name: String!, $affiliation: String = null, $email: String = null, $originatingDataId: uuid = null, $registrantId: uuid = null) {
   update_collection_ProgramPersonWithAccessToken(
@@ -48478,37 +45746,10 @@ export const UpdatePersonDocument = gql`
   }
 }
     ${ProgramPersonInfoFragmentDoc}`;
-export type UpdatePersonMutationFn = Apollo.MutationFunction<UpdatePersonMutation, UpdatePersonMutationVariables>;
 
-/**
- * __useUpdatePersonMutation__
- *
- * To run a mutation, you first call `useUpdatePersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePersonMutation, { data, loading, error }] = useUpdatePersonMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
- *      email: // value for 'email'
- *      originatingDataId: // value for 'originatingDataId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useUpdatePersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePersonMutation, UpdatePersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePersonMutation, UpdatePersonMutationVariables>(UpdatePersonDocument, options);
-      }
-export type UpdatePersonMutationHookResult = ReturnType<typeof useUpdatePersonMutation>;
-export type UpdatePersonMutationResult = Apollo.MutationResult<UpdatePersonMutation>;
-export type UpdatePersonMutationOptions = Apollo.BaseMutationOptions<UpdatePersonMutation, UpdatePersonMutationVariables>;
+export function useUpdatePersonMutation() {
+  return Urql.useMutation<UpdatePersonMutation, UpdatePersonMutationVariables>(UpdatePersonDocument);
+};
 export const UpdateTagDocument = gql`
     mutation UpdateTag($id: uuid!, $name: String!, $colour: String!, $originatingDataId: uuid = null, $priority: Int! = 10) {
   update_collection_Tag_by_pk(
@@ -48519,36 +45760,10 @@ export const UpdateTagDocument = gql`
   }
 }
     ${TagInfoFragmentDoc}`;
-export type UpdateTagMutationFn = Apollo.MutationFunction<UpdateTagMutation, UpdateTagMutationVariables>;
 
-/**
- * __useUpdateTagMutation__
- *
- * To run a mutation, you first call `useUpdateTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateTagMutation, { data, loading, error }] = useUpdateTagMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      colour: // value for 'colour'
- *      originatingDataId: // value for 'originatingDataId'
- *      priority: // value for 'priority'
- *   },
- * });
- */
-export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTagMutation, UpdateTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateTagMutation, UpdateTagMutationVariables>(UpdateTagDocument, options);
-      }
-export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
-export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
-export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export function useUpdateTagMutation() {
+  return Urql.useMutation<UpdateTagMutation, UpdateTagMutationVariables>(UpdateTagDocument);
+};
 export const UpdateExhibitionDocument = gql`
     mutation UpdateExhibition($id: uuid!, $name: String!, $colour: String!, $priority: Int!, $isHidden: Boolean!) {
   update_collection_Exhibition_by_pk(
@@ -48559,36 +45774,10 @@ export const UpdateExhibitionDocument = gql`
   }
 }
     ${ExhibitionInfoFragmentDoc}`;
-export type UpdateExhibitionMutationFn = Apollo.MutationFunction<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
 
-/**
- * __useUpdateExhibitionMutation__
- *
- * To run a mutation, you first call `useUpdateExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateExhibitionMutation, { data, loading, error }] = useUpdateExhibitionMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      colour: // value for 'colour'
- *      priority: // value for 'priority'
- *      isHidden: // value for 'isHidden'
- *   },
- * });
- */
-export function useUpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>(UpdateExhibitionDocument, options);
-      }
-export type UpdateExhibitionMutationHookResult = ReturnType<typeof useUpdateExhibitionMutation>;
-export type UpdateExhibitionMutationResult = Apollo.MutationResult<UpdateExhibitionMutation>;
-export type UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>;
+export function useUpdateExhibitionMutation() {
+  return Urql.useMutation<UpdateExhibitionMutation, UpdateExhibitionMutationVariables>(UpdateExhibitionDocument);
+};
 export const BulkEdit_AddElementsDocument = gql`
     mutation BulkEdit_AddElements($objects: [content_Element_insert_input!]!) {
   insert_content_Element(objects: $objects) {
@@ -48596,32 +45785,10 @@ export const BulkEdit_AddElementsDocument = gql`
   }
 }
     `;
-export type BulkEdit_AddElementsMutationFn = Apollo.MutationFunction<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>;
 
-/**
- * __useBulkEdit_AddElementsMutation__
- *
- * To run a mutation, you first call `useBulkEdit_AddElementsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useBulkEdit_AddElementsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [bulkEditAddElementsMutation, { data, loading, error }] = useBulkEdit_AddElementsMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useBulkEdit_AddElementsMutation(baseOptions?: Apollo.MutationHookOptions<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>(BulkEdit_AddElementsDocument, options);
-      }
-export type BulkEdit_AddElementsMutationHookResult = ReturnType<typeof useBulkEdit_AddElementsMutation>;
-export type BulkEdit_AddElementsMutationResult = Apollo.MutationResult<BulkEdit_AddElementsMutation>;
-export type BulkEdit_AddElementsMutationOptions = Apollo.BaseMutationOptions<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>;
+export function useBulkEdit_AddElementsMutation() {
+  return Urql.useMutation<BulkEdit_AddElementsMutation, BulkEdit_AddElementsMutationVariables>(BulkEdit_AddElementsDocument);
+};
 export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
     mutation CombineVideosModal_CreateCombineVideosJob($conferenceId: uuid!, $createdByRegistrantId: uuid!, $outputName: String!, $data: jsonb!) {
   insert_job_queues_CombineVideosJob_one(
@@ -48631,35 +45798,10 @@ export const CombineVideosModal_CreateCombineVideosJobDocument = gql`
   }
 }
     `;
-export type CombineVideosModal_CreateCombineVideosJobMutationFn = Apollo.MutationFunction<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
 
-/**
- * __useCombineVideosModal_CreateCombineVideosJobMutation__
- *
- * To run a mutation, you first call `useCombineVideosModal_CreateCombineVideosJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCombineVideosModal_CreateCombineVideosJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [combineVideosModalCreateCombineVideosJobMutation, { data, loading, error }] = useCombineVideosModal_CreateCombineVideosJobMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      createdByRegistrantId: // value for 'createdByRegistrantId'
- *      outputName: // value for 'outputName'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCombineVideosModal_CreateCombineVideosJobMutation(baseOptions?: Apollo.MutationHookOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument, options);
-      }
-export type CombineVideosModal_CreateCombineVideosJobMutationHookResult = ReturnType<typeof useCombineVideosModal_CreateCombineVideosJobMutation>;
-export type CombineVideosModal_CreateCombineVideosJobMutationResult = Apollo.MutationResult<CombineVideosModal_CreateCombineVideosJobMutation>;
-export type CombineVideosModal_CreateCombineVideosJobMutationOptions = Apollo.BaseMutationOptions<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>;
+export function useCombineVideosModal_CreateCombineVideosJobMutation() {
+  return Urql.useMutation<CombineVideosModal_CreateCombineVideosJobMutation, CombineVideosModal_CreateCombineVideosJobMutationVariables>(CombineVideosModal_CreateCombineVideosJobDocument);
+};
 export const CombineVideosModal_GetCombineVideosJobDocument = gql`
     query CombineVideosModal_GetCombineVideosJob($conferenceId: uuid!) {
   job_queues_CombineVideosJob(
@@ -48673,33 +45815,9 @@ export const CombineVideosModal_GetCombineVideosJobDocument = gql`
 }
     `;
 
-/**
- * __useCombineVideosModal_GetCombineVideosJobQuery__
- *
- * To run a query within a React component, call `useCombineVideosModal_GetCombineVideosJobQuery` and pass it any options that fit your needs.
- * When your component renders, `useCombineVideosModal_GetCombineVideosJobQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCombineVideosModal_GetCombineVideosJobQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCombineVideosModal_GetCombineVideosJobQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
-      }
-export function useCombineVideosModal_GetCombineVideosJobLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>(CombineVideosModal_GetCombineVideosJobDocument, options);
-        }
-export type CombineVideosModal_GetCombineVideosJobQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobQuery>;
-export type CombineVideosModal_GetCombineVideosJobLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetCombineVideosJobLazyQuery>;
-export type CombineVideosModal_GetCombineVideosJobQueryResult = Apollo.QueryResult<CombineVideosModal_GetCombineVideosJobQuery, CombineVideosModal_GetCombineVideosJobQueryVariables>;
+export function useCombineVideosModal_GetCombineVideosJobQuery(options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetCombineVideosJobQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CombineVideosModal_GetCombineVideosJobQuery>({ query: CombineVideosModal_GetCombineVideosJobDocument, ...options });
+};
 export const CombineVideosModal_GetElementsDocument = gql`
     query CombineVideosModal_GetElements($itemIds: [uuid!]!, $elementIds: [uuid!]!) {
   content_Item(where: {id: {_in: $itemIds}}) {
@@ -48716,34 +45834,9 @@ export const CombineVideosModal_GetElementsDocument = gql`
 }
     `;
 
-/**
- * __useCombineVideosModal_GetElementsQuery__
- *
- * To run a query within a React component, call `useCombineVideosModal_GetElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCombineVideosModal_GetElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCombineVideosModal_GetElementsQuery({
- *   variables: {
- *      itemIds: // value for 'itemIds'
- *      elementIds: // value for 'elementIds'
- *   },
- * });
- */
-export function useCombineVideosModal_GetElementsQuery(baseOptions: Apollo.QueryHookOptions<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>(CombineVideosModal_GetElementsDocument, options);
-      }
-export function useCombineVideosModal_GetElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>(CombineVideosModal_GetElementsDocument, options);
-        }
-export type CombineVideosModal_GetElementsQueryHookResult = ReturnType<typeof useCombineVideosModal_GetElementsQuery>;
-export type CombineVideosModal_GetElementsLazyQueryHookResult = ReturnType<typeof useCombineVideosModal_GetElementsLazyQuery>;
-export type CombineVideosModal_GetElementsQueryResult = Apollo.QueryResult<CombineVideosModal_GetElementsQuery, CombineVideosModal_GetElementsQueryVariables>;
+export function useCombineVideosModal_GetElementsQuery(options: Omit<Urql.UseQueryArgs<CombineVideosModal_GetElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CombineVideosModal_GetElementsQuery>({ query: CombineVideosModal_GetElementsDocument, ...options });
+};
 export const SEoUm_InfosDocument = gql`
     query SEoUM_Infos($itemIds: [uuid!]!) {
   content_Item(where: {id: {_in: $itemIds}}) {
@@ -48752,33 +45845,9 @@ export const SEoUm_InfosDocument = gql`
 }
     ${SelectElements_ItemFragmentDoc}`;
 
-/**
- * __useSEoUm_InfosQuery__
- *
- * To run a query within a React component, call `useSEoUm_InfosQuery` and pass it any options that fit your needs.
- * When your component renders, `useSEoUm_InfosQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSEoUm_InfosQuery({
- *   variables: {
- *      itemIds: // value for 'itemIds'
- *   },
- * });
- */
-export function useSEoUm_InfosQuery(baseOptions: Apollo.QueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
-      }
-export function useSEoUm_InfosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>(SEoUm_InfosDocument, options);
-        }
-export type SEoUm_InfosQueryHookResult = ReturnType<typeof useSEoUm_InfosQuery>;
-export type SEoUm_InfosLazyQueryHookResult = ReturnType<typeof useSEoUm_InfosLazyQuery>;
-export type SEoUm_InfosQueryResult = Apollo.QueryResult<SEoUm_InfosQuery, SEoUm_InfosQueryVariables>;
+export function useSEoUm_InfosQuery(options: Omit<Urql.UseQueryArgs<SEoUm_InfosQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SEoUm_InfosQuery>({ query: SEoUm_InfosDocument, ...options });
+};
 export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
     query UpdateExhibitionDescriptiveItems_SelectExhibitions($conferenceId: uuid!) {
   collection_Exhibition(
@@ -48790,33 +45859,9 @@ export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
 }
     `;
 
-/**
- * __useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery__
- *
- * To run a query within a React component, call `useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>(UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument, options);
-      }
-export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>(UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument, options);
-        }
-export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>;
-export type UpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQueryHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItems_SelectExhibitionsLazyQuery>;
-export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryResult = Apollo.QueryResult<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery, UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>;
+export function useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery(options: Omit<Urql.UseQueryArgs<UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery>({ query: UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument, ...options });
+};
 export const UpdateExhibitionDescriptiveItemDocument = gql`
     mutation UpdateExhibitionDescriptiveItem($id: uuid!, $descriptiveItemId: uuid!) {
   update_collection_Exhibition_by_pk(
@@ -48828,33 +45873,10 @@ export const UpdateExhibitionDescriptiveItemDocument = gql`
   }
 }
     `;
-export type UpdateExhibitionDescriptiveItemMutationFn = Apollo.MutationFunction<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>;
 
-/**
- * __useUpdateExhibitionDescriptiveItemMutation__
- *
- * To run a mutation, you first call `useUpdateExhibitionDescriptiveItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateExhibitionDescriptiveItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateExhibitionDescriptiveItemMutation, { data, loading, error }] = useUpdateExhibitionDescriptiveItemMutation({
- *   variables: {
- *      id: // value for 'id'
- *      descriptiveItemId: // value for 'descriptiveItemId'
- *   },
- * });
- */
-export function useUpdateExhibitionDescriptiveItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>(UpdateExhibitionDescriptiveItemDocument, options);
-      }
-export type UpdateExhibitionDescriptiveItemMutationHookResult = ReturnType<typeof useUpdateExhibitionDescriptiveItemMutation>;
-export type UpdateExhibitionDescriptiveItemMutationResult = Apollo.MutationResult<UpdateExhibitionDescriptiveItemMutation>;
-export type UpdateExhibitionDescriptiveItemMutationOptions = Apollo.BaseMutationOptions<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>;
+export function useUpdateExhibitionDescriptiveItemMutation() {
+  return Urql.useMutation<UpdateExhibitionDescriptiveItemMutation, UpdateExhibitionDescriptiveItemMutationVariables>(UpdateExhibitionDescriptiveItemDocument);
+};
 export const UpdateLayoutDocument = gql`
     mutation UpdateLayout($elementIds: [uuid!]!, $layoutData: jsonb!) {
   update_content_Element(
@@ -48865,33 +45887,10 @@ export const UpdateLayoutDocument = gql`
   }
 }
     `;
-export type UpdateLayoutMutationFn = Apollo.MutationFunction<UpdateLayoutMutation, UpdateLayoutMutationVariables>;
 
-/**
- * __useUpdateLayoutMutation__
- *
- * To run a mutation, you first call `useUpdateLayoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateLayoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateLayoutMutation, { data, loading, error }] = useUpdateLayoutMutation({
- *   variables: {
- *      elementIds: // value for 'elementIds'
- *      layoutData: // value for 'layoutData'
- *   },
- * });
- */
-export function useUpdateLayoutMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLayoutMutation, UpdateLayoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateLayoutMutation, UpdateLayoutMutationVariables>(UpdateLayoutDocument, options);
-      }
-export type UpdateLayoutMutationHookResult = ReturnType<typeof useUpdateLayoutMutation>;
-export type UpdateLayoutMutationResult = Apollo.MutationResult<UpdateLayoutMutation>;
-export type UpdateLayoutMutationOptions = Apollo.BaseMutationOptions<UpdateLayoutMutation, UpdateLayoutMutationVariables>;
+export function useUpdateLayoutMutation() {
+  return Urql.useMutation<UpdateLayoutMutation, UpdateLayoutMutationVariables>(UpdateLayoutDocument);
+};
 export const UpdateUploadsRemainingDocument = gql`
     mutation UpdateUploadsRemaining($elementIds: [uuid!]!, $count: Int!) {
   update_content_Element(
@@ -48902,33 +45901,10 @@ export const UpdateUploadsRemainingDocument = gql`
   }
 }
     `;
-export type UpdateUploadsRemainingMutationFn = Apollo.MutationFunction<UpdateUploadsRemainingMutation, UpdateUploadsRemainingMutationVariables>;
 
-/**
- * __useUpdateUploadsRemainingMutation__
- *
- * To run a mutation, you first call `useUpdateUploadsRemainingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateUploadsRemainingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateUploadsRemainingMutation, { data, loading, error }] = useUpdateUploadsRemainingMutation({
- *   variables: {
- *      elementIds: // value for 'elementIds'
- *      count: // value for 'count'
- *   },
- * });
- */
-export function useUpdateUploadsRemainingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUploadsRemainingMutation, UpdateUploadsRemainingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateUploadsRemainingMutation, UpdateUploadsRemainingMutationVariables>(UpdateUploadsRemainingDocument, options);
-      }
-export type UpdateUploadsRemainingMutationHookResult = ReturnType<typeof useUpdateUploadsRemainingMutation>;
-export type UpdateUploadsRemainingMutationResult = Apollo.MutationResult<UpdateUploadsRemainingMutation>;
-export type UpdateUploadsRemainingMutationOptions = Apollo.BaseMutationOptions<UpdateUploadsRemainingMutation, UpdateUploadsRemainingMutationVariables>;
+export function useUpdateUploadsRemainingMutation() {
+  return Urql.useMutation<UpdateUploadsRemainingMutation, UpdateUploadsRemainingMutationVariables>(UpdateUploadsRemainingDocument);
+};
 export const ManageContent_DeleteElementDocument = gql`
     mutation ManageContent_DeleteElement($elementId: uuid!) {
   delete_content_Element_by_pk(id: $elementId) {
@@ -48936,32 +45912,10 @@ export const ManageContent_DeleteElementDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteElementMutationFn = Apollo.MutationFunction<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>;
 
-/**
- * __useManageContent_DeleteElementMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteElementMutation, { data, loading, error }] = useManageContent_DeleteElementMutation({
- *   variables: {
- *      elementId: // value for 'elementId'
- *   },
- * });
- */
-export function useManageContent_DeleteElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>(ManageContent_DeleteElementDocument, options);
-      }
-export type ManageContent_DeleteElementMutationHookResult = ReturnType<typeof useManageContent_DeleteElementMutation>;
-export type ManageContent_DeleteElementMutationResult = Apollo.MutationResult<ManageContent_DeleteElementMutation>;
-export type ManageContent_DeleteElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>;
+export function useManageContent_DeleteElementMutation() {
+  return Urql.useMutation<ManageContent_DeleteElementMutation, ManageContent_DeleteElementMutationVariables>(ManageContent_DeleteElementDocument);
+};
 export const ManageContent_UpdateElementDocument = gql`
     mutation ManageContent_UpdateElement($elementId: uuid!, $element: content_Element_set_input!) {
   update_content_Element_by_pk(pk_columns: {id: $elementId}, _set: $element) {
@@ -48969,33 +45923,10 @@ export const ManageContent_UpdateElementDocument = gql`
   }
 }
     ${ManageContent_ElementFragmentDoc}`;
-export type ManageContent_UpdateElementMutationFn = Apollo.MutationFunction<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
 
-/**
- * __useManageContent_UpdateElementMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateElementMutation, { data, loading, error }] = useManageContent_UpdateElementMutation({
- *   variables: {
- *      elementId: // value for 'elementId'
- *      element: // value for 'element'
- *   },
- * });
- */
-export function useManageContent_UpdateElementMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>(ManageContent_UpdateElementDocument, options);
-      }
-export type ManageContent_UpdateElementMutationHookResult = ReturnType<typeof useManageContent_UpdateElementMutation>;
-export type ManageContent_UpdateElementMutationResult = Apollo.MutationResult<ManageContent_UpdateElementMutation>;
-export type ManageContent_UpdateElementMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>;
+export function useManageContent_UpdateElementMutation() {
+  return Urql.useMutation<ManageContent_UpdateElementMutation, ManageContent_UpdateElementMutationVariables>(ManageContent_UpdateElementDocument);
+};
 export const ManageContent_SelectItemExhibitionsDocument = gql`
     query ManageContent_SelectItemExhibitions($exhibitionId: uuid!) {
   content_ItemExhibition(where: {exhibitionId: {_eq: $exhibitionId}}) {
@@ -49004,33 +45935,9 @@ export const ManageContent_SelectItemExhibitionsDocument = gql`
 }
     ${ManageContent_ItemExhibitionFragmentDoc}`;
 
-/**
- * __useManageContent_SelectItemExhibitionsQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectItemExhibitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectItemExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectItemExhibitionsQuery({
- *   variables: {
- *      exhibitionId: // value for 'exhibitionId'
- *   },
- * });
- */
-export function useManageContent_SelectItemExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
-      }
-export function useManageContent_SelectItemExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>(ManageContent_SelectItemExhibitionsDocument, options);
-        }
-export type ManageContent_SelectItemExhibitionsQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsQuery>;
-export type ManageContent_SelectItemExhibitionsLazyQueryHookResult = ReturnType<typeof useManageContent_SelectItemExhibitionsLazyQuery>;
-export type ManageContent_SelectItemExhibitionsQueryResult = Apollo.QueryResult<ManageContent_SelectItemExhibitionsQuery, ManageContent_SelectItemExhibitionsQueryVariables>;
+export function useManageContent_SelectItemExhibitionsQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectItemExhibitionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectItemExhibitionsQuery>({ query: ManageContent_SelectItemExhibitionsDocument, ...options });
+};
 export const ManageContent_InsertItemExhibitionDocument = gql`
     mutation ManageContent_InsertItemExhibition($conferenceId: uuid!, $exhibitionId: uuid!, $itemId: uuid!, $priority: Int!) {
   insert_content_ItemExhibition_one(
@@ -49040,35 +45947,10 @@ export const ManageContent_InsertItemExhibitionDocument = gql`
   }
 }
     ${ManageContent_ItemExhibitionFragmentDoc}`;
-export type ManageContent_InsertItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
 
-/**
- * __useManageContent_InsertItemExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertItemExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertItemExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertItemExhibitionMutation, { data, loading, error }] = useManageContent_InsertItemExhibitionMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      exhibitionId: // value for 'exhibitionId'
- *      itemId: // value for 'itemId'
- *      priority: // value for 'priority'
- *   },
- * });
- */
-export function useManageContent_InsertItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>(ManageContent_InsertItemExhibitionDocument, options);
-      }
-export type ManageContent_InsertItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertItemExhibitionMutation>;
-export type ManageContent_InsertItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertItemExhibitionMutation>;
-export type ManageContent_InsertItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>;
+export function useManageContent_InsertItemExhibitionMutation() {
+  return Urql.useMutation<ManageContent_InsertItemExhibitionMutation, ManageContent_InsertItemExhibitionMutationVariables>(ManageContent_InsertItemExhibitionDocument);
+};
 export const ManageContent_UpdateItemExhibitionDocument = gql`
     mutation ManageContent_UpdateItemExhibition($itemExhibitionId: uuid!, $priority: Int!) {
   update_content_ItemExhibition_by_pk(
@@ -49079,33 +45961,10 @@ export const ManageContent_UpdateItemExhibitionDocument = gql`
   }
 }
     ${ManageContent_ItemExhibitionFragmentDoc}`;
-export type ManageContent_UpdateItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
 
-/**
- * __useManageContent_UpdateItemExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateItemExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateItemExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateItemExhibitionMutation, { data, loading, error }] = useManageContent_UpdateItemExhibitionMutation({
- *   variables: {
- *      itemExhibitionId: // value for 'itemExhibitionId'
- *      priority: // value for 'priority'
- *   },
- * });
- */
-export function useManageContent_UpdateItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>(ManageContent_UpdateItemExhibitionDocument, options);
-      }
-export type ManageContent_UpdateItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateItemExhibitionMutation>;
-export type ManageContent_UpdateItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateItemExhibitionMutation>;
-export type ManageContent_UpdateItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>;
+export function useManageContent_UpdateItemExhibitionMutation() {
+  return Urql.useMutation<ManageContent_UpdateItemExhibitionMutation, ManageContent_UpdateItemExhibitionMutationVariables>(ManageContent_UpdateItemExhibitionDocument);
+};
 export const ManageContent_DeleteItemExhibitionDocument = gql`
     mutation ManageContent_DeleteItemExhibition($itemExhibitionId: uuid!) {
   delete_content_ItemExhibition_by_pk(id: $itemExhibitionId) {
@@ -49113,32 +45972,10 @@ export const ManageContent_DeleteItemExhibitionDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteItemExhibitionMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
 
-/**
- * __useManageContent_DeleteItemExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteItemExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteItemExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteItemExhibitionMutation, { data, loading, error }] = useManageContent_DeleteItemExhibitionMutation({
- *   variables: {
- *      itemExhibitionId: // value for 'itemExhibitionId'
- *   },
- * });
- */
-export function useManageContent_DeleteItemExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>(ManageContent_DeleteItemExhibitionDocument, options);
-      }
-export type ManageContent_DeleteItemExhibitionMutationHookResult = ReturnType<typeof useManageContent_DeleteItemExhibitionMutation>;
-export type ManageContent_DeleteItemExhibitionMutationResult = Apollo.MutationResult<ManageContent_DeleteItemExhibitionMutation>;
-export type ManageContent_DeleteItemExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>;
+export function useManageContent_DeleteItemExhibitionMutation() {
+  return Urql.useMutation<ManageContent_DeleteItemExhibitionMutation, ManageContent_DeleteItemExhibitionMutationVariables>(ManageContent_DeleteItemExhibitionDocument);
+};
 export const ManageContent_InsertExhibitionDocument = gql`
     mutation ManageContent_InsertExhibition($exhibition: collection_Exhibition_insert_input!) {
   insert_collection_Exhibition_one(object: $exhibition) {
@@ -49146,32 +45983,10 @@ export const ManageContent_InsertExhibitionDocument = gql`
   }
 }
     ${ManageContent_ExhibitionFragmentDoc}`;
-export type ManageContent_InsertExhibitionMutationFn = Apollo.MutationFunction<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
 
-/**
- * __useManageContent_InsertExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertExhibitionMutation, { data, loading, error }] = useManageContent_InsertExhibitionMutation({
- *   variables: {
- *      exhibition: // value for 'exhibition'
- *   },
- * });
- */
-export function useManageContent_InsertExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>(ManageContent_InsertExhibitionDocument, options);
-      }
-export type ManageContent_InsertExhibitionMutationHookResult = ReturnType<typeof useManageContent_InsertExhibitionMutation>;
-export type ManageContent_InsertExhibitionMutationResult = Apollo.MutationResult<ManageContent_InsertExhibitionMutation>;
-export type ManageContent_InsertExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>;
+export function useManageContent_InsertExhibitionMutation() {
+  return Urql.useMutation<ManageContent_InsertExhibitionMutation, ManageContent_InsertExhibitionMutationVariables>(ManageContent_InsertExhibitionDocument);
+};
 export const ManageContent_UpdateExhibitionDocument = gql`
     mutation ManageContent_UpdateExhibition($id: uuid!, $update: collection_Exhibition_set_input!) {
   update_collection_Exhibition_by_pk(pk_columns: {id: $id}, _set: $update) {
@@ -49179,33 +45994,10 @@ export const ManageContent_UpdateExhibitionDocument = gql`
   }
 }
     ${ManageContent_ExhibitionFragmentDoc}`;
-export type ManageContent_UpdateExhibitionMutationFn = Apollo.MutationFunction<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
 
-/**
- * __useManageContent_UpdateExhibitionMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateExhibitionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateExhibitionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateExhibitionMutation, { data, loading, error }] = useManageContent_UpdateExhibitionMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateExhibitionMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>(ManageContent_UpdateExhibitionDocument, options);
-      }
-export type ManageContent_UpdateExhibitionMutationHookResult = ReturnType<typeof useManageContent_UpdateExhibitionMutation>;
-export type ManageContent_UpdateExhibitionMutationResult = Apollo.MutationResult<ManageContent_UpdateExhibitionMutation>;
-export type ManageContent_UpdateExhibitionMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>;
+export function useManageContent_UpdateExhibitionMutation() {
+  return Urql.useMutation<ManageContent_UpdateExhibitionMutation, ManageContent_UpdateExhibitionMutationVariables>(ManageContent_UpdateExhibitionDocument);
+};
 export const ManageContent_DeleteExhibitionsDocument = gql`
     mutation ManageContent_DeleteExhibitions($ids: [uuid!]!) {
   delete_collection_Exhibition(where: {id: {_in: $ids}}) {
@@ -49215,32 +46007,10 @@ export const ManageContent_DeleteExhibitionsDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteExhibitionsMutationFn = Apollo.MutationFunction<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
 
-/**
- * __useManageContent_DeleteExhibitionsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteExhibitionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteExhibitionsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteExhibitionsMutation, { data, loading, error }] = useManageContent_DeleteExhibitionsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteExhibitionsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>(ManageContent_DeleteExhibitionsDocument, options);
-      }
-export type ManageContent_DeleteExhibitionsMutationHookResult = ReturnType<typeof useManageContent_DeleteExhibitionsMutation>;
-export type ManageContent_DeleteExhibitionsMutationResult = Apollo.MutationResult<ManageContent_DeleteExhibitionsMutation>;
-export type ManageContent_DeleteExhibitionsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>;
+export function useManageContent_DeleteExhibitionsMutation() {
+  return Urql.useMutation<ManageContent_DeleteExhibitionsMutation, ManageContent_DeleteExhibitionsMutationVariables>(ManageContent_DeleteExhibitionsDocument);
+};
 export const AddContentMenu_CreateElementDocument = gql`
     mutation AddContentMenu_CreateElement($object: content_Element_insert_input!) {
   insert_content_Element_one(object: $object) {
@@ -49248,32 +46018,10 @@ export const AddContentMenu_CreateElementDocument = gql`
   }
 }
     ${ManageContent_ElementFragmentDoc}`;
-export type AddContentMenu_CreateElementMutationFn = Apollo.MutationFunction<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
 
-/**
- * __useAddContentMenu_CreateElementMutation__
- *
- * To run a mutation, you first call `useAddContentMenu_CreateElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddContentMenu_CreateElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addContentMenuCreateElementMutation, { data, loading, error }] = useAddContentMenu_CreateElementMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useAddContentMenu_CreateElementMutation(baseOptions?: Apollo.MutationHookOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>(AddContentMenu_CreateElementDocument, options);
-      }
-export type AddContentMenu_CreateElementMutationHookResult = ReturnType<typeof useAddContentMenu_CreateElementMutation>;
-export type AddContentMenu_CreateElementMutationResult = Apollo.MutationResult<AddContentMenu_CreateElementMutation>;
-export type AddContentMenu_CreateElementMutationOptions = Apollo.BaseMutationOptions<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>;
+export function useAddContentMenu_CreateElementMutation() {
+  return Urql.useMutation<AddContentMenu_CreateElementMutation, AddContentMenu_CreateElementMutationVariables>(AddContentMenu_CreateElementDocument);
+};
 export const Item_CreateRoomDocument = gql`
     mutation Item_CreateRoom($conferenceId: uuid!, $itemId: uuid!) {
   createItemRoom(conferenceId: $conferenceId, itemId: $itemId) {
@@ -49282,33 +46030,10 @@ export const Item_CreateRoomDocument = gql`
   }
 }
     `;
-export type Item_CreateRoomMutationFn = Apollo.MutationFunction<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>;
 
-/**
- * __useItem_CreateRoomMutation__
- *
- * To run a mutation, you first call `useItem_CreateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useItem_CreateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [itemCreateRoomMutation, { data, loading, error }] = useItem_CreateRoomMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useItem_CreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>(Item_CreateRoomDocument, options);
-      }
-export type Item_CreateRoomMutationHookResult = ReturnType<typeof useItem_CreateRoomMutation>;
-export type Item_CreateRoomMutationResult = Apollo.MutationResult<Item_CreateRoomMutation>;
-export type Item_CreateRoomMutationOptions = Apollo.BaseMutationOptions<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>;
+export function useItem_CreateRoomMutation() {
+  return Urql.useMutation<Item_CreateRoomMutation, Item_CreateRoomMutationVariables>(Item_CreateRoomDocument);
+};
 export const ManageContent_SelectProgramPeopleDocument = gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
   collection_ProgramPersonWithAccessToken(
@@ -49319,33 +46044,9 @@ export const ManageContent_SelectProgramPeopleDocument = gql`
 }
     ${ManageContent_ProgramPersonFragmentDoc}`;
 
-/**
- * __useManageContent_SelectProgramPeopleQuery__
- *
- * To run a query within a React component, call `useManageContent_SelectProgramPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageContent_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageContent_SelectProgramPeopleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageContent_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
-      }
-export function useManageContent_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>(ManageContent_SelectProgramPeopleDocument, options);
-        }
-export type ManageContent_SelectProgramPeopleQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleQuery>;
-export type ManageContent_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useManageContent_SelectProgramPeopleLazyQuery>;
-export type ManageContent_SelectProgramPeopleQueryResult = Apollo.QueryResult<ManageContent_SelectProgramPeopleQuery, ManageContent_SelectProgramPeopleQueryVariables>;
+export function useManageContent_SelectProgramPeopleQuery(options: Omit<Urql.UseQueryArgs<ManageContent_SelectProgramPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageContent_SelectProgramPeopleQuery>({ query: ManageContent_SelectProgramPeopleDocument, ...options });
+};
 export const ManageContent_InsertItemProgramPersonDocument = gql`
     mutation ManageContent_InsertItemProgramPerson($conferenceId: uuid!, $personId: uuid!, $roleName: String!, $priority: Int!, $itemId: uuid!) {
   insert_content_ItemProgramPerson_one(
@@ -49355,36 +46056,10 @@ export const ManageContent_InsertItemProgramPersonDocument = gql`
   }
 }
     ${ManageContent_ItemProgramPersonFragmentDoc}`;
-export type ManageContent_InsertItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
 
-/**
- * __useManageContent_InsertItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertItemProgramPersonMutation, { data, loading, error }] = useManageContent_InsertItemProgramPersonMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      personId: // value for 'personId'
- *      roleName: // value for 'roleName'
- *      priority: // value for 'priority'
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useManageContent_InsertItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>(ManageContent_InsertItemProgramPersonDocument, options);
-      }
-export type ManageContent_InsertItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_InsertItemProgramPersonMutation>;
-export type ManageContent_InsertItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_InsertItemProgramPersonMutation>;
-export type ManageContent_InsertItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>;
+export function useManageContent_InsertItemProgramPersonMutation() {
+  return Urql.useMutation<ManageContent_InsertItemProgramPersonMutation, ManageContent_InsertItemProgramPersonMutationVariables>(ManageContent_InsertItemProgramPersonDocument);
+};
 export const ManageContent_UpdateItemProgramPersonDocument = gql`
     mutation ManageContent_UpdateItemProgramPerson($itemPersonId: uuid!, $priority: Int!, $roleName: String!) {
   update_content_ItemProgramPerson_by_pk(
@@ -49395,34 +46070,10 @@ export const ManageContent_UpdateItemProgramPersonDocument = gql`
   }
 }
     ${ManageContent_ItemProgramPersonFragmentDoc}`;
-export type ManageContent_UpdateItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
 
-/**
- * __useManageContent_UpdateItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateItemProgramPersonMutation, { data, loading, error }] = useManageContent_UpdateItemProgramPersonMutation({
- *   variables: {
- *      itemPersonId: // value for 'itemPersonId'
- *      priority: // value for 'priority'
- *      roleName: // value for 'roleName'
- *   },
- * });
- */
-export function useManageContent_UpdateItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument, options);
-      }
-export type ManageContent_UpdateItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_UpdateItemProgramPersonMutation>;
-export type ManageContent_UpdateItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_UpdateItemProgramPersonMutation>;
-export type ManageContent_UpdateItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>;
+export function useManageContent_UpdateItemProgramPersonMutation() {
+  return Urql.useMutation<ManageContent_UpdateItemProgramPersonMutation, ManageContent_UpdateItemProgramPersonMutationVariables>(ManageContent_UpdateItemProgramPersonDocument);
+};
 export const ManageContent_DeleteItemProgramPersonDocument = gql`
     mutation ManageContent_DeleteItemProgramPerson($itemPersonId: uuid!) {
   delete_content_ItemProgramPerson_by_pk(id: $itemPersonId) {
@@ -49430,32 +46081,10 @@ export const ManageContent_DeleteItemProgramPersonDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteItemProgramPersonMutationFn = Apollo.MutationFunction<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
 
-/**
- * __useManageContent_DeleteItemProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteItemProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteItemProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteItemProgramPersonMutation, { data, loading, error }] = useManageContent_DeleteItemProgramPersonMutation({
- *   variables: {
- *      itemPersonId: // value for 'itemPersonId'
- *   },
- * });
- */
-export function useManageContent_DeleteItemProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>(ManageContent_DeleteItemProgramPersonDocument, options);
-      }
-export type ManageContent_DeleteItemProgramPersonMutationHookResult = ReturnType<typeof useManageContent_DeleteItemProgramPersonMutation>;
-export type ManageContent_DeleteItemProgramPersonMutationResult = Apollo.MutationResult<ManageContent_DeleteItemProgramPersonMutation>;
-export type ManageContent_DeleteItemProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>;
+export function useManageContent_DeleteItemProgramPersonMutation() {
+  return Urql.useMutation<ManageContent_DeleteItemProgramPersonMutation, ManageContent_DeleteItemProgramPersonMutationVariables>(ManageContent_DeleteItemProgramPersonDocument);
+};
 export const ManageContent_InsertTagDocument = gql`
     mutation ManageContent_InsertTag($tag: collection_Tag_insert_input!) {
   insert_collection_Tag_one(object: $tag) {
@@ -49463,32 +46092,10 @@ export const ManageContent_InsertTagDocument = gql`
   }
 }
     ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_InsertTagMutationFn = Apollo.MutationFunction<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
 
-/**
- * __useManageContent_InsertTagMutation__
- *
- * To run a mutation, you first call `useManageContent_InsertTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_InsertTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentInsertTagMutation, { data, loading, error }] = useManageContent_InsertTagMutation({
- *   variables: {
- *      tag: // value for 'tag'
- *   },
- * });
- */
-export function useManageContent_InsertTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument, options);
-      }
-export type ManageContent_InsertTagMutationHookResult = ReturnType<typeof useManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationResult = Apollo.MutationResult<ManageContent_InsertTagMutation>;
-export type ManageContent_InsertTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>;
+export function useManageContent_InsertTagMutation() {
+  return Urql.useMutation<ManageContent_InsertTagMutation, ManageContent_InsertTagMutationVariables>(ManageContent_InsertTagDocument);
+};
 export const ManageContent_UpdateTagDocument = gql`
     mutation ManageContent_UpdateTag($id: uuid!, $update: collection_Tag_set_input!) {
   update_collection_Tag_by_pk(pk_columns: {id: $id}, _set: $update) {
@@ -49496,33 +46103,10 @@ export const ManageContent_UpdateTagDocument = gql`
   }
 }
     ${ManageContent_TagFragmentDoc}`;
-export type ManageContent_UpdateTagMutationFn = Apollo.MutationFunction<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
 
-/**
- * __useManageContent_UpdateTagMutation__
- *
- * To run a mutation, you first call `useManageContent_UpdateTagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_UpdateTagMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentUpdateTagMutation, { data, loading, error }] = useManageContent_UpdateTagMutation({
- *   variables: {
- *      id: // value for 'id'
- *      update: // value for 'update'
- *   },
- * });
- */
-export function useManageContent_UpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument, options);
-      }
-export type ManageContent_UpdateTagMutationHookResult = ReturnType<typeof useManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationResult = Apollo.MutationResult<ManageContent_UpdateTagMutation>;
-export type ManageContent_UpdateTagMutationOptions = Apollo.BaseMutationOptions<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>;
+export function useManageContent_UpdateTagMutation() {
+  return Urql.useMutation<ManageContent_UpdateTagMutation, ManageContent_UpdateTagMutationVariables>(ManageContent_UpdateTagDocument);
+};
 export const ManageContent_DeleteTagsDocument = gql`
     mutation ManageContent_DeleteTags($ids: [uuid!]!) {
   delete_collection_Tag(where: {id: {_in: $ids}}) {
@@ -49532,32 +46116,10 @@ export const ManageContent_DeleteTagsDocument = gql`
   }
 }
     `;
-export type ManageContent_DeleteTagsMutationFn = Apollo.MutationFunction<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
 
-/**
- * __useManageContent_DeleteTagsMutation__
- *
- * To run a mutation, you first call `useManageContent_DeleteTagsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageContent_DeleteTagsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageContentDeleteTagsMutation, { data, loading, error }] = useManageContent_DeleteTagsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageContent_DeleteTagsMutation(baseOptions?: Apollo.MutationHookOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument, options);
-      }
-export type ManageContent_DeleteTagsMutationHookResult = ReturnType<typeof useManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationResult = Apollo.MutationResult<ManageContent_DeleteTagsMutation>;
-export type ManageContent_DeleteTagsMutationOptions = Apollo.BaseMutationOptions<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>;
+export function useManageContent_DeleteTagsMutation() {
+  return Urql.useMutation<ManageContent_DeleteTagsMutation, ManageContent_DeleteTagsMutationVariables>(ManageContent_DeleteTagsDocument);
+};
 export const ElementSecurity_SelectGrantsDocument = gql`
     query ElementSecurity_SelectGrants($elementIds: [uuid!]!, $conferenceId: uuid!) {
   content_ElementPermissionGrant(
@@ -49576,34 +46138,9 @@ export const ElementSecurity_SelectGrantsDocument = gql`
 ${ElementSecurity_PermissionSetFragmentDoc}
 ${ElementSecurity_GroupFragmentDoc}`;
 
-/**
- * __useElementSecurity_SelectGrantsQuery__
- *
- * To run a query within a React component, call `useElementSecurity_SelectGrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useElementSecurity_SelectGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useElementSecurity_SelectGrantsQuery({
- *   variables: {
- *      elementIds: // value for 'elementIds'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useElementSecurity_SelectGrantsQuery(baseOptions: Apollo.QueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
-      }
-export function useElementSecurity_SelectGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>(ElementSecurity_SelectGrantsDocument, options);
-        }
-export type ElementSecurity_SelectGrantsQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsQuery>;
-export type ElementSecurity_SelectGrantsLazyQueryHookResult = ReturnType<typeof useElementSecurity_SelectGrantsLazyQuery>;
-export type ElementSecurity_SelectGrantsQueryResult = Apollo.QueryResult<ElementSecurity_SelectGrantsQuery, ElementSecurity_SelectGrantsQueryVariables>;
+export function useElementSecurity_SelectGrantsQuery(options: Omit<Urql.UseQueryArgs<ElementSecurity_SelectGrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ElementSecurity_SelectGrantsQuery>({ query: ElementSecurity_SelectGrantsDocument, ...options });
+};
 export const ElementSecurity_InsertGrantsDocument = gql`
     mutation ElementSecurity_InsertGrants($elementGrants: [content_ElementPermissionGrant_insert_input!]!) {
   insert_content_ElementPermissionGrant(
@@ -49616,32 +46153,10 @@ export const ElementSecurity_InsertGrantsDocument = gql`
   }
 }
     ${ElementSecurity_ElementPgFragmentDoc}`;
-export type ElementSecurity_InsertGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
 
-/**
- * __useElementSecurity_InsertGrantsMutation__
- *
- * To run a mutation, you first call `useElementSecurity_InsertGrantsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useElementSecurity_InsertGrantsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [elementSecurityInsertGrantsMutation, { data, loading, error }] = useElementSecurity_InsertGrantsMutation({
- *   variables: {
- *      elementGrants: // value for 'elementGrants'
- *   },
- * });
- */
-export function useElementSecurity_InsertGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>(ElementSecurity_InsertGrantsDocument, options);
-      }
-export type ElementSecurity_InsertGrantsMutationHookResult = ReturnType<typeof useElementSecurity_InsertGrantsMutation>;
-export type ElementSecurity_InsertGrantsMutationResult = Apollo.MutationResult<ElementSecurity_InsertGrantsMutation>;
-export type ElementSecurity_InsertGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>;
+export function useElementSecurity_InsertGrantsMutation() {
+  return Urql.useMutation<ElementSecurity_InsertGrantsMutation, ElementSecurity_InsertGrantsMutationVariables>(ElementSecurity_InsertGrantsDocument);
+};
 export const ElementSecurity_DeleteGrantsDocument = gql`
     mutation ElementSecurity_DeleteGrants($elementGrantIds: [uuid!]!) {
   delete_content_ElementPermissionGrant(where: {id: {_in: $elementGrantIds}}) {
@@ -49651,32 +46166,10 @@ export const ElementSecurity_DeleteGrantsDocument = gql`
   }
 }
     `;
-export type ElementSecurity_DeleteGrantsMutationFn = Apollo.MutationFunction<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
 
-/**
- * __useElementSecurity_DeleteGrantsMutation__
- *
- * To run a mutation, you first call `useElementSecurity_DeleteGrantsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useElementSecurity_DeleteGrantsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [elementSecurityDeleteGrantsMutation, { data, loading, error }] = useElementSecurity_DeleteGrantsMutation({
- *   variables: {
- *      elementGrantIds: // value for 'elementGrantIds'
- *   },
- * });
- */
-export function useElementSecurity_DeleteGrantsMutation(baseOptions?: Apollo.MutationHookOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>(ElementSecurity_DeleteGrantsDocument, options);
-      }
-export type ElementSecurity_DeleteGrantsMutationHookResult = ReturnType<typeof useElementSecurity_DeleteGrantsMutation>;
-export type ElementSecurity_DeleteGrantsMutationResult = Apollo.MutationResult<ElementSecurity_DeleteGrantsMutation>;
-export type ElementSecurity_DeleteGrantsMutationOptions = Apollo.BaseMutationOptions<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>;
+export function useElementSecurity_DeleteGrantsMutation() {
+  return Urql.useMutation<ElementSecurity_DeleteGrantsMutation, ElementSecurity_DeleteGrantsMutationVariables>(ElementSecurity_DeleteGrantsDocument);
+};
 export const InsertSubmissionRequestEmailJobsDocument = gql`
     mutation InsertSubmissionRequestEmailJobs($objs: [job_queues_SubmissionRequestEmailJob_insert_input!]!) {
   insert_job_queues_SubmissionRequestEmailJob(objects: $objs) {
@@ -49684,32 +46177,10 @@ export const InsertSubmissionRequestEmailJobsDocument = gql`
   }
 }
     `;
-export type InsertSubmissionRequestEmailJobsMutationFn = Apollo.MutationFunction<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
 
-/**
- * __useInsertSubmissionRequestEmailJobsMutation__
- *
- * To run a mutation, you first call `useInsertSubmissionRequestEmailJobsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertSubmissionRequestEmailJobsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertSubmissionRequestEmailJobsMutation, { data, loading, error }] = useInsertSubmissionRequestEmailJobsMutation({
- *   variables: {
- *      objs: // value for 'objs'
- *   },
- * });
- */
-export function useInsertSubmissionRequestEmailJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>(InsertSubmissionRequestEmailJobsDocument, options);
-      }
-export type InsertSubmissionRequestEmailJobsMutationHookResult = ReturnType<typeof useInsertSubmissionRequestEmailJobsMutation>;
-export type InsertSubmissionRequestEmailJobsMutationResult = Apollo.MutationResult<InsertSubmissionRequestEmailJobsMutation>;
-export type InsertSubmissionRequestEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>;
+export function useInsertSubmissionRequestEmailJobsMutation() {
+  return Urql.useMutation<InsertSubmissionRequestEmailJobsMutation, InsertSubmissionRequestEmailJobsMutationVariables>(InsertSubmissionRequestEmailJobsDocument);
+};
 export const SubmissionRequestsModalDataDocument = gql`
     query SubmissionRequestsModalData($conferenceId: uuid!, $itemIds: [uuid!]!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -49722,34 +46193,9 @@ export const SubmissionRequestsModalDataDocument = gql`
     ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}
 ${SubmissionRequestsModal_ItemFragmentDoc}`;
 
-/**
- * __useSubmissionRequestsModalDataQuery__
- *
- * To run a query within a React component, call `useSubmissionRequestsModalDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubmissionRequestsModalDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubmissionRequestsModalDataQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      itemIds: // value for 'itemIds'
- *   },
- * });
- */
-export function useSubmissionRequestsModalDataQuery(baseOptions: Apollo.QueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
-      }
-export function useSubmissionRequestsModalDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>(SubmissionRequestsModalDataDocument, options);
-        }
-export type SubmissionRequestsModalDataQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataQuery>;
-export type SubmissionRequestsModalDataLazyQueryHookResult = ReturnType<typeof useSubmissionRequestsModalDataLazyQuery>;
-export type SubmissionRequestsModalDataQueryResult = Apollo.QueryResult<SubmissionRequestsModalDataQuery, SubmissionRequestsModalDataQueryVariables>;
+export function useSubmissionRequestsModalDataQuery(options: Omit<Urql.UseQueryArgs<SubmissionRequestsModalDataQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SubmissionRequestsModalDataQuery>({ query: SubmissionRequestsModalDataDocument, ...options });
+};
 export const SubmissionsReviewModalDataDocument = gql`
     query SubmissionsReviewModalData($itemIds: [uuid!]!) {
   content_Item(where: {id: {_in: $itemIds}}) {
@@ -49758,33 +46204,9 @@ export const SubmissionsReviewModalDataDocument = gql`
 }
     ${SubmissionsReviewModal_ItemFragmentDoc}`;
 
-/**
- * __useSubmissionsReviewModalDataQuery__
- *
- * To run a query within a React component, call `useSubmissionsReviewModalDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubmissionsReviewModalDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubmissionsReviewModalDataQuery({
- *   variables: {
- *      itemIds: // value for 'itemIds'
- *   },
- * });
- */
-export function useSubmissionsReviewModalDataQuery(baseOptions: Apollo.QueryHookOptions<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>(SubmissionsReviewModalDataDocument, options);
-      }
-export function useSubmissionsReviewModalDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>(SubmissionsReviewModalDataDocument, options);
-        }
-export type SubmissionsReviewModalDataQueryHookResult = ReturnType<typeof useSubmissionsReviewModalDataQuery>;
-export type SubmissionsReviewModalDataLazyQueryHookResult = ReturnType<typeof useSubmissionsReviewModalDataLazyQuery>;
-export type SubmissionsReviewModalDataQueryResult = Apollo.QueryResult<SubmissionsReviewModalDataQuery, SubmissionsReviewModalDataQueryVariables>;
+export function useSubmissionsReviewModalDataQuery(options: Omit<Urql.UseQueryArgs<SubmissionsReviewModalDataQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SubmissionsReviewModalDataQuery>({ query: SubmissionsReviewModalDataDocument, ...options });
+};
 export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
     query ConfigureEmailTemplates_GetConferenceConfigurations($conferenceId: uuid!) {
   conference_Configuration(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -49793,33 +46215,9 @@ export const ConfigureEmailTemplates_GetConferenceConfigurationsDocument = gql`
 }
     ${ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc}`;
 
-/**
- * __useConfigureEmailTemplates_GetConferenceConfigurationsQuery__
- *
- * To run a query within a React component, call `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useConfigureEmailTemplates_GetConferenceConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, options);
-      }
-export function useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>(ConfigureEmailTemplates_GetConferenceConfigurationsDocument, options);
-        }
-export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsQuery>;
-export type ConfigureEmailTemplates_GetConferenceConfigurationsLazyQueryHookResult = ReturnType<typeof useConfigureEmailTemplates_GetConferenceConfigurationsLazyQuery>;
-export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryResult = Apollo.QueryResult<ConfigureEmailTemplates_GetConferenceConfigurationsQuery, ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>;
+export function useConfigureEmailTemplates_GetConferenceConfigurationsQuery(options: Omit<Urql.UseQueryArgs<ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConfigureEmailTemplates_GetConferenceConfigurationsQuery>({ query: ConfigureEmailTemplates_GetConferenceConfigurationsDocument, ...options });
+};
 export const ConfigureEmailTemplates_UpdateConferenceConfigurationDocument = gql`
     mutation ConfigureEmailTemplates_UpdateConferenceConfiguration($value: jsonb!, $conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
   insert_conference_Configuration_one(
@@ -49832,34 +46230,10 @@ export const ConfigureEmailTemplates_UpdateConferenceConfigurationDocument = gql
   }
 }
     `;
-export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationFn = Apollo.MutationFunction<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
 
-/**
- * __useConfigureEmailTemplates_UpdateConferenceConfigurationMutation__
- *
- * To run a mutation, you first call `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useConfigureEmailTemplates_UpdateConferenceConfigurationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [configureEmailTemplatesUpdateConferenceConfigurationMutation, { data, loading, error }] = useConfigureEmailTemplates_UpdateConferenceConfigurationMutation({
- *   variables: {
- *      value: // value for 'value'
- *      conferenceId: // value for 'conferenceId'
- *      key: // value for 'key'
- *   },
- * });
- */
-export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>(ConfigureEmailTemplates_UpdateConferenceConfigurationDocument, options);
-      }
-export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationHookResult = ReturnType<typeof useConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
-export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationResult = Apollo.MutationResult<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
-export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationOptions = Apollo.BaseMutationOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
+export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation() {
+  return Urql.useMutation<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>(ConfigureEmailTemplates_UpdateConferenceConfigurationDocument);
+};
 export const ChooseElementByTagModal_GetTagsDocument = gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
   collection_Tag(
@@ -49872,33 +46246,9 @@ export const ChooseElementByTagModal_GetTagsDocument = gql`
 }
     `;
 
-/**
- * __useChooseElementByTagModal_GetTagsQuery__
- *
- * To run a query within a React component, call `useChooseElementByTagModal_GetTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useChooseElementByTagModal_GetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useChooseElementByTagModal_GetTagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useChooseElementByTagModal_GetTagsQuery(baseOptions: Apollo.QueryHookOptions<ChooseElementByTagModal_GetTagsQuery, ChooseElementByTagModal_GetTagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ChooseElementByTagModal_GetTagsQuery, ChooseElementByTagModal_GetTagsQueryVariables>(ChooseElementByTagModal_GetTagsDocument, options);
-      }
-export function useChooseElementByTagModal_GetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseElementByTagModal_GetTagsQuery, ChooseElementByTagModal_GetTagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ChooseElementByTagModal_GetTagsQuery, ChooseElementByTagModal_GetTagsQueryVariables>(ChooseElementByTagModal_GetTagsDocument, options);
-        }
-export type ChooseElementByTagModal_GetTagsQueryHookResult = ReturnType<typeof useChooseElementByTagModal_GetTagsQuery>;
-export type ChooseElementByTagModal_GetTagsLazyQueryHookResult = ReturnType<typeof useChooseElementByTagModal_GetTagsLazyQuery>;
-export type ChooseElementByTagModal_GetTagsQueryResult = Apollo.QueryResult<ChooseElementByTagModal_GetTagsQuery, ChooseElementByTagModal_GetTagsQueryVariables>;
+export function useChooseElementByTagModal_GetTagsQuery(options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetTagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ChooseElementByTagModal_GetTagsQuery>({ query: ChooseElementByTagModal_GetTagsDocument, ...options });
+};
 export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
     query ChooseElementByTagModal_GetVideoElements($tagId: uuid!, $name: String!) {
   content_Element(
@@ -49915,34 +46265,9 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
 }
     `;
 
-/**
- * __useChooseElementByTagModal_GetVideoElementsQuery__
- *
- * To run a query within a React component, call `useChooseElementByTagModal_GetVideoElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useChooseElementByTagModal_GetVideoElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useChooseElementByTagModal_GetVideoElementsQuery({
- *   variables: {
- *      tagId: // value for 'tagId'
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useChooseElementByTagModal_GetVideoElementsQuery(baseOptions: Apollo.QueryHookOptions<ChooseElementByTagModal_GetVideoElementsQuery, ChooseElementByTagModal_GetVideoElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ChooseElementByTagModal_GetVideoElementsQuery, ChooseElementByTagModal_GetVideoElementsQueryVariables>(ChooseElementByTagModal_GetVideoElementsDocument, options);
-      }
-export function useChooseElementByTagModal_GetVideoElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseElementByTagModal_GetVideoElementsQuery, ChooseElementByTagModal_GetVideoElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ChooseElementByTagModal_GetVideoElementsQuery, ChooseElementByTagModal_GetVideoElementsQueryVariables>(ChooseElementByTagModal_GetVideoElementsDocument, options);
-        }
-export type ChooseElementByTagModal_GetVideoElementsQueryHookResult = ReturnType<typeof useChooseElementByTagModal_GetVideoElementsQuery>;
-export type ChooseElementByTagModal_GetVideoElementsLazyQueryHookResult = ReturnType<typeof useChooseElementByTagModal_GetVideoElementsLazyQuery>;
-export type ChooseElementByTagModal_GetVideoElementsQueryResult = Apollo.QueryResult<ChooseElementByTagModal_GetVideoElementsQuery, ChooseElementByTagModal_GetVideoElementsQueryVariables>;
+export function useChooseElementByTagModal_GetVideoElementsQuery(options: Omit<Urql.UseQueryArgs<ChooseElementByTagModal_GetVideoElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ChooseElementByTagModal_GetVideoElementsQuery>({ query: ChooseElementByTagModal_GetVideoElementsDocument, ...options });
+};
 export const ChooseElementModal_GetItemsDocument = gql`
     query ChooseElementModal_GetItems($conferenceId: uuid!) {
   content_Item(
@@ -49955,33 +46280,9 @@ export const ChooseElementModal_GetItemsDocument = gql`
 }
     `;
 
-/**
- * __useChooseElementModal_GetItemsQuery__
- *
- * To run a query within a React component, call `useChooseElementModal_GetItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useChooseElementModal_GetItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useChooseElementModal_GetItemsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useChooseElementModal_GetItemsQuery(baseOptions: Apollo.QueryHookOptions<ChooseElementModal_GetItemsQuery, ChooseElementModal_GetItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ChooseElementModal_GetItemsQuery, ChooseElementModal_GetItemsQueryVariables>(ChooseElementModal_GetItemsDocument, options);
-      }
-export function useChooseElementModal_GetItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseElementModal_GetItemsQuery, ChooseElementModal_GetItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ChooseElementModal_GetItemsQuery, ChooseElementModal_GetItemsQueryVariables>(ChooseElementModal_GetItemsDocument, options);
-        }
-export type ChooseElementModal_GetItemsQueryHookResult = ReturnType<typeof useChooseElementModal_GetItemsQuery>;
-export type ChooseElementModal_GetItemsLazyQueryHookResult = ReturnType<typeof useChooseElementModal_GetItemsLazyQuery>;
-export type ChooseElementModal_GetItemsQueryResult = Apollo.QueryResult<ChooseElementModal_GetItemsQuery, ChooseElementModal_GetItemsQueryVariables>;
+export function useChooseElementModal_GetItemsQuery(options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ChooseElementModal_GetItemsQuery>({ query: ChooseElementModal_GetItemsDocument, ...options });
+};
 export const ChooseElementModal_GetVideoElementsDocument = gql`
     query ChooseElementModal_GetVideoElements($itemId: uuid) {
   content_Element(
@@ -49994,33 +46295,9 @@ export const ChooseElementModal_GetVideoElementsDocument = gql`
 }
     `;
 
-/**
- * __useChooseElementModal_GetVideoElementsQuery__
- *
- * To run a query within a React component, call `useChooseElementModal_GetVideoElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useChooseElementModal_GetVideoElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useChooseElementModal_GetVideoElementsQuery({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useChooseElementModal_GetVideoElementsQuery(baseOptions?: Apollo.QueryHookOptions<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>(ChooseElementModal_GetVideoElementsDocument, options);
-      }
-export function useChooseElementModal_GetVideoElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>(ChooseElementModal_GetVideoElementsDocument, options);
-        }
-export type ChooseElementModal_GetVideoElementsQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsQuery>;
-export type ChooseElementModal_GetVideoElementsLazyQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsLazyQuery>;
-export type ChooseElementModal_GetVideoElementsQueryResult = Apollo.QueryResult<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>;
+export function useChooseElementModal_GetVideoElementsQuery(options: Omit<Urql.UseQueryArgs<ChooseElementModal_GetVideoElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ChooseElementModal_GetVideoElementsQuery>({ query: ChooseElementModal_GetVideoElementsDocument, ...options });
+};
 export const ManageExport_GetGoogleOAuthUrlDocument = gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
   getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {
@@ -50028,33 +46305,10 @@ export const ManageExport_GetGoogleOAuthUrlDocument = gql`
   }
 }
     `;
-export type ManageExport_GetGoogleOAuthUrlMutationFn = Apollo.MutationFunction<ManageExport_GetGoogleOAuthUrlMutation, ManageExport_GetGoogleOAuthUrlMutationVariables>;
 
-/**
- * __useManageExport_GetGoogleOAuthUrlMutation__
- *
- * To run a mutation, you first call `useManageExport_GetGoogleOAuthUrlMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageExport_GetGoogleOAuthUrlMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageExportGetGoogleOAuthUrlMutation, { data, loading, error }] = useManageExport_GetGoogleOAuthUrlMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      scopes: // value for 'scopes'
- *   },
- * });
- */
-export function useManageExport_GetGoogleOAuthUrlMutation(baseOptions?: Apollo.MutationHookOptions<ManageExport_GetGoogleOAuthUrlMutation, ManageExport_GetGoogleOAuthUrlMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageExport_GetGoogleOAuthUrlMutation, ManageExport_GetGoogleOAuthUrlMutationVariables>(ManageExport_GetGoogleOAuthUrlDocument, options);
-      }
-export type ManageExport_GetGoogleOAuthUrlMutationHookResult = ReturnType<typeof useManageExport_GetGoogleOAuthUrlMutation>;
-export type ManageExport_GetGoogleOAuthUrlMutationResult = Apollo.MutationResult<ManageExport_GetGoogleOAuthUrlMutation>;
-export type ManageExport_GetGoogleOAuthUrlMutationOptions = Apollo.BaseMutationOptions<ManageExport_GetGoogleOAuthUrlMutation, ManageExport_GetGoogleOAuthUrlMutationVariables>;
+export function useManageExport_GetGoogleOAuthUrlMutation() {
+  return Urql.useMutation<ManageExport_GetGoogleOAuthUrlMutation, ManageExport_GetGoogleOAuthUrlMutationVariables>(ManageExport_GetGoogleOAuthUrlDocument);
+};
 export const ManageExport_GetRegistrantGoogleAccountsDocument = gql`
     query ManageExport_GetRegistrantGoogleAccounts($registrantId: uuid!) {
   registrant_GoogleAccount(where: {registrantId: {_eq: $registrantId}}) {
@@ -50063,33 +46317,9 @@ export const ManageExport_GetRegistrantGoogleAccountsDocument = gql`
 }
     ${ManageExport_RegistrantGoogleAccountFragmentDoc}`;
 
-/**
- * __useManageExport_GetRegistrantGoogleAccountsQuery__
- *
- * To run a query within a React component, call `useManageExport_GetRegistrantGoogleAccountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageExport_GetRegistrantGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageExport_GetRegistrantGoogleAccountsQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useManageExport_GetRegistrantGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<ManageExport_GetRegistrantGoogleAccountsQuery, ManageExport_GetRegistrantGoogleAccountsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageExport_GetRegistrantGoogleAccountsQuery, ManageExport_GetRegistrantGoogleAccountsQueryVariables>(ManageExport_GetRegistrantGoogleAccountsDocument, options);
-      }
-export function useManageExport_GetRegistrantGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageExport_GetRegistrantGoogleAccountsQuery, ManageExport_GetRegistrantGoogleAccountsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageExport_GetRegistrantGoogleAccountsQuery, ManageExport_GetRegistrantGoogleAccountsQueryVariables>(ManageExport_GetRegistrantGoogleAccountsDocument, options);
-        }
-export type ManageExport_GetRegistrantGoogleAccountsQueryHookResult = ReturnType<typeof useManageExport_GetRegistrantGoogleAccountsQuery>;
-export type ManageExport_GetRegistrantGoogleAccountsLazyQueryHookResult = ReturnType<typeof useManageExport_GetRegistrantGoogleAccountsLazyQuery>;
-export type ManageExport_GetRegistrantGoogleAccountsQueryResult = Apollo.QueryResult<ManageExport_GetRegistrantGoogleAccountsQuery, ManageExport_GetRegistrantGoogleAccountsQueryVariables>;
+export function useManageExport_GetRegistrantGoogleAccountsQuery(options: Omit<Urql.UseQueryArgs<ManageExport_GetRegistrantGoogleAccountsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageExport_GetRegistrantGoogleAccountsQuery>({ query: ManageExport_GetRegistrantGoogleAccountsDocument, ...options });
+};
 export const ManageExport_DeleteRegistrantGoogleAccountDocument = gql`
     mutation ManageExport_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
   delete_registrant_GoogleAccount_by_pk(id: $registrantGoogleAccountId) {
@@ -50097,32 +46327,10 @@ export const ManageExport_DeleteRegistrantGoogleAccountDocument = gql`
   }
 }
     `;
-export type ManageExport_DeleteRegistrantGoogleAccountMutationFn = Apollo.MutationFunction<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>;
 
-/**
- * __useManageExport_DeleteRegistrantGoogleAccountMutation__
- *
- * To run a mutation, you first call `useManageExport_DeleteRegistrantGoogleAccountMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageExport_DeleteRegistrantGoogleAccountMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageExportDeleteRegistrantGoogleAccountMutation, { data, loading, error }] = useManageExport_DeleteRegistrantGoogleAccountMutation({
- *   variables: {
- *      registrantGoogleAccountId: // value for 'registrantGoogleAccountId'
- *   },
- * });
- */
-export function useManageExport_DeleteRegistrantGoogleAccountMutation(baseOptions?: Apollo.MutationHookOptions<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>(ManageExport_DeleteRegistrantGoogleAccountDocument, options);
-      }
-export type ManageExport_DeleteRegistrantGoogleAccountMutationHookResult = ReturnType<typeof useManageExport_DeleteRegistrantGoogleAccountMutation>;
-export type ManageExport_DeleteRegistrantGoogleAccountMutationResult = Apollo.MutationResult<ManageExport_DeleteRegistrantGoogleAccountMutation>;
-export type ManageExport_DeleteRegistrantGoogleAccountMutationOptions = Apollo.BaseMutationOptions<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>;
+export function useManageExport_DeleteRegistrantGoogleAccountMutation() {
+  return Urql.useMutation<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>(ManageExport_DeleteRegistrantGoogleAccountDocument);
+};
 export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
   ongoing_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
@@ -50142,33 +46350,9 @@ export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
 }
     ${UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc}`;
 
-/**
- * __useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
-      }
-export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
-        }
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>;
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery>;
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>;
+export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>({ query: UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, ...options });
+};
 export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
   registrant_GoogleAccount(where: {registrantId: {_eq: $registrantId}}) {
@@ -50179,33 +46363,9 @@ export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
 }
     `;
 
-/**
- * __useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery, UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery, UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>(UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument, options);
-      }
-export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery, UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery, UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>(UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument, options);
-        }
-export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>;
-export type UploadYouTubeVideos_GetRegistrantGoogleAccountsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetRegistrantGoogleAccountsLazyQuery>;
-export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery, UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>;
+export function useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery(options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery>({ query: UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument, ...options });
+};
 export const UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument = gql`
     mutation UploadYouTubeVideos_CreateUploadYouTubeVideoJobs($objects: [job_queues_UploadYouTubeVideoJob_insert_input!]!) {
   insert_job_queues_UploadYouTubeVideoJob(objects: $objects) {
@@ -50215,32 +46375,10 @@ export const UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument = gql`
   }
 }
     `;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
 
-/**
- * __useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation__
- *
- * To run a mutation, you first call `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadYouTubeVideosCreateUploadYouTubeVideoJobsMutation, { data, loading, error }] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>(UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument, options);
-      }
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationResult = Apollo.MutationResult<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation>;
-export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>;
+export function useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation() {
+  return Urql.useMutation<UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation, UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables>(UploadYouTubeVideos_CreateUploadYouTubeVideoJobsDocument);
+};
 export const UploadYouTubeVideos_GetElementsDocument = gql`
     query UploadYouTubeVideos_GetElements($elementIds: [uuid!]!) {
   content_Element(where: {id: {_in: $elementIds}}) {
@@ -50254,33 +46392,9 @@ export const UploadYouTubeVideos_GetElementsDocument = gql`
 }
     `;
 
-/**
- * __useUploadYouTubeVideos_GetElementsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetElementsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetElementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetElementsQuery({
- *   variables: {
- *      elementIds: // value for 'elementIds'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetElementsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetElementsQuery, UploadYouTubeVideos_GetElementsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetElementsQuery, UploadYouTubeVideos_GetElementsQueryVariables>(UploadYouTubeVideos_GetElementsDocument, options);
-      }
-export function useUploadYouTubeVideos_GetElementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetElementsQuery, UploadYouTubeVideos_GetElementsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetElementsQuery, UploadYouTubeVideos_GetElementsQueryVariables>(UploadYouTubeVideos_GetElementsDocument, options);
-        }
-export type UploadYouTubeVideos_GetElementsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetElementsQuery>;
-export type UploadYouTubeVideos_GetElementsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetElementsLazyQuery>;
-export type UploadYouTubeVideos_GetElementsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetElementsQuery, UploadYouTubeVideos_GetElementsQueryVariables>;
+export function useUploadYouTubeVideos_GetElementsQuery(options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetElementsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UploadYouTubeVideos_GetElementsQuery>({ query: UploadYouTubeVideos_GetElementsDocument, ...options });
+};
 export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
     query UploadYouTubeVideos_GetTemplateData($elementIds: [uuid!]!) {
   content_Element(where: {id: {_in: $elementIds}}) {
@@ -50338,33 +46452,9 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
 }
     ${UploadYouTubeVideos_ElementFragmentDoc}`;
 
-/**
- * __useUploadYouTubeVideos_GetTemplateDataQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetTemplateDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetTemplateDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetTemplateDataQuery({
- *   variables: {
- *      elementIds: // value for 'elementIds'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetTemplateDataQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, options);
-      }
-export function useUploadYouTubeVideos_GetTemplateDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(UploadYouTubeVideos_GetTemplateDataDocument, options);
-        }
-export type UploadYouTubeVideos_GetTemplateDataQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataQuery>;
-export type UploadYouTubeVideos_GetTemplateDataLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetTemplateDataLazyQuery>;
-export type UploadYouTubeVideos_GetTemplateDataQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>;
+export function useUploadYouTubeVideos_GetTemplateDataQuery(options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetTemplateDataQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UploadYouTubeVideos_GetTemplateDataQuery>({ query: UploadYouTubeVideos_GetTemplateDataDocument, ...options });
+};
 export const UploadYouTubeVideos_RefreshYouTubeDataDocument = gql`
     mutation UploadYouTubeVideos_RefreshYouTubeData($registrantId: uuid!, $registrantGoogleAccountId: uuid!) {
   refreshYouTubeData(
@@ -50376,33 +46466,10 @@ export const UploadYouTubeVideos_RefreshYouTubeDataDocument = gql`
   }
 }
     `;
-export type UploadYouTubeVideos_RefreshYouTubeDataMutationFn = Apollo.MutationFunction<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
 
-/**
- * __useUploadYouTubeVideos_RefreshYouTubeDataMutation__
- *
- * To run a mutation, you first call `useUploadYouTubeVideos_RefreshYouTubeDataMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_RefreshYouTubeDataMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadYouTubeVideosRefreshYouTubeDataMutation, { data, loading, error }] = useUploadYouTubeVideos_RefreshYouTubeDataMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      registrantGoogleAccountId: // value for 'registrantGoogleAccountId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_RefreshYouTubeDataMutation(baseOptions?: Apollo.MutationHookOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>(UploadYouTubeVideos_RefreshYouTubeDataDocument, options);
-      }
-export type UploadYouTubeVideos_RefreshYouTubeDataMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_RefreshYouTubeDataMutation>;
-export type UploadYouTubeVideos_RefreshYouTubeDataMutationResult = Apollo.MutationResult<UploadYouTubeVideos_RefreshYouTubeDataMutation>;
-export type UploadYouTubeVideos_RefreshYouTubeDataMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
+export function useUploadYouTubeVideos_RefreshYouTubeDataMutation() {
+  return Urql.useMutation<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>(UploadYouTubeVideos_RefreshYouTubeDataDocument);
+};
 export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
   video_YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -50411,33 +46478,9 @@ export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
 }
     ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
 
-/**
- * __useUploadYouTubeVideos_GetYouTubeUploadsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetYouTubeUploadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetYouTubeUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetYouTubeUploadsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, options);
-      }
-export function useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, options);
-        }
-export type UploadYouTubeVideos_GetYouTubeUploadsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsQuery>;
-export type UploadYouTubeVideos_GetYouTubeUploadsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery>;
-export type UploadYouTubeVideos_GetYouTubeUploadsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>;
+export function useUploadYouTubeVideos_GetYouTubeUploadsQuery(options: Omit<Urql.UseQueryArgs<UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery>({ query: UploadYouTubeVideos_GetYouTubeUploadsDocument, ...options });
+};
 export const ImportRegistrantsDocument = gql`
     mutation ImportRegistrants($insertRegistrants: [registrant_Registrant_insert_input!]!, $insertInvitations: [registrant_Invitation_insert_input!]!, $insertGroupRegistrants: [permissions_GroupRegistrant_insert_input!]!) {
   insert_registrant_Registrant(objects: $insertRegistrants) {
@@ -50451,34 +46494,10 @@ export const ImportRegistrantsDocument = gql`
   }
 }
     `;
-export type ImportRegistrantsMutationFn = Apollo.MutationFunction<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>;
 
-/**
- * __useImportRegistrantsMutation__
- *
- * To run a mutation, you first call `useImportRegistrantsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useImportRegistrantsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [importRegistrantsMutation, { data, loading, error }] = useImportRegistrantsMutation({
- *   variables: {
- *      insertRegistrants: // value for 'insertRegistrants'
- *      insertInvitations: // value for 'insertInvitations'
- *      insertGroupRegistrants: // value for 'insertGroupRegistrants'
- *   },
- * });
- */
-export function useImportRegistrantsMutation(baseOptions?: Apollo.MutationHookOptions<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>(ImportRegistrantsDocument, options);
-      }
-export type ImportRegistrantsMutationHookResult = ReturnType<typeof useImportRegistrantsMutation>;
-export type ImportRegistrantsMutationResult = Apollo.MutationResult<ImportRegistrantsMutation>;
-export type ImportRegistrantsMutationOptions = Apollo.BaseMutationOptions<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>;
+export function useImportRegistrantsMutation() {
+  return Urql.useMutation<ImportRegistrantsMutation, ImportRegistrantsMutationVariables>(ImportRegistrantsDocument);
+};
 export const UpdateConferenceDocument = gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
   update_conference_Conference(
@@ -50494,35 +46513,10 @@ export const UpdateConferenceDocument = gql`
   }
 }
     `;
-export type UpdateConferenceMutationFn = Apollo.MutationFunction<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
 
-/**
- * __useUpdateConferenceMutation__
- *
- * To run a mutation, you first call `useUpdateConferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateConferenceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateConferenceMutation, { data, loading, error }] = useUpdateConferenceMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      shortName: // value for 'shortName'
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useUpdateConferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument, options);
-      }
-export type UpdateConferenceMutationHookResult = ReturnType<typeof useUpdateConferenceMutation>;
-export type UpdateConferenceMutationResult = Apollo.MutationResult<UpdateConferenceMutation>;
-export type UpdateConferenceMutationOptions = Apollo.BaseMutationOptions<UpdateConferenceMutation, UpdateConferenceMutationVariables>;
+export function useUpdateConferenceMutation() {
+  return Urql.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument);
+};
 export const SelectAllGroupsDocument = gql`
     query SelectAllGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -50531,33 +46525,9 @@ export const SelectAllGroupsDocument = gql`
 }
     ${ManageGroups_GroupFragmentDoc}`;
 
-/**
- * __useSelectAllGroupsQuery__
- *
- * To run a query within a React component, call `useSelectAllGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllGroupsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>(SelectAllGroupsDocument, options);
-      }
-export function useSelectAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>(SelectAllGroupsDocument, options);
-        }
-export type SelectAllGroupsQueryHookResult = ReturnType<typeof useSelectAllGroupsQuery>;
-export type SelectAllGroupsLazyQueryHookResult = ReturnType<typeof useSelectAllGroupsLazyQuery>;
-export type SelectAllGroupsQueryResult = Apollo.QueryResult<SelectAllGroupsQuery, SelectAllGroupsQueryVariables>;
+export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
+};
 export const CreateDeleteGroupsDocument = gql`
     mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [permissions_Group_insert_input!]!) {
   delete_permissions_Group(where: {id: {_in: $deleteGroupIds}}) {
@@ -50581,33 +46551,10 @@ export const CreateDeleteGroupsDocument = gql`
   }
 }
     `;
-export type CreateDeleteGroupsMutationFn = Apollo.MutationFunction<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>;
 
-/**
- * __useCreateDeleteGroupsMutation__
- *
- * To run a mutation, you first call `useCreateDeleteGroupsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDeleteGroupsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDeleteGroupsMutation, { data, loading, error }] = useCreateDeleteGroupsMutation({
- *   variables: {
- *      deleteGroupIds: // value for 'deleteGroupIds'
- *      insertGroups: // value for 'insertGroups'
- *   },
- * });
- */
-export function useCreateDeleteGroupsMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>(CreateDeleteGroupsDocument, options);
-      }
-export type CreateDeleteGroupsMutationHookResult = ReturnType<typeof useCreateDeleteGroupsMutation>;
-export type CreateDeleteGroupsMutationResult = Apollo.MutationResult<CreateDeleteGroupsMutation>;
-export type CreateDeleteGroupsMutationOptions = Apollo.BaseMutationOptions<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>;
+export function useCreateDeleteGroupsMutation() {
+  return Urql.useMutation<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>(CreateDeleteGroupsDocument);
+};
 export const UpdateGroupDocument = gql`
     mutation UpdateGroup($groupId: uuid!, $groupName: String!, $enabled: Boolean!, $includeUnauthenticated: Boolean!, $insertRoles: [permissions_GroupRole_insert_input!]!, $deleteRoleIds: [uuid!] = []) {
   update_permissions_Group(
@@ -50641,37 +46588,10 @@ export const UpdateGroupDocument = gql`
   }
 }
     `;
-export type UpdateGroupMutationFn = Apollo.MutationFunction<UpdateGroupMutation, UpdateGroupMutationVariables>;
 
-/**
- * __useUpdateGroupMutation__
- *
- * To run a mutation, you first call `useUpdateGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateGroupMutation, { data, loading, error }] = useUpdateGroupMutation({
- *   variables: {
- *      groupId: // value for 'groupId'
- *      groupName: // value for 'groupName'
- *      enabled: // value for 'enabled'
- *      includeUnauthenticated: // value for 'includeUnauthenticated'
- *      insertRoles: // value for 'insertRoles'
- *      deleteRoleIds: // value for 'deleteRoleIds'
- *   },
- * });
- */
-export function useUpdateGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGroupMutation, UpdateGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument, options);
-      }
-export type UpdateGroupMutationHookResult = ReturnType<typeof useUpdateGroupMutation>;
-export type UpdateGroupMutationResult = Apollo.MutationResult<UpdateGroupMutation>;
-export type UpdateGroupMutationOptions = Apollo.BaseMutationOptions<UpdateGroupMutation, UpdateGroupMutationVariables>;
+export function useUpdateGroupMutation() {
+  return Urql.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument);
+};
 export const ManageProgramPeople_SelectAllPeopleDocument = gql`
     query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
   collection_ProgramPersonWithAccessToken(
@@ -50682,33 +46602,9 @@ export const ManageProgramPeople_SelectAllPeopleDocument = gql`
 }
     ${ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc}`;
 
-/**
- * __useManageProgramPeople_SelectAllPeopleQuery__
- *
- * To run a query within a React component, call `useManageProgramPeople_SelectAllPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageProgramPeople_SelectAllPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageProgramPeople_SelectAllPeopleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageProgramPeople_SelectAllPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageProgramPeople_SelectAllPeopleQuery, ManageProgramPeople_SelectAllPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageProgramPeople_SelectAllPeopleQuery, ManageProgramPeople_SelectAllPeopleQueryVariables>(ManageProgramPeople_SelectAllPeopleDocument, options);
-      }
-export function useManageProgramPeople_SelectAllPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageProgramPeople_SelectAllPeopleQuery, ManageProgramPeople_SelectAllPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageProgramPeople_SelectAllPeopleQuery, ManageProgramPeople_SelectAllPeopleQueryVariables>(ManageProgramPeople_SelectAllPeopleDocument, options);
-        }
-export type ManageProgramPeople_SelectAllPeopleQueryHookResult = ReturnType<typeof useManageProgramPeople_SelectAllPeopleQuery>;
-export type ManageProgramPeople_SelectAllPeopleLazyQueryHookResult = ReturnType<typeof useManageProgramPeople_SelectAllPeopleLazyQuery>;
-export type ManageProgramPeople_SelectAllPeopleQueryResult = Apollo.QueryResult<ManageProgramPeople_SelectAllPeopleQuery, ManageProgramPeople_SelectAllPeopleQueryVariables>;
+export function useManageProgramPeople_SelectAllPeopleQuery(options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageProgramPeople_SelectAllPeopleQuery>({ query: ManageProgramPeople_SelectAllPeopleDocument, ...options });
+};
 export const ManageProgramPeople_SelectAllRegistrantsDocument = gql`
     query ManageProgramPeople_SelectAllRegistrants($conferenceId: uuid!) {
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -50717,33 +46613,9 @@ export const ManageProgramPeople_SelectAllRegistrantsDocument = gql`
 }
     ${ManageProgramPeople_RegistrantFragmentDoc}`;
 
-/**
- * __useManageProgramPeople_SelectAllRegistrantsQuery__
- *
- * To run a query within a React component, call `useManageProgramPeople_SelectAllRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageProgramPeople_SelectAllRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageProgramPeople_SelectAllRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageProgramPeople_SelectAllRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<ManageProgramPeople_SelectAllRegistrantsQuery, ManageProgramPeople_SelectAllRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageProgramPeople_SelectAllRegistrantsQuery, ManageProgramPeople_SelectAllRegistrantsQueryVariables>(ManageProgramPeople_SelectAllRegistrantsDocument, options);
-      }
-export function useManageProgramPeople_SelectAllRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageProgramPeople_SelectAllRegistrantsQuery, ManageProgramPeople_SelectAllRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageProgramPeople_SelectAllRegistrantsQuery, ManageProgramPeople_SelectAllRegistrantsQueryVariables>(ManageProgramPeople_SelectAllRegistrantsDocument, options);
-        }
-export type ManageProgramPeople_SelectAllRegistrantsQueryHookResult = ReturnType<typeof useManageProgramPeople_SelectAllRegistrantsQuery>;
-export type ManageProgramPeople_SelectAllRegistrantsLazyQueryHookResult = ReturnType<typeof useManageProgramPeople_SelectAllRegistrantsLazyQuery>;
-export type ManageProgramPeople_SelectAllRegistrantsQueryResult = Apollo.QueryResult<ManageProgramPeople_SelectAllRegistrantsQuery, ManageProgramPeople_SelectAllRegistrantsQueryVariables>;
+export function useManageProgramPeople_SelectAllRegistrantsQuery(options: Omit<Urql.UseQueryArgs<ManageProgramPeople_SelectAllRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageProgramPeople_SelectAllRegistrantsQuery>({ query: ManageProgramPeople_SelectAllRegistrantsDocument, ...options });
+};
 export const ManageProgramPeople_InsertProgramPersonDocument = gql`
     mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPersonWithAccessToken_insert_input!) {
   insert_collection_ProgramPersonWithAccessToken_one(object: $person) {
@@ -50751,32 +46623,10 @@ export const ManageProgramPeople_InsertProgramPersonDocument = gql`
   }
 }
     ${ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc}`;
-export type ManageProgramPeople_InsertProgramPersonMutationFn = Apollo.MutationFunction<ManageProgramPeople_InsertProgramPersonMutation, ManageProgramPeople_InsertProgramPersonMutationVariables>;
 
-/**
- * __useManageProgramPeople_InsertProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageProgramPeople_InsertProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageProgramPeople_InsertProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageProgramPeopleInsertProgramPersonMutation, { data, loading, error }] = useManageProgramPeople_InsertProgramPersonMutation({
- *   variables: {
- *      person: // value for 'person'
- *   },
- * });
- */
-export function useManageProgramPeople_InsertProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageProgramPeople_InsertProgramPersonMutation, ManageProgramPeople_InsertProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageProgramPeople_InsertProgramPersonMutation, ManageProgramPeople_InsertProgramPersonMutationVariables>(ManageProgramPeople_InsertProgramPersonDocument, options);
-      }
-export type ManageProgramPeople_InsertProgramPersonMutationHookResult = ReturnType<typeof useManageProgramPeople_InsertProgramPersonMutation>;
-export type ManageProgramPeople_InsertProgramPersonMutationResult = Apollo.MutationResult<ManageProgramPeople_InsertProgramPersonMutation>;
-export type ManageProgramPeople_InsertProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageProgramPeople_InsertProgramPersonMutation, ManageProgramPeople_InsertProgramPersonMutationVariables>;
+export function useManageProgramPeople_InsertProgramPersonMutation() {
+  return Urql.useMutation<ManageProgramPeople_InsertProgramPersonMutation, ManageProgramPeople_InsertProgramPersonMutationVariables>(ManageProgramPeople_InsertProgramPersonDocument);
+};
 export const ManageProgramPeople_DeleteProgramPersonsDocument = gql`
     mutation ManageProgramPeople_DeleteProgramPersons($ids: [uuid!] = []) {
   delete_collection_ProgramPersonWithAccessToken(where: {id: {_in: $ids}}) {
@@ -50786,32 +46636,10 @@ export const ManageProgramPeople_DeleteProgramPersonsDocument = gql`
   }
 }
     `;
-export type ManageProgramPeople_DeleteProgramPersonsMutationFn = Apollo.MutationFunction<ManageProgramPeople_DeleteProgramPersonsMutation, ManageProgramPeople_DeleteProgramPersonsMutationVariables>;
 
-/**
- * __useManageProgramPeople_DeleteProgramPersonsMutation__
- *
- * To run a mutation, you first call `useManageProgramPeople_DeleteProgramPersonsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageProgramPeople_DeleteProgramPersonsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageProgramPeopleDeleteProgramPersonsMutation, { data, loading, error }] = useManageProgramPeople_DeleteProgramPersonsMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useManageProgramPeople_DeleteProgramPersonsMutation(baseOptions?: Apollo.MutationHookOptions<ManageProgramPeople_DeleteProgramPersonsMutation, ManageProgramPeople_DeleteProgramPersonsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageProgramPeople_DeleteProgramPersonsMutation, ManageProgramPeople_DeleteProgramPersonsMutationVariables>(ManageProgramPeople_DeleteProgramPersonsDocument, options);
-      }
-export type ManageProgramPeople_DeleteProgramPersonsMutationHookResult = ReturnType<typeof useManageProgramPeople_DeleteProgramPersonsMutation>;
-export type ManageProgramPeople_DeleteProgramPersonsMutationResult = Apollo.MutationResult<ManageProgramPeople_DeleteProgramPersonsMutation>;
-export type ManageProgramPeople_DeleteProgramPersonsMutationOptions = Apollo.BaseMutationOptions<ManageProgramPeople_DeleteProgramPersonsMutation, ManageProgramPeople_DeleteProgramPersonsMutationVariables>;
+export function useManageProgramPeople_DeleteProgramPersonsMutation() {
+  return Urql.useMutation<ManageProgramPeople_DeleteProgramPersonsMutation, ManageProgramPeople_DeleteProgramPersonsMutationVariables>(ManageProgramPeople_DeleteProgramPersonsDocument);
+};
 export const ManageProgramPeople_UpdateProgramPersonDocument = gql`
     mutation ManageProgramPeople_UpdateProgramPerson($id: uuid!, $name: String!, $affiliation: String, $email: String, $registrantId: uuid) {
   update_collection_ProgramPersonWithAccessToken(
@@ -50824,36 +46652,10 @@ export const ManageProgramPeople_UpdateProgramPersonDocument = gql`
   }
 }
     ${ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc}`;
-export type ManageProgramPeople_UpdateProgramPersonMutationFn = Apollo.MutationFunction<ManageProgramPeople_UpdateProgramPersonMutation, ManageProgramPeople_UpdateProgramPersonMutationVariables>;
 
-/**
- * __useManageProgramPeople_UpdateProgramPersonMutation__
- *
- * To run a mutation, you first call `useManageProgramPeople_UpdateProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManageProgramPeople_UpdateProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [manageProgramPeopleUpdateProgramPersonMutation, { data, loading, error }] = useManageProgramPeople_UpdateProgramPersonMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      affiliation: // value for 'affiliation'
- *      email: // value for 'email'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useManageProgramPeople_UpdateProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<ManageProgramPeople_UpdateProgramPersonMutation, ManageProgramPeople_UpdateProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManageProgramPeople_UpdateProgramPersonMutation, ManageProgramPeople_UpdateProgramPersonMutationVariables>(ManageProgramPeople_UpdateProgramPersonDocument, options);
-      }
-export type ManageProgramPeople_UpdateProgramPersonMutationHookResult = ReturnType<typeof useManageProgramPeople_UpdateProgramPersonMutation>;
-export type ManageProgramPeople_UpdateProgramPersonMutationResult = Apollo.MutationResult<ManageProgramPeople_UpdateProgramPersonMutation>;
-export type ManageProgramPeople_UpdateProgramPersonMutationOptions = Apollo.BaseMutationOptions<ManageProgramPeople_UpdateProgramPersonMutation, ManageProgramPeople_UpdateProgramPersonMutationVariables>;
+export function useManageProgramPeople_UpdateProgramPersonMutation() {
+  return Urql.useMutation<ManageProgramPeople_UpdateProgramPersonMutation, ManageProgramPeople_UpdateProgramPersonMutationVariables>(ManageProgramPeople_UpdateProgramPersonDocument);
+};
 export const SelectAllPermissionsDocument = gql`
     query SelectAllPermissions {
   permissions_Permission {
@@ -50863,32 +46665,9 @@ export const SelectAllPermissionsDocument = gql`
 }
     `;
 
-/**
- * __useSelectAllPermissionsQuery__
- *
- * To run a query within a React component, call `useSelectAllPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllPermissionsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectAllPermissionsQuery(baseOptions?: Apollo.QueryHookOptions<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>(SelectAllPermissionsDocument, options);
-      }
-export function useSelectAllPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>(SelectAllPermissionsDocument, options);
-        }
-export type SelectAllPermissionsQueryHookResult = ReturnType<typeof useSelectAllPermissionsQuery>;
-export type SelectAllPermissionsLazyQueryHookResult = ReturnType<typeof useSelectAllPermissionsLazyQuery>;
-export type SelectAllPermissionsQueryResult = Apollo.QueryResult<SelectAllPermissionsQuery, SelectAllPermissionsQueryVariables>;
+export function useSelectAllPermissionsQuery(options: Omit<Urql.UseQueryArgs<SelectAllPermissionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllPermissionsQuery>({ query: SelectAllPermissionsDocument, ...options });
+};
 export const SelectAllRolesDocument = gql`
     query SelectAllRoles($conferenceId: uuid!) {
   permissions_Role(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -50904,33 +46683,9 @@ export const SelectAllRolesDocument = gql`
 }
     `;
 
-/**
- * __useSelectAllRolesQuery__
- *
- * To run a query within a React component, call `useSelectAllRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllRolesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllRolesQuery(baseOptions: Apollo.QueryHookOptions<SelectAllRolesQuery, SelectAllRolesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllRolesQuery, SelectAllRolesQueryVariables>(SelectAllRolesDocument, options);
-      }
-export function useSelectAllRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllRolesQuery, SelectAllRolesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllRolesQuery, SelectAllRolesQueryVariables>(SelectAllRolesDocument, options);
-        }
-export type SelectAllRolesQueryHookResult = ReturnType<typeof useSelectAllRolesQuery>;
-export type SelectAllRolesLazyQueryHookResult = ReturnType<typeof useSelectAllRolesLazyQuery>;
-export type SelectAllRolesQueryResult = Apollo.QueryResult<SelectAllRolesQuery, SelectAllRolesQueryVariables>;
+export function useSelectAllRolesQuery(options: Omit<Urql.UseQueryArgs<SelectAllRolesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllRolesQuery>({ query: SelectAllRolesDocument, ...options });
+};
 export const CreateDeleteRolesDocument = gql`
     mutation CreateDeleteRoles($deleteRoleIds: [uuid!] = [], $insertRoles: [permissions_Role_insert_input!]!) {
   delete_permissions_Role(where: {id: {_in: $deleteRoleIds}}) {
@@ -50952,33 +46707,10 @@ export const CreateDeleteRolesDocument = gql`
   }
 }
     `;
-export type CreateDeleteRolesMutationFn = Apollo.MutationFunction<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>;
 
-/**
- * __useCreateDeleteRolesMutation__
- *
- * To run a mutation, you first call `useCreateDeleteRolesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDeleteRolesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDeleteRolesMutation, { data, loading, error }] = useCreateDeleteRolesMutation({
- *   variables: {
- *      deleteRoleIds: // value for 'deleteRoleIds'
- *      insertRoles: // value for 'insertRoles'
- *   },
- * });
- */
-export function useCreateDeleteRolesMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>(CreateDeleteRolesDocument, options);
-      }
-export type CreateDeleteRolesMutationHookResult = ReturnType<typeof useCreateDeleteRolesMutation>;
-export type CreateDeleteRolesMutationResult = Apollo.MutationResult<CreateDeleteRolesMutation>;
-export type CreateDeleteRolesMutationOptions = Apollo.BaseMutationOptions<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>;
+export function useCreateDeleteRolesMutation() {
+  return Urql.useMutation<CreateDeleteRolesMutation, CreateDeleteRolesMutationVariables>(CreateDeleteRolesDocument);
+};
 export const UpdateRoleDocument = gql`
     mutation UpdateRole($roleId: uuid!, $roleName: String!, $insertPermissions: [permissions_RolePermission_insert_input!]!, $deletePermissionNames: [permissions_Permission_enum!] = []) {
   update_permissions_Role(where: {id: {_eq: $roleId}}, _set: {name: $roleName}) {
@@ -51009,35 +46741,10 @@ export const UpdateRoleDocument = gql`
   }
 }
     `;
-export type UpdateRoleMutationFn = Apollo.MutationFunction<UpdateRoleMutation, UpdateRoleMutationVariables>;
 
-/**
- * __useUpdateRoleMutation__
- *
- * To run a mutation, you first call `useUpdateRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRoleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRoleMutation, { data, loading, error }] = useUpdateRoleMutation({
- *   variables: {
- *      roleId: // value for 'roleId'
- *      roleName: // value for 'roleName'
- *      insertPermissions: // value for 'insertPermissions'
- *      deletePermissionNames: // value for 'deletePermissionNames'
- *   },
- * });
- */
-export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoleMutation, UpdateRoleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, options);
-      }
-export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
-export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>;
-export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
+export function useUpdateRoleMutation() {
+  return Urql.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument);
+};
 export const SelectAllRoomsWithParticipantsDocument = gql`
     query SelectAllRoomsWithParticipants($conferenceId: uuid!) {
   room_Room(
@@ -51048,33 +46755,9 @@ export const SelectAllRoomsWithParticipantsDocument = gql`
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
 
-/**
- * __useSelectAllRoomsWithParticipantsQuery__
- *
- * To run a query within a React component, call `useSelectAllRoomsWithParticipantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllRoomsWithParticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllRoomsWithParticipantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllRoomsWithParticipantsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>(SelectAllRoomsWithParticipantsDocument, options);
-      }
-export function useSelectAllRoomsWithParticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>(SelectAllRoomsWithParticipantsDocument, options);
-        }
-export type SelectAllRoomsWithParticipantsQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsQuery>;
-export type SelectAllRoomsWithParticipantsLazyQueryHookResult = ReturnType<typeof useSelectAllRoomsWithParticipantsLazyQuery>;
-export type SelectAllRoomsWithParticipantsQueryResult = Apollo.QueryResult<SelectAllRoomsWithParticipantsQuery, SelectAllRoomsWithParticipantsQueryVariables>;
+export function useSelectAllRoomsWithParticipantsQuery(options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllRoomsWithParticipantsQuery>({ query: SelectAllRoomsWithParticipantsDocument, ...options });
+};
 export const ManageRooms_SelectGroupsDocument = gql`
     query ManageRooms_SelectGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -51084,33 +46767,9 @@ export const ManageRooms_SelectGroupsDocument = gql`
 }
     `;
 
-/**
- * __useManageRooms_SelectGroupsQuery__
- *
- * To run a query within a React component, call `useManageRooms_SelectGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageRooms_SelectGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageRooms_SelectGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageRooms_SelectGroupsQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>(ManageRooms_SelectGroupsDocument, options);
-      }
-export function useManageRooms_SelectGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>(ManageRooms_SelectGroupsDocument, options);
-        }
-export type ManageRooms_SelectGroupsQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupsQuery>;
-export type ManageRooms_SelectGroupsLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupsLazyQuery>;
-export type ManageRooms_SelectGroupsQueryResult = Apollo.QueryResult<ManageRooms_SelectGroupsQuery, ManageRooms_SelectGroupsQueryVariables>;
+export function useManageRooms_SelectGroupsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
+};
 export const ManageRooms_SelectItemsDocument = gql`
     query ManageRooms_SelectItems($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -51120,33 +46779,9 @@ export const ManageRooms_SelectItemsDocument = gql`
 }
     `;
 
-/**
- * __useManageRooms_SelectItemsQuery__
- *
- * To run a query within a React component, call `useManageRooms_SelectItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageRooms_SelectItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageRooms_SelectItemsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageRooms_SelectItemsQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectItemsQuery, ManageRooms_SelectItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageRooms_SelectItemsQuery, ManageRooms_SelectItemsQueryVariables>(ManageRooms_SelectItemsDocument, options);
-      }
-export function useManageRooms_SelectItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectItemsQuery, ManageRooms_SelectItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageRooms_SelectItemsQuery, ManageRooms_SelectItemsQueryVariables>(ManageRooms_SelectItemsDocument, options);
-        }
-export type ManageRooms_SelectItemsQueryHookResult = ReturnType<typeof useManageRooms_SelectItemsQuery>;
-export type ManageRooms_SelectItemsLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectItemsLazyQuery>;
-export type ManageRooms_SelectItemsQueryResult = Apollo.QueryResult<ManageRooms_SelectItemsQuery, ManageRooms_SelectItemsQueryVariables>;
+export function useManageRooms_SelectItemsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
+};
 export const ManageRooms_SelectGroupRegistrantsDocument = gql`
     query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
   permissions_GroupRegistrant(where: {groupId: {_eq: $groupId}}) {
@@ -51157,33 +46792,9 @@ export const ManageRooms_SelectGroupRegistrantsDocument = gql`
 }
     `;
 
-/**
- * __useManageRooms_SelectGroupRegistrantsQuery__
- *
- * To run a query within a React component, call `useManageRooms_SelectGroupRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageRooms_SelectGroupRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageRooms_SelectGroupRegistrantsQuery({
- *   variables: {
- *      groupId: // value for 'groupId'
- *   },
- * });
- */
-export function useManageRooms_SelectGroupRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectGroupRegistrantsQuery, ManageRooms_SelectGroupRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageRooms_SelectGroupRegistrantsQuery, ManageRooms_SelectGroupRegistrantsQueryVariables>(ManageRooms_SelectGroupRegistrantsDocument, options);
-      }
-export function useManageRooms_SelectGroupRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectGroupRegistrantsQuery, ManageRooms_SelectGroupRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageRooms_SelectGroupRegistrantsQuery, ManageRooms_SelectGroupRegistrantsQueryVariables>(ManageRooms_SelectGroupRegistrantsDocument, options);
-        }
-export type ManageRooms_SelectGroupRegistrantsQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupRegistrantsQuery>;
-export type ManageRooms_SelectGroupRegistrantsLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectGroupRegistrantsLazyQuery>;
-export type ManageRooms_SelectGroupRegistrantsQueryResult = Apollo.QueryResult<ManageRooms_SelectGroupRegistrantsQuery, ManageRooms_SelectGroupRegistrantsQueryVariables>;
+export function useManageRooms_SelectGroupRegistrantsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectGroupRegistrantsQuery>({ query: ManageRooms_SelectGroupRegistrantsDocument, ...options });
+};
 export const ManageRooms_SelectRoomPeopleDocument = gql`
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
   room_RoomPerson(where: {roomId: {_eq: $roomId}}) {
@@ -51192,33 +46803,9 @@ export const ManageRooms_SelectRoomPeopleDocument = gql`
 }
     ${RoomPersonInfoFragmentDoc}`;
 
-/**
- * __useManageRooms_SelectRoomPeopleQuery__
- *
- * To run a query within a React component, call `useManageRooms_SelectRoomPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageRooms_SelectRoomPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageRooms_SelectRoomPeopleQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useManageRooms_SelectRoomPeopleQuery(baseOptions: Apollo.QueryHookOptions<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>(ManageRooms_SelectRoomPeopleDocument, options);
-      }
-export function useManageRooms_SelectRoomPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>(ManageRooms_SelectRoomPeopleDocument, options);
-        }
-export type ManageRooms_SelectRoomPeopleQueryHookResult = ReturnType<typeof useManageRooms_SelectRoomPeopleQuery>;
-export type ManageRooms_SelectRoomPeopleLazyQueryHookResult = ReturnType<typeof useManageRooms_SelectRoomPeopleLazyQuery>;
-export type ManageRooms_SelectRoomPeopleQueryResult = Apollo.QueryResult<ManageRooms_SelectRoomPeopleQuery, ManageRooms_SelectRoomPeopleQueryVariables>;
+export function useManageRooms_SelectRoomPeopleQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectRoomPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectRoomPeopleQuery>({ query: ManageRooms_SelectRoomPeopleDocument, ...options });
+};
 export const CreateRoomDocument = gql`
     mutation CreateRoom($room: room_Room_insert_input!) {
   insert_room_Room_one(object: $room) {
@@ -51226,32 +46813,10 @@ export const CreateRoomDocument = gql`
   }
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
-export type CreateRoomMutationFn = Apollo.MutationFunction<CreateRoomMutation, CreateRoomMutationVariables>;
 
-/**
- * __useCreateRoomMutation__
- *
- * To run a mutation, you first call `useCreateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createRoomMutation, { data, loading, error }] = useCreateRoomMutation({
- *   variables: {
- *      room: // value for 'room'
- *   },
- * });
- */
-export function useCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<CreateRoomMutation, CreateRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateRoomMutation, CreateRoomMutationVariables>(CreateRoomDocument, options);
-      }
-export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutation>;
-export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
-export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
+export function useCreateRoomMutation() {
+  return Urql.useMutation<CreateRoomMutation, CreateRoomMutationVariables>(CreateRoomDocument);
+};
 export const UpdateRoomsWithParticipantsDocument = gql`
     mutation UpdateRoomsWithParticipants($id: uuid!, $name: String!, $capacity: Int, $priority: Int!, $managementModeName: room_ManagementMode_enum!, $originatingItemId: uuid, $chatId: uuid!, $enableMandatoryPin: Boolean!, $enableAutoPin: Boolean!, $enableMandatorySubscribe: Boolean!, $enableAutoSubscribe: Boolean!) {
   update_room_Room_by_pk(
@@ -51274,42 +46839,10 @@ export const UpdateRoomsWithParticipantsDocument = gql`
   }
 }
     ${RoomWithParticipantInfoFragmentDoc}`;
-export type UpdateRoomsWithParticipantsMutationFn = Apollo.MutationFunction<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>;
 
-/**
- * __useUpdateRoomsWithParticipantsMutation__
- *
- * To run a mutation, you first call `useUpdateRoomsWithParticipantsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRoomsWithParticipantsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRoomsWithParticipantsMutation, { data, loading, error }] = useUpdateRoomsWithParticipantsMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      capacity: // value for 'capacity'
- *      priority: // value for 'priority'
- *      managementModeName: // value for 'managementModeName'
- *      originatingItemId: // value for 'originatingItemId'
- *      chatId: // value for 'chatId'
- *      enableMandatoryPin: // value for 'enableMandatoryPin'
- *      enableAutoPin: // value for 'enableAutoPin'
- *      enableMandatorySubscribe: // value for 'enableMandatorySubscribe'
- *      enableAutoSubscribe: // value for 'enableAutoSubscribe'
- *   },
- * });
- */
-export function useUpdateRoomsWithParticipantsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>(UpdateRoomsWithParticipantsDocument, options);
-      }
-export type UpdateRoomsWithParticipantsMutationHookResult = ReturnType<typeof useUpdateRoomsWithParticipantsMutation>;
-export type UpdateRoomsWithParticipantsMutationResult = Apollo.MutationResult<UpdateRoomsWithParticipantsMutation>;
-export type UpdateRoomsWithParticipantsMutationOptions = Apollo.BaseMutationOptions<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>;
+export function useUpdateRoomsWithParticipantsMutation() {
+  return Urql.useMutation<UpdateRoomsWithParticipantsMutation, UpdateRoomsWithParticipantsMutationVariables>(UpdateRoomsWithParticipantsDocument);
+};
 export const InsertRoomPeopleDocument = gql`
     mutation InsertRoomPeople($people: [room_RoomPerson_insert_input!]!) {
   insert_room_RoomPerson(
@@ -51322,32 +46855,10 @@ export const InsertRoomPeopleDocument = gql`
   }
 }
     ${RoomPersonInfoFragmentDoc}`;
-export type InsertRoomPeopleMutationFn = Apollo.MutationFunction<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
 
-/**
- * __useInsertRoomPeopleMutation__
- *
- * To run a mutation, you first call `useInsertRoomPeopleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertRoomPeopleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertRoomPeopleMutation, { data, loading, error }] = useInsertRoomPeopleMutation({
- *   variables: {
- *      people: // value for 'people'
- *   },
- * });
- */
-export function useInsertRoomPeopleMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>(InsertRoomPeopleDocument, options);
-      }
-export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoomPeopleMutation>;
-export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
-export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
+export function useInsertRoomPeopleMutation() {
+  return Urql.useMutation<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>(InsertRoomPeopleDocument);
+};
 export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
     query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
   conference_Configuration_by_pk(
@@ -51361,33 +46872,9 @@ export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
 }
     `;
 
-/**
- * __useGetIsExternalRtmpBroadcastEnabledQuery__
- *
- * To run a query within a React component, call `useGetIsExternalRtmpBroadcastEnabledQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIsExternalRtmpBroadcastEnabledQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIsExternalRtmpBroadcastEnabledQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetIsExternalRtmpBroadcastEnabledQuery(baseOptions: Apollo.QueryHookOptions<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>(GetIsExternalRtmpBroadcastEnabledDocument, options);
-      }
-export function useGetIsExternalRtmpBroadcastEnabledLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>(GetIsExternalRtmpBroadcastEnabledDocument, options);
-        }
-export type GetIsExternalRtmpBroadcastEnabledQueryHookResult = ReturnType<typeof useGetIsExternalRtmpBroadcastEnabledQuery>;
-export type GetIsExternalRtmpBroadcastEnabledLazyQueryHookResult = ReturnType<typeof useGetIsExternalRtmpBroadcastEnabledLazyQuery>;
-export type GetIsExternalRtmpBroadcastEnabledQueryResult = Apollo.QueryResult<GetIsExternalRtmpBroadcastEnabledQuery, GetIsExternalRtmpBroadcastEnabledQueryVariables>;
+export function useGetIsExternalRtmpBroadcastEnabledQuery(options: Omit<Urql.UseQueryArgs<GetIsExternalRtmpBroadcastEnabledQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetIsExternalRtmpBroadcastEnabledQuery>({ query: GetIsExternalRtmpBroadcastEnabledDocument, ...options });
+};
 export const SelectAllRegistrantsDocument = gql`
     query SelectAllRegistrants($conferenceId: uuid!) {
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -51396,33 +46883,9 @@ export const SelectAllRegistrantsDocument = gql`
 }
     ${RegistrantPartsFragmentDoc}`;
 
-/**
- * __useSelectAllRegistrantsQuery__
- *
- * To run a query within a React component, call `useSelectAllRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectAllRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectAllRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectAllRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<SelectAllRegistrantsQuery, SelectAllRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectAllRegistrantsQuery, SelectAllRegistrantsQueryVariables>(SelectAllRegistrantsDocument, options);
-      }
-export function useSelectAllRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectAllRegistrantsQuery, SelectAllRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectAllRegistrantsQuery, SelectAllRegistrantsQueryVariables>(SelectAllRegistrantsDocument, options);
-        }
-export type SelectAllRegistrantsQueryHookResult = ReturnType<typeof useSelectAllRegistrantsQuery>;
-export type SelectAllRegistrantsLazyQueryHookResult = ReturnType<typeof useSelectAllRegistrantsLazyQuery>;
-export type SelectAllRegistrantsQueryResult = Apollo.QueryResult<SelectAllRegistrantsQuery, SelectAllRegistrantsQueryVariables>;
+export function useSelectAllRegistrantsQuery(options: Omit<Urql.UseQueryArgs<SelectAllRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllRegistrantsQuery>({ query: SelectAllRegistrantsDocument, ...options });
+};
 export const ManageRegistrants_SelectProfilesDocument = gql`
     query ManageRegistrants_SelectProfiles($registrantIds: [uuid!]!) {
   registrant_Profile(where: {registrantId: {_in: $registrantIds}}) {
@@ -51431,33 +46894,9 @@ export const ManageRegistrants_SelectProfilesDocument = gql`
 }
     ${ManageRegistrants_ProfileFragmentDoc}`;
 
-/**
- * __useManageRegistrants_SelectProfilesQuery__
- *
- * To run a query within a React component, call `useManageRegistrants_SelectProfilesQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageRegistrants_SelectProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageRegistrants_SelectProfilesQuery({
- *   variables: {
- *      registrantIds: // value for 'registrantIds'
- *   },
- * });
- */
-export function useManageRegistrants_SelectProfilesQuery(baseOptions: Apollo.QueryHookOptions<ManageRegistrants_SelectProfilesQuery, ManageRegistrants_SelectProfilesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageRegistrants_SelectProfilesQuery, ManageRegistrants_SelectProfilesQueryVariables>(ManageRegistrants_SelectProfilesDocument, options);
-      }
-export function useManageRegistrants_SelectProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageRegistrants_SelectProfilesQuery, ManageRegistrants_SelectProfilesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageRegistrants_SelectProfilesQuery, ManageRegistrants_SelectProfilesQueryVariables>(ManageRegistrants_SelectProfilesDocument, options);
-        }
-export type ManageRegistrants_SelectProfilesQueryHookResult = ReturnType<typeof useManageRegistrants_SelectProfilesQuery>;
-export type ManageRegistrants_SelectProfilesLazyQueryHookResult = ReturnType<typeof useManageRegistrants_SelectProfilesLazyQuery>;
-export type ManageRegistrants_SelectProfilesQueryResult = Apollo.QueryResult<ManageRegistrants_SelectProfilesQuery, ManageRegistrants_SelectProfilesQueryVariables>;
+export function useManageRegistrants_SelectProfilesQuery(options: Omit<Urql.UseQueryArgs<ManageRegistrants_SelectProfilesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRegistrants_SelectProfilesQuery>({ query: ManageRegistrants_SelectProfilesDocument, ...options });
+};
 export const InsertRegistrantDocument = gql`
     mutation InsertRegistrant($registrant: registrant_Registrant_insert_input!, $invitation: registrant_Invitation_insert_input!) {
   insert_registrant_Registrant_one(object: $registrant) {
@@ -51469,33 +46908,10 @@ export const InsertRegistrantDocument = gql`
 }
     ${RegistrantPartsFragmentDoc}
 ${InvitationPartsFragmentDoc}`;
-export type InsertRegistrantMutationFn = Apollo.MutationFunction<InsertRegistrantMutation, InsertRegistrantMutationVariables>;
 
-/**
- * __useInsertRegistrantMutation__
- *
- * To run a mutation, you first call `useInsertRegistrantMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertRegistrantMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertRegistrantMutation, { data, loading, error }] = useInsertRegistrantMutation({
- *   variables: {
- *      registrant: // value for 'registrant'
- *      invitation: // value for 'invitation'
- *   },
- * });
- */
-export function useInsertRegistrantMutation(baseOptions?: Apollo.MutationHookOptions<InsertRegistrantMutation, InsertRegistrantMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertRegistrantMutation, InsertRegistrantMutationVariables>(InsertRegistrantDocument, options);
-      }
-export type InsertRegistrantMutationHookResult = ReturnType<typeof useInsertRegistrantMutation>;
-export type InsertRegistrantMutationResult = Apollo.MutationResult<InsertRegistrantMutation>;
-export type InsertRegistrantMutationOptions = Apollo.BaseMutationOptions<InsertRegistrantMutation, InsertRegistrantMutationVariables>;
+export function useInsertRegistrantMutation() {
+  return Urql.useMutation<InsertRegistrantMutation, InsertRegistrantMutationVariables>(InsertRegistrantDocument);
+};
 export const InsertRegistrantWithoutInviteDocument = gql`
     mutation InsertRegistrantWithoutInvite($registrant: registrant_Registrant_insert_input!) {
   insert_registrant_Registrant_one(object: $registrant) {
@@ -51503,32 +46919,10 @@ export const InsertRegistrantWithoutInviteDocument = gql`
   }
 }
     ${RegistrantPartsFragmentDoc}`;
-export type InsertRegistrantWithoutInviteMutationFn = Apollo.MutationFunction<InsertRegistrantWithoutInviteMutation, InsertRegistrantWithoutInviteMutationVariables>;
 
-/**
- * __useInsertRegistrantWithoutInviteMutation__
- *
- * To run a mutation, you first call `useInsertRegistrantWithoutInviteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertRegistrantWithoutInviteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertRegistrantWithoutInviteMutation, { data, loading, error }] = useInsertRegistrantWithoutInviteMutation({
- *   variables: {
- *      registrant: // value for 'registrant'
- *   },
- * });
- */
-export function useInsertRegistrantWithoutInviteMutation(baseOptions?: Apollo.MutationHookOptions<InsertRegistrantWithoutInviteMutation, InsertRegistrantWithoutInviteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertRegistrantWithoutInviteMutation, InsertRegistrantWithoutInviteMutationVariables>(InsertRegistrantWithoutInviteDocument, options);
-      }
-export type InsertRegistrantWithoutInviteMutationHookResult = ReturnType<typeof useInsertRegistrantWithoutInviteMutation>;
-export type InsertRegistrantWithoutInviteMutationResult = Apollo.MutationResult<InsertRegistrantWithoutInviteMutation>;
-export type InsertRegistrantWithoutInviteMutationOptions = Apollo.BaseMutationOptions<InsertRegistrantWithoutInviteMutation, InsertRegistrantWithoutInviteMutationVariables>;
+export function useInsertRegistrantWithoutInviteMutation() {
+  return Urql.useMutation<InsertRegistrantWithoutInviteMutation, InsertRegistrantWithoutInviteMutationVariables>(InsertRegistrantWithoutInviteDocument);
+};
 export const DeleteRegistrantsDocument = gql`
     mutation DeleteRegistrants($deleteRegistrantIds: [uuid!] = []) {
   delete_registrant_Registrant(where: {id: {_in: $deleteRegistrantIds}}) {
@@ -51538,32 +46932,10 @@ export const DeleteRegistrantsDocument = gql`
   }
 }
     `;
-export type DeleteRegistrantsMutationFn = Apollo.MutationFunction<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>;
 
-/**
- * __useDeleteRegistrantsMutation__
- *
- * To run a mutation, you first call `useDeleteRegistrantsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRegistrantsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteRegistrantsMutation, { data, loading, error }] = useDeleteRegistrantsMutation({
- *   variables: {
- *      deleteRegistrantIds: // value for 'deleteRegistrantIds'
- *   },
- * });
- */
-export function useDeleteRegistrantsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>(DeleteRegistrantsDocument, options);
-      }
-export type DeleteRegistrantsMutationHookResult = ReturnType<typeof useDeleteRegistrantsMutation>;
-export type DeleteRegistrantsMutationResult = Apollo.MutationResult<DeleteRegistrantsMutation>;
-export type DeleteRegistrantsMutationOptions = Apollo.BaseMutationOptions<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>;
+export function useDeleteRegistrantsMutation() {
+  return Urql.useMutation<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>(DeleteRegistrantsDocument);
+};
 export const UpdateRegistrantDocument = gql`
     mutation UpdateRegistrant($registrantId: uuid!, $registrantName: String!, $upsertGroups: [permissions_GroupRegistrant_insert_input!]!, $remainingGroupIds: [uuid!]) {
   update_registrant_Registrant_by_pk(
@@ -51591,35 +46963,10 @@ export const UpdateRegistrantDocument = gql`
   }
 }
     ${RegistrantPartsFragmentDoc}`;
-export type UpdateRegistrantMutationFn = Apollo.MutationFunction<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>;
 
-/**
- * __useUpdateRegistrantMutation__
- *
- * To run a mutation, you first call `useUpdateRegistrantMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRegistrantMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRegistrantMutation, { data, loading, error }] = useUpdateRegistrantMutation({
- *   variables: {
- *      registrantId: // value for 'registrantId'
- *      registrantName: // value for 'registrantName'
- *      upsertGroups: // value for 'upsertGroups'
- *      remainingGroupIds: // value for 'remainingGroupIds'
- *   },
- * });
- */
-export function useUpdateRegistrantMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>(UpdateRegistrantDocument, options);
-      }
-export type UpdateRegistrantMutationHookResult = ReturnType<typeof useUpdateRegistrantMutation>;
-export type UpdateRegistrantMutationResult = Apollo.MutationResult<UpdateRegistrantMutation>;
-export type UpdateRegistrantMutationOptions = Apollo.BaseMutationOptions<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>;
+export function useUpdateRegistrantMutation() {
+  return Urql.useMutation<UpdateRegistrantMutation, UpdateRegistrantMutationVariables>(UpdateRegistrantDocument);
+};
 export const InsertInvitationEmailJobsDocument = gql`
     mutation InsertInvitationEmailJobs($registrantIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
   insert_job_queues_InvitationEmailJob(
@@ -51629,72 +46976,23 @@ export const InsertInvitationEmailJobsDocument = gql`
   }
 }
     `;
-export type InsertInvitationEmailJobsMutationFn = Apollo.MutationFunction<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
 
-/**
- * __useInsertInvitationEmailJobsMutation__
- *
- * To run a mutation, you first call `useInsertInvitationEmailJobsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertInvitationEmailJobsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertInvitationEmailJobsMutation, { data, loading, error }] = useInsertInvitationEmailJobsMutation({
- *   variables: {
- *      registrantIds: // value for 'registrantIds'
- *      conferenceId: // value for 'conferenceId'
- *      sendRepeat: // value for 'sendRepeat'
- *   },
- * });
- */
-export function useInsertInvitationEmailJobsMutation(baseOptions?: Apollo.MutationHookOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>(InsertInvitationEmailJobsDocument, options);
-      }
-export type InsertInvitationEmailJobsMutationHookResult = ReturnType<typeof useInsertInvitationEmailJobsMutation>;
-export type InsertInvitationEmailJobsMutationResult = Apollo.MutationResult<InsertInvitationEmailJobsMutation>;
-export type InsertInvitationEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
+export function useInsertInvitationEmailJobsMutation() {
+  return Urql.useMutation<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>(InsertInvitationEmailJobsDocument);
+};
 export const ManagePeople_InsertCustomEmailJobDocument = gql`
-    mutation ManagePeople_InsertCustomEmailJob($markdownBody: String!, $subject: String!, $conferenceId: uuid!, $registrantIds: jsonb!) {
+    mutation ManagePeople_InsertCustomEmailJob($htmlBody: String!, $subject: String!, $conferenceId: uuid!, $registrantIds: jsonb!) {
   insert_job_queues_CustomEmailJob(
-    objects: {markdownBody: $markdownBody, subject: $subject, conferenceId: $conferenceId, registrantIds: $registrantIds}
+    objects: {htmlBody: $htmlBody, subject: $subject, conferenceId: $conferenceId, registrantIds: $registrantIds}
   ) {
     affected_rows
   }
 }
     `;
-export type ManagePeople_InsertCustomEmailJobMutationFn = Apollo.MutationFunction<ManagePeople_InsertCustomEmailJobMutation, ManagePeople_InsertCustomEmailJobMutationVariables>;
 
-/**
- * __useManagePeople_InsertCustomEmailJobMutation__
- *
- * To run a mutation, you first call `useManagePeople_InsertCustomEmailJobMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useManagePeople_InsertCustomEmailJobMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [managePeopleInsertCustomEmailJobMutation, { data, loading, error }] = useManagePeople_InsertCustomEmailJobMutation({
- *   variables: {
- *      markdownBody: // value for 'markdownBody'
- *      subject: // value for 'subject'
- *      conferenceId: // value for 'conferenceId'
- *      registrantIds: // value for 'registrantIds'
- *   },
- * });
- */
-export function useManagePeople_InsertCustomEmailJobMutation(baseOptions?: Apollo.MutationHookOptions<ManagePeople_InsertCustomEmailJobMutation, ManagePeople_InsertCustomEmailJobMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ManagePeople_InsertCustomEmailJobMutation, ManagePeople_InsertCustomEmailJobMutationVariables>(ManagePeople_InsertCustomEmailJobDocument, options);
-      }
-export type ManagePeople_InsertCustomEmailJobMutationHookResult = ReturnType<typeof useManagePeople_InsertCustomEmailJobMutation>;
-export type ManagePeople_InsertCustomEmailJobMutationResult = Apollo.MutationResult<ManagePeople_InsertCustomEmailJobMutation>;
-export type ManagePeople_InsertCustomEmailJobMutationOptions = Apollo.BaseMutationOptions<ManagePeople_InsertCustomEmailJobMutation, ManagePeople_InsertCustomEmailJobMutationVariables>;
+export function useManagePeople_InsertCustomEmailJobMutation() {
+  return Urql.useMutation<ManagePeople_InsertCustomEmailJobMutation, ManagePeople_InsertCustomEmailJobMutationVariables>(ManagePeople_InsertCustomEmailJobDocument);
+};
 export const SendEmail_GetAllGroupsDocument = gql`
     query SendEmail_GetAllGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -51705,33 +47003,9 @@ export const SendEmail_GetAllGroupsDocument = gql`
 }
     `;
 
-/**
- * __useSendEmail_GetAllGroupsQuery__
- *
- * To run a query within a React component, call `useSendEmail_GetAllGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSendEmail_GetAllGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSendEmail_GetAllGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSendEmail_GetAllGroupsQuery(baseOptions: Apollo.QueryHookOptions<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>(SendEmail_GetAllGroupsDocument, options);
-      }
-export function useSendEmail_GetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>(SendEmail_GetAllGroupsDocument, options);
-        }
-export type SendEmail_GetAllGroupsQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsQuery>;
-export type SendEmail_GetAllGroupsLazyQueryHookResult = ReturnType<typeof useSendEmail_GetAllGroupsLazyQuery>;
-export type SendEmail_GetAllGroupsQueryResult = Apollo.QueryResult<SendEmail_GetAllGroupsQuery, SendEmail_GetAllGroupsQueryVariables>;
+export function useSendEmail_GetAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SendEmail_GetAllGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SendEmail_GetAllGroupsQuery>({ query: SendEmail_GetAllGroupsDocument, ...options });
+};
 export const GetRoomRtmpOutputDocument = gql`
     query GetRoomRtmpOutput($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -51767,33 +47041,9 @@ export const GetRoomRtmpOutputDocument = gql`
 }
     `;
 
-/**
- * __useGetRoomRtmpOutputQuery__
- *
- * To run a query within a React component, call `useGetRoomRtmpOutputQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomRtmpOutputQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRoomRtmpOutputQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomRtmpOutputQuery(baseOptions: Apollo.QueryHookOptions<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>(GetRoomRtmpOutputDocument, options);
-      }
-export function useGetRoomRtmpOutputLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>(GetRoomRtmpOutputDocument, options);
-        }
-export type GetRoomRtmpOutputQueryHookResult = ReturnType<typeof useGetRoomRtmpOutputQuery>;
-export type GetRoomRtmpOutputLazyQueryHookResult = ReturnType<typeof useGetRoomRtmpOutputLazyQuery>;
-export type GetRoomRtmpOutputQueryResult = Apollo.QueryResult<GetRoomRtmpOutputQuery, GetRoomRtmpOutputQueryVariables>;
+export function useGetRoomRtmpOutputQuery(options: Omit<Urql.UseQueryArgs<GetRoomRtmpOutputQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetRoomRtmpOutputQuery>({ query: GetRoomRtmpOutputDocument, ...options });
+};
 export const InsertRoomRtmpOutputDocument = gql`
     mutation InsertRoomRtmpOutput($roomId: uuid!, $url: String!, $key: String!) {
   insert_video_RoomRtmpOutput_one(
@@ -51808,34 +47058,10 @@ export const InsertRoomRtmpOutputDocument = gql`
   }
 }
     `;
-export type InsertRoomRtmpOutputMutationFn = Apollo.MutationFunction<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>;
 
-/**
- * __useInsertRoomRtmpOutputMutation__
- *
- * To run a mutation, you first call `useInsertRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertRoomRtmpOutputMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertRoomRtmpOutputMutation, { data, loading, error }] = useInsertRoomRtmpOutputMutation({
- *   variables: {
- *      roomId: // value for 'roomId'
- *      url: // value for 'url'
- *      key: // value for 'key'
- *   },
- * });
- */
-export function useInsertRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>(InsertRoomRtmpOutputDocument, options);
-      }
-export type InsertRoomRtmpOutputMutationHookResult = ReturnType<typeof useInsertRoomRtmpOutputMutation>;
-export type InsertRoomRtmpOutputMutationResult = Apollo.MutationResult<InsertRoomRtmpOutputMutation>;
-export type InsertRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>;
+export function useInsertRoomRtmpOutputMutation() {
+  return Urql.useMutation<InsertRoomRtmpOutputMutation, InsertRoomRtmpOutputMutationVariables>(InsertRoomRtmpOutputDocument);
+};
 export const UpdateRoomRtmpOutputDocument = gql`
     mutation UpdateRoomRtmpOutput($id: uuid!, $url: String!, $key: String!) {
   update_video_RoomRtmpOutput_by_pk(
@@ -51851,34 +47077,10 @@ export const UpdateRoomRtmpOutputDocument = gql`
   }
 }
     `;
-export type UpdateRoomRtmpOutputMutationFn = Apollo.MutationFunction<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>;
 
-/**
- * __useUpdateRoomRtmpOutputMutation__
- *
- * To run a mutation, you first call `useUpdateRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRoomRtmpOutputMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRoomRtmpOutputMutation, { data, loading, error }] = useUpdateRoomRtmpOutputMutation({
- *   variables: {
- *      id: // value for 'id'
- *      url: // value for 'url'
- *      key: // value for 'key'
- *   },
- * });
- */
-export function useUpdateRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>(UpdateRoomRtmpOutputDocument, options);
-      }
-export type UpdateRoomRtmpOutputMutationHookResult = ReturnType<typeof useUpdateRoomRtmpOutputMutation>;
-export type UpdateRoomRtmpOutputMutationResult = Apollo.MutationResult<UpdateRoomRtmpOutputMutation>;
-export type UpdateRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>;
+export function useUpdateRoomRtmpOutputMutation() {
+  return Urql.useMutation<UpdateRoomRtmpOutputMutation, UpdateRoomRtmpOutputMutationVariables>(UpdateRoomRtmpOutputDocument);
+};
 export const DeleteRoomRtmpOutputDocument = gql`
     mutation DeleteRoomRtmpOutput($id: uuid!) {
   delete_video_RoomRtmpOutput_by_pk(id: $id) {
@@ -51886,32 +47088,10 @@ export const DeleteRoomRtmpOutputDocument = gql`
   }
 }
     `;
-export type DeleteRoomRtmpOutputMutationFn = Apollo.MutationFunction<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
 
-/**
- * __useDeleteRoomRtmpOutputMutation__
- *
- * To run a mutation, you first call `useDeleteRoomRtmpOutputMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRoomRtmpOutputMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteRoomRtmpOutputMutation, { data, loading, error }] = useDeleteRoomRtmpOutputMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteRoomRtmpOutputMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>(DeleteRoomRtmpOutputDocument, options);
-      }
-export type DeleteRoomRtmpOutputMutationHookResult = ReturnType<typeof useDeleteRoomRtmpOutputMutation>;
-export type DeleteRoomRtmpOutputMutationResult = Apollo.MutationResult<DeleteRoomRtmpOutputMutation>;
-export type DeleteRoomRtmpOutputMutationOptions = Apollo.BaseMutationOptions<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>;
+export function useDeleteRoomRtmpOutputMutation() {
+  return Urql.useMutation<DeleteRoomRtmpOutputMutation, DeleteRoomRtmpOutputMutationVariables>(DeleteRoomRtmpOutputDocument);
+};
 export const AddEventPeople_SelectItemPeopleDocument = gql`
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
   content_ItemProgramPerson(
@@ -51932,34 +47112,9 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
 }
     ${AddEventPeople_ItemPersonFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectItemPeopleQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectItemPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectItemPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectItemPeopleQuery({
- *   variables: {
- *      itemIds: // value for 'itemIds'
- *      exhibitionIds: // value for 'exhibitionIds'
- *   },
- * });
- */
-export function useAddEventPeople_SelectItemPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>(AddEventPeople_SelectItemPeopleDocument, options);
-      }
-export function useAddEventPeople_SelectItemPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>(AddEventPeople_SelectItemPeopleDocument, options);
-        }
-export type AddEventPeople_SelectItemPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectItemPeopleQuery>;
-export type AddEventPeople_SelectItemPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectItemPeopleLazyQuery>;
-export type AddEventPeople_SelectItemPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>;
+export function useAddEventPeople_SelectItemPeopleQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectItemPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectItemPeopleQuery>({ query: AddEventPeople_SelectItemPeopleDocument, ...options });
+};
 export const AddEventPeople_SelectProgramPeopleDocument = gql`
     query AddEventPeople_SelectProgramPeople($conferenceId: uuid!) {
   collection_ProgramPersonWithAccessToken(
@@ -51970,33 +47125,9 @@ export const AddEventPeople_SelectProgramPeopleDocument = gql`
 }
     ${AddEventPeople_ProgramPersonFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectProgramPeopleQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectProgramPeopleQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectProgramPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectProgramPeopleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useAddEventPeople_SelectProgramPeopleQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectProgramPeopleQuery, AddEventPeople_SelectProgramPeopleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectProgramPeopleQuery, AddEventPeople_SelectProgramPeopleQueryVariables>(AddEventPeople_SelectProgramPeopleDocument, options);
-      }
-export function useAddEventPeople_SelectProgramPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectProgramPeopleQuery, AddEventPeople_SelectProgramPeopleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectProgramPeopleQuery, AddEventPeople_SelectProgramPeopleQueryVariables>(AddEventPeople_SelectProgramPeopleDocument, options);
-        }
-export type AddEventPeople_SelectProgramPeopleQueryHookResult = ReturnType<typeof useAddEventPeople_SelectProgramPeopleQuery>;
-export type AddEventPeople_SelectProgramPeopleLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectProgramPeopleLazyQuery>;
-export type AddEventPeople_SelectProgramPeopleQueryResult = Apollo.QueryResult<AddEventPeople_SelectProgramPeopleQuery, AddEventPeople_SelectProgramPeopleQueryVariables>;
+export function useAddEventPeople_SelectProgramPeopleQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeopleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectProgramPeopleQuery>({ query: AddEventPeople_SelectProgramPeopleDocument, ...options });
+};
 export const AddEventPeople_SelectRegistrantsDocument = gql`
     query AddEventPeople_SelectRegistrants($conferenceId: uuid!) {
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52005,33 +47136,9 @@ export const AddEventPeople_SelectRegistrantsDocument = gql`
 }
     ${AddEventPeople_RegistrantFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectRegistrantsQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectRegistrantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectRegistrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectRegistrantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useAddEventPeople_SelectRegistrantsQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectRegistrantsQuery, AddEventPeople_SelectRegistrantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectRegistrantsQuery, AddEventPeople_SelectRegistrantsQueryVariables>(AddEventPeople_SelectRegistrantsDocument, options);
-      }
-export function useAddEventPeople_SelectRegistrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectRegistrantsQuery, AddEventPeople_SelectRegistrantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectRegistrantsQuery, AddEventPeople_SelectRegistrantsQueryVariables>(AddEventPeople_SelectRegistrantsDocument, options);
-        }
-export type AddEventPeople_SelectRegistrantsQueryHookResult = ReturnType<typeof useAddEventPeople_SelectRegistrantsQuery>;
-export type AddEventPeople_SelectRegistrantsLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectRegistrantsLazyQuery>;
-export type AddEventPeople_SelectRegistrantsQueryResult = Apollo.QueryResult<AddEventPeople_SelectRegistrantsQuery, AddEventPeople_SelectRegistrantsQueryVariables>;
+export function useAddEventPeople_SelectRegistrantsQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectRegistrantsQuery>({ query: AddEventPeople_SelectRegistrantsDocument, ...options });
+};
 export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
     query AddEventPeople_SelectProgramPeople_ByRegistrant($registrantIds: [uuid!]!) {
   collection_ProgramPersonWithAccessToken(
@@ -52042,33 +47149,9 @@ export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
 }
     ${AddEventPeople_ProgramPersonFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectProgramPeople_ByRegistrantQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectProgramPeople_ByRegistrantQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectProgramPeople_ByRegistrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
- *   variables: {
- *      registrantIds: // value for 'registrantIds'
- *   },
- * });
- */
-export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>(AddEventPeople_SelectProgramPeople_ByRegistrantDocument, options);
-      }
-export function useAddEventPeople_SelectProgramPeople_ByRegistrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>(AddEventPeople_SelectProgramPeople_ByRegistrantDocument, options);
-        }
-export type AddEventPeople_SelectProgramPeople_ByRegistrantQueryHookResult = ReturnType<typeof useAddEventPeople_SelectProgramPeople_ByRegistrantQuery>;
-export type AddEventPeople_SelectProgramPeople_ByRegistrantLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectProgramPeople_ByRegistrantLazyQuery>;
-export type AddEventPeople_SelectProgramPeople_ByRegistrantQueryResult = Apollo.QueryResult<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>;
+export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({ query: AddEventPeople_SelectProgramPeople_ByRegistrantDocument, ...options });
+};
 export const AddEventPeople_SelectGroupsDocument = gql`
     query AddEventPeople_SelectGroups($conferenceId: uuid!) {
   permissions_Group(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52077,33 +47160,9 @@ export const AddEventPeople_SelectGroupsDocument = gql`
 }
     ${AddEventPeople_GroupFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectGroupsQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectGroupsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useAddEventPeople_SelectGroupsQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, options);
-      }
-export function useAddEventPeople_SelectGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>(AddEventPeople_SelectGroupsDocument, options);
-        }
-export type AddEventPeople_SelectGroupsQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsQuery>;
-export type AddEventPeople_SelectGroupsLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectGroupsLazyQuery>;
-export type AddEventPeople_SelectGroupsQueryResult = Apollo.QueryResult<AddEventPeople_SelectGroupsQuery, AddEventPeople_SelectGroupsQueryVariables>;
+export function useAddEventPeople_SelectGroupsQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
+};
 export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
     query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
   registrant_Registrant(where: {groupRegistrants: {groupId: {_eq: $groupId}}}) {
@@ -52112,33 +47171,9 @@ export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
 }
     ${AddEventPeople_RegistrantFragmentDoc}`;
 
-/**
- * __useAddEventPeople_SelectRegistrants_ByGroupQuery__
- *
- * To run a query within a React component, call `useAddEventPeople_SelectRegistrants_ByGroupQuery` and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_SelectRegistrants_ByGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAddEventPeople_SelectRegistrants_ByGroupQuery({
- *   variables: {
- *      groupId: // value for 'groupId'
- *   },
- * });
- */
-export function useAddEventPeople_SelectRegistrants_ByGroupQuery(baseOptions: Apollo.QueryHookOptions<AddEventPeople_SelectRegistrants_ByGroupQuery, AddEventPeople_SelectRegistrants_ByGroupQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery, AddEventPeople_SelectRegistrants_ByGroupQueryVariables>(AddEventPeople_SelectRegistrants_ByGroupDocument, options);
-      }
-export function useAddEventPeople_SelectRegistrants_ByGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AddEventPeople_SelectRegistrants_ByGroupQuery, AddEventPeople_SelectRegistrants_ByGroupQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AddEventPeople_SelectRegistrants_ByGroupQuery, AddEventPeople_SelectRegistrants_ByGroupQueryVariables>(AddEventPeople_SelectRegistrants_ByGroupDocument, options);
-        }
-export type AddEventPeople_SelectRegistrants_ByGroupQueryHookResult = ReturnType<typeof useAddEventPeople_SelectRegistrants_ByGroupQuery>;
-export type AddEventPeople_SelectRegistrants_ByGroupLazyQueryHookResult = ReturnType<typeof useAddEventPeople_SelectRegistrants_ByGroupLazyQuery>;
-export type AddEventPeople_SelectRegistrants_ByGroupQueryResult = Apollo.QueryResult<AddEventPeople_SelectRegistrants_ByGroupQuery, AddEventPeople_SelectRegistrants_ByGroupQueryVariables>;
+export function useAddEventPeople_SelectRegistrants_ByGroupQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({ query: AddEventPeople_SelectRegistrants_ByGroupDocument, ...options });
+};
 export const AddEventPeople_InsertProgramPeopleDocument = gql`
     mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
   insert_collection_ProgramPersonWithAccessToken(objects: $objects) {
@@ -52148,32 +47183,10 @@ export const AddEventPeople_InsertProgramPeopleDocument = gql`
   }
 }
     ${AddEventPeople_ProgramPersonFragmentDoc}`;
-export type AddEventPeople_InsertProgramPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>;
 
-/**
- * __useAddEventPeople_InsertProgramPeopleMutation__
- *
- * To run a mutation, you first call `useAddEventPeople_InsertProgramPeopleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_InsertProgramPeopleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addEventPeopleInsertProgramPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertProgramPeopleMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useAddEventPeople_InsertProgramPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>(AddEventPeople_InsertProgramPeopleDocument, options);
-      }
-export type AddEventPeople_InsertProgramPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertProgramPeopleMutation>;
-export type AddEventPeople_InsertProgramPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertProgramPeopleMutation>;
-export type AddEventPeople_InsertProgramPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>;
+export function useAddEventPeople_InsertProgramPeopleMutation() {
+  return Urql.useMutation<AddEventPeople_InsertProgramPeopleMutation, AddEventPeople_InsertProgramPeopleMutationVariables>(AddEventPeople_InsertProgramPeopleDocument);
+};
 export const AddEventPeople_InsertEventPeopleDocument = gql`
     mutation AddEventPeople_InsertEventPeople($objects: [schedule_EventProgramPerson_insert_input!]!) {
   insert_schedule_EventProgramPerson(
@@ -52186,32 +47199,10 @@ export const AddEventPeople_InsertEventPeopleDocument = gql`
   }
 }
     ${EventProgramPersonInfoFragmentDoc}`;
-export type AddEventPeople_InsertEventPeopleMutationFn = Apollo.MutationFunction<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
 
-/**
- * __useAddEventPeople_InsertEventPeopleMutation__
- *
- * To run a mutation, you first call `useAddEventPeople_InsertEventPeopleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddEventPeople_InsertEventPeopleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addEventPeopleInsertEventPeopleMutation, { data, loading, error }] = useAddEventPeople_InsertEventPeopleMutation({
- *   variables: {
- *      objects: // value for 'objects'
- *   },
- * });
- */
-export function useAddEventPeople_InsertEventPeopleMutation(baseOptions?: Apollo.MutationHookOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>(AddEventPeople_InsertEventPeopleDocument, options);
-      }
-export type AddEventPeople_InsertEventPeopleMutationHookResult = ReturnType<typeof useAddEventPeople_InsertEventPeopleMutation>;
-export type AddEventPeople_InsertEventPeopleMutationResult = Apollo.MutationResult<AddEventPeople_InsertEventPeopleMutation>;
-export type AddEventPeople_InsertEventPeopleMutationOptions = Apollo.BaseMutationOptions<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>;
+export function useAddEventPeople_InsertEventPeopleMutation() {
+  return Urql.useMutation<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>(AddEventPeople_InsertEventPeopleDocument);
+};
 export const ContinuationsEditor_SelectContinuationsDocument = gql`
     query ContinuationsEditor_SelectContinuations($fromId: uuid!) {
   schedule_Continuation(
@@ -52222,33 +47213,9 @@ export const ContinuationsEditor_SelectContinuationsDocument = gql`
 }
     ${ContinuationsEditor_ContinuationFragmentDoc}`;
 
-/**
- * __useContinuationsEditor_SelectContinuationsQuery__
- *
- * To run a query within a React component, call `useContinuationsEditor_SelectContinuationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useContinuationsEditor_SelectContinuationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useContinuationsEditor_SelectContinuationsQuery({
- *   variables: {
- *      fromId: // value for 'fromId'
- *   },
- * });
- */
-export function useContinuationsEditor_SelectContinuationsQuery(baseOptions: Apollo.QueryHookOptions<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>(ContinuationsEditor_SelectContinuationsDocument, options);
-      }
-export function useContinuationsEditor_SelectContinuationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>(ContinuationsEditor_SelectContinuationsDocument, options);
-        }
-export type ContinuationsEditor_SelectContinuationsQueryHookResult = ReturnType<typeof useContinuationsEditor_SelectContinuationsQuery>;
-export type ContinuationsEditor_SelectContinuationsLazyQueryHookResult = ReturnType<typeof useContinuationsEditor_SelectContinuationsLazyQuery>;
-export type ContinuationsEditor_SelectContinuationsQueryResult = Apollo.QueryResult<ContinuationsEditor_SelectContinuationsQuery, ContinuationsEditor_SelectContinuationsQueryVariables>;
+export function useContinuationsEditor_SelectContinuationsQuery(options: Omit<Urql.UseQueryArgs<ContinuationsEditor_SelectContinuationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ContinuationsEditor_SelectContinuationsQuery>({ query: ContinuationsEditor_SelectContinuationsDocument, ...options });
+};
 export const ContinuationsEditor_InsertDocument = gql`
     mutation ContinuationsEditor_Insert($object: schedule_Continuation_insert_input!) {
   insert_schedule_Continuation_one(object: $object) {
@@ -52256,32 +47223,10 @@ export const ContinuationsEditor_InsertDocument = gql`
   }
 }
     ${ContinuationsEditor_ContinuationFragmentDoc}`;
-export type ContinuationsEditor_InsertMutationFn = Apollo.MutationFunction<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>;
 
-/**
- * __useContinuationsEditor_InsertMutation__
- *
- * To run a mutation, you first call `useContinuationsEditor_InsertMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useContinuationsEditor_InsertMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [continuationsEditorInsertMutation, { data, loading, error }] = useContinuationsEditor_InsertMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useContinuationsEditor_InsertMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>(ContinuationsEditor_InsertDocument, options);
-      }
-export type ContinuationsEditor_InsertMutationHookResult = ReturnType<typeof useContinuationsEditor_InsertMutation>;
-export type ContinuationsEditor_InsertMutationResult = Apollo.MutationResult<ContinuationsEditor_InsertMutation>;
-export type ContinuationsEditor_InsertMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>;
+export function useContinuationsEditor_InsertMutation() {
+  return Urql.useMutation<ContinuationsEditor_InsertMutation, ContinuationsEditor_InsertMutationVariables>(ContinuationsEditor_InsertDocument);
+};
 export const ContinuationsEditor_UpdateDocument = gql`
     mutation ContinuationsEditor_Update($id: uuid!, $object: schedule_Continuation_set_input!) {
   update_schedule_Continuation_by_pk(pk_columns: {id: $id}, _set: $object) {
@@ -52289,33 +47234,10 @@ export const ContinuationsEditor_UpdateDocument = gql`
   }
 }
     ${ContinuationsEditor_ContinuationFragmentDoc}`;
-export type ContinuationsEditor_UpdateMutationFn = Apollo.MutationFunction<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>;
 
-/**
- * __useContinuationsEditor_UpdateMutation__
- *
- * To run a mutation, you first call `useContinuationsEditor_UpdateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useContinuationsEditor_UpdateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [continuationsEditorUpdateMutation, { data, loading, error }] = useContinuationsEditor_UpdateMutation({
- *   variables: {
- *      id: // value for 'id'
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useContinuationsEditor_UpdateMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>(ContinuationsEditor_UpdateDocument, options);
-      }
-export type ContinuationsEditor_UpdateMutationHookResult = ReturnType<typeof useContinuationsEditor_UpdateMutation>;
-export type ContinuationsEditor_UpdateMutationResult = Apollo.MutationResult<ContinuationsEditor_UpdateMutation>;
-export type ContinuationsEditor_UpdateMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>;
+export function useContinuationsEditor_UpdateMutation() {
+  return Urql.useMutation<ContinuationsEditor_UpdateMutation, ContinuationsEditor_UpdateMutationVariables>(ContinuationsEditor_UpdateDocument);
+};
 export const ContinuationsEditor_UpdateManyDocument = gql`
     mutation ContinuationsEditor_UpdateMany($ids: [uuid!]!, $object: schedule_Continuation_set_input!) {
   update_schedule_Continuation(where: {id: {_in: $ids}}, _set: $object) {
@@ -52325,33 +47247,10 @@ export const ContinuationsEditor_UpdateManyDocument = gql`
   }
 }
     ${ContinuationsEditor_ContinuationFragmentDoc}`;
-export type ContinuationsEditor_UpdateManyMutationFn = Apollo.MutationFunction<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>;
 
-/**
- * __useContinuationsEditor_UpdateManyMutation__
- *
- * To run a mutation, you first call `useContinuationsEditor_UpdateManyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useContinuationsEditor_UpdateManyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [continuationsEditorUpdateManyMutation, { data, loading, error }] = useContinuationsEditor_UpdateManyMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useContinuationsEditor_UpdateManyMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>(ContinuationsEditor_UpdateManyDocument, options);
-      }
-export type ContinuationsEditor_UpdateManyMutationHookResult = ReturnType<typeof useContinuationsEditor_UpdateManyMutation>;
-export type ContinuationsEditor_UpdateManyMutationResult = Apollo.MutationResult<ContinuationsEditor_UpdateManyMutation>;
-export type ContinuationsEditor_UpdateManyMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>;
+export function useContinuationsEditor_UpdateManyMutation() {
+  return Urql.useMutation<ContinuationsEditor_UpdateManyMutation, ContinuationsEditor_UpdateManyMutationVariables>(ContinuationsEditor_UpdateManyDocument);
+};
 export const ContinuationsEditor_DeleteDocument = gql`
     mutation ContinuationsEditor_Delete($ids: [uuid!]!) {
   delete_schedule_Continuation(where: {id: {_in: $ids}}) {
@@ -52361,32 +47260,10 @@ export const ContinuationsEditor_DeleteDocument = gql`
   }
 }
     `;
-export type ContinuationsEditor_DeleteMutationFn = Apollo.MutationFunction<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>;
 
-/**
- * __useContinuationsEditor_DeleteMutation__
- *
- * To run a mutation, you first call `useContinuationsEditor_DeleteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useContinuationsEditor_DeleteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [continuationsEditorDeleteMutation, { data, loading, error }] = useContinuationsEditor_DeleteMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useContinuationsEditor_DeleteMutation(baseOptions?: Apollo.MutationHookOptions<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>(ContinuationsEditor_DeleteDocument, options);
-      }
-export type ContinuationsEditor_DeleteMutationHookResult = ReturnType<typeof useContinuationsEditor_DeleteMutation>;
-export type ContinuationsEditor_DeleteMutationResult = Apollo.MutationResult<ContinuationsEditor_DeleteMutation>;
-export type ContinuationsEditor_DeleteMutationOptions = Apollo.BaseMutationOptions<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>;
+export function useContinuationsEditor_DeleteMutation() {
+  return Urql.useMutation<ContinuationsEditor_DeleteMutation, ContinuationsEditor_DeleteMutationVariables>(ContinuationsEditor_DeleteDocument);
+};
 export const CreateContinuationModal_RoomsDocument = gql`
     query CreateContinuationModal_Rooms($conferenceId: uuid!) {
   room_Room(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52396,33 +47273,9 @@ export const CreateContinuationModal_RoomsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_RoomsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_RoomsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_RoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_RoomsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_RoomsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>(CreateContinuationModal_RoomsDocument, options);
-      }
-export function useCreateContinuationModal_RoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>(CreateContinuationModal_RoomsDocument, options);
-        }
-export type CreateContinuationModal_RoomsQueryHookResult = ReturnType<typeof useCreateContinuationModal_RoomsQuery>;
-export type CreateContinuationModal_RoomsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_RoomsLazyQuery>;
-export type CreateContinuationModal_RoomsQueryResult = Apollo.QueryResult<CreateContinuationModal_RoomsQuery, CreateContinuationModal_RoomsQueryVariables>;
+export function useCreateContinuationModal_RoomsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_RoomsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_RoomsQuery>({ query: CreateContinuationModal_RoomsDocument, ...options });
+};
 export const CreateContinuationModal_EventsDocument = gql`
     query CreateContinuationModal_Events($conferenceId: uuid!) {
   schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52447,33 +47300,9 @@ export const CreateContinuationModal_EventsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_EventsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_EventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_EventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_EventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_EventsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>(CreateContinuationModal_EventsDocument, options);
-      }
-export function useCreateContinuationModal_EventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>(CreateContinuationModal_EventsDocument, options);
-        }
-export type CreateContinuationModal_EventsQueryHookResult = ReturnType<typeof useCreateContinuationModal_EventsQuery>;
-export type CreateContinuationModal_EventsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_EventsLazyQuery>;
-export type CreateContinuationModal_EventsQueryResult = Apollo.QueryResult<CreateContinuationModal_EventsQuery, CreateContinuationModal_EventsQueryVariables>;
+export function useCreateContinuationModal_EventsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_EventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_EventsQuery>({ query: CreateContinuationModal_EventsDocument, ...options });
+};
 export const CreateContinuationModal_ItemsDocument = gql`
     query CreateContinuationModal_Items($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52483,33 +47312,9 @@ export const CreateContinuationModal_ItemsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_ItemsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_ItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_ItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_ItemsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_ItemsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(CreateContinuationModal_ItemsDocument, options);
-      }
-export function useCreateContinuationModal_ItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>(CreateContinuationModal_ItemsDocument, options);
-        }
-export type CreateContinuationModal_ItemsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ItemsQuery>;
-export type CreateContinuationModal_ItemsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ItemsLazyQuery>;
-export type CreateContinuationModal_ItemsQueryResult = Apollo.QueryResult<CreateContinuationModal_ItemsQuery, CreateContinuationModal_ItemsQueryVariables>;
+export function useCreateContinuationModal_ItemsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ItemsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_ItemsQuery>({ query: CreateContinuationModal_ItemsDocument, ...options });
+};
 export const CreateContinuationModal_ExhibitionsDocument = gql`
     query CreateContinuationModal_Exhibitions($conferenceId: uuid!) {
   collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52519,33 +47324,9 @@ export const CreateContinuationModal_ExhibitionsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_ExhibitionsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_ExhibitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_ExhibitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_ExhibitionsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_ExhibitionsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>(CreateContinuationModal_ExhibitionsDocument, options);
-      }
-export function useCreateContinuationModal_ExhibitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>(CreateContinuationModal_ExhibitionsDocument, options);
-        }
-export type CreateContinuationModal_ExhibitionsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ExhibitionsQuery>;
-export type CreateContinuationModal_ExhibitionsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ExhibitionsLazyQuery>;
-export type CreateContinuationModal_ExhibitionsQueryResult = Apollo.QueryResult<CreateContinuationModal_ExhibitionsQuery, CreateContinuationModal_ExhibitionsQueryVariables>;
+export function useCreateContinuationModal_ExhibitionsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ExhibitionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_ExhibitionsQuery>({ query: CreateContinuationModal_ExhibitionsDocument, ...options });
+};
 export const CreateContinuationModal_ShufflePeriodsDocument = gql`
     query CreateContinuationModal_ShufflePeriods($conferenceId: uuid!) {
   room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52555,33 +47336,9 @@ export const CreateContinuationModal_ShufflePeriodsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_ShufflePeriodsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_ShufflePeriodsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_ShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_ShufflePeriodsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_ShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>(CreateContinuationModal_ShufflePeriodsDocument, options);
-      }
-export function useCreateContinuationModal_ShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>(CreateContinuationModal_ShufflePeriodsDocument, options);
-        }
-export type CreateContinuationModal_ShufflePeriodsQueryHookResult = ReturnType<typeof useCreateContinuationModal_ShufflePeriodsQuery>;
-export type CreateContinuationModal_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ShufflePeriodsLazyQuery>;
-export type CreateContinuationModal_ShufflePeriodsQueryResult = Apollo.QueryResult<CreateContinuationModal_ShufflePeriodsQuery, CreateContinuationModal_ShufflePeriodsQueryVariables>;
+export function useCreateContinuationModal_ShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ShufflePeriodsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_ShufflePeriodsQuery>({ query: CreateContinuationModal_ShufflePeriodsDocument, ...options });
+};
 export const CreateContinuationModal_TagsDocument = gql`
     query CreateContinuationModal_Tags($conferenceId: uuid!) {
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52591,33 +47348,9 @@ export const CreateContinuationModal_TagsDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_TagsQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_TagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_TagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_TagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_TagsQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>(CreateContinuationModal_TagsDocument, options);
-      }
-export function useCreateContinuationModal_TagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>(CreateContinuationModal_TagsDocument, options);
-        }
-export type CreateContinuationModal_TagsQueryHookResult = ReturnType<typeof useCreateContinuationModal_TagsQuery>;
-export type CreateContinuationModal_TagsLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_TagsLazyQuery>;
-export type CreateContinuationModal_TagsQueryResult = Apollo.QueryResult<CreateContinuationModal_TagsQuery, CreateContinuationModal_TagsQueryVariables>;
+export function useCreateContinuationModal_TagsQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_TagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_TagsQuery>({ query: CreateContinuationModal_TagsDocument, ...options });
+};
 export const CreateContinuationModal_ProfileDocument = gql`
     query CreateContinuationModal_Profile($conferenceId: uuid!) {
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -52627,33 +47360,9 @@ export const CreateContinuationModal_ProfileDocument = gql`
 }
     `;
 
-/**
- * __useCreateContinuationModal_ProfileQuery__
- *
- * To run a query within a React component, call `useCreateContinuationModal_ProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreateContinuationModal_ProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreateContinuationModal_ProfileQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateContinuationModal_ProfileQuery(baseOptions: Apollo.QueryHookOptions<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>(CreateContinuationModal_ProfileDocument, options);
-      }
-export function useCreateContinuationModal_ProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>(CreateContinuationModal_ProfileDocument, options);
-        }
-export type CreateContinuationModal_ProfileQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileQuery>;
-export type CreateContinuationModal_ProfileLazyQueryHookResult = ReturnType<typeof useCreateContinuationModal_ProfileLazyQuery>;
-export type CreateContinuationModal_ProfileQueryResult = Apollo.QueryResult<CreateContinuationModal_ProfileQuery, CreateContinuationModal_ProfileQueryVariables>;
+export function useCreateContinuationModal_ProfileQuery(options: Omit<Urql.UseQueryArgs<CreateContinuationModal_ProfileQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CreateContinuationModal_ProfileQuery>({ query: CreateContinuationModal_ProfileDocument, ...options });
+};
 export const SelectEventStreamTextEventIdDocument = gql`
     query SelectEventStreamTextEventId($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
@@ -52663,33 +47372,9 @@ export const SelectEventStreamTextEventIdDocument = gql`
 }
     `;
 
-/**
- * __useSelectEventStreamTextEventIdQuery__
- *
- * To run a query within a React component, call `useSelectEventStreamTextEventIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectEventStreamTextEventIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectEventStreamTextEventIdQuery({
- *   variables: {
- *      eventId: // value for 'eventId'
- *   },
- * });
- */
-export function useSelectEventStreamTextEventIdQuery(baseOptions: Apollo.QueryHookOptions<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>(SelectEventStreamTextEventIdDocument, options);
-      }
-export function useSelectEventStreamTextEventIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>(SelectEventStreamTextEventIdDocument, options);
-        }
-export type SelectEventStreamTextEventIdQueryHookResult = ReturnType<typeof useSelectEventStreamTextEventIdQuery>;
-export type SelectEventStreamTextEventIdLazyQueryHookResult = ReturnType<typeof useSelectEventStreamTextEventIdLazyQuery>;
-export type SelectEventStreamTextEventIdQueryResult = Apollo.QueryResult<SelectEventStreamTextEventIdQuery, SelectEventStreamTextEventIdQueryVariables>;
+export function useSelectEventStreamTextEventIdQuery(options: Omit<Urql.UseQueryArgs<SelectEventStreamTextEventIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectEventStreamTextEventIdQuery>({ query: SelectEventStreamTextEventIdDocument, ...options });
+};
 export const UpdateEventStreamTextEventIdDocument = gql`
     mutation UpdateEventStreamTextEventId($eventId: uuid!, $streamTextEventId: String) {
   update_schedule_Event_by_pk(
@@ -52701,33 +47386,10 @@ export const UpdateEventStreamTextEventIdDocument = gql`
   }
 }
     `;
-export type UpdateEventStreamTextEventIdMutationFn = Apollo.MutationFunction<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>;
 
-/**
- * __useUpdateEventStreamTextEventIdMutation__
- *
- * To run a mutation, you first call `useUpdateEventStreamTextEventIdMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventStreamTextEventIdMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEventStreamTextEventIdMutation, { data, loading, error }] = useUpdateEventStreamTextEventIdMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *      streamTextEventId: // value for 'streamTextEventId'
- *   },
- * });
- */
-export function useUpdateEventStreamTextEventIdMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>(UpdateEventStreamTextEventIdDocument, options);
-      }
-export type UpdateEventStreamTextEventIdMutationHookResult = ReturnType<typeof useUpdateEventStreamTextEventIdMutation>;
-export type UpdateEventStreamTextEventIdMutationResult = Apollo.MutationResult<UpdateEventStreamTextEventIdMutation>;
-export type UpdateEventStreamTextEventIdMutationOptions = Apollo.BaseMutationOptions<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>;
+export function useUpdateEventStreamTextEventIdMutation() {
+  return Urql.useMutation<UpdateEventStreamTextEventIdMutation, UpdateEventStreamTextEventIdMutationVariables>(UpdateEventStreamTextEventIdDocument);
+};
 export const InsertEventProgramPersonDocument = gql`
     mutation InsertEventProgramPerson($newEventProgramPerson: schedule_EventProgramPerson_insert_input!) {
   insert_schedule_EventProgramPerson_one(
@@ -52738,32 +47400,10 @@ export const InsertEventProgramPersonDocument = gql`
   }
 }
     ${EventProgramPersonInfoFragmentDoc}`;
-export type InsertEventProgramPersonMutationFn = Apollo.MutationFunction<InsertEventProgramPersonMutation, InsertEventProgramPersonMutationVariables>;
 
-/**
- * __useInsertEventProgramPersonMutation__
- *
- * To run a mutation, you first call `useInsertEventProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertEventProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertEventProgramPersonMutation, { data, loading, error }] = useInsertEventProgramPersonMutation({
- *   variables: {
- *      newEventProgramPerson: // value for 'newEventProgramPerson'
- *   },
- * });
- */
-export function useInsertEventProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<InsertEventProgramPersonMutation, InsertEventProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertEventProgramPersonMutation, InsertEventProgramPersonMutationVariables>(InsertEventProgramPersonDocument, options);
-      }
-export type InsertEventProgramPersonMutationHookResult = ReturnType<typeof useInsertEventProgramPersonMutation>;
-export type InsertEventProgramPersonMutationResult = Apollo.MutationResult<InsertEventProgramPersonMutation>;
-export type InsertEventProgramPersonMutationOptions = Apollo.BaseMutationOptions<InsertEventProgramPersonMutation, InsertEventProgramPersonMutationVariables>;
+export function useInsertEventProgramPersonMutation() {
+  return Urql.useMutation<InsertEventProgramPersonMutation, InsertEventProgramPersonMutationVariables>(InsertEventProgramPersonDocument);
+};
 export const DeleteEventProgramPersonsDocument = gql`
     mutation DeleteEventProgramPersons($deleteEventPeopleIds: [uuid!]!) {
   delete_schedule_EventProgramPerson(where: {id: {_in: $deleteEventPeopleIds}}) {
@@ -52773,32 +47413,10 @@ export const DeleteEventProgramPersonsDocument = gql`
   }
 }
     `;
-export type DeleteEventProgramPersonsMutationFn = Apollo.MutationFunction<DeleteEventProgramPersonsMutation, DeleteEventProgramPersonsMutationVariables>;
 
-/**
- * __useDeleteEventProgramPersonsMutation__
- *
- * To run a mutation, you first call `useDeleteEventProgramPersonsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteEventProgramPersonsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteEventProgramPersonsMutation, { data, loading, error }] = useDeleteEventProgramPersonsMutation({
- *   variables: {
- *      deleteEventPeopleIds: // value for 'deleteEventPeopleIds'
- *   },
- * });
- */
-export function useDeleteEventProgramPersonsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventProgramPersonsMutation, DeleteEventProgramPersonsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteEventProgramPersonsMutation, DeleteEventProgramPersonsMutationVariables>(DeleteEventProgramPersonsDocument, options);
-      }
-export type DeleteEventProgramPersonsMutationHookResult = ReturnType<typeof useDeleteEventProgramPersonsMutation>;
-export type DeleteEventProgramPersonsMutationResult = Apollo.MutationResult<DeleteEventProgramPersonsMutation>;
-export type DeleteEventProgramPersonsMutationOptions = Apollo.BaseMutationOptions<DeleteEventProgramPersonsMutation, DeleteEventProgramPersonsMutationVariables>;
+export function useDeleteEventProgramPersonsMutation() {
+  return Urql.useMutation<DeleteEventProgramPersonsMutation, DeleteEventProgramPersonsMutationVariables>(DeleteEventProgramPersonsDocument);
+};
 export const UpdateEventProgramPersonDocument = gql`
     mutation UpdateEventProgramPerson($id: uuid!, $personId: uuid!, $roleName: schedule_EventProgramPersonRole_enum!) {
   update_schedule_EventProgramPerson_by_pk(
@@ -52809,34 +47427,10 @@ export const UpdateEventProgramPersonDocument = gql`
   }
 }
     ${EventProgramPersonInfoFragmentDoc}`;
-export type UpdateEventProgramPersonMutationFn = Apollo.MutationFunction<UpdateEventProgramPersonMutation, UpdateEventProgramPersonMutationVariables>;
 
-/**
- * __useUpdateEventProgramPersonMutation__
- *
- * To run a mutation, you first call `useUpdateEventProgramPersonMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventProgramPersonMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEventProgramPersonMutation, { data, loading, error }] = useUpdateEventProgramPersonMutation({
- *   variables: {
- *      id: // value for 'id'
- *      personId: // value for 'personId'
- *      roleName: // value for 'roleName'
- *   },
- * });
- */
-export function useUpdateEventProgramPersonMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventProgramPersonMutation, UpdateEventProgramPersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateEventProgramPersonMutation, UpdateEventProgramPersonMutationVariables>(UpdateEventProgramPersonDocument, options);
-      }
-export type UpdateEventProgramPersonMutationHookResult = ReturnType<typeof useUpdateEventProgramPersonMutation>;
-export type UpdateEventProgramPersonMutationResult = Apollo.MutationResult<UpdateEventProgramPersonMutation>;
-export type UpdateEventProgramPersonMutationOptions = Apollo.BaseMutationOptions<UpdateEventProgramPersonMutation, UpdateEventProgramPersonMutationVariables>;
+export function useUpdateEventProgramPersonMutation() {
+  return Urql.useMutation<UpdateEventProgramPersonMutation, UpdateEventProgramPersonMutationVariables>(UpdateEventProgramPersonDocument);
+};
 export const ManageSchedule_ShufflePeriodsDocument = gql`
     query ManageSchedule_ShufflePeriods($conferenceId: uuid!, $now: timestamptz!) {
   room_ShufflePeriod(
@@ -52847,34 +47441,9 @@ export const ManageSchedule_ShufflePeriodsDocument = gql`
 }
     ${ShufflePeriodInfoFragmentDoc}`;
 
-/**
- * __useManageSchedule_ShufflePeriodsQuery__
- *
- * To run a query within a React component, call `useManageSchedule_ShufflePeriodsQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageSchedule_ShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageSchedule_ShufflePeriodsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      now: // value for 'now'
- *   },
- * });
- */
-export function useManageSchedule_ShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>(ManageSchedule_ShufflePeriodsDocument, options);
-      }
-export function useManageSchedule_ShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>(ManageSchedule_ShufflePeriodsDocument, options);
-        }
-export type ManageSchedule_ShufflePeriodsQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsQuery>;
-export type ManageSchedule_ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useManageSchedule_ShufflePeriodsLazyQuery>;
-export type ManageSchedule_ShufflePeriodsQueryResult = Apollo.QueryResult<ManageSchedule_ShufflePeriodsQuery, ManageSchedule_ShufflePeriodsQueryVariables>;
+export function useManageSchedule_ShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ManageSchedule_ShufflePeriodsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageSchedule_ShufflePeriodsQuery>({ query: ManageSchedule_ShufflePeriodsDocument, ...options });
+};
 export const InsertEventInfoDocument = gql`
     mutation InsertEventInfo($id: uuid!, $roomId: uuid!, $conferenceId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $insertContinuation: Boolean!, $enableRecording: Boolean!) {
   insert_schedule_Event_one(
@@ -52889,44 +47458,10 @@ export const InsertEventInfoDocument = gql`
   }
 }
     ${EventInfoFragmentDoc}`;
-export type InsertEventInfoMutationFn = Apollo.MutationFunction<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
 
-/**
- * __useInsertEventInfoMutation__
- *
- * To run a mutation, you first call `useInsertEventInfoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertEventInfoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertEventInfoMutation, { data, loading, error }] = useInsertEventInfoMutation({
- *   variables: {
- *      id: // value for 'id'
- *      roomId: // value for 'roomId'
- *      conferenceId: // value for 'conferenceId'
- *      intendedRoomModeName: // value for 'intendedRoomModeName'
- *      originatingDataId: // value for 'originatingDataId'
- *      name: // value for 'name'
- *      startTime: // value for 'startTime'
- *      durationSeconds: // value for 'durationSeconds'
- *      itemId: // value for 'itemId'
- *      exhibitionId: // value for 'exhibitionId'
- *      shufflePeriodId: // value for 'shufflePeriodId'
- *      insertContinuation: // value for 'insertContinuation'
- *      enableRecording: // value for 'enableRecording'
- *   },
- * });
- */
-export function useInsertEventInfoMutation(baseOptions?: Apollo.MutationHookOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertEventInfoMutation, InsertEventInfoMutationVariables>(InsertEventInfoDocument, options);
-      }
-export type InsertEventInfoMutationHookResult = ReturnType<typeof useInsertEventInfoMutation>;
-export type InsertEventInfoMutationResult = Apollo.MutationResult<InsertEventInfoMutation>;
-export type InsertEventInfoMutationOptions = Apollo.BaseMutationOptions<InsertEventInfoMutation, InsertEventInfoMutationVariables>;
+export function useInsertEventInfoMutation() {
+  return Urql.useMutation<InsertEventInfoMutation, InsertEventInfoMutationVariables>(InsertEventInfoDocument);
+};
 export const UpdateEventInfoDocument = gql`
     mutation UpdateEventInfo($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $shufflePeriodId: uuid = null, $enableRecording: Boolean!) {
   update_schedule_Event_by_pk(
@@ -52937,42 +47472,10 @@ export const UpdateEventInfoDocument = gql`
   }
 }
     ${EventInfoFragmentDoc}`;
-export type UpdateEventInfoMutationFn = Apollo.MutationFunction<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>;
 
-/**
- * __useUpdateEventInfoMutation__
- *
- * To run a mutation, you first call `useUpdateEventInfoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventInfoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEventInfoMutation, { data, loading, error }] = useUpdateEventInfoMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *      roomId: // value for 'roomId'
- *      intendedRoomModeName: // value for 'intendedRoomModeName'
- *      originatingDataId: // value for 'originatingDataId'
- *      name: // value for 'name'
- *      startTime: // value for 'startTime'
- *      durationSeconds: // value for 'durationSeconds'
- *      itemId: // value for 'itemId'
- *      exhibitionId: // value for 'exhibitionId'
- *      shufflePeriodId: // value for 'shufflePeriodId'
- *      enableRecording: // value for 'enableRecording'
- *   },
- * });
- */
-export function useUpdateEventInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>(UpdateEventInfoDocument, options);
-      }
-export type UpdateEventInfoMutationHookResult = ReturnType<typeof useUpdateEventInfoMutation>;
-export type UpdateEventInfoMutationResult = Apollo.MutationResult<UpdateEventInfoMutation>;
-export type UpdateEventInfoMutationOptions = Apollo.BaseMutationOptions<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>;
+export function useUpdateEventInfoMutation() {
+  return Urql.useMutation<UpdateEventInfoMutation, UpdateEventInfoMutationVariables>(UpdateEventInfoDocument);
+};
 export const DeleteEventInfosDocument = gql`
     mutation DeleteEventInfos($eventIds: [uuid!]!) {
   delete_schedule_Event(where: {id: {_in: $eventIds}}) {
@@ -52982,32 +47485,10 @@ export const DeleteEventInfosDocument = gql`
   }
 }
     `;
-export type DeleteEventInfosMutationFn = Apollo.MutationFunction<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
 
-/**
- * __useDeleteEventInfosMutation__
- *
- * To run a mutation, you first call `useDeleteEventInfosMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteEventInfosMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteEventInfosMutation, { data, loading, error }] = useDeleteEventInfosMutation({
- *   variables: {
- *      eventIds: // value for 'eventIds'
- *   },
- * });
- */
-export function useDeleteEventInfosMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>(DeleteEventInfosDocument, options);
-      }
-export type DeleteEventInfosMutationHookResult = ReturnType<typeof useDeleteEventInfosMutation>;
-export type DeleteEventInfosMutationResult = Apollo.MutationResult<DeleteEventInfosMutation>;
-export type DeleteEventInfosMutationOptions = Apollo.BaseMutationOptions<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>;
+export function useDeleteEventInfosMutation() {
+  return Urql.useMutation<DeleteEventInfosMutation, DeleteEventInfosMutationVariables>(DeleteEventInfosDocument);
+};
 export const SelectWholeScheduleDocument = gql`
     query SelectWholeSchedule($conferenceId: uuid!) {
   room_Room(
@@ -53047,33 +47528,9 @@ ${ExhibitionInfoFragmentDoc}
 ${ItemFullNestedInfoFragmentDoc}
 ${ProgramPersonInfoFragmentDoc}`;
 
-/**
- * __useSelectWholeScheduleQuery__
- *
- * To run a query within a React component, call `useSelectWholeScheduleQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectWholeScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectWholeScheduleQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useSelectWholeScheduleQuery(baseOptions: Apollo.QueryHookOptions<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>(SelectWholeScheduleDocument, options);
-      }
-export function useSelectWholeScheduleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>(SelectWholeScheduleDocument, options);
-        }
-export type SelectWholeScheduleQueryHookResult = ReturnType<typeof useSelectWholeScheduleQuery>;
-export type SelectWholeScheduleLazyQueryHookResult = ReturnType<typeof useSelectWholeScheduleLazyQuery>;
-export type SelectWholeScheduleQueryResult = Apollo.QueryResult<SelectWholeScheduleQuery, SelectWholeScheduleQueryVariables>;
+export function useSelectWholeScheduleQuery(options: Omit<Urql.UseQueryArgs<SelectWholeScheduleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectWholeScheduleQuery>({ query: SelectWholeScheduleDocument, ...options });
+};
 export const InsertRoomsDocument = gql`
     mutation InsertRooms($newRooms: [room_Room_insert_input!]!) {
   insert_room_Room(objects: $newRooms) {
@@ -53083,32 +47540,10 @@ export const InsertRoomsDocument = gql`
   }
 }
     ${RoomInfoFragmentDoc}`;
-export type InsertRoomsMutationFn = Apollo.MutationFunction<InsertRoomsMutation, InsertRoomsMutationVariables>;
 
-/**
- * __useInsertRoomsMutation__
- *
- * To run a mutation, you first call `useInsertRoomsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertRoomsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertRoomsMutation, { data, loading, error }] = useInsertRoomsMutation({
- *   variables: {
- *      newRooms: // value for 'newRooms'
- *   },
- * });
- */
-export function useInsertRoomsMutation(baseOptions?: Apollo.MutationHookOptions<InsertRoomsMutation, InsertRoomsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertRoomsMutation, InsertRoomsMutationVariables>(InsertRoomsDocument, options);
-      }
-export type InsertRoomsMutationHookResult = ReturnType<typeof useInsertRoomsMutation>;
-export type InsertRoomsMutationResult = Apollo.MutationResult<InsertRoomsMutation>;
-export type InsertRoomsMutationOptions = Apollo.BaseMutationOptions<InsertRoomsMutation, InsertRoomsMutationVariables>;
+export function useInsertRoomsMutation() {
+  return Urql.useMutation<InsertRoomsMutation, InsertRoomsMutationVariables>(InsertRoomsDocument);
+};
 export const DeleteRoomsDocument = gql`
     mutation DeleteRooms($deleteRoomIds: [uuid!]!) {
   delete_room_Room(where: {id: {_in: $deleteRoomIds}}) {
@@ -53118,32 +47553,10 @@ export const DeleteRoomsDocument = gql`
   }
 }
     `;
-export type DeleteRoomsMutationFn = Apollo.MutationFunction<DeleteRoomsMutation, DeleteRoomsMutationVariables>;
 
-/**
- * __useDeleteRoomsMutation__
- *
- * To run a mutation, you first call `useDeleteRoomsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRoomsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteRoomsMutation, { data, loading, error }] = useDeleteRoomsMutation({
- *   variables: {
- *      deleteRoomIds: // value for 'deleteRoomIds'
- *   },
- * });
- */
-export function useDeleteRoomsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomsMutation, DeleteRoomsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteRoomsMutation, DeleteRoomsMutationVariables>(DeleteRoomsDocument, options);
-      }
-export type DeleteRoomsMutationHookResult = ReturnType<typeof useDeleteRoomsMutation>;
-export type DeleteRoomsMutationResult = Apollo.MutationResult<DeleteRoomsMutation>;
-export type DeleteRoomsMutationOptions = Apollo.BaseMutationOptions<DeleteRoomsMutation, DeleteRoomsMutationVariables>;
+export function useDeleteRoomsMutation() {
+  return Urql.useMutation<DeleteRoomsMutation, DeleteRoomsMutationVariables>(DeleteRoomsDocument);
+};
 export const UpdateRoomDocument = gql`
     mutation UpdateRoom($id: uuid!, $name: String!, $capacity: Int = null, $originatingDataId: uuid = null, $priority: Int!) {
   update_room_Room_by_pk(
@@ -53154,36 +47567,10 @@ export const UpdateRoomDocument = gql`
   }
 }
     ${RoomInfoFragmentDoc}`;
-export type UpdateRoomMutationFn = Apollo.MutationFunction<UpdateRoomMutation, UpdateRoomMutationVariables>;
 
-/**
- * __useUpdateRoomMutation__
- *
- * To run a mutation, you first call `useUpdateRoomMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRoomMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRoomMutation, { data, loading, error }] = useUpdateRoomMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      capacity: // value for 'capacity'
- *      originatingDataId: // value for 'originatingDataId'
- *      priority: // value for 'priority'
- *   },
- * });
- */
-export function useUpdateRoomMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoomMutation, UpdateRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRoomMutation, UpdateRoomMutationVariables>(UpdateRoomDocument, options);
-      }
-export type UpdateRoomMutationHookResult = ReturnType<typeof useUpdateRoomMutation>;
-export type UpdateRoomMutationResult = Apollo.MutationResult<UpdateRoomMutation>;
-export type UpdateRoomMutationOptions = Apollo.BaseMutationOptions<UpdateRoomMutation, UpdateRoomMutationVariables>;
+export function useUpdateRoomMutation() {
+  return Urql.useMutation<UpdateRoomMutation, UpdateRoomMutationVariables>(UpdateRoomDocument);
+};
 export const DeleteEventsDocument = gql`
     mutation DeleteEvents($deleteEventIds: [uuid!]!) {
   delete_schedule_Event(where: {id: {_in: $deleteEventIds}}) {
@@ -53193,32 +47580,10 @@ export const DeleteEventsDocument = gql`
   }
 }
     `;
-export type DeleteEventsMutationFn = Apollo.MutationFunction<DeleteEventsMutation, DeleteEventsMutationVariables>;
 
-/**
- * __useDeleteEventsMutation__
- *
- * To run a mutation, you first call `useDeleteEventsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteEventsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteEventsMutation, { data, loading, error }] = useDeleteEventsMutation({
- *   variables: {
- *      deleteEventIds: // value for 'deleteEventIds'
- *   },
- * });
- */
-export function useDeleteEventsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventsMutation, DeleteEventsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteEventsMutation, DeleteEventsMutationVariables>(DeleteEventsDocument, options);
-      }
-export type DeleteEventsMutationHookResult = ReturnType<typeof useDeleteEventsMutation>;
-export type DeleteEventsMutationResult = Apollo.MutationResult<DeleteEventsMutation>;
-export type DeleteEventsMutationOptions = Apollo.BaseMutationOptions<DeleteEventsMutation, DeleteEventsMutationVariables>;
+export function useDeleteEventsMutation() {
+  return Urql.useMutation<DeleteEventsMutation, DeleteEventsMutationVariables>(DeleteEventsDocument);
+};
 export const InsertEventDocument = gql`
     mutation InsertEvent($newEvent: schedule_Event_insert_input!, $newEventId: uuid!, $insertContinuation: Boolean!) {
   insert_schedule_Event_one(object: $newEvent) {
@@ -53231,34 +47596,10 @@ export const InsertEventDocument = gql`
   }
 }
     ${EventInfoFragmentDoc}`;
-export type InsertEventMutationFn = Apollo.MutationFunction<InsertEventMutation, InsertEventMutationVariables>;
 
-/**
- * __useInsertEventMutation__
- *
- * To run a mutation, you first call `useInsertEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertEventMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertEventMutation, { data, loading, error }] = useInsertEventMutation({
- *   variables: {
- *      newEvent: // value for 'newEvent'
- *      newEventId: // value for 'newEventId'
- *      insertContinuation: // value for 'insertContinuation'
- *   },
- * });
- */
-export function useInsertEventMutation(baseOptions?: Apollo.MutationHookOptions<InsertEventMutation, InsertEventMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertEventMutation, InsertEventMutationVariables>(InsertEventDocument, options);
-      }
-export type InsertEventMutationHookResult = ReturnType<typeof useInsertEventMutation>;
-export type InsertEventMutationResult = Apollo.MutationResult<InsertEventMutation>;
-export type InsertEventMutationOptions = Apollo.BaseMutationOptions<InsertEventMutation, InsertEventMutationVariables>;
+export function useInsertEventMutation() {
+  return Urql.useMutation<InsertEventMutation, InsertEventMutationVariables>(InsertEventDocument);
+};
 export const UpdateEventDocument = gql`
     mutation UpdateEvent($eventId: uuid!, $roomId: uuid!, $intendedRoomModeName: room_Mode_enum!, $originatingDataId: uuid = null, $name: String!, $startTime: timestamptz!, $durationSeconds: Int!, $itemId: uuid = null, $exhibitionId: uuid = null, $newEventTags: [schedule_EventTag_insert_input!]!, $deleteEventTagIds: [uuid!]!) {
   insert_schedule_EventTag(objects: $newEventTags) {
@@ -53282,42 +47623,10 @@ export const UpdateEventDocument = gql`
 }
     ${EventTagInfoFragmentDoc}
 ${EventInfoFragmentDoc}`;
-export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
 
-/**
- * __useUpdateEventMutation__
- *
- * To run a mutation, you first call `useUpdateEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEventMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEventMutation, { data, loading, error }] = useUpdateEventMutation({
- *   variables: {
- *      eventId: // value for 'eventId'
- *      roomId: // value for 'roomId'
- *      intendedRoomModeName: // value for 'intendedRoomModeName'
- *      originatingDataId: // value for 'originatingDataId'
- *      name: // value for 'name'
- *      startTime: // value for 'startTime'
- *      durationSeconds: // value for 'durationSeconds'
- *      itemId: // value for 'itemId'
- *      exhibitionId: // value for 'exhibitionId'
- *      newEventTags: // value for 'newEventTags'
- *      deleteEventTagIds: // value for 'deleteEventTagIds'
- *   },
- * });
- */
-export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventMutation, UpdateEventMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, options);
-      }
-export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
-export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
-export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
+export function useUpdateEventMutation() {
+  return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument);
+};
 export const UpdateShufflePeriodDocument = gql`
     mutation UpdateShufflePeriod($id: uuid!, $object: room_ShufflePeriod_set_input!) {
   update_room_ShufflePeriod_by_pk(pk_columns: {id: $id}, _set: $object) {
@@ -53337,33 +47646,10 @@ export const UpdateShufflePeriodDocument = gql`
   }
 }
     `;
-export type UpdateShufflePeriodMutationFn = Apollo.MutationFunction<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
 
-/**
- * __useUpdateShufflePeriodMutation__
- *
- * To run a mutation, you first call `useUpdateShufflePeriodMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateShufflePeriodMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateShufflePeriodMutation, { data, loading, error }] = useUpdateShufflePeriodMutation({
- *   variables: {
- *      id: // value for 'id'
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useUpdateShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>(UpdateShufflePeriodDocument, options);
-      }
-export type UpdateShufflePeriodMutationHookResult = ReturnType<typeof useUpdateShufflePeriodMutation>;
-export type UpdateShufflePeriodMutationResult = Apollo.MutationResult<UpdateShufflePeriodMutation>;
-export type UpdateShufflePeriodMutationOptions = Apollo.BaseMutationOptions<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>;
+export function useUpdateShufflePeriodMutation() {
+  return Urql.useMutation<UpdateShufflePeriodMutation, UpdateShufflePeriodMutationVariables>(UpdateShufflePeriodDocument);
+};
 export const InsertShufflePeriodDocument = gql`
     mutation InsertShufflePeriod($object: room_ShufflePeriod_insert_input!) {
   insert_room_ShufflePeriod_one(object: $object) {
@@ -53383,32 +47669,10 @@ export const InsertShufflePeriodDocument = gql`
   }
 }
     `;
-export type InsertShufflePeriodMutationFn = Apollo.MutationFunction<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
 
-/**
- * __useInsertShufflePeriodMutation__
- *
- * To run a mutation, you first call `useInsertShufflePeriodMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertShufflePeriodMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [insertShufflePeriodMutation, { data, loading, error }] = useInsertShufflePeriodMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useInsertShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>(InsertShufflePeriodDocument, options);
-      }
-export type InsertShufflePeriodMutationHookResult = ReturnType<typeof useInsertShufflePeriodMutation>;
-export type InsertShufflePeriodMutationResult = Apollo.MutationResult<InsertShufflePeriodMutation>;
-export type InsertShufflePeriodMutationOptions = Apollo.BaseMutationOptions<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>;
+export function useInsertShufflePeriodMutation() {
+  return Urql.useMutation<InsertShufflePeriodMutation, InsertShufflePeriodMutationVariables>(InsertShufflePeriodDocument);
+};
 export const ManageShufflePeriods_SelectAllDocument = gql`
     query ManageShufflePeriods_SelectAll($conferenceId: uuid!) {
   room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -53417,33 +47681,9 @@ export const ManageShufflePeriods_SelectAllDocument = gql`
 }
     ${ManageShufflePeriods_ShufflePeriodFragmentDoc}`;
 
-/**
- * __useManageShufflePeriods_SelectAllQuery__
- *
- * To run a query within a React component, call `useManageShufflePeriods_SelectAllQuery` and pass it any options that fit your needs.
- * When your component renders, `useManageShufflePeriods_SelectAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useManageShufflePeriods_SelectAllQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useManageShufflePeriods_SelectAllQuery(baseOptions: Apollo.QueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, options);
-      }
-export function useManageShufflePeriods_SelectAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(ManageShufflePeriods_SelectAllDocument, options);
-        }
-export type ManageShufflePeriods_SelectAllQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllQuery>;
-export type ManageShufflePeriods_SelectAllLazyQueryHookResult = ReturnType<typeof useManageShufflePeriods_SelectAllLazyQuery>;
-export type ManageShufflePeriods_SelectAllQueryResult = Apollo.QueryResult<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>;
+export function useManageShufflePeriods_SelectAllQuery(options: Omit<Urql.UseQueryArgs<ManageShufflePeriods_SelectAllQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageShufflePeriods_SelectAllQuery>({ query: ManageShufflePeriods_SelectAllDocument, ...options });
+};
 export const DeleteShufflePeriodDocument = gql`
     mutation DeleteShufflePeriod($id: uuid!) {
   delete_room_ShufflePeriod_by_pk(id: $id) {
@@ -53451,32 +47691,10 @@ export const DeleteShufflePeriodDocument = gql`
   }
 }
     `;
-export type DeleteShufflePeriodMutationFn = Apollo.MutationFunction<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
 
-/**
- * __useDeleteShufflePeriodMutation__
- *
- * To run a mutation, you first call `useDeleteShufflePeriodMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteShufflePeriodMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteShufflePeriodMutation, { data, loading, error }] = useDeleteShufflePeriodMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteShufflePeriodMutation(baseOptions?: Apollo.MutationHookOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>(DeleteShufflePeriodDocument, options);
-      }
-export type DeleteShufflePeriodMutationHookResult = ReturnType<typeof useDeleteShufflePeriodMutation>;
-export type DeleteShufflePeriodMutationResult = Apollo.MutationResult<DeleteShufflePeriodMutation>;
-export type DeleteShufflePeriodMutationOptions = Apollo.BaseMutationOptions<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>;
+export function useDeleteShufflePeriodMutation() {
+  return Urql.useMutation<DeleteShufflePeriodMutation, DeleteShufflePeriodMutationVariables>(DeleteShufflePeriodDocument);
+};
 export const UpsertConferenceThemeDocument = gql`
     mutation UpsertConferenceTheme($conferenceId: uuid!, $value: jsonb!) {
   insert_conference_Configuration_one(
@@ -53489,33 +47707,10 @@ export const UpsertConferenceThemeDocument = gql`
   }
 }
     `;
-export type UpsertConferenceThemeMutationFn = Apollo.MutationFunction<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>;
 
-/**
- * __useUpsertConferenceThemeMutation__
- *
- * To run a mutation, you first call `useUpsertConferenceThemeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpsertConferenceThemeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [upsertConferenceThemeMutation, { data, loading, error }] = useUpsertConferenceThemeMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      value: // value for 'value'
- *   },
- * });
- */
-export function useUpsertConferenceThemeMutation(baseOptions?: Apollo.MutationHookOptions<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>(UpsertConferenceThemeDocument, options);
-      }
-export type UpsertConferenceThemeMutationHookResult = ReturnType<typeof useUpsertConferenceThemeMutation>;
-export type UpsertConferenceThemeMutationResult = Apollo.MutationResult<UpsertConferenceThemeMutation>;
-export type UpsertConferenceThemeMutationOptions = Apollo.BaseMutationOptions<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>;
+export function useUpsertConferenceThemeMutation() {
+  return Urql.useMutation<UpsertConferenceThemeMutation, UpsertConferenceThemeMutationVariables>(UpsertConferenceThemeDocument);
+};
 export const ConferenceTakenDocument = gql`
     query ConferenceTaken($name: String!, $shortName: String!, $slug: String!) {
   conference_Conference(
@@ -53529,35 +47724,9 @@ export const ConferenceTakenDocument = gql`
 }
     `;
 
-/**
- * __useConferenceTakenQuery__
- *
- * To run a query within a React component, call `useConferenceTakenQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceTakenQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceTakenQuery({
- *   variables: {
- *      name: // value for 'name'
- *      shortName: // value for 'shortName'
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useConferenceTakenQuery(baseOptions: Apollo.QueryHookOptions<ConferenceTakenQuery, ConferenceTakenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, options);
-      }
-export function useConferenceTakenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceTakenQuery, ConferenceTakenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, options);
-        }
-export type ConferenceTakenQueryHookResult = ReturnType<typeof useConferenceTakenQuery>;
-export type ConferenceTakenLazyQueryHookResult = ReturnType<typeof useConferenceTakenLazyQuery>;
-export type ConferenceTakenQueryResult = Apollo.QueryResult<ConferenceTakenQuery, ConferenceTakenQueryVariables>;
+export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<ConferenceTakenQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
+};
 export const CreateConferenceDocument = gql`
     mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
   insert_conference_Conference(
@@ -53576,35 +47745,10 @@ export const CreateConferenceDocument = gql`
   }
 }
     `;
-export type CreateConferenceMutationFn = Apollo.MutationFunction<CreateConferenceMutation, CreateConferenceMutationVariables>;
 
-/**
- * __useCreateConferenceMutation__
- *
- * To run a mutation, you first call `useCreateConferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConferenceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createConferenceMutation, { data, loading, error }] = useCreateConferenceMutation({
- *   variables: {
- *      name: // value for 'name'
- *      shortName: // value for 'shortName'
- *      slug: // value for 'slug'
- *      demoCode: // value for 'demoCode'
- *   },
- * });
- */
-export function useCreateConferenceMutation(baseOptions?: Apollo.MutationHookOptions<CreateConferenceMutation, CreateConferenceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument, options);
-      }
-export type CreateConferenceMutationHookResult = ReturnType<typeof useCreateConferenceMutation>;
-export type CreateConferenceMutationResult = Apollo.MutationResult<CreateConferenceMutation>;
-export type CreateConferenceMutationOptions = Apollo.BaseMutationOptions<CreateConferenceMutation, CreateConferenceMutationVariables>;
+export function useCreateConferenceMutation() {
+  return Urql.useMutation<CreateConferenceMutation, CreateConferenceMutationVariables>(CreateConferenceDocument);
+};
 export const CreateNewConferenceMetaStructureDocument = gql`
     mutation CreateNewConferenceMetaStructure($conferenceId: uuid!, $registrantDisplayName: String!, $userId: String!, $abstractData: jsonb!, $itemListData: jsonb!) {
   insert_registrant_Registrant(
@@ -53644,36 +47788,10 @@ export const CreateNewConferenceMetaStructureDocument = gql`
   }
 }
     `;
-export type CreateNewConferenceMetaStructureMutationFn = Apollo.MutationFunction<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
 
-/**
- * __useCreateNewConferenceMetaStructureMutation__
- *
- * To run a mutation, you first call `useCreateNewConferenceMetaStructureMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateNewConferenceMetaStructureMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createNewConferenceMetaStructureMutation, { data, loading, error }] = useCreateNewConferenceMetaStructureMutation({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      registrantDisplayName: // value for 'registrantDisplayName'
- *      userId: // value for 'userId'
- *      abstractData: // value for 'abstractData'
- *      itemListData: // value for 'itemListData'
- *   },
- * });
- */
-export function useCreateNewConferenceMetaStructureMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>(CreateNewConferenceMetaStructureDocument, options);
-      }
-export type CreateNewConferenceMetaStructureMutationHookResult = ReturnType<typeof useCreateNewConferenceMetaStructureMutation>;
-export type CreateNewConferenceMetaStructureMutationResult = Apollo.MutationResult<CreateNewConferenceMetaStructureMutation>;
-export type CreateNewConferenceMetaStructureMutationOptions = Apollo.BaseMutationOptions<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>;
+export function useCreateNewConferenceMetaStructureMutation() {
+  return Urql.useMutation<CreateNewConferenceMetaStructureMutation, CreateNewConferenceMetaStructureMutationVariables>(CreateNewConferenceMetaStructureDocument);
+};
 export const RegistrantsByIdDocument = gql`
     query RegistrantsById($conferenceId: uuid!, $registrantIds: [uuid!]!) {
   registrant_Registrant(
@@ -53684,34 +47802,9 @@ export const RegistrantsByIdDocument = gql`
 }
     ${RegistrantDataFragmentDoc}`;
 
-/**
- * __useRegistrantsByIdQuery__
- *
- * To run a query within a React component, call `useRegistrantsByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useRegistrantsByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRegistrantsByIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      registrantIds: // value for 'registrantIds'
- *   },
- * });
- */
-export function useRegistrantsByIdQuery(baseOptions: Apollo.QueryHookOptions<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>(RegistrantsByIdDocument, options);
-      }
-export function useRegistrantsByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>(RegistrantsByIdDocument, options);
-        }
-export type RegistrantsByIdQueryHookResult = ReturnType<typeof useRegistrantsByIdQuery>;
-export type RegistrantsByIdLazyQueryHookResult = ReturnType<typeof useRegistrantsByIdLazyQuery>;
-export type RegistrantsByIdQueryResult = Apollo.QueryResult<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>;
+export function useRegistrantsByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RegistrantsByIdQuery>({ query: RegistrantsByIdDocument, ...options });
+};
 export const RegistrantsByUserIdDocument = gql`
     query RegistrantsByUserId($conferenceId: uuid!, $userIds: [String!]!) {
   registrant_Registrant(
@@ -53722,34 +47815,9 @@ export const RegistrantsByUserIdDocument = gql`
 }
     ${RegistrantDataFragmentDoc}`;
 
-/**
- * __useRegistrantsByUserIdQuery__
- *
- * To run a query within a React component, call `useRegistrantsByUserIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useRegistrantsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRegistrantsByUserIdQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      userIds: // value for 'userIds'
- *   },
- * });
- */
-export function useRegistrantsByUserIdQuery(baseOptions: Apollo.QueryHookOptions<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>(RegistrantsByUserIdDocument, options);
-      }
-export function useRegistrantsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>(RegistrantsByUserIdDocument, options);
-        }
-export type RegistrantsByUserIdQueryHookResult = ReturnType<typeof useRegistrantsByUserIdQuery>;
-export type RegistrantsByUserIdLazyQueryHookResult = ReturnType<typeof useRegistrantsByUserIdLazyQuery>;
-export type RegistrantsByUserIdQueryResult = Apollo.QueryResult<RegistrantsByUserIdQuery, RegistrantsByUserIdQueryVariables>;
+export function useRegistrantsByUserIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantsByUserIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RegistrantsByUserIdQuery>({ query: RegistrantsByUserIdDocument, ...options });
+};
 export const ConferenceBySlug_WithUserDocument = gql`
     query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
   conference_Conference(where: {slug: {_eq: $slug}}) {
@@ -53760,34 +47828,9 @@ export const ConferenceBySlug_WithUserDocument = gql`
     ${PublicConferenceInfoFragmentDoc}
 ${AuthdConferenceInfoFragmentDoc}`;
 
-/**
- * __useConferenceBySlug_WithUserQuery__
- *
- * To run a query within a React component, call `useConferenceBySlug_WithUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceBySlug_WithUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceBySlug_WithUserQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useConferenceBySlug_WithUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, options);
-      }
-export function useConferenceBySlug_WithUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>(ConferenceBySlug_WithUserDocument, options);
-        }
-export type ConferenceBySlug_WithUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserQuery>;
-export type ConferenceBySlug_WithUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithUserLazyQuery>;
-export type ConferenceBySlug_WithUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithUserQuery, ConferenceBySlug_WithUserQueryVariables>;
+export function useConferenceBySlug_WithUserQuery(options: Omit<Urql.UseQueryArgs<ConferenceBySlug_WithUserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceBySlug_WithUserQuery>({ query: ConferenceBySlug_WithUserDocument, ...options });
+};
 export const ConferenceBySlug_WithoutUserDocument = gql`
     query ConferenceBySlug_WithoutUser($slug: String!) {
   conference_Conference(where: {slug: {_eq: $slug}}) {
@@ -53796,33 +47839,9 @@ export const ConferenceBySlug_WithoutUserDocument = gql`
 }
     ${PublicConferenceInfoFragmentDoc}`;
 
-/**
- * __useConferenceBySlug_WithoutUserQuery__
- *
- * To run a query within a React component, call `useConferenceBySlug_WithoutUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useConferenceBySlug_WithoutUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useConferenceBySlug_WithoutUserQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useConferenceBySlug_WithoutUserQuery(baseOptions: Apollo.QueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, options);
-      }
-export function useConferenceBySlug_WithoutUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>(ConferenceBySlug_WithoutUserDocument, options);
-        }
-export type ConferenceBySlug_WithoutUserQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserQuery>;
-export type ConferenceBySlug_WithoutUserLazyQueryHookResult = ReturnType<typeof useConferenceBySlug_WithoutUserLazyQuery>;
-export type ConferenceBySlug_WithoutUserQueryResult = Apollo.QueryResult<ConferenceBySlug_WithoutUserQuery, ConferenceBySlug_WithoutUserQueryVariables>;
+export function useConferenceBySlug_WithoutUserQuery(options: Omit<Urql.UseQueryArgs<ConferenceBySlug_WithoutUserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConferenceBySlug_WithoutUserQuery>({ query: ConferenceBySlug_WithoutUserDocument, ...options });
+};
 export const UpdateSubtitlesDocument = gql`
     mutation UpdateSubtitles($elementId: String!, $magicToken: String!, $subtitleText: String!) {
   updateSubtitles(
@@ -53835,34 +47854,10 @@ export const UpdateSubtitlesDocument = gql`
   }
 }
     `;
-export type UpdateSubtitlesMutationFn = Apollo.MutationFunction<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
 
-/**
- * __useUpdateSubtitlesMutation__
- *
- * To run a mutation, you first call `useUpdateSubtitlesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateSubtitlesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateSubtitlesMutation, { data, loading, error }] = useUpdateSubtitlesMutation({
- *   variables: {
- *      elementId: // value for 'elementId'
- *      magicToken: // value for 'magicToken'
- *      subtitleText: // value for 'subtitleText'
- *   },
- * });
- */
-export function useUpdateSubtitlesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>(UpdateSubtitlesDocument, options);
-      }
-export type UpdateSubtitlesMutationHookResult = ReturnType<typeof useUpdateSubtitlesMutation>;
-export type UpdateSubtitlesMutationResult = Apollo.MutationResult<UpdateSubtitlesMutation>;
-export type UpdateSubtitlesMutationOptions = Apollo.BaseMutationOptions<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>;
+export function useUpdateSubtitlesMutation() {
+  return Urql.useMutation<UpdateSubtitlesMutation, UpdateSubtitlesMutationVariables>(UpdateSubtitlesDocument);
+};
 export const Submissions_ListUploadersDocument = gql`
     query Submissions_ListUploaders($elementId: uuid!) {
   content_Uploader(where: {elementId: {_eq: $elementId}}) {
@@ -53873,33 +47868,9 @@ export const Submissions_ListUploadersDocument = gql`
 }
     `;
 
-/**
- * __useSubmissions_ListUploadersQuery__
- *
- * To run a query within a React component, call `useSubmissions_ListUploadersQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubmissions_ListUploadersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubmissions_ListUploadersQuery({
- *   variables: {
- *      elementId: // value for 'elementId'
- *   },
- * });
- */
-export function useSubmissions_ListUploadersQuery(baseOptions: Apollo.QueryHookOptions<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>(Submissions_ListUploadersDocument, options);
-      }
-export function useSubmissions_ListUploadersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>(Submissions_ListUploadersDocument, options);
-        }
-export type Submissions_ListUploadersQueryHookResult = ReturnType<typeof useSubmissions_ListUploadersQuery>;
-export type Submissions_ListUploadersLazyQueryHookResult = ReturnType<typeof useSubmissions_ListUploadersLazyQuery>;
-export type Submissions_ListUploadersQueryResult = Apollo.QueryResult<Submissions_ListUploadersQuery, Submissions_ListUploadersQueryVariables>;
+export function useSubmissions_ListUploadersQuery(options: Omit<Urql.UseQueryArgs<Submissions_ListUploadersQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Submissions_ListUploadersQuery>({ query: Submissions_ListUploadersDocument, ...options });
+};
 export const Submissions_GetProgramPersonAccessTokenDocument = gql`
     query Submissions_GetProgramPersonAccessToken($elementId: uuid!, $uploaderEmail: String!, $elementAccessToken: String!) {
   getProgramPersonAccessToken(
@@ -53912,35 +47883,9 @@ export const Submissions_GetProgramPersonAccessTokenDocument = gql`
 }
     `;
 
-/**
- * __useSubmissions_GetProgramPersonAccessTokenQuery__
- *
- * To run a query within a React component, call `useSubmissions_GetProgramPersonAccessTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubmissions_GetProgramPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubmissions_GetProgramPersonAccessTokenQuery({
- *   variables: {
- *      elementId: // value for 'elementId'
- *      uploaderEmail: // value for 'uploaderEmail'
- *      elementAccessToken: // value for 'elementAccessToken'
- *   },
- * });
- */
-export function useSubmissions_GetProgramPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>(Submissions_GetProgramPersonAccessTokenDocument, options);
-      }
-export function useSubmissions_GetProgramPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>(Submissions_GetProgramPersonAccessTokenDocument, options);
-        }
-export type Submissions_GetProgramPersonAccessTokenQueryHookResult = ReturnType<typeof useSubmissions_GetProgramPersonAccessTokenQuery>;
-export type Submissions_GetProgramPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useSubmissions_GetProgramPersonAccessTokenLazyQuery>;
-export type Submissions_GetProgramPersonAccessTokenQueryResult = Apollo.QueryResult<Submissions_GetProgramPersonAccessTokenQuery, Submissions_GetProgramPersonAccessTokenQueryVariables>;
+export function useSubmissions_GetProgramPersonAccessTokenQuery(options: Omit<Urql.UseQueryArgs<Submissions_GetProgramPersonAccessTokenQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Submissions_GetProgramPersonAccessTokenQuery>({ query: Submissions_GetProgramPersonAccessTokenDocument, ...options });
+};
 export const ItemByPersonAccessTokenDocument = gql`
     query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
   collection_ProgramPersonByAccessToken(where: {accessToken: {_eq: $accessToken}}) {
@@ -53963,34 +47908,9 @@ export const ItemByPersonAccessTokenDocument = gql`
 }
     `;
 
-/**
- * __useItemByPersonAccessTokenQuery__
- *
- * To run a query within a React component, call `useItemByPersonAccessTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useItemByPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useItemByPersonAccessTokenQuery({
- *   variables: {
- *      accessToken: // value for 'accessToken'
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useItemByPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>(ItemByPersonAccessTokenDocument, options);
-      }
-export function useItemByPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>(ItemByPersonAccessTokenDocument, options);
-        }
-export type ItemByPersonAccessTokenQueryHookResult = ReturnType<typeof useItemByPersonAccessTokenQuery>;
-export type ItemByPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useItemByPersonAccessTokenLazyQuery>;
-export type ItemByPersonAccessTokenQueryResult = Apollo.QueryResult<ItemByPersonAccessTokenQuery, ItemByPersonAccessTokenQueryVariables>;
+export function useItemByPersonAccessTokenQuery(options: Omit<Urql.UseQueryArgs<ItemByPersonAccessTokenQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ItemByPersonAccessTokenQuery>({ query: ItemByPersonAccessTokenDocument, ...options });
+};
 export const ItemsByPersonAccessTokenDocument = gql`
     query ItemsByPersonAccessToken($accessToken: String!) {
   collection_ProgramPersonByAccessToken(where: {accessToken: {_eq: $accessToken}}) {
@@ -54007,33 +47927,9 @@ export const ItemsByPersonAccessTokenDocument = gql`
 }
     `;
 
-/**
- * __useItemsByPersonAccessTokenQuery__
- *
- * To run a query within a React component, call `useItemsByPersonAccessTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useItemsByPersonAccessTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useItemsByPersonAccessTokenQuery({
- *   variables: {
- *      accessToken: // value for 'accessToken'
- *   },
- * });
- */
-export function useItemsByPersonAccessTokenQuery(baseOptions: Apollo.QueryHookOptions<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>(ItemsByPersonAccessTokenDocument, options);
-      }
-export function useItemsByPersonAccessTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>(ItemsByPersonAccessTokenDocument, options);
-        }
-export type ItemsByPersonAccessTokenQueryHookResult = ReturnType<typeof useItemsByPersonAccessTokenQuery>;
-export type ItemsByPersonAccessTokenLazyQueryHookResult = ReturnType<typeof useItemsByPersonAccessTokenLazyQuery>;
-export type ItemsByPersonAccessTokenQueryResult = Apollo.QueryResult<ItemsByPersonAccessTokenQuery, ItemsByPersonAccessTokenQueryVariables>;
+export function useItemsByPersonAccessTokenQuery(options: Omit<Urql.UseQueryArgs<ItemsByPersonAccessTokenQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ItemsByPersonAccessTokenQuery>({ query: ItemsByPersonAccessTokenDocument, ...options });
+};
 export const GetElementDocument = gql`
     query GetElement($accessToken: String!, $elementId: uuid!) {
   content_ElementByPersonAccessToken(where: {id: {_eq: $elementId}}) {
@@ -54054,34 +47950,9 @@ export const GetElementDocument = gql`
 }
     `;
 
-/**
- * __useGetElementQuery__
- *
- * To run a query within a React component, call `useGetElementQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetElementQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetElementQuery({
- *   variables: {
- *      accessToken: // value for 'accessToken'
- *      elementId: // value for 'elementId'
- *   },
- * });
- */
-export function useGetElementQuery(baseOptions: Apollo.QueryHookOptions<GetElementQuery, GetElementQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetElementQuery, GetElementQueryVariables>(GetElementDocument, options);
-      }
-export function useGetElementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetElementQuery, GetElementQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetElementQuery, GetElementQueryVariables>(GetElementDocument, options);
-        }
-export type GetElementQueryHookResult = ReturnType<typeof useGetElementQuery>;
-export type GetElementLazyQueryHookResult = ReturnType<typeof useGetElementLazyQuery>;
-export type GetElementQueryResult = Apollo.QueryResult<GetElementQuery, GetElementQueryVariables>;
+export function useGetElementQuery(options: Omit<Urql.UseQueryArgs<GetElementQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetElementQuery>({ query: GetElementDocument, ...options });
+};
 export const SubmitUploadableElementDocument = gql`
     mutation submitUploadableElement($elementData: jsonb!, $magicToken: String!) {
   submitUploadableElement(data: $elementData, magicToken: $magicToken) {
@@ -54090,33 +47961,10 @@ export const SubmitUploadableElementDocument = gql`
   }
 }
     `;
-export type SubmitUploadableElementMutationFn = Apollo.MutationFunction<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>;
 
-/**
- * __useSubmitUploadableElementMutation__
- *
- * To run a mutation, you first call `useSubmitUploadableElementMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubmitUploadableElementMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [submitUploadableElementMutation, { data, loading, error }] = useSubmitUploadableElementMutation({
- *   variables: {
- *      elementData: // value for 'elementData'
- *      magicToken: // value for 'magicToken'
- *   },
- * });
- */
-export function useSubmitUploadableElementMutation(baseOptions?: Apollo.MutationHookOptions<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>(SubmitUploadableElementDocument, options);
-      }
-export type SubmitUploadableElementMutationHookResult = ReturnType<typeof useSubmitUploadableElementMutation>;
-export type SubmitUploadableElementMutationResult = Apollo.MutationResult<SubmitUploadableElementMutation>;
-export type SubmitUploadableElementMutationOptions = Apollo.BaseMutationOptions<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>;
+export function useSubmitUploadableElementMutation() {
+  return Urql.useMutation<SubmitUploadableElementMutation, SubmitUploadableElementMutationVariables>(SubmitUploadableElementDocument);
+};
 export const GetUploadAgreementDocument = gql`
     query GetUploadAgreement($magicToken: String!) {
   getUploadAgreement(magicToken: $magicToken) {
@@ -54126,33 +47974,9 @@ export const GetUploadAgreementDocument = gql`
 }
     `;
 
-/**
- * __useGetUploadAgreementQuery__
- *
- * To run a query within a React component, call `useGetUploadAgreementQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUploadAgreementQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUploadAgreementQuery({
- *   variables: {
- *      magicToken: // value for 'magicToken'
- *   },
- * });
- */
-export function useGetUploadAgreementQuery(baseOptions: Apollo.QueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, options);
-      }
-export function useGetUploadAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>(GetUploadAgreementDocument, options);
-        }
-export type GetUploadAgreementQueryHookResult = ReturnType<typeof useGetUploadAgreementQuery>;
-export type GetUploadAgreementLazyQueryHookResult = ReturnType<typeof useGetUploadAgreementLazyQuery>;
-export type GetUploadAgreementQueryResult = Apollo.QueryResult<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
+export function useGetUploadAgreementQuery(options: Omit<Urql.UseQueryArgs<GetUploadAgreementQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUploadAgreementQuery>({ query: GetUploadAgreementDocument, ...options });
+};
 export const GetForceUserRefreshConfigDocument = gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
   conference_Configuration_by_pk(
@@ -54166,33 +47990,9 @@ export const GetForceUserRefreshConfigDocument = gql`
 }
     `;
 
-/**
- * __useGetForceUserRefreshConfigQuery__
- *
- * To run a query within a React component, call `useGetForceUserRefreshConfigQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetForceUserRefreshConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetForceUserRefreshConfigQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetForceUserRefreshConfigQuery(baseOptions: Apollo.QueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, options);
-      }
-export function useGetForceUserRefreshConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>(GetForceUserRefreshConfigDocument, options);
-        }
-export type GetForceUserRefreshConfigQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigQuery>;
-export type GetForceUserRefreshConfigLazyQueryHookResult = ReturnType<typeof useGetForceUserRefreshConfigLazyQuery>;
-export type GetForceUserRefreshConfigQueryResult = Apollo.QueryResult<GetForceUserRefreshConfigQuery, GetForceUserRefreshConfigQueryVariables>;
+export function useGetForceUserRefreshConfigQuery(options: Omit<Urql.UseQueryArgs<GetForceUserRefreshConfigQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetForceUserRefreshConfigQuery>({ query: GetForceUserRefreshConfigDocument, ...options });
+};
 export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
     mutation GoogleOAuth_SubmitGoogleOAuthCode($code: String!, $state: String!) {
   submitGoogleOAuthCode(code: $code, state: $state) {
@@ -54201,33 +48001,10 @@ export const GoogleOAuth_SubmitGoogleOAuthCodeDocument = gql`
   }
 }
     `;
-export type GoogleOAuth_SubmitGoogleOAuthCodeMutationFn = Apollo.MutationFunction<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
 
-/**
- * __useGoogleOAuth_SubmitGoogleOAuthCodeMutation__
- *
- * To run a mutation, you first call `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGoogleOAuth_SubmitGoogleOAuthCodeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [googleOAuthSubmitGoogleOAuthCodeMutation, { data, loading, error }] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation({
- *   variables: {
- *      code: // value for 'code'
- *      state: // value for 'state'
- *   },
- * });
- */
-export function useGoogleOAuth_SubmitGoogleOAuthCodeMutation(baseOptions?: Apollo.MutationHookOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>(GoogleOAuth_SubmitGoogleOAuthCodeDocument, options);
-      }
-export type GoogleOAuth_SubmitGoogleOAuthCodeMutationHookResult = ReturnType<typeof useGoogleOAuth_SubmitGoogleOAuthCodeMutation>;
-export type GoogleOAuth_SubmitGoogleOAuthCodeMutationResult = Apollo.MutationResult<GoogleOAuth_SubmitGoogleOAuthCodeMutation>;
-export type GoogleOAuth_SubmitGoogleOAuthCodeMutationOptions = Apollo.BaseMutationOptions<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>;
+export function useGoogleOAuth_SubmitGoogleOAuthCodeMutation() {
+  return Urql.useMutation<GoogleOAuth_SubmitGoogleOAuthCodeMutation, GoogleOAuth_SubmitGoogleOAuthCodeMutationVariables>(GoogleOAuth_SubmitGoogleOAuthCodeDocument);
+};
 export const SelectInvitationForAcceptDocument = gql`
     query SelectInvitationForAccept($inviteCode: uuid!) {
   registrant_Invitation(where: {inviteCode: {_eq: $inviteCode}}) {
@@ -54237,33 +48014,9 @@ export const SelectInvitationForAcceptDocument = gql`
 }
     `;
 
-/**
- * __useSelectInvitationForAcceptQuery__
- *
- * To run a query within a React component, call `useSelectInvitationForAcceptQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectInvitationForAcceptQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectInvitationForAcceptQuery({
- *   variables: {
- *      inviteCode: // value for 'inviteCode'
- *   },
- * });
- */
-export function useSelectInvitationForAcceptQuery(baseOptions: Apollo.QueryHookOptions<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>(SelectInvitationForAcceptDocument, options);
-      }
-export function useSelectInvitationForAcceptLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>(SelectInvitationForAcceptDocument, options);
-        }
-export type SelectInvitationForAcceptQueryHookResult = ReturnType<typeof useSelectInvitationForAcceptQuery>;
-export type SelectInvitationForAcceptLazyQueryHookResult = ReturnType<typeof useSelectInvitationForAcceptLazyQuery>;
-export type SelectInvitationForAcceptQueryResult = Apollo.QueryResult<SelectInvitationForAcceptQuery, SelectInvitationForAcceptQueryVariables>;
+export function useSelectInvitationForAcceptQuery(options: Omit<Urql.UseQueryArgs<SelectInvitationForAcceptQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectInvitationForAcceptQuery>({ query: SelectInvitationForAcceptDocument, ...options });
+};
 export const Invitation_ConfirmCurrentDocument = gql`
     mutation Invitation_ConfirmCurrent($inviteCode: uuid!) {
   invitationConfirmCurrent(inviteCode: $inviteCode) {
@@ -54272,32 +48025,10 @@ export const Invitation_ConfirmCurrentDocument = gql`
   }
 }
     `;
-export type Invitation_ConfirmCurrentMutationFn = Apollo.MutationFunction<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>;
 
-/**
- * __useInvitation_ConfirmCurrentMutation__
- *
- * To run a mutation, you first call `useInvitation_ConfirmCurrentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInvitation_ConfirmCurrentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [invitationConfirmCurrentMutation, { data, loading, error }] = useInvitation_ConfirmCurrentMutation({
- *   variables: {
- *      inviteCode: // value for 'inviteCode'
- *   },
- * });
- */
-export function useInvitation_ConfirmCurrentMutation(baseOptions?: Apollo.MutationHookOptions<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>(Invitation_ConfirmCurrentDocument, options);
-      }
-export type Invitation_ConfirmCurrentMutationHookResult = ReturnType<typeof useInvitation_ConfirmCurrentMutation>;
-export type Invitation_ConfirmCurrentMutationResult = Apollo.MutationResult<Invitation_ConfirmCurrentMutation>;
-export type Invitation_ConfirmCurrentMutationOptions = Apollo.BaseMutationOptions<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>;
+export function useInvitation_ConfirmCurrentMutation() {
+  return Urql.useMutation<Invitation_ConfirmCurrentMutation, Invitation_ConfirmCurrentMutationVariables>(Invitation_ConfirmCurrentDocument);
+};
 export const GetEventsInNextHourDocument = gql`
     query GetEventsInNextHour($conferenceId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
   schedule_Event(
@@ -54308,35 +48039,9 @@ export const GetEventsInNextHourDocument = gql`
 }
     ${MinimalEventInfoFragmentDoc}`;
 
-/**
- * __useGetEventsInNextHourQuery__
- *
- * To run a query within a React component, call `useGetEventsInNextHourQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEventsInNextHourQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEventsInNextHourQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      now: // value for 'now'
- *      cutoff: // value for 'cutoff'
- *   },
- * });
- */
-export function useGetEventsInNextHourQuery(baseOptions: Apollo.QueryHookOptions<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>(GetEventsInNextHourDocument, options);
-      }
-export function useGetEventsInNextHourLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>(GetEventsInNextHourDocument, options);
-        }
-export type GetEventsInNextHourQueryHookResult = ReturnType<typeof useGetEventsInNextHourQuery>;
-export type GetEventsInNextHourLazyQueryHookResult = ReturnType<typeof useGetEventsInNextHourLazyQuery>;
-export type GetEventsInNextHourQueryResult = Apollo.QueryResult<GetEventsInNextHourQuery, GetEventsInNextHourQueryVariables>;
+export function useGetEventsInNextHourQuery(options: Omit<Urql.UseQueryArgs<GetEventsInNextHourQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetEventsInNextHourQuery>({ query: GetEventsInNextHourDocument, ...options });
+};
 export const MenuScheduleDocument = gql`
     query MenuSchedule($now: timestamptz!, $inOneHour: timestamptz!, $conferenceId: uuid!) {
   schedule_Event(
@@ -54347,35 +48052,9 @@ export const MenuScheduleDocument = gql`
 }
     ${MenuSchedule_EventFragmentDoc}`;
 
-/**
- * __useMenuScheduleQuery__
- *
- * To run a query within a React component, call `useMenuScheduleQuery` and pass it any options that fit your needs.
- * When your component renders, `useMenuScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMenuScheduleQuery({
- *   variables: {
- *      now: // value for 'now'
- *      inOneHour: // value for 'inOneHour'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useMenuScheduleQuery(baseOptions: Apollo.QueryHookOptions<MenuScheduleQuery, MenuScheduleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MenuScheduleQuery, MenuScheduleQueryVariables>(MenuScheduleDocument, options);
-      }
-export function useMenuScheduleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuScheduleQuery, MenuScheduleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MenuScheduleQuery, MenuScheduleQueryVariables>(MenuScheduleDocument, options);
-        }
-export type MenuScheduleQueryHookResult = ReturnType<typeof useMenuScheduleQuery>;
-export type MenuScheduleLazyQueryHookResult = ReturnType<typeof useMenuScheduleLazyQuery>;
-export type MenuScheduleQueryResult = Apollo.QueryResult<MenuScheduleQuery, MenuScheduleQueryVariables>;
+export function useMenuScheduleQuery(options: Omit<Urql.UseQueryArgs<MenuScheduleQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MenuScheduleQuery>({ query: MenuScheduleDocument, ...options });
+};
 export const MenuSchedule_SearchEventsDocument = gql`
     query MenuSchedule_SearchEvents($conferenceId: uuid!, $search: String!) {
   schedule_Event(
@@ -54388,34 +48067,9 @@ export const MenuSchedule_SearchEventsDocument = gql`
 }
     ${MenuSchedule_EventFragmentDoc}`;
 
-/**
- * __useMenuSchedule_SearchEventsQuery__
- *
- * To run a query within a React component, call `useMenuSchedule_SearchEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMenuSchedule_SearchEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMenuSchedule_SearchEventsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useMenuSchedule_SearchEventsQuery(baseOptions: Apollo.QueryHookOptions<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>(MenuSchedule_SearchEventsDocument, options);
-      }
-export function useMenuSchedule_SearchEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>(MenuSchedule_SearchEventsDocument, options);
-        }
-export type MenuSchedule_SearchEventsQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsQuery>;
-export type MenuSchedule_SearchEventsLazyQueryHookResult = ReturnType<typeof useMenuSchedule_SearchEventsLazyQuery>;
-export type MenuSchedule_SearchEventsQueryResult = Apollo.QueryResult<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>;
+export function useMenuSchedule_SearchEventsQuery(options: Omit<Urql.UseQueryArgs<MenuSchedule_SearchEventsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MenuSchedule_SearchEventsQuery>({ query: MenuSchedule_SearchEventsDocument, ...options });
+};
 export const MainMenuSponsors_GetSponsorsDocument = gql`
     query MainMenuSponsors_GetSponsors($conferenceId: uuid!) {
   content_Item(
@@ -54427,33 +48081,9 @@ export const MainMenuSponsors_GetSponsorsDocument = gql`
 }
     ${MainMenuSponsors_ItemDataFragmentDoc}`;
 
-/**
- * __useMainMenuSponsors_GetSponsorsQuery__
- *
- * To run a query within a React component, call `useMainMenuSponsors_GetSponsorsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMainMenuSponsors_GetSponsorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMainMenuSponsors_GetSponsorsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useMainMenuSponsors_GetSponsorsQuery(baseOptions: Apollo.QueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, options);
-      }
-export function useMainMenuSponsors_GetSponsorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>(MainMenuSponsors_GetSponsorsDocument, options);
-        }
-export type MainMenuSponsors_GetSponsorsQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsQuery>;
-export type MainMenuSponsors_GetSponsorsLazyQueryHookResult = ReturnType<typeof useMainMenuSponsors_GetSponsorsLazyQuery>;
-export type MainMenuSponsors_GetSponsorsQueryResult = Apollo.QueryResult<MainMenuSponsors_GetSponsorsQuery, MainMenuSponsors_GetSponsorsQueryVariables>;
+export function useMainMenuSponsors_GetSponsorsQuery(options: Omit<Urql.UseQueryArgs<MainMenuSponsors_GetSponsorsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MainMenuSponsors_GetSponsorsQuery>({ query: MainMenuSponsors_GetSponsorsDocument, ...options });
+};
 export const CreateDmDocument = gql`
     mutation CreateDm($registrantIds: [uuid]!, $conferenceId: uuid!) {
   createRoomDm(registrantIds: $registrantIds, conferenceId: $conferenceId) {
@@ -54463,33 +48093,10 @@ export const CreateDmDocument = gql`
   }
 }
     `;
-export type CreateDmMutationFn = Apollo.MutationFunction<CreateDmMutation, CreateDmMutationVariables>;
 
-/**
- * __useCreateDmMutation__
- *
- * To run a mutation, you first call `useCreateDmMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDmMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDmMutation, { data, loading, error }] = useCreateDmMutation({
- *   variables: {
- *      registrantIds: // value for 'registrantIds'
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCreateDmMutation(baseOptions?: Apollo.MutationHookOptions<CreateDmMutation, CreateDmMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument, options);
-      }
-export type CreateDmMutationHookResult = ReturnType<typeof useCreateDmMutation>;
-export type CreateDmMutationResult = Apollo.MutationResult<CreateDmMutation>;
-export type CreateDmMutationOptions = Apollo.BaseMutationOptions<CreateDmMutation, CreateDmMutationVariables>;
+export function useCreateDmMutation() {
+  return Urql.useMutation<CreateDmMutation, CreateDmMutationVariables>(CreateDmDocument);
+};
 export const GetItemChatId_V1Document = gql`
     query GetItemChatId_V1($itemId: uuid!) {
   content_Item_by_pk(id: $itemId) {
@@ -54500,33 +48107,9 @@ export const GetItemChatId_V1Document = gql`
 }
     `;
 
-/**
- * __useGetItemChatId_V1Query__
- *
- * To run a query within a React component, call `useGetItemChatId_V1Query` and pass it any options that fit your needs.
- * When your component renders, `useGetItemChatId_V1Query` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetItemChatId_V1Query({
- *   variables: {
- *      itemId: // value for 'itemId'
- *   },
- * });
- */
-export function useGetItemChatId_V1Query(baseOptions: Apollo.QueryHookOptions<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>(GetItemChatId_V1Document, options);
-      }
-export function useGetItemChatId_V1LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>(GetItemChatId_V1Document, options);
-        }
-export type GetItemChatId_V1QueryHookResult = ReturnType<typeof useGetItemChatId_V1Query>;
-export type GetItemChatId_V1LazyQueryHookResult = ReturnType<typeof useGetItemChatId_V1LazyQuery>;
-export type GetItemChatId_V1QueryResult = Apollo.QueryResult<GetItemChatId_V1Query, GetItemChatId_V1QueryVariables>;
+export function useGetItemChatId_V1Query(options: Omit<Urql.UseQueryArgs<GetItemChatId_V1QueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetItemChatId_V1Query>({ query: GetItemChatId_V1Document, ...options });
+};
 export const GetRoomChatIdDocument = gql`
     query GetRoomChatId($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {
@@ -54537,33 +48120,9 @@ export const GetRoomChatIdDocument = gql`
 }
     `;
 
-/**
- * __useGetRoomChatIdQuery__
- *
- * To run a query within a React component, call `useGetRoomChatIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRoomChatIdQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, options);
-      }
-export function useGetRoomChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>(GetRoomChatIdDocument, options);
-        }
-export type GetRoomChatIdQueryHookResult = ReturnType<typeof useGetRoomChatIdQuery>;
-export type GetRoomChatIdLazyQueryHookResult = ReturnType<typeof useGetRoomChatIdLazyQuery>;
-export type GetRoomChatIdQueryResult = Apollo.QueryResult<GetRoomChatIdQuery, GetRoomChatIdQueryVariables>;
+export function useGetRoomChatIdQuery(options: Omit<Urql.UseQueryArgs<GetRoomChatIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetRoomChatIdQuery>({ query: GetRoomChatIdDocument, ...options });
+};
 export const CountSwagBagsDocument = gql`
     query CountSwagBags($conferenceId: uuid!) {
   content_Item_aggregate(
@@ -54576,33 +48135,9 @@ export const CountSwagBagsDocument = gql`
 }
     `;
 
-/**
- * __useCountSwagBagsQuery__
- *
- * To run a query within a React component, call `useCountSwagBagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCountSwagBagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCountSwagBagsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useCountSwagBagsQuery(baseOptions: Apollo.QueryHookOptions<CountSwagBagsQuery, CountSwagBagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CountSwagBagsQuery, CountSwagBagsQueryVariables>(CountSwagBagsDocument, options);
-      }
-export function useCountSwagBagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CountSwagBagsQuery, CountSwagBagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CountSwagBagsQuery, CountSwagBagsQueryVariables>(CountSwagBagsDocument, options);
-        }
-export type CountSwagBagsQueryHookResult = ReturnType<typeof useCountSwagBagsQuery>;
-export type CountSwagBagsLazyQueryHookResult = ReturnType<typeof useCountSwagBagsLazyQuery>;
-export type CountSwagBagsQueryResult = Apollo.QueryResult<CountSwagBagsQuery, CountSwagBagsQueryVariables>;
+export function useCountSwagBagsQuery(options: Omit<Urql.UseQueryArgs<CountSwagBagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CountSwagBagsQuery>({ query: CountSwagBagsDocument, ...options });
+};
 export const GetItemChatIdDocument = gql`
     query GetItemChatId($itemOrExhibitionId: uuid!) {
   content_Item(
@@ -54615,33 +48150,9 @@ export const GetItemChatIdDocument = gql`
 }
     `;
 
-/**
- * __useGetItemChatIdQuery__
- *
- * To run a query within a React component, call `useGetItemChatIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetItemChatIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetItemChatIdQuery({
- *   variables: {
- *      itemOrExhibitionId: // value for 'itemOrExhibitionId'
- *   },
- * });
- */
-export function useGetItemChatIdQuery(baseOptions: Apollo.QueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
-      }
-export function useGetItemChatIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetItemChatIdQuery, GetItemChatIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetItemChatIdQuery, GetItemChatIdQueryVariables>(GetItemChatIdDocument, options);
-        }
-export type GetItemChatIdQueryHookResult = ReturnType<typeof useGetItemChatIdQuery>;
-export type GetItemChatIdLazyQueryHookResult = ReturnType<typeof useGetItemChatIdLazyQuery>;
-export type GetItemChatIdQueryResult = Apollo.QueryResult<GetItemChatIdQuery, GetItemChatIdQueryVariables>;
+export function useGetItemChatIdQuery(options: Omit<Urql.UseQueryArgs<GetItemChatIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetItemChatIdQuery>({ query: GetItemChatIdDocument, ...options });
+};
 export const GetConferenceLandingPageItemIdDocument = gql`
     query GetConferenceLandingPageItemId($conferenceSlug: String!) {
   content_Item(
@@ -54653,33 +48164,9 @@ export const GetConferenceLandingPageItemIdDocument = gql`
 }
     `;
 
-/**
- * __useGetConferenceLandingPageItemIdQuery__
- *
- * To run a query within a React component, call `useGetConferenceLandingPageItemIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConferenceLandingPageItemIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetConferenceLandingPageItemIdQuery({
- *   variables: {
- *      conferenceSlug: // value for 'conferenceSlug'
- *   },
- * });
- */
-export function useGetConferenceLandingPageItemIdQuery(baseOptions: Apollo.QueryHookOptions<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>(GetConferenceLandingPageItemIdDocument, options);
-      }
-export function useGetConferenceLandingPageItemIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>(GetConferenceLandingPageItemIdDocument, options);
-        }
-export type GetConferenceLandingPageItemIdQueryHookResult = ReturnType<typeof useGetConferenceLandingPageItemIdQuery>;
-export type GetConferenceLandingPageItemIdLazyQueryHookResult = ReturnType<typeof useGetConferenceLandingPageItemIdLazyQuery>;
-export type GetConferenceLandingPageItemIdQueryResult = Apollo.QueryResult<GetConferenceLandingPageItemIdQuery, GetConferenceLandingPageItemIdQueryVariables>;
+export function useGetConferenceLandingPageItemIdQuery(options: Omit<Urql.UseQueryArgs<GetConferenceLandingPageItemIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetConferenceLandingPageItemIdQuery>({ query: GetConferenceLandingPageItemIdDocument, ...options });
+};
 export const GetVapidPublicKeyDocument = gql`
     query GetVAPIDPublicKey {
   vapidPublicKey {
@@ -54688,32 +48175,9 @@ export const GetVapidPublicKeyDocument = gql`
 }
     `;
 
-/**
- * __useGetVapidPublicKeyQuery__
- *
- * To run a query within a React component, call `useGetVapidPublicKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetVapidPublicKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetVapidPublicKeyQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetVapidPublicKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument, options);
-      }
-export function useGetVapidPublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument, options);
-        }
-export type GetVapidPublicKeyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyQuery>;
-export type GetVapidPublicKeyLazyQueryHookResult = ReturnType<typeof useGetVapidPublicKeyLazyQuery>;
-export type GetVapidPublicKeyQueryResult = Apollo.QueryResult<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>;
+export function useGetVapidPublicKeyQuery(options: Omit<Urql.UseQueryArgs<GetVapidPublicKeyQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetVapidPublicKeyQuery>({ query: GetVapidPublicKeyDocument, ...options });
+};
 export const UpsertPushNotificationSubscriptionDocument = gql`
     mutation UpsertPushNotificationSubscription($object: PushNotificationSubscription_insert_input!) {
   insert_PushNotificationSubscription_one(
@@ -54724,32 +48188,10 @@ export const UpsertPushNotificationSubscriptionDocument = gql`
   }
 }
     `;
-export type UpsertPushNotificationSubscriptionMutationFn = Apollo.MutationFunction<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>;
 
-/**
- * __useUpsertPushNotificationSubscriptionMutation__
- *
- * To run a mutation, you first call `useUpsertPushNotificationSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpsertPushNotificationSubscriptionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [upsertPushNotificationSubscriptionMutation, { data, loading, error }] = useUpsertPushNotificationSubscriptionMutation({
- *   variables: {
- *      object: // value for 'object'
- *   },
- * });
- */
-export function useUpsertPushNotificationSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>(UpsertPushNotificationSubscriptionDocument, options);
-      }
-export type UpsertPushNotificationSubscriptionMutationHookResult = ReturnType<typeof useUpsertPushNotificationSubscriptionMutation>;
-export type UpsertPushNotificationSubscriptionMutationResult = Apollo.MutationResult<UpsertPushNotificationSubscriptionMutation>;
-export type UpsertPushNotificationSubscriptionMutationOptions = Apollo.BaseMutationOptions<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>;
+export function useUpsertPushNotificationSubscriptionMutation() {
+  return Urql.useMutation<UpsertPushNotificationSubscriptionMutation, UpsertPushNotificationSubscriptionMutationVariables>(UpsertPushNotificationSubscriptionDocument);
+};
 export const DeletePushNotificationSubscriptionDocument = gql`
     mutation DeletePushNotificationSubscription($endpoint: String!) {
   delete_PushNotificationSubscription(where: {endpoint: {_eq: $endpoint}}) {
@@ -54757,32 +48199,10 @@ export const DeletePushNotificationSubscriptionDocument = gql`
   }
 }
     `;
-export type DeletePushNotificationSubscriptionMutationFn = Apollo.MutationFunction<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>;
 
-/**
- * __useDeletePushNotificationSubscriptionMutation__
- *
- * To run a mutation, you first call `useDeletePushNotificationSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeletePushNotificationSubscriptionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deletePushNotificationSubscriptionMutation, { data, loading, error }] = useDeletePushNotificationSubscriptionMutation({
- *   variables: {
- *      endpoint: // value for 'endpoint'
- *   },
- * });
- */
-export function useDeletePushNotificationSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>(DeletePushNotificationSubscriptionDocument, options);
-      }
-export type DeletePushNotificationSubscriptionMutationHookResult = ReturnType<typeof useDeletePushNotificationSubscriptionMutation>;
-export type DeletePushNotificationSubscriptionMutationResult = Apollo.MutationResult<DeletePushNotificationSubscriptionMutation>;
-export type DeletePushNotificationSubscriptionMutationOptions = Apollo.BaseMutationOptions<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>;
+export function useDeletePushNotificationSubscriptionMutation() {
+  return Urql.useMutation<DeletePushNotificationSubscriptionMutation, DeletePushNotificationSubscriptionMutationVariables>(DeletePushNotificationSubscriptionDocument);
+};
 export const GetRoomMembersDocument = gql`
     query GetRoomMembers($roomId: uuid!) {
   room_RoomPerson(where: {roomId: {_eq: $roomId}}) {
@@ -54791,33 +48211,9 @@ export const GetRoomMembersDocument = gql`
 }
     ${RoomMemberFragmentDoc}`;
 
-/**
- * __useGetRoomMembersQuery__
- *
- * To run a query within a React component, call `useGetRoomMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRoomMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRoomMembersQuery({
- *   variables: {
- *      roomId: // value for 'roomId'
- *   },
- * });
- */
-export function useGetRoomMembersQuery(baseOptions: Apollo.QueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, options);
-      }
-export function useGetRoomMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomMembersQuery, GetRoomMembersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRoomMembersQuery, GetRoomMembersQueryVariables>(GetRoomMembersDocument, options);
-        }
-export type GetRoomMembersQueryHookResult = ReturnType<typeof useGetRoomMembersQuery>;
-export type GetRoomMembersLazyQueryHookResult = ReturnType<typeof useGetRoomMembersLazyQuery>;
-export type GetRoomMembersQueryResult = Apollo.QueryResult<GetRoomMembersQuery, GetRoomMembersQueryVariables>;
+export function useGetRoomMembersQuery(options: Omit<Urql.UseQueryArgs<GetRoomMembersQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetRoomMembersQuery>({ query: GetRoomMembersDocument, ...options });
+};
 export const GetAllRoomParticipantsDocument = gql`
     query GetAllRoomParticipants($conferenceId: uuid!) {
   room_Participant(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -54826,33 +48222,9 @@ export const GetAllRoomParticipantsDocument = gql`
 }
     ${RoomParticipantDetailsFragmentDoc}`;
 
-/**
- * __useGetAllRoomParticipantsQuery__
- *
- * To run a query within a React component, call `useGetAllRoomParticipantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllRoomParticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllRoomParticipantsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetAllRoomParticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>(GetAllRoomParticipantsDocument, options);
-      }
-export function useGetAllRoomParticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>(GetAllRoomParticipantsDocument, options);
-        }
-export type GetAllRoomParticipantsQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsQuery>;
-export type GetAllRoomParticipantsLazyQueryHookResult = ReturnType<typeof useGetAllRoomParticipantsLazyQuery>;
-export type GetAllRoomParticipantsQueryResult = Apollo.QueryResult<GetAllRoomParticipantsQuery, GetAllRoomParticipantsQueryVariables>;
+export function useGetAllRoomParticipantsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomParticipantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetAllRoomParticipantsQuery>({ query: GetAllRoomParticipantsDocument, ...options });
+};
 export const MyShuffleQueueEntryDocument = gql`
     query MyShuffleQueueEntry($id: bigint!) {
   room_ShuffleQueueEntry_by_pk(id: $id) {
@@ -54861,33 +48233,9 @@ export const MyShuffleQueueEntryDocument = gql`
 }
     ${SubdShuffleQueueEntryDataFragmentDoc}`;
 
-/**
- * __useMyShuffleQueueEntryQuery__
- *
- * To run a query within a React component, call `useMyShuffleQueueEntryQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyShuffleQueueEntryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyShuffleQueueEntryQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useMyShuffleQueueEntryQuery(baseOptions: Apollo.QueryHookOptions<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>(MyShuffleQueueEntryDocument, options);
-      }
-export function useMyShuffleQueueEntryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>(MyShuffleQueueEntryDocument, options);
-        }
-export type MyShuffleQueueEntryQueryHookResult = ReturnType<typeof useMyShuffleQueueEntryQuery>;
-export type MyShuffleQueueEntryLazyQueryHookResult = ReturnType<typeof useMyShuffleQueueEntryLazyQuery>;
-export type MyShuffleQueueEntryQueryResult = Apollo.QueryResult<MyShuffleQueueEntryQuery, MyShuffleQueueEntryQueryVariables>;
+export function useMyShuffleQueueEntryQuery(options: Omit<Urql.UseQueryArgs<MyShuffleQueueEntryQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MyShuffleQueueEntryQuery>({ query: MyShuffleQueueEntryDocument, ...options });
+};
 export const ShufflePeriodsDocument = gql`
     query ShufflePeriods($conferenceId: uuid!, $end: timestamptz!) {
   room_ShufflePeriod(
@@ -54898,34 +48246,9 @@ export const ShufflePeriodsDocument = gql`
 }
     ${ShufflePeriodDataFragmentDoc}`;
 
-/**
- * __useShufflePeriodsQuery__
- *
- * To run a query within a React component, call `useShufflePeriodsQuery` and pass it any options that fit your needs.
- * When your component renders, `useShufflePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useShufflePeriodsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *      end: // value for 'end'
- *   },
- * });
- */
-export function useShufflePeriodsQuery(baseOptions: Apollo.QueryHookOptions<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>(ShufflePeriodsDocument, options);
-      }
-export function useShufflePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>(ShufflePeriodsDocument, options);
-        }
-export type ShufflePeriodsQueryHookResult = ReturnType<typeof useShufflePeriodsQuery>;
-export type ShufflePeriodsLazyQueryHookResult = ReturnType<typeof useShufflePeriodsLazyQuery>;
-export type ShufflePeriodsQueryResult = Apollo.QueryResult<ShufflePeriodsQuery, ShufflePeriodsQueryVariables>;
+export function useShufflePeriodsQuery(options: Omit<Urql.UseQueryArgs<ShufflePeriodsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ShufflePeriodsQuery>({ query: ShufflePeriodsDocument, ...options });
+};
 export const JoinShuffleQueueDocument = gql`
     mutation JoinShuffleQueue($shufflePeriodId: uuid!, $registrantId: uuid!) {
   insert_room_ShuffleQueueEntry_one(
@@ -54935,33 +48258,10 @@ export const JoinShuffleQueueDocument = gql`
   }
 }
     ${PrefetchShuffleQueueEntryDataFragmentDoc}`;
-export type JoinShuffleQueueMutationFn = Apollo.MutationFunction<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
 
-/**
- * __useJoinShuffleQueueMutation__
- *
- * To run a mutation, you first call `useJoinShuffleQueueMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useJoinShuffleQueueMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [joinShuffleQueueMutation, { data, loading, error }] = useJoinShuffleQueueMutation({
- *   variables: {
- *      shufflePeriodId: // value for 'shufflePeriodId'
- *      registrantId: // value for 'registrantId'
- *   },
- * });
- */
-export function useJoinShuffleQueueMutation(baseOptions?: Apollo.MutationHookOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>(JoinShuffleQueueDocument, options);
-      }
-export type JoinShuffleQueueMutationHookResult = ReturnType<typeof useJoinShuffleQueueMutation>;
-export type JoinShuffleQueueMutationResult = Apollo.MutationResult<JoinShuffleQueueMutation>;
-export type JoinShuffleQueueMutationOptions = Apollo.BaseMutationOptions<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>;
+export function useJoinShuffleQueueMutation() {
+  return Urql.useMutation<JoinShuffleQueueMutation, JoinShuffleQueueMutationVariables>(JoinShuffleQueueDocument);
+};
 export const GetShuffleRoomsParticipantsCountDocument = gql`
     query GetShuffleRoomsParticipantsCount($conferenceId: uuid!) {
   room_Participant_aggregate(
@@ -54974,33 +48274,9 @@ export const GetShuffleRoomsParticipantsCountDocument = gql`
 }
     `;
 
-/**
- * __useGetShuffleRoomsParticipantsCountQuery__
- *
- * To run a query within a React component, call `useGetShuffleRoomsParticipantsCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetShuffleRoomsParticipantsCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetShuffleRoomsParticipantsCountQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useGetShuffleRoomsParticipantsCountQuery(baseOptions: Apollo.QueryHookOptions<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>(GetShuffleRoomsParticipantsCountDocument, options);
-      }
-export function useGetShuffleRoomsParticipantsCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>(GetShuffleRoomsParticipantsCountDocument, options);
-        }
-export type GetShuffleRoomsParticipantsCountQueryHookResult = ReturnType<typeof useGetShuffleRoomsParticipantsCountQuery>;
-export type GetShuffleRoomsParticipantsCountLazyQueryHookResult = ReturnType<typeof useGetShuffleRoomsParticipantsCountLazyQuery>;
-export type GetShuffleRoomsParticipantsCountQueryResult = Apollo.QueryResult<GetShuffleRoomsParticipantsCountQuery, GetShuffleRoomsParticipantsCountQueryVariables>;
+export function useGetShuffleRoomsParticipantsCountQuery(options: Omit<Urql.UseQueryArgs<GetShuffleRoomsParticipantsCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetShuffleRoomsParticipantsCountQuery>({ query: GetShuffleRoomsParticipantsCountDocument, ...options });
+};
 export const SelectCurrentUserDocument = gql`
     query SelectCurrentUser($userId: String!) {
   User_by_pk(id: $userId) {
@@ -55009,33 +48285,9 @@ export const SelectCurrentUserDocument = gql`
 }
     ${UserInfoFragmentDoc}`;
 
-/**
- * __useSelectCurrentUserQuery__
- *
- * To run a query within a React component, call `useSelectCurrentUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectCurrentUserQuery({
- *   variables: {
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useSelectCurrentUserQuery(baseOptions: Apollo.QueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, options);
-      }
-export function useSelectCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>(SelectCurrentUserDocument, options);
-        }
-export type SelectCurrentUserQueryHookResult = ReturnType<typeof useSelectCurrentUserQuery>;
-export type SelectCurrentUserLazyQueryHookResult = ReturnType<typeof useSelectCurrentUserLazyQuery>;
-export type SelectCurrentUserQueryResult = Apollo.QueryResult<SelectCurrentUserQuery, SelectCurrentUserQueryVariables>;
+export function useSelectCurrentUserQuery(options: Omit<Urql.UseQueryArgs<SelectCurrentUserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectCurrentUserQuery>({ query: SelectCurrentUserDocument, ...options });
+};
 export const TermsConfigsDocument = gql`
     query TermsConfigs {
   hostOrganisationName: system_Configuration_by_pk(key: HOST_ORGANISATION_NAME) {
@@ -55080,32 +48332,9 @@ export const TermsConfigsDocument = gql`
 }
     `;
 
-/**
- * __useTermsConfigsQuery__
- *
- * To run a query within a React component, call `useTermsConfigsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTermsConfigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTermsConfigsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useTermsConfigsQuery(baseOptions?: Apollo.QueryHookOptions<TermsConfigsQuery, TermsConfigsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TermsConfigsQuery, TermsConfigsQueryVariables>(TermsConfigsDocument, options);
-      }
-export function useTermsConfigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermsConfigsQuery, TermsConfigsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TermsConfigsQuery, TermsConfigsQueryVariables>(TermsConfigsDocument, options);
-        }
-export type TermsConfigsQueryHookResult = ReturnType<typeof useTermsConfigsQuery>;
-export type TermsConfigsLazyQueryHookResult = ReturnType<typeof useTermsConfigsLazyQuery>;
-export type TermsConfigsQueryResult = Apollo.QueryResult<TermsConfigsQuery, TermsConfigsQueryVariables>;
+export function useTermsConfigsQuery(options: Omit<Urql.UseQueryArgs<TermsConfigsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<TermsConfigsQuery>({ query: TermsConfigsDocument, ...options });
+};
 export const AgreeToTermsDocument = gql`
     mutation AgreeToTerms($userId: String!, $at: timestamptz!) {
   update_User_by_pk(
@@ -55118,33 +48347,10 @@ export const AgreeToTermsDocument = gql`
   }
 }
     `;
-export type AgreeToTermsMutationFn = Apollo.MutationFunction<AgreeToTermsMutation, AgreeToTermsMutationVariables>;
 
-/**
- * __useAgreeToTermsMutation__
- *
- * To run a mutation, you first call `useAgreeToTermsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAgreeToTermsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [agreeToTermsMutation, { data, loading, error }] = useAgreeToTermsMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *      at: // value for 'at'
- *   },
- * });
- */
-export function useAgreeToTermsMutation(baseOptions?: Apollo.MutationHookOptions<AgreeToTermsMutation, AgreeToTermsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AgreeToTermsMutation, AgreeToTermsMutationVariables>(AgreeToTermsDocument, options);
-      }
-export type AgreeToTermsMutationHookResult = ReturnType<typeof useAgreeToTermsMutation>;
-export type AgreeToTermsMutationResult = Apollo.MutationResult<AgreeToTermsMutation>;
-export type AgreeToTermsMutationOptions = Apollo.BaseMutationOptions<AgreeToTermsMutation, AgreeToTermsMutationVariables>;
+export function useAgreeToTermsMutation() {
+  return Urql.useMutation<AgreeToTermsMutation, AgreeToTermsMutationVariables>(AgreeToTermsDocument);
+};
 export const VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument = gql`
     query VonageRoomStateProvider_GetVonageMaxSimultaneousScreenShares($conferenceId: uuid!) {
   conference_Configuration_by_pk(
@@ -55158,30 +48364,6 @@ export const VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocumen
 }
     `;
 
-/**
- * __useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery__
- *
- * To run a query within a React component, call `useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery` and pass it any options that fit your needs.
- * When your component renders, `useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery(baseOptions: Apollo.QueryHookOptions<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery, VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery, VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>(VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument, options);
-      }
-export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery, VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery, VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>(VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument, options);
-        }
-export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryHookResult = ReturnType<typeof useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>;
-export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesLazyQueryHookResult = ReturnType<typeof useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesLazyQuery>;
-export type VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryResult = Apollo.QueryResult<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery, VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>;
+export function useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery(options: Omit<Urql.UseQueryArgs<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery>({ query: VonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesDocument, ...options });
+};

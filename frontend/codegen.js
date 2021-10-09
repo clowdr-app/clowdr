@@ -18,7 +18,7 @@ module.exports = {
     overwrite: true,
     generates: {
         "./src/generated/graphql.tsx": {
-            plugins: ["typescript", "typescript-operations", "typescript-react-apollo"],
+            plugins: ["typescript", "typescript-operations", "typescript-urql"],
             config: {
                 skipTypename: false,
                 withHooks: true,

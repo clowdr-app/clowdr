@@ -22,6 +22,12 @@ object_relationships:
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
+computed_fields:
+- definition:
+    function:
+      name: VonageParticipantStream_durationSeconds
+      schema: video
+  name: durationSeconds
 select_permissions:
 - permission:
     columns:

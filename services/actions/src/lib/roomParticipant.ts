@@ -28,6 +28,7 @@ gql`
                 vonageConnectionId: $vonageConnectionId
                 chimeRegistrantId: $chimeRegistrantId
             }
+            on_conflict: { constraint: Participant_roomId_registrantId_key, update_columns: [updatedAt] }
         ) {
             id
         }

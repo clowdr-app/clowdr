@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import {
     Box,
     Button,
@@ -26,6 +25,7 @@ import {
 import React, { LegacyRef, useCallback, useMemo } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Collection_Tag_Set_Input,
@@ -96,7 +96,7 @@ export default function ManageTagsModal({ onClose: onCloseCb }: { onClose?: () =
 
 function ManageTagsModalBody(): JSX.Element {
     const conference = useConference();
-    const tagsResponse = useManageContent_SelectAllTagsQuery({
+    const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -275,7 +275,7 @@ function ManageTagsModalBody(): JSX.Element {
 
     const data = useMemo(() => [...(tagsResponse.data?.collection_Tag ?? [])], [tagsResponse.data?.collection_Tag]);
 
-    const [insertTag, insertTagResponse] = useManageContent_InsertTagMutation();
+    const [insertTagResponse, insertTag] = useManageContent_InsertTagMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_TagFragment>;
@@ -285,7 +285,7 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertTagResponse.loading,
+            ongoing: insertTagResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -329,10 +329,10 @@ function ManageTagsModalBody(): JSX.Element {
                 });
             },
         }),
-        [conference.id, data?.length, insertTag, insertTagResponse.loading]
+        [conference.id, data?.length, insertTag, insertTagResponse.fetching]
     );
 
-    const [updateTag, updateTagResponse] = useManageContent_UpdateTagMutation();
+    const [updateTagResponse, updateTag] = useManageContent_UpdateTagMutation();
     const update:
         | {
               start: (record: ManageContent_TagFragment) => void;
@@ -340,7 +340,7 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateTagResponse.loading,
+            ongoing: updateTagResponse.fetching,
             start: (record) => {
                 const tagUpdateInput: Collection_Tag_Set_Input = {
                     name: record.name,
@@ -378,10 +378,10 @@ function ManageTagsModalBody(): JSX.Element {
                 });
             },
         }),
-        [updateTag, updateTagResponse.loading]
+        [updateTag, updateTagResponse.fetching]
     );
 
-    const [deleteTags, deleteTagsResponse] = useManageContent_DeleteTagsMutation();
+    const [deleteTagsResponse, deleteTags] = useManageContent_DeleteTagsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -389,7 +389,7 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteTagsResponse.loading,
+            ongoing: deleteTagsResponse.fetching,
             start: (keys) => {
                 deleteTags({
                     variables: {
@@ -411,16 +411,16 @@ function ManageTagsModalBody(): JSX.Element {
                 });
             },
         }),
-        [deleteTags, deleteTagsResponse.loading]
+        [deleteTags, deleteTagsResponse.fetching]
     );
 
     return (
         <>
-            {tagsResponse.loading && !tagsResponse.data ? <Spinner label="Loading tags" /> : undefined}
+            {tagsResponse.fetching && !tagsResponse.data ? <Spinner label="Loading tags" /> : undefined}
             <CRUDTable<ManageContent_TagFragment>
                 columns={columns}
                 row={row}
-                data={!tagsResponse.loading && (tagsResponse.data?.collection_Tag ? data : null)}
+                data={!tagsResponse.fetching && (tagsResponse.data?.collection_Tag ? data : null)}
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
                     insertTagResponse.error || updateTagResponse.error || deleteTagsResponse.error

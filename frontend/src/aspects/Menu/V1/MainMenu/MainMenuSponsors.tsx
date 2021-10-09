@@ -1,15 +1,15 @@
-import { gql } from "@apollo/client";
 import { Grid, GridItem, Image, List, ListItem, Text, useToken, VStack } from "@chakra-ui/react";
 import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
+import { gql } from "urql";
 import { MainMenuSponsors_ItemDataFragment, useMainMenuSponsors_GetSponsorsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { Participants } from "../../../Conference/Attend/Rooms/V1/RoomParticipants";
 import { useConference } from "../../../Conference/useConference";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
@@ -54,7 +54,7 @@ gql`
 export function MainMenuSponsors(): JSX.Element {
     const conference = useConference();
 
-    const sponsorsResult = useMainMenuSponsors_GetSponsorsQuery({
+    const [sponsorsResult] = useMainMenuSponsors_GetSponsorsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -94,7 +94,7 @@ export function MainMenuSponsors(): JSX.Element {
     const borderColour = useToken("colors", ["gray.300"]);
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.content_Item} queryResult={sponsorsResult}>
+        <QueryWrapper getter={(data) => data.content_Item} queryResult={sponsorsResult}>
             {(sponsorItems: readonly MainMenuSponsors_ItemDataFragment[]) => (
                 <List>
                     {R.sortWith(
@@ -184,6 +184,6 @@ export function MainMenuSponsors(): JSX.Element {
                     })}
                 </List>
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }

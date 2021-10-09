@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -16,6 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useAgreeToTermsMutation,
     UserInfoFragment,
@@ -157,15 +157,14 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
-    const { loading, error, data, refetch } = useSelectCurrentUserQuery({
+    const [{ fetching: loading, error, data }, refetch] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
-        nextFetchPolicy: "cache-first",
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 
-    const { loading: termsLoading, data: termsData } = useTermsConfigsQuery();
+    const [{ fetching: termsLoading, data: termsData }] = useTermsConfigsQuery();
 
     const value = loading ? undefined : error ? false : data;
     const ctx = useMemo(() => {
@@ -309,14 +308,12 @@ function TermsAndPPCompliance({
 }): JSX.Element {
     const [termsChecked, setTermsChecked] = useState<boolean>(false);
     const [ppChecked, setPPChecked] = useState<boolean>(false);
-    const [agreeToTerms, agreeToTermsResponse] = useAgreeToTermsMutation();
+    const [agreeToTermsResponse, agreeToTerms] = useAgreeToTermsMutation();
 
     const agreeAndContinue = useCallback(() => {
         agreeToTerms({
-            variables: {
-                userId,
-                at: new Date().toISOString(),
-            },
+            userId,
+            at: new Date().toISOString(),
         });
     }, [agreeToTerms, userId]);
 
@@ -399,7 +396,7 @@ function TermsAndPPCompliance({
                                 colorScheme="purple"
                                 onClick={() => agreeAndContinue()}
                                 isDisabled={!termsChecked || !ppChecked}
-                                isLoading={agreeToTermsResponse.loading}
+                                isLoading={agreeToTermsResponse.fetching}
                             >
                                 <FAIcon iconStyle="s" icon="signature" aria-hidden mr={2} />
                                 Confirm and continue

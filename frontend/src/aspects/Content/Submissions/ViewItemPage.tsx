@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -15,6 +14,7 @@ import type { VideoFileBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import * as R from "ramda";
 import React from "react";
+import { gql } from "urql";
 import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
@@ -50,7 +50,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const title = useTitle("Submission");
 
     const accessToken = magicToken;
-    const itemResponse = useItemByPersonAccessTokenQuery({
+    const [itemResponse] = useItemByPersonAccessTokenQuery({
         variables: {
             itemId,
             accessToken,
@@ -90,7 +90,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     return (
         <Center pt={6} w="100%">
             {title}
-            {itemResponse.loading && !itemResponse.data ? (
+            {itemResponse.fetching && !itemResponse.data ? (
                 <CenteredSpinner />
             ) : (
                 <Container maxW="container.xl">

@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import {
     Box,
     Button,
@@ -28,6 +27,7 @@ import {
 import React, { LegacyRef, useCallback, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Collection_Exhibition_Set_Input,
@@ -103,7 +103,7 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useManageContent_SelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -366,7 +366,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
         [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
 
-    const [insertExhibition, insertExhibitionResponse] = useManageContent_InsertExhibitionMutation();
+    const [insertExhibitionResponse, insertExhibition] = useManageContent_InsertExhibitionMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_ExhibitionFragment>;
@@ -378,7 +378,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertExhibitionResponse.loading,
+            ongoing: insertExhibitionResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -424,10 +424,10 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 });
             },
         }),
-        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.loading]
+        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching]
     );
 
-    const [updateExhibition, updateExhibitionResponse] = useManageContent_UpdateExhibitionMutation();
+    const [updateExhibitionResponse, updateExhibition] = useManageContent_UpdateExhibitionMutation();
     const update:
         | {
               start: (record: ManageContent_ExhibitionFragment) => void;
@@ -435,7 +435,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateExhibitionResponse.loading,
+            ongoing: updateExhibitionResponse.fetching,
             start: (record) => {
                 const exhibitionUpdateInput: Collection_Exhibition_Set_Input = {
                     name: record.name,
@@ -474,10 +474,10 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 });
             },
         }),
-        [updateExhibition, updateExhibitionResponse.loading]
+        [updateExhibition, updateExhibitionResponse.fetching]
     );
 
-    const [deleteExhibitions, deleteExhibitionsResponse] = useManageContent_DeleteExhibitionsMutation();
+    const [deleteExhibitionsResponse, deleteExhibitions] = useManageContent_DeleteExhibitionsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -485,7 +485,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteExhibitionsResponse.loading,
+            ongoing: deleteExhibitionsResponse.fetching,
             start: (keys) => {
                 deleteExhibitions({
                     variables: {
@@ -507,7 +507,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 });
             },
         }),
-        [deleteExhibitions, deleteExhibitionsResponse.loading]
+        [deleteExhibitions, deleteExhibitionsResponse.fetching]
     );
 
     const updateDescriptiveItemId = useCallback(
@@ -550,13 +550,13 @@ function ManageExhibitionsModalBody(): JSX.Element {
 
     return (
         <>
-            {exhibitionsResponse.loading && !exhibitionsResponse.data ? (
+            {exhibitionsResponse.fetching && !exhibitionsResponse.data ? (
                 <Spinner label="Loading exhibitions" />
             ) : undefined}
             <CRUDTable<ManageContent_ExhibitionFragment>
                 columns={columns}
                 row={row}
-                data={!exhibitionsResponse.loading && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
+                data={!exhibitionsResponse.fetching && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
                     insertExhibitionResponse.error || updateExhibitionResponse.error || deleteExhibitionsResponse.error

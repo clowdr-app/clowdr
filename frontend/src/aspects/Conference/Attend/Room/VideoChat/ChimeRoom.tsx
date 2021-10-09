@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
+import { gql } from "urql";
 import { RoomPage_RoomDetailsFragment, useGetRoomChimeDataMutation } from "../../../../../generated/graphql";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 

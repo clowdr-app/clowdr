@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -21,6 +20,7 @@ import {
 import Papa from "papaparse";
 import * as R from "ramda";
 import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Content_ItemType_Enum,
@@ -297,42 +297,31 @@ export default function ManageContentV2(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllTags,
-        error: errorAllTags,
-        data: allTags,
-        refetch: refetchAllTags,
-    } = useManageContent_SelectAllTagsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags, refetch: refetchAllTags }] =
+        useManageContent_SelectAllTagsQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllTags, false);
 
-    const {
-        loading: loadingAllExhibitions,
-        error: errorAllExhibitions,
-        data: allExhibitions,
-    } = useManageContent_SelectAllExhibitionsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllExhibitions, error: errorAllExhibitions, data: allExhibitions }] =
+        useManageContent_SelectAllExhibitionsQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllExhibitions, false);
 
-    const {
-        loading: loadingAllItems,
-        error: errorAllItems,
-        data: allItems,
-        refetch: refetchAllItems,
-    } = useManageContent_SelectAllItemsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllItems, error: errorAllItems, data: allItems, refetch: refetchAllItems }] =
+        useManageContent_SelectAllItemsQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllItems, false);
     const data = useMemo(() => [...(allItems?.content_Item ?? [])], [allItems?.content_Item]);
 
@@ -645,7 +634,7 @@ export default function ManageContentV2(): JSX.Element {
         [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
 
-    const [insertItem, insertItemResponse] = useManageContent_InsertItemMutation();
+    const [insertItemResponse, insertItem] = useManageContent_InsertItemMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_ItemFragment>;
@@ -655,7 +644,7 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertItemResponse.loading,
+            ongoing: insertItemResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -700,10 +689,10 @@ export default function ManageContentV2(): JSX.Element {
                 });
             },
         }),
-        [conference.id, insertItem, insertItemResponse.loading]
+        [conference.id, insertItem, insertItemResponse.fetching]
     );
 
-    const [updateItem, updateItemResponse] = useManageContent_UpdateItemMutation();
+    const [updateItemResponse, updateItem] = useManageContent_UpdateItemMutation();
     const update:
         | {
               start: (record: ManageContent_ItemFragment) => void;
@@ -711,7 +700,7 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateItemResponse.loading,
+            ongoing: updateItemResponse.fetching,
             start: (record) => {
                 const itemUpdateInput: Content_Item_Set_Input = {
                     title: record.title,
@@ -754,10 +743,10 @@ export default function ManageContentV2(): JSX.Element {
                 });
             },
         }),
-        [updateItem, updateItemResponse.loading]
+        [updateItem, updateItemResponse.fetching]
     );
 
-    const [deleteItems, deleteItemsResponse] = useManageContent_DeleteItemsMutation();
+    const [deleteItemsResponse, deleteItems] = useManageContent_DeleteItemsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -765,7 +754,7 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteItemsResponse.loading,
+            ongoing: deleteItemsResponse.fetching,
             start: (keys) => {
                 deleteItems({
                     variables: {
@@ -787,7 +776,7 @@ export default function ManageContentV2(): JSX.Element {
                 });
             },
         }),
-        [deleteItems, deleteItemsResponse.loading]
+        [deleteItems, deleteItemsResponse.fetching]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -815,7 +804,7 @@ export default function ManageContentV2(): JSX.Element {
         },
         [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_PersonIds]
     );
-    const selectItemsForExport = useManageContent_SelectItemsForExportQuery({
+    const [selectItemsForExport] = useManageContent_SelectItemsForExportQuery({
         skip: true,
     });
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(

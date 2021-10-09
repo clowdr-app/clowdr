@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import assert from "assert";
 import { DateTime } from "luxon";
@@ -6,6 +5,7 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
+import { gql } from "urql";
 import {
     Permissions_Permission_Enum,
     ProgramPersonDataFragment,
@@ -17,7 +17,7 @@ import {
     Schedule_TagFragment,
     useSchedule_SelectSummariesQuery,
 } from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
@@ -674,14 +674,14 @@ export function ScheduleInner({
 
 export function ScheduleFetchWrapper(): JSX.Element {
     const conference = useConference();
-    const roomsResult = useSchedule_SelectSummariesQuery({
+    const [roomsResult] = useSchedule_SelectSummariesQuery({
         variables: {
             conferenceId: conference.id,
         },
         fetchPolicy: "cache-first",
     });
     return (
-        <ApolloQueryWrapper<
+        <QueryWrapper<
             Schedule_SelectSummariesQuery,
             unknown,
             {
@@ -702,7 +702,7 @@ export function ScheduleFetchWrapper(): JSX.Element {
             })}
         >
             {(data) => <ScheduleInner {...data} />}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 

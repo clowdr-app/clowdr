@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -20,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import Papa from "papaparse";
 import React, { LegacyRef, useCallback, useMemo, useRef } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragment,
@@ -128,7 +128,7 @@ export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
-    const { data: registrantsData } = useManageProgramPeople_SelectAllRegistrantsQuery({
+    const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -483,30 +483,26 @@ export default function ManageProgramPeople(): JSX.Element {
         [registrantOptions, registrants]
     );
 
-    const {
-        loading: loadingAllProgramPersons,
-        error: errorAllProgramPersons,
-        data: allProgramPersons,
-        refetch,
-    } = useManageProgramPeople_SelectAllPeopleQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllProgramPersons, error: errorAllProgramPersons, data: allProgramPersons, refetch }] =
+        useManageProgramPeople_SelectAllPeopleQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllProgramPersons, false);
     const data = useMemo(
         () => [...(allProgramPersons?.collection_ProgramPersonWithAccessToken ?? [])],
         [allProgramPersons?.collection_ProgramPersonWithAccessToken]
     );
 
-    const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
-    const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
-    const [updateProgramPerson, updateProgramPersonResponse] = useManageProgramPeople_UpdateProgramPersonMutation();
+    const [insertProgramPersonResponse, insertProgramPerson] = useManageProgramPeople_InsertProgramPersonMutation();
+    const [deleteProgramPersonsResponse, deleteProgramPersons] = useManageProgramPeople_DeleteProgramPersonsMutation();
+    const [updateProgramPersonResponse, updateProgramPerson] = useManageProgramPeople_UpdateProgramPersonMutation();
 
     const insert: Insert<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: insertProgramPersonResponse.loading,
+            ongoing: insertProgramPersonResponse.fetching,
             generateDefaults: () => {
                 const programpersonId = uuidv4();
                 return {
@@ -541,7 +537,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 });
             },
         }),
-        [conference.id, insertProgramPerson, insertProgramPersonResponse.loading]
+        [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching]
     );
 
     const startUpdate = useCallback(
@@ -571,15 +567,15 @@ export default function ManageProgramPeople(): JSX.Element {
 
     const update: Update<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: updateProgramPersonResponse.loading,
+            ongoing: updateProgramPersonResponse.fetching,
             start: startUpdate,
         }),
-        [updateProgramPersonResponse.loading, startUpdate]
+        [updateProgramPersonResponse.fetching, startUpdate]
     );
 
     const deleteP: Delete<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: deleteProgramPersonsResponse.loading,
+            ongoing: deleteProgramPersonsResponse.fetching,
             start: (keys) => {
                 deleteProgramPersons({
                     variables: {
@@ -611,7 +607,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 });
             },
         }),
-        [deleteProgramPersons, deleteProgramPersonsResponse.loading]
+        [deleteProgramPersons, deleteProgramPersonsResponse.fetching]
     );
 
     const toast = useToast();

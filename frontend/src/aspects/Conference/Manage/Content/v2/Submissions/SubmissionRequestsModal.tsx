@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -34,6 +33,7 @@ import {
 import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     Conference_ConfigurationKey_Enum,
     Content_ItemType_Enum,
@@ -43,7 +43,7 @@ import {
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
-import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
@@ -123,7 +123,7 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
-    const result = useSubmissionRequestsModalDataQuery({
+    const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
             conferenceId: conference.id,
             itemIds,
@@ -131,7 +131,7 @@ function SendSubmissionRequestsModalLazyInner({
         fetchPolicy: "no-cache",
     });
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(result) => result}>
+        <QueryWrapper queryResult={result} getter={(result) => result}>
             {({
                 conference_Configuration,
                 content_Item,
@@ -161,7 +161,7 @@ function SendSubmissionRequestsModalLazyInner({
                     />
                 );
             }}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 

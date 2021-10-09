@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Button, FormControl, FormLabel, Select, useToast, VStack } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     useEventVonageControls_GetEventsQuery,
     useEventVonageControls_StopEventBroadcastMutation,
@@ -28,7 +28,7 @@ gql`
 `;
 
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data } = useEventVonageControls_GetEventsQuery({
+    const [{ data }] = useEventVonageControls_GetEventsQuery({
         variables: {
             conferenceId,
         },

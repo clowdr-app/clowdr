@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -20,6 +19,7 @@ import {
 import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permissions_GroupRegistrant_Insert_Input,
@@ -69,23 +69,16 @@ export default function ImportPanel({
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    const {
-        loading: groupsLoading,
-        data: groupsData,
-        error: groupsError,
-    } = useSelectAllGroupsQuery({
+    const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
     useQueryErrorToast(groupsError, false);
 
-    const {
-        loading: registrantsLoading,
-        data: registrantsData,
-        error: registrantsError,
-        refetch: refetchRegistrants,
-    } = useSelectAllRegistrantsQuery({
+    const [
+        { fetching: registrantsLoading, data: registrantsData, error: registrantsError, refetch: refetchRegistrants },
+    ] = useSelectAllRegistrantsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -93,7 +86,7 @@ export default function ImportPanel({
     });
     useQueryErrorToast(registrantsError, false);
 
-    const [importMutation, { loading: importLoading, error: importError, data: importData }] =
+    const [{ fetching: importLoading, error: importError, data: importData }, importMutation] =
         useImportRegistrantsMutation();
     useQueryErrorToast(importError, false);
 

@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import {
     AccordionButton,
     AccordionIcon,
@@ -24,6 +23,7 @@ import {
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useRef, useState } from "react";
+import { gql, Reference } from "urql";
 import {
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
@@ -65,7 +65,7 @@ export function EditElement({
     defaultOpenSecurity: boolean;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
-    const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
+    const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation({
         update: (cache, response) => {
             if (response.data?.update_content_Element_by_pk) {
                 const data = response.data.update_content_Element_by_pk;
@@ -87,7 +87,7 @@ export function EditElement({
             }
         },
     });
-    const [deleteElement, deleteElementResponse] = useManageContent_DeleteElementMutation({
+    const [deleteElementResponse, deleteElement] = useManageContent_DeleteElementMutation({
         update: (cache, { data: _data }) => {
             if (_data?.delete_content_Element_by_pk) {
                 const data = _data.delete_content_Element_by_pk;
@@ -195,7 +195,7 @@ export function EditElement({
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item up"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
                                         </Button>
@@ -245,7 +245,7 @@ export function EditElement({
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item down"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
                                         </Button>
@@ -267,7 +267,7 @@ export function EditElement({
                                     }
                                     mr={4}
                                     size="xs"
-                                    isLoading={updateElementResponse.loading}
+                                    isLoading={updateElementResponse.fetching}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
 
@@ -322,7 +322,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Save element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
@@ -349,7 +349,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Discard name changes"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
@@ -379,7 +379,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Edit element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(true);
@@ -424,7 +424,7 @@ export function EditElement({
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
                                     }}
-                                    isLoading={deleteElementResponse.loading}
+                                    isLoading={deleteElementResponse.fetching}
                                     ml={2}
                                 />
                             </Tooltip>

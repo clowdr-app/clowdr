@@ -1,7 +1,7 @@
-import { FetchResult, gql } from "@apollo/client";
 import { Heading, Spinner } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
+import { FetchResult, gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     CreateDeleteRolesMutation,
@@ -117,24 +117,17 @@ export default function ManageRoles(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage roles at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllPermissions,
-        error: errorAllPermissions,
-        data: allPermissions,
-    } = useSelectAllPermissionsQuery();
+    const [{ fetching: loadingAllPermissions, error: errorAllPermissions, data: allPermissions }] =
+        useSelectAllPermissionsQuery();
     useQueryErrorToast(errorAllPermissions, false);
 
-    const {
-        loading: loadingAllRoles,
-        error: errorAllRoles,
-        data: allRoles,
-        refetch: refetchAllRoles,
-    } = useSelectAllRolesQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllRoles, error: errorAllRoles, data: allRoles, refetch: refetchAllRoles }] =
+        useSelectAllRolesQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllRoles, false);
 
     const [createDeleteRolesMutation] = useCreateDeleteRolesMutation();

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -19,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import AmazonS3URI from "amazon-s3-uri";
 import React from "react";
+import { gql } from "urql";
 import { useMyRecordingsQuery } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useTitle } from "../../../Utils/useTitle";
@@ -51,7 +51,7 @@ export default function MyRecordingsPage(): JSX.Element {
 
     const conference = useConference();
     const registrant = useCurrentRegistrant();
-    const response = useMyRecordingsQuery({
+    const [response] = useMyRecordingsQuery({
         variables: {
             registrantId: registrant.id,
         },
@@ -73,7 +73,7 @@ export default function MyRecordingsPage(): JSX.Element {
                 <Text>
                     This page lists any recordings of video-chat events or social rooms that you have participated in.
                 </Text>
-                {response.loading && !response.data ? (
+                {response.fetching && !response.data ? (
                     <HStack spacing={2}>
                         <Box>
                             <Spinner />

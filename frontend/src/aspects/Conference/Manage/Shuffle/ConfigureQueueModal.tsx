@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -26,6 +25,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
+import { gql } from "urql";
 import {
     ManageShufflePeriods_SelectAllDocument,
     ManageShufflePeriods_SelectAllQuery,
@@ -67,7 +67,7 @@ export default function ConfigureQueueModal({
     const { isOpen, onOpen, onClose } = useDisclosure();
     const conference = useConference();
 
-    const [update, updateResponse] = useUpdateShufflePeriodMutation({
+    const [updateResponse, update] = useUpdateShufflePeriodMutation({
         update: (cache, result) => {
             if (result.data?.update_room_ShufflePeriod_by_pk) {
                 const data = result.data.update_room_ShufflePeriod_by_pk;
@@ -265,7 +265,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Name</FormLabel>
                                 <Input
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     min={1}
                                     value={name}
                                     onChange={(ev) => setName(ev.target.value)}
@@ -277,7 +277,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Automation</FormLabel>
                                 <Select
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={algorithm}
                                     onChange={(ev) =>
                                         setAlgorithm(ev.target.selectedOptions[0].value as Room_ShuffleAlgorithm_Enum)
@@ -300,7 +300,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Start at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={startAt}
                                     onChange={onStartAtChange}
                                 />
@@ -312,7 +312,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>End at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     value={endAt}
                                     onChange={onEndAtChange}
                                 />
@@ -324,7 +324,7 @@ export default function ConfigureQueueModal({
                             <FormControl>
                                 <FormLabel>Room duration in minutes</FormLabel>
                                 <NumberInput
-                                    isDisabled={updateResponse.loading}
+                                    isDisabled={updateResponse.fetching}
                                     min={2}
                                     max={2 * 60}
                                     value={roomDurationMinutes}
@@ -348,7 +348,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Target registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={2}
                                             value={targetRegistrants}
                                             onChange={onTargetRegistrantsChange}
@@ -366,7 +366,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Maximum registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={2}
                                             value={maxRegistrants}
                                             onChange={onMaxRegistrantsChange}
@@ -384,7 +384,7 @@ export default function ConfigureQueueModal({
                                     <FormControl>
                                         <FormLabel>Maximum wait time in seconds</FormLabel>
                                         <NumberInput
-                                            isDisabled={updateResponse.loading}
+                                            isDisabled={updateResponse.fetching}
                                             min={60}
                                             max={300}
                                             value={maxWait}
@@ -409,14 +409,14 @@ export default function ConfigureQueueModal({
                     </ModalBody>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button isDisabled={updateResponse.loading} onClick={onClose}>
+                            <Button isDisabled={updateResponse.fetching} onClick={onClose}>
                                 Cancel
                             </Button>
                             <Tooltip label={name.length === 0 ? "Name is required" : undefined}>
                                 <Box>
                                     <Button
-                                        isLoading={updateResponse.loading}
-                                        isDisabled={updateResponse.loading || name.length === 0}
+                                        isLoading={updateResponse.fetching}
+                                        isDisabled={updateResponse.fetching || name.length === 0}
                                         onClick={onUpdate}
                                         colorScheme="purple"
                                     >

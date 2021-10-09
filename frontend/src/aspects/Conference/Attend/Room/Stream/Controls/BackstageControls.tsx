@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
 import { useVonageGlobalState } from "../../Vonage/VonageGlobalStateProvider";
 import { ImmediateSwitch } from "./ImmediateSwitch";

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { useDisclosure, useToast } from "@chakra-ui/react";
 import {
     isVonageSessionLayoutData,
@@ -6,6 +5,7 @@ import {
     VonageSessionLayoutType,
 } from "@clowdr-app/shared-types/build/vonage";
 import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
@@ -69,7 +69,7 @@ export function VonageLayoutProvider({
     vonageSessionId,
     children,
 }: PropsWithChildren<{ vonageSessionId: string }>): JSX.Element {
-    const result = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
+    const [result] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
             vonageSessionId,
         },

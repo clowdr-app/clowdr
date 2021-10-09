@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/toast";
 import {
     ContinuationDefaultFor,
@@ -9,6 +8,7 @@ import {
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router";
+import { gql } from "urql";
 import {
     ContinuationChoices_ContinuationFragment,
     useContinuationChoices_ContinuationsQuery,
@@ -92,7 +92,7 @@ export default function ContinuationChoices({
     const nowStatic_StartStr = useMemo(() => new Date(Date.now() + 60000).toISOString(), []);
     const nowStatic_EndStr = useMemo(() => new Date(Date.now() - 60000).toISOString(), []);
     // ...else this query would change on every render!
-    const response = useContinuationChoices_ContinuationsQuery({
+    const [response] = useContinuationChoices_ContinuationsQuery({
         variables: {
             fromId: "eventId" in from ? from.eventId : from.shufflePeriodId,
             nowStart: nowStatic_StartStr,
@@ -184,7 +184,7 @@ function ContinuationChoices_Inner({
     currentRole: ContinuationDefaultFor;
     currentRoomId: string;
 }): JSX.Element {
-    const roomsResponse = useContinuationChoices_RoomsQuery({
+    const [roomsResponse] = useContinuationChoices_RoomsQuery({
         variables: {
             ids: choices.reduce((acc, option) => {
                 const to: ExtendedContinuationTo = option.to;
@@ -303,7 +303,7 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.Event:
-                                if (!roomsResponse.loading) {
+                                if (!roomsResponse.fetching) {
                                     const event = roomsResponse.data?.schedule_Event.find(
                                         (event) => event.id === to.id
                                     );
@@ -321,7 +321,7 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.AutoDiscussionRoom:
-                                if (!roomsResponse.loading) {
+                                if (!roomsResponse.fetching) {
                                     console.log("Activate auto room", {
                                         choices,
                                         selectedOptionId,

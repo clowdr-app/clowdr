@@ -6,8 +6,8 @@ import { useChatSubscribedQuery } from "./SubscribedQuery";
 
 export function SubscribedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
-    const subscribedQ = useChatSubscribedQuery();
-    const isLoading = subscribedQ.loading;
+    const [subscribedQ] = useChatSubscribedQuery();
+    const isLoading = subscribedQ.fetching;
     const isSubscribed = !!subscribedQ.data?.isSubscribed;
     const label = isLoading
         ? "Loading subscribed status"

@@ -154,7 +154,7 @@ export default function EventBox({
         });
     }, [sortedEvents, scrollToEvent, scrollToEventCbs]);
 
-    const [getContent, content] = useSchedule_SelectItemLazyQuery();
+    const [[getContent, content]] = useSchedule_SelectItemLazyQuery();
     useEffect(() => {
         if (isOpen && !content.data && event.itemId) {
             getContent({

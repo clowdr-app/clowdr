@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import {
     ElementBaseType,
@@ -10,6 +9,7 @@ import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layo
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     Content_ElementType_Enum,
     ElementDataFragment,
@@ -43,13 +43,13 @@ gql`
 
 export default function SwagBags(): JSX.Element {
     const conference = useConference();
-    const swagBagsResponse = useSelectSwagBagsQuery({
+    const [swagBagsResponse] = useSelectSwagBagsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    return swagBagsResponse.loading && !swagBagsResponse.data ? (
+    return swagBagsResponse.fetching && !swagBagsResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading your swag" }} />
     ) : (
         <SwagBagsInner bags={swagBagsResponse.data?.content_Item ?? []} />

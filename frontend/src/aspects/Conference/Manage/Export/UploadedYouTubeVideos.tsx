@@ -1,12 +1,12 @@
-import { gql } from "@apollo/client";
 import { Heading, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { default as React } from "react";
 import ReactPlayer from "react-player";
+import { gql } from "urql";
 import {
     UploadYouTubeVideos_YouTubeUploadFragment,
     useUploadYouTubeVideos_GetYouTubeUploadsQuery,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useConference } from "../../useConference";
 
 gql`
@@ -35,7 +35,7 @@ gql`
 
 export function UploadedYouTubeVideos(): JSX.Element {
     const conference = useConference();
-    const youtubeUploadsResult = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+    const [youtubeUploadsResult] = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -46,7 +46,7 @@ export function UploadedYouTubeVideos(): JSX.Element {
                 Uploaded videos
             </Heading>
 
-            <ApolloQueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.video_YouTubeUpload}>
+            <QueryWrapper queryResult={youtubeUploadsResult} getter={(result) => result.video_YouTubeUpload}>
                 {(uploads: readonly UploadYouTubeVideos_YouTubeUploadFragment[]) => (
                     <Table>
                         <Thead>
@@ -74,7 +74,7 @@ export function UploadedYouTubeVideos(): JSX.Element {
                         </Tbody>
                     </Table>
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         </>
     );
 }

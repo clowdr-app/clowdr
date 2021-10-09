@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Box, Heading, Spinner, useColorModeValue } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     Content_ElementType_Enum,
     Permissions_Permission_Enum,
@@ -28,7 +28,7 @@ function ConferenceLandingPageInner(): JSX.Element {
 
     const title = useTitle(conference.name);
 
-    const { error, data } = useConferenceLandingPageItemQuery({
+    const [{ error, data }] = useConferenceLandingPageItemQuery({
         variables: {
             conferenceId: conference.id,
         },

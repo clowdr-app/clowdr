@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     RoomParticipantDetailsFragment,
     SocialRoomFragment,
@@ -41,7 +41,7 @@ gql`
 export default function InactiveSocialRooms(): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
-    const result = useGetSocialRoomsQuery({
+    const [result] = useGetSocialRoomsQuery({
         variables: {
             conferenceId: conference.id,
             registrantId: registrant.id,
@@ -55,7 +55,7 @@ export default function InactiveSocialRooms(): JSX.Element {
         return <></>;
     }
 
-    if (result.loading && !result?.data) {
+    if (result.fetching && !result?.data) {
         return <Spinner label="Loading rooms" />;
     }
 

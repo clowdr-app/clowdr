@@ -1,7 +1,7 @@
-import { gql, useQuery } from "@apollo/client";
 import { Flex, Heading, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs, Text, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql, useQuery } from "urql";
 import type { ItemEventFragment, ItemRoomEventFragment } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -169,7 +169,7 @@ query ItemEvent_RoomNearbyEvents {
     // console.log(query.data);
     const fullEventsList: (ItemEventFragment | ItemRoomEventFragment)[] = useMemo(
         () =>
-            query.loading || !query.data
+            query.fetching || !query.data
                 ? []
                 : R.uniqBy(
                       (x) => x.id,
@@ -196,7 +196,7 @@ query ItemEvent_RoomNearbyEvents {
                               ),
                       ]
                   ),
-        [events, query.data, query.loading, thisItemId]
+        [events, query.data, query.fetching, thisItemId]
     );
 
     const table = useMemo(
@@ -204,5 +204,5 @@ query ItemEvent_RoomNearbyEvents {
         [fullEventsList, roomId]
     );
 
-    return query.loading ? <Spinner label="Loading room schedule" /> : table;
+    return query.fetching ? <Spinner label="Loading room schedule" /> : table;
 }

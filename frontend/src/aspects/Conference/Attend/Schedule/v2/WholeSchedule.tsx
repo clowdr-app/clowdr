@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import * as luxon from "luxon";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import { useScheduleV2_AllEvents_ParamsQuery } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { useConference } from "../../../useConference";
@@ -29,7 +29,7 @@ gql`
 
 export default function WholeSchedule(): JSX.Element {
     const conference = useConference();
-    const eventsResponse = useScheduleV2_AllEvents_ParamsQuery({
+    const [eventsResponse] = useScheduleV2_AllEvents_ParamsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -49,7 +49,7 @@ export default function WholeSchedule(): JSX.Element {
         return undefined;
     }, [eventsResponse.data?.latestEndingEvent]);
 
-    if (eventsResponse.loading || !eventsResponse.data) {
+    if (eventsResponse.fetching || !eventsResponse.data) {
         return <CenteredSpinner />;
     }
 

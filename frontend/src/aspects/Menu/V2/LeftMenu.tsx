@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, Link, MenuDivider, MenuItem } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useCountSwagBagsQuery } from "../../../generated/graphql";
 import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
@@ -38,11 +38,10 @@ export default function LeftMenu(): JSX.Element {
     const history = useHistory();
     const colorScheme = "LeftMenuButton";
 
-    const swagBagsResponse = useCountSwagBagsQuery({
+    const [swagBagsResponse] = useCountSwagBagsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-first",
     });
 
     const { liveEventsByRoom } = useLiveEvents();

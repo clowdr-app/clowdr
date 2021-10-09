@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Grid,
     GridItem,
@@ -14,6 +13,7 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
+import { gql } from "urql";
 import {
     ExhibitionSummaryFragment,
     ItemTagDataFragment,
@@ -159,7 +159,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
 
 export function ExhibitionsGrid(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -167,10 +167,10 @@ export function ExhibitionsGrid(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(
         () =>
@@ -199,7 +199,7 @@ export function ExhibitionsGrid(): JSX.Element {
 
 export default function ExhibitionsPage(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -207,10 +207,10 @@ export default function ExhibitionsPage(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 

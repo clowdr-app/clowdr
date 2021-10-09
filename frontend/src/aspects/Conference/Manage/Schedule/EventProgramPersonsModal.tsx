@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -25,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import assert from "assert";
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     EventInfoFragment,
@@ -109,12 +109,12 @@ export function AddEventProgramPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
+    const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
             conferenceId: event.conferenceId,
         },
     });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
+    const [selectProgramPeople_ByRegistrantQuery] = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
         skip: true,
     });
     const registrantOptions = useMemo(
@@ -266,7 +266,7 @@ export function AddEventProgramPerson_RegistrantModal({
                             <Button onClick={onClose}>Cancel</Button>
                             <Button
                                 colorScheme="purple"
-                                isDisabled={selectRegistrantsQuery.loading || selectedRegistrantId === ""}
+                                isDisabled={selectRegistrantsQuery.fetching || selectedRegistrantId === ""}
                                 isLoading={adding}
                                 onClick={add}
                             >
@@ -293,9 +293,9 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
             ));
     }, [programPeople]);
 
-    const [insertEventProgramPerson, insertEventProgramPersonResponse] = useInsertEventProgramPersonMutation();
-    const [updateEventProgramPerson, updateEventProgramPersonResponse] = useUpdateEventProgramPersonMutation();
-    const [deleteEventProgramPersons, deleteEventProgramPersonsResponse] = useDeleteEventProgramPersonsMutation();
+    const [insertEventProgramPersonResponse, insertEventProgramPerson] = useInsertEventProgramPersonMutation();
+    const [updateEventProgramPersonResponse, updateEventProgramPerson] = useUpdateEventProgramPersonMutation();
+    const [deleteEventProgramPersonsResponse, deleteEventProgramPersons] = useDeleteEventProgramPersonsMutation();
 
     const row: RowSpecification<EventProgramPersonInfoFragment> = useMemo(
         () => ({
@@ -483,7 +483,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                 row={row}
                                 columns={columns}
                                 insert={{
-                                    ongoing: insertEventProgramPersonResponse.loading,
+                                    ongoing: insertEventProgramPersonResponse.fetching,
                                     generateDefaults: () => ({
                                         id: uuidv4(),
                                         eventId: event.id,
@@ -537,7 +537,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                     },
                                 }}
                                 update={{
-                                    ongoing: updateEventProgramPersonResponse.loading,
+                                    ongoing: updateEventProgramPersonResponse.fetching,
                                     start: (record) => {
                                         updateEventProgramPerson({
                                             variables: {
@@ -559,7 +559,7 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                     },
                                 }}
                                 delete={{
-                                    ongoing: deleteEventProgramPersonsResponse.loading,
+                                    ongoing: deleteEventProgramPersonsResponse.fetching,
                                     start: (keys) => {
                                         deleteEventProgramPersons({
                                             variables: {

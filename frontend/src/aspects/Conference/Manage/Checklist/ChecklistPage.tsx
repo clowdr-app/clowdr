@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -33,6 +32,7 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { Fragment, PropsWithChildren, useMemo } from "react";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -426,7 +426,7 @@ export default function ChecklistPage(): JSX.Element {
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
     const now = useMemo(() => new Date().toISOString(), []);
-    const checklistResponse = usePreshowChecklistQuery({
+    const [checklistResponse] = usePreshowChecklistQuery({
         variables: {
             now,
             conferenceId: conference.id,
@@ -1241,7 +1241,7 @@ export default function ChecklistPage(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Pre-conference Checklist
             </Heading>
-            {checklistResponse.loading && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
+            {checklistResponse.fetching && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
             {checklistResponse.data ? (
                 <Accordion allowToggle maxW={800}>
                     <Grid alignItems="stretch" rowGap={2} columnGap={4} templateColumns="auto auto">

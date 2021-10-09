@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { WeakRef } from "@ungap/weakrefs";
 import { detect } from "detect-browser";
 import * as R from "ramda";
 import React, { Dispatch, useEffect, useMemo, useReducer, useRef } from "react";
+import { gql } from "urql";
 import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
 import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { useConference } from "../Conference/useConference";
@@ -468,7 +468,7 @@ export function VonageRoomStateProvider({
     }, [cameraTrack, microphoneTrack]);
 
     const { id: conferenceId } = useConference();
-    const maxSimultaneousScreenSharesResponse = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
+    const [maxSimultaneousScreenSharesResponse] = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
         variables: {
             conferenceId,
         },

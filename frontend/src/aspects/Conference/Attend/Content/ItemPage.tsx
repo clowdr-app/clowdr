@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
+import { gql } from "urql";
 import {
     Content_ItemType_Enum,
     ItemElements_ItemDataFragment,
@@ -11,7 +11,7 @@ import {
     useGetItemQuery,
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -59,7 +59,7 @@ gql`
 `;
 
 export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
-    const result = useGetItemQuery({
+    const [result] = useGetItemQuery({
         variables: {
             itemId,
         },
@@ -73,7 +73,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
             componentIfDenied={<PageNotFound />}
             permissions={[Permissions_Permission_Enum.ConferenceView]}
         >
-            <ApolloQueryWrapper
+            <QueryWrapper
                 queryResult={result}
                 getter={(data) =>
                     ({
@@ -146,7 +146,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         </HStack>
                     );
                 }}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         </RequireAtLeastOnePermissionWrapper>
     );
 }

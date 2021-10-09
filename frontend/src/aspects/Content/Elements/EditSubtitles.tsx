@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -28,6 +27,7 @@ import * as R from "ramda";
 import React, { Suspense, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import srtValidator, { SrtValidationError } from "srt-validator";
+import { gql } from "urql";
 import { useFilePicker, Validator } from "use-file-picker";
 import useFetch from "use-http";
 import { useUpdateSubtitlesMutation } from "../../../generated/graphql";
@@ -64,7 +64,7 @@ export default function EditSubtitles({
     elementId: string;
     magicToken: string;
 }): JSX.Element {
-    const [updateSubtitles] = useUpdateSubtitlesMutation();
+    const [_updateSubtitlesResponse, updateSubtitles] = useUpdateSubtitlesMutation();
     const toast = useToast();
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
     const history = useHistory();
@@ -110,11 +110,9 @@ export default function EditSubtitles({
         async (srtTranscript: string) => {
             try {
                 const result = await updateSubtitles({
-                    variables: {
-                        elementId,
-                        magicToken,
-                        subtitleText: srtTranscript,
-                    },
+                    elementId,
+                    magicToken,
+                    subtitleText: srtTranscript,
                 });
                 if (result.data?.updateSubtitles?.success) {
                     toast({

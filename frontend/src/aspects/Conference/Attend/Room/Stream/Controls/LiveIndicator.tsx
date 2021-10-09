@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Badge,
     Button,
@@ -24,6 +23,7 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     RoomEventDetailsFragment,
     useLiveIndicator_GetElementQuery,
@@ -75,7 +75,7 @@ export function LiveIndicator({
     const secondsUntilOffAir = (endTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
-    const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
+    const [{ data: latestImmediateSwitchData }] = useLiveIndicator_GetLatestQuery({
         variables: {
             eventId: event.id,
         },
@@ -101,7 +101,7 @@ export function LiveIndicator({
         return transformed;
     }, [latestImmediateSwitchData]);
 
-    const { data: _currentElementData } = useLiveIndicator_GetElementQuery({
+    const [{ data: _currentElementData }] = useLiveIndicator_GetElementQuery({
         variables: {
             elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
         },

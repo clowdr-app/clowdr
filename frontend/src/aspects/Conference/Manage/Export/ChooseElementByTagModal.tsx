@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -24,6 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
@@ -68,7 +68,7 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const tagsResult = useChooseElementByTagModal_GetTagsQuery({
+    const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -86,7 +86,7 @@ export function ChooseElementByTagModal({
 
     const [searchString, setSearchString] = useState<string | null>(null);
 
-    const elementsResult = useChooseElementByTagModal_GetVideoElementsQuery({
+    const [elementsResult] = useChooseElementByTagModal_GetVideoElementsQuery({
         variables: {
             tagId,
             name: searchString ?? "%%",
@@ -96,7 +96,7 @@ export function ChooseElementByTagModal({
     const elements = useMemo(() => {
         return (
             <Box mt={4}>
-                {elementsResult.loading ? (
+                {elementsResult.fetching ? (
                     <Spinner />
                 ) : elementsResult.error ? (
                     <Text>Could not retrieve list of files.</Text>
@@ -197,7 +197,7 @@ export function ChooseElementByTagModal({
                                     isLoading={isSubmitting}
                                     isDisabled={
                                         !isValid ||
-                                        elementsResult.loading ||
+                                        elementsResult.fetching ||
                                         (elementsResult.data && elementsResult.data.content_Element.length === 0)
                                     }
                                     mt={4}

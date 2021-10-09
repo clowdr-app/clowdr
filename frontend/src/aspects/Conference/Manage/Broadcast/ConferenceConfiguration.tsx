@@ -1,14 +1,14 @@
-import { gql } from "@apollo/client";
 import { Alert, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
+import { gql } from "urql";
 import {
     ConferenceConfiguration_ConferenceConfigurationsFragment,
     Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 
 gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -40,17 +40,14 @@ gql`
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const conferenceConfigurationsResult = useConferenceConfiguration_GetConferenceConfigurationsQuery({
+    const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId,
         },
     });
 
     return (
-        <ApolloQueryWrapper
-            queryResult={conferenceConfigurationsResult}
-            getter={(result) => result.conference_Configuration}
-        >
+        <QueryWrapper queryResult={conferenceConfigurationsResult} getter={(result) => result.conference_Configuration}>
             {(configurations: readonly ConferenceConfiguration_ConferenceConfigurationsFragment[]) => (
                 <FillerVideoConfiguration
                     fillerVideos={
@@ -62,7 +59,7 @@ export function Configuration({ conferenceId }: { conferenceId: string }): JSX.E
                     }}
                 />
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 

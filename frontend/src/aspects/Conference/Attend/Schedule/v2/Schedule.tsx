@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Box, Table, Text, Th, Tr, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
+import { gql } from "urql";
 import {
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
@@ -90,7 +90,7 @@ export default function Schedule({
         }),
         [conference.id]
     );
-    const tagsResponse = useScheduleV2_TagsQuery(tagsQueryObj);
+    const [tagsResponse] = useScheduleV2_TagsQuery(tagsQueryObj);
     const sortedTags = useMemo<ScheduleV2_TagFragment[]>(
         () =>
             tagsResponse.data?.collection_Tag
@@ -110,7 +110,7 @@ export default function Schedule({
         }),
         [conference.id]
     );
-    const roomsResponse = useScheduleV2_RoomsQuery(roomsQueryObj);
+    const [roomsResponse] = useScheduleV2_RoomsQuery(roomsQueryObj);
 
     const sortedRooms = useMemo<ScheduleV2_RoomFragment[]>(
         () =>

@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import {
     Permissions_Permission_Enum,
     RoomListRoomDetailsFragment,
@@ -9,7 +9,7 @@ import {
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
@@ -131,7 +131,7 @@ export default function RoomListPage(): JSX.Element {
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
-    const result = useGetAllRoomsQuery({
+    const [result] = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
             registrantId: registrant.id,
@@ -189,26 +189,26 @@ export default function RoomListPage(): JSX.Element {
                     People
                 </LinkButton>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
+            <QueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Social Rooms" }} />
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             <HStack flexWrap="wrap" justifyContent="center" mt={2}>
                 <Button onClick={onOpen} colorScheme="PrimaryActionButton">
                     Create new room
                 </Button>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+            <QueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Program Rooms" }} />
                 )}
-            </ApolloQueryWrapper>
-            {/* <ApolloQueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
+            </QueryWrapper>
+            {/* <QueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Discussion Rooms" }} limit={25} />
                 )}
-            </ApolloQueryWrapper> */}
+            </QueryWrapper> */}
         </RequireAtLeastOnePermissionWrapper>
     );
 }

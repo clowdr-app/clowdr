@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -11,6 +10,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -65,7 +65,7 @@ export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
-    const shufflePeriodsQ = useManageShufflePeriods_SelectAllQuery({
+    const [shufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -112,7 +112,7 @@ export default function ManageShuffle(): JSX.Element {
                 </Alert>
             ) : undefined}
             {!shufflePeriodsQ.error ? (
-                shufflePeriodsQ.loading && !shufflePeriodsQ.data ? (
+                shufflePeriodsQ.fetching && !shufflePeriodsQ.data ? (
                     <Spinner label="Loading shuffle queues" />
                 ) : (
                     <>

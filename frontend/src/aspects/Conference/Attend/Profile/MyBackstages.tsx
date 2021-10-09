@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -30,6 +29,7 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
+import { gql } from "urql";
 import { MyBackstages_EventFragment, useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -75,7 +75,7 @@ function MyBackstages(): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
-    const myBackstagesResponse = useRegistrantEventsWithBackstagesQuery({
+    const [myBackstagesResponse] = useRegistrantEventsWithBackstagesQuery({
         variables: {
             registrantId: registrant.id,
         },
@@ -142,7 +142,7 @@ function MyBackstages(): JSX.Element {
                 Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
                 can go directly to your room at the start time. You will not see any backstages in this list.
             </Text>
-            {myBackstagesResponse.loading && !eventsGroupedByDay ? (
+            {myBackstagesResponse.fetching && !eventsGroupedByDay ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
             ) : undefined}
             {eventsTodayAndFuture ? (

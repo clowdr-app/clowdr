@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -23,6 +22,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
+import { gql } from "urql";
 import { useUpdateUploadsRemainingMutation } from "../../../../../../generated/graphql";
 
 gql`
@@ -70,7 +70,7 @@ function ModalInner({
     const elementIds = useMemo(() => elementsByItem.flatMap((x) => x.elementIds), [elementsByItem]);
     const [newValue, setNewValue] = useState<number>(3);
 
-    const [doUpdate, updateResponse] = useUpdateUploadsRemainingMutation();
+    const [updateResponse, doUpdate] = useUpdateUploadsRemainingMutation();
 
     const update = useCallback(async () => {
         try {
@@ -123,7 +123,7 @@ function ModalInner({
             <ModalFooter>
                 <ButtonGroup spacing={2}>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button colorScheme="purple" isLoading={updateResponse.loading} onClick={update}>
+                    <Button colorScheme="purple" isLoading={updateResponse.fetching} onClick={update}>
                         Update
                     </Button>
                 </ButtonGroup>

@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
 import { Box, chakra, HStack, Skeleton, Td, Text, VStack } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as luxon from "luxon";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import { gql } from "urql";
 import type { ScheduleV2_EventFragment, ScheduleV2_TagFragment } from "../../../../../generated/graphql";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";

@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -23,6 +22,7 @@ import {
 import assert from "assert";
 import Papa from "papaparse";
 import React, { LegacyRef, useMemo, useState } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     InvitationPartsFragmentDoc,
@@ -218,11 +218,7 @@ export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllGroups,
-        error: errorAllGroups,
-        data: allGroups,
-    } = useSelectAllGroupsQuery({
+    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -230,12 +226,14 @@ export default function ManageRegistrants(): JSX.Element {
     });
     useQueryErrorToast(errorAllGroups, false);
 
-    const {
-        loading: loadingAllRegistrants,
-        error: errorAllRegistrants,
-        data: allRegistrants,
-        refetch: refetchAllRegistrants,
-    } = useSelectAllRegistrantsQuery({
+    const [
+        {
+            fetching: loadingAllRegistrants,
+            error: errorAllRegistrants,
+            data: allRegistrants,
+            refetch: refetchAllRegistrants,
+        },
+    ] = useSelectAllRegistrantsQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -247,11 +245,11 @@ export default function ManageRegistrants(): JSX.Element {
         [allRegistrants?.registrant_Registrant]
     );
 
-    const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
+    const [insertRegistrantResponse, insertRegistrant] = useInsertRegistrantMutation();
     const [insertRegistrantWithoutInvite, insertRegistrantWithoutInviteResponse] =
         useInsertRegistrantWithoutInviteMutation();
-    const [deleteRegistrants, deleteRegistrantsResponse] = useDeleteRegistrantsMutation();
-    const [updateRegistrant, updateRegistrantResponse] = useUpdateRegistrantMutation();
+    const [deleteRegistrantsResponse, deleteRegistrants] = useDeleteRegistrantsMutation();
+    const [updateRegistrantResponse, updateRegistrant] = useUpdateRegistrantMutation();
 
     const row: RowSpecification<RegistrantDescriptor> = useMemo(
         () => ({
@@ -573,7 +571,7 @@ export default function ManageRegistrants(): JSX.Element {
         return result;
     }, [allGroups?.permissions_Group]);
 
-    const [insertInvitationEmailJobsMutation, { loading: insertInvitationEmailJobsLoading }] =
+    const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
     const [insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
     const [sendCustomEmailRegistrants, setSendCustomEmailRegistrants] = useState<RegistrantDescriptor[]>([]);
@@ -583,7 +581,7 @@ export default function ManageRegistrants(): JSX.Element {
 
     const insert: Insert<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: insertRegistrantResponse.loading,
+            ongoing: insertRegistrantResponse.fetching,
             generateDefaults: () => {
                 const registrantId = uuidv4();
                 return {
@@ -655,12 +653,12 @@ export default function ManageRegistrants(): JSX.Element {
                 }
             },
         }),
-        [conference.id, insertRegistrant, insertRegistrantResponse.loading, insertRegistrantWithoutInvite]
+        [conference.id, insertRegistrant, insertRegistrantResponse.fetching, insertRegistrantWithoutInvite]
     );
 
     const update: Update<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: updateRegistrantResponse.loading,
+            ongoing: updateRegistrantResponse.fetching,
             start: (record) => {
                 updateRegistrant({
                     variables: {
@@ -688,12 +686,12 @@ export default function ManageRegistrants(): JSX.Element {
                 });
             },
         }),
-        [updateRegistrant, updateRegistrantResponse.loading]
+        [updateRegistrant, updateRegistrantResponse.fetching]
     );
 
     const deleteP: Delete<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: deleteRegistrantsResponse.loading,
+            ongoing: deleteRegistrantsResponse.fetching,
             start: (keys) => {
                 deleteRegistrants({
                     variables: {
@@ -722,7 +720,7 @@ export default function ManageRegistrants(): JSX.Element {
                 });
             },
         }),
-        [deleteRegistrants, deleteRegistrantsResponse.loading]
+        [deleteRegistrants, deleteRegistrantsResponse.fetching]
     );
 
     const enabledGroups = useMemo(
@@ -735,7 +733,7 @@ export default function ManageRegistrants(): JSX.Element {
     );
 
     const [exportWithProfileData, setExportWithProfileData] = useState<boolean>(false);
-    const selectProfiles = useManageRegistrants_SelectProfilesQuery({
+    const [selectProfiles] = useManageRegistrants_SelectProfilesQuery({
         skip: true,
     });
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(

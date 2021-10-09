@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, chakra, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import { useGetEventVideosQuery } from "../../../../../../generated/graphql";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useVonageGlobalState } from "../VonageGlobalStateProvider";
@@ -42,7 +42,7 @@ gql`
 
 export default function PlayVideoMenuButton({ eventId }: { eventId: string }): JSX.Element {
     const vonage = useVonageGlobalState();
-    const response = useGetEventVideosQuery({
+    const [response] = useGetEventVideosQuery({
         variables: {
             eventId,
         },
@@ -110,7 +110,7 @@ export default function PlayVideoMenuButton({ eventId }: { eventId: string }): J
                 onClick={() => {
                     // TODO
                 }}
-                isLoading={response.loading}
+                isLoading={response.fetching}
                 isDisabled={!videoElementIds.length}
             >
                 <chakra.span>Play pre-recorded video</chakra.span>

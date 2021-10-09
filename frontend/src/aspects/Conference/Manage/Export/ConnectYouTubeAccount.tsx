@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Button, Heading, HStack, Link, List, ListItem, Text, useColorModeValue, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import {
     ManageExport_RegistrantGoogleAccountFragment,
     useManageExport_DeleteRegistrantGoogleAccountMutation,
@@ -10,7 +10,7 @@ import {
     useManageExport_GetRegistrantGoogleAccountsQuery,
 } from "../../../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "../../../Google/useGoogleOAuthRedirectUrl";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
@@ -45,7 +45,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
     const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
-    const result = useManageExport_GetRegistrantGoogleAccountsQuery({
+    const [result] = useManageExport_GetRegistrantGoogleAccountsQuery({
         variables: {
             registrantId: registrant?.id,
         },
@@ -70,7 +70,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                 </Link>
                 .
             </Text>
-            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
+            <QueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List>
                         {accounts.map((account) => (
@@ -120,7 +120,7 @@ export function ConnectYouTubeAccount(): JSX.Element {
                         ))}
                     </List>
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             <Button
                 display="block"
                 onClick={async () => {

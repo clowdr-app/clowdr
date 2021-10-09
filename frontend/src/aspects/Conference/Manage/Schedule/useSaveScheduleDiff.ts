@@ -1,6 +1,6 @@
-import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
+import { ApolloError, gql } from "urql";
 import {
     Collection_Tag_Insert_Input,
     Conference_OriginatingData_Insert_Input,
@@ -295,11 +295,7 @@ export function useSaveScheduleDiff():
     const [insertEventMutation] = useInsertEventMutation();
     const [updateEventMutation] = useUpdateEventMutation();
 
-    const {
-        loading: loadingContent,
-        error: errorContent,
-        data: wholeSchedule,
-    } = useSelectWholeScheduleQuery({
+    const [{ fetching: loadingContent, error: errorContent, data: wholeSchedule }] = useSelectWholeScheduleQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,

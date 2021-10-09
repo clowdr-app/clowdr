@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -27,6 +26,7 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
+import { gql } from "urql";
 import {
     ManageShufflePeriods_SelectAllDocument,
     ManageShufflePeriods_SelectAllQuery,
@@ -83,7 +83,7 @@ export default function ShuffleQueueTile({
 }): JSX.Element {
     const conference = useConference();
 
-    const [deletePeriod, deletePeriodResponse] = useDeleteShufflePeriodMutation({
+    const [deletePeriodResponse, deletePeriod] = useDeleteShufflePeriodMutation({
         variables: {
             id: queue.id,
         },
@@ -180,7 +180,7 @@ export default function ShuffleQueueTile({
                         <ConfigureQueueModal initialQueue={queue} />
                         <Tooltip label="Delete">
                             <Button
-                                isLoading={deletePeriodResponse.loading}
+                                isLoading={deletePeriodResponse.fetching}
                                 size="xs"
                                 aria-label="Delete"
                                 colorScheme="red"

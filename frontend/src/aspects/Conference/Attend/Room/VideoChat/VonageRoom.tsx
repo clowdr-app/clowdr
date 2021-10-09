@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -14,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
+import { gql } from "urql";
 import {
     RoomPage_RoomDetailsFragment,
     useGetEventVonageTokenMutation,
@@ -136,7 +136,7 @@ export function VideoChatVonageRoom({
         setPublicVonageSessionId(room.publicVonageSessionId);
     }, [room.publicVonageSessionId]);
 
-    const roomVonageSessionIdResponse = useGetRoomVonageSessionIdQuery({
+    const [roomVonageSessionIdResponse] = useGetRoomVonageSessionIdQuery({
         skip: true,
     });
     const attempts = React.useRef<number>(0);

@@ -1,4 +1,3 @@
-import { gql, useApolloClient } from "@apollo/client";
 import {
     AspectRatio,
     Box,
@@ -14,6 +13,7 @@ import {
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql, useClient } from "urql";
 import {
     Content_ItemType_Enum,
     RoomPage_RoomDetailsFragment,
@@ -107,11 +107,13 @@ gql`
 `;
 
 export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
-    const {
-        data: defaultVideoRoomBackendData,
-        refetch: refetchDefaultVideoRoomBackend,
-        loading: defaultvideoRoomBackendLoading,
-    } = useRoom_GetDefaultVideoRoomBackendQuery({
+    const [
+        {
+            data: defaultVideoRoomBackendData,
+            refetch: refetchDefaultVideoRoomBackend,
+            fetching: defaultvideoRoomBackendLoading,
+        },
+    ] = useRoom_GetDefaultVideoRoomBackendQuery({
         fetchPolicy: "network-only",
     });
 
@@ -155,7 +157,7 @@ function Room({
         [now]
     );
 
-    const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
+    const [{ fetching: loadingEvents, data }] = useRoom_GetEventsQuery({
         fetchPolicy: "cache-and-network",
         nextFetchPolicy: "cache-first",
         variables: {
@@ -389,7 +391,7 @@ function RoomInner({
     const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
 
     const raiseHand = useRaiseHandState();
-    const apolloClient = useApolloClient();
+    const client = useClient();
     const currentUser = useCurrentUser().user;
     useEffect(() => {
         if (currentRegistrant.userId) {
@@ -462,17 +464,17 @@ function RoomInner({
                   if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
                       setTimeout(() => {
                           // alert("Auto revealing backstage room");
-                          const fragmentId = apolloClient.cache.identify({
+                          const fragmentId = client.cache.identify({
                               __typename: "schedule_Event",
                               id: currentRoomEvent.id,
                           });
-                          const eventFragment = apolloClient.cache.readFragment<Room_EventSummaryFragment>({
+                          const eventFragment = client.cache.readFragment<Room_EventSummaryFragment>({
                               fragment: Room_EventSummaryFragmentDoc,
                               id: fragmentId,
                               fragmentName: "Room_EventSummary",
                           });
                           if (eventFragment) {
-                              apolloClient.cache.writeFragment({
+                              client.cache.writeFragment({
                                   fragment: Room_EventSummaryFragmentDoc,
                                   id: fragmentId,
                                   fragmentName: "Room_EventSummary",
@@ -505,7 +507,7 @@ function RoomInner({
         return () => {
             unobserve();
         };
-    }, [apolloClient.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
+    }, [client.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
 
     const onLeaveBackstage = useCallback(() => {
         const isParticipantOfCurrentEvent =

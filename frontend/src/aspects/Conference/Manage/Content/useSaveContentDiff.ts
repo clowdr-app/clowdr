@@ -1,6 +1,6 @@
-import { ApolloError, gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
+import { ApolloError, gql } from "urql";
 import {
     Collection_Exhibition_Insert_Input,
     Collection_ProgramPerson_Insert_Input,
@@ -483,11 +483,7 @@ export function useSaveContentDiff():
     const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
     const [updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
-    const {
-        loading: loadingContent,
-        error: errorContent,
-        data: allContent,
-    } = useSelectAllContentQuery({
+    const [{ fetching: loadingContent, error: errorContent, data: allContent }] = useSelectAllContentQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,

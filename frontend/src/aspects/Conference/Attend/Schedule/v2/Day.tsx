@@ -1,9 +1,9 @@
-import { gql, QueryHookOptions } from "@apollo/client";
 import { Box, Skeleton, Td, Th, Tr, useColorModeValue } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql, QueryHookOptions } from "urql";
 import {
     ScheduleV2_DayEventsQuery,
     ScheduleV2_DayEventsQueryVariables,
@@ -93,7 +93,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
         }),
         [conference.id, eventFilter, startOfDayTime, isVisible]
     );
-    const lwEventsResponse = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
+    const [lwEventsResponse] = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
 
     const fullDayEventsQueryObj: QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables> =
         useMemo(
@@ -105,7 +105,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
             }),
             [lwEventsResponse.data, isRendered]
         );
-    const fullEventsResponse = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
+    const [fullEventsResponse] = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
 
     const parsedEvents: ParsedEvent[] = useMemo(
         () =>

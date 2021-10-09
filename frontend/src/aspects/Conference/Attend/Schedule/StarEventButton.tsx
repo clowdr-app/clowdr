@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Box, BoxProps, Button, Spinner } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     StarEventButton_GetStarsDocument,
     StarEventButton_GetStarsQuery,
@@ -107,14 +107,14 @@ function StarEventButtonInner({
     registrant: Registrant;
 }): JSX.Element {
     const eventIds = useMemo(() => (typeof _eventIds === "string" ? [_eventIds] : _eventIds), [_eventIds]);
-    const starsResponse = useStarEventButton_GetStarsQuery({
+    const [starsResponse] = useStarEventButton_GetStarsQuery({
         variables: {
             eventIds,
             registrantId: registrant.id,
         },
     });
 
-    const [insertStars, insertStarsResponse] = useStarEventButton_InsertStarsMutation({
+    const [insertStarsResponse, insertStars] = useStarEventButton_InsertStarsMutation({
         update: (cache, response) => {
             if (response.data?.insert_schedule_StarredEvent) {
                 const datas = response.data?.insert_schedule_StarredEvent.returning;
@@ -179,7 +179,7 @@ function StarEventButtonInner({
             }
         },
     });
-    const [deleteStars, deleteStarsResponse] = useStarEventButton_DeleteStarsMutation({
+    const [deleteStarsResponse, deleteStars] = useStarEventButton_DeleteStarsMutation({
         update: (cache, response) => {
             if (response.data?.delete_schedule_StarredEvent) {
                 const data = response.data.delete_schedule_StarredEvent;
@@ -255,11 +255,11 @@ function StarEventButtonInner({
         },
     });
 
-    if (starsResponse.loading) {
+    if (starsResponse.fetching) {
         return <Spinner size="xs" speed="0.6s" />;
     }
 
-    if (insertStarsResponse.loading || deleteStarsResponse.loading) {
+    if (insertStarsResponse.fetching || deleteStarsResponse.fetching) {
         return <Spinner size="xs" color="gold" speed="0.4s" />;
     }
 

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -18,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React from "react";
+import { gql } from "urql";
 import {
     RoomListRoomDetailsFragmentDoc,
     Room_ManagementMode_Enum,

@@ -1,4 +1,3 @@
-import { gql, useApolloClient } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -13,6 +12,7 @@ import {
 import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { gql, useClient } from "urql";
 import {
     ConferenceTakenDocument,
     ConferenceTakenQuery,
@@ -314,12 +314,13 @@ export function validateShortName(inValue: string | null | undefined): string | 
 
 export default function NewConferenceForm(): JSX.Element {
     const toast = useToast();
-    const apolloClient = useApolloClient();
+    const client = useClient();
     const history = useHistory();
     const { user } = useCurrentUser();
 
-    const [createConferenceMutation] = useCreateConferenceMutation();
-    const [createNewConferenceMetaStructureMutation] = useCreateNewConferenceMetaStructureMutation();
+    const [_createConferenceResponse, createConferenceMutation] = useCreateConferenceMutation();
+    const [_createNewConferenceMetaStructureResponse, createNewConferenceMetaStructureMutation] =
+        useCreateNewConferenceMetaStructureMutation();
 
     function validateDemoCode(value: string | null | undefined) {
         if (!!value && isValidUUID(value)) {
@@ -352,11 +353,11 @@ export default function NewConferenceForm(): JSX.Element {
 
                 let failed: false | string = false;
 
-                const takenResult = await apolloClient.query<ConferenceTakenQuery, ConferenceTakenQueryVariables>({
-                    query: ConferenceTakenDocument,
-                    variables: values,
-                    fetchPolicy: "network-only",
-                });
+                const takenResult = await client
+                    .query<ConferenceTakenQuery, ConferenceTakenQueryVariables>(ConferenceTakenDocument, values, {
+                        requestPolicy: "network-only",
+                    })
+                    .toPromise();
                 try {
                     let ok: boolean | Pick<Conference_Conference, "id" | "name" | "shortName" | "slug"> = false;
                     if (takenResult.error) {
@@ -374,11 +375,9 @@ export default function NewConferenceForm(): JSX.Element {
                     }
 
                     if (ok === true) {
-                        const result = await createConferenceMutation({
-                            variables: values,
-                        });
+                        const result = await createConferenceMutation(values);
                         if (
-                            result.errors ||
+                            result.error ||
                             !result.data ||
                             !result.data.insert_conference_Conference ||
                             !result.data.insert_conference_Conference.returning.length
@@ -396,29 +395,27 @@ export default function NewConferenceForm(): JSX.Element {
                             const now = Date.now();
 
                             await createNewConferenceMetaStructureMutation({
-                                variables: {
-                                    conferenceId,
-                                    registrantDisplayName: "Conference Creator",
-                                    userId: user.id,
-                                    abstractData: [
-                                        {
-                                            createdAt: now,
-                                            createdBy: "system",
-                                            data: {
-                                                type: "ABSTRACT",
-                                                baseType: "text",
-                                                text: "Welcome to this conference!",
-                                            },
+                                conferenceId,
+                                registrantDisplayName: "Conference Creator",
+                                userId: user.id,
+                                abstractData: [
+                                    {
+                                        createdAt: now,
+                                        createdBy: "system",
+                                        data: {
+                                            type: "ABSTRACT",
+                                            baseType: "text",
+                                            text: "Welcome to this conference!",
                                         },
-                                    ],
-                                    itemListData: [
-                                        {
-                                            createdAt: now,
-                                            createdBy: "system",
-                                            data: { type: "CONTENT_GROUP_LIST", baseType: "component" },
-                                        },
-                                    ],
-                                },
+                                    },
+                                ],
+                                itemListData: [
+                                    {
+                                        createdAt: now,
+                                        createdBy: "system",
+                                        data: { type: "CONTENT_GROUP_LIST", baseType: "component" },
+                                    },
+                                ],
                             });
 
                             toast({

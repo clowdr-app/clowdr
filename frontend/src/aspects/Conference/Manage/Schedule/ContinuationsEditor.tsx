@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,6 +24,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import { gql } from "urql";
 import {
     ContinuationsEditor_ContinuationFragment,
     ContinuationsEditor_ContinuationFragmentDoc,
@@ -102,7 +102,7 @@ export default function ContinuationsEditor({
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
 
-    const response = useContinuationsEditor_SelectContinuationsQuery({
+    const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {
             fromId: eventId ?? shufflePeriodId,
         },
@@ -126,7 +126,7 @@ export default function ContinuationsEditor({
         [continuations]
     );
 
-    const [updateMany, updateManyResponse] = useContinuationsEditor_UpdateManyMutation({
+    const [updateManyResponse, updateMany] = useContinuationsEditor_UpdateManyMutation({
         update: (cache, response) => {
             if (response.data?.update_schedule_Continuation) {
                 const datas = response.data?.update_schedule_Continuation.returning;
@@ -212,7 +212,7 @@ export default function ContinuationsEditor({
                     <FAIcon iconStyle="s" icon={showExplanation ? "arrow-up" : "info"} mr={2} />
                     {showExplanation ? "Hide explanation" : "Show explanation"}
                 </Button>
-                {response.loading && !response.data ? (
+                {response.fetching && !response.data ? (
                     <Box>
                         <Spinner label="Loading continuations" />
                         Loading continuations
@@ -294,7 +294,7 @@ function ContinuationOption({
     idx: number;
     fromId: string;
 }): JSX.Element {
-    const [update, updateResponse] = useContinuationsEditor_UpdateMutation({
+    const [updateResponse, update] = useContinuationsEditor_UpdateMutation({
         update: (cache, response) => {
             if (response.data?.update_schedule_Continuation_by_pk) {
                 const data = response.data?.update_schedule_Continuation_by_pk;
@@ -335,7 +335,7 @@ function ContinuationOption({
     });
     useQueryErrorToast(updateResponse.error, false, "Update continuation");
 
-    const [deleteOp, deleteResponse] = useContinuationsEditor_DeleteMutation({
+    const [deleteResponse, deleteOp] = useContinuationsEditor_DeleteMutation({
         update: (cache, response) => {
             if (response.data?.delete_schedule_Continuation) {
                 const data = response.data.delete_schedule_Continuation;
@@ -504,7 +504,7 @@ function ContinuationOption({
                     aria-label="Delete"
                     colorScheme="red"
                     size="xs"
-                    isDisabled={deleteResponse.loading}
+                    isDisabled={deleteResponse.fetching}
                     onClick={async () => {
                         try {
                             deleteOp({

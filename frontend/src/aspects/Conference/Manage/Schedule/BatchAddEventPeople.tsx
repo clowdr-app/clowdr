@@ -1,4 +1,3 @@
-import { gql, MutationTuple, QueryResult, Reference } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -30,6 +29,7 @@ import {
 import assert from "assert";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { gql, MutationTuple, QueryResult, Reference } from "urql";
 import {
     AddEventPeople_InsertEventPeopleMutation,
     AddEventPeople_InsertEventPeopleMutationVariables,
@@ -188,7 +188,7 @@ function AddEventPeople_FromContentPanel({
     isExpanded: boolean;
     onClose: () => void;
 }) {
-    const selectItemPeopleQuery = useAddEventPeople_SelectItemPeopleQuery({
+    const [selectItemPeopleQuery] = useAddEventPeople_SelectItemPeopleQuery({
         skip: true,
     });
     const insert = useAddEventPeople_InsertEventPeopleMutation();
@@ -347,7 +347,7 @@ function AddEventPeople_SingleProgramPersonPanel({
         }
     }, [isExpanded]);
 
-    const selectProgramPeopleQuery = useAddEventPeople_SelectProgramPeopleQuery({
+    const [selectProgramPeopleQuery] = useAddEventPeople_SelectProgramPeopleQuery({
         skip: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
@@ -500,22 +500,22 @@ function AddEventPeople_FromGroupPanel({
         }
     }, [isExpanded]);
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
+    const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         skip: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
         },
     });
-    const selectGroupsQuery = useAddEventPeople_SelectGroupsQuery({
+    const [selectGroupsQuery] = useAddEventPeople_SelectGroupsQuery({
         skip: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
         },
     });
-    const selectRegistrants_ByGroupQuery = useAddEventPeople_SelectRegistrants_ByGroupQuery({
+    const [selectRegistrants_ByGroupQuery] = useAddEventPeople_SelectRegistrants_ByGroupQuery({
         skip: true,
     });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
+    const [selectProgramPeople_ByRegistrantQuery] = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
         skip: true,
     });
     const registrantOptions = useMemo(
@@ -667,13 +667,13 @@ function AddEventPeople_SingleRegistrantPanel({
         }
     }, [isExpanded]);
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
+    const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         skip: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
         },
     });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
+    const [selectProgramPeople_ByRegistrantQuery] = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
         skip: true,
     });
     const registrantOptions = useMemo(

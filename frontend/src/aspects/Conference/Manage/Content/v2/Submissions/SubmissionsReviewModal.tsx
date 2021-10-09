@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -25,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     SubmissionsReviewModal_ElementFragment,
     useSubmissionsReviewModalDataQuery,
@@ -81,7 +81,7 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const itemsResponse = useSubmissionsReviewModalDataQuery({
+    const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {
             itemIds,
         },
@@ -203,7 +203,7 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
             <ModalHeader>Review submissions</ModalHeader>
             <ModalCloseButton />
             <ModalBody mb={4}>
-                {itemsResponse.loading ? <Spinner /> : undefined}
+                {itemsResponse.fetching ? <Spinner /> : undefined}
                 <Accordion allowMultiple={false} allowToggle reduceMotion>
                     <AccordionItem>
                         <AccordionButton>

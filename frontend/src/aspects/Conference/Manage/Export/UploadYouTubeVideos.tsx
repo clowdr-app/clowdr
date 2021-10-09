@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -36,6 +35,7 @@ import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
+import { gql } from "urql";
 import {
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
@@ -249,14 +249,14 @@ export function UploadYouTubeVideos(): JSX.Element {
     const toast = useToast();
     const registrant = useCurrentRegistrant();
 
-    const existingJobsResult = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
+    const [existingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
             conferenceId: conference.id,
         },
         pollInterval: 10000,
     });
 
-    const googleAccountsResult = useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery({
+    const [googleAccountsResult] = useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery({
         variables: {
             registrantId: registrant.id,
         },
@@ -320,7 +320,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     const chooseByTagDisclosure = useDisclosure();
 
     const [elementIds, setElementIds] = useState<string[]>([]);
-    const { data } = useUploadYouTubeVideos_GetElementsQuery({
+    const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
             elementIds,
         },
@@ -336,7 +336,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         return R.fromPairs(pairs);
     }, [data]);
 
-    const { refetch: refetchTemplateData } = useUploadYouTubeVideos_GetTemplateDataQuery({ skip: true });
+    const [{ refetch: refetchTemplateData }] = useUploadYouTubeVideos_GetTemplateDataQuery({ skip: true });
 
     const compileTemplates = useCallback(
         async (
@@ -1199,7 +1199,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     <Heading as="h2" size="md" textAlign="left" mt={8} mb={2}>
                         Recent uploads
                     </Heading>
-                    {existingJobsResult.loading ? <Spinner /> : undefined}
+                    {existingJobsResult.fetching ? <Spinner /> : undefined}
                     {existingJobsResult.error ? <Text>Could not get recent uploads.</Text> : undefined}
                     <Heading as="h3" size="sm" textAlign="left" mt={4}>
                         Ongoing

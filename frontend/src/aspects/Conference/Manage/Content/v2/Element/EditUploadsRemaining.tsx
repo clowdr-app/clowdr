@@ -1,4 +1,3 @@
-import type { FetchResult, MutationFunctionOptions } from "@apollo/client";
 import {
     chakra,
     Flex,
@@ -13,6 +12,7 @@ import {
     NumberInputStepper,
 } from "@chakra-ui/react";
 import React from "react";
+import type { FetchResult, MutationFunctionOptions } from "urql";
 import type {
     ManageContent_UpdateElementMutation,
     ManageContent_UpdateElementMutationVariables,

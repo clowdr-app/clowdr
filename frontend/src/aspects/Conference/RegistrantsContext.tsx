@@ -1,6 +1,12 @@
-import { gql } from "@apollo/client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { RegistrantDataFragment, useRegistrantsByIdQuery, useRegistrantsByUserIdQuery } from "../../generated/graphql";
+import { gql, useClient } from "urql";
+import {
+    RegistrantDataFragment,
+    RegistrantsByIdDocument,
+    RegistrantsByIdQuery,
+    RegistrantsByUserIdDocument,
+    RegistrantsByUserIdQuery,
+} from "../../generated/graphql";
 import usePolling from "../Generic/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
@@ -144,12 +150,6 @@ export default function RegistrantsContextProvider({
     const [checkInterval, setCheckInterval] = useState<number>(1000);
     const conference = useConference();
     const currentUser = useMaybeCurrentUser();
-    const registrantsByIdQ = useRegistrantsByIdQuery({
-        skip: true,
-    });
-    const registrantsByUserIdQ = useRegistrantsByUserIdQuery({
-        skip: true,
-    });
 
     const registrants = React.useRef<Map<string, RegistrantCacheEntry>>(new Map());
     const usersToRegistrantIds = React.useRef<Map<string, string>>(new Map());
@@ -182,6 +182,8 @@ export default function RegistrantsContextProvider({
     useEffect(() => {
         usersToRegistrantIds.current = new Map();
     }, [conference.id]);
+
+    const client = useClient();
 
     useEffect(() => {
         if (!currentUser.user) {
@@ -222,10 +224,16 @@ export default function RegistrantsContextProvider({
                         (x) => x !== undefined && x !== null && x !== ""
                     );
                     if (filteredIds.length > 0) {
-                        const datas = await registrantsByIdQ.refetch({
-                            registrantIds: filteredIds,
-                            conferenceId: conference.id,
-                        });
+                        const datas = await client
+                            .query<RegistrantsByIdQuery>(RegistrantsByIdDocument, {
+                                registrantIds: filteredIds,
+                                conferenceId: conference.id,
+                            })
+                            .toPromise();
+
+                        if (!datas.data) {
+                            throw new Error(datas.error?.message ?? "Data is null!");
+                        }
 
                         if (
                             filteredIds.length !== datas.data.registrant_Registrant.length &&
@@ -253,10 +261,16 @@ export default function RegistrantsContextProvider({
                         (x) => x !== undefined && x !== null && x !== ""
                     );
                     if (filteredIds.length > 0) {
-                        const datas = await registrantsByUserIdQ.refetch({
-                            userIds: filteredIds,
-                            conferenceId: conference.id,
-                        });
+                        const datas = await client
+                            .query<RegistrantsByUserIdQuery>(RegistrantsByUserIdDocument, {
+                                userIds: filteredIds,
+                                conferenceId: conference.id,
+                            })
+                            .toPromise();
+
+                        if (!datas.data) {
+                            throw new Error(datas.error?.message ?? "Data is null!");
+                        }
 
                         if (
                             filteredIds.length !== datas.data.registrant_Registrant.length &&
@@ -312,7 +326,7 @@ export default function RegistrantsContextProvider({
         return () => {
             clearInterval(tId);
         };
-    }, [registrantsByIdQ, registrantsByUserIdQ, checkInterval, conference.id, fullRefetchInterval, currentUser]);
+    }, [client, checkInterval, conference.id, fullRefetchInterval, currentUser]);
 
     const ctx = useMemo(
         () => ({

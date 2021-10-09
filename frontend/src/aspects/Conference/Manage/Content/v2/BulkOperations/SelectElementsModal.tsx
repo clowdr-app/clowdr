@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -25,6 +24,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     Content_ElementType_Enum,
     ManageContent_ItemFragment,
@@ -107,7 +107,7 @@ function ModalInner({
     restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
-    const infos = useSEoUm_InfosQuery({
+    const [infos] = useSEoUm_InfosQuery({
         variables: {
             itemIds,
         },
@@ -282,7 +282,7 @@ function ModalInner({
     return (
         <>
             <ModalBody>
-                {infos.loading && !infos.data ? <Spinner label="Loading elements" /> : undefined}
+                {infos.fetching && !infos.data ? <Spinner label="Loading elements" /> : undefined}
                 {infos.data ? (
                     <HStack flexWrap="wrap" alignItems="stretch" justifyContent="space-between">
                         <VStack spacing={4} flex="1 1 48%" minW={400} mb={10}>

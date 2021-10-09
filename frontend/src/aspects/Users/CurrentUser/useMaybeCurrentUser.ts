@@ -12,7 +12,7 @@ export type UserInfo = {
      * `UserInfoFragment` if the user was found.
      */
     user: UserInfoFragment | false | undefined;
-    refetchUser: () => Promise<unknown>;
+    refetchUser: () => void;
 };
 
 export const defaultCurrentUserContext: UserInfo = {

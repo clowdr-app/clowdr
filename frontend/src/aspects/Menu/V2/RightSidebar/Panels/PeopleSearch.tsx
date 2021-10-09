@@ -9,10 +9,10 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useSearchRegistrantsLazyQuery } from "../../../../../generated/graphql";
+import { CombinedError, useClient } from "urql";
+import { SearchRegistrantsDocument, SearchRegistrantsQuery } from "../../../../../generated/graphql";
 import { useConference } from "../../../../Conference/useConference";
 import { Registrant, useMaybeCurrentRegistrant } from "../../../../Conference/useCurrentRegistrant";
-import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../../Icons/FAIcon";
 import { RegistrantsList } from "./RegistrantsList";
 
@@ -22,12 +22,11 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
     const conference = useConference();
     const registrant = useMaybeCurrentRegistrant();
 
-    const [
-        searchQuery,
-        { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchRegistrantsLazyQuery();
-    useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search registrants");
-
+    const [{ loadingSearch, dataSearch, errorSearch }, setSearchState] = useState<{
+        loadingSearch: boolean;
+        dataSearch: SearchRegistrantsQuery | undefined;
+        errorSearch: CombinedError | undefined;
+    }>({ loadingSearch: false, dataSearch: undefined, errorSearch: undefined });
     const [loadedCount, setLoadedCount] = useState<number>(30);
 
     const [searched, setSearched] = useState<Registrant[] | null>(null);
@@ -57,14 +56,25 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
         // the cache of the last run of the search query
     }, [dataSearch, errorSearch, loadingSearch, search]);
 
+    const client = useClient();
     useEffect(() => {
-        const tId = setTimeout(() => {
+        const tId = setTimeout(async () => {
             if (search.length >= 3) {
-                searchQuery({
-                    variables: {
+                setSearchState((old) => ({
+                    loadingSearch: true,
+                    dataSearch: old.dataSearch,
+                    errorSearch: old.errorSearch,
+                }));
+                const response = await client
+                    .query(SearchRegistrantsDocument, {
                         conferenceId: conference.id,
                         search: `%${search}%`,
-                    },
+                    })
+                    .toPromise();
+                setSearchState({
+                    loadingSearch: false,
+                    dataSearch: response.data,
+                    errorSearch: response.error,
                 });
             } else {
                 setAllSearched(null);
@@ -73,7 +83,7 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
         return () => {
             clearTimeout(tId);
         };
-    }, [conference.id, search, searchQuery]);
+    }, [conference.id, search, client]);
 
     return (
         <>

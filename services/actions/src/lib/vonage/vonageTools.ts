@@ -768,7 +768,7 @@ export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLay
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenShareType);
                         break;
                     case "custom":
                         await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);

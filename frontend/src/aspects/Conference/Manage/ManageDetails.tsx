@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -24,6 +23,7 @@ import {
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useUpdateConferenceMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";

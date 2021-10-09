@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import {
     Button,
     FormLabel,
@@ -14,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { LegacyRef, useMemo } from "react";
+import { gql, Reference } from "urql";
 import {
     ElementSecurity_ElementPgFragment,
     ElementSecurity_ElementPgFragmentDoc,
@@ -134,7 +134,7 @@ function EditElementsPermissionGrantsModalInner({
     treatEmptyAsAny = false,
 }: Omit<Props, "isOpen" | "onClose">): JSX.Element {
     const conference = useConference();
-    const grantsResponse = useElementSecurity_SelectGrantsQuery({
+    const [grantsResponse] = useElementSecurity_SelectGrantsQuery({
         variables: {
             elementIds,
             conferenceId: conference.id,
@@ -315,7 +315,7 @@ function EditElementsPermissionGrantsModalInner({
         [elementIds, groupOptions, groups, permissionSetOptions, permissionSets]
     );
 
-    const [insertGrants, insertGrantsResponse] = useElementSecurity_InsertGrantsMutation({
+    const [insertGrantsResponse, insertGrants] = useElementSecurity_InsertGrantsMutation({
         update: (cache, response) => {
             if (response.data) {
                 if (response.data.insert_content_ElementPermissionGrant) {
@@ -331,7 +331,7 @@ function EditElementsPermissionGrantsModalInner({
             }
         },
     });
-    const [deleteGrants, deleteGrantsResponse] = useElementSecurity_DeleteGrantsMutation({
+    const [deleteGrantsResponse, deleteGrants] = useElementSecurity_DeleteGrantsMutation({
         update: (cache, response) => {
             if (response.data) {
                 const dataE = response.data.delete_content_ElementPermissionGrant;
@@ -357,18 +357,20 @@ function EditElementsPermissionGrantsModalInner({
 
     return (
         <>
-            {grantsResponse.loading && !grantsResponse.data ? <Spinner label="Loading permission grants" /> : undefined}
+            {grantsResponse.fetching && !grantsResponse.data ? (
+                <Spinner label="Loading permission grants" />
+            ) : undefined}
             {grantsResponse.data ? (
                 <>
                     <CRUDTable
                         data={
-                            !grantsResponse.loading && (grantsResponse.data && permissionSets && groups ? data : null)
+                            !grantsResponse.fetching && (grantsResponse.data && permissionSets && groups ? data : null)
                         }
                         tableUniqueName="EditElementPermissionGrants"
                         row={row}
                         columns={columns}
                         insert={{
-                            ongoing: insertGrantsResponse.loading,
+                            ongoing: insertGrantsResponse.fetching,
                             generateDefaults: () => ({}),
                             makeWhole: (d) => (d.permissionSetId ? (d as RowType) : undefined),
                             start: (record) => {
@@ -393,7 +395,7 @@ function EditElementsPermissionGrantsModalInner({
                             },
                         }}
                         delete={{
-                            ongoing: deleteGrantsResponse.loading,
+                            ongoing: deleteGrantsResponse.fetching,
                             start: (keys) => {
                                 const keyPairs: {
                                     permissionSetId: string;

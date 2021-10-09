@@ -8,7 +8,7 @@ export function useHLSUri(roomId: string, broadcastEventStartsAt: number): strin
 
     const [refetchChannelStackInterval, setRefetchChannelStackInterval] = useState<number>(2 * 60 * 1000);
     const [skipGetChannelStack, setSkipGetChannelStack] = useState<boolean>(true);
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+    const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId,
         },

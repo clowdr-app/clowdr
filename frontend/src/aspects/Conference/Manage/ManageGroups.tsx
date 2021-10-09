@@ -1,7 +1,7 @@
-import { FetchResult, gql } from "@apollo/client";
 import { Heading, Spinner } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
+import { FetchResult, gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     CreateDeleteGroupsMutation,
@@ -126,11 +126,7 @@ export default function ManageGroups(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
 
-    const {
-        loading: loadingAllRoles,
-        error: errorAllRoles,
-        data: allRoles,
-    } = useSelectAllRolesQuery({
+    const [{ fetching: loadingAllRoles, error: errorAllRoles, data: allRoles }] = useSelectAllRolesQuery({
         fetchPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -138,17 +134,13 @@ export default function ManageGroups(): JSX.Element {
     });
     useQueryErrorToast(errorAllRoles, false);
 
-    const {
-        loading: loadingAllGroups,
-        error: errorAllGroups,
-        data: allGroups,
-        refetch: refetchAllGroups,
-    } = useSelectAllGroupsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups, refetch: refetchAllGroups }] =
+        useSelectAllGroupsQuery({
+            fetchPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllGroups, false);
 
     const [createDeleteGroupsMutation] = useCreateDeleteGroupsMutation();

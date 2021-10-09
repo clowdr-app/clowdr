@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,6 +24,7 @@ import {
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
+import { gql } from "urql";
 import {
     MonitorLivestreams_EventFragment,
     MonitorLivestreams_PersonFragment,
@@ -147,7 +147,7 @@ export default function LivestreamMonitoring(): JSX.Element {
     const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
     const nowStr = useMemo(() => new Date(nowRoundedDown + 3000).toISOString(), [nowRoundedDown]);
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
-    const response = useMonitorLivestreamsQuery({
+    const [response] = useMonitorLivestreamsQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,
@@ -505,7 +505,7 @@ export default function LivestreamMonitoring(): JSX.Element {
             </Grid>
             <Divider />
             <Center h="60px">
-                {response.loading ? (
+                {response.fetching ? (
                     <Spinner label="Loading backstage info" size="sm" />
                 ) : (
                     <>
@@ -539,7 +539,7 @@ export default function LivestreamMonitoring(): JSX.Element {
 
 function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
     const conference = useConference();
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+    const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId: id,
         },

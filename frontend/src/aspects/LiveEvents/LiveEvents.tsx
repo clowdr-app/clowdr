@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import { MinimalEventInfoFragment, useGetEventsInNextHourQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { roundDownToNearest, roundUpToNearest } from "../Generic/MathUtils";
@@ -63,7 +63,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
         [nowSlow]
     );
 
-    const response = useGetEventsInNextHourQuery({
+    const [response] = useGetEventsInNextHourQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,

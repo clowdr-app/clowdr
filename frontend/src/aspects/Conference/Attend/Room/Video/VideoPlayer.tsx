@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertIcon,
@@ -21,6 +20,7 @@ import {
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { gql } from "urql";
 import { useVideoPlayer_GetElementQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -54,7 +54,7 @@ export function VideoPlayer({
         }
     `;
 
-    const { data, error, loading } = useVideoPlayer_GetElementQuery({
+    const [{ data, error, loading }] = useVideoPlayer_GetElementQuery({
         variables: {
             elementId,
         },

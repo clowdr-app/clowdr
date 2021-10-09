@@ -5,7 +5,7 @@ import { SearchPanel_ItemFragment, useProfilePage_ItemsQuery } from "../../../..
 import SearchResult_Item from "../Search/SearchResult_Item";
 
 export default function RegistrantItems({ registrantId }: { registrantId: string }): JSX.Element {
-    const itemsResponse = useProfilePage_ItemsQuery({
+    const [itemsResponse] = useProfilePage_ItemsQuery({
         variables: {
             registrantId: registrantId,
         },

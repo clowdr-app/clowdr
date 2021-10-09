@@ -1,8 +1,8 @@
-import { gql, useApolloClient } from "@apollo/client";
 import { Box, Flex } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
+import { gql, useClient } from "urql";
 import { validate } from "uuid";
 import {
     Room_EventSummaryFragment,
@@ -95,7 +95,7 @@ export function VonageRoom({
     const raiseHand = useRaiseHandState();
 
     const [deleteEventParticipant] = useDeleteEventParticipantMutation();
-    const apolloClient = useApolloClient();
+    const client = useClient();
 
     const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 
@@ -157,20 +157,18 @@ export function VonageRoom({
                                                               const data =
                                                                   response.data.delete_schedule_EventProgramPerson
                                                                       .returning;
-                                                              const fragmentId = apolloClient.cache.identify({
+                                                              const fragmentId = client.cache.identify({
                                                                   __typename: "schedule_Event",
                                                                   id: eventId,
                                                               });
                                                               const eventFragment =
-                                                                  apolloClient.cache.readFragment<Room_EventSummaryFragment>(
-                                                                      {
-                                                                          fragment: Room_EventSummaryFragmentDoc,
-                                                                          id: fragmentId,
-                                                                          fragmentName: "Room_EventSummary",
-                                                                      }
-                                                                  );
+                                                                  client.cache.readFragment<Room_EventSummaryFragment>({
+                                                                      fragment: Room_EventSummaryFragmentDoc,
+                                                                      id: fragmentId,
+                                                                      fragmentName: "Room_EventSummary",
+                                                                  });
                                                               if (eventFragment) {
-                                                                  apolloClient.cache.writeFragment({
+                                                                  client.cache.writeFragment({
                                                                       fragment: Room_EventSummaryFragmentDoc,
                                                                       id: fragmentId,
                                                                       fragmentName: "Room_EventSummary",

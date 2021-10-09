@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { Box, Button, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { gql } from "urql";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
 import { HlsPlayer } from "../../Video/HlsPlayer";
@@ -28,7 +28,7 @@ export default function StreamPreview({
     const bgColor = useColorModeValue("gray.100", "gray.800");
     const [enabled, setEnabled] = useState<boolean>(true);
     const conference = useConference();
-    const configResponse = useEnableBackstageStreamPreviewQuery({
+    const [configResponse] = useEnableBackstageStreamPreviewQuery({
         variables: {
             conferenceId: conference.id,
         },

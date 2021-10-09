@@ -1,7 +1,7 @@
-import type { Reference } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
+import type { Reference } from "urql";
 import {
     ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
@@ -16,7 +16,7 @@ export function EditElementInner(props: {
     element: ManageContent_ElementFragment;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
-    const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
+    const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation({
         update: (cache, { data: _data }) => {
             if (_data?.update_content_Element_by_pk) {
                 const data = _data.update_content_Element_by_pk;
@@ -103,7 +103,7 @@ export function EditElementInner(props: {
                 elementId={props.element.id}
                 uploadsRemaining={props.element.uploadsRemaining ?? null}
                 updateUploadableElement={updateElement}
-                isUpdatingUploadable={updateElementResponse.loading}
+                isUpdatingUploadable={updateElementResponse.fetching}
             />
             <Divider my={2} />
             {editor}

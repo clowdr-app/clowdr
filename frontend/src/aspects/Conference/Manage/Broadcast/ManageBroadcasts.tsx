@@ -29,7 +29,7 @@ export default function ManageBroadcast(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
 
-    const [create, { loading, error }] = useCreateConferencePrepareJobMutation();
+    const [{ loading, error }, create] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(error, false);
     const toast = useToast();
 

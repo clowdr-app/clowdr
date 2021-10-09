@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -20,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     ManageModeration_ChatFlagFragment,
     Permissions_Permission_Enum,
@@ -87,7 +87,7 @@ export default function ManageModeration(): JSX.Element {
 
 function ModerationList(): JSX.Element {
     const conference = useConference();
-    const flagsResponse = useManageModeration_SelectFlagsQuery({
+    const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -108,7 +108,7 @@ function ModerationList(): JSX.Element {
 
     return (
         <>
-            {flagsResponse.loading && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
+            {flagsResponse.fetching && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
             <ModerationChatConfigurationProvider>
                 <List spacing={8} mt={4} px={2} py={2}>
                     {sortedFlags?.map((flag, idx) =>
@@ -283,7 +283,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
     const messageState = useMemo(() => new MessageState(chatState, flag.message), [chatState, flag.message]);
     const registrant = useCurrentRegistrant();
 
-    const [update, updateResponse] = useManageModeration_UpdateFlagMutation();
+    const [updateResponse, update] = useManageModeration_UpdateFlagMutation();
 
     const [newNote, setNewNote] = useState<string>("");
     const [resolution, setResolution] = useState<string>("");
@@ -347,7 +347,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={newNote.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
                                 update({
                                     variables: {
@@ -387,7 +387,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={resolution.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
                                 update({
                                     variables: {

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -27,6 +26,7 @@ import {
     EMAIL_TEMPLATE_SUBTITLES_GENERATED,
 } from "@clowdr-app/shared-types/build/email";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     Conference_ConfigurationKey_Enum,
     ConfigureEmailTemplates_ConferenceConfigurationFragment,
@@ -34,7 +34,7 @@ import {
     useConfigureEmailTemplates_GetConferenceConfigurationsQuery,
     useConfigureEmailTemplates_UpdateConferenceConfigurationMutation,
 } from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useConference } from "../../useConference";
 
 gql`
@@ -69,21 +69,18 @@ gql`
 export function ConfigureEmailTemplates(): JSX.Element {
     const conference = useConference();
 
-    const conferenceConfigurationResult = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
+    const [conferenceConfigurationResult] = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
     return (
-        <ApolloQueryWrapper
-            getter={(result) => result.conference_Configuration}
-            queryResult={conferenceConfigurationResult}
-        >
+        <QueryWrapper getter={(result) => result.conference_Configuration} queryResult={conferenceConfigurationResult}>
             {(conferenceConfigurations: readonly ConfigureEmailTemplates_ConferenceConfigurationFragment[]) => (
                 <ConfigureEmailTemplatesInner conferenceConfigurations={conferenceConfigurations} />
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -150,7 +147,7 @@ export function ConfigureEmailTemplatesInner({
     return (
         <>
             <Box minH="3ex" py={4}>
-                {updateConferenceConfigurationResponse.loading ? (
+                {updateConferenceConfigurationResponse.fetching ? (
                     <HStack spacing={2}>
                         <Text>Saving</Text> <Spinner />
                     </HStack>

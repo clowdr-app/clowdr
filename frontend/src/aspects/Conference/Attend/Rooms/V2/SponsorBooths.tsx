@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
+import { gql } from "urql";
 import { SponsorBoothsList_ItemFragment, useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";
@@ -45,7 +45,7 @@ gql`
 
 export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (value: boolean) => void }): JSX.Element {
     const conference = useConference();
-    const result = useGetSponsorBoothsQuery({
+    const [result] = useGetSponsorBoothsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -57,7 +57,7 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);
     }, [setAnySponsors, result.data]);
 
-    if (result.loading && !result?.data) {
+    if (result.fetching && !result?.data) {
         return <Spinner label="Loading rooms" />;
     }
 

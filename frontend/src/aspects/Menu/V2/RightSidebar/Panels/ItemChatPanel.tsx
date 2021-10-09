@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
@@ -63,17 +63,17 @@ function LandingPageChatPanel({
     setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }) {
-    const response = useGetConferenceLandingPageItemIdQuery({
+    const [response] = useGetConferenceLandingPageItemIdQuery({
         variables: {
             conferenceSlug: confSlug,
         },
     });
 
     useEffect(() => {
-        if (!response.loading && !response.data?.content_Item?.length) {
+        if (!response.fetching && !response.data?.content_Item?.length) {
             setPageChatAvailable(false);
         }
-    }, [response.data?.content_Item?.length, response.loading, setPageChatAvailable]);
+    }, [response.data?.content_Item?.length, response.fetching, setPageChatAvailable]);
 
     if (response.data?.content_Item?.length) {
         return (
@@ -104,7 +104,7 @@ function ItemChatPanelInner({
     setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
-    const { loading, error, data } = useGetItemChatIdQuery({
+    const [{ fetching: loading, error, data }] = useGetItemChatIdQuery({
         variables: {
             itemOrExhibitionId,
         },

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -13,6 +12,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { gql } from "urql";
 import { useItemsByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
@@ -38,7 +38,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
     const title = useTitle("Submissions");
 
     const accessToken = magicToken;
-    const itemsResponse = useItemsByPersonAccessTokenQuery({
+    const [itemsResponse] = useItemsByPersonAccessTokenQuery({
         variables: {
             accessToken,
         },
@@ -55,7 +55,7 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
     return (
         <Center pt={6}>
             {title}
-            {itemsResponse.loading && !itemsResponse.data ? (
+            {itemsResponse.fetching && !itemsResponse.data ? (
                 <CenteredSpinner />
             ) : (
                 <Container maxW="container.md">

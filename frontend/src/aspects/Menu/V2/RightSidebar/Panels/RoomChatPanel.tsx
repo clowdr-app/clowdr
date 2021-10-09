@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, HStack, Spinner } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { gql } from "urql";
 import { useGetRoomChatIdQuery } from "../../../../../generated/graphql";
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
@@ -29,7 +29,7 @@ export function RoomChatPanel({
     setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
-    const { loading, error, data } = useGetRoomChatIdQuery({
+    const [{ fetching: loading, error, data }] = useGetRoomChatIdQuery({
         variables: {
             roomId,
         },

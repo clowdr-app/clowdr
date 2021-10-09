@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import {
     ExhibitionWithContentFragment,
     ItemEventFragment,
@@ -179,13 +179,13 @@ function ExhibitionPageInner({
 }
 
 export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string }): JSX.Element {
-    const exhibitionResponse = useSelectExhibitionQuery({
+    const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
         },
     });
 
-    return exhibitionResponse.loading && !exhibitionResponse.data ? (
+    return exhibitionResponse.fetching && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionPageInner

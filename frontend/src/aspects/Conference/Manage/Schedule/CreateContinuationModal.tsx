@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -41,6 +40,7 @@ import { format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import { gql } from "urql";
 import {
     ContinuationsEditor_ContinuationFragmentDoc,
     ContinuationsEditor_SelectContinuationsDocument,
@@ -502,7 +502,7 @@ export default function CreateContinuationModal({
         [to]
     );
 
-    const response_Rooms = useCreateContinuationModal_RoomsQuery({
+    const [response_Rooms] = useCreateContinuationModal_RoomsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -531,7 +531,7 @@ export default function CreateContinuationModal({
         ),
         [response_Rooms, to]
     );
-    const response_Events = useCreateContinuationModal_EventsQuery({
+    const [response_Events] = useCreateContinuationModal_EventsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -568,7 +568,7 @@ export default function CreateContinuationModal({
         ),
         [response_Events, to]
     );
-    const response_Items = useCreateContinuationModal_ItemsQuery({
+    const [response_Items] = useCreateContinuationModal_ItemsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -626,7 +626,7 @@ export default function CreateContinuationModal({
         ),
         [response_Items, to]
     );
-    const response_Exhibitions = useCreateContinuationModal_ExhibitionsQuery({
+    const [response_Exhibitions] = useCreateContinuationModal_ExhibitionsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -655,7 +655,7 @@ export default function CreateContinuationModal({
         ),
         [response_Exhibitions, to]
     );
-    const response_ShufflePeriods = useCreateContinuationModal_ShufflePeriodsQuery({
+    const [response_ShufflePeriods] = useCreateContinuationModal_ShufflePeriodsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -684,7 +684,7 @@ export default function CreateContinuationModal({
         ),
         [response_ShufflePeriods, to]
     );
-    const response_Profile = useCreateContinuationModal_ProfileQuery({
+    const [response_Profile] = useCreateContinuationModal_ProfileQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -714,7 +714,7 @@ export default function CreateContinuationModal({
         [response_Profile, to]
     );
 
-    const response_Tags = useCreateContinuationModal_TagsQuery({
+    const [response_Tags] = useCreateContinuationModal_TagsQuery({
         skip: true,
         variables: {
             conferenceId: conference.id,
@@ -933,7 +933,7 @@ export default function CreateContinuationModal({
     }, [to]);
     const allValid = toIsValid === true ? (description === "" ? "Please write a label" : true) : toIsValid;
 
-    const [insert, insertResponse] = useContinuationsEditor_InsertMutation({
+    const [insertResponse, insert] = useContinuationsEditor_InsertMutation({
         update: (cache, response) => {
             if (response.data?.insert_schedule_Continuation_one) {
                 const data = response.data?.insert_schedule_Continuation_one;
@@ -1067,7 +1067,7 @@ export default function CreateContinuationModal({
                                             }
                                         }}
                                         isDisabled={allValid !== true}
-                                        isLoading={insertResponse.loading}
+                                        isLoading={insertResponse.fetching}
                                     >
                                         <FAIcon iconStyle="s" icon="plus" mr={2} />
                                         Add

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -11,6 +10,7 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import { useSearchRegistrantsLazyQuery, useSelectRegistrantsQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
@@ -52,19 +52,16 @@ export function AllRegistrantsList(): JSX.Element {
 
     const conference = useConference();
 
-    const [searchQuery, { loading: loadingSearch, error: errorSearch, data: dataSearch }] =
+    const [{ fetching: loadingSearch, error: errorSearch, data: dataSearch }, searchQuery] =
         useSearchRegistrantsLazyQuery();
     useQueryErrorToast(errorSearch, false, "RegistrantListPage.tsx -- search");
 
-    const {
-        loading: loadingRegistrants,
-        error: errorRegistrants,
-        data: dataRegistrants,
-    } = useSelectRegistrantsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingRegistrants, error: errorRegistrants, data: dataRegistrants }] =
+        useSelectRegistrantsQuery({
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorRegistrants, false, "RegistrantListPage.tsx -- registrants");
 
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(true);

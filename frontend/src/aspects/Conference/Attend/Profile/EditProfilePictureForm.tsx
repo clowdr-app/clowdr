@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy, { UppyFile } from "@uppy/core";
@@ -8,6 +7,7 @@ import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     ProfileDataFragment,
     ProfileDataFragmentDoc,

@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Box, Heading, Text, VStack } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
+import { gql } from "urql";
 import {
     Content_ElementType_Enum,
     Content_ItemType_Enum,
@@ -11,7 +11,7 @@ import {
     useItemElements_GetItemQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
@@ -108,16 +108,16 @@ gql`
 `;
 
 export function ItemElementsWrapper({ itemId, linkToItem }: { itemId: string; linkToItem?: boolean }): JSX.Element {
-    const result = useItemElements_GetItemQuery({
+    const [result] = useItemElements_GetItemQuery({
         variables: {
             itemId,
         },
     });
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
+        <QueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
             {(item: ItemElements_ItemDataFragment) => <ItemElements itemData={item} linkToItem={linkToItem} />}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 

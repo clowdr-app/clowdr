@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { ApolloClient, ApolloError, gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -15,6 +14,7 @@ import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
+import { Client as UrqlClient, CombinedError, gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     ChatReactionDataFragment,
@@ -419,7 +419,7 @@ export class MessageState {
     }
 
     public async report(type: Chat_FlagType_Enum, reason: string): Promise<void> {
-        await this.globalState.apolloClient.mutate({
+        await this.globalState.client.mutate({
             mutation: InsertChatFlagDocument,
             variables: {
                 messageSId: this.sId,
@@ -553,7 +553,7 @@ export class ChatState {
             if (isPind) {
                 if (!this.EnableMandatoryPin) {
                     try {
-                        await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
+                        await this.globalState.client.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
                             mutation: UnpinChatDocument,
                             variables: {
                                 registrantId: this.globalState.registrant.id,
@@ -567,10 +567,7 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
-                        PinChatMutation,
-                        PinChatMutationVariables
-                    >({
+                    const result = await this.globalState.client.mutate<PinChatMutation, PinChatMutationVariables>({
                         mutation: PinChatDocument,
                         variables: {
                             registrantId: this.globalState.registrant.id,
@@ -586,7 +583,7 @@ export class ChatState {
                         );
                     }
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isPinned = isPind;
                         throw e;
                     } else {
@@ -632,16 +629,15 @@ export class ChatState {
             if (isSubd) {
                 if (!this.EnableMandatorySubscribe) {
                     try {
-                        await this.globalState.apolloClient.mutate<
-                            UnsubscribeChatMutation,
-                            UnsubscribeChatMutationVariables
-                        >({
-                            mutation: UnsubscribeChatDocument,
-                            variables: {
-                                registrantId: this.globalState.registrant.id,
-                                chatId: this.Id,
-                            },
-                        });
+                        await this.globalState.client.mutate<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(
+                            {
+                                mutation: UnsubscribeChatDocument,
+                                variables: {
+                                    registrantId: this.globalState.registrant.id,
+                                    chatId: this.Id,
+                                },
+                            }
+                        );
                     } catch (e) {
                         this.isSubscribed = isSubd;
                         throw e;
@@ -649,7 +645,7 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
+                    const result = await this.globalState.client.mutate<
                         SubscribeChatMutation,
                         SubscribeChatMutationVariables
                     >({
@@ -662,7 +658,7 @@ export class ChatState {
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
@@ -727,7 +723,7 @@ export class ChatState {
 
         try {
             if (this.lastHistoricallyFetchedMessageId !== -1) {
-                const result = await this.globalState.apolloClient.query<
+                const result = await this.globalState.client.query<
                     SelectMessagesPageQuery,
                     SelectMessagesPageQueryVariables
                 >({
@@ -1173,7 +1169,7 @@ export class GlobalChatState {
             shortName: string;
         },
         public readonly registrant: Registrant,
-        public readonly apolloClient: ApolloClient<unknown>
+        public readonly client: UrqlClient<unknown>
     ) {}
 
     private chatStates: Map<string, ChatState> | undefined;
@@ -1343,7 +1339,7 @@ export class GlobalChatState {
                                 existing.setIsPinned(true);
                             } else {
                                 try {
-                                    const newlyPinSubChats = await this.apolloClient.query<
+                                    const newlyPinSubChats = await this.client.query<
                                         SelectInitialChatStatesQuery,
                                         SelectInitialChatStatesQueryVariables
                                     >({
@@ -1447,10 +1443,7 @@ export class GlobalChatState {
                         this.offSocketEvents(socket, true);
                     });
 
-                    const initialData = await this.apolloClient.query<
-                        InitialChatStateQuery,
-                        InitialChatStateQueryVariables
-                    >({
+                    const initialData = await this.client.query<InitialChatStateQuery, InitialChatStateQueryVariables>({
                         query: InitialChatStateDocument,
                         variables: {
                             registrantId: this.registrant.id,
@@ -1542,7 +1535,7 @@ export class GlobalChatState {
 
             try {
                 if (!this.chatStates?.has(chatId)) {
-                    const result = await this.apolloClient.query<
+                    const result = await this.client.query<
                         SelectInitialChatStateQuery,
                         SelectInitialChatStateQueryVariables
                     >({

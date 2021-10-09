@@ -1,12 +1,12 @@
-import { gql } from "@apollo/client";
 import React from "react";
+import { gql } from "urql";
 import {
     Permissions_Permission_Enum,
     RoomPage_RoomDetailsFragment,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
@@ -82,22 +82,24 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const registrant = useCurrentRegistrant();
-    const roomDetailsResponse = useRoomPage_GetRoomDetailsQuery({
+    const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
             registrantId: registrant.id,
         },
     });
     const title = useTitle(
-        roomDetailsResponse.loading ? "Loading room" : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
+        roomDetailsResponse.fetching
+            ? "Loading room"
+            : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
     );
 
     return (
         <>
             {title}
-            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
+            <QueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         </>
     );
 }

@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Box, Center, Divider, Heading, Link, ListItem, Spinner, Text, UnorderedList, VStack } from "@chakra-ui/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/progress-bar/dist/style.css";
 import React, { useCallback, useMemo } from "react";
+import { gql } from "urql";
 import { Content_ElementType_Enum, useGetElementQuery, useGetUploadAgreementQuery } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
@@ -57,24 +57,21 @@ export default function SubmitElementPage({
     itemId: string;
     elementId: string;
 }): JSX.Element {
-    const {
-        loading: uploadAgreementLoading,
-        error: uploadAgreementError,
-        data: uploadAgreementData,
-    } = useGetUploadAgreementQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            magicToken,
-        },
-        context: {
-            headers: {
-                "SEND-WITHOUT-AUTH": true,
+    const [{ fetching: uploadAgreementLoading, error: uploadAgreementError, data: uploadAgreementData }] =
+        useGetUploadAgreementQuery({
+            requestPolicy: "network-only",
+            variables: {
+                magicToken,
             },
-        },
-    });
+            context: {
+                headers: {
+                    "SEND-WITHOUT-AUTH": true,
+                },
+            },
+        });
     useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
-    const { loading, error, data, refetch } = useGetElementQuery({
+    const [{ fetching: loading, error, data }, refetch] = useGetElementQuery({
         variables: {
             accessToken: magicToken,
             elementId,
@@ -84,7 +81,7 @@ export default function SubmitElementPage({
                 "x-hasura-magic-token": magicToken,
             },
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
@@ -105,8 +102,8 @@ export default function SubmitElementPage({
         return uploadAgreementData?.getUploadAgreement?.agreementUrl ?? undefined;
     }, [uploadAgreementData]);
 
-    const formSubmitted = useCallback(async () => {
-        await refetch();
+    const formSubmitted = useCallback(() => {
+        refetch();
     }, [refetch]);
 
     const form = useMemo(() => {
@@ -341,7 +338,7 @@ export default function SubmitElementPage({
                                 data={data}
                                 error={!!error}
                                 loading={loading}
-                                refetch={refetch}
+                                refetch={() => refetch()}
                             />
                         </VStack>
                     </>

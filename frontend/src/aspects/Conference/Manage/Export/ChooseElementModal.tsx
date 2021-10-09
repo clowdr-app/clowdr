@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -15,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
+import { gql } from "urql";
 import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
@@ -50,7 +50,7 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
-    const itemsResult = useChooseElementModal_GetItemsQuery({
+    const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -66,7 +66,7 @@ export function ChooseElementModal({
         ));
     }, [itemsResult.data?.content_Item]);
 
-    const elementsResult = useChooseElementModal_GetVideoElementsQuery({
+    const [elementsResult] = useChooseElementModal_GetVideoElementsQuery({
         variables: {
             itemId,
         },

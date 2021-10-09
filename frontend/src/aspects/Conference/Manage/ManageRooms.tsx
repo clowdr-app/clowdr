@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -41,6 +40,7 @@ import {
 } from "@chakra-ui/react";
 import Papa from "papaparse";
 import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Permissions_Permission_Enum,
@@ -249,21 +249,21 @@ function RoomSecondaryEditor({
     externalRtmpBroadcastEnabled: boolean;
 }): JSX.Element {
     const conference = useConference();
-    const groups = useManageRooms_SelectGroupsQuery({
+    const [groups] = useManageRooms_SelectGroupsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
-    const people = useManageRooms_SelectRoomPeopleQuery({
+    const [people] = useManageRooms_SelectRoomPeopleQuery({
         variables: {
             roomId: room?.id,
         },
         skip: !room,
     });
-    const groupRegistrantsQ = useManageRooms_SelectGroupRegistrantsQuery({
+    const [groupRegistrantsQ] = useManageRooms_SelectGroupRegistrantsQuery({
         skip: true,
     });
-    const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
+    const [insertRoomPeopleResponse, insertRoomPeople] = useInsertRoomPeopleMutation();
     useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
     useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
 
@@ -356,7 +356,7 @@ function RoomSecondaryEditor({
                                             <MenuButton
                                                 as={Button}
                                                 isLoading={
-                                                    groupRegistrantsQ.loading || insertRoomPeopleResponse.loading
+                                                    groupRegistrantsQ.fetching || insertRoomPeopleResponse.fetching
                                                 }
                                             >
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
@@ -501,11 +501,11 @@ function RoomSecondaryEditor({
 
 function EditableRoomsCRUDTable() {
     const conference = useConference();
-    const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
-    const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
-    const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
+    const [insertRoomResponse, insertRoom] = useCreateRoomMutation();
+    const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
+    const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
 
-    const externalRtmpBroadcastEnabledResponse = useGetIsExternalRtmpBroadcastEnabledQuery({
+    const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -513,13 +513,13 @@ function EditableRoomsCRUDTable() {
     const externalRtmpBroadcastEnabled =
         externalRtmpBroadcastEnabledResponse.data?.conference_Configuration_by_pk?.value === true;
 
-    const items = useManageRooms_SelectItemsQuery({
+    const [items] = useManageRooms_SelectItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
+    const [selectAllRoomsResult] = useSelectAllRoomsWithParticipantsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -1334,7 +1334,7 @@ function EditableRoomsCRUDTable() {
     return (
         <>
             <CRUDTable
-                data={!selectAllRoomsResult.loading && (selectAllRoomsResult.data?.room_Room ? data : null)}
+                data={!selectAllRoomsResult.fetching && (selectAllRoomsResult.data?.room_Room ? data : null)}
                 tableUniqueName="ManageConferenceRooms"
                 row={row}
                 columns={columns}
@@ -1345,7 +1345,7 @@ function EditableRoomsCRUDTable() {
                     },
                 }}
                 insert={{
-                    ongoing: insertRoomResponse.loading,
+                    ongoing: insertRoomResponse.fetching,
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
@@ -1385,7 +1385,7 @@ function EditableRoomsCRUDTable() {
                     },
                 }}
                 update={{
-                    ongoing: updateRoomResponse.loading,
+                    ongoing: updateRoomResponse.fetching,
                     start: (record) => {
                         updateRoom({
                             variables: {
@@ -1418,7 +1418,7 @@ function EditableRoomsCRUDTable() {
                     },
                 }}
                 delete={{
-                    ongoing: deleteRoomsResponse.loading,
+                    ongoing: deleteRoomsResponse.fetching,
                     start: (keys) => {
                         deleteRooms({
                             variables: {

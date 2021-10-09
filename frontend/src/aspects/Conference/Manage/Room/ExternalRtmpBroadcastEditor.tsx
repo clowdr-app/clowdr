@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -14,6 +13,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
+import { gql } from "urql";
 import {
     useDeleteRoomRtmpOutputMutation,
     useGetRoomRtmpOutputQuery,
@@ -85,15 +85,15 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
-    const rtmpOutputResponse = useGetRoomRtmpOutputQuery({
+    const [rtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
             roomId,
         },
         fetchPolicy: "network-only",
     });
-    const [doInsert, insertResponse] = useInsertRoomRtmpOutputMutation();
-    const [doUpdate, updateResponse] = useUpdateRoomRtmpOutputMutation();
-    const [doDelete, deleteResponse] = useDeleteRoomRtmpOutputMutation();
+    const [insertResponse, doInsert] = useInsertRoomRtmpOutputMutation();
+    const [updateResponse, doUpdate] = useUpdateRoomRtmpOutputMutation();
+    const [deleteResponse, doDelete] = useDeleteRoomRtmpOutputMutation();
 
     const [url, setUrl] = useState<string | null>(null);
     const [key, setKey] = useState<string | null>(null);
@@ -175,7 +175,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
         ]
     );
 
-    return rtmpOutputResponse.loading && !rtmpOutputResponse.data ? (
+    return rtmpOutputResponse.fetching && !rtmpOutputResponse.data ? (
         <CenteredSpinner />
     ) : (
         <VStack spacing={4} justifyContent="flex-start" alignItems="flex-start">
@@ -293,10 +293,10 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                                 }
                             }}
                             isLoading={
-                                rtmpOutputResponse.loading ||
-                                insertResponse.loading ||
-                                updateResponse.loading ||
-                                deleteResponse.loading
+                                rtmpOutputResponse.fetching ||
+                                insertResponse.fetching ||
+                                updateResponse.fetching ||
+                                deleteResponse.fetching
                             }
                             isDisabled={(url === null && key === null) || isUpdating}
                         >

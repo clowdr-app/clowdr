@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
@@ -32,6 +31,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
+import { gql, Reference } from "urql";
 import {
     ManageContent_ItemExhibitionFragment,
     ManageContent_ItemExhibitionFragmentDoc,
@@ -133,7 +133,7 @@ function SecondaryEditorInner({
     setDescriptiveItemId: (id: string | null) => void;
 }): JSX.Element {
     const conference = useConference();
-    const itemExhibitionsResponse = useManageContent_SelectItemExhibitionsQuery({
+    const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {
             exhibitionId,
         },
@@ -141,7 +141,7 @@ function SecondaryEditorInner({
     const itemExhibitions = itemExhibitionsResponse.data?.content_ItemExhibition;
     const itemExhibitionsIds = useMemo(() => itemExhibitions?.map((x) => x.item.id), [itemExhibitions]);
 
-    const itemsResponse = useManageContent_SelectAllItemsQuery({
+    const [itemsResponse] = useManageContent_SelectAllItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -175,7 +175,7 @@ function SecondaryEditorInner({
                     <ExternalLinkIcon />
                 </LinkButton>
             </HStack>
-            {itemsResponse.loading && !sortedItems ? <Spinner label="Loading items" /> : undefined}
+            {itemsResponse.fetching && !sortedItems ? <Spinner label="Loading items" /> : undefined}
             {sortedItems ? (
                 <FormControl>
                     <FormLabel>Descriptive Item</FormLabel>
@@ -204,7 +204,7 @@ function SecondaryEditorInner({
                         sortedItems={filteredItems}
                     />
                 ) : undefined}
-                {itemExhibitionsResponse.loading && !itemExhibitions ? <Spinner label="Loading people" /> : undefined}
+                {itemExhibitionsResponse.fetching && !itemExhibitions ? <Spinner label="Loading people" /> : undefined}
                 {itemExhibitions ? <ItemExhibitionsList exhibitionItems={itemExhibitions} /> : undefined}
             </VStack>
         </VStack>
@@ -224,7 +224,7 @@ function AddItemExhibitionBody({
 }): JSX.Element {
     const conference = useConference();
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-    const [insertItemExhibition, insertItemExhibitionResponse] = useManageContent_InsertItemExhibitionMutation();
+    const [insertItemExhibitionResponse, insertItemExhibition] = useManageContent_InsertItemExhibitionMutation();
 
     const toast = useToast();
     return (
@@ -252,7 +252,7 @@ function AddItemExhibitionBody({
                 <Button
                     colorScheme="purple"
                     isDisabled={!selectedItemId}
-                    isLoading={insertItemExhibitionResponse.loading}
+                    isLoading={insertItemExhibitionResponse.fetching}
                     onClick={async () => {
                         try {
                             await insertItemExhibition({
@@ -343,8 +343,8 @@ function ItemExhibitionsList({
         [exhibitionItems]
     );
     const toast = useToast();
-    const [updateItemExhibition, updateItemExhibitionResponse] = useManageContent_UpdateItemExhibitionMutation();
-    const [deleteItemExhibition, deleteItemExhibitionResponse] = useManageContent_DeleteItemExhibitionMutation();
+    const [updateItemExhibitionResponse, updateItemExhibition] = useManageContent_UpdateItemExhibitionMutation();
+    const [deleteItemExhibitionResponse, deleteItemExhibition] = useManageContent_DeleteItemExhibitionMutation();
 
     return sortedItems.length > 0 ? (
         <>
@@ -356,7 +356,7 @@ function ItemExhibitionsList({
                             <Button
                                 size="xs"
                                 isDisabled={idx === 0}
-                                isLoading={updateItemExhibitionResponse.loading}
+                                isLoading={updateItemExhibitionResponse.fetching}
                                 onClick={() => {
                                     const previousItemExhibition = sortedItems[idx - 1];
 
@@ -434,7 +434,7 @@ function ItemExhibitionsList({
                             <Button
                                 size="xs"
                                 isDisabled={idx === sortedItems.length - 1}
-                                isLoading={updateItemExhibitionResponse.loading}
+                                isLoading={updateItemExhibitionResponse.fetching}
                                 onClick={() => {
                                     const nextItemExhibition = sortedItems[idx + 1];
 
@@ -516,7 +516,7 @@ function ItemExhibitionsList({
                             aria-label="Delete"
                             colorScheme="red"
                             size="xs"
-                            isDisabled={deleteItemExhibitionResponse.loading}
+                            isDisabled={deleteItemExhibitionResponse.fetching}
                             onClick={async () => {
                                 try {
                                     deleteItemExhibition({

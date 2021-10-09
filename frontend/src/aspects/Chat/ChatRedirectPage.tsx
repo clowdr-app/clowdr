@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import React from "react";
 import { Redirect } from "react-router-dom";
+import { gql } from "urql";
 import { useGetChatPathQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useConference } from "../Conference/useConference";
@@ -21,7 +21,7 @@ gql`
 `;
 
 export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.Element {
-    const { loading, error, data } = useGetChatPathQuery({
+    const [{ loading, error, data }] = useGetChatPathQuery({
         variables: {
             chatId,
         },

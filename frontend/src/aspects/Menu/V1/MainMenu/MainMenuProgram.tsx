@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Badge,
     Box,
@@ -18,16 +17,17 @@ import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import { gql } from "urql";
 import {
     MenuSchedule_EventFragment,
     useMenuScheduleQuery,
-    useMenuSchedule_SearchEventsLazyQuery,
+    useMenuSchedule_SearchEventsQuery,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useConference } from "../../../Conference/useConference";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
 import usePolling from "../../../Generic/usePolling";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 
 gql`
@@ -137,7 +137,7 @@ export function MainMenuProgram(): JSX.Element {
     const updateTimes = useCallback(() => setTimes(makeTimes()), [setTimes]);
     usePolling(updateTimes, 180000, true);
 
-    const scheduleResult = useMenuScheduleQuery({
+    const [scheduleResult] = useMenuScheduleQuery({
         variables: {
             conferenceId: conference.id,
             now: times.now,
@@ -153,15 +153,18 @@ export function MainMenuProgram(): JSX.Element {
 
     const [search, debouncedSearch, setSearch] = useDebouncedState<string>("", 1000);
 
-    const [performSearch, searchResult] = useMenuSchedule_SearchEventsLazyQuery({
+    const [searchResult, performSearch] = useMenuSchedule_SearchEventsQuery({
         variables: {
             conferenceId: conference.id,
             search: `%${debouncedSearch}%`,
         },
+        pause: true,
     });
 
     useEffect(() => {
-        if (debouncedSearch.length) performSearch();
+        if (debouncedSearch.length) {
+            performSearch();
+        }
     }, [debouncedSearch, performSearch]);
 
     const resultCountStr = `Showing ${
@@ -199,7 +202,7 @@ export function MainMenuProgram(): JSX.Element {
             </FormControl>
             {debouncedSearch.length > 0 ? (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
+                    <QueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) =>
                             events.length > 0 ? (
                                 <MainMenuProgramInner
@@ -214,11 +217,11 @@ export function MainMenuProgram(): JSX.Element {
                                 <Text mb={2}>No results</Text>
                             )
                         }
-                    </ApolloQueryWrapper>
+                    </QueryWrapper>
                 </>
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
+                    <QueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <>
                                 <MainMenuProgramInner
@@ -244,7 +247,7 @@ export function MainMenuProgram(): JSX.Element {
                                 />
                             </>
                         )}
-                    </ApolloQueryWrapper>
+                    </QueryWrapper>
                 </>
             )}
             <LinkButton

@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
+import { gql } from "urql";
 import {
     AuthdConferenceInfoFragment,
     PublicConferenceInfoFragment,
@@ -181,7 +181,7 @@ function ConferenceProvider_WithoutUser({
     confSlug: string;
     children: string | JSX.Element | JSX.Element[];
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithoutUserQuery({
+    const [{ fetching: loading, error, data }] = useConferenceBySlug_WithoutUserQuery({
         variables: {
             slug: confSlug,
         },
@@ -219,7 +219,7 @@ function ConferenceProvider_WithUser({
     children: string | JSX.Element | JSX.Element[];
     userId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithUserQuery({
+    const [{ fetching: loading, error, data }] = useConferenceBySlug_WithUserQuery({
         variables: {
             slug: confSlug,
             userId,

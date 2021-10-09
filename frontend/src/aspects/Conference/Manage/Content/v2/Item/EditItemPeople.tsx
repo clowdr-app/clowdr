@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -27,6 +26,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
+import { gql, Reference } from "urql";
 import {
     ManageContent_ItemProgramPersonFragment,
     ManageContent_ItemProgramPersonFragmentDoc,
@@ -43,7 +43,7 @@ import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
     const conference = useConference();
-    const itemPeopleResponse = useManageContent_SelectItemPeopleQuery({
+    const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
             itemId,
         },
@@ -73,7 +73,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
                     </Tooltip>
                 </LinkButton>
             </ButtonGroup>
-            {itemPeopleResponse.loading && !itemPeople ? <Spinner label="Loading people" /> : undefined}
+            {itemPeopleResponse.fetching && !itemPeople ? <Spinner label="Loading people" /> : undefined}
             {itemPeople ? <ItemPersonsList itemPeople={itemPeople} /> : undefined}
         </VStack>
     );
@@ -132,14 +132,14 @@ function AddItemPersonBody({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const peopleResponse = useManageContent_SelectProgramPeopleQuery({
+    const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
     const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<string>("AUTHOR");
-    const [insertItemPerson, insertItemPersonResponse] = useManageContent_InsertItemProgramPersonMutation();
+    const [insertItemPersonResponse, insertItemPerson] = useManageContent_InsertItemProgramPersonMutation();
 
     const sortedPeople = useMemo(
         () =>
@@ -155,7 +155,7 @@ function AddItemPersonBody({
             <PopoverHeader>Link program person</PopoverHeader>
             <PopoverBody>
                 <VStack spacing={2}>
-                    {peopleResponse.loading && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
+                    {peopleResponse.fetching && !sortedPeople ? <Spinner label="Loading program people" /> : undefined}
                     {sortedPeople ? (
                         <FormControl>
                             <FormLabel>Person</FormLabel>
@@ -195,7 +195,7 @@ function AddItemPersonBody({
                         size="sm"
                         colorScheme="purple"
                         isDisabled={!selectedPersonId}
-                        isLoading={insertItemPersonResponse.loading}
+                        isLoading={insertItemPersonResponse.fetching}
                         onClick={async () => {
                             try {
                                 await insertItemPerson({
@@ -307,7 +307,7 @@ function ItemPersonsList({
     const toast = useToast();
     const [updateItemProgramPerson, updateItemProgramPersonResponse] =
         useManageContent_UpdateItemProgramPersonMutation();
-    const [deleteItemPerson, deleteItemPersonResponse] = useManageContent_DeleteItemProgramPersonMutation();
+    const [deleteItemPersonResponse, deleteItemPerson] = useManageContent_DeleteItemProgramPersonMutation();
 
     return sortedReps.length > 0 ? (
         <>
@@ -531,7 +531,7 @@ function ItemPersonsList({
                                     size="xs"
                                     value={itemProgramPerson.roleName}
                                     w="auto"
-                                    isDisabled={updateItemProgramPersonResponse.loading}
+                                    isDisabled={updateItemProgramPersonResponse.fetching}
                                     onChange={(ev) => {
                                         updateItemProgramPerson({
                                             variables: {
@@ -583,7 +583,7 @@ function ItemPersonsList({
                                     aria-label="Delete"
                                     colorScheme="red"
                                     size="xs"
-                                    isDisabled={deleteItemPersonResponse.loading}
+                                    isDisabled={deleteItemPersonResponse.fetching}
                                     onClick={async () => {
                                         try {
                                             deleteItemPerson({

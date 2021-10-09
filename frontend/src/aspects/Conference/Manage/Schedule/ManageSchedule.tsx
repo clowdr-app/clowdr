@@ -1,4 +1,3 @@
-import { gql, Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -41,6 +40,7 @@ import {
 import { DateTime } from "luxon";
 import Papa from "papaparse";
 import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
+import { gql, Reference } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import {
     Content_ItemType_Enum,
@@ -241,7 +241,7 @@ function EditableScheduleTable(): JSX.Element {
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
-    const wholeSchedule = useSelectWholeScheduleQuery({
+    const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -251,7 +251,7 @@ function EditableScheduleTable(): JSX.Element {
     const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
 
     const shufflePeriodsNow = useMemo(() => new Date().toISOString(), []);
-    const shufflePeriodsResponse = useManageSchedule_ShufflePeriodsQuery({
+    const [shufflePeriodsResponse] = useManageSchedule_ShufflePeriodsQuery({
         variables: {
             conferenceId: conference.id,
             now: shufflePeriodsNow,
@@ -349,9 +349,9 @@ function EditableScheduleTable(): JSX.Element {
     } = useDisclosure();
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-    const [insertEvent, insertEventResponse] = useInsertEventInfoMutation();
-    const [updateEvent, updateEventResponse] = useUpdateEventInfoMutation();
-    const [deleteEvents, deleteEventsResponse] = useDeleteEventInfosMutation();
+    const [insertEventResponse, insertEvent] = useInsertEventInfoMutation();
+    const [updateEventResponse, updateEvent] = useUpdateEventInfoMutation();
+    const [deleteEventsResponse, deleteEvents] = useDeleteEventInfosMutation();
 
     const columns: Array<ColumnSpecification<EventInfoFragment>> = React.useMemo(
         () => [
@@ -1134,7 +1134,7 @@ function EditableScheduleTable(): JSX.Element {
         () =>
             roomOptions && roomOptions.length > 0
                 ? {
-                      ongoing: insertEventResponse.loading,
+                      ongoing: insertEventResponse.fetching,
                       generateDefaults: () => ({
                           id: uuidv4(),
                           durationSeconds: 300,
@@ -1199,7 +1199,7 @@ function EditableScheduleTable(): JSX.Element {
                       },
                   }
                 : undefined,
-        [conference.id, insertEvent, insertEventResponse.loading, roomOptions]
+        [conference.id, insertEvent, insertEventResponse.fetching, roomOptions]
     );
 
     const update:
@@ -1209,7 +1209,7 @@ function EditableScheduleTable(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateEventResponse.loading,
+            ongoing: updateEventResponse.fetching,
             start: (record) => {
                 const variables: any = {
                     ...record,
@@ -1249,7 +1249,7 @@ function EditableScheduleTable(): JSX.Element {
                 });
             },
         }),
-        [updateEvent, updateEventResponse.loading]
+        [updateEvent, updateEventResponse.fetching]
     );
 
     const deleteProps:
@@ -1259,7 +1259,7 @@ function EditableScheduleTable(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteEventsResponse.loading,
+            ongoing: deleteEventsResponse.fetching,
             start: (keys) => {
                 deleteEvents({
                     variables: {
@@ -1281,7 +1281,7 @@ function EditableScheduleTable(): JSX.Element {
                 });
             },
         }),
-        [deleteEvents, deleteEventsResponse.loading]
+        [deleteEvents, deleteEventsResponse.fetching]
     );
 
     const batchAddPeopleDisclosure = useDisclosure();
@@ -1534,7 +1534,7 @@ function EditableScheduleTable(): JSX.Element {
             ) : undefined}
             <CRUDTable
                 tableUniqueName="ManageConferenceSchedule"
-                data={!wholeSchedule.loading && (wholeSchedule.data?.schedule_Event ? data : null)}
+                data={!wholeSchedule.fetching && (wholeSchedule.data?.schedule_Event ? data : null)}
                 columns={columns}
                 row={row}
                 edit={edit}

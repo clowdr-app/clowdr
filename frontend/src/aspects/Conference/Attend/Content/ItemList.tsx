@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -22,6 +21,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
+import { gql } from "urql";
 import {
     ItemList_ItemDataFragment,
     ItemList_ItemTagDataFragment,
@@ -211,7 +211,7 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         (x) => x
     );
 
-    const contentOfTag = useContentOfTagQuery({
+    const [contentOfTag] = useContentOfTagQuery({
         skip: true,
     });
     const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
@@ -331,7 +331,7 @@ export default function ItemList(
 ): JSX.Element {
     const { overrideSelectedTag, setOverrideSelectedTag, ...remainingProps } = props;
     const conference = useConference();
-    const { loading, data, error } = useTagsQuery({
+    const [{ loading, data, error }] = useTagsQuery({
         variables: {
             conferenceId: conference.id,
         },

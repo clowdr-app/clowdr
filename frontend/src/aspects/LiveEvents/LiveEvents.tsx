@@ -28,6 +28,7 @@ gql`
 
 interface LiveEventsContext {
     liveEventsByRoom: Record<string, MinimalEventInfoFragment[]>;
+    liveEventsInNextHour: readonly MinimalEventInfoFragment[];
 }
 
 const context = React.createContext<LiveEventsContext | undefined>(undefined);
@@ -103,8 +104,9 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
                 (x) => x.room.id,
                 liveEvents.filter((x) => !!x.room)
             ),
+            liveEventsInNextHour: response.data?.schedule_Event ?? [],
         }),
-        [liveEvents]
+        [liveEvents, response.data?.schedule_Event]
     );
     return <context.Provider value={ctx}>{children}</context.Provider>;
 }

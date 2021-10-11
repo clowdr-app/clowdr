@@ -259,14 +259,17 @@ bypassed during offline (local) testing.
 **_You will need to do online testing with Auth0 for non-minor PRs to be
 considered for merging._**
 
-#### 1. Configure Default Application
+#### 0. Create account
 
 1. Visit [auth0.com](https://auth0.com)
 1. Click `Sign up`.
 1. You may either create an Auth0 account or use an existing account with one of the other authentication providers offered.
 1. Fill in company name if appropriate and click `Next`
-1. Click `Applications` in the left sidebar and then the `Applications` menu item.
-1. There should be a single application named `Default Application`. Click on it to go to its settings page.
+
+#### 1. Configure application
+
+1. In the left sidebar under `Applications`, click `Applications`.
+1. There should be a single application named `Default Application`. If not, create an application. Click on it to go to its settings page.
 1. Rename the Default Application if you'd like, and make a note of the following configuration parameters:
    - Domain
    - Client ID
@@ -335,7 +338,7 @@ local machine and maybe exposing it through a tunnel.
 
 1. Create an Auth0 _API_
 
-   - Click `APIs` in the sidebar
+   - In the left sidebar under `Applications`, click `APIs`
    - Click `Create API`
    - `Name` it anything you like -- e.g., `Clowdr Test API`
    - Set the `Identifier` to `hasura`
@@ -350,7 +353,7 @@ Order of the rules matters.
 
 1. Create a new _Rule_
 
-   - Click `Rules` in the sidebar, then `Create Rule`
+   - In the left sidebar under `Auth Pipeline`, click `Rules`, then `Create Rule`
    - Select `Empty rule`
    - `Name` it `Setup isNew app metadata` (or anything else, if you prefer)
    - Replace the `Script` with the code below
@@ -552,11 +555,11 @@ created above.
 
 #### 7. Configure "new UI experience"
 
-Under _Universal Login_ settings, set the _default look and feel_ to _**New**_.
+In the left sidebar under _Branding_, click _Universal Login_ and set the _default look and feel_ to _**New**_.
 
 #### 8. (Optional) Customising the login page
 
-To customise what the Auth0 login page looks like, go to _Universal Login_ and
+To customise what the Auth0 login page looks like, go to _Branding_ -> _Universal Login_ and
 have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
 properly.)
 

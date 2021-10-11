@@ -259,25 +259,17 @@ bypassed during offline (local) testing.
 **_You will need to do online testing with Auth0 for non-minor PRs to be
 considered for merging._**
 
-#### 1. Create Application
+#### 1. Configure Default Application
 
 1. Visit [auth0.com](https://auth0.com)
-1. Click `Sign up` and create an account
-1. On the "Welcome to Auth0" screen, just click `Next`
+1. Click `Sign up`.
+1. You may either create an Auth0 account or use an existing account with one of the other authentication providers offered.
 1. Fill in company name if appropriate and click `Next`
-1. Click `Applications` in the left sidebar and then `Create application`
-   - Name it anything you like (e.g. Clowdr Test)
-   - Choose `Single Page Web Applications`
-   - Click `Create`
-1. Click `Settings` in the middle of the page and make a note of the
-   following configuration parameters:
+1. Click `Applications` in the left sidebar and then the `Applications` menu item.
+1. There should be a single application named `Default Application`. Click on it to go to its settings page.
+1. Rename the Default Application if you'd like, and make a note of the following configuration parameters:
    - Domain
    - Client ID
-
-#### 2. Configure Application
-
-Now, configure the application in the _Settings_ tab.
-
 1. Configure `Allowed Callback URLs` (comma-separated)
    (The format/suffix of these urls should not be altered. They should
    include `localhost`.)

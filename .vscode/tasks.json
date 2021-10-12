@@ -27,7 +27,7 @@
             "type": "shell",
             "dependsOn": "Start Docker Services -- Local Development",
             "isBackground": true,
-            "command": "hasura",
+            "command": "npm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/hasura"
@@ -35,14 +35,14 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["console", "--envfile", ".env.local"]
+            "args": ["run", "hasura:console-when-ready", "--envfile='./.env.local'"]
         },
         // Hasura Console -- CI Testing
         {
             "label": "Hasura Console -- CI Testing",
             "type": "shell",
             "isBackground": true,
-            "command": "hasura",
+            "command": "npm",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}/hasura"
@@ -50,7 +50,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["console", "--envfile", ".env.ci-test"]
+            "args": ["run", "hasura:console-when-ready", "--envfile='./.env.ci-test'"]
         },
         // Action service -- Local Development
         {

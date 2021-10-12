@@ -6,8 +6,6 @@ and all of our backend services.
 ## Pre-requisites
 
 1. [Docker Compose](https://docs.docker.com/compose/)
-1. [Hasura CLI](https://hasura.io/docs/2.0/graphql/core/hasura-cli/install-hasura-cli.html)
-   - At the time of writing, the Hasura CLI installer defaults to installing `v1.3.3`. You will need a version of the CLI that matches the version of the Hasura image you are using in your `docker-compose.yaml`. You can run (for example) `hasura update-cli --version 2.0.1` to update the CLI to `v2.0.1`.
 
 ## Setting Up
 

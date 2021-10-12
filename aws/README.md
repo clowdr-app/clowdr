@@ -8,7 +8,7 @@ You must set up AWS even when running a local development environment, as Midspa
 
 1. An [AWS](https://aws.amazon.com/) account.
    - Are you administrating the AWS account? Read [AWS Setup](../docs/aws-setup.md) first.
-   - If you are using an AWS account administrated by someone else, they should read the above article and provide you with credentials.
+   - If you are using an AWS account administered by someone else, they should read the above article and provide you with credentials.
 1. The [AWS CLI](https://aws.amazon.com/cli/) and an appropriate system for managing your credentials securely.
    - We strongly recommended to follow [the secure setup](#setting-up-aws) outlined below.
 
@@ -36,7 +36,7 @@ We strongly recommended to use `aws-vault` to securely manage AWS credentials on
 
 If your AWS account uses the [recommended setup](../docs/aws-setup.md), the system will work as follows:
 
-- You have AWS SSO credentials that allow you to administrate the AWS account where you will be deploying Midspace.
+- You have AWS SSO credentials that allow you to administer the AWS account where you will be deploying Midspace.
 - The SSO configuration (username + login URL) will be stored in `~/.aws/config`.
 - When credentials are needed, `aws-vault` is used to log in via AWS SSO and retrieve a set of temporary credentials.
 - These temporary credentials are stored securely (method depends on your operating system), and `aws-vault` can supply them to the AWS CLI/CDK when needed.
@@ -45,8 +45,9 @@ You may wish to deploy multiple instances of Midspace (e.g. personal sandbox, st
 
 To configure a single profile/instance, follow these steps:
 
-1. Install `aws-vault`.
+1. Install [`aws-vault`](https://github.com/99designs/aws-vault).
    - On macOS, you can use `brew install aws-vault`.
+   - On Windows, you can use `choco install aws-vault`.
 1. Request (or generate, if you are an administrator) the SSO credentials to gain access to the AWS account where you want to deploy Midspace.
 
    - If you are deploying to a sub-account of a larger organisation, your administrator should do this for you.
@@ -62,20 +63,20 @@ To configure a single profile/instance, follow these steps:
    - For example:
 
      ```ini
-     [profile <sandbox>]
-     credential_process = /opt/homebrew/bin/aws-vault exec <sandbox>-internal --json
+     [profile sandbox]
+     credential_process = /opt/homebrew/bin/aws-vault exec sandbox-internal --json
 
-     [profile <sandbox>-internal]
-     sso_start_url = https://<myorg>.awsapps.com/start
-     sso_region = <eu-west-1>
-     region = <eu-west-1>
-     sso_account_id = <123456789000>
+     [profile sandbox-internal]
+     sso_start_url = https://myorg.awsapps.com/start
+     sso_region = eu-west-1
+     region = eu-west-1
+     sso_account_id = 123456789000
      sso_role_name = AWSAdministratorAccess
      ```
 
    - The path to `aws-vault` may be different, depending on your installation method.
    - You will need to modify this configuration to match your personal credentials. The `sso_start_url` will be in the AWS Single Sign-On invitation email you received, and the `sso_account_id` is in your AWS account settings page after you've logged in.
-   - The example `<sandbox>-internal` profile contains the actual SSO configuration. The `<sandbox>` profile is a wrapper that allows the AWS CLI to automatically call out to `aws-vault` to retrieve the credentials ([see AWS docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html)).
+   - The example `sandbox-internal` profile contains the actual SSO configuration. The `sandbox` profile is a wrapper that allows the AWS CLI to automatically call out to `aws-vault` to retrieve the credentials ([see AWS docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html)).
 
 1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox-internal` (replacing `sandbox-internal` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
 1. You can now run AWS CLI commands like so:

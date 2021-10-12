@@ -2,15 +2,15 @@
 
 AWS infrastructure-as-code for the Midspace app.
 
+You must set up AWS even when running a local development environment, as Midspace uses some AWS services (e.g. MediaLive) that cannot be simulated locally.
+
 ## Pre-requisites
 
 1. An [AWS](https://aws.amazon.com/) account.
-   - See [Setting up AWS](#setting-up-aws).
-1. The [AWS CLI](https://aws.amazon.com/cli/)
-   - Configure the CLI with your AWS credentials. See [Setting up AWS](#aws-cli-setup).
-1. Install [aws-vault](https://github.com/99designs/aws-vault).
-   - This is a utility which allows you to log in, generate temporary credentials, store them securely and pass them into other applications.
-   - On macOS, install with `brew install aws-vault`.
+   - Are you administrating the AWS account? Read [AWS Setup](../docs/aws-setup.md) first.
+   - If you are using an AWS account administrated by someone else, they should read the above article and provide you with credentials.
+1. The [AWS CLI](https://aws.amazon.com/cli/) and an appropriate system for managing your credentials securely.
+   - We strongly recommended to follow [the secure setup](#setting-up-aws) outlined below.
 
 ## Setting up
 
@@ -30,65 +30,72 @@ The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to c
 1. Run the `Deploy to AWS` VSCode task to deploy the Midspace infrastructure to your account. You will be asked
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
 
-## Setting up AWS
-
-There are many ways to set up an AWS account, and the choices you make are critical for security. If you plan to run a 'production' Midspace instance, we highly recommend that you do your own research. Here are some suggestions:
-
-- A useful template for structuring AWS accounts: _[How to configure a production-grade AWS account structure using Gruntwork AWS Landing Zone](https://gruntwork.io/guides/foundations/how-to-configure-production-grade-aws-account-structure/#what-is-an-aws-account-structure)_
-- If you choose to use IAM users + assume role + a bastion account, you should use something like [aws-vault](https://github.com/99designs/aws-vault) to increase the security of credential storage.
-- You may also choose to use AWS SSO (our recommended method). This avoids storing any long-term credentials on disk.
-  - We recommend using separate AWS SSO accounts for admin activities and development work. This ensure that you are doing development work in a relatively low-privilege context.
-- Make use of AWS Organizations, and consider using AWS Control Tower.
-- Do not deploy any infrastructure in the root/management account.
-- Do not use root users for day-to-day work.
-- MFA is absolutely critical. Make sure it is enforced.
-
 ## AWS CLI Setup
 
-You may wish to deploy multiple instances of Midspace (e.g. personal sandbox, staging, production). Each instance must be associated with a different named profile in the AWS CLI config.
+We strongly recommended to use `aws-vault` to securely manage AWS credentials on your development machine.
 
-### Method 1 (recommended)
+If your AWS account uses the [recommended setup](../docs/aws-setup.md), the system will work as follows:
 
-This method is strongly recommended because it only ever stores temporary credentials on your local disk.
+- You have AWS SSO credentials that allow you to administrate the AWS account where you will be deploying Midspace.
+- The SSO configuration (username + login URL) will be stored in `~/.aws/config`.
+- When credentials are needed, `aws-vault` is used to log in via AWS SSO and retrieve a set of temporary credentials.
+- These temporary credentials are stored securely (method depends on your operating system), and `aws-vault` can supply them to the AWS CLI/CDK when needed.
 
-1. Set up AWS SSO for your AWS Organization.
+You may wish to deploy multiple instances of Midspace (e.g. personal sandbox, staging, production). For each instance, you must create a different named profile in the AWS CLI config. Each profile must have a corresponding `.env.<profile>` env file that contains any instance-specific deployment configuration.
 
-   - If you are using a sub-account of a larger organisation, this should have been done for you. You should request SSO login details from your administrator.
-   - Make sure to configure and note your _User Portal URL_. This is where you log in and is also referred to as the `sso_start_url`.
-   - Note: in future we plan to provide ready-made SCP policies to help you set this up securely.
-   - Each SSO user should have the `AWSAdministratorAccess` permission set on the accounts it can deploy Midspace to.
+To configure a single profile/instance, follow these steps:
 
-1. Add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for your SSO user. For example:
+1. Install `aws-vault`.
+   - On macOS, you can use `brew install aws-vault`.
+1. Request (or generate, if you are an administrator) the SSO credentials to gain access to the AWS account where you want to deploy Midspace.
 
-   ```ini
-   [profile sandbox]
-   sso_start_url = https://midspace.awsapps.com/start
-   sso_region = eu-west-1
-   region = eu-west-1
-   sso_account_id = 123456789000
-   sso_role_name = AWSAdministratorAccess
-   ```
+   - If you are deploying to a sub-account of a larger organisation, your administrator should do this for you.
+   - If you do not have an SSO user yet, you will receive an email from AWS inviting you to set it up.
+   - Else, the permissions can simply be added to your existing SSO user.
+   - You should receive the following details:
+     - `sso_start_url`: this is the URL where you log into your organisation's AWS SSO. It takes the form `https://<myorg>.awsapps.com/start`
+     - `sso_region`: e.g. `eu-west-1`
+     - `sso_account_id`: the numeric ID of the AWS account your SSO user has been granted access to.
 
-   You will need to modify this example configuration to match your desired setup. The `sso_start_url` will be in the AWS Single Sign-On invitation email you received, and the `sso_account_id` is in your AWS account settings page after you've logged in.
+1. Using these credentials, add a named profile to [`~/.aws/config`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). In this case, we're using the name `sandbox`, but you can choose whatever you like.
 
-1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox` (replacing `sandbox` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
-1. You can now run AWS CLI commands like so: `aws-vault exec sandbox -- aws s3 ls`.
+   - For example:
 
-### Method 2 (not recommended)
+     ```ini
+     [profile <sandbox>]
+     credential_process = /opt/homebrew/bin/aws-vault exec <sandbox>-internal --json
 
-This method is not recommended because it stores long-term credentials on your local disk.
+     [profile <sandbox>-internal]
+     sso_start_url = https://<myorg>.awsapps.com/start
+     sso_region = <eu-west-1>
+     region = <eu-west-1>
+     sso_account_id = <123456789000>
+     sso_role_name = AWSAdministratorAccess
+     ```
+
+   - The path to `aws-vault` may be different, depending on your installation method.
+   - You will need to modify this configuration to match your personal credentials. The `sso_start_url` will be in the AWS Single Sign-On invitation email you received, and the `sso_account_id` is in your AWS account settings page after you've logged in.
+   - The example `<sandbox>-internal` profile contains the actual SSO configuration. The `<sandbox>` profile is a wrapper that allows the AWS CLI to automatically call out to `aws-vault` to retrieve the credentials ([see AWS docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html)).
+
+1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox-internal` (replacing `sandbox-internal` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
+1. You can now run AWS CLI commands like so:
+   - `aws s3 ls --profile sandbox`: Uses the AWS CLI directly. AWS CLI calls out to the `credential_process` (in our case, `aws-vault`) to retrieve the needed credentials.
+   - `aws-vault exec sandbox-internal -- aws s3 ls`: Uses `aws-vault` to retrieve the credentials and pass them into the AWS CLI.
+
+### An insecure method
+
+If you just want to get up and running as quickly as possible, and you do not care about security at all, you don't need to use the SSO setup outlined above. Note that the method outlined below will store long-term credentials on your local disk.
 
 1. Create an IAM user with `AdministratorAccess` or similar permissions.
 
    - You will use this IAM user to deploy your infrastructure, so it needs to be able to perform all of the required actions (e.g. creating S3 buckets, modifying IAM users, CloudFormation and so on.)
    - It is _strongly_ recommended to enable MFA for this user.
 
-1. Follow the AWS CLI documentation to configure your `~/.aws/credentials` file for this IAM user.
+1. Create an access key for the IAM user.
+1. Follow the AWS CLI documentation to configure your `~/.aws/credentials` file with the access key.
 
-   - If you are using MFA, set up
-     [aws-mfa](https://github.com/broamski/aws-mfa) so that you can easily
-     generate credentials.
-   - With aws-mfa, you can specify (for example) a `sandbox-long-term` profile if you want the profile to be called `sandbox` when you actually use it.
+   - If you are using MFA, you can use [`aws-mfa`](https://github.com/broamski/aws-mfa) to easily generate temporary credentials from your access key.
+   - Using `aws-mfa`, you can specify (for example) a `sandbox-long-term` profile if you want the profile to be called `sandbox` when you actually use it.
 
 1. Configure your `~/.aws/config` file to specify the region you want to
    deploy to by default.

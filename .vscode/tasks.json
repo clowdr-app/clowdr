@@ -280,26 +280,19 @@
             "detail": "AWS CDK requires the account to be 'bootstrapped' first.",
             "type": "shell",
             "isBackground": true,
-            "command": "aws-vault",
+            "command": "npm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/aws"
+                "cwd": "${workspaceFolder}/aws",
+                "env": {
+                    "DOTENV_CONFIG_PATH": ".env.${input:aws-profile-name}",
+                    "AWS_PROFILE": "${input:aws-profile-name}"
+                }
             },
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": [
-                "exec",
-                "${input:aws-profile-name}",
-                "--",
-                "npm",
-                "exec",
-                "--",
-                "cross-env",
-                "DOTENV_CONFIG_PATH='.env.${input:aws-profile-name}'",
-                "cdk",
-                "bootstrap"
-            ]
+            "args": ["run", "bootstrap"]
         },
         // Deploy to AWS
         {
@@ -307,27 +300,19 @@
             "detail": "Deploy all CDK stacks to an AWS account. You will be asked which profile you want to deploy to.",
             "type": "shell",
             "isBackground": true,
-            "command": "aws-vault",
+            "command": "npm",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceFolder}/aws"
+                "cwd": "${workspaceFolder}/aws",
+                "env": {
+                    "DOTENV_CONFIG_PATH": ".env.${input:aws-profile-name}",
+                    "AWS_PROFILE": "${input:aws-profile-name}"
+                }
             },
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": [
-                "exec",
-                "${input:aws-profile-name}",
-                "--",
-                "npm",
-                "exec",
-                "--",
-                "cross-env",
-                "DOTENV_CONFIG_PATH='.env.${input:aws-profile-name}'",
-                "cdk",
-                "deploy",
-                "--all"
-            ]
+            "args": ["run", "deploy:all"]
         }
     ],
     "inputs": [

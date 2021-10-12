@@ -78,6 +78,8 @@ export class AwsStack extends cdk.Stack {
             elasticTranscoderNotificationsTopic,
         ]);
 
+        cloudFormationNotificationsTopic.grantPublish(actionsUser);
+
         this.addMediaConvertEventRule(mediaConvertNotificationsTopic, props.stackPrefix);
         this.addMediaLiveEventRule(mediaLiveNotificationsTopic);
         this.addMediaPackageEventRule(mediaPackageHarvestNotificationsTopic);

@@ -65,6 +65,7 @@ To configure a single profile/instance, follow these steps:
      ```ini
      [profile sandbox]
      credential_process = /opt/homebrew/bin/aws-vault exec sandbox-internal --json
+     region = eu-west-1
 
      [profile sandbox-internal]
      sso_start_url = https://myorg.awsapps.com/start
@@ -77,6 +78,7 @@ To configure a single profile/instance, follow these steps:
    - The path to `aws-vault` may be different, depending on your installation method.
    - You will need to modify this configuration to match your personal credentials. The `sso_start_url` will be in the AWS Single Sign-On invitation email you received, and the `sso_account_id` is in your AWS account settings page after you've logged in.
    - The example `sandbox-internal` profile contains the actual SSO configuration. The `sandbox` profile is a wrapper that allows the AWS CLI to automatically call out to `aws-vault` to retrieve the credentials ([see AWS docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html)).
+   - The AWS resources will be deployed to the region specified in the profile you use.
 
 1. Test that your named profile is configured properly by using `aws-vault` to log into your AWS account. Run `aws-vault login sandbox-internal` (replacing `sandbox-internal` with the name you chose for your profile) - this should open a web browser and allow you to log in to AWS.
 1. You can now run AWS CLI commands like so:

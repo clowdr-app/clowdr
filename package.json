@@ -9,7 +9,8 @@
         "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002",
         "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003",
         "lint-staged": "lint-staged",
-        "prepare": "node ./prepare.js"
+        "prepare": "node ./prepare.js",
+        "hasura:console-when-ready": "cd hasura && wait-on http-get://localhost:8080/v1/version && hasura console --envfile $npm_config_envfile"
     },
     "repository": {
         "type": "git",
@@ -29,11 +30,13 @@
         "eslint-plugin-jest": "^24.3.6",
         "eslint-plugin-react": "^7.24.0",
         "eslint-plugin-react-hooks": "^4.2.0",
+        "hasura-cli": "^2.0.9",
         "husky": "^7.0.0",
         "lint-staged": "^11.1.1",
         "prettier": "^2.3.2",
         "prettier-plugin-organize-imports": "^2.2.0",
-        "typescript": "^4.3.5"
+        "typescript": "^4.3.5",
+        "wait-on": "^6.0.0"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",

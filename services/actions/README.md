@@ -27,22 +27,28 @@ Eventually this may be split into multiple microservices.
 
 We use the AWS `serverless-image-handler` template for processing uploaded profile images. These are the steps to deploy it:
 
-1. Create a new secret in AWS Secrets Manager - you can use any secret name and secret key you like. Choose a secure random string and make a note of it.
-1. In AWS CloudFormation, create a stack from the template `https://solutions-reference.s3.amazonaws.com/serverless-image-handler/latest/serverless-image-handler.template`
-1. Choose the Stack name to be something unique, preferably using your `AWS_PREFIX`.
+1. Create a new secret in AWS Secrets Manager: - you can use any secret name and secret key you like.
+   1. Select `Other type of secrets` and `Secret key/value`
+   1. You can use any key you like, perhaps `<prefix>-image-handler`.
+   1. Choose a secure random string for the value and make a note of it.
+   1. Click `Next` and choose any secret name you like that will associate it with this stack and the image handler.
+   1. Click `Next` again, leave automatic rotation disabled, and click `Next` again, and finally `Store`.
+1. In AWS CloudFormation, create a stack:
+   1. Click `Create Stack` -> `With New Resources`
+   1. Select `Template is ready` and `Template Source`: `Amazon S3 URL`. Use this template:
+   1. `https://solutions-reference.s3.amazonaws.com/serverless-image-handler/latest/serverless-image-handler.template`
+1. Choose the Stack name to be something unique, preferably using your `STACK_PREFIX`.
 1. Set the parameters as follows:
-
-- `CorsEnabled`: Yes
-- `CorsOrigin`: `http://localhost` if running locally, or an appropriate origin.
-- `SourceBuckets`: the name of your content bucket (i.e. `AWS_CONTENT_BUCKET_ID`)
-- `DeployDemoUI`: No
-- `LogRetentionPeriod`: 1
-- `EnableSignature`: Yes
-- `SecretsManagerSecret`: the name of the secret you created earlier
-- `SecretsManagerKey`: the key of the secret you created earlier
-- `EnableDefaultFallbackImage`: No
-- `AutoWebP`: Yes
-
+   - `CorsEnabled`: Yes
+   - `CorsOrigin`: `http://localhost` if running locally, or an appropriate origin.
+   - `SourceBuckets`: the name of your content bucket (i.e. `AWS_CONTENT_BUCKET_ID`. This is visible in the `Outputs` tab for your `<prefix>-main` stack in the CloudFormation console.)
+   - `DeployDemoUI`: No
+   - `LogRetentionPeriod`: 1
+   - `EnableSignature`: Yes
+   - `SecretsManagerSecret`: the name of the secret you created earlier
+   - `SecretsManagerKey`: the key of the secret you created earlier
+   - `EnableDefaultFallbackImage`: No
+   - `AutoWebP`: Yes
 1. Deploy the stack and wait for creation to copmlete.
 1. Make a note of the `ApiEndpoint` output.
 

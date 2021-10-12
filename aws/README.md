@@ -18,7 +18,7 @@ You must set up AWS even when running a local development environment, as Midspa
 1. Install npm modules: `npm i`
 1. Configure an env file for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
    - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
-   - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file.
+   - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
 1. Bootstrap your AWS account by running the `Bootstrap AWS account` VSCode task.
 
 ### Deploying the main AWS stacks

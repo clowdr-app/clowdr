@@ -103,9 +103,5 @@ If you just want to get up and running as quickly as possible, and you do not ca
 
 ## Useful commands
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
+- VSCode task: `Bootstrap AWS account` - bootstraps the chosen profile so that it is ready for CDK deployments.
+- VSCode task: `Deploy to AWS` - deploy all stacks to the chosen profile.

@@ -27,7 +27,7 @@ The stack `<prefix>-main` deploys the main infrastructure for the Clowdr app (e.
 
 The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
 
-1. Run the `Deploy to AWS` VSCode task to deploy the Midspace infrastructure to your account. You will be asked
+1. Run the `Deploy to AWS` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
 
 ## AWS CLI Setup

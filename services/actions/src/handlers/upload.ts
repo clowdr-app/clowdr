@@ -262,6 +262,7 @@ gql`
         content_Element_by_pk(id: $elementId) {
             id
             conferenceId
+            typeName
             item {
                 id
                 itemPeople(
@@ -296,31 +297,57 @@ async function sendSubmittedEmail(
     });
 
     if (uploaders.data.content_Element_by_pk?.item.itemPeople.length) {
-        const emails: Email_Insert_Input[] = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
-            const htmlContents = `<p>Dear ${person.name},</p>
-<p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
-<p>Our systems will now start processing your content. For videos, we will process your video and then auto-generate subtitles.</p>
-<p>For video submissions, you will receive two further emails:</p>
-<ol>
-    <li><b>Within the next hour</b> you should receive the first email, letting you know when we've successfully processed your video.</li>
-    <li><b>Within the next 2 hours</b> the second email will let you know subtitles have been generated for your video and are available for editing.</li>
-    <li>In the unlikely event that processing your video fails, you will receive an email. You should then forward this to your conference's organising committee to ask for technical assistance.</li>
-    <li>Please remember to check your spam/junk folder for emails from us, just in case.</li>
-    <li>If you don't receive an update within 4 hours, please contact your conference organisers for technical support.</li>
-</ol>
-<p>Thank you,<br/>
-The Midspace team
-</p>
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+        let emails: Email_Insert_Input[];
+        if (
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoBroadcast ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoCountdown ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoFile ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoFiller ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoTitles ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoPrepublish ||
+            uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoSponsorsFiller
+        ) {
+            emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
+                const htmlContents = `<p>Dear ${person.name},</p>
+        <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
+        <p>Our systems will now start processing your video and then auto-generate subtitles.</p>
+        <ol>
+            <li><b>Within the next 2 hours</b> you will receive an email to let you know subtitles have been generated for your video and are available for editing.</li>
+            <li>In the unlikely event that processing your video fails, you will receive an email. You should then forward this to your conference's organising committee to ask for technical assistance.</li>
+            <li>Please remember to check your spam/junk folder for emails from us.</li>
+            <li>If you don't receive an update within 4 hours, please contact us for technical support.</li>
+        </ol>
+        <p>Thank you,<br/>
+        The Midspace team
+        </p>
+        <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
 
-            return {
-                recipientName: person.name,
-                emailAddress: person.email,
-                reason: "item_submitted",
-                subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
-                htmlContents,
-            };
-        });
+                return {
+                    recipientName: person.name,
+                    emailAddress: person.email,
+                    reason: "item_submitted",
+                    subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                    htmlContents,
+                };
+            });
+        } else {
+            emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
+                const htmlContents = `<p>Dear ${person.name},</p>
+    <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName} and it will now be included in the conference.</p>
+    <p>Thank you for your submission,<br/>
+    The Midspace team
+    </p>
+    <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+
+                return {
+                    recipientName: person.name,
+                    emailAddress: person.email,
+                    reason: "item_submitted",
+                    subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                    htmlContents,
+                };
+            });
+        }
 
         await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId);
     }

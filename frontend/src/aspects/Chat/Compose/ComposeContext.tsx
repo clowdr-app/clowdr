@@ -1,9 +1,10 @@
+import type { UppyFile } from "@uppy/core";
 import assert from "assert";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { ChatConfiguration, useChatConfiguration } from "../Configuration";
 import type { MinMax } from "../Types/Base";
-import type { AnswerMessageData, MessageData, OrdinaryMessageData } from "../Types/Messages";
+import type { AnswerMessageData, MessageData, MessageMediaData, OrdinaryMessageData } from "../Types/Messages";
 import { useSendMessageQueries } from "./SendMessageQueries";
 
 interface ComposeCtx {
@@ -16,6 +17,8 @@ interface ComposeCtx {
     lastSendTime: number;
     readyToSend: boolean;
     blockedReason: string | undefined;
+    file: { file: UppyFile; data?: MessageMediaData } | null;
+    setFile: (value: { file: UppyFile; data?: MessageMediaData } | null) => void;
 
     setNewMessage: (msg: string) => void;
     setNewMessageType: (type: Chat_MessageType_Enum) => void;
@@ -70,6 +73,7 @@ export function ComposeContextProvider({
     const [newMessageType, setNewMessageType] = useState<Chat_MessageType_Enum>(defaultType);
     const [newMessageData, setNewMessageData] = useState<MessageData>({});
     const [lastSendTime, setLastSendTime] = useState<number>(0);
+    const [file, setFile] = useState<{ file: UppyFile; data?: MessageMediaData } | null>(null);
     // const now = useRealTime(250);
     const sendQueries = useSendMessageQueries();
 
@@ -149,6 +153,8 @@ export function ComposeContextProvider({
             // ? "Question mark required."
             newMessageType === Chat_MessageType_Enum.Answer && !("questionMessagesIds" in newMessageData)
             ? "Please select the question you are answering."
+            : !file?.data
+            ? "Please wait for file to finish uploading."
             : undefined;
 
     const setAnsweringQuestionId = useCallback(
@@ -159,17 +165,20 @@ export function ComposeContextProvider({
                 }
                 const data: AnswerMessageData = {
                     questionMessagesIds: ids,
+                    media: file?.data,
                 };
                 setNewMessageData(data);
             } else {
                 if (newMessageType === Chat_MessageType_Enum.Answer) {
                     setNewMessageType(Chat_MessageType_Enum.Message);
-                    const data: OrdinaryMessageData = {};
+                    const data: OrdinaryMessageData = {
+                        media: file?.data,
+                    };
                     setNewMessageData(data);
                 }
             }
         },
-        [newMessageType]
+        [newMessageType, file]
     );
 
     useEffect(() => {
@@ -205,6 +214,7 @@ export function ComposeContextProvider({
                         false
                     );
 
+                    setFile(null);
                     setNewMessage("");
                     setNewMessageData({});
                     setNewMessageType(Chat_MessageType_Enum.Message);
@@ -228,11 +238,20 @@ export function ComposeContextProvider({
         (type: Chat_MessageType_Enum) => {
             if (type !== newMessageType) {
                 setNewMessageType(type);
-                setNewMessageData({});
+                setNewMessageData({
+                    media: file?.data,
+                });
             }
         },
-        [newMessageType]
+        [newMessageType, file]
     );
+
+    useEffect(() => {
+        setNewMessageData((old) => ({
+            ...old,
+            media: file?.data,
+        }));
+    }, [file]);
 
     const ctx = useMemo(
         () => ({
@@ -245,6 +264,9 @@ export function ComposeContextProvider({
             messageLengthRange,
             lastSendTime,
             blockedReason,
+
+            file,
+            setFile,
 
             isSending: sendQueries.isSending,
             sendError: undefined,
@@ -264,6 +286,8 @@ export function ComposeContextProvider({
             sendQueries.isSending,
             setAnsweringQuestionId,
             setNewMessageTypeF,
+            file,
+            setFile,
         ]
     );
 

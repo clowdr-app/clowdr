@@ -1,15 +1,37 @@
-export interface OrdinaryMessageData {}
+export enum MediaType {
+    Audio,
+    Video,
+    Image,
+    PDF,
+    Text,
+    XML,
+    CSV,
+    JSON,
+}
 
-export interface EmoteMessageData {}
+export interface MessageMediaData {
+    type: MediaType;
+    name: string;
+    url: string;
+    alt: string;
+}
 
-export interface QuestionMessageData {}
+export interface BaseMessageData {
+    media?: MessageMediaData;
+}
 
-export interface AnswerMessageData {
+export interface OrdinaryMessageData extends BaseMessageData {}
+
+export interface EmoteMessageData extends BaseMessageData {}
+
+export interface QuestionMessageData extends BaseMessageData {}
+
+export interface AnswerMessageData extends BaseMessageData {
     questionMessagesIds?: number[];
     questionMessagesSIds?: string[];
 }
 
-export interface PollMessageData {
+export interface PollMessageData extends BaseMessageData {
     options: string[];
 
     maxVotesPerRegistrant: number;
@@ -17,12 +39,12 @@ export interface PollMessageData {
     revealBeforeComplete: boolean;
 }
 
-export interface PollResultsMessageData {
+export interface PollResultsMessageData extends BaseMessageData {
     pollMessageId?: string;
     pollMessageSId?: string;
 }
 
-export interface DuplicationMarkerMessageData {
+export interface DuplicationMarkerMessageData extends BaseMessageData {
     type: "start" | "end";
     event: {
         id: string;

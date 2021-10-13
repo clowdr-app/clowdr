@@ -1,6 +1,7 @@
-import { Button, Flex, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Button, Flex, HStack, Image, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import ReactPlayer from "react-player";
 import {
     ChatReactionDataFragment,
     Chat_MessageType_Enum,
@@ -8,14 +9,17 @@ import {
     RegistrantDataFragment,
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
+import { ExternalLinkButton } from "../../Chakra/LinkButton";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
 import { useAddEmojiFloat, useEmojiFloat } from "../../Emoji/EmojiFloat";
 import { roundUpToNearest } from "../../Generic/MathUtils";
+import { FAIcon } from "../../Icons/FAIcon";
 import type { Observable } from "../../Observable";
 import { Markdown } from "../../Text/Markdown";
 import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
+import { BaseMessageData, MediaType } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";
@@ -294,8 +298,10 @@ function MessageBody({
         [message, reactions]
     );
 
-    const msgBody = useMemo(
-        () => (
+    const messageData = message.data as BaseMessageData;
+    const msgBody = useMemo(() => {
+        const urlParts = messageData.media?.url.split("/");
+        return (
             <VStack
                 alignItems="flex-start"
                 spacing={roundUpToNearest(config.spacing * 0.5, 1) + "px"}
@@ -310,10 +316,32 @@ function MessageBody({
                 {reactionEls}
                 {question}
                 {poll}
+                {messageData.media ? (
+                    <>
+                        {messageData.media.type === MediaType.Audio || messageData.media.type === MediaType.Video ? (
+                            <ReactPlayer url={messageData.media.url} controls width="100%" height="auto" />
+                        ) : messageData.media.type === MediaType.Image ? (
+                            <Image src={messageData.media.url} alt={messageData.media.alt} />
+                        ) : undefined}
+                        <ExternalLinkButton
+                            to={messageData.media.url}
+                            isExternal
+                            size="xs"
+                            colorScheme="SecondaryActionButton"
+                            linkProps={{
+                                download:
+                                    messageData.media.name ??
+                                    (urlParts ? urlParts[urlParts.length - 1] : "unknown-file"),
+                            }}
+                        >
+                            <FAIcon iconStyle="s" icon="paperclip" />
+                            &nbsp; {messageData.media.name ?? "Attachment"}
+                        </ExternalLinkButton>
+                    </>
+                ) : undefined}
             </VStack>
-        ),
-        [config.spacing, controls, emote, message.type, poll, question, reactionEls]
-    );
+        );
+    }, [config.spacing, controls, emote, message.type, poll, question, reactionEls, messageData]);
 
     if (message.type === Chat_MessageType_Enum.DuplicationMarker) {
         return <></>;

@@ -1,8 +1,10 @@
 import {
     Box,
     BoxProps,
+    Button,
     Code,
     Flex,
+    Tag,
     Text,
     Textarea,
     Tooltip,
@@ -10,10 +12,19 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import AwsS3Multipart from "@uppy/aws-s3-multipart";
+import Uppy from "@uppy/core";
+import "@uppy/core/dist/style.css";
+import "@uppy/drag-drop/dist/style.css";
+import { StatusBar } from "@uppy/react";
+import "@uppy/status-bar/dist/style.css";
+import AmazonS3URI from "amazon-s3-uri";
+import assert from "assert";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
+import { FAIcon } from "../../Icons/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import type { AnswerMessageData } from "../Types/Messages";
+import { AnswerMessageData, MediaType, MessageMediaData } from "../Types/Messages";
 import { useComposeContext } from "./ComposeContext";
 import { InsertEmojiButton } from "./InsertEmojiButton";
 import { MessageTypeButtons } from "./MessageTypeButtons";
@@ -99,6 +110,255 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         "ChatCompose.borderColorFaded-light",
         "ChatCompose.borderColorFaded-dark"
     );
+
+    const allowedFileTypes = useMemo(
+        () => [
+            "image/bmp",
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/gif",
+            "video/av1",
+            "video/mp4",
+            "video/H264",
+            "video/H265",
+            "video/JPEG",
+            "video/VP8",
+            "video/VP9",
+            "video/ogg",
+            "audio/mpeg",
+            "audio/mp4",
+            "audio/mp3",
+            "audio/ogg",
+            "audio/wav",
+            "audio/vorbis",
+            "audio/aac",
+            "text/csv",
+            "text/xml",
+            "text/plain",
+            "application/json",
+            "application/pdf",
+        ],
+        []
+    );
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const uppy = useMemo(() => {
+        const uppy = new Uppy({
+            id: "chat-message-media-upload",
+            meta: {},
+            allowMultipleUploads: false,
+            allowMultipleUploadBatches: false,
+            restrictions: {
+                allowedFileTypes,
+                maxNumberOfFiles: 1,
+                minNumberOfFiles: 1,
+                maxFileSize: 100 * 1024 * 1024,
+            },
+            autoProceed: false,
+        });
+
+        uppy.use(AwsS3Multipart, {
+            limit: 4,
+            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+        });
+        return uppy;
+    }, [allowedFileTypes]);
+
+    useEffect(() => {
+        const onUpdateFiles = async () => {
+            const validNameRegex = /^[a-zA-Z0-9.!*'()\-_ ]+$/;
+            const invalidFiles = uppy?.getFiles().filter((file) => !validNameRegex.test(file.name));
+            for (const invalidFile of invalidFiles) {
+                toast({
+                    status: "error",
+                    description:
+                        "Invalid file name. File names must only contain letters, numbers, spaces and the following special characters: !*'()-_",
+                });
+                uppy.removeFile(invalidFile.id);
+            }
+
+            const finalFiles = uppy.getFiles();
+
+            if (finalFiles.length === 1) {
+                composeCtx.setFile({ file: finalFiles[0] });
+
+                let result;
+                try {
+                    result = await uppy.upload();
+                } catch (e) {
+                    console.error("Failed to upload file", e);
+                    toast({
+                        status: "error",
+                        description: "Failed to upload file. Please try again.",
+                    });
+                    uppy.reset();
+                    composeCtx.setFile(null);
+                    return;
+                }
+
+                if (result.failed.length > 0 || result.successful.length < 1) {
+                    console.error("Failed to upload file", result.failed);
+                    toast({
+                        status: "error",
+                        description: "Failed to upload file. Please try again later.",
+                    });
+                    uppy.reset();
+                    composeCtx.setFile(null);
+                    return;
+                }
+
+                try {
+                    const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
+                    assert(bucket);
+                    assert(key);
+
+                    uppy.reset();
+                    const url = `https://${bucket}.s3-${
+                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                    }.amazonaws.com/${key}`;
+                    let type: MediaType;
+                    switch (finalFiles[0].type) {
+                        case "image/bmp":
+                            type = MediaType.Image;
+                            break;
+                        case "image/png":
+                            type = MediaType.Image;
+                            break;
+                        case "image/jpeg":
+                            type = MediaType.Image;
+                            break;
+                        case "image/jpg":
+                            type = MediaType.Image;
+                            break;
+                        case "image/gif":
+                            type = MediaType.Image;
+                            break;
+                        case "video/av1":
+                            type = MediaType.Video;
+                            break;
+                        case "video/mp4":
+                            type = MediaType.Video;
+                            break;
+                        case "video/H264":
+                            type = MediaType.Video;
+                            break;
+                        case "video/H265":
+                            type = MediaType.Video;
+                            break;
+                        case "video/JPEG":
+                            type = MediaType.Video;
+                            break;
+                        case "video/VP8":
+                            type = MediaType.Video;
+                            break;
+                        case "video/VP9":
+                            type = MediaType.Video;
+                            break;
+                        case "video/ogg":
+                            type = MediaType.Video;
+                            break;
+                        case "audio/mpeg":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/mp4":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/mp3":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/ogg":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/wav":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/vorbis":
+                            type = MediaType.Audio;
+                            break;
+                        case "audio/aac":
+                            type = MediaType.Audio;
+                            break;
+                        case "text/csv":
+                            type = MediaType.CSV;
+                            break;
+                        case "text/xml":
+                            type = MediaType.XML;
+                            break;
+                        case "text/plain":
+                            type = MediaType.Text;
+                            break;
+                        case "application/json":
+                            type = MediaType.JSON;
+                            break;
+                        case "application/pdf":
+                            type = MediaType.PDF;
+                            break;
+                        default:
+                            throw new Error("Unrecognised type");
+                    }
+                    const mediaData: MessageMediaData = {
+                        type,
+                        name: finalFiles[0].name ?? "No file name",
+                        url,
+                        alt: "No alt text provided.",
+                    };
+                    composeCtx.setFile({ file: finalFiles[0], data: mediaData });
+                } catch (e) {
+                    console.error("Failed to submit file", e);
+                    toast({
+                        status: "error",
+                        title: "Failed to submit file.",
+                        description: e?.message ?? "Please try again later.",
+                    });
+                    uppy.reset();
+                    composeCtx.setFile(null);
+                    return;
+                }
+            } else {
+                composeCtx.setFile(null);
+            }
+        };
+        uppy.on("file-added", onUpdateFiles);
+        uppy.on("file-removed", onUpdateFiles);
+
+        const onUploadSuccess = () => {
+            toast({
+                status: "success",
+                description: "Uploaded successfully.",
+            });
+        };
+        uppy.on("upload-success", onUploadSuccess);
+
+        const onError = (err: Error) => {
+            console.error("Error while uploading file", { err });
+            toast({
+                status: "error",
+                title: "Error while uploading file",
+                description: `${err.name}: ${err.message}`,
+            });
+        };
+        uppy.on("error", onError);
+
+        const onUploadError = (file: unknown, err: Error) => {
+            console.error("Error while uploading file", { err });
+            toast({
+                status: "error",
+                title: "Error while uploading file",
+                description: `${err.name}: ${err.message}`,
+            });
+        };
+        uppy.on("upload-error", onUploadError);
+
+        return () => {
+            uppy.off("file-added", onUpdateFiles);
+            uppy.off("file-removed", onUpdateFiles);
+            uppy.off("upload-success", onUploadSuccess);
+            uppy.off("error", onError);
+            uppy.off("upload-error", onUploadError);
+        };
+    }, [toast, uppy, composeCtx]);
+
     return (
         <VStack
             spacing={0}
@@ -112,9 +372,14 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         >
             <QuickSendEmote />
             <MessageTypeButtons isDisabled={composeCtx.isSending} w="100%" />
-            <Box pos="relative" w="100%" h="auto" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
+            <Box pos="relative" w="100%" h="10vh" borderTop="1px solid" borderTopColor={borderColourFaded} pt="1px">
                 <Textarea
                     ref={composeBoxRef}
+                    pos="absolute"
+                    top={0}
+                    left={0}
+                    width="100%"
+                    height="100%"
                     fontSize={config.fontSizeRange.value}
                     borderRadius={0}
                     border="none"
@@ -164,7 +429,74 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                     opacity={0.7}
                 /> */}
             </Box>
-            <Flex w="100%" minH="2.4em">
+            <Flex w="100%" alignItems="stretch" justifyContent="stretch" flexDir="column">
+                <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+            </Flex>
+            <Flex w="100%" minH="2.4em" alignItems="center">
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={(ev) => {
+                        uppy.getFiles().map((file) => uppy.removeFile(file.name));
+                        if (ev.target.files?.length) {
+                            try {
+                                uppy.addFile({
+                                    data: ev.target.files[0],
+                                    name: ev.target.files[0].name,
+                                    type: ev.target.files[0].type,
+                                    meta: {
+                                        name: ev.target.files[0].name,
+                                        type: ev.target.files[0].type,
+                                    },
+                                });
+                            } catch (e) {
+                                toast({
+                                    title: "Unsupported file type",
+                                    description: e.toString(),
+                                    status: "error",
+                                    position: "bottom-right",
+                                    isClosable: true,
+                                });
+                            }
+                        }
+                    }}
+                />
+                {composeCtx.file ? (
+                    <Tag
+                        ml={1}
+                        colorScheme="SecondaryActionButton"
+                        variant={composeCtx.file?.data ? "solid" : "subtle"}
+                        onClick={() => {
+                            if (composeCtx.file?.data) {
+                                composeCtx.setFile(null);
+                            }
+                        }}
+                        cursor="pointer"
+                        aria-label="Remove media"
+                    >
+                        {composeCtx.file.file.name}
+                        {composeCtx.file?.data ? (
+                            <>
+                                &nbsp;&nbsp;
+                                <FAIcon iconStyle="s" icon="times" />
+                            </>
+                        ) : undefined}
+                    </Tag>
+                ) : (
+                    <Button
+                        size="xs"
+                        colorScheme="PrimaryActionButton"
+                        variant="ghost"
+                        ml={1}
+                        onClick={() => {
+                            fileInputRef.current?.click();
+                        }}
+                    >
+                        <FAIcon iconStyle="s" icon="paperclip" />
+                        &nbsp; Attach media
+                    </Button>
+                )}
                 {composeCtx.newMessageType === Chat_MessageType_Enum.Answer ? (
                     <Flex
                         fontSize={config.fontSizeRange.value * 0.7}
@@ -226,7 +558,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         ) : (
                             <SendMessageButton
                                 sendFailed={sendFailed !== null}
-                                isDisabled={!composeCtx.readyToSend}
+                                isDisabled={!composeCtx.readyToSend || !!(composeCtx.file && !composeCtx.file?.data)}
                                 isLoading={composeCtx.isSending}
                                 onClick={() => {
                                     composeCtx.send();

@@ -96,7 +96,7 @@ async function sendCustomEmails(
             htmlContents,
             reason: EmailReason.CustomEmail,
             userId: null,
-            subject: `[CUSTOM EMAIL]: ${subject}`,
+            subject: `[${conferenceName} | CUSTOM EMAIL | ${result.data.registrant_Registrant.length} recipients] ${subject}`,
         });
     }
 
@@ -138,7 +138,7 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
         try {
             await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
         } catch (error: any) {
-            console.error("Failed to process send custom email job", { jobId: job.id, error: error.message ?? error });
+            console.error("Failed to process send custom email job", { jobId: job.id, error });
             failedJobIds.push(job.id);
         }
     }

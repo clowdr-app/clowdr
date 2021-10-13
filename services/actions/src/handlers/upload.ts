@@ -15,7 +15,7 @@ import {
 import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import Mustache from "mustache";
+import { compile } from "handlebars";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -316,11 +316,7 @@ async function sendSubmittedEmail(
             <li>In the unlikely event that processing your video fails, you will receive an email. You should then forward this to your conference's organising committee to ask for technical assistance.</li>
             <li>Please remember to check your spam/junk folder for emails from us.</li>
             <li>If you don't receive an update within 4 hours, please contact us for technical support.</li>
-        </ol>
-        <p>Thank you,<br/>
-        The Midspace team
-        </p>
-        <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+        </ol>`;
 
                 return {
                     recipientName: person.name,
@@ -333,11 +329,7 @@ async function sendSubmittedEmail(
         } else {
             emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
                 const htmlContents = `<p>Dear ${person.name},</p>
-    <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName} and it will now be included in the conference.</p>
-    <p>Thank you for your submission,<br/>
-    The Midspace team
-    </p>
-    <p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+    <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName} and it will now be included in the conference.</p>`;
 
                 return {
                     recipientName: person.name,
@@ -690,7 +682,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         if (job.uploader) {
             const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
             const uploadLink = `{{frontendHost}}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
-            const view: EmailView_SubmissionRequest = {
+            const context: EmailView_SubmissionRequest = {
                 uploader: {
                     name: job.uploader.name,
                 },
@@ -715,23 +707,20 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                       Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
                   );
 
-            const htmlBody = Mustache.render(
-                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
-                view
+            const bodyTemplate = compile(
+                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate
+            );
+            const subjectTemplate = compile(
+                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate
             );
 
-            const subject = Mustache.render(
-                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
-                view
-            );
-
-            const htmlContents = `${htmlBody}
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+            const htmlBody = bodyTemplate(context);
+            const subject = subjectTemplate(context);
 
             const newEmail: Email_Insert_Input = {
                 recipientName: job.uploader.name,
                 emailAddress: job.uploader.email,
-                htmlContents,
+                htmlContents: htmlBody,
                 reason: "upload-request",
                 subject,
             };
@@ -741,7 +730,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         } else if (job.person) {
             const uploadLink = `{{frontendHost}}/submissions/${job.person.accessToken}`;
 
-            const view: EmailView_SubmissionRequest = {
+            const context: EmailView_SubmissionRequest = {
                 person: {
                     name: job.person.name,
                 },
@@ -759,23 +748,20 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                       Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
                   );
 
-            const htmlBody = Mustache.render(
-                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate,
-                view
+            const bodyTemplate = compile(
+                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate
+            );
+            const subjectTemplate = compile(
+                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate
             );
 
-            const subject = Mustache.render(
-                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate,
-                view
-            );
-
-            const htmlContents = `${htmlBody}
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+            const htmlBody = bodyTemplate(context);
+            const subject = subjectTemplate(context);
 
             const newEmail: Email_Insert_Input = {
                 recipientName: job.person.name,
                 emailAddress: job.person.email,
-                htmlContents,
+                htmlContents: htmlBody,
                 reason: "upload-request",
                 subject,
             };

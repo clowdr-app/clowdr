@@ -166,10 +166,9 @@ your account and access the conference.</p>
 <p>
 <a href="{{frontendHost}}/invitation/accept/${registrant.invitation.inviteCode}">Click here to join the conference</a></p>
 
-<p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
+<p>If you are asked for an invitation code, enter <code>${registrant.invitation.inviteCode}<code></p>
 
-<p>We hope you enjoy your conference,<br />
-The Midspace team</p>`;
+<p>We hope you enjoy your conference!</p>`;
 
                     emailsToSend.set(registrant.id, {
                         recipientName: registrant.displayName,

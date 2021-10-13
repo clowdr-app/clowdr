@@ -319,6 +319,7 @@ itemTitle       ${element.item.title}
 elementId       ${elementId}
 elementName     ${elementName}
 conferenceName  ${element.conference.name}
+path            /item/${element.item.id}/element/${elementId}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
@@ -381,6 +382,7 @@ itemTitle       ${element.item.title}
 elementId       ${elementId}
 elementName     ${elementName}
 conferenceName  ${element.conference.name}
+path            /item/${element.item.id}/element/${elementId}
         </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({

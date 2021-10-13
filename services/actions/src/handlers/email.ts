@@ -113,7 +113,7 @@ export async function insertEmails(
     assert(hostOrganisationName, "Host organisation name not configured - missing system configuration");
     assert(stopEmailsAddress, "Stop emails address not configured - missing system configuration");
 
-    const htmlUnsubscribeDetails = `This email was sent on behalf of Midspace, operated by ${hostOrganisationName}. If you believe you have received this email in error, please contact us via <a href="mailto:${stopEmailsAddress}">${stopEmailsAddress}</a>`;
+    const htmlUnsubscribeDetails = `This is an automated email sent on behalf of Midspace, operated by ${hostOrganisationName}. If you believe you have received this email in error, please contact us via <a href="mailto:${stopEmailsAddress}">${stopEmailsAddress}</a>`;
 
     const context: Omit<EmailTemplateContext, "htmlBody" | "subject" | "excerpt" | "sendingReason"> = {
         frontendHost,

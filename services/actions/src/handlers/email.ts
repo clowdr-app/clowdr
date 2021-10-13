@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import sgMail from "@sendgrid/mail";
 import assert from "assert";
+import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
 import wcmatch from "wildcard-match";
 import {
@@ -79,13 +80,9 @@ export async function insertEmails(
         },
     });
 
-    const supportAddress = configResponse.data.support?.length ? configResponse?.data.support[0].value : undefined;
-    const techSupportAddress = configResponse.data.techSupport?.length
-        ? configResponse?.data.techSupport[0].value
-        : undefined;
-    const frontendHost = configResponse.data.frontendHost?.length
-        ? configResponse.data.frontendHost[0].value
-        : configResponse.data.defaultFrontendHost?.value ?? "Error: Host not configured";
+    const supportAddress = configResponse?.data.support?.[0].value ?? undefined;
+    const techSupportAddress = configResponse.data.techSupport?.[0]?.value ?? undefined;
+    const frontendHost = configResponse.data.frontendHost?.[0]?.value ?? "Error: Host not configured";
     let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
     if (!allowedDomains) {
         allowedDomains = [];
@@ -133,11 +130,16 @@ export async function insertEmails(
         )
         .map((email) => {
             const htmlContents = email.htmlContents as string;
+            const subject = email.subject ?? `An update from ${hostOrganisationName}`;
+            const sendingReason = formatSendingReason(email.reason ?? "", conferenceName ?? null) ?? "";
+            const htmlBody = compile(htmlContents)({
+                frontendHost,
+            });
             const compiledEmail = emailBuilder.compile({
                 ...context,
-                htmlBody: htmlContents,
-                subject: email.subject ?? `An update from ${hostOrganisationName}`,
-                sendingReason: formatSendingReason(email.reason ?? "", conferenceName ?? null) ?? "",
+                htmlBody,
+                subject,
+                sendingReason,
             });
             return {
                 ...email,

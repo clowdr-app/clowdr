@@ -9,6 +9,7 @@ import {
     UnmarkCustomEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { EmailReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
 
@@ -28,6 +29,12 @@ gql`
         }
         conference_Conference_by_pk(id: $conferenceId) {
             shortName
+            techSupportAddress: configurations(where: { key: { _eq: TECH_SUPPORT_ADDRESS } }) {
+                value
+            }
+        }
+        platformAddress: system_Configuration_by_pk(key: SENDGRID_REPLYTO) {
+            value
         }
     }
 `;
@@ -74,9 +81,22 @@ async function sendCustomEmails(
             recipientName: registrant.displayName,
             emailAddress: email,
             htmlContents,
-            reason: "custom-email",
+            reason: EmailReason.CustomEmail,
             userId: registrant?.user?.id ?? null,
             subject,
+        });
+    }
+
+    const copyToEmail =
+        result.data.conference_Conference_by_pk?.techSupportAddress?.[0]?.value ?? result.data.platformAddress?.value;
+    if (copyToEmail) {
+        emailsToSend.push({
+            recipientName: `${conferenceName} TECH_SUPPORT_ADDRESS`,
+            emailAddress: copyToEmail,
+            htmlContents,
+            reason: EmailReason.CustomEmail,
+            userId: null,
+            subject: `[CUSTOM EMAIL]: ${subject}`,
         });
     }
 

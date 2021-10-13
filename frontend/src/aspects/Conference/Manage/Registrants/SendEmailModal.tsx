@@ -205,7 +205,7 @@ The ${conference.shortName} organisers`,
                             mt={4}
                             colorScheme="purple"
                         >
-                            Send {registrants.length} emails
+                            Send {registrants.length} {registrants.length === 1 ? "email" : "emails"}
                         </Button>
                     </ModalFooter>
                 </ModalContent>

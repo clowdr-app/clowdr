@@ -53,7 +53,7 @@ export default function ForceUserRefresh(): JSX.Element {
         (x) => parseInt(x, 10)
     );
 
-    const intervalMs = 30 * 1000;
+    const intervalMs = 5 * 60 * 1000;
     const now = useRealTime(intervalMs + 100);
     useEffect(() => {
         if (lastCheckMs + intervalMs <= now) {

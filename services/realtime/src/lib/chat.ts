@@ -1,4 +1,4 @@
-import { redisClientP } from "../redis";
+import { redisClientP, redisClientPool } from "../redis";
 
 export function generateChatRoomName(chatId: string): string {
     return `chat:chat.${chatId}`;
@@ -36,31 +36,14 @@ export type SocketInfo = {
     userId: string;
 };
 export async function allSocketsAndUserIds(): Promise<SocketInfo[]> {
-    const results: SocketInfo[] = [];
-    let [cursor, keys] = await redisClientP.scan("0", "chat:socket.*.user");
-    let partial = (
-        await Promise.all(
-            keys.map(async (key) => {
-                const value = await redisClientP.get(key);
-                if (value) {
-                    return {
-                        socketId: key.split(".")[1],
-                        userId: value,
-                    };
-                }
-                return undefined;
-            })
-        )
-    ).filter((x) => !!x) as SocketInfo[];
-    partial.forEach((pair) => {
-        results.push(pair);
-    });
-    while (cursor !== "0") {
-        [cursor, keys] = await redisClientP.scan(cursor, "chat:socket.*.user");
-        partial = (
+    const redisClient = await redisClientPool.acquire("lib/chat/allSocketsAndUserIds");
+    try {
+        const results: SocketInfo[] = [];
+        let [cursor, keys] = await redisClientP.scan(redisClient)("0", "chat:socket.*.user");
+        let partial = (
             await Promise.all(
                 keys.map(async (key) => {
-                    const value = await redisClientP.get(key);
+                    const value = await redisClientP.get(redisClient)(key);
                     if (value) {
                         return {
                             socketId: key.split(".")[1],
@@ -74,7 +57,29 @@ export async function allSocketsAndUserIds(): Promise<SocketInfo[]> {
         partial.forEach((pair) => {
             results.push(pair);
         });
-    }
+        while (cursor !== "0") {
+            [cursor, keys] = await redisClientP.scan(redisClient)(cursor, "chat:socket.*.user");
+            partial = (
+                await Promise.all(
+                    keys.map(async (key) => {
+                        const value = await redisClientP.get(redisClient)(key);
+                        if (value) {
+                            return {
+                                socketId: key.split(".")[1],
+                                userId: value,
+                            };
+                        }
+                        return undefined;
+                    })
+                )
+            ).filter((x) => !!x) as SocketInfo[];
+            partial.forEach((pair) => {
+                results.push(pair);
+            });
+        }
 
-    return results;
+        return results;
+    } finally {
+        redisClientPool.release("lib/chat/allSocketsAndUserIds", redisClient);
+    }
 }

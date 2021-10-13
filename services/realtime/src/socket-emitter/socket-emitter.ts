@@ -1,4 +1,4 @@
 import { Emitter } from "@socket.io/redis-emitter";
-import { redisClient } from "../redis";
+import { createRedisClient } from "../redis";
 
-export const emitter = new Emitter(redisClient);
+export const emitter = new Emitter(createRedisClient());

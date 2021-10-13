@@ -5,7 +5,7 @@ import { createAdapter } from "socket.io-redis";
 import { GetUserConferenceSlugsDocument } from "../generated/graphql";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
-import { redisClient } from "../redis";
+import { createRedisClient } from "../redis";
 import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectHandRaise } from "../socket-events/handRaise";
@@ -28,8 +28,8 @@ export const socketServer = new socketIO.Server(httpServer, {
 
 // We only need these if we're running a socket server, not just a worker process
 // (Having them here reduces the total number of connections to the redis instance)
-export const redisPubClient = redisClient.duplicate();
-export const redisSubClient = redisClient.duplicate();
+export const redisPubClient = createRedisClient();
+export const redisSubClient = createRedisClient();
 
 // Configure the websocket server's connection to redis
 socketServer.adapter(

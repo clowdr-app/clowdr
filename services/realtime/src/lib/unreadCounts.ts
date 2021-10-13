@@ -1,4 +1,4 @@
-import { redisClientP } from "../redis";
+import { redisClientP, redisClientPool } from "../redis";
 import { emitter } from "../socket-emitter/socket-emitter";
 import { getReadUpToIndex } from "./cache/readUpToIndex";
 import { generateChatRecentMessagesSetKey, notificationsRoomName } from "./chat";
@@ -12,16 +12,21 @@ export async function sendUnreadCount(chatId: string, userId: string): Promise<v
         messageSId: undefined,
     });
     const redisSetKey = generateChatRecentMessagesSetKey(chatId);
-    const rank = readUpToIndex?.messageSId
-        ? await redisClientP.zrevrank(redisSetKey, readUpToIndex.messageSId)
-        : await redisClientP.zcard(redisSetKey);
+    const redisClient = await redisClientPool.acquire("lib/unreadCount/sendUnreadCount");
+    try {
+        const rank = readUpToIndex?.messageSId
+            ? await redisClientP.zrevrank(redisClient)(redisSetKey, readUpToIndex.messageSId)
+            : await redisClientP.zcard(redisClient)(redisSetKey);
 
-    const roomName = notificationsRoomName(userId);
-    if (rank === null) {
-        const unreadCount = await redisClientP.zcard(redisSetKey);
-        emitter.to(roomName).emit("chat.unreadCount.update", chatId, formatUnreadCount(unreadCount));
-    } else {
-        emitter.to(roomName).emit("chat.unreadCount.update", chatId, formatUnreadCount(rank));
+        const roomName = notificationsRoomName(userId);
+        if (rank === null) {
+            const unreadCount = await redisClientP.zcard(redisClient)(redisSetKey);
+            emitter.to(roomName).emit("chat.unreadCount.update", chatId, formatUnreadCount(unreadCount));
+        } else {
+            emitter.to(roomName).emit("chat.unreadCount.update", chatId, formatUnreadCount(rank));
+        }
+    } finally {
+        redisClientPool.release("lib/unreadCount/sendUnreadCount", redisClient);
     }
 }
 

@@ -1,4 +1,4 @@
-import { redisClientP, redlock } from "../../redis";
+import { redisClientP, redisClientPool, redlock } from "../../redis";
 
 export class Cache<T> {
     constructor(
@@ -21,28 +21,40 @@ export class Cache<T> {
         acquireLock = true
     ): Promise<T | undefined> {
         const cacheKey = this.generateCacheKey(itemKey);
-        const existingValStr = await redisClientP.get(cacheKey);
-        if (existingValStr !== null) {
-            const existingVal = JSON.parse(existingValStr);
-            const fetchedAt: number = existingVal.fetchedAt;
-
-            if (existingVal.value === "undefined" || refetchNow) {
-                if (Date.now() - fetchedAt < this.rateLimitPeriodMs) {
-                    return existingVal.value === "undefined" ? undefined : this.parse(existingVal.value);
-                }
-            } else {
-                return this.parse(existingVal.value);
-            }
-        }
-
-        const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
+        const redisClient = await redisClientPool.acquire("lib/cache/cache/get");
+        let redisClientReleased = false;
         try {
-            console.info("Fetching from original source for cache", cacheKey);
-            const val = await this.fetch(itemKey, testMode_ExpectedValue);
-            await this.set(itemKey, val, false);
-            return val;
+            const existingValStr = await redisClientP.get(redisClient)(cacheKey);
+
+            redisClientPool.release("lib/cache/cache/get", redisClient);
+            redisClientReleased = true;
+
+            if (existingValStr !== null) {
+                const existingVal = JSON.parse(existingValStr);
+                const fetchedAt: number = existingVal.fetchedAt;
+
+                if (existingVal.value === "undefined" || refetchNow) {
+                    if (Date.now() - fetchedAt < this.rateLimitPeriodMs) {
+                        return existingVal.value === "undefined" ? undefined : this.parse(existingVal.value);
+                    }
+                } else {
+                    return this.parse(existingVal.value);
+                }
+            }
+
+            const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
+            try {
+                console.info("Fetching from original source for cache", cacheKey);
+                const val = await this.fetch(itemKey, testMode_ExpectedValue);
+                await this.set(itemKey, val, false);
+                return val;
+            } finally {
+                lease?.unlock();
+            }
         } finally {
-            lease?.unlock();
+            if (!redisClientReleased) {
+                redisClientPool.release("lib/cache/cache/get", redisClient);
+            }
         }
     }
 
@@ -50,13 +62,18 @@ export class Cache<T> {
         const cacheKey = this.generateCacheKey(itemKey);
         const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
         try {
-            const valStr = value !== undefined ? this.stringify(value) : "undefined";
-            await redisClientP.set(
-                cacheKey,
-                JSON.stringify({ fetchedAt: Date.now(), value: valStr }),
-                "PX",
-                Date.now() + this.refetchAfterMs
-            );
+            const redisClient = await redisClientPool.acquire("lib/cache/cache/set");
+            try {
+                const valStr = value !== undefined ? this.stringify(value) : "undefined";
+                await redisClientP.set(redisClient)(
+                    cacheKey,
+                    JSON.stringify({ fetchedAt: Date.now(), value: valStr }),
+                    "PX",
+                    Date.now() + this.refetchAfterMs
+                );
+            } finally {
+                redisClientPool.release("lib/cache/cache/set", redisClient);
+            }
         } finally {
             lease?.unlock();
         }
@@ -66,7 +83,12 @@ export class Cache<T> {
         const cacheKey = this.generateCacheKey(itemKey);
         const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
         try {
-            await redisClientP.del(cacheKey);
+            const redisClient = await redisClientPool.acquire("lib/cache/cache/delete");
+            try {
+                await redisClientP.del(redisClient)(cacheKey);
+            } finally {
+                redisClientPool.release("lib/cache/cache/delete", redisClient);
+            }
         } finally {
             lease?.unlock();
         }

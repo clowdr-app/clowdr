@@ -12,7 +12,7 @@ import {
 import { getEventInfo } from "../lib/cache/roomInfo";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
 import { canAccessEvent } from "../lib/permissions";
-import { redisClientP } from "../redis";
+import { redisClientP, redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 import { testMode } from "../testMode";
 
@@ -69,7 +69,17 @@ export function onRaiseHand(
                         Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    await redisClientP.zadd(generateEventHandsRaisedKeyName(eventId), Date.now(), userId);
+                    const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onRaiseHand");
+                    try {
+                        await redisClientP.zadd(redisClient)(
+                            generateEventHandsRaisedKeyName(eventId),
+                            Date.now(),
+                            userId
+                        );
+                    } finally {
+                        redisClientPool.release("socket-handlers/handRaise/onRaiseHand", redisClient);
+                    }
+
                     socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.raised", { eventId, userId });
@@ -104,7 +114,13 @@ export function onLowerHand(
                         Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), userId);
+                    const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onLowerHand");
+                    try {
+                        await redisClientP.zrem(redisClient)(generateEventHandsRaisedKeyName(eventId), userId);
+                    } finally {
+                        redisClientPool.release("socket-handlers/handRaise/onLowerHand", redisClient);
+                    }
+
                     socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.lowered", { eventId, userId });
@@ -139,8 +155,17 @@ export function onFetchHandsRaised(
                         Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    const userIds = await redisClientP.zrange(generateEventHandsRaisedKeyName(eventId), 0, -1);
-                    socket.emit("event.handRaise.listing", { eventId, userIds });
+                    const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onFetchHandsRaised");
+                    try {
+                        const userIds = await redisClientP.zrange(redisClient)(
+                            generateEventHandsRaisedKeyName(eventId),
+                            0,
+                            -1
+                        );
+                        socket.emit("event.handRaise.listing", { eventId, userIds });
+                    } finally {
+                        redisClientPool.release("socket-handlers/handRaise/onFetchHandsRaised", redisClient);
+                    }
                 }
             } catch (e) {
                 console.error(`Error processing event.handRaise.fetch (socket: ${socketId}, eventId: ${eventId})`, e);
@@ -250,7 +275,18 @@ export function onAcceptHandRaised(
                         );
 
                         if (insertResult) {
-                            await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                            const redisClient = await redisClientPool.acquire(
+                                "socket-handlers/handRaise/onAcceptHandRaised"
+                            );
+                            try {
+                                await redisClientP.zrem(redisClient)(
+                                    generateEventHandsRaisedKeyName(eventId),
+                                    targetUserId
+                                );
+                            } finally {
+                                redisClientPool.release("socket-handlers/handRaise/onAcceptHandRaised", redisClient);
+                            }
+
                             socketServer
                                 .in(generateEventHandsRaisedRoomName(eventId))
                                 .emit("event.handRaise.accepted", {
@@ -298,7 +334,12 @@ export function onRejectHandRaised(
                         Room_ManagementMode_Enum.Public
                     )
                 ) {
-                    await redisClientP.zrem(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                    const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onRejectHandRaised");
+                    try {
+                        await redisClientP.zrem(redisClient)(generateEventHandsRaisedKeyName(eventId), targetUserId);
+                    } finally {
+                        redisClientPool.release("socket-handlers/handRaise/onRejectHandRaised", redisClient);
+                    }
                     socketServer
                         .in(generateEventHandsRaisedRoomName(eventId))
                         .emit("event.handRaise.rejected", { eventId, userId: targetUserId });

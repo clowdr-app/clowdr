@@ -218,7 +218,10 @@ export function exitPresence(
 
                         redisClient.scard(userKey, (getErr, sessionCount) => {
                             if (getErr) {
-                                cb(getErr);
+                                redisClient.unwatch((unwatchErr) => {
+                                    cb(unwatchErr ?? getErr);
+                                    return;
+                                });
                                 return;
                             }
 

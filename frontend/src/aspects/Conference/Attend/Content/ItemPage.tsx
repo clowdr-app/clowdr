@@ -3,6 +3,7 @@ import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react"
 import React from "react";
 import { Redirect } from "react-router-dom";
 import {
+    Content_ItemType_Enum,
     ItemElements_ItemDataFragment,
     ItemEventFragment,
     ItemPage_ItemRoomsFragment,
@@ -97,6 +98,14 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                 to={`/conference/${conference.slug}/exhibition/${itemData.descriptionOfExhibitions[0].id}`}
                             />
                         );
+                    }
+
+                    if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.rooms.length > 0) {
+                        return <Redirect to={`/conference/${conference.slug}/room/${itemData.rooms[0].id}`} />;
+                    }
+
+                    if (itemData.typeName === Content_ItemType_Enum.LandingPage) {
+                        return <Redirect to={`/conference/${conference.slug}`} />;
                     }
 
                     return (

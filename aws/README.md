@@ -19,7 +19,7 @@ You must set up AWS even when running a local development environment, as Midspa
 1. Configure an env file for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
    - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
    - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
-1. Bootstrap your AWS account by running the `Bootstrap AWS account` VSCode task.
+1. Bootstrap your AWS account by running the `AWS -- Bootstrap account` VSCode task.
 
 ### Deploying the main AWS stacks
 
@@ -27,7 +27,7 @@ The stack `<prefix>-main` deploys the main infrastructure for the Clowdr app (e.
 
 The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
 
-1. Run the `Deploy to AWS` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
+1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
 
 ## AWS CLI Setup
@@ -105,5 +105,5 @@ If you just want to get up and running as quickly as possible, and you do not ca
 
 ## Useful commands
 
-- VSCode task: `Bootstrap AWS account` - bootstraps the chosen profile so that it is ready for CDK deployments.
-- VSCode task: `Deploy to AWS` - deploy all stacks to the chosen profile.
+- VSCode task: `AWS -- Bootstrap account` - bootstraps the chosen profile so that it is ready for CDK deployments.
+- VSCode task: `AWS -- Deploy stacks` - deploy all stacks to the chosen profile.

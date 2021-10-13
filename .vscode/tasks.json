@@ -274,12 +274,10 @@
             "isBackground": true,
             "problemMatcher": []
         },
-        // Bootstrap AWS
         {
-            "label": "Bootstrap AWS account",
+            "label": "AWS -- Bootstrap account",
             "detail": "AWS CDK requires the account to be 'bootstrapped' first.",
             "type": "shell",
-            "isBackground": true,
             "command": "npm",
             "problemMatcher": [],
             "options": {
@@ -294,12 +292,10 @@
             },
             "args": ["run", "bootstrap"]
         },
-        // Deploy to AWS
         {
-            "label": "Deploy to AWS",
+            "label": "AWS -- Deploy stacks",
             "detail": "Deploy all CDK stacks to an AWS account. You will be asked which profile you want to deploy to.",
             "type": "shell",
-            "isBackground": true,
             "command": "npm",
             "problemMatcher": [],
             "options": {
@@ -313,6 +309,14 @@
                 "instanceLimit": 1
             },
             "args": ["run", "deploy:all"]
+        },
+        {
+            "label": "AWS -- Open console",
+            "detail": "Open the AWS console in browser.",
+            "type": "shell",
+            "command": "aws-vault",
+            "problemMatcher": [],
+            "args": ["login", "${input:aws-profile-name}-internal"]
         }
     ],
     "inputs": [

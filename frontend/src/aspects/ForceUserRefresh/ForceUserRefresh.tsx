@@ -12,6 +12,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { compare } from "compare-versions";
 import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useGetForceUserRefreshConfigLazyQuery } from "../../generated/graphql";
@@ -52,7 +53,7 @@ export default function ForceUserRefresh(): JSX.Element {
         (x) => parseInt(x, 10)
     );
 
-    const intervalMs = 5 * 60 * 1000;
+    const intervalMs = 30 * 1000;
     const now = useRealTime(intervalMs + 100);
     useEffect(() => {
         if (lastCheckMs + intervalMs <= now) {
@@ -71,7 +72,8 @@ export default function ForceUserRefresh(): JSX.Element {
                     const latestVersion = config.value;
                     if (version !== latestVersion) {
                         setVersion(latestVersion);
-                        if (version !== "") {
+
+                        if (version !== "" && compare(latestVersion, version, ">")) {
                             onOpen();
                         }
                     }

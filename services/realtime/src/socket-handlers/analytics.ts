@@ -1,7 +1,7 @@
 import assert from "assert";
 import { is } from "typescript-is";
 import { validate } from "uuid";
-import { redisClientP } from "../redis";
+import { redisClientP, redisClientPool } from "../redis";
 
 export function onConnect(_userId: string, _socketId: string): void {
     // TODO
@@ -25,7 +25,12 @@ export function onViewCount(
         try {
             assert(is<ViewCountInfo>(info), "Submitted analytics info is invalid. (type)");
             assert(validate(info.identifier), "Submitted analytics info is invalid. (id)");
-            await redisClientP.incr(`analytics.view.count:${info.contentType}:${info.identifier}`);
+            const client = await redisClientPool.acquire("socket-handlers/analytics/onViewCount");
+            try {
+                await redisClientP.incr(client)(`analytics.view.count:${info.contentType}:${info.identifier}`);
+            } finally {
+                redisClientPool.release("socket-handlers/analytics/onViewCount", client);
+            }
         } catch (e) {
             console.error(e);
         }

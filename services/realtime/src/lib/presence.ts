@@ -1,4 +1,5 @@
-import { redisClient, redlock } from "../redis";
+import { RedisClient } from "redis";
+import { redisClientPool, redlock } from "../redis";
 import { socketServer } from "../servers/socket-server";
 
 /**
@@ -30,13 +31,20 @@ function sessionListsKey(sessionId: string) {
     return `SessionLists:${sessionId}`;
 }
 
-function addUserSession(listId: string, userId: string, sessionId: string, cb: (err: Error | null) => void) {
+function addUserSession(
+    redisClient: RedisClient,
+    listId: string,
+    userId: string,
+    sessionId: string,
+    cb: (err: Error | null) => void
+) {
     const sessionsKey = userSessionsKey(listId, userId);
     const listsKey = sessionListsKey(sessionId);
 
     redlock.lock(`locks:${sessionsKey}`, 1000, (err, sessionsKeyLock) => {
         if (err) {
             cb(err);
+            return;
         }
 
         redlock.lock(`locks:${listsKey}`, 1000, (err, listsKeyLock) => {
@@ -56,29 +64,39 @@ function addUserSession(listId: string, userId: string, sessionId: string, cb: (
             if (err) {
                 unlock();
                 cb(err);
+                return;
             }
 
             redisClient.sadd(sessionsKey, sessionId, (err) => {
                 if (err) {
                     unlock();
                     cb(err);
+                    return;
                 }
 
                 redisClient.sadd(listsKey, listId, (err) => {
                     unlock();
                     cb(err);
+                    return;
                 });
             });
         });
     });
 }
 
-function removeUserSession(listId: string, userId: string, sessionId: string, cb: (err: Error | null) => void) {
+function removeUserSession(
+    redisClient: RedisClient,
+    listId: string,
+    userId: string,
+    sessionId: string,
+    cb: (err: Error | null) => void
+) {
     const sessionsKey = userSessionsKey(listId, userId);
     const listsKey = sessionListsKey(sessionId);
     redlock.lock(`locks:${sessionsKey}`, 1000, (err, sessionsKeyLock) => {
         if (err) {
             cb(err);
+            return;
         }
 
         redlock.lock(`locks:${listsKey}`, 1000, (err, listsKeyLock) => {
@@ -98,17 +116,20 @@ function removeUserSession(listId: string, userId: string, sessionId: string, cb
             if (err) {
                 unlock();
                 cb(err);
+                return;
             }
 
             redisClient.srem(sessionsKey, sessionId, (err) => {
                 if (err) {
                     unlock();
                     cb(err);
+                    return;
                 }
 
                 redisClient.srem(listsKey, listId, (err) => {
                     unlock();
                     cb(err);
+                    return;
                 });
             });
         });
@@ -116,6 +137,7 @@ function removeUserSession(listId: string, userId: string, sessionId: string, cb
 }
 
 export function enterPresence(
+    _redisClient: RedisClient | null,
     listId: string,
     userId: string,
     sessionId: string,
@@ -123,98 +145,156 @@ export function enterPresence(
 ): void {
     // console.info(`${userId} / ${sessionId} entering ${listId}`);
 
-    addUserSession(listId, userId, sessionId, (err) => {
-        if (err) {
-            cb(err);
-        }
-
-        const listKey = presenceListKey(listId);
-        redisClient.sadd(listKey, userId, (err, v) => {
+    function internal(redisClient: RedisClient, cb: (err: Error | null) => void) {
+        addUserSession(redisClient, listId, userId, sessionId, (err) => {
             if (err) {
                 cb(err);
+                return;
             }
 
-            if (v > 0) {
-                // console.info(`${userId} / ${sessionId} entered ${listId}`);
-                const chan = presenceChannelName(listId);
-                socketServer.in(chan).emit("entered", { listId, userId });
-            }
-            // else {
-            //     console.info(`${userId} / ${sessionId} re-entered ${listId}`);
-            // }
+            const listKey = presenceListKey(listId);
+            redisClient.sadd(listKey, userId, (err, v) => {
+                if (err) {
+                    cb(err);
+                    return;
+                }
 
-            cb(null);
+                if (v > 0) {
+                    // console.info(`${userId} / ${sessionId} entered ${listId}`);
+                    const chan = presenceChannelName(listId);
+                    socketServer.in(chan).emit("entered", { listId, userId });
+                }
+                // else {
+                //     console.info(`${userId} / ${sessionId} re-entered ${listId}`);
+                // }
+
+                cb(null);
+                return;
+            });
         });
-    });
+    }
+
+    if (_redisClient) {
+        internal(_redisClient, cb);
+    } else {
+        redisClientPool
+            .acquire("lib/presence/enterPresence")
+            .then((redisClient) => {
+                internal(redisClient, (err) => {
+                    redisClientPool.release("lib/presence/enterPresence", redisClient);
+                    cb(err);
+                    return;
+                });
+            })
+            .catch(cb);
+    }
 }
 
-export function exitPresence(listId: string, userId: string, sessionId: string, cb: (err: Error | null) => void): void {
+export function exitPresence(
+    _redisClient: RedisClient | null,
+    listId: string,
+    userId: string,
+    sessionId: string,
+    cb: (err: Error | null) => void
+): void {
     // console.info(`${userId} / ${sessionId} exiting ${listId}`);
 
-    const listKey = presenceListKey(listId);
-    const userKey = userSessionsKey(listId, userId);
-    removeUserSession(listId, userId, sessionId, (err) => {
-        if (err) {
-            cb(err);
-        }
+    function internal(redisClient: RedisClient, cb: (err: Error | null) => void) {
+        const listKey = presenceListKey(listId);
+        const userKey = userSessionsKey(listId, userId);
+        removeUserSession(redisClient, listId, userId, sessionId, (err) => {
+            if (err) {
+                cb(err);
+                return;
+            }
 
-        function attempt(attemptNum: number) {
-            if (attemptNum > 0) {
-                redisClient.watch(userKey, (watchErr) => {
-                    if (watchErr) {
-                        cb(watchErr);
-                    }
-
-                    redisClient.scard(userKey, (getErr, sessionCount) => {
-                        if (getErr) {
-                            cb(getErr);
+            function attempt(attemptNum: number) {
+                if (attemptNum > 0) {
+                    redisClient.watch(userKey, (watchErr) => {
+                        if (watchErr) {
+                            cb(watchErr);
+                            return;
                         }
 
-                        if (sessionCount === 0) {
-                            // Attempt to remove user from the presence list
-                            redisClient
-                                .multi()
-                                .srem(listKey, userId)
-                                .exec((execErr, results) => {
+                        redisClient.scard(userKey, (getErr, sessionCount) => {
+                            if (getErr) {
+                                cb(getErr);
+                                return;
+                            }
+
+                            if (sessionCount === 0) {
+                                // Attempt to remove user from the presence list
+                                redisClient
+                                    .multi()
+                                    .srem(listKey, userId)
+                                    .exec((execErr, results) => {
+                                        if (execErr) {
+                                            attempt(attemptNum - 1);
+                                            return;
+                                        }
+
+                                        if (!results) {
+                                            cb(null);
+                                            return;
+                                        }
+
+                                        const [numRemoved] = results;
+
+                                        if (numRemoved > 0) {
+                                            // console.info(`${userId} / ${sessionId} left ${listId}`);
+                                            const chan = presenceChannelName(listId);
+                                            socketServer.in(chan).emit("left", { listId, userId });
+                                        }
+
+                                        cb(null);
+                                    });
+                            } else {
+                                // Validate that the session count hasn't changed
+                                redisClient.multi().exec((execErr) => {
                                     if (execErr) {
                                         attempt(attemptNum - 1);
-                                    }
-
-                                    if (!results) {
-                                        return;
-                                    }
-
-                                    const [numRemoved] = results;
-
-                                    if (numRemoved > 0) {
-                                        // console.info(`${userId} / ${sessionId} left ${listId}`);
-                                        const chan = presenceChannelName(listId);
-                                        socketServer.in(chan).emit("left", { listId, userId });
+                                    } else {
+                                        cb(null);
                                     }
                                 });
-                        } else {
-                            // Validate that the session count hasn't changed
-                            redisClient.multi().exec((execErr) => {
-                                if (execErr) {
-                                    attempt(attemptNum - 1);
-                                }
-                            });
-                        }
+                            }
+                        });
                     });
-                });
-            } else {
-                cb(
-                    new Error(
-                        `Ran out of attempts to perform exit presence transaction! ${listId}, ${userId}, ${sessionId}`
-                    )
-                );
+                } else {
+                    cb(
+                        new Error(
+                            `Ran out of attempts to perform exit presence transaction! ${listId}, ${userId}, ${sessionId}`
+                        )
+                    );
+                    return;
+                }
             }
-        }
-        attempt(5);
-    });
+            attempt(5);
+        });
+    }
+
+    if (_redisClient) {
+        internal(_redisClient, cb);
+    } else {
+        redisClientPool
+            .acquire("lib/presence/exitPresence")
+            .then((redisClient) => {
+                internal(redisClient, (err) => {
+                    redisClientPool.release("lib/presence/exitPresence", redisClient);
+                    cb(err);
+                    return;
+                });
+            })
+            .catch(cb);
+    }
 }
 
-export function exitAllPresences(userId: string, sessionId: string, cb: (err: Error | null) => void): void {
+export function exitAllPresences(
+    redisClient: RedisClient,
+    userId: string,
+    sessionId: string,
+    cb: (err: Error | null) => void
+): void {
     console.info(`Begin ${userId} exiting all presences for session ${sessionId}`);
 
     const listsKey = sessionListsKey(sessionId);
@@ -222,6 +302,7 @@ export function exitAllPresences(userId: string, sessionId: string, cb: (err: Er
     redlock.lock(`locks:${listsKey}`, 1000, (err, listsKeyLock) => {
         if (err) {
             cb(err);
+            return;
         }
 
         redisClient.SMEMBERS(listsKey, (err, listIds) => {
@@ -233,6 +314,7 @@ export function exitAllPresences(userId: string, sessionId: string, cb: (err: Er
 
             if (err) {
                 cb(err);
+                return;
             }
 
             console.info(`${userId} exiting all presences for session ${sessionId}:`, listIds);
@@ -241,7 +323,7 @@ export function exitAllPresences(userId: string, sessionId: string, cb: (err: Er
             const cleanupFunctionChain = listIds.reduce<() => void>(
                 (cb, listId) => {
                     return () => {
-                        exitPresence(listId, userId, sessionId, (err) => {
+                        exitPresence(redisClient, listId, userId, sessionId, (err) => {
                             if (err) {
                                 accumulatedErrors.push(
                                     `Error exiting presence for ${listId} / ${userId} / ${sessionId}: ${err.toString()}`
@@ -249,6 +331,7 @@ export function exitAllPresences(userId: string, sessionId: string, cb: (err: Er
                             }
 
                             cb();
+                            return;
                         });
                     };
                 },
@@ -261,8 +344,10 @@ export function exitAllPresences(userId: string, sessionId: string, cb: (err: Er
             if (accumulatedErrors.length > 0) {
                 const fullError = accumulatedErrors.reduce((acc, x) => `${acc}\n\n${x}`, "").substr(2);
                 cb(new Error(fullError));
+                return;
             } else {
                 cb(null);
+                return;
             }
         });
     });

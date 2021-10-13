@@ -5,7 +5,7 @@ import { gql } from "@apollo/client/core";
 import assert from "assert";
 import { InsertViewCountsDocument, SelectViewCountsDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import { redisClientP } from "../../redis";
+import { redisClientP, redisClientPool } from "../../redis";
 
 gql`
     query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {
@@ -71,41 +71,14 @@ async function Main(continueExecuting = false) {
             count: number;
         }[] = [];
 
-        let [cursor, keys] = await redisClientP.scan("0", "analytics.view.count:*");
-        let partial = (
-            await Promise.all(
-                keys.map(async (key) => {
-                    const value = Number.parseInt(await redisClientP.getset(key, "0"), 10);
-                    if (value) {
-                        return {
-                            contentType: key.split(":")[1],
-                            identifier: key.split(":")[2],
-                            count: value,
-                        };
-                    }
-                    return undefined;
-                })
-            )
-        ).filter((x) => !!x) as {
-            identifier: string;
-            contentType: string;
-            count: number;
-        }[];
-        partial.forEach((pair) => {
-            if (pair.contentType === "Item") {
-                itemResults.push(pair);
-            } else if (pair.contentType === "Element") {
-                elementResults.push(pair);
-            } else if (pair.contentType === "Room.HLSStream") {
-                roomHLSResults.push(pair);
-            }
-        });
-        while (cursor !== "0") {
-            [cursor, keys] = await redisClientP.scan(cursor, "analytics.view.count:*");
-            partial = (
+        const client = await redisClientPool.acquire("workers/analytics/viewCountWriteback/Main");
+        let clientReleased = false;
+        try {
+            let [cursor, keys] = await redisClientP.scan(client)("0", "analytics.view.count:*");
+            let partial = (
                 await Promise.all(
                     keys.map(async (key) => {
-                        const value = Number.parseInt(await redisClientP.getset(key, "0"), 10);
+                        const value = Number.parseInt(await redisClientP.getset(client)(key, "0"), 10);
                         if (value) {
                             return {
                                 contentType: key.split(":")[1],
@@ -130,63 +103,101 @@ async function Main(continueExecuting = false) {
                     roomHLSResults.push(pair);
                 }
             });
+            while (cursor !== "0") {
+                [cursor, keys] = await redisClientP.scan(client)(cursor, "analytics.view.count:*");
+                partial = (
+                    await Promise.all(
+                        keys.map(async (key) => {
+                            const value = Number.parseInt(await redisClientP.getset(client)(key, "0"), 10);
+                            if (value) {
+                                return {
+                                    contentType: key.split(":")[1],
+                                    identifier: key.split(":")[2],
+                                    count: value,
+                                };
+                            }
+                            return undefined;
+                        })
+                    )
+                ).filter((x) => !!x) as {
+                    identifier: string;
+                    contentType: string;
+                    count: number;
+                }[];
+                partial.forEach((pair) => {
+                    if (pair.contentType === "Item") {
+                        itemResults.push(pair);
+                    } else if (pair.contentType === "Element") {
+                        elementResults.push(pair);
+                    } else if (pair.contentType === "Room.HLSStream") {
+                        roomHLSResults.push(pair);
+                    }
+                });
+            }
+
+            redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);
+            clientReleased = true;
+
+            //         console.info(`View counts to write back:
+            //     Item: ${JSON.stringify(itemResults, null, 2)}
+
+            //     Element: ${JSON.stringify(elementResults, null, 2)}
+
+            //     Room.HLSStream: ${JSON.stringify(roomHLSResults, null, 2)}
+            // `);
+
+            const itemIds = itemResults.map((x) => x.identifier);
+            const elementIds = elementResults.map((x) => x.identifier);
+            const roomIds = roomHLSResults.map((x) => x.identifier);
+            const existingCounts = await apolloClient.query({
+                query: SelectViewCountsDocument,
+                variables: {
+                    itemIds,
+                    elementIds,
+                    roomIds,
+                    cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+                },
+            });
+            await apolloClient.mutate({
+                mutation: InsertViewCountsDocument,
+                variables: {
+                    itemStats: itemResults.map((result) => {
+                        const existing = existingCounts.data.analytics_ContentItemStats.find(
+                            (x) => x.itemId === result.identifier
+                        );
+                        return {
+                            id: existing?.id,
+                            itemId: result.identifier,
+                            viewCount: (existing?.viewCount ?? 0) + result.count,
+                        };
+                    }),
+                    elementStats: elementResults.map((result) => {
+                        const existing = existingCounts.data.analytics_ContentElementStats.find(
+                            (x) => x.elementId === result.identifier
+                        );
+                        return {
+                            id: existing?.id,
+                            elementId: result.identifier,
+                            viewCount: (existing?.viewCount ?? 0) + result.count,
+                        };
+                    }),
+                    roomStats: roomHLSResults.map((result) => {
+                        const existing = existingCounts.data.analytics_RoomStats.find(
+                            (x) => x.roomId === result.identifier
+                        );
+                        return {
+                            id: existing?.id,
+                            roomId: result.identifier,
+                            hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
+                        };
+                    }),
+                },
+            });
+        } finally {
+            if (!clientReleased) {
+                redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);
+            }
         }
-
-        //         console.info(`View counts to write back:
-        //     Item: ${JSON.stringify(itemResults, null, 2)}
-
-        //     Element: ${JSON.stringify(elementResults, null, 2)}
-
-        //     Room.HLSStream: ${JSON.stringify(roomHLSResults, null, 2)}
-        // `);
-
-        const itemIds = itemResults.map((x) => x.identifier);
-        const elementIds = elementResults.map((x) => x.identifier);
-        const roomIds = roomHLSResults.map((x) => x.identifier);
-        const existingCounts = await apolloClient.query({
-            query: SelectViewCountsDocument,
-            variables: {
-                itemIds,
-                elementIds,
-                roomIds,
-                cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-            },
-        });
-        await apolloClient.mutate({
-            mutation: InsertViewCountsDocument,
-            variables: {
-                itemStats: itemResults.map((result) => {
-                    const existing = existingCounts.data.analytics_ContentItemStats.find(
-                        (x) => x.itemId === result.identifier
-                    );
-                    return {
-                        id: existing?.id,
-                        itemId: result.identifier,
-                        viewCount: (existing?.viewCount ?? 0) + result.count,
-                    };
-                }),
-                elementStats: elementResults.map((result) => {
-                    const existing = existingCounts.data.analytics_ContentElementStats.find(
-                        (x) => x.elementId === result.identifier
-                    );
-                    return {
-                        id: existing?.id,
-                        elementId: result.identifier,
-                        viewCount: (existing?.viewCount ?? 0) + result.count,
-                    };
-                }),
-                roomStats: roomHLSResults.map((result) => {
-                    const existing = existingCounts.data.analytics_RoomStats.find(
-                        (x) => x.roomId === result.identifier
-                    );
-                    return {
-                        id: existing?.id,
-                        roomId: result.identifier,
-                        hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
-                    };
-                }),
-            },
-        });
 
         if (!continueExecuting) {
             process.exit(0);

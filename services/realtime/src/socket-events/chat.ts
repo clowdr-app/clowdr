@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { allSocketsAndUserIds, chatListenersKeyName, socketChatsKeyName, socketUserKeyName } from "../lib/chat";
-import { redisClientP } from "../redis";
+import { redisClientP, redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 import * as chat from "../socket-handlers/chat/chat";
 import * as chat_messages from "../socket-handlers/chat/messages";
@@ -11,7 +11,13 @@ import { onRequestUnreadCount, onSetReadUpToIndex } from "../socket-handlers/cha
 
 export function onConnect(socket: Socket, userId: string, conferenceSlugs: string[]): void {
     const socketId = socket.id;
-    redisClientP.setForever(socketUserKeyName(socketId), userId);
+    redisClientPool.acquire("socket-events/chat/onConnect").then((redisClient) => {
+        try {
+            redisClientP.setForever(redisClient)(socketUserKeyName(socketId), userId);
+        } finally {
+            redisClientPool.release("socket-events/chat/onConnect", redisClient);
+        }
+    });
 
     socket.on("chat.subscribe", chat.onSubscribe(conferenceSlugs, userId, socketId, socket));
     socket.on("chat.unsubscribe", chat.onUnsubscribe(conferenceSlugs, userId, socketId, socket));
@@ -43,20 +49,25 @@ export async function onDisconnect(socketId: string, userId: string): Promise<vo
 }
 
 async function exitChats(socketId: string, userId: string, log = false) {
-    const chatIds = await redisClientP.smembers(socketChatsKeyName(socketId));
-    if (log) {
-        console.info(
-            `Exiting chats for ${socketId} / ${userId}:${chatIds.reduce(
-                (acc, chatId) => `${acc}
+    const redisClient = await redisClientPool.acquire("socket-events/chat/exitChats");
+    try {
+        const chatIds = await redisClientP.smembers(redisClient)(socketChatsKeyName(socketId));
+        if (log) {
+            console.info(
+                `Exiting chats for ${socketId} / ${userId}:${chatIds.reduce(
+                    (acc, chatId) => `${acc}
     - ${chatId}`,
-                ""
-            )}`
-        );
-    }
-    await redisClientP.del(socketChatsKeyName(socketId));
-    await redisClientP.del(socketUserKeyName(socketId));
-    for (const chatId of chatIds) {
-        await redisClientP.srem(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                    ""
+                )}`
+            );
+        }
+        await redisClientP.del(redisClient)(socketChatsKeyName(socketId));
+        await redisClientP.del(redisClient)(socketUserKeyName(socketId));
+        for (const chatId of chatIds) {
+            await redisClientP.srem(redisClient)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+        }
+    } finally {
+        redisClientPool.release("socket-events/chat/exitChats", redisClient);
     }
 }
 

@@ -1,46 +1,78 @@
 import crypto from "crypto";
 import { Socket } from "socket.io";
 import { enterPresence, exitAllPresences, exitPresence, presenceChannelName, presenceListKey } from "../lib/presence";
-import { redisClient } from "../redis";
+import { redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 
 const ALL_SESSION_USER_IDS_KEY = "Presence.SessionAndUserIds";
 
 export function invalidateSessions(): void {
     try {
-        redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
-            if (err) {
-                console.error("Error invalidating sessions", err);
-                return;
-            }
+        redisClientPool.acquire("socket-handlers/presence/invalidateSessions").then((redisClient) => {
+            redisClient.SMEMBERS(ALL_SESSION_USER_IDS_KEY, async (err, sessionListsKeys) => {
+                if (err) {
+                    redisClientPool.release("socket-handlers/presence/invalidateSessions", redisClient);
+                    console.error("Error invalidating sessions", err);
+                    return;
+                }
 
-            if (!sessionListsKeys) {
-                return;
-            }
+                if (!sessionListsKeys) {
+                    redisClientPool.release("socket-handlers/presence/invalidateSessions", redisClient);
+                    return;
+                }
 
-            const socketIds = await socketServer.allSockets();
-            for (const sessionListsKey of sessionListsKeys) {
-                const parts = sessionListsKey.split("¬");
-                const sessionId = parts[0];
-                const userId = parts[1];
-                if (!socketIds.has(sessionId)) {
-                    console.log("Found dangling session", sessionListsKey);
-                    try {
-                        exitAllPresences(userId, sessionId, (err) => {
-                            if (err) {
-                                console.error(
-                                    `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
-                                    err
-                                );
-                            } else {
-                                redisClient.SREM(ALL_SESSION_USER_IDS_KEY, sessionListsKey);
-                            }
-                        });
-                    } catch (e) {
-                        console.error(`Error exiting all presences of dangling session ${sessionId} / ${userId}`, e);
+                const socketIds = await socketServer.allSockets();
+                let exitsRequired = 0;
+                let exitsSeen = 0;
+                for (const sessionListsKey of sessionListsKeys) {
+                    const parts = sessionListsKey.split("¬");
+                    const sessionId = parts[0];
+                    if (!socketIds.has(sessionId)) {
+                        console.log("Found dangling session", sessionListsKey);
+                        exitsRequired++;
                     }
                 }
-            }
+
+                for (const sessionListsKey of sessionListsKeys) {
+                    const parts = sessionListsKey.split("¬");
+                    const sessionId = parts[0];
+                    const userId = parts[1];
+                    if (!socketIds.has(sessionId)) {
+                        console.log("Found dangling session", sessionListsKey);
+                        try {
+                            exitAllPresences(redisClient, userId, sessionId, (err) => {
+                                try {
+                                    if (err) {
+                                        console.error(
+                                            `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
+                                            err
+                                        );
+                                    } else {
+                                        redisClient.SREM(ALL_SESSION_USER_IDS_KEY, sessionListsKey);
+                                    }
+                                } finally {
+                                    exitsSeen++;
+                                    if (exitsSeen === exitsRequired) {
+                                        redisClientPool.release(
+                                            "socket-handlers/presence/invalidateSessions",
+                                            redisClient
+                                        );
+                                    }
+                                }
+                            });
+                        } catch (e) {
+                            console.error(
+                                `Error exiting all presences of dangling session ${sessionId} / ${userId}`,
+                                e
+                            );
+                        }
+                    }
+                }
+
+                if (exitsRequired === 0) {
+                    redisClientPool.release("socket-handlers/presence/invalidateSessions", redisClient);
+                }
+            });
         });
     } catch (e) {
         console.warn("Could not list all sockets to try to exit presences", e);
@@ -76,7 +108,7 @@ export function onEnterPage(
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlugs, path);
                 if (pageKey) {
-                    enterPresence(pageKey, userId, socketId, (err) => {
+                    enterPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
                             throw err;
                         }
@@ -101,7 +133,7 @@ export function onLeavePage(
             if (typeof path === "string") {
                 const pageKey = getPageKey(conferenceSlugs, path);
                 if (pageKey) {
-                    exitPresence(pageKey, userId, socketId, (err) => {
+                    exitPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
                             throw err;
                         }
@@ -131,7 +163,10 @@ export function onObservePage(
                     // console.log(`${userId} observed ${listId}`);
                     await socket.join(chan);
 
+                    const redisClient = await redisClientPool.acquire("socket-handlers/presence/onObservePage");
                     redisClient.smembers(listKey, (err, userIds) => {
+                        redisClientPool.release("socket-handlers/presence/onObservePage", redisClient);
+
                         if (err) {
                             throw err;
                         }
@@ -174,17 +209,37 @@ export function onUnobservePage(
 
 export function onConnect(userId: string, socketId: string): void {
     // Removed periodically by `invalidateSessions`
-    redisClient.SADD(ALL_SESSION_USER_IDS_KEY, `${socketId}¬${userId}`);
+    redisClientPool
+        .acquire("socket-handlers/presence/onConnect")
+        .then((redisClient) => {
+            try {
+                redisClient.SADD(ALL_SESSION_USER_IDS_KEY, `${socketId}¬${userId}`);
+            } finally {
+                redisClientPool.release("socket-handlers/presence/onConnect", redisClient);
+            }
+        })
+        .catch((err) => {
+            console.error(`Error exiting all presences on socket ${socketId}`, err);
+        });
 }
 
 export function onDisconnect(socketId: string, userId: string): void {
-    try {
-        exitAllPresences(userId, socketId, (err) => {
-            if (err) {
-                throw err;
+    redisClientPool
+        .acquire("socket-handlers/presence/onDisconnect")
+        .then((redisClient) => {
+            try {
+                exitAllPresences(redisClient, userId, socketId, (err) => {
+                    redisClientPool.release("socket-handlers/presence/onDisconnect", redisClient);
+
+                    if (err) {
+                        throw err;
+                    }
+                });
+            } catch (e) {
+                console.error(`Error exiting all presences on socket ${socketId}`, e);
             }
+        })
+        .catch((err) => {
+            console.error(`Error exiting all presences on socket ${socketId}`, err);
         });
-    } catch (e) {
-        console.error(`Error exiting all presences on socket ${socketId}`, e);
-    }
 }

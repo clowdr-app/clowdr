@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { ReadUpToIndexDocument } from "../../generated/graphql";
-import { redisClientP } from "../../redis";
+import { redisClientP, redisClientPool } from "../../redis";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 
@@ -80,13 +80,23 @@ export async function setReadUpToIndex(chatId: string, userId: string, messageSI
         userId,
     });
 
-    await redisClientP.sadd(modifiedSetKey, key);
+    const client = await redisClientPool.acquire("lib/cache/readUpToIndex/setReadUpToIndex");
+    try {
+        await redisClientP.sadd(client)(modifiedSetKey, key);
+    } finally {
+        redisClientPool.release("lib/cache/readUpToIndex/setReadUpToIndex", client);
+    }
 }
 
 export async function getAndClearModified(): Promise<ReadUpToIndex[]> {
-    const keys = await redisClientP.smembers(modifiedSetKey);
-    await redisClientP.del(modifiedSetKey);
-    return (await Promise.all(keys.map((key) => ReadUpToIndexCache.get(key, undefined)))).filter(
-        (x) => !!x
-    ) as ReadUpToIndex[];
+    const redisClient = await redisClientPool.acquire("lib/cache/readUpToIndex/getAndClearModified");
+    try {
+        const keys = await redisClientP.smembers(redisClient)(modifiedSetKey);
+        await redisClientP.del(redisClient)(modifiedSetKey);
+        return (await Promise.all(keys.map((key) => ReadUpToIndexCache.get(key, undefined)))).filter(
+            (x) => !!x
+        ) as ReadUpToIndex[];
+    } finally {
+        redisClientPool.release("lib/cache/readUpToIndex/getAndClearModified", redisClient);
+    }
 }

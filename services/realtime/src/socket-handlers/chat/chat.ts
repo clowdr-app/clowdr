@@ -4,7 +4,7 @@ import { is } from "typescript-is";
 import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
-import { redisClientP } from "../../redis";
+import { redisClientP, redisClientPool } from "../../redis";
 
 export function onSubscribe(
     conferenceSlugs: string[],
@@ -31,12 +31,17 @@ export function onSubscribe(
                         []
                     )
                 ) {
-                    const existingChats = await redisClientP.smembers(socketChatsKeyName(socketId));
-                    if (!existingChats.includes(chatId)) {
-                        socket.join(generateChatRoomName(chatId));
+                    const client = await redisClientPool.acquire("socket-handlers/chat/chat/onSubscribe");
+                    try {
+                        const existingChats = await redisClientP.smembers(client)(socketChatsKeyName(socketId));
+                        if (!existingChats.includes(chatId)) {
+                            socket.join(generateChatRoomName(chatId));
 
-                        await redisClientP.sadd(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
-                        await redisClientP.sadd(socketChatsKeyName(socketId), chatId);
+                            await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                            await redisClientP.sadd(client)(socketChatsKeyName(socketId), chatId);
+                        }
+                    } finally {
+                        redisClientPool.release("socket-handlers/chat/chat/onSubscribe", client);
                     }
                 }
             } catch (e) {
@@ -72,8 +77,13 @@ export function onUnsubscribe(
                     )
                 ) {
                     socket.leave(generateChatRoomName(chatId));
-                    await redisClientP.srem(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
-                    await redisClientP.srem(socketChatsKeyName(socketId), chatId);
+                    const client = await redisClientPool.acquire("socket-handlers/chat/chat/onUnsubscribe");
+                    try {
+                        await redisClientP.srem(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                        await redisClientP.srem(client)(socketChatsKeyName(socketId), chatId);
+                    } finally {
+                        redisClientPool.release("socket-handlers/chat/chat/onUnsubscribe", client);
+                    }
                 }
             } catch (e) {
                 console.error(`Error processing chat.unsubscribe (socket: ${socketId}, chatId: ${chatId})`, e);

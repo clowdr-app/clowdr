@@ -375,7 +375,7 @@ export const fallbackTemplates = {
                       href="{{frontendHost}}"
                       class="f-fallback email-masthead_name"
                     >
-                      {{hostOrganisationName}}
+                      Midspace
                     </a>
                   </td>
                 </tr>

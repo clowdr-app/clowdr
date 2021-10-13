@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import MarkdownIt from "markdown-it";
 import * as R from "ramda";
 import {
     CustomEmail_SelectRegistrantsDocument,
@@ -25,16 +26,19 @@ gql`
                 email
             }
         }
+        conference_Conference_by_pk(id: $conferenceId) {
+            shortName
+        }
     }
 `;
 
 async function sendCustomEmails(
     registrantIds: string[],
     conferenceId: string,
-    htmlBody: string,
+    userMarkdownBody: string,
     subject: string
 ): Promise<void> {
-    const registrants = await apolloClient.query({
+    const result = await apolloClient.query({
         query: CustomEmail_SelectRegistrantsDocument,
         variables: {
             registrantIds: R.uniq(registrantIds),
@@ -42,26 +46,34 @@ async function sendCustomEmails(
         },
     });
 
-    if (registrants.error) {
-        throw new Error(registrants.error.message);
-    } else if (registrants.errors && registrants.errors.length > 0) {
-        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
+    if (result.error) {
+        throw new Error(result.error.message);
+    } else if (result.errors && result.errors.length > 0) {
+        throw new Error(result.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
     const emailsToSend: Array<Email_Insert_Input> = [];
 
-    for (const registrant of registrants.data.registrant_Registrant) {
+    const markdownIt = new MarkdownIt("commonmark", {
+        linkify: true,
+    });
+
+    const userHtmlBody = markdownIt.render(userMarkdownBody);
+    const conferenceName = result.data.conference_Conference_by_pk?.shortName ?? "your conference";
+    const htmlContents = `<p><strong>A message from the organisers of ${conferenceName}:</strong></p>${userHtmlBody}`;
+
+    for (const registrant of result.data.registrant_Registrant) {
         const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
         if (!email) {
-            console.warn("User has no known email address", registrant.id);
+            console.warn("User has no known email address", { registrantId: registrant.id });
             continue;
         }
 
         emailsToSend.push({
             recipientName: registrant.displayName,
             emailAddress: email,
-            htmlContents: htmlBody,
+            htmlContents,
             reason: "custom-email",
             userId: registrant?.user?.id ?? null,
             subject,
@@ -79,7 +91,7 @@ gql`
                 registrantIds
                 conferenceId
                 subject
-                htmlBody
+                markdownBody
             }
         }
     }
@@ -104,8 +116,8 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
         try {
-            await sendCustomEmails(job.registrantIds, job.conferenceId, job.htmlBody, job.subject);
-        } catch (error) {
+            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
+        } catch (error: any) {
             console.error("Failed to process send custom email job", { jobId: job.id, error: error.message ?? error });
             failedJobIds.push(job.id);
         }

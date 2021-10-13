@@ -37,6 +37,6 @@ insert_permissions:
     columns:
     - registrantIds
     - conferenceId
-    - htmlBody
+    - markdownBody
     - subject
   role: user

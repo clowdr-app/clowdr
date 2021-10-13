@@ -50,7 +50,7 @@ export async function handleFlagInserted(data: Payload<FlagData>): Promise<void>
                         htmlContents: `<p>Dear ${conference.shortName} support,</p>
 <p>This is an automated email to let you know that a message has been reported
 in your conference and needs your attention. Please go to the 
-<a href="{[FRONTEND_HOST]}/conference/${conference.slug}/manage/chats/moderation">moderation hub</a>
+<a href="{{frontendHost}}/conference/${conference.slug}/manage/chats/moderation">moderation hub</a>
 to view and resolve the report.</p>
 `,
                     },
@@ -67,7 +67,7 @@ to view and resolve the report.</p>
                         subject: "[HIGH PRIORITY] Chat message reported in " + conference.shortName,
                         htmlContents: `<p>This is an automated email. A message has been reported
 in ${conference.shortName} and needs attention. Please go to the 
-<a href="{[FRONTEND_HOST]}/conference/${conference.slug}/manage/chats/moderation">moderation hub</a>
+<a href="{{frontendHost}}/conference/${conference.slug}/manage/chats/moderation">moderation hub</a>
 to view and resolve the report.</p>
 `,
                     },

@@ -221,7 +221,7 @@ async function trySendTranscriptionEmail(elementId: string) {
         }
 
         const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-            const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}`;
+            const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}`;
 
             const view: EmailView_SubtitlesGenerated = {
                 person: {
@@ -282,7 +282,7 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 
     const element = elementDetails.data.content_Element_by_pk;
     const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
         const htmlContents = `<p>Dear ${person.name},</p>
 <p>Your item ${elementName} (${element.item.title}) at ${element.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
@@ -341,7 +341,7 @@ async function trySendTranscodeFailedEmail(
     const element = elementDetails.data.content_Element_by_pk;
 
     const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
         const htmlContents = `<p>Dear ${person.name},</p>
 <p>There was a problem processing <b>${elementName}</b> (${element.item.title}) for ${element.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>

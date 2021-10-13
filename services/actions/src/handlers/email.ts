@@ -13,6 +13,8 @@ import {
     UnmarkUnsentEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { EmailBuilder, EmailTemplateContext, getEmailTemplate } from "../lib/email/emailTemplate";
+import { formatSendingReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
 
 gql`
@@ -51,6 +53,10 @@ gql`
         allowEmailsToDomains: system_Configuration_by_pk(key: ALLOW_EMAILS_TO_DOMAINS) {
             key
             value
+        }
+
+        conference_Conference(where: { id: { _eq: $conferenceId } }) @include(if: $includeConferenceFields) {
+            shortName
         }
     }
 
@@ -98,21 +104,25 @@ export async function insertEmails(
     }
     const allowedDomainMatches = allowedDomains.map((x) => wcmatch(x));
 
+    const defaultEmailTemplate = await getEmailTemplate();
+    const emailBuilder = new EmailBuilder(defaultEmailTemplate);
+
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
     const stopEmailsAddress = configResponse.data.stopEmails?.value;
+    const conferenceName = configResponse.data.conference_Conference?.[0]?.shortName;
     assert(hostOrganisationName, "Host organisation name not configured - missing system configuration");
     assert(stopEmailsAddress, "Stop emails address not configured - missing system configuration");
 
-    const conferenceSupportHTML = supportAddress
-        ? `<p>If you have any questions or require support, please contact your conference organisers via their website or at <a href="mailto:${supportAddress}">${supportAddress}</a>.</p>`
-        : "";
-    const conferenceTechSupportHTML = techSupportAddress
-        ? `<p>If you require technical support, such as an error message within Midspace, please contact <a href="mailto:${techSupportAddress}">${techSupportAddress}</a>.</p>`
-        : "";
-    const stopEmailsHTML = `<p>This is an automated email sent on behalf of ${hostOrganisationName}. If you believe you have received this email in error, please contact us via <a href="mailto:${stopEmailsAddress}">${stopEmailsAddress}</a></p>`;
+    const htmlUnsubscribeDetails = `This email was sent on behalf of ${hostOrganisationName}. If you believe you have received this email in error, please contact us via <a href="mailto:${stopEmailsAddress}">${stopEmailsAddress}</a>`;
 
-    const addedHTML = conferenceSupportHTML + "\n" + conferenceTechSupportHTML + "\n" + stopEmailsHTML;
-    const addedText = htmlToText(addedHTML);
+    const context: Omit<EmailTemplateContext, "htmlBody" | "subject" | "excerpt" | "sendingReason"> = {
+        frontendHost,
+        hostOrganisationName,
+        htmlUnsubscribeDetails,
+        stopEmailsAddress,
+        supportAddress,
+        techSupportAddress,
+    };
 
     const emailsToInsert = emails
         .filter(
@@ -122,12 +132,18 @@ export async function insertEmails(
                 allowedDomainMatches.some((f) => email.emailAddress && f(email.emailAddress))
         )
         .map((email) => {
-            const initialHtmlContents = email.htmlContents as string;
-            const htmlContents = initialHtmlContents.replace(/\{\[FRONTEND_HOST\]\}/g, frontendHost);
+            const htmlContents = email.htmlContents as string;
+            const compiledEmail = emailBuilder.compile({
+                ...context,
+                htmlBody: htmlContents,
+                subject: email.subject ?? `An update from ${hostOrganisationName}`,
+                sendingReason: formatSendingReason(email.reason ?? "", conferenceName ?? null) ?? "",
+            });
             return {
                 ...email,
-                htmlContents: htmlContents + "\n" + addedHTML,
-                plainTextContents: htmlToText(htmlContents) + "\n" + addedText,
+                subject: compiledEmail.subject,
+                htmlContents: compiledEmail.body,
+                plainTextContents: htmlToText(compiledEmail.body),
             };
         });
     if (emailsToInsert.length < emails.length) {

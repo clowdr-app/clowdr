@@ -689,7 +689,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
 
         if (job.uploader) {
             const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
-            const uploadLink = `{[FRONTEND_HOST]}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
+            const uploadLink = `{{frontendHost}}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
             const view: EmailView_SubmissionRequest = {
                 uploader: {
                     name: job.uploader.name,
@@ -739,7 +739,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
 
             result = { email: newEmail, uploaderId: job.uploader.id, jobId: job.id };
         } else if (job.person) {
-            const uploadLink = `{[FRONTEND_HOST]}/submissions/${job.person.accessToken}`;
+            const uploadLink = `{{frontendHost}}/submissions/${job.person.accessToken}`;
 
             const view: EmailView_SubmissionRequest = {
                 person: {

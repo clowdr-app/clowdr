@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import MarkdownIt from "markdown-it";
 import * as R from "ramda";
 import {
     CustomEmail_SelectRegistrantsDocument,
@@ -8,6 +9,7 @@ import {
     UnmarkCustomEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import { EmailReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
 import { insertEmails } from "./email";
 
@@ -25,16 +27,25 @@ gql`
                 email
             }
         }
+        conference_Conference_by_pk(id: $conferenceId) {
+            shortName
+            techSupportAddress: configurations(where: { key: { _eq: TECH_SUPPORT_ADDRESS } }) {
+                value
+            }
+        }
+        platformAddress: system_Configuration_by_pk(key: SENDGRID_REPLYTO) {
+            value
+        }
     }
 `;
 
 async function sendCustomEmails(
     registrantIds: string[],
     conferenceId: string,
-    htmlBody: string,
+    userMarkdownBody: string,
     subject: string
 ): Promise<void> {
-    const registrants = await apolloClient.query({
+    const result = await apolloClient.query({
         query: CustomEmail_SelectRegistrantsDocument,
         variables: {
             registrantIds: R.uniq(registrantIds),
@@ -42,29 +53,50 @@ async function sendCustomEmails(
         },
     });
 
-    if (registrants.error) {
-        throw new Error(registrants.error.message);
-    } else if (registrants.errors && registrants.errors.length > 0) {
-        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
+    if (result.error) {
+        throw new Error(result.error.message);
+    } else if (result.errors && result.errors.length > 0) {
+        throw new Error(result.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
     const emailsToSend: Array<Email_Insert_Input> = [];
 
-    for (const registrant of registrants.data.registrant_Registrant) {
+    const markdownIt = new MarkdownIt("commonmark", {
+        linkify: true,
+    });
+
+    const userHtmlBody = markdownIt.render(userMarkdownBody);
+    const conferenceName = result.data.conference_Conference_by_pk?.shortName ?? "your conference";
+    const htmlContents = `<p><strong>A message from the organisers of ${conferenceName}:</strong></p>${userHtmlBody}`;
+
+    for (const registrant of result.data.registrant_Registrant) {
         const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
         if (!email) {
-            console.warn("User has no known email address", registrant.id);
+            console.warn("User has no known email address", { registrantId: registrant.id });
             continue;
         }
 
         emailsToSend.push({
             recipientName: registrant.displayName,
             emailAddress: email,
-            htmlContents: htmlBody,
-            reason: "custom-email",
+            htmlContents,
+            reason: EmailReason.CustomEmail,
             userId: registrant?.user?.id ?? null,
             subject,
+        });
+    }
+
+    const copyToEmail =
+        result.data.conference_Conference_by_pk?.techSupportAddress?.[0]?.value ?? result.data.platformAddress?.value;
+    if (copyToEmail) {
+        emailsToSend.push({
+            recipientName: `${conferenceName} TECH_SUPPORT_ADDRESS`,
+            emailAddress: copyToEmail,
+            htmlContents,
+            reason: EmailReason.CustomEmail,
+            userId: null,
+            subject: `[${conferenceName} | CUSTOM EMAIL | ${result.data.registrant_Registrant.length} recipients] ${subject}`,
         });
     }
 
@@ -79,7 +111,7 @@ gql`
                 registrantIds
                 conferenceId
                 subject
-                htmlBody
+                markdownBody
             }
         }
     }
@@ -104,9 +136,9 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
         try {
-            await sendCustomEmails(job.registrantIds, job.conferenceId, job.htmlBody, job.subject);
-        } catch (error) {
-            console.error("Failed to process send custom email job", { jobId: job.id, error: error.message ?? error });
+            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
+        } catch (error: any) {
+            console.error("Failed to process send custom email job", { jobId: job.id, error });
             failedJobIds.push(job.id);
         }
     }

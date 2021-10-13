@@ -6,7 +6,7 @@ import {
 import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
 import { EmailView_SubtitlesGenerated, EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import assert from "assert";
-import Mustache from "mustache";
+import { compile } from "handlebars";
 import R from "ramda";
 import {
     Conference_ConfigurationKey_Enum,
@@ -18,6 +18,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
+import { EmailReason } from "../lib/email/sendingReasons";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
 import { ElementData, Payload } from "../types/hasura/event";
@@ -140,7 +141,12 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
         oldVersion.data.subtitles["en_US"]?.status !== "FAILED" &&
         currentVersion.data.subtitles["en_US"]?.status === "FAILED"
     ) {
-        await trySendTranscriptionFailedEmail(newRow.id, newRow.name, currentVersion.data.baseType);
+        await trySendTranscriptionFailedEmail(
+            newRow.id,
+            newRow.name,
+            currentVersion.data.baseType,
+            currentVersion.data.subtitles["en_US"]?.message ?? null
+        );
     }
 
     if (currentVersion.data.baseType === "video") {
@@ -220,10 +226,17 @@ async function trySendTranscriptionEmail(elementId: string) {
             emailTemplates = null;
         }
 
-        const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-            const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}`;
+        const bodyTemplate = compile(
+            emailTemplates?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.htmlBodyTemplate
+        );
+        const subjectTemplate = compile(
+            emailTemplates?.subjectTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.subjectTemplate
+        );
 
-            const view: EmailView_SubtitlesGenerated = {
+        const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
+            const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}`;
+
+            const context: EmailView_SubtitlesGenerated = {
                 person: {
                     name: person.name,
                 },
@@ -240,34 +253,31 @@ async function trySendTranscriptionEmail(elementId: string) {
                 uploadLink: magicItemLink,
             };
 
-            const htmlBody = Mustache.render(
-                emailTemplates?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.htmlBodyTemplate,
-                view
-            );
-            const subject = Mustache.render(
-                emailTemplates?.subjectTemplate ?? EMAIL_TEMPLATE_SUBTITLES_GENERATED.subjectTemplate,
-                view
-            );
-            const htmlContents = `${htmlBody}
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+            const htmlBody = bodyTemplate(context);
+            const subject = subjectTemplate(context);
 
             return {
                 recipientName: person.name,
                 emailAddress: person.email,
-                reason: "item_transcription_succeeded",
+                reason: EmailReason.ItemTranscriptionSucceeded,
                 subject,
-                htmlContents,
+                htmlContents: htmlBody,
             };
         });
 
         await insertEmails(emails, element.conference.id);
-    } catch (e) {
-        console.error("Error while sending transcription emails", elementId, e);
+    } catch (err) {
+        console.error("Error while sending transcription emails", { elementId, err });
         return;
     }
 }
 
-async function trySendTranscriptionFailedEmail(elementId: string, elementName: string, elementType: "video" | "audio") {
+async function trySendTranscriptionFailedEmail(
+    elementId: string,
+    elementName: string,
+    elementType: "video" | "audio",
+    message: string | null
+) {
     const elementDetails = await apolloClient.query({
         query: GetElementDetailsDocument,
         variables: {
@@ -282,36 +292,39 @@ async function trySendTranscriptionFailedEmail(elementId: string, elementName: s
 
     const element = elementDetails.data.content_Element_by_pk;
     const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
         const htmlContents = `<p>Dear ${person.name},</p>
 <p>Your item ${elementName} (${element.item.title}) at ${element.conference.name} <b>has successfully entered our systems</b>. Your ${elementType} will be included in the conference pre-publications and/or live streams (as appropriate).</p>
 <p>However, we are sorry that unfortunately an error occurred and we were unable to auto-generate subtitles. We appreciate this is a significant inconvenience but we kindly ask that you to manually enter subtitles for your ${elementType}.</p>
 <p><a href="${magicItemLink}">Please manually add subtitles on this page.</a></p>
-<p>After this time, subtitles will be automatically embedded into the ${elementType} files and moved into the content delivery system - they will no longer be editable.</p>
-<p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your ${elementType}, we will let you know as soon as possible!</p>
-<p>Thank you,<br/>
-The Midspace team
-</p>
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+<p>We have also sent ourselves a notification of this failure via email and we will assist you at our earliest opportunity. If we can get automated subtitles working for your ${elementType}, we will let you know as soon as possible!</p>`;
 
         return {
             recipientName: person.name,
             emailAddress: person.email,
-            reason: "item_transcription_failed",
-            subject: `Midspace: Submission ERROR: Failed to generate subtitles for ${elementName} at ${element.conference.name}`,
+            reason: EmailReason.ItemTranscriptionFailed,
+            subject: `Submission ERROR: Failed to generate subtitles for ${elementName} at ${element.conference.name}`,
             htmlContents,
         };
     });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id / element id: /item/${element.item.id}/element/${elementId}.</p>
+        <pre>
+failure         Failed to generate subtitles
+message         ${message}
+itemId          ${element.item.id}
+itemTitle       ${element.item.title}
+elementId       ${elementId}
+elementName     ${elementName}
+conferenceName  ${element.conference.name}
+        </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
-            reason: "item_transcription_failed",
+            reason: EmailReason.FailureNotification,
             subject: `PRIORITY: SYSTEM ERROR: Failed to generate subtitles for ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
         });
@@ -341,35 +354,39 @@ async function trySendTranscodeFailedEmail(
     const element = elementDetails.data.content_Element_by_pk;
 
     const emails: Email_Insert_Input[] = element.item.itemPeople.map(({ person }) => {
-        const magicItemLink = `{[FRONTEND_HOST]}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
+        const magicItemLink = `{{frontendHost}}/submissions/${person.accessToken}/item/${element.item.id}/element/${element.id}`;
 
         const htmlContents = `<p>Dear ${person.name},</p>
 <p>There was a problem processing <b>${elementName}</b> (${element.item.title}) for ${element.conference.name}. Your ${elementType} is not currently accepted by Midspace's systems and currently will not be included in the conference pre-publications or live streams.</p>
 <p>Error details: ${message}</p>
 <p><a href="${magicItemLink}">You may try uploading a new version</a> but we recommend you forward this email to your conference's organisers and ask for technical assistance.</p>
-<p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>
-<p>Thank you,<br/>
-The Midspace team
-</p>
-<p>You are receiving this email because you are listed as an uploader for this item.</p>`;
+<p>We have also sent ourselves a notification of this failure via email and we will assist you as soon as possible. Making Midspace work for you is our top priority! We will try to understand the error and solve the issue either by fixing our software or providing you instructions for how to work around it.</p>`;
 
         return {
             recipientName: person.name,
             emailAddress: person.email,
             reason: "item_transcode_failed",
-            subject: `Midspace: Submission ERROR: Failed to process ${elementName} at ${element.conference.name}`,
+            subject: `Submission ERROR: Failed to process ${elementName} at ${element.conference.name}`,
             htmlContents,
         };
     });
 
     {
         const htmlContents = `<p>Yep, this is the automated system here to tell you that the automation failed.</p>
-<p>Here's the content item id / element id: /item/${element.item.id}/element/${elementId}.</p>
+        <pre>
+failure         Failed to transcode video
+message         ${message}
+itemId          ${element.item.id}
+itemTitle       ${element.item.title}
+elementId       ${elementId}
+elementName     ${elementName}
+conferenceName  ${element.conference.name}
+        </pre>
 <p>Good luck fixing me!</p>`;
         emails.push({
             recipientName: "System Administrator",
             emailAddress: process.env.FAILURE_NOTIFICATIONS_EMAIL_ADDRESS,
-            reason: "item_transcode_failed",
+            reason: EmailReason.ItemTranscodeFailed,
             subject: `URGENT: SYSTEM ERROR: Failed to process ${elementName} at ${elementDetails.data.content_Element_by_pk?.conference.name}`,
             htmlContents,
         });

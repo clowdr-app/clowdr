@@ -3,11 +3,15 @@ import {
     Box,
     Button,
     FormControl,
+    FormErrorIcon,
     FormErrorMessage,
     FormHelperText,
     FormLabel,
     Heading,
     Input,
+    InputGroup,
+    InputRightElement,
+    Link,
     List,
     ListItem,
     Modal,
@@ -17,13 +21,19 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
     Text,
     Textarea,
     useToast,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import type { RegistrantPartsFragment } from "../../../../generated/graphql";
+import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 
 gql`
@@ -35,6 +45,8 @@ gql`
         }
     }
 `;
+
+type Inputs = { subject: string; markdownBody: string };
 
 export function SendEmailModal({
     isOpen,
@@ -49,8 +61,28 @@ export function SendEmailModal({
 }): JSX.Element {
     const conference = useConference();
     const toast = useToast();
+    const {
+        formState: { errors, touchedFields, isSubmitting, isValid },
+        handleSubmit,
+        register,
+        reset,
+        watch,
+    } = useForm<Inputs>({
+        defaultValues: {
+            subject: `${conference.shortName}: Update`,
+            markdownBody: `Dear registrant,
 
-    const recipients = useMemo(
+We hope you enjoy ${conference.shortName}.
+
+
+Yours sincerely,
+
+The ${conference.shortName} organisers`,
+        },
+        mode: "onTouched",
+    });
+
+    const recipientsEl = useMemo(
         () => (
             <Box mt={4}>
                 <Heading as="h3" textAlign="left" size="md" mb={2}>
@@ -72,98 +104,112 @@ export function SendEmailModal({
         [registrants]
     );
 
+    const onSubmit: SubmitHandler<Inputs> = useCallback(
+        async (data) => {
+            try {
+                await send(
+                    registrants.map((x) => x.id),
+                    data.markdownBody,
+                    data.subject
+                );
+                onClose();
+                reset();
+                toast({
+                    status: "success",
+                    title: "Sent emails",
+                    description: `Successfully sent ${registrants.length} ${
+                        registrants.length === 1 ? "email" : "emails"
+                    }.`,
+                });
+            } catch (err: any) {
+                console.error("Could not send custom emails", { err });
+                toast({
+                    status: "error",
+                    title: "Could not send emails",
+                    description: err.message,
+                });
+            }
+        },
+        [onClose, registrants, reset, send, toast]
+    );
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
-            <Formik<{ subject: string; htmlBody: string }>
-                initialValues={{
-                    subject: `${conference.shortName}: Update`,
-                    htmlBody: `<p>Dear registrant,</p>
-<p>We hope you enjoy the conference.</p>
-<p>${conference.shortName} organisers</p>`,
-                }}
-                onSubmit={async (values, actions) => {
-                    try {
-                        await send(
-                            registrants.map((x) => x.id),
-                            values.htmlBody,
-                            values.subject
-                        );
-                        actions.resetForm();
-                        onClose();
-                        toast({
-                            status: "success",
-                            title: "Emails sent",
-                        });
-                    } catch (e) {
-                        toast({
-                            status: "error",
-                            title: "Could not send emails",
-                            description: e.message,
-                        });
-                    }
-                }}
-            >
-                {({ isSubmitting, isValid }) => (
-                    <Form>
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader>Send custom email</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                                <Field name="subject">
-                                    {({ field, form }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.subject && !!form.touched.subject}
-                                            isRequired
-                                        >
-                                            <FormLabel htmlFor="subject" mt={2}>
-                                                Subject line
-                                            </FormLabel>
-                                            <FormHelperText>The subject line of the email.</FormHelperText>
-                                            <Input {...field} id="subject" mt={2} />
-                                            <FormErrorMessage>{form.errors.subject}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                                <Field name="htmlBody">
-                                    {({ field, form }: FieldProps<string>) => (
-                                        <FormControl
-                                            isInvalid={!!form.errors.htmlBody && !!form.touched.htmlBody}
-                                            isRequired
-                                        >
-                                            <FormLabel htmlFor="htmlBody" mt={2}>
-                                                Email body
-                                            </FormLabel>
-                                            <FormHelperText>The email body (HTML).</FormHelperText>
-                                            <Textarea
-                                                fontFamily="monospace"
-                                                lineHeight="lg"
-                                                minH="xs"
-                                                {...field}
-                                                id="htmlBody"
-                                                mt={2}
-                                            />
-                                            <FormErrorMessage>{form.errors.htmlBody}</FormErrorMessage>
-                                        </FormControl>
-                                    )}
-                                </Field>
-                                {recipients}
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    type="submit"
-                                    isLoading={isSubmitting}
-                                    isDisabled={!isValid || registrants.length === 0}
-                                    mt={4}
-                                    colorScheme="purple"
-                                >
-                                    Send {registrants.length} emails
-                                </Button>
-                            </ModalFooter>
-                        </ModalContent>
-                    </Form>
-                )}
-            </Formik>
+            <ModalOverlay />
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <ModalContent>
+                    <ModalHeader>Send custom email</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormControl isInvalid={Boolean(errors.subject) && Boolean(touchedFields.subject)} isRequired>
+                            <FormLabel mt={2}>Subject line</FormLabel>
+                            <FormHelperText>The subject line of the email.</FormHelperText>
+                            <InputGroup mt={2}>
+                                <Input {...register("subject", { required: true, minLength: 5 })} />
+                                <InputRightElement>
+                                    <FormErrorIcon />
+                                </InputRightElement>
+                            </InputGroup>
+                            <FormErrorMessage>
+                                {errors.subject?.type === "required" && "You must enter a subject line."}{" "}
+                                {errors.subject?.type === "minLength" && "Subject line must be at least 5 characters."}{" "}
+                                {errors.subject?.message}
+                            </FormErrorMessage>
+                        </FormControl>
+                        <FormControl
+                            isInvalid={Boolean(errors.markdownBody) && Boolean(touchedFields.markdownBody)}
+                            isRequired
+                        >
+                            <FormLabel mt={2}>Email body</FormLabel>
+                            <FormHelperText>
+                                You can use Markdown formatting in your email body.{" "}
+                                <Link isExternal href="https://www.markdowntutorial.com/">
+                                    Learn more
+                                </Link>
+                                .
+                            </FormHelperText>
+                            <Tabs size="sm" variant="enclosed" mt={2}>
+                                <TabList>
+                                    <Tab>Edit</Tab>
+                                    <Tab>Preview</Tab>
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Textarea
+                                            fontFamily="monospace"
+                                            lineHeight="lg"
+                                            minH="xs"
+                                            {...register("markdownBody", { required: true, maxLength: 10000 })}
+                                            mt={2}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <Markdown>{watch("markdownBody")}</Markdown>
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                            <FormErrorMessage>
+                                {errors.markdownBody?.type === "required" && "You must write an email!"}{" "}
+                                {errors.markdownBody?.type === "maxLength" &&
+                                    "Email body cannot exceed 10000 characters."}{" "}
+                                {errors.subject?.message}
+                            </FormErrorMessage>
+                        </FormControl>
+                        {recipientsEl}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            type="submit"
+                            isLoading={isSubmitting}
+                            isDisabled={!isValid || registrants.length === 0}
+                            mt={4}
+                            colorScheme="purple"
+                        >
+                            Send {registrants.length} {registrants.length === 1 ? "email" : "emails"}
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </form>
         </Modal>
     );
 }

@@ -66,29 +66,6 @@ gql`
         }
     }
 
-    mutation SendFreshInviteConfirmationEmail(
-        $emailAddress: String!
-        $htmlContents: String!
-        $invitationId: uuid!
-        $plainTextContents: String!
-        $subject: String!
-        $userId: String!
-    ) {
-        insert_Email_one(
-            object: {
-                emailAddress: $emailAddress
-                htmlContents: $htmlContents
-                invitationId: $invitationId
-                plainTextContents: $plainTextContents
-                reason: "confirm-invite"
-                subject: $subject
-                userId: $userId
-            }
-        ) {
-            id
-        }
-    }
-
     mutation SetRegistrantUserId($registrantId: uuid!, $userId: String!) {
         update_registrant_Registrant(where: { id: { _eq: $registrantId } }, _set: { userId: $userId }) {
             affected_rows
@@ -187,12 +164,11 @@ async function sendInviteEmails(
 your account and access the conference.</p>
 
 <p>
-<a href="{[FRONTEND_HOST]}/invitation/accept/${registrant.invitation.inviteCode}">Click here to join the conference</a></p>
+<a href="{{frontendHost}}/invitation/accept/${registrant.invitation.inviteCode}">Click here to join the conference</a></p>
 
-<p>If you are asked for an invitation code, enter ${registrant.invitation.inviteCode}</p>
+<p>If you are asked for an invitation code, enter <code>${registrant.invitation.inviteCode}<code></p>
 
-<p>We hope you enjoy your conference,<br />
-The Midspace team</p>`;
+<p>We hope you enjoy your conference!</p>`;
 
                     emailsToSend.set(registrant.id, {
                         recipientName: registrant.displayName,

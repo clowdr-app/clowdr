@@ -1,6 +1,6 @@
 # Conference Configuration
 
-The `ConferenceConfiguration` table is a key-value store for conference configuration variables. The keys are strings and the values are arbitrary JSON blobs.
+The `conference.Configuration` table is a key-value store for conference configuration variables. The keys are strings and the values are arbitrary JSON blobs.
 
 ## Title background video
 

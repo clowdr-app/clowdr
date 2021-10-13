@@ -3095,17 +3095,6 @@ export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Inc_Input = {
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Insert_Input = {
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ElementTotalViews_Max_Fields = {
   __typename?: 'analytics_mat_ElementTotalViews_max_fields';
@@ -3118,15 +3107,6 @@ export type Analytics_Mat_ElementTotalViews_Min_Fields = {
   __typename?: 'analytics_mat_ElementTotalViews_min_fields';
   elementId?: Maybe<Scalars['uuid']>;
   totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Mutation_Response = {
-  __typename?: 'analytics_mat_ElementTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_ElementTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
@@ -3142,12 +3122,6 @@ export enum Analytics_Mat_ElementTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Set_Input = {
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
@@ -3243,17 +3217,6 @@ export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Inc_Input = {
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Insert_Input = {
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ItemTotalViews_Max_Fields = {
   __typename?: 'analytics_mat_ItemTotalViews_max_fields';
@@ -3266,15 +3229,6 @@ export type Analytics_Mat_ItemTotalViews_Min_Fields = {
   __typename?: 'analytics_mat_ItemTotalViews_min_fields';
   itemId?: Maybe<Scalars['uuid']>;
   totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Mutation_Response = {
-  __typename?: 'analytics_mat_ItemTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_ItemTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
@@ -3290,12 +3244,6 @@ export enum Analytics_Mat_ItemTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Set_Input = {
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
@@ -3376,11 +3324,6 @@ export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Append_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-};
-
 /** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
 export type Analytics_Mat_RoomPresence_Bool_Exp = {
   _and?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
@@ -3390,29 +3333,6 @@ export type Analytics_Mat_RoomPresence_Bool_Exp = {
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
-};
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Analytics_Mat_RoomPresence_Delete_At_Path_Input = {
-  count?: Maybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Analytics_Mat_RoomPresence_Delete_Elem_Input = {
-  count?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Analytics_Mat_RoomPresence_Delete_Key_Input = {
-  count?: Maybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Insert_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -3431,26 +3351,12 @@ export type Analytics_Mat_RoomPresence_Min_Fields = {
   name?: Maybe<Scalars['String']>;
 };
 
-/** response of any mutation on the table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Mutation_Response = {
-  __typename?: 'analytics_mat_RoomPresence_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_RoomPresence>;
-};
-
 /** Ordering options when selecting data from "analytics.mat_RoomPresence". */
 export type Analytics_Mat_RoomPresence_Order_By = {
   count?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Prepend_Input = {
-  count?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "analytics.mat_RoomPresence" */
@@ -3464,14 +3370,6 @@ export enum Analytics_Mat_RoomPresence_Select_Column {
   /** column name */
   Name = 'name'
 }
-
-/** input type for updating data in table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Set_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-};
 
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
@@ -10873,10 +10771,12 @@ export type Content_Element_Order_By = {
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   data?: Maybe<Order_By>;
+  hasBeenSubmitted?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   isHidden?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
+  itemTitle?: Maybe<Order_By>;
   layoutData?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -10887,6 +10787,7 @@ export type Content_Element_Order_By = {
   type?: Maybe<Content_ElementType_Order_By>;
   typeName?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
+  uploadersCount?: Maybe<Order_By>;
   uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
   uploadsRemaining?: Maybe<Order_By>;
   youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
@@ -12293,6 +12194,7 @@ export type Content_ItemProgramPerson_On_Conflict = {
 export type Content_ItemProgramPerson_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
+  hasSubmissionRequestBeenSent?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
@@ -12936,6 +12838,7 @@ export type Content_Item_Order_By = {
   descriptionOfExhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
   elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+  hasUnsubmittedElements?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
   itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -14301,8 +14204,8 @@ export type Job_Queues_CustomEmailJob = {
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
   created_at: Scalars['timestamptz'];
-  htmlBody: Scalars['String'];
   id: Scalars['uuid'];
+  markdownBody: Scalars['String'];
   processed: Scalars['Boolean'];
   registrantIds: Scalars['jsonb'];
   subject: Scalars['String'];
@@ -14350,8 +14253,8 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  htmlBody?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  markdownBody?: Maybe<String_Comparison_Exp>;
   processed?: Maybe<Boolean_Comparison_Exp>;
   registrantIds?: Maybe<Jsonb_Comparison_Exp>;
   subject?: Maybe<String_Comparison_Exp>;
@@ -14384,8 +14287,8 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   processed?: Maybe<Scalars['Boolean']>;
   registrantIds?: Maybe<Scalars['jsonb']>;
   subject?: Maybe<Scalars['String']>;
@@ -14397,8 +14300,8 @@ export type Job_Queues_CustomEmailJob_Max_Fields = {
   __typename?: 'job_queues_CustomEmailJob_max_fields';
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14408,8 +14311,8 @@ export type Job_Queues_CustomEmailJob_Min_Fields = {
   __typename?: 'job_queues_CustomEmailJob_min_fields';
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14435,8 +14338,8 @@ export type Job_Queues_CustomEmailJob_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
-  htmlBody?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  markdownBody?: Maybe<Order_By>;
   processed?: Maybe<Order_By>;
   registrantIds?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
@@ -14460,9 +14363,9 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -14477,8 +14380,8 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
 export type Job_Queues_CustomEmailJob_Set_Input = {
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   processed?: Maybe<Scalars['Boolean']>;
   registrantIds?: Maybe<Scalars['jsonb']>;
   subject?: Maybe<Scalars['String']>;
@@ -14492,9 +14395,9 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -15650,12 +15553,6 @@ export type Mutation_Root = {
   delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** delete single row from the table: "analytics.RoomStats" */
   delete_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** delete data from the table: "analytics.mat_ElementTotalViews" */
-  delete_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_ItemTotalViews" */
-  delete_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_RoomPresence" */
-  delete_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** delete data from the table: "chat.Chat" */
   delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -16029,18 +15926,6 @@ export type Mutation_Root = {
   insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.RoomStats" */
   insert_analytics_RoomStats_one?: Maybe<Analytics_RoomStats>;
-  /** insert data into the table: "analytics.mat_ElementTotalViews" */
-  insert_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ElementTotalViews" */
-  insert_analytics_mat_ElementTotalViews_one?: Maybe<Analytics_Mat_ElementTotalViews>;
-  /** insert data into the table: "analytics.mat_ItemTotalViews" */
-  insert_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ItemTotalViews" */
-  insert_analytics_mat_ItemTotalViews_one?: Maybe<Analytics_Mat_ItemTotalViews>;
-  /** insert data into the table: "analytics.mat_RoomPresence" */
-  insert_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_RoomPresence" */
-  insert_analytics_mat_RoomPresence_one?: Maybe<Analytics_Mat_RoomPresence>;
   /** insert data into the table: "chat.Chat" */
   insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -16438,12 +16323,6 @@ export type Mutation_Root = {
   update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** update single row of the table: "analytics.RoomStats" */
   update_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** update data of the table: "analytics.mat_ElementTotalViews" */
-  update_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_ItemTotalViews" */
-  update_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_RoomPresence" */
-  update_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** update data of the table: "chat.Chat" */
   update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -16886,24 +16765,6 @@ export type Mutation_RootDelete_Analytics_RoomStatsArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Analytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ElementTotalViewsArgs = {
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ItemTotalViewsArgs = {
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_RoomPresenceArgs = {
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -18045,42 +17906,6 @@ export type Mutation_RootInsert_Analytics_RoomStatsArgs = {
 export type Mutation_RootInsert_Analytics_RoomStats_OneArgs = {
   object: Analytics_RoomStats_Insert_Input;
   on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViewsArgs = {
-  objects: Array<Analytics_Mat_ElementTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViews_OneArgs = {
-  object: Analytics_Mat_ElementTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViewsArgs = {
-  objects: Array<Analytics_Mat_ItemTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViews_OneArgs = {
-  object: Analytics_Mat_ItemTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresenceArgs = {
-  objects: Array<Analytics_Mat_RoomPresence_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresence_OneArgs = {
-  object: Analytics_Mat_RoomPresence_Insert_Input;
 };
 
 
@@ -19512,34 +19337,6 @@ export type Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs = {
   _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
   _set?: Maybe<Analytics_RoomStats_Set_Input>;
   pk_columns: Analytics_RoomStats_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ElementTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ElementTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ElementTotalViews_Set_Input>;
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ItemTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ItemTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ItemTotalViews_Set_Input>;
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_RoomPresenceArgs = {
-  _append?: Maybe<Analytics_Mat_RoomPresence_Append_Input>;
-  _delete_at_path?: Maybe<Analytics_Mat_RoomPresence_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Analytics_Mat_RoomPresence_Delete_Elem_Input>;
-  _delete_key?: Maybe<Analytics_Mat_RoomPresence_Delete_Key_Input>;
-  _prepend?: Maybe<Analytics_Mat_RoomPresence_Prepend_Input>;
-  _set?: Maybe<Analytics_Mat_RoomPresence_Set_Input>;
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -25836,6 +25633,7 @@ export type Registrant_Invitation_Order_By = {
   confirmationCode?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+  hash?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   inviteCode?: Maybe<Order_By>;
   invitedEmailAddress?: Maybe<Order_By>;
@@ -26706,6 +26504,7 @@ export type Registrant_Registrant_Order_By = {
   groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
+  inviteSent?: Maybe<Order_By>;
   profile?: Maybe<Registrant_Profile_Order_By>;
   programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
   roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -28917,6 +28716,7 @@ export type Room_Room_Order_By = {
   currentModeName?: Maybe<Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
+  isProgramRoom?: Maybe<Order_By>;
   livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
   managementMode?: Maybe<Room_ManagementMode_Order_By>;
   managementModeName?: Maybe<Order_By>;
@@ -35464,6 +35264,8 @@ export enum System_ConfigurationKey_Enum {
   DefaultFrontendHost = 'DEFAULT_FRONTEND_HOST',
   /** Default backend platform for video rooms */
   DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
+  /** Templates for emails sent by the application. */
+  EmailTemplates = 'EMAIL_TEMPLATES',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
   HostOrganisationName = 'HOST_ORGANISATION_NAME',
   /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -38387,6 +38189,8 @@ export type Video_VonageParticipantStream = {
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
   createdAt: Scalars['timestamptz'];
+  /** A computed field, executes function "video.VonageParticipantStream_durationSeconds" */
+  durationSeconds?: Maybe<Scalars['bigint']>;
   /** An object relationship */
   eventVonageSession?: Maybe<Video_EventVonageSession>;
   id: Scalars['uuid'];
@@ -38445,6 +38249,7 @@ export type Video_VonageParticipantStream_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  durationSeconds?: Maybe<Bigint_Comparison_Exp>;
   eventVonageSession?: Maybe<Video_EventVonageSession_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
@@ -38559,6 +38364,7 @@ export type Video_VonageParticipantStream_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
+  durationSeconds?: Maybe<Order_By>;
   eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
   id?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;
@@ -39546,12 +39352,12 @@ export type CustomEmail_SelectRegistrantsQueryVariables = Exact<{
 }>;
 
 
-export type CustomEmail_SelectRegistrantsQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', displayName: string, id: any, invitation?: Maybe<{ __typename?: 'registrant_Invitation', invitedEmailAddress: string, id: any }>, user?: Maybe<{ __typename?: 'User', id: string, email?: Maybe<string> }> }> };
+export type CustomEmail_SelectRegistrantsQuery = { __typename?: 'query_root', registrant_Registrant: Array<{ __typename?: 'registrant_Registrant', displayName: string, id: any, invitation?: Maybe<{ __typename?: 'registrant_Invitation', invitedEmailAddress: string, id: any }>, user?: Maybe<{ __typename?: 'User', id: string, email?: Maybe<string> }> }>, conference_Conference_by_pk?: Maybe<{ __typename?: 'conference_Conference', shortName: string, techSupportAddress: Array<{ __typename?: 'conference_Configuration', value: any }> }>, platformAddress?: Maybe<{ __typename?: 'system_Configuration', value: any }> };
 
 export type MarkAndSelectUnprocessedCustomEmailJobsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MarkAndSelectUnprocessedCustomEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_CustomEmailJob?: Maybe<{ __typename?: 'job_queues_CustomEmailJob_mutation_response', returning: Array<{ __typename?: 'job_queues_CustomEmailJob', id: any, registrantIds: any, conferenceId: any, subject: string, htmlBody: string }> }> };
+export type MarkAndSelectUnprocessedCustomEmailJobsMutation = { __typename?: 'mutation_root', update_job_queues_CustomEmailJob?: Maybe<{ __typename?: 'job_queues_CustomEmailJob_mutation_response', returning: Array<{ __typename?: 'job_queues_CustomEmailJob', id: any, registrantIds: any, conferenceId: any, subject: string, markdownBody: string }> }> };
 
 export type UnmarkCustomEmailJobsMutationVariables = Exact<{
   ids: Array<Scalars['uuid']> | Scalars['uuid'];
@@ -39566,7 +39372,7 @@ export type ConferenceEmailConfigurationQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceEmailConfigurationQuery = { __typename?: 'query_root', support: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, techSupport: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, hostOrganisationName?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, stopEmails?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, frontendHost: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, defaultFrontendHost?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, allowEmailsToDomains?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }> };
+export type ConferenceEmailConfigurationQuery = { __typename?: 'query_root', support: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, techSupport: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, hostOrganisationName?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, stopEmails?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, frontendHost: Maybe<Array<{ __typename?: 'conference_Configuration', key: Conference_ConfigurationKey_Enum, value: any }>>, defaultFrontendHost?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, allowEmailsToDomains?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }>, conference_Conference?: Maybe<Array<{ __typename?: 'conference_Conference', shortName: string }>> };
 
 export type InsertEmailsMutationVariables = Exact<{
   objects: Array<Email_Insert_Input> | Email_Insert_Input;
@@ -39731,18 +39537,6 @@ export type UpdateInvitationMutationVariables = Exact<{
 
 
 export type UpdateInvitationMutation = { __typename?: 'mutation_root', update_registrant_Invitation?: Maybe<{ __typename?: 'registrant_Invitation_mutation_response', affected_rows: number }> };
-
-export type SendFreshInviteConfirmationEmailMutationVariables = Exact<{
-  emailAddress: Scalars['String'];
-  htmlContents: Scalars['String'];
-  invitationId: Scalars['uuid'];
-  plainTextContents: Scalars['String'];
-  subject: Scalars['String'];
-  userId: Scalars['String'];
-}>;
-
-
-export type SendFreshInviteConfirmationEmailMutation = { __typename?: 'mutation_root', insert_Email_one?: Maybe<{ __typename?: 'Email', id: any }> };
 
 export type SetRegistrantUserIdMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40261,6 +40055,11 @@ export type GetElementByIdQueryVariables = Exact<{
 
 export type GetElementByIdQuery = { __typename?: 'query_root', content_Element_by_pk?: Maybe<{ __typename?: 'content_Element', id: any, data: any, typeName: Content_ElementType_Enum }> };
 
+export type GetEmailTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEmailTemplatesQuery = { __typename?: 'query_root', emailTemplates?: Maybe<{ __typename?: 'system_Configuration', key: System_ConfigurationKey_Enum, value: any }> };
+
 export type GetEventVonageSessionQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
@@ -40594,10 +40393,10 @@ export const ElementAddNewVersionDocument = {"kind":"Document","definitions":[{"
 export const GetElementDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetElementDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Element_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"shortName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"itemPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"person"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"","block":false}}]}}]}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"roleName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"AUTHOR","block":false},{"kind":"StringValue","value":"PRESENTER","block":false},{"kind":"StringValue","value":"DISCUSSANT","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"person"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetElementDetailsQuery, GetElementDetailsQueryVariables>;
 export const GetUploadAgreementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUploadAgreement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accessToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"accessToken"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accessToken"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"UPLOAD_AGREEMENT"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUploadAgreementQuery, GetUploadAgreementQueryVariables>;
 export const FindMatchingProgramPersonForUploaderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindMatchingProgramPersonForUploader"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"elementAccessToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploaderEmail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"accessToken"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"elementAccessToken"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"uploaders"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploaderEmail"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"itemId"}},{"kind":"Field","name":{"kind":"Name","value":"conference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"programPeople"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploaderEmail"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"itemPeople"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"itemId"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindMatchingProgramPersonForUploaderQuery, FindMatchingProgramPersonForUploaderQueryVariables>;
-export const CustomEmail_SelectRegistrantsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CustomEmail_SelectRegistrants"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"invitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invitedEmailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<CustomEmail_SelectRegistrantsQuery, CustomEmail_SelectRegistrantsQueryVariables>;
-export const MarkAndSelectUnprocessedCustomEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnprocessedCustomEmailJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_CustomEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrantIds"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"htmlBody"}}]}}]}}]}}]} as unknown as DocumentNode<MarkAndSelectUnprocessedCustomEmailJobsMutation, MarkAndSelectUnprocessedCustomEmailJobsMutationVariables>;
+export const CustomEmail_SelectRegistrantsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CustomEmail_SelectRegistrants"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"invitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invitedEmailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference_Conference_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shortName"}},{"kind":"Field","alias":{"kind":"Name","value":"techSupportAddress"},"name":{"kind":"Name","value":"configurations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"TECH_SUPPORT_ADDRESS"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"platformAddress"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_REPLYTO"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<CustomEmail_SelectRegistrantsQuery, CustomEmail_SelectRegistrantsQueryVariables>;
+export const MarkAndSelectUnprocessedCustomEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnprocessedCustomEmailJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_CustomEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrantIds"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"markdownBody"}}]}}]}}]}}]} as unknown as DocumentNode<MarkAndSelectUnprocessedCustomEmailJobsMutation, MarkAndSelectUnprocessedCustomEmailJobsMutationVariables>;
 export const UnmarkCustomEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnmarkCustomEmailJobs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_CustomEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UnmarkCustomEmailJobsMutation, UnmarkCustomEmailJobsMutationVariables>;
-export const ConferenceEmailConfigurationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConferenceEmailConfiguration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"support"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUPPORT_ADDRESS"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"techSupport"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"TECH_SUPPORT_ADDRESS"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hostOrganisationName"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"HOST_ORGANISATION_NAME"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"stopEmails"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"STOP_EMAILS_CONTACT_EMAIL_ADDRESS"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"frontendHost"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"FRONTEND_HOST"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"defaultFrontendHost"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"DEFAULT_FRONTEND_HOST"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"allowEmailsToDomains"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"ALLOW_EMAILS_TO_DOMAINS"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<ConferenceEmailConfigurationQuery, ConferenceEmailConfigurationQueryVariables>;
+export const ConferenceEmailConfigurationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConferenceEmailConfiguration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"support"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"SUPPORT_ADDRESS"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"techSupport"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"TECH_SUPPORT_ADDRESS"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hostOrganisationName"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"HOST_ORGANISATION_NAME"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"stopEmails"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"STOP_EMAILS_CONTACT_EMAIL_ADDRESS"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"frontendHost"},"name":{"kind":"Name","value":"conference_Configuration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"key"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"FRONTEND_HOST"}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"defaultFrontendHost"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"DEFAULT_FRONTEND_HOST"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"allowEmailsToDomains"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"ALLOW_EMAILS_TO_DOMAINS"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"conference_Conference"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}}]}}]}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"include"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"if"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includeConferenceFields"}}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shortName"}}]}}]}}]} as unknown as DocumentNode<ConferenceEmailConfigurationQuery, ConferenceEmailConfigurationQueryVariables>;
 export const InsertEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Email_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<InsertEmailsMutation, InsertEmailsMutationVariables>;
 export const SelectUnsentEmailIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SelectUnsentEmailIds"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"300"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SelectUnsentEmailIdsQuery, SelectUnsentEmailIdsQueryVariables>;
 export const MarkAndSelectUnsentEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnsentEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sentAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sentAt"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"retriesCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recipientName"}},{"kind":"Field","name":{"kind":"Name","value":"emailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"htmlContents"}},{"kind":"Field","name":{"kind":"Name","value":"plainTextContents"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"retriesCount"}}]}}]}}]}}]} as unknown as DocumentNode<MarkAndSelectUnsentEmailsMutation, MarkAndSelectUnsentEmailsMutationVariables>;
@@ -40619,7 +40418,6 @@ export const FailUploadYouTubeVideoJobDocument = {"kind":"Document","definitions
 export const CompleteUploadYouTubeVideoJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteUploadYouTubeVideoJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_UploadYouTubeVideoJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"COMPLETED"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CompleteUploadYouTubeVideoJobMutation, CompleteUploadYouTubeVideoJobMutationVariables>;
 export const SelectInvitationAndUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SelectInvitationAndUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inviteCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Invitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"inviteCode"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inviteCode"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InvitationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"User_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InvitedUserParts"}}]}}]}},...InvitationPartsFragmentDoc.definitions,...InvitedUserPartsFragmentDoc.definitions]} as unknown as DocumentNode<SelectInvitationAndUserQuery, SelectInvitationAndUserQueryVariables>;
 export const UpdateInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"confirmationCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"invitationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updatedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_registrant_Invitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"invitationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"updatedAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updatedAt"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"confirmationCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"confirmationCode"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"linkToUserId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateInvitationMutation, UpdateInvitationMutationVariables>;
-export const SendFreshInviteConfirmationEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendFreshInviteConfirmationEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"htmlContents"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"invitationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"plainTextContents"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subject"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_Email_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"emailAddress"},"value":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"htmlContents"},"value":{"kind":"Variable","name":{"kind":"Name","value":"htmlContents"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"invitationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"invitationId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"plainTextContents"},"value":{"kind":"Variable","name":{"kind":"Name","value":"plainTextContents"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"reason"},"value":{"kind":"StringValue","value":"confirm-invite","block":false}},{"kind":"ObjectField","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subject"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SendFreshInviteConfirmationEmailMutation, SendFreshInviteConfirmationEmailMutationVariables>;
 export const SetRegistrantUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetRegistrantUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<SetRegistrantUserIdMutation, SetRegistrantUserIdMutationVariables>;
 export const SelectRegistrantsWithInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SelectRegistrantsWithInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_Registrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrantIds"}}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"groupRegistrants"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"group"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"enabled"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"groupRoles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"role"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"rolePermissions"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permissionName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"CONFERENCE_VIEW"}}]}}]}}]}}]}}]}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RegistrantWithInviteParts"}}]}}]}},...RegistrantWithInvitePartsFragmentDoc.definitions]} as unknown as DocumentNode<SelectRegistrantsWithInvitationQuery, SelectRegistrantsWithInvitationQueryVariables>;
 export const MarkAndSelectUnprocessedInvitationEmailJobsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnprocessedInvitationEmailJobs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_InvitationEmailJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"processed"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"registrantIds"}},{"kind":"Field","name":{"kind":"Name","value":"sendRepeat"}}]}}]}}]}}]} as unknown as DocumentNode<MarkAndSelectUnprocessedInvitationEmailJobsMutation, MarkAndSelectUnprocessedInvitationEmailJobsMutationVariables>;
@@ -40684,6 +40482,7 @@ export const GetConfigurationValueDocument = {"kind":"Document","definitions":[{
 export const FailConferencePrepareJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FailConferencePrepareJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_conference_PrepareJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"FAILED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<FailConferencePrepareJobMutation, FailConferencePrepareJobMutationVariables>;
 export const CompleteConferencePrepareJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteConferencePrepareJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_conference_PrepareJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"COMPLETED"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CompleteConferencePrepareJobMutation, CompleteConferencePrepareJobMutationVariables>;
 export const GetElementByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetElementById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Element_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"elementId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"typeName"}}]}}]}}]} as unknown as DocumentNode<GetElementByIdQuery, GetElementByIdQueryVariables>;
+export const GetEmailTemplatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEmailTemplates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"emailTemplates"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"EMAIL_TEMPLATES"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetEmailTemplatesQuery, GetEmailTemplatesQueryVariables>;
 export const GetEventVonageSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventVonageSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"video_EventVonageSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetEventVonageSessionQuery, GetEventVonageSessionQueryVariables>;
 export const SetEventVonageSessionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetEventVonageSessionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_video_EventVonageSession_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"sessionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"EventVonageSession_eventId_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"EnumValue","value":"sessionId"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SetEventVonageSessionIdMutation, SetEventVonageSessionIdMutationVariables>;
 export const CreateItemRoom_GetItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CreateItemRoom_GetItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_Item_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"rooms"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"originatingEventId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}}]} as unknown as DocumentNode<CreateItemRoom_GetItemQuery, CreateItemRoom_GetItemQueryVariables>;

@@ -14206,8 +14206,8 @@ export type Job_Queues_CustomEmailJob = {
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly created_at: Scalars['timestamptz'];
-  readonly htmlBody: Scalars['String'];
   readonly id: Scalars['uuid'];
+  readonly markdownBody: Scalars['String'];
   readonly processed: Scalars['Boolean'];
   readonly registrantIds: Scalars['jsonb'];
   readonly subject: Scalars['String'];
@@ -14255,8 +14255,8 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  readonly htmlBody?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly markdownBody?: Maybe<String_Comparison_Exp>;
   readonly processed?: Maybe<Boolean_Comparison_Exp>;
   readonly registrantIds?: Maybe<Jsonb_Comparison_Exp>;
   readonly subject?: Maybe<String_Comparison_Exp>;
@@ -14289,8 +14289,8 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
   readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly registrantIds?: Maybe<Scalars['jsonb']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -14302,8 +14302,8 @@ export type Job_Queues_CustomEmailJob_Max_Fields = {
   readonly __typename?: 'job_queues_CustomEmailJob_max_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14313,8 +14313,8 @@ export type Job_Queues_CustomEmailJob_Min_Fields = {
   readonly __typename?: 'job_queues_CustomEmailJob_min_fields';
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14340,8 +14340,8 @@ export type Job_Queues_CustomEmailJob_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly created_at?: Maybe<Order_By>;
-  readonly htmlBody?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly markdownBody?: Maybe<Order_By>;
   readonly processed?: Maybe<Order_By>;
   readonly registrantIds?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
@@ -14365,9 +14365,9 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -14382,8 +14382,8 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
 export type Job_Queues_CustomEmailJob_Set_Input = {
   readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly created_at?: Maybe<Scalars['timestamptz']>;
-  readonly htmlBody?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly markdownBody?: Maybe<Scalars['String']>;
   readonly processed?: Maybe<Scalars['Boolean']>;
   readonly registrantIds?: Maybe<Scalars['jsonb']>;
   readonly subject?: Maybe<Scalars['String']>;
@@ -14397,9 +14397,9 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -38189,6 +38189,8 @@ export type Video_VonageParticipantStream = {
   readonly conference: Conference_Conference;
   readonly conferenceId: Scalars['uuid'];
   readonly createdAt: Scalars['timestamptz'];
+  /** A computed field, executes function "video.VonageParticipantStream_durationSeconds" */
+  readonly durationSeconds?: Maybe<Scalars['bigint']>;
   /** An object relationship */
   readonly eventVonageSession?: Maybe<Video_EventVonageSession>;
   readonly id: Scalars['uuid'];
@@ -38247,6 +38249,7 @@ export type Video_VonageParticipantStream_Bool_Exp = {
   readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
   readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly durationSeconds?: Maybe<Bigint_Comparison_Exp>;
   readonly eventVonageSession?: Maybe<Video_EventVonageSession_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
@@ -38361,6 +38364,7 @@ export type Video_VonageParticipantStream_Order_By = {
   readonly conference?: Maybe<Conference_Conference_Order_By>;
   readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
+  readonly durationSeconds?: Maybe<Order_By>;
   readonly eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
@@ -40976,7 +40980,7 @@ export type InsertInvitationEmailJobsMutationVariables = Exact<{
 export type InsertInvitationEmailJobsMutation = { readonly __typename?: 'mutation_root', readonly insert_job_queues_InvitationEmailJob?: Maybe<{ readonly __typename?: 'job_queues_InvitationEmailJob_mutation_response', readonly affected_rows: number }> };
 
 export type ManagePeople_InsertCustomEmailJobMutationVariables = Exact<{
-  htmlBody: Scalars['String'];
+  markdownBody: Scalars['String'];
   subject: Scalars['String'];
   conferenceId: Scalars['uuid'];
   registrantIds: Scalars['jsonb'];
@@ -51623,9 +51627,9 @@ export type InsertInvitationEmailJobsMutationHookResult = ReturnType<typeof useI
 export type InsertInvitationEmailJobsMutationResult = Apollo.MutationResult<InsertInvitationEmailJobsMutation>;
 export type InsertInvitationEmailJobsMutationOptions = Apollo.BaseMutationOptions<InsertInvitationEmailJobsMutation, InsertInvitationEmailJobsMutationVariables>;
 export const ManagePeople_InsertCustomEmailJobDocument = gql`
-    mutation ManagePeople_InsertCustomEmailJob($htmlBody: String!, $subject: String!, $conferenceId: uuid!, $registrantIds: jsonb!) {
+    mutation ManagePeople_InsertCustomEmailJob($markdownBody: String!, $subject: String!, $conferenceId: uuid!, $registrantIds: jsonb!) {
   insert_job_queues_CustomEmailJob(
-    objects: {htmlBody: $htmlBody, subject: $subject, conferenceId: $conferenceId, registrantIds: $registrantIds}
+    objects: {markdownBody: $markdownBody, subject: $subject, conferenceId: $conferenceId, registrantIds: $registrantIds}
   ) {
     affected_rows
   }
@@ -51646,7 +51650,7 @@ export type ManagePeople_InsertCustomEmailJobMutationFn = Apollo.MutationFunctio
  * @example
  * const [managePeopleInsertCustomEmailJobMutation, { data, loading, error }] = useManagePeople_InsertCustomEmailJobMutation({
  *   variables: {
- *      htmlBody: // value for 'htmlBody'
+ *      markdownBody: // value for 'markdownBody'
  *      subject: // value for 'subject'
  *      conferenceId: // value for 'conferenceId'
  *      registrantIds: // value for 'registrantIds'

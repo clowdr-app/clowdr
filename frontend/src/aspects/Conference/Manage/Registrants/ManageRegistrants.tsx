@@ -185,14 +185,14 @@ gql`
     }
 
     mutation ManagePeople_InsertCustomEmailJob(
-        $htmlBody: String!
+        $markdownBody: String!
         $subject: String!
         $conferenceId: uuid!
         $registrantIds: jsonb!
     ) {
         insert_job_queues_CustomEmailJob(
             objects: {
-                htmlBody: $htmlBody
+                markdownBody: $markdownBody
                 subject: $subject
                 conferenceId: $conferenceId
                 registrantIds: $registrantIds
@@ -1309,12 +1309,12 @@ export default function ManageRegistrants(): JSX.Element {
                 isOpen={sendCustomEmailModal.isOpen}
                 onClose={sendCustomEmailModal.onClose}
                 registrants={sendCustomEmailRegistrants}
-                send={async (registrantIds: string[], htmlBody: string, subject: string) => {
+                send={async (registrantIds: string[], markdownBody: string, subject: string) => {
                     const result = await insertCustomEmailJobMutation({
                         variables: {
                             registrantIds,
                             conferenceId: conference.id,
-                            htmlBody,
+                            markdownBody,
                             subject,
                         },
                     });

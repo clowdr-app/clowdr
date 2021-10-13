@@ -3095,17 +3095,6 @@ export type Analytics_Mat_ElementTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Inc_Input = {
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Insert_Input = {
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ElementTotalViews_Max_Fields = {
   __typename?: 'analytics_mat_ElementTotalViews_max_fields';
@@ -3118,15 +3107,6 @@ export type Analytics_Mat_ElementTotalViews_Min_Fields = {
   __typename?: 'analytics_mat_ElementTotalViews_min_fields';
   elementId?: Maybe<Scalars['uuid']>;
   totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Mutation_Response = {
-  __typename?: 'analytics_mat_ElementTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_ElementTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ElementTotalViews". */
@@ -3142,12 +3122,6 @@ export enum Analytics_Mat_ElementTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ElementTotalViews" */
-export type Analytics_Mat_ElementTotalViews_Set_Input = {
-  elementId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ElementTotalViews_Stddev_Fields = {
@@ -3243,17 +3217,6 @@ export type Analytics_Mat_ItemTotalViews_Bool_Exp = {
   totalViewCount?: Maybe<Bigint_Comparison_Exp>;
 };
 
-/** input type for incrementing numeric columns in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Inc_Input = {
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** input type for inserting data into table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Insert_Input = {
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
 /** aggregate max on columns */
 export type Analytics_Mat_ItemTotalViews_Max_Fields = {
   __typename?: 'analytics_mat_ItemTotalViews_max_fields';
@@ -3266,15 +3229,6 @@ export type Analytics_Mat_ItemTotalViews_Min_Fields = {
   __typename?: 'analytics_mat_ItemTotalViews_min_fields';
   itemId?: Maybe<Scalars['uuid']>;
   totalViewCount?: Maybe<Scalars['bigint']>;
-};
-
-/** response of any mutation on the table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Mutation_Response = {
-  __typename?: 'analytics_mat_ItemTotalViews_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_ItemTotalViews>;
 };
 
 /** Ordering options when selecting data from "analytics.mat_ItemTotalViews". */
@@ -3290,12 +3244,6 @@ export enum Analytics_Mat_ItemTotalViews_Select_Column {
   /** column name */
   TotalViewCount = 'totalViewCount'
 }
-
-/** input type for updating data in table "analytics.mat_ItemTotalViews" */
-export type Analytics_Mat_ItemTotalViews_Set_Input = {
-  itemId?: Maybe<Scalars['uuid']>;
-  totalViewCount?: Maybe<Scalars['bigint']>;
-};
 
 /** aggregate stddev on columns */
 export type Analytics_Mat_ItemTotalViews_Stddev_Fields = {
@@ -3376,11 +3324,6 @@ export type Analytics_Mat_RoomPresence_Aggregate_FieldsCountArgs = {
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Append_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-};
-
 /** Boolean expression to filter rows from the table "analytics.mat_RoomPresence". All fields are combined with a logical 'AND'. */
 export type Analytics_Mat_RoomPresence_Bool_Exp = {
   _and?: Maybe<Array<Analytics_Mat_RoomPresence_Bool_Exp>>;
@@ -3390,29 +3333,6 @@ export type Analytics_Mat_RoomPresence_Bool_Exp = {
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
-};
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Analytics_Mat_RoomPresence_Delete_At_Path_Input = {
-  count?: Maybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Analytics_Mat_RoomPresence_Delete_Elem_Input = {
-  count?: Maybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Analytics_Mat_RoomPresence_Delete_Key_Input = {
-  count?: Maybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Insert_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -3431,26 +3351,12 @@ export type Analytics_Mat_RoomPresence_Min_Fields = {
   name?: Maybe<Scalars['String']>;
 };
 
-/** response of any mutation on the table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Mutation_Response = {
-  __typename?: 'analytics_mat_RoomPresence_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Analytics_Mat_RoomPresence>;
-};
-
 /** Ordering options when selecting data from "analytics.mat_RoomPresence". */
 export type Analytics_Mat_RoomPresence_Order_By = {
   count?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Analytics_Mat_RoomPresence_Prepend_Input = {
-  count?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "analytics.mat_RoomPresence" */
@@ -3464,14 +3370,6 @@ export enum Analytics_Mat_RoomPresence_Select_Column {
   /** column name */
   Name = 'name'
 }
-
-/** input type for updating data in table "analytics.mat_RoomPresence" */
-export type Analytics_Mat_RoomPresence_Set_Input = {
-  count?: Maybe<Scalars['jsonb']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['uuid']>;
-  name?: Maybe<Scalars['String']>;
-};
 
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
@@ -8436,6 +8334,8 @@ export enum Conference_ConfigurationKey_Enum {
   FrontendHost = 'FRONTEND_HOST',
   /** An image to be displayed if AWS MediaLive loses input. */
   InputLossSlate = 'INPUT_LOSS_SLATE',
+  /** Additional text for the My Backstages modal. */
+  MyBackstagesNotice = 'MY_BACKSTAGES_NOTICE',
   /** A string representing a valid URL for users to register for the conference. */
   RegistrationUrl = 'REGISTRATION_URL',
   /** Select different versions of the schedule view. */
@@ -8446,6 +8346,8 @@ export enum Conference_ConfigurationKey_Enum {
   SupportAddress = 'SUPPORT_ADDRESS',
   /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */
   TechSupportAddress = 'TECH_SUPPORT_ADDRESS',
+  /** JSON representation of a custom Component Map colors object. */
+  ThemeComponentColors = 'THEME_COMPONENT_COLORS',
   /** Text of the upload agreement or a URL to one. */
   UploadAgreement = 'UPLOAD_AGREEMENT',
   /** The time in milliseconds since the UNIX epoch, as a string. */
@@ -10861,10 +10763,12 @@ export type Content_Element_Order_By = {
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   data?: Maybe<Order_By>;
+  hasBeenSubmitted?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   isHidden?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
+  itemTitle?: Maybe<Order_By>;
   layoutData?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   originatingData?: Maybe<Conference_OriginatingData_Order_By>;
@@ -10875,6 +10779,7 @@ export type Content_Element_Order_By = {
   type?: Maybe<Content_ElementType_Order_By>;
   typeName?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
+  uploadersCount?: Maybe<Order_By>;
   uploaders_aggregate?: Maybe<Content_Uploader_Aggregate_Order_By>;
   uploadsRemaining?: Maybe<Order_By>;
   youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
@@ -11056,6 +10961,10 @@ export type Content_Item = {
   conferenceId: Scalars['uuid'];
   createdAt: Scalars['timestamptz'];
   /** An array relationship */
+  descriptionOfExhibitions: Array<Collection_Exhibition>;
+  /** An aggregate relationship */
+  descriptionOfExhibitions_aggregate: Collection_Exhibition_Aggregate;
+  /** An array relationship */
   elements: Array<Content_Element>;
   /** An aggregate relationship */
   elements_aggregate: Content_Element_Aggregate;
@@ -11099,6 +11008,26 @@ export type Content_Item = {
   type: Content_ItemType;
   typeName: Content_ItemType_Enum;
   updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemDescriptionOfExhibitionsArgs = {
+  distinct_on?: Maybe<Array<Collection_Exhibition_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_Exhibition_Order_By>>;
+  where?: Maybe<Collection_Exhibition_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Item" */
+export type Content_ItemDescriptionOfExhibitions_AggregateArgs = {
+  distinct_on?: Maybe<Array<Collection_Exhibition_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Collection_Exhibition_Order_By>>;
+  where?: Maybe<Collection_Exhibition_Bool_Exp>;
 };
 
 
@@ -12257,6 +12186,7 @@ export type Content_ItemProgramPerson_On_Conflict = {
 export type Content_ItemProgramPerson_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
+  hasSubmissionRequestBeenSent?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   item?: Maybe<Content_Item_Order_By>;
   itemId?: Maybe<Order_By>;
@@ -12763,6 +12693,7 @@ export type Content_Item_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  descriptionOfExhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
   elements?: Maybe<Content_Element_Bool_Exp>;
   events?: Maybe<Schedule_Event_Bool_Exp>;
   hasUnsubmittedElements?: Maybe<Boolean_Comparison_Exp>;
@@ -12796,6 +12727,7 @@ export type Content_Item_Insert_Input = {
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
+  descriptionOfExhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
   elements?: Maybe<Content_Element_Arr_Rel_Insert_Input>;
   events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
   id?: Maybe<Scalars['uuid']>;
@@ -12895,8 +12827,10 @@ export type Content_Item_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
+  descriptionOfExhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
   elements_aggregate?: Maybe<Content_Element_Aggregate_Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
+  hasUnsubmittedElements?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   itemExhibitions_aggregate?: Maybe<Content_ItemExhibition_Aggregate_Order_By>;
   itemPeople_aggregate?: Maybe<Content_ItemProgramPerson_Aggregate_Order_By>;
@@ -14262,8 +14196,8 @@ export type Job_Queues_CustomEmailJob = {
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
   created_at: Scalars['timestamptz'];
-  htmlBody: Scalars['String'];
   id: Scalars['uuid'];
+  markdownBody: Scalars['String'];
   processed: Scalars['Boolean'];
   registrantIds: Scalars['jsonb'];
   subject: Scalars['String'];
@@ -14311,8 +14245,8 @@ export type Job_Queues_CustomEmailJob_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
-  htmlBody?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  markdownBody?: Maybe<String_Comparison_Exp>;
   processed?: Maybe<Boolean_Comparison_Exp>;
   registrantIds?: Maybe<Jsonb_Comparison_Exp>;
   subject?: Maybe<String_Comparison_Exp>;
@@ -14345,8 +14279,8 @@ export type Job_Queues_CustomEmailJob_Insert_Input = {
   conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   processed?: Maybe<Scalars['Boolean']>;
   registrantIds?: Maybe<Scalars['jsonb']>;
   subject?: Maybe<Scalars['String']>;
@@ -14358,8 +14292,8 @@ export type Job_Queues_CustomEmailJob_Max_Fields = {
   __typename?: 'job_queues_CustomEmailJob_max_fields';
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14369,8 +14303,8 @@ export type Job_Queues_CustomEmailJob_Min_Fields = {
   __typename?: 'job_queues_CustomEmailJob_min_fields';
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -14396,8 +14330,8 @@ export type Job_Queues_CustomEmailJob_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
-  htmlBody?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  markdownBody?: Maybe<Order_By>;
   processed?: Maybe<Order_By>;
   registrantIds?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
@@ -14421,9 +14355,9 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -14438,8 +14372,8 @@ export enum Job_Queues_CustomEmailJob_Select_Column {
 export type Job_Queues_CustomEmailJob_Set_Input = {
   conferenceId?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  htmlBody?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  markdownBody?: Maybe<Scalars['String']>;
   processed?: Maybe<Scalars['Boolean']>;
   registrantIds?: Maybe<Scalars['jsonb']>;
   subject?: Maybe<Scalars['String']>;
@@ -14453,9 +14387,9 @@ export enum Job_Queues_CustomEmailJob_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HtmlBody = 'htmlBody',
-  /** column name */
   Id = 'id',
+  /** column name */
+  MarkdownBody = 'markdownBody',
   /** column name */
   Processed = 'processed',
   /** column name */
@@ -15611,12 +15545,6 @@ export type Mutation_Root = {
   delete_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** delete single row from the table: "analytics.RoomStats" */
   delete_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** delete data from the table: "analytics.mat_ElementTotalViews" */
-  delete_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_ItemTotalViews" */
-  delete_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** delete data from the table: "analytics.mat_RoomPresence" */
-  delete_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** delete data from the table: "chat.Chat" */
   delete_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** delete single row from the table: "chat.Chat" */
@@ -15990,18 +15918,6 @@ export type Mutation_Root = {
   insert_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** insert a single row into the table: "analytics.RoomStats" */
   insert_analytics_RoomStats_one?: Maybe<Analytics_RoomStats>;
-  /** insert data into the table: "analytics.mat_ElementTotalViews" */
-  insert_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ElementTotalViews" */
-  insert_analytics_mat_ElementTotalViews_one?: Maybe<Analytics_Mat_ElementTotalViews>;
-  /** insert data into the table: "analytics.mat_ItemTotalViews" */
-  insert_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_ItemTotalViews" */
-  insert_analytics_mat_ItemTotalViews_one?: Maybe<Analytics_Mat_ItemTotalViews>;
-  /** insert data into the table: "analytics.mat_RoomPresence" */
-  insert_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
-  /** insert a single row into the table: "analytics.mat_RoomPresence" */
-  insert_analytics_mat_RoomPresence_one?: Maybe<Analytics_Mat_RoomPresence>;
   /** insert data into the table: "chat.Chat" */
   insert_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** insert a single row into the table: "chat.Chat" */
@@ -16399,12 +16315,6 @@ export type Mutation_Root = {
   update_analytics_RoomStats?: Maybe<Analytics_RoomStats_Mutation_Response>;
   /** update single row of the table: "analytics.RoomStats" */
   update_analytics_RoomStats_by_pk?: Maybe<Analytics_RoomStats>;
-  /** update data of the table: "analytics.mat_ElementTotalViews" */
-  update_analytics_mat_ElementTotalViews?: Maybe<Analytics_Mat_ElementTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_ItemTotalViews" */
-  update_analytics_mat_ItemTotalViews?: Maybe<Analytics_Mat_ItemTotalViews_Mutation_Response>;
-  /** update data of the table: "analytics.mat_RoomPresence" */
-  update_analytics_mat_RoomPresence?: Maybe<Analytics_Mat_RoomPresence_Mutation_Response>;
   /** update data of the table: "chat.Chat" */
   update_chat_Chat?: Maybe<Chat_Chat_Mutation_Response>;
   /** update single row of the table: "chat.Chat" */
@@ -16847,24 +16757,6 @@ export type Mutation_RootDelete_Analytics_RoomStatsArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Analytics_RoomStats_By_PkArgs = {
   id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ElementTotalViewsArgs = {
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_ItemTotalViewsArgs = {
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Analytics_Mat_RoomPresenceArgs = {
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -18006,42 +17898,6 @@ export type Mutation_RootInsert_Analytics_RoomStatsArgs = {
 export type Mutation_RootInsert_Analytics_RoomStats_OneArgs = {
   object: Analytics_RoomStats_Insert_Input;
   on_conflict?: Maybe<Analytics_RoomStats_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViewsArgs = {
-  objects: Array<Analytics_Mat_ElementTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ElementTotalViews_OneArgs = {
-  object: Analytics_Mat_ElementTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViewsArgs = {
-  objects: Array<Analytics_Mat_ItemTotalViews_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_ItemTotalViews_OneArgs = {
-  object: Analytics_Mat_ItemTotalViews_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresenceArgs = {
-  objects: Array<Analytics_Mat_RoomPresence_Insert_Input>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Analytics_Mat_RoomPresence_OneArgs = {
-  object: Analytics_Mat_RoomPresence_Insert_Input;
 };
 
 
@@ -19473,34 +19329,6 @@ export type Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs = {
   _inc?: Maybe<Analytics_RoomStats_Inc_Input>;
   _set?: Maybe<Analytics_RoomStats_Set_Input>;
   pk_columns: Analytics_RoomStats_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ElementTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ElementTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ElementTotalViews_Set_Input>;
-  where: Analytics_Mat_ElementTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_ItemTotalViewsArgs = {
-  _inc?: Maybe<Analytics_Mat_ItemTotalViews_Inc_Input>;
-  _set?: Maybe<Analytics_Mat_ItemTotalViews_Set_Input>;
-  where: Analytics_Mat_ItemTotalViews_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Analytics_Mat_RoomPresenceArgs = {
-  _append?: Maybe<Analytics_Mat_RoomPresence_Append_Input>;
-  _delete_at_path?: Maybe<Analytics_Mat_RoomPresence_Delete_At_Path_Input>;
-  _delete_elem?: Maybe<Analytics_Mat_RoomPresence_Delete_Elem_Input>;
-  _delete_key?: Maybe<Analytics_Mat_RoomPresence_Delete_Key_Input>;
-  _prepend?: Maybe<Analytics_Mat_RoomPresence_Prepend_Input>;
-  _set?: Maybe<Analytics_Mat_RoomPresence_Set_Input>;
-  where: Analytics_Mat_RoomPresence_Bool_Exp;
 };
 
 
@@ -25797,6 +25625,7 @@ export type Registrant_Invitation_Order_By = {
   confirmationCode?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emails_aggregate?: Maybe<Email_Aggregate_Order_By>;
+  hash?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   inviteCode?: Maybe<Order_By>;
   invitedEmailAddress?: Maybe<Order_By>;
@@ -26667,6 +26496,7 @@ export type Registrant_Registrant_Order_By = {
   groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
+  inviteSent?: Maybe<Order_By>;
   profile?: Maybe<Registrant_Profile_Order_By>;
   programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
   roomParticipants_aggregate?: Maybe<Room_Participant_Aggregate_Order_By>;
@@ -28878,6 +28708,7 @@ export type Room_Room_Order_By = {
   currentModeName?: Maybe<Order_By>;
   events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
+  isProgramRoom?: Maybe<Order_By>;
   livestreamDuration?: Maybe<Room_LivestreamDurations_Order_By>;
   managementMode?: Maybe<Room_ManagementMode_Order_By>;
   managementModeName?: Maybe<Order_By>;
@@ -30946,6 +30777,7 @@ export type Schedule_Event = {
   shufflePeriod?: Maybe<Room_ShufflePeriod>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   startTime: Scalars['timestamptz'];
+  streamTextEventId?: Maybe<Scalars['String']>;
   timingsUpdatedAt: Scalars['timestamptz'];
   updatedAt: Scalars['timestamptz'];
 };
@@ -31636,6 +31468,7 @@ export type Schedule_Event_Bool_Exp = {
   shufflePeriod?: Maybe<Room_ShufflePeriod_Bool_Exp>;
   shufflePeriodId?: Maybe<Uuid_Comparison_Exp>;
   startTime?: Maybe<Timestamptz_Comparison_Exp>;
+  streamTextEventId?: Maybe<String_Comparison_Exp>;
   timingsUpdatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
 };
@@ -31678,6 +31511,7 @@ export type Schedule_Event_Insert_Input = {
   shufflePeriod?: Maybe<Room_ShufflePeriod_Obj_Rel_Insert_Input>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   startTime?: Maybe<Scalars['timestamptz']>;
+  streamTextEventId?: Maybe<Scalars['String']>;
   timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31697,6 +31531,7 @@ export type Schedule_Event_Max_Fields = {
   roomId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   startTime?: Maybe<Scalars['timestamptz']>;
+  streamTextEventId?: Maybe<Scalars['String']>;
   timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31715,6 +31550,7 @@ export type Schedule_Event_Max_Order_By = {
   roomId?: Maybe<Order_By>;
   shufflePeriodId?: Maybe<Order_By>;
   startTime?: Maybe<Order_By>;
+  streamTextEventId?: Maybe<Order_By>;
   timingsUpdatedAt?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
@@ -31734,6 +31570,7 @@ export type Schedule_Event_Min_Fields = {
   roomId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   startTime?: Maybe<Scalars['timestamptz']>;
+  streamTextEventId?: Maybe<Scalars['String']>;
   timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31752,6 +31589,7 @@ export type Schedule_Event_Min_Order_By = {
   roomId?: Maybe<Order_By>;
   shufflePeriodId?: Maybe<Order_By>;
   startTime?: Maybe<Order_By>;
+  streamTextEventId?: Maybe<Order_By>;
   timingsUpdatedAt?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
@@ -31806,6 +31644,7 @@ export type Schedule_Event_Order_By = {
   shufflePeriod?: Maybe<Room_ShufflePeriod_Order_By>;
   shufflePeriodId?: Maybe<Order_By>;
   startTime?: Maybe<Order_By>;
+  streamTextEventId?: Maybe<Order_By>;
   timingsUpdatedAt?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
 };
@@ -31846,6 +31685,8 @@ export enum Schedule_Event_Select_Column {
   /** column name */
   StartTime = 'startTime',
   /** column name */
+  StreamTextEventId = 'streamTextEventId',
+  /** column name */
   TimingsUpdatedAt = 'timingsUpdatedAt',
   /** column name */
   UpdatedAt = 'updatedAt'
@@ -31867,6 +31708,7 @@ export type Schedule_Event_Set_Input = {
   roomId?: Maybe<Scalars['uuid']>;
   shufflePeriodId?: Maybe<Scalars['uuid']>;
   startTime?: Maybe<Scalars['timestamptz']>;
+  streamTextEventId?: Maybe<Scalars['String']>;
   timingsUpdatedAt?: Maybe<Scalars['timestamptz']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
 };
@@ -31945,6 +31787,8 @@ export enum Schedule_Event_Update_Column {
   ShufflePeriodId = 'shufflePeriodId',
   /** column name */
   StartTime = 'startTime',
+  /** column name */
+  StreamTextEventId = 'streamTextEventId',
   /** column name */
   TimingsUpdatedAt = 'timingsUpdatedAt',
   /** column name */
@@ -38331,6 +38175,8 @@ export type Video_VonageParticipantStream = {
   conference: Conference_Conference;
   conferenceId: Scalars['uuid'];
   createdAt: Scalars['timestamptz'];
+  /** A computed field, executes function "video.VonageParticipantStream_durationSeconds" */
+  durationSeconds?: Maybe<Scalars['bigint']>;
   /** An object relationship */
   eventVonageSession?: Maybe<Video_EventVonageSession>;
   id: Scalars['uuid'];
@@ -38389,6 +38235,7 @@ export type Video_VonageParticipantStream_Bool_Exp = {
   conference?: Maybe<Conference_Conference_Bool_Exp>;
   conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  durationSeconds?: Maybe<Bigint_Comparison_Exp>;
   eventVonageSession?: Maybe<Video_EventVonageSession_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
@@ -38503,6 +38350,7 @@ export type Video_VonageParticipantStream_Order_By = {
   conference?: Maybe<Conference_Conference_Order_By>;
   conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
+  durationSeconds?: Maybe<Order_By>;
   eventVonageSession?: Maybe<Video_EventVonageSession_Order_By>;
   id?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;

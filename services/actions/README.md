@@ -56,7 +56,7 @@ We use the AWS `serverless-image-handler` template for processing uploaded profi
 
 We use a Google Cloud project to provide access to the YouTube Data API with OAuth2.
 
-1. Create a new project in Google Cloud Platform.
+1. Create a new project in [Google Cloud Platform](https://cloud.google.com/).
 1. Enable the [YouTube Data API v3](https://console.cloud.google.com/marketplace/product/google/youtube.googleapis.com)
 1. Create a mew [OAuth 2.0 Client ID](https://console.cloud.google.com/apis/credentials)
 1. Set the _Authorised JavaScript origins_ `URIs` to the URI at which the frontend is hosted.

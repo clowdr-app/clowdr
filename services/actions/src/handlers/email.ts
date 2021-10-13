@@ -76,13 +76,16 @@ export async function insertEmails(
         query: ConferenceEmailConfigurationDocument,
         variables: {
             conferenceId,
-            includeConferenceFields: !!conferenceId,
+            includeConferenceFields: Boolean(conferenceId),
         },
     });
 
-    const supportAddress = configResponse?.data.support?.[0].value ?? undefined;
+    const supportAddress = configResponse.data.support?.[0]?.value ?? undefined;
     const techSupportAddress = configResponse.data.techSupport?.[0]?.value ?? undefined;
-    const frontendHost = configResponse.data.frontendHost?.[0]?.value ?? "Error: Host not configured";
+    const frontendHost =
+        configResponse.data.frontendHost?.[0]?.value ??
+        configResponse.data.defaultFrontendHost?.value ??
+        "Error: Host not configured";
     let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
     if (!allowedDomains) {
         allowedDomains = [];

@@ -55,6 +55,7 @@ select_permissions:
         - SPONSORS_LABEL
         - DISABLE_NEARBY_EVENTS
         - THEME_COMPONENT_COLORS
+        - DISABLE_ALL_EVENTS_FOR_ITEM
   role: unauthenticated
 - permission:
     columns:
@@ -96,6 +97,7 @@ select_permissions:
           - VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES
           - MY_BACKSTAGES_NOTICE
           - THEME_COMPONENT_COLORS
+          - DISABLE_ALL_EVENTS_FOR_ITEM
   role: user
 update_permissions:
 - permission:

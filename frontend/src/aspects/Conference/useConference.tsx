@@ -75,6 +75,11 @@ gql`
             key
             value
         }
+        disableAllTimesForThisItem: configurations(where: { key: { _eq: DISABLE_ALL_EVENTS_FOR_ITEM } }) {
+            conferenceId
+            key
+            value
+        }
         disableNearbyEvents: configurations(where: { key: { _eq: DISABLE_NEARBY_EVENTS } }) {
             conferenceId
             key

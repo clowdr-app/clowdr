@@ -64,7 +64,7 @@
         "@types/uuid": "^8.3.1",
         "@types/ws": "^7.4.7",
         "@unbounce/parse-aws-arn": "^1.2.2",
-        "@uppy/companion": "^3.0.1",
+        "@uppy/companion": "^3.1.0",
         "amazon-s3-uri": "^0.1.1",
         "axios": "^0.21.1",
         "axios-better-stacktrace": "^2.1.1",

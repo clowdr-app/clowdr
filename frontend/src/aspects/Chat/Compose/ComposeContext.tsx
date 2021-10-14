@@ -153,7 +153,7 @@ export function ComposeContextProvider({
             // ? "Question mark required."
             newMessageType === Chat_MessageType_Enum.Answer && !("questionMessagesIds" in newMessageData)
             ? "Please select the question you are answering."
-            : !file?.data
+            : file && !file?.data
             ? "Please wait for file to finish uploading."
             : undefined;
 

@@ -70,6 +70,7 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
    - **Full Setup**: You will need the outputs from running the AWS CDK
      deployment. **Quick setup**: Set all the environment variables related
      to AWS to `XXXX`.
+   - `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
 1. Use the Hasura Console to add your Sendgrid API credentials to the system configuration. Open the `system.Configuration` table and insert the following rows:
 
    - `key`: `SENDGRID_API_KEY`, `value`: your SendGrid API key, as a JSON string (i.e. wrapped in double quotes)
@@ -177,13 +178,13 @@ You will not have the information required for all environment variables yet. Se
 | AWS_TRANSCRIBE_SERVICE_ROLE_ARN                  | The IAM role to be passed to Transcribe                                                                                       | Yes      |
 | AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN            | The ARN of the SNS topic for MediaConvert notifications                                                                       | Yes      |
 | AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN           | The ARN of the SNS topic for transcription notifications                                                                      | Yes      |
-| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the Cloudfront distribution obtained from deploying the Serverless Image Handler template (e.g. `f9da4dbs83dnsl`) | No       |
+| AWS_IMAGES_CLOUDFRONT_DISTRIBUTION_NAME          | The name of the CloudFront (separate AWS service from CloudFormation!) distribution obtained from deploying the Serverless Image Handler template (e.g. `f9da4dbs83dnsl`) | No       |
 | AWS_IMAGES_SECRET_VALUE                          | The value you manually entered into Secrets Manager.                                                                          | No       |
 | OPENSHOT_BASE_URL                                | The base URL of the OpenShot instance                                                                                         |          | Yes            |
 | OPENSHOT_USERNAME                                | The username you created for your OpenShot instance                                                                           |          | Yes            |
 | OPENSHOT_PASSWORD                                | The password you created for your OpenShot instance                                                                           |          | Yes            |
-| OPENTOK_API_KEY                                  | Your Vonage Video API key (project API key)                                                                                   |          |
-| OPENTOK_API_SECRET                               | Your Vonage Video API secret                                                                                                  |          |
+| OPENTOK_API_KEY                                  | Your Vonage Video API key (project API key, displayed in multicolored box at top of Vonage project page)                      |          |
+| OPENTOK_API_SECRET                               | Your Vonage Video API secret, displayed in multicolored box at top of Vonage project page                                      |          |
 | VONAGE_WEBHOOK_SECRET                            | A random token (your choice!) to be sent with Vonage webhook calls                                                            |          |
 | GOOGLE_CLIENT_ID                                 | The OAuth Client ID from your Google Cloud Platform project                                                                   |          |
 | GOOGLE_CLIENT_SECRET                             | The OAuth Client secret form your Google Cloud Platform project                                                               |          |

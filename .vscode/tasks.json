@@ -251,10 +251,24 @@
         {
             "label": "Run All -- Local Development",
             "dependsOn": [
+                "Packetriot",
                 "Hasura Console -- Local Development",
                 "Actions Service -- Local Development",
                 "Real-time Service -- Local Development",
                 "Playout Service -- Local Development",
+                "Frontend -- Local Development"
+            ],
+            "dependsOrder": "parallel",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        // Run Minimal -- Local Development
+        {
+            "label": "Run Minimal -- Local Development",
+            "dependsOn": [
+                "Packetriot",
+                "Hasura Console -- Local Development",
+                "Actions Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",

@@ -10,6 +10,8 @@ and all of our backend services.
 ## Setting Up
 
 1. `cp hasura/.env.example hasura/.env.local`
+1. `cp hasura/config.yaml.example hasura/config.yaml`
+1. Set the value of the `...ADMIN_SECRET` and `EVENT_SECRET` in both `.env.local` and `config.yaml` to random strings of your choosing that match across the two files.
 1. If you are using an M1 Mac, note that Hasura's official Docker image does not yet support this platform. You will need to use a different image built by a third party. Swap `image: hasura/graphql-engine:v{version number}.cli-migrations-v2` for `image: fedormelexin/graphql-engine-arm64:v{version number}.cli-migrations-v2` in `docker-compose.yaml`, replacing the version number as appropriate.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`.

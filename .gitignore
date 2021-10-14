@@ -121,6 +121,9 @@ services/realtime/build/
 pktriot.json
 certs
 
+# Hasura GraphQL service config
+hasura/config.yaml
+
 frontend/.env.production.x
 .DS_Store
 frontend/.env.local.x

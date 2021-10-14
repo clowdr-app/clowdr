@@ -106,6 +106,12 @@ parts of the platform, follow all the steps below.
       for expected values.
 12. Follow the instructions below for Auth0 setup.
 
+### Generating shared secrets
+
+Several setup steps require an arbitrarily selected secret value shared between services. Here are two different commands for generating 128-bit random values that you can use depending on what tools you have available:
+- `openssl rand -hex 16`
+- `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+
 ### Expose local services at a public URL
 
 When you run Clowdr locally, many parts of the system rely on exposing local

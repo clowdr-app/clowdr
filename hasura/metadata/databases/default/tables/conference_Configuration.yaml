@@ -56,6 +56,8 @@ select_permissions:
         - DISABLE_NEARBY_EVENTS
         - THEME_COMPONENT_COLORS
         - DISABLE_ALL_EVENTS_FOR_ITEM
+        - VISIBLE_EXHIBITIONS_LABEL
+        - HIDDEN_EXHIBITIONS_LABEL
   role: unauthenticated
 - permission:
     columns:
@@ -98,6 +100,8 @@ select_permissions:
           - MY_BACKSTAGES_NOTICE
           - THEME_COMPONENT_COLORS
           - DISABLE_ALL_EVENTS_FOR_ITEM
+          - VISIBLE_EXHIBITIONS_LABEL
+          - HIDDEN_EXHIBITIONS_LABEL
   role: user
 update_permissions:
 - permission:

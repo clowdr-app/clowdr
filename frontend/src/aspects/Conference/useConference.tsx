@@ -91,6 +91,17 @@ gql`
             value
         }
 
+        visibleExhibitionsLabel: configurations(where: { key: { _eq: VISIBLE_EXHIBITIONS_LABEL } }) {
+            conferenceId
+            key
+            value
+        }
+        hiddenExhibitionsLabel: configurations(where: { key: { _eq: HIDDEN_EXHIBITIONS_LABEL } }) {
+            conferenceId
+            key
+            value
+        }
+
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData
         }

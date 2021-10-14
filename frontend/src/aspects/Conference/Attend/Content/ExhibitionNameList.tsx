@@ -1,7 +1,7 @@
 import { HStack, StackProps, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import type { ExhibitionSummaryFragment, ItemExhibitionDataFragment } from "../../../../generated/graphql";
+import type { ItemExhibitionDataFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useConference } from "../../useConference";
 
@@ -22,7 +22,7 @@ export default function ExhibitionNameList({
     );
 }
 
-function ExhibitionButton({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
+function ExhibitionButton({ exhibition }: { exhibition: { id: any; name: string; colour: string } }): JSX.Element {
     const conference = useConference();
     const borderColour = useColorModeValue(
         "ItemExhibitionLinkButton.borderColor-light",

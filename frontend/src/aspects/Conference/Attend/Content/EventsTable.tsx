@@ -156,11 +156,12 @@ function Event({
                         ) : "exhibitionId" in itemEvent && itemEvent.exhibitionId ? (
                             <>
                                 <Text mr={2} pb={2}>
-                                    {itemEvent.item.title} is part of the exhibition at this event.
+                                    {itemEvent.item.title} is part of the{" "}
+                                    {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"} at this event.
                                 </Text>
                                 <LinkButton
                                     to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
-                                    aria-label={"Go to exhibition"}
+                                    aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
                                     whiteSpace="normal"
                                     variant="outline"
                                     size="sm"
@@ -170,7 +171,7 @@ function Event({
                                     colorScheme="SecondaryActionButton"
                                     linkProps={{ maxH: "unset" }}
                                 >
-                                    View exhibition
+                                    View {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}
                                 </LinkButton>
                             </>
                         ) : (
@@ -183,7 +184,7 @@ function Event({
                     <Td>
                         <LinkButton
                             to={`/conference/${conference.slug}/exhibition/${itemEvent.exhibitionId}`}
-                            aria-label={"Go to exhibition"}
+                            aria-label={`Go to ${conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}`}
                             whiteSpace="normal"
                             variant="outline"
                             size="sm"
@@ -193,7 +194,7 @@ function Event({
                             colorScheme="SecondaryActionButton"
                             linkProps={{ maxH: "unset" }}
                         >
-                            View exhibition
+                            View {conference.hiddenExhibitionsLabel[0]?.value ?? "exhibition"}
                         </LinkButton>
                     </Td>
                 ) : (

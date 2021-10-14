@@ -214,17 +214,19 @@ export default function ExhibitionsPage(): JSX.Element {
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 
-    const title = useTitle("Exhibitions");
+    const title = useTitle(conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions");
 
     return (
         <>
             {title}
             {sortedExhibitions === undefined ? (
-                <CenteredSpinner spinnerProps={{ label: "Loading exhibitions" }} />
+                <CenteredSpinner
+                    spinnerProps={{ label: `Loading ${conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}` }}
+                />
             ) : (
                 <>
                     <Heading as="h1" id="page-heading" py={6}>
-                        Exhibitions
+                        {conference.visibleExhibitionsLabel[0]?.value ?? "Exhibitions"}
                     </Heading>
                     <Grid
                         templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}

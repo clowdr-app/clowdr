@@ -378,7 +378,7 @@ export function ScheduleModal({
                             </Tab>
                             <Tab>
                                 <FAIcon iconStyle="s" icon="puzzle-piece" />
-                                &nbsp;&nbsp;Exhibitions
+                                &nbsp;&nbsp;{conference.visibleExhibitionsLabel[0]?.value ?? "Exhibition"}s
                             </Tab>
                             {anySponsors ? (
                                 <Tab>

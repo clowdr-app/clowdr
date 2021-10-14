@@ -98,9 +98,11 @@ gql`
 
     fragment ItemExhibitionData on content_ItemExhibition {
         id
-        itemId
         exhibition {
-            ...ExhibitionSummary
+            id
+            name
+            priority
+            colour
         }
     }
 `;
@@ -233,9 +235,7 @@ export function ItemElements({
                     <TagList my={3} tags={itemData.itemTags} />
                     {itemData.itemExhibitions.length > 0 ? (
                         <VStack alignItems="flex-start" mb={3}>
-                            <Text fontStyle="italic">
-                                Featured in exhibition{itemData.itemExhibitions.length > 1 ? "s" : ""}:
-                            </Text>
+                            <Text fontStyle="italic">Featured in:</Text>
                             <ExhibitionNameList mt={3} mb={5} exhibitions={itemData.itemExhibitions} />
                         </VStack>
                     ) : undefined}

@@ -333,6 +333,7 @@ function MessageBody({
                                     messageData.media.name ??
                                     (urlParts ? urlParts[urlParts.length - 1] : "unknown-file"),
                             }}
+                            variant="ghost"
                         >
                             <FAIcon iconStyle="s" icon="paperclip" />
                             &nbsp; {messageData.media.name ?? "Attachment"}

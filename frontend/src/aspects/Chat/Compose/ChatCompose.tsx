@@ -141,6 +141,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         ],
         []
     );
+    const allowedFileTypesStr = useMemo(() => allowedFileTypes.join(","), [allowedFileTypes]);
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const uppy = useMemo(() => {
@@ -436,6 +437,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 <input
                     type="file"
                     ref={fileInputRef}
+                    accept={allowedFileTypesStr}
                     style={{ display: "none" }}
                     onChange={(ev) => {
                         uppy.getFiles().map((file) => uppy.removeFile(file.name));
@@ -451,13 +453,30 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                                     },
                                 });
                             } catch (e) {
-                                toast({
-                                    title: "Unsupported file type",
-                                    description: e.toString(),
-                                    status: "error",
-                                    position: "bottom-right",
-                                    isClosable: true,
-                                });
+                                console.info("Error selecting file for chat media upload", e);
+                                if (e.toString().includes("You can only upload")) {
+                                    toast({
+                                        title: "Unsupported file type",
+                                        description: "Only images, audio, video, PDF or text files are allowed.",
+                                        status: "error",
+                                        position: "bottom-right",
+                                        isClosable: true,
+                                    });
+                                } else if (e.toString().includes("exceeds maximum allowed size")) {
+                                    toast({
+                                        title: "File must be less than 100MB",
+                                        status: "error",
+                                        position: "bottom-right",
+                                        isClosable: true,
+                                    });
+                                } else {
+                                    toast({
+                                        title: "Something went wrong. Please check your connection and try again.",
+                                        status: "error",
+                                        position: "bottom-right",
+                                        isClosable: true,
+                                    });
+                                }
                             }
                         }
                     }}

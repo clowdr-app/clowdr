@@ -78,6 +78,9 @@ typings/
 .env.staging
 .env.production
 .publisher.env
+frontend/.env.production.x
+frontend/.env.local.x
+services/realtime/src/test/.consumer.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -117,6 +120,9 @@ frontend/x.env.local
 *.local
 services/realtime/build/
 
+# MacOS
+.DS_Store
+
 # Packetriot
 pktriot.json
 certs
@@ -124,9 +130,5 @@ certs
 # Hasura GraphQL service config
 hasura/config.yaml
 
-frontend/.env.production.x
-.DS_Store
-frontend/.env.local.x
-services/realtime/src/test/.consumer.env
-
+# Database restore from backup
 restore/

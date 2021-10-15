@@ -286,62 +286,39 @@ considered for merging._**
 1. Configure `Allowed Callback URLs` (comma-separated)
    (The format/suffix of these urls should not be altered. They should
    include `localhost`.)
-
    ```
    http://localhost:3000/auth0/,
    http://localhost:3000/auth0/logged-in,
    http://localhost:3000/auth0/email-verification/result,
    ```
-
-(Note that, for production, the first URL _must_ be the `auth0` address; see
-[the auth0 documentation on Email Templates / Redirect
-URLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
-
-**Full Setup**: If you have set up Netlify, you can optionally include your
-Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a
-platform for hosting static websites. It takes our latest React site from
-git, builds it and deploys it to a CDN automatically. It's not required for
-most users - you could host the static part of the app wherever you
-want. For the local development case, you're just using a server on your
-local machine and maybe exposing it through a tunnel.
-
+   (Note that, for production, the first URL _must_ be the `auth0` address; see [the auth0 documentation on Email Templates / RedirectURLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
+   **Full Setup**: If you have set up Netlify, you can optionally include your Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a platform for hosting static websites. It takes our latest React site from git, builds it and deploys it to a CDN automatically. It's not required for most users - you could host the static part of the app wherever you want. For the local development case, you're just using a server on your local machine and maybe exposing it through a tunnel.
     ```
     https://<netlify-subdomain>.netlify.app/auth0/,
     https://<netlify-subdomain>.netlify.app/auth0/logged-in,
     https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
     ```
-
 1. Configure `Allowed Logout URLs` (comma-separated)
    (The format/suffix of these urls should not be altered.)
-
    E.g.
-
    ```
    http://localhost:3000/auth0/logged-out,
    http://localhost:3000/auth0/email-verification/required/no-redirect,
    ```
-
-**Full Setup**: If using netlify, add these:
-
-    ```
-    https://<netlify-subdomain>.netlify.app/auth0/logged-out,
-    https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
-    ```
-
+   **Full Setup**: If using netlify, add these:
+   ```
+   https://<netlify-subdomain>.netlify.app/auth0/logged-out,
+   https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
+   ```
 1. Configure `Allowed Web Origins` (comma-separated)
-
    E.g.
-
    ```
    http://localhost:3000,
    ```
-
-**Full Setup**: If using netlify, add this:
-
-    ```
-    https://<netlify-subdomain>.netlify.app
-    ```
-
+   **Full Setup**: If using netlify, add this:
+   ```
+   https://<netlify-subdomain>.netlify.app
+   ```
 1. **Don't forget to `Save changes`**
 
 #### 3. Create API

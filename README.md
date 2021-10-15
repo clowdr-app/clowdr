@@ -339,15 +339,12 @@ considered for merging._**
 Order of the rules matters.
 
 1. Create a new _Rule_
-
    - In the left sidebar under `Auth Pipeline`, click `Rules`, then `Create Rule`
    - Select `Empty rule`
    - `Name` it `Setup isNew app metadata` (or anything else, if you prefer)
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
-
    (This rule sets up the tracking of new user accounts so we only insert them into the db once.)
-
    ```js
    function (user, context, callback) {
      user.app_metadata = user.app_metadata || {};
@@ -366,18 +363,13 @@ Order of the rules matters.
      }
    }
    ```
-
-(If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
-
+   (If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
 1. Create another new _Rule_
-
    - Select `Empty rule`
    - `Name` it something like `Force Verified Email Before Login`
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
-
    This rule prevents users from logging in before they have verified their account.
-
    ```js
    function emailVerified(user, context, callback) {
      if (!user.email_verified) {
@@ -387,17 +379,13 @@ Order of the rules matters.
      }
    }
    ```
-
 1. Create another new _Rule_
-
    - Select `Empty rule`
    - `Name` it something like `Hasura JWT`
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
-
    This rule upgrades the access token to give it relevant roles which are then
    recognised by Clowdr's Hasura instance.
-
    ```js
    function (user, context, callback) {
         const namespace = configuration.HASURA_NAMESPACE;
@@ -412,17 +400,13 @@ Order of the rules matters.
         callback(null, user, context);
    }
    ```
-
 1. Create another new _Rule_
-
    - Select `Empty rule`
    - `Name` it something like `Hasura User Sync`
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
-
    This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
    directly access the `user` table.
-
    ```js
    function (user, context, callback) {
        if (user.app_metadata.isNew) {

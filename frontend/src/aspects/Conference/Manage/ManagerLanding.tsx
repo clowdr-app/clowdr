@@ -106,6 +106,18 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="pink"
                 /> */}
                 <RestrictedDashboardButton
+                    to="content"
+                    name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
+                    icon="star"
+                    description={`Manage your ${
+                        conference.sponsorsLabel?.[0]?.value ?? "sponsors"
+                    }, their booths and representatives.`}
+                    permissions={[
+                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
+                    ]}
+                    colorScheme="purple"
+                />
+                <RestrictedDashboardButton
                     to="groups"
                     name="Groups"
                     icon="user-cog"
@@ -127,18 +139,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageAttendees,
                     ]}
                     colorScheme="pink"
-                />
-                <RestrictedDashboardButton
-                    to="content"
-                    name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
-                    icon="star"
-                    description={`Manage your ${
-                        conference.sponsorsLabel?.[0]?.value ?? "sponsors"
-                    }, their booths and representatives.`}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage sponsors permission
-                    ]}
-                    colorScheme="purple"
                 />
                 {/* <RestrictedDashboardButton
                     to="chats"

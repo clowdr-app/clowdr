@@ -30,10 +30,10 @@ const presetJSONata_JSON = `
 `;
 
 const presetJSONata_CSV = `
-[$.{
-    "name": $exists(name) ? name : Name,
-    "email": $exists(email) ? email : Email,
-    "group": $exists(group) ? group : $exists(Group) ? Group : "Registrants"
+[$[$trim(Name) != ""].{
+    "name": $exists(name) ? $trim(name) : $trim(Name),
+    "email": $exists(email) ? $trim(email) : $trim(Email),
+    "group": $exists(group) and $trim(group) != "" ? $trim(group) : $exists(Group) and $trim(Group) != "" ? $trim(Group) : "Registrants"
 }]
 `;
 
@@ -60,9 +60,10 @@ export default function ImportRegistrantsPage(): JSX.Element {
             ),
         [data]
     );
-    const reviewPanel = useMemo(() => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />, [
-        intermediaryData,
-    ]);
+    const reviewPanel = useMemo(
+        () => <ReviewPanel data={intermediaryData} defaultQuery={defaultReviewQuery} />,
+        [intermediaryData]
+    );
     const importPanel = useMemo(() => <ImportPanel data={intermediaryData} />, [intermediaryData]);
 
     return (

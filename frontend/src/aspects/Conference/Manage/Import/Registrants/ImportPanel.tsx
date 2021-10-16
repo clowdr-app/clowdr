@@ -18,7 +18,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
-import assert from "assert";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -54,12 +53,11 @@ interface RegistrantFinalData {
     id: string;
     name: string;
     email: string;
-    group:
-        | undefined
-        | {
-              id: string;
-              name: string;
-          };
+    groups: {
+        id: string;
+        name: string;
+    }[];
+    missingGroups?: string[];
     isNew: boolean;
 }
 
@@ -113,72 +111,98 @@ export default function ImportPanel({
     }, [importData?.insert_registrant_Registrant, refetchRegistrants, toast]);
 
     const finalData = useMemo(() => {
-        const firstPass = Object.values(inputData).reduce(
-            (acc, input) => [
-                ...acc,
-                ...input
-                    .map((row) => ({
-                        ...row,
-                        name: row.name.trim(),
-                        email: row.email.trim().toLowerCase(),
-                    }))
-                    // Remove duplicates as compared to the existing data
-                    .reduce<RegistrantFinalData[]>((acc, row) => {
-                        const group = groupsData?.permissions_Group.find(
-                            (g) => g.name.toLowerCase() === row.group.toLowerCase()
-                        );
+        return Object.values(inputData).reduce((acc, input) => {
+            for (const row of input) {
+                const email = row.email.trim().toLowerCase();
+                const group = groupsData?.permissions_Group.find(
+                    (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
+                );
 
-                        const existingRegistrant =
+                const existingFinal = acc.find((x) => x.email === email);
+                if (existingFinal) {
+                    if (group) {
+                        const existingOriginal =
+                            !existingFinal.isNew &&
                             registrantsData?.registrant_Registrant &&
-                            registrantsData.registrant_Registrant.find((x) => {
-                                return x.invitation && x.invitation.invitedEmailAddress === row.email;
-                            });
-
-                        if (existingRegistrant) {
-                            if (!existingRegistrant.groupRegistrants.some((ga) => ga.groupId === group?.id)) {
-                                return [
-                                    ...acc,
-                                    {
-                                        name: row.name,
-                                        email: row.email,
-                                        id: existingRegistrant.id,
-                                        group,
-                                        isNew: false,
-                                    },
-                                ];
-                            } else {
-                                return acc;
-                            }
-                        } else {
-                            return [
-                                ...acc,
-                                {
-                                    name: row.name,
-                                    email: row.email,
-                                    id: uuidv4(),
-                                    group,
-                                    isNew: true,
-                                },
-                            ];
+                            registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
+                        if (
+                            !existingFinal.groups.some((x) => x.id === group.id) &&
+                            (!existingOriginal ||
+                                !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id))
+                        ) {
+                            existingFinal.groups.push(group);
                         }
-                    }, []),
-            ],
-            [] as RegistrantFinalData[]
-        );
+                    } else {
+                        if (!existingFinal.missingGroups) {
+                            existingFinal.missingGroups = [row.group];
+                        } else if (
+                            !existingFinal.missingGroups.some(
+                                (x) => x.trim().toLowerCase() === row.group.trim().toLowerCase()
+                            )
+                        ) {
+                            existingFinal.missingGroups.push(row.group);
+                        }
+                    }
+                } else {
+                    const existingOriginal =
+                        registrantsData?.registrant_Registrant &&
+                        registrantsData.registrant_Registrant.find((x) => {
+                            return x.invitation && x.invitation.invitedEmailAddress === row.email;
+                        });
+                    if (existingOriginal) {
+                        if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
+                            acc.push({
+                                id: existingOriginal.id,
+                                isNew: false,
+                                email,
+                                name: existingOriginal.displayName,
+                                groups: group ? [group] : [],
+                                missingGroups: !group ? [row.group] : undefined,
+                            });
+                        }
+                    } else {
+                        const name = row.name.trim();
+                        acc.push({
+                            id: uuidv4(),
+                            isNew: true,
+                            email,
+                            name,
+                            groups: group ? [group] : [],
+                            missingGroups: !group ? [row.group] : undefined,
+                        });
+                    }
+                }
+            }
 
-        // Remove duplicates as compared to the provided data
-        return firstPass.filter(
-            (row1, index1) => !firstPass.some((row2, index2) => index2 < index1 && row2.email === row1.email)
-        );
+            return acc;
+        }, [] as RegistrantFinalData[]);
     }, [registrantsData?.registrant_Registrant, groupsData?.permissions_Group, inputData]);
 
-    const noGroup = finalData.some((x) => !x.group);
+    const missingGroups = useMemo<string[]>(
+        () =>
+            finalData?.reduce<string[]>((acc, x) => {
+                if (x.missingGroups) {
+                    acc.push(...x.missingGroups);
+                }
+                return acc;
+            }, []) ?? [],
+        [finalData]
+    );
     const noEmail = finalData.some((x) => x.email.length === 0);
     const noName = finalData.some((x) => x.name.length === 0);
 
     const totalInputLength = useMemo(
         () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
         [inputData]
+    );
+    const totalOutputLength = useMemo(() => finalData?.reduce((acc, x) => acc + x.groups.length, 0) ?? 0, [finalData]);
+    const newRegistrantsCount = useMemo(
+        () => finalData?.reduce((acc, x) => acc + (x.isNew ? 1 : 0), 0) ?? 0,
+        [finalData]
+    );
+    const existingRegistrantsCount = useMemo(
+        () => finalData?.reduce((acc, x) => acc + (!x.isNew ? 1 : 0), 0) ?? 0,
+        [finalData]
     );
 
     return (
@@ -206,31 +230,30 @@ export default function ImportPanel({
             <HStack>
                 <Button
                     colorScheme="purple"
-                    isDisabled={!!groupsError || !!registrantsError || noName || noEmail || noGroup}
+                    isDisabled={!!groupsError || !!registrantsError || noName || noEmail || !!missingGroups.length}
                     isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {
                         const newRegistrants = finalData.filter((x) => x.isNew);
                         const newGroupRegistrants: Permissions_GroupRegistrant_Insert_Input[] = finalData
                             .filter((x) => !x.isNew)
-                            .map((x) => ({
-                                registrantId: x.id,
-                                groupId: x.group?.id,
-                            }));
+                            .flatMap((x) =>
+                                x.groups.map((y) => ({
+                                    registrantId: x.id,
+                                    groupId: y.id,
+                                }))
+                            );
 
                         importMutation({
                             variables: {
                                 insertRegistrants: newRegistrants.map((x) => {
-                                    assert(x.group);
                                     return {
                                         id: x.id,
                                         conferenceId: conference.id,
                                         displayName: x.name,
                                         groupRegistrants: {
-                                            data: [
-                                                {
-                                                    groupId: x.group.id,
-                                                },
-                                            ],
+                                            data: x.groups.map((y) => ({
+                                                groupId: y.id,
+                                            })),
                                         },
                                     };
                                 }),
@@ -249,7 +272,7 @@ export default function ImportPanel({
                 <LinkButton
                     to={`/conference/${conference.slug}/manage/registrants`}
                     colorScheme="red"
-                    isDisabled={!!finalData?.length && (!hasImported || importLoading)}
+                    isDisabled={!!totalOutputLength && (!hasImported || importLoading)}
                 >
                     Go to Manage Registrants
                 </LinkButton>
@@ -278,7 +301,7 @@ export default function ImportPanel({
                     <AlertTitle>Error: One or more rows has no &lsquot;email&rsquot; value</AlertTitle>
                 </Alert>
             ) : undefined}
-            {noGroup && !groupsLoading ? (
+            {missingGroups.length && !groupsLoading ? (
                 <Alert
                     status="error"
                     variant="top-accent"
@@ -294,6 +317,12 @@ export default function ImportPanel({
                         <VStack alignItems="flex-start" spacing={2} my={2}>
                             <Text overflowWrap="normal">
                                 Make sure you created any groups before importing registrants.
+                            </Text>
+                            <Text overflowWrap="normal">
+                                Missing groups are:{" "}
+                                {R.sortBy((x) => x, missingGroups)
+                                    .reduce<string>((acc, x) => `${acc}, ${x}`, "")
+                                    .substring(2)}
                             </Text>
                             <Text overflowWrap="normal">
                                 {groupsData
@@ -312,7 +341,7 @@ export default function ImportPanel({
                     </AlertDescription>
                 </Alert>
             ) : undefined}
-            {!noName && !noEmail && !noGroup && !groupsLoading && finalData.length < totalInputLength ? (
+            {!noName && !noEmail && !missingGroups.length && !groupsLoading && totalOutputLength < totalInputLength ? (
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
@@ -320,13 +349,17 @@ export default function ImportPanel({
                     </AlertTitle>
                 </Alert>
             ) : undefined}
-            {!noName && !noEmail && !noGroup && !groupsLoading ? (
+            {!noName && !noEmail && !missingGroups.length && !groupsLoading ? (
                 <Alert>
                     <AlertIcon />
-                    <AlertTitle>{finalData.length} unique registrant-group pairs will be imported.</AlertTitle>
-                    {finalData.length < totalInputLength ? (
+                    <AlertTitle>
+                        {newRegistrantsCount} new registrants will be imported.
+                        <br />
+                        {existingRegistrantsCount} existing registrants will be added to more groups.
+                    </AlertTitle>
+                    {totalOutputLength < totalInputLength ? (
                         <AlertDescription>
-                            ({totalInputLength - finalData.length} were ignored due to de-duplication)
+                            ({totalInputLength - totalOutputLength} group assignments were de-duplicated)
                         </AlertDescription>
                     ) : undefined}
                 </Alert>
@@ -345,10 +378,10 @@ export default function ImportPanel({
                                 <Tr key={x.id}>
                                     <Td>{x.name}</Td>
                                     <Td>{x.email}</Td>
-                                    <Td>{x.group?.name}</Td>
+                                    <Td>{x.groups.map((y) => y.name).join(", ")}</Td>
                                 </Tr>
                             ))}
-                        {finalData.length === 0 ? (
+                        {totalOutputLength === 0 ? (
                             <Tr>
                                 <Td>No new data to import</Td>
                                 <Td></Td>

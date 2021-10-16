@@ -420,10 +420,10 @@ Order of the rules matters.
            }`;
            const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "email": email } };
 
-           // console.log("url", url);
            // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
 
            const sendRequest = (url, adminSecret, user, context, cb) => {
+               // console.log("url", url);
                request.post({
                    headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
                    url:   url,

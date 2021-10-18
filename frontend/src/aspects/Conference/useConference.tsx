@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
-import { Button, chakra, Code, Text, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import assert from "assert";
-import React, { useState } from "react";
+import React from "react";
+import { AppError } from "../../AppError";
 import {
     AuthdConferenceInfoFragment,
     PublicConferenceInfoFragment,
@@ -9,7 +10,6 @@ import {
     useConferenceBySlug_WithUserQuery,
 } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import GenericErrorPage from "../Errors/GenericErrorPage";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
@@ -226,7 +226,6 @@ function ConferenceProvider_WithUser({
             userId,
         },
     });
-    const [now] = useState(Date.now());
 
     if (loading && !data) {
         return <CenteredSpinner />;
@@ -235,25 +234,12 @@ function ConferenceProvider_WithUser({
     if (error) {
         return (
             <VStack>
-                <GenericErrorPage heading="Sorry, Midspace ran into a problem.">
-                    <Text pb="6px">If you report this error, please include the following details:</Text>
-                    <VStack alignItems="left" p="8px" bgColor="#eee" maxH="80vh" overflowY="auto" maxWidth="80%">
-                        <Code>{JSON.stringify(error)}</Code>
-                        <Code>Time: {now}</Code>
-                        <Code>Location: {window.location.href}</Code>
-                    </VStack>
-                    <Button
-                        onClick={() => window.location.reload(false)}
-                        bgColor="#eee"
-                        p="12px"
-                        border="1px solid black"
-                        borderRadius="4px"
-                        fontSize="1.2em"
-                    >
-                        Refresh
-                    </Button>
-                    <chakra.a href="/">Return to home</chakra.a>
-                </GenericErrorPage>
+                <AppError
+                    error={error}
+                    resetErrorBoundary={() => {
+                        //
+                    }}
+                />
             </VStack>
         );
     }

@@ -18,7 +18,7 @@ module.exports = {
     overwrite: true,
     generates: {
         "./src/generated/graphql.tsx": {
-            plugins: ["typescript", "typescript-operations", "typescript-urql"],
+            plugins: ["typescript", "typescript-operations", "typescript-urql", "typescript-urql-graphcache"],
             config: {
                 skipTypename: false,
                 withHooks: true,
@@ -30,8 +30,11 @@ module.exports = {
                 addDocBlocks: true,
             },
         },
-        "./graphql.schema.json": {
+        "./src/generated/graphql.schema.json": {
             plugins: ["introspection"],
+            config: {
+                minify: true,
+            }
         },
     },
 };

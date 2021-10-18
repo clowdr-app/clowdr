@@ -726,16 +726,18 @@ export class ChatState {
                 const result = await this.globalState.client.query<
                     SelectMessagesPageQuery,
                     SelectMessagesPageQueryVariables
-                >({
-                    query: SelectMessagesPageDocument,
-                    variables: {
+                >(
+                    SelectMessagesPageDocument,
+                    {
                         chatId: this.Id,
                         maxCount: pageSize,
                         startAtIndex: this.lastHistoricallyFetchedMessageId,
                     },
-                    fetchPolicy:
-                        this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1 ? "network-only" : undefined,
-                });
+                    {
+                        fetchPolicy:
+                            this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1 ? "network-only" : undefined,
+                    }
+                );
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
                         const existing = this.messages.get(msg.sId);
@@ -1169,7 +1171,7 @@ export class GlobalChatState {
             shortName: string;
         },
         public readonly registrant: Registrant,
-        public readonly client: UrqlClient<unknown>
+        public readonly client: UrqlClient
     ) {}
 
     private chatStates: Map<string, ChatState> | undefined;

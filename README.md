@@ -279,10 +279,11 @@ considered for merging._**
 #### 1. Configure application
 
 1. In the left sidebar under `Applications`, click `Applications`.
-1. There should be a single application named `Default Application`. If not, create an application. Click on it to go to its settings page.
+1. There should be a single application named `Default Application`. If not, create a new application of type Single Page Application. Click on the application name to go to its settings page.
 1. Rename the Default Application if you'd like, and make a note of the following configuration parameters:
    - Domain
    - Client ID
+1. In the `Application Properties` section, for `Application Type` select `Single Page Application`.
 1. Configure `Allowed Callback URLs` (comma-separated)
    (The format/suffix of these urls should not be altered. They should
    include `localhost`.)

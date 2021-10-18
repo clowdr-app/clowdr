@@ -147,7 +147,7 @@ export default function ImportPanel({
                     const existingOriginal =
                         registrantsData?.registrant_Registrant &&
                         registrantsData.registrant_Registrant.find((x) => {
-                            return x.invitation && x.invitation.invitedEmailAddress === row.email;
+                            return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
                         });
                     if (existingOriginal) {
                         if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {

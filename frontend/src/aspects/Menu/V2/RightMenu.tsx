@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink, Route, useRouteMatch } from "react-router-dom";
 import type { Schedule_EventProgramPersonRole_Enum } from "../../../generated/graphql";
 import LoginButton from "../../Auth/Buttons/LoginButton";
+import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMaybeConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
@@ -309,6 +310,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                             showLabel={isExpanded}
                             h="auto"
                             pt={1.5}
+                            mb={2}
                         >
                             <MenuItem
                                 onClick={() => {
@@ -327,6 +329,9 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                         &nbsp;&nbsp;Change UI experience
                     </MenuItem> */}
                         </MoreOptionsMenuButton>
+                        {!maybeRegistrant ? (
+                            <LogoutButton asMenuButtonV2 showLabel={isExpanded} colorScheme={colorScheme} />
+                        ) : undefined}
                     </>
                 ) : undefined}
             </Flex>

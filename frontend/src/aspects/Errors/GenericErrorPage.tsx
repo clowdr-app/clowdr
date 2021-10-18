@@ -1,14 +1,14 @@
 import { Heading, Text } from "@chakra-ui/react";
+import type { PropsWithChildren } from "react";
 import React from "react";
 import FAIcon from "../Icons/FAIcon";
 
 export default function GenericErrorPage({
     heading,
     children,
-}: {
+}: PropsWithChildren<{
     heading: string;
-    children: JSX.Element | string;
-}): JSX.Element {
+}>): JSX.Element {
     return (
         <>
             <FAIcon iconStyle="s" icon="cat" fontSize="6xl" />

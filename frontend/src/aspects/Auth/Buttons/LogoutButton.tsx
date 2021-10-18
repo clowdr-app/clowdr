@@ -8,12 +8,10 @@ export default function LogoutButton({
     asMenuItem,
     asMenuButtonV2,
     showLabel,
-    colorScheme,
 }: {
     asMenuItem?: boolean;
     asMenuButtonV2?: boolean;
     showLabel?: boolean;
-    colorScheme?: string;
 }): JSX.Element {
     const { logout } = useAuth0();
     const returnTo = useMemo(() => `${window.location.origin}/auth0/logged-out`, []);
@@ -24,7 +22,7 @@ export default function LogoutButton({
             iconStyle="s"
             icon="sign-out-alt"
             borderRadius={0}
-            colorScheme={colorScheme ?? "LeftMenuButton"}
+            colorScheme="LeftMenuButton"
             side="right"
             onClick={() => logout({ returnTo })}
             mb={1}
@@ -39,7 +37,7 @@ export default function LogoutButton({
             <Button
                 size="sm"
                 onClick={() => logout({ returnTo })}
-                colorScheme={colorScheme ?? "LogoutButtonWithinPage"}
+                colorScheme="LogoutButtonWithinPage"
                 role="menuitem"
                 aria-label="Log out"
             >

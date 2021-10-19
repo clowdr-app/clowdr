@@ -134,13 +134,11 @@ export default function ImportPanel({
                         }
                     } else {
                         if (!existingFinal.missingGroups) {
-                            existingFinal.missingGroups = [row.group];
+                            existingFinal.missingGroups = [row.group.trim()];
                         } else if (
-                            !existingFinal.missingGroups.some(
-                                (x) => x.trim().toLowerCase() === row.group.trim().toLowerCase()
-                            )
+                            !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
                         ) {
-                            existingFinal.missingGroups.push(row.group);
+                            existingFinal.missingGroups.push(row.group.trim());
                         }
                     }
                 } else {
@@ -157,7 +155,7 @@ export default function ImportPanel({
                                 email,
                                 name: existingOriginal.displayName,
                                 groups: group ? [group] : [],
-                                missingGroups: !group ? [row.group] : undefined,
+                                missingGroups: !group ? [row.group.trim()] : undefined,
                             });
                         }
                     } else {
@@ -168,7 +166,7 @@ export default function ImportPanel({
                             email,
                             name,
                             groups: group ? [group] : [],
-                            missingGroups: !group ? [row.group] : undefined,
+                            missingGroups: !group ? [row.group.trim()] : undefined,
                         });
                     }
                 }
@@ -179,13 +177,14 @@ export default function ImportPanel({
     }, [registrantsData?.registrant_Registrant, groupsData?.permissions_Group, inputData]);
 
     const missingGroups = useMemo<string[]>(
-        () =>
-            finalData?.reduce<string[]>((acc, x) => {
+        () => [
+            ...(finalData?.reduce<Set<string>>((acc, x) => {
                 if (x.missingGroups) {
-                    acc.push(...x.missingGroups);
+                    x.missingGroups.forEach((y) => acc.add(y));
                 }
                 return acc;
-            }, []) ?? [],
+            }, new Set<string>()) ?? []),
+        ],
         [finalData]
     );
     const noEmail = finalData.some((x) => x.email.length === 0);

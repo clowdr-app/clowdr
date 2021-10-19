@@ -430,16 +430,15 @@ Order of the rules matters.
                    url:   url,
                    body:  JSON.stringify(graphqlReq)
                }, function(error, response, body){
-                   // console.log('error', error);
-                   // console.log('body', body);
+                   // console.log("error", error);
+                   // console.log("body", body);
                    body = JSON.parse(body);
-                   console.log(body);
                    if (!error &&
                        body.data &&
                        body.data.insert_User &&
                        typeof body.data.insert_User.affected_rows === "number"
                    ) {
-                       console.log("Suucessfully saved to db. Marking as not new.");
+                       console.log("Successfully saved to db. Marking as not new.");
                        user.app_metadata.isNew = false;
                    }
                    else {

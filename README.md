@@ -430,6 +430,8 @@ Order of the rules matters.
                    url:   url,
                    body:  JSON.stringify(graphqlReq)
                }, function(error, response, body){
+                   // console.log('error', error);
+                   // console.log('body', body);
                    body = JSON.parse(body);
                    console.log(body);
                    if (!error &&

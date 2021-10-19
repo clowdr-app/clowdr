@@ -1,11 +1,14 @@
-import { Heading, Link, Text } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
-import { Breadcrumbs } from "../Breadcrumbs";
+import { DashboardPage } from "../DashboardPage";
+import { ConnectYouTubeAccount } from "./YouTube/ConnectYouTubeAccount";
+import { UploadYouTubeVideos } from "./YouTube/UploadYouTubeVideos";
+import { YouTubeExportProvider } from "./YouTube/YouTubeExportContext";
 
 export function YouTubeExport(): JSX.Element {
     const conference = useConference();
@@ -16,21 +19,20 @@ export function YouTubeExport(): JSX.Element {
             permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
             componentIfDenied={<PageNotFound />}
         >
-            {title}
-            <Breadcrumbs />
-            <Heading mt={4} as="h1" fontSize="4xl">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
-                Upload to YouTube
-            </Heading>
-            <Text>
-                By using this &ldquo;Export to YouTube&rdquo; feature of Midspace, you agree to{" "}
-                <Link isExternal href="https://www.youtube.com/t/terms">
-                    YouTube&apos;s Terms of Service
-                </Link>
-                .
-            </Text>
+            <DashboardPage title="Export to YouTube">
+                {title}
+                <Text>
+                    By using Midspace to export videos to YouTube, you agree to{" "}
+                    <Link isExternal href="https://www.youtube.com/t/terms">
+                        YouTube&apos;s Terms of Service
+                    </Link>
+                    .
+                </Text>
+                <YouTubeExportProvider>
+                    <ConnectYouTubeAccount my={4} />
+                    <UploadYouTubeVideos />
+                </YouTubeExportProvider>
+            </DashboardPage>
         </RequireAtLeastOnePermissionWrapper>
     );
 }

@@ -1,18 +1,30 @@
 import { gql } from "@apollo/client";
-import { Button, Heading, HStack, Link, List, ListItem, Text, useColorModeValue, useToast } from "@chakra-ui/react";
+import {
+    Box,
+    BoxProps,
+    Button,
+    Heading,
+    HStack,
+    List,
+    ListItem,
+    useColorModeValue,
+    useId,
+    useIds,
+    useToast,
+} from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
     ManageExport_RegistrantGoogleAccountFragment,
     useManageExport_DeleteRegistrantGoogleAccountMutation,
     useManageExport_GetGoogleOAuthUrlMutation,
-    useManageExport_GetRegistrantGoogleAccountsQuery,
 } from "../../../../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import { YouTubeExportContext } from "./YouTubeExportContext";
 
 gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
@@ -38,18 +50,16 @@ gql`
         }
     }
 `;
-export function ConnectYouTubeAccount(): JSX.Element {
+export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const listItemBgColour = useColorModeValue("gray.100", "gray.700");
+    const selectedListItemBgColour = useColorModeValue("purple.100", "purple.700");
     const toast = useToast();
 
     const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
-    const result = useManageExport_GetRegistrantGoogleAccountsQuery({
-        variables: {
-            registrantId: registrant?.id,
-        },
-    });
+
+    const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId } = useContext(YouTubeExportContext);
 
     const [deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
@@ -57,61 +67,115 @@ export function ConnectYouTubeAccount(): JSX.Element {
     const history = useHistory();
     const [, setGoogleOAuthRedirectUrl] = useGoogleOAuthRedirectPath();
 
+    const optionIdSuffix = useId();
+    const optionIds = useIds(
+        optionIdSuffix,
+        ...(googleAccounts.data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
+    );
+
+    const disconnectAccount = useCallback(
+        async (accountId: string) => {
+            setDeleting((x) => R.set(R.lensProp(accountId), true, x));
+            try {
+                await deleteAccount({
+                    variables: { registrantGoogleAccountId: accountId },
+                });
+                await googleAccounts.refetch();
+                toast({
+                    status: "success",
+                    title: "Unlinked YouTube account.",
+                });
+            } catch (e) {
+                toast({
+                    status: "error",
+                    title: "Failed to unlink YouTube account. Try again later.",
+                });
+            } finally {
+                setDeleting((x) => R.set(R.lensProp(accountId), false, x));
+            }
+        },
+        [deleteAccount, googleAccounts, toast]
+    );
+
+    const addAccount = useCallback(async () => {
+        try {
+            const urlResult = await mutation({
+                variables: {
+                    registrantId: registrant.id,
+                    scopes: [
+                        "https://www.googleapis.com/auth/youtube.upload",
+                        "https://www.googleapis.com/auth/youtube.readonly",
+                        "https://www.googleapis.com/auth/youtube.force-ssl",
+                    ],
+                },
+            });
+
+            if (!urlResult.data?.getGoogleOAuthUrl) {
+                throw new Error("Could not retrieve Google OAuth URL");
+            }
+
+            setGoogleOAuthRedirectUrl(history.location.pathname);
+            window.location.href = urlResult.data?.getGoogleOAuthUrl?.url;
+        } catch (e) {
+            console.error("Failed to connect to YouTube", e);
+            toast({
+                title: "Failed to connect to YouTube",
+                status: "error",
+            });
+        }
+    }, [history.location.pathname, mutation, registrant.id, setGoogleOAuthRedirectUrl, toast]);
+
     return (
-        <>
-            <Heading as="h3" size="md" textAlign="left" mb={2}>
-                Connected accounts
-            </Heading>
-            <Text>
-                By connecting your YouTube account through this &ldquo;Export to YouTube&rdquo; feature of Midspace, you
-                agree to{" "}
-                <Link isExternal href="https://www.youtube.com/t/terms">
-                    YouTube&apos;s Terms of Service
-                </Link>
-                .
-            </Text>
-            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={result}>
+        <Box {...props}>
+            <HStack justifyContent="space-between" mb={2}>
+                <Heading as="h3" size="md" textAlign="left" mb={2}>
+                    Choose a connected account
+                </Heading>
+                <Button
+                    display="block"
+                    colorScheme="PrimaryActionButton"
+                    onClick={addAccount}
+                    mt={2}
+                    ml="auto"
+                    size="sm"
+                >
+                    <FAIcon icon="plus" iconStyle="s" mr={2} />
+                    Add a YouTube account
+                </Button>
+            </HStack>
+            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
-                    <List>
-                        {accounts.map((account) => (
-                            <ListItem
-                                key={account.id}
-                                p={2}
-                                pl={4}
-                                my={2}
-                                bgColor={listItemBgColour}
-                                borderRadius="sm"
-                                overflow="hidden"
-                            >
-                                <HStack>
-                                    <FAIcon icon="youtube" iconStyle="b" />
-                                    <Text>{account.googleAccountEmail}</Text>
+                    <List
+                        role="listbox"
+                        aria-activedescendant={
+                            selectedGoogleAccountId ? `${selectedGoogleAccountId}-${optionIdSuffix}` : undefined
+                        }
+                        spacing={2}
+                    >
+                        {accounts.map((account, idx) => (
+                            <ListItem key={account.id}>
+                                <HStack gridColumnGap={2} flex={1} borderRadius="sm" overflow="hidden">
+                                    <Button
+                                        id={optionIds[idx]}
+                                        aria-selected={selectedGoogleAccountId === account.id}
+                                        isActive={selectedGoogleAccountId === account.id ? true : false}
+                                        isDisabled={Boolean(selectedGoogleAccountId)}
+                                        colorScheme="SecondaryActionButton"
+                                        role="option"
+                                        onClick={() => setSelectedGoogleAccountId(account.id)}
+                                        leftIcon={<FAIcon icon="youtube" iconStyle="b" />}
+                                        textAlign="left"
+                                    >
+                                        {account.googleAccountEmail}
+                                    </Button>
                                     <Button
                                         aria-label="disconnect account"
                                         style={{ marginLeft: "auto" }}
+                                        isDisabled={Boolean(selectedGoogleAccountId)}
                                         colorScheme="red"
                                         size="sm"
                                         isLoading={!!deleting[account.id]}
-                                        onClick={async () => {
-                                            setDeleting((x) => R.set(R.lensProp(account.id), true, x));
-                                            try {
-                                                await deleteAccount({
-                                                    variables: { registrantGoogleAccountId: account.id },
-                                                });
-                                                await result.refetch();
-                                                toast({
-                                                    status: "success",
-                                                    title: "Unlinked YouTube account.",
-                                                });
-                                            } catch (e) {
-                                                toast({
-                                                    status: "error",
-                                                    title: "Failed to unlink YouTube account. Try again later.",
-                                                });
-                                            } finally {
-                                                setDeleting((x) => R.set(R.lensProp(account.id), false, x));
-                                            }
-                                        }}
+                                        onClick={() => disconnectAccount(account.id)}
                                     >
                                         <FAIcon icon="unlink" iconStyle="s" />
                                     </Button>
@@ -121,40 +185,18 @@ export function ConnectYouTubeAccount(): JSX.Element {
                     </List>
                 )}
             </ApolloQueryWrapper>
-            <Button
-                display="block"
-                onClick={async () => {
-                    try {
-                        const urlResult = await mutation({
-                            variables: {
-                                registrantId: registrant.id,
-                                scopes: [
-                                    "https://www.googleapis.com/auth/youtube.upload",
-                                    "https://www.googleapis.com/auth/youtube.readonly",
-                                    "https://www.googleapis.com/auth/youtube.force-ssl",
-                                ],
-                            },
-                        });
-
-                        if (!urlResult.data?.getGoogleOAuthUrl) {
-                            throw new Error("Could not retrieve Google OAuth URL");
-                        }
-
-                        setGoogleOAuthRedirectUrl(history.location.pathname);
-                        window.location.href = urlResult.data?.getGoogleOAuthUrl?.url;
-                    } catch (e) {
-                        console.error("Failed to connect to YouTube", e);
-                        toast({
-                            title: "Failed to connect to YouTube",
-                            status: "error",
-                        });
-                    }
-                }}
-                mt={2}
-            >
-                <FAIcon icon="plus" iconStyle="s" mr={2} />
-                Connect to YouTube
-            </Button>
-        </>
+            {selectedGoogleAccountId && (
+                <Button
+                    display="block"
+                    colorScheme="SecondaryActionButton"
+                    onClick={() => setSelectedGoogleAccountId(null)}
+                    mt={2}
+                    ml="auto"
+                    size="sm"
+                >
+                    Cancel
+                </Button>
+            )}
+        </Box>
     );
 }

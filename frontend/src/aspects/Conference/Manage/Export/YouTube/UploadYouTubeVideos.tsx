@@ -34,7 +34,7 @@ import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/bui
 import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
 import * as R from "ramda";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
 import {
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
@@ -52,6 +52,7 @@ import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { ChooseElementByTagModal } from "../ChooseElementByTagModal";
 import { ChooseElementModal } from "../ChooseElementModal";
+import { YouTubeExportContext } from "./YouTubeExportContext";
 
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
@@ -248,6 +249,7 @@ export function UploadYouTubeVideos(): JSX.Element {
     const conference = useConference();
     const toast = useToast();
     const registrant = useCurrentRegistrant();
+    const { selectedGoogleAccountId } = useContext(YouTubeExportContext);
 
     const existingJobsResult = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
@@ -534,7 +536,7 @@ export function UploadYouTubeVideos(): JSX.Element {
         (x) => x
     );
 
-    return (
+    return selectedGoogleAccountId ? (
         <>
             <HStack alignItems="stretch">
                 <VStack alignItems="flex-start" flexGrow={1}>
@@ -1246,12 +1248,14 @@ export function UploadYouTubeVideos(): JSX.Element {
                             </>
                         ) : (
                             <Text fontStyle="italic" fontSize="sm">
-                                You haven't uploaded anything yet.
+                                You haven&apos;t uploaded anything yet.
                             </Text>
                         )}
                     </List>
                 </VStack>
             </HStack>
         </>
+    ) : (
+        <></>
     );
 }

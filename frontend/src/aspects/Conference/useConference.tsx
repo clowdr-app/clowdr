@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
+import { AppError } from "../../AppError";
 import {
     AuthdConferenceInfoFragment,
     PublicConferenceInfoFragment,
@@ -239,7 +240,12 @@ function ConferenceProvider_WithUser({
     if (error) {
         return (
             <VStack>
-                <PageNotFound />
+                <AppError
+                    error={error}
+                    resetErrorBoundary={() => {
+                        //
+                    }}
+                />
             </VStack>
         );
     }

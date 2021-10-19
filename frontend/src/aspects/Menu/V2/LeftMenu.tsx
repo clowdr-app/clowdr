@@ -8,7 +8,7 @@ import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
-import { useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
+import { ProgramModalTab, useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredEventsModal";
 import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../Conference/useConference";
@@ -161,9 +161,23 @@ export default function LeftMenu(): JSX.Element {
                     side="left"
                     ref={scheduleButtonRef as React.RefObject<HTMLButtonElement>}
                     onClick={() => schedule_OnOpen()}
-                    mb={maybeRegistrant ? 1 : "auto"}
+                    mb={conference.forceSponsorsMenuLink?.[0]?.value || maybeRegistrant ? 1 : "auto"}
                     showLabel={isExpanded}
                 />
+                {conference.forceSponsorsMenuLink?.[0]?.value ? (
+                    <MenuButton
+                        label="Sponsors"
+                        iconStyle="s"
+                        icon={"star"}
+                        px={0}
+                        borderRadius={0}
+                        colorScheme={colorScheme}
+                        side="left"
+                        onClick={() => schedule_OnOpen(undefined, ProgramModalTab.Sponsors)}
+                        mb={maybeRegistrant ? 1 : "auto"}
+                        showLabel={isExpanded}
+                    />
+                ) : undefined}
                 {maybeRegistrant ? (
                     <>
                         <MenuButton

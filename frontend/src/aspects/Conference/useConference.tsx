@@ -102,6 +102,12 @@ gql`
             value
         }
 
+        forceSponsorsMenuLink: configurations(where: { key: { _eq: FORCE_MENU_SPONSORS_LINK } }) {
+            conferenceId
+            key
+            value
+        }
+
         publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
             ...GroupData
         }

@@ -58,6 +58,7 @@ select_permissions:
         - DISABLE_ALL_EVENTS_FOR_ITEM
         - VISIBLE_EXHIBITIONS_LABEL
         - HIDDEN_EXHIBITIONS_LABEL
+        - FORCE_MENU_SPONSORS_LINK
   role: unauthenticated
 - permission:
     columns:
@@ -102,6 +103,7 @@ select_permissions:
           - DISABLE_ALL_EVENTS_FOR_ITEM
           - VISIBLE_EXHIBITIONS_LABEL
           - HIDDEN_EXHIBITIONS_LABEL
+          - FORCE_MENU_SPONSORS_LINK
   role: user
 update_permissions:
 - permission:

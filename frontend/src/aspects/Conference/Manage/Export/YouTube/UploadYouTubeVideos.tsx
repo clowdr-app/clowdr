@@ -45,13 +45,13 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
     Video_JobStatus_Enum,
-} from "../../../../generated/graphql";
-import { useRestorableState } from "../../../Generic/useRestorableState";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
-import useCurrentRegistrant from "../../useCurrentRegistrant";
-import { ChooseElementByTagModal } from "./ChooseElementByTagModal";
-import { ChooseElementModal } from "./ChooseElementModal";
+} from "../../../../../generated/graphql";
+import { useRestorableState } from "../../../../Generic/useRestorableState";
+import { FAIcon } from "../../../../Icons/FAIcon";
+import { useConference } from "../../../useConference";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
+import { ChooseElementByTagModal } from "../ChooseElementByTagModal";
+import { ChooseElementModal } from "../ChooseElementModal";
 
 gql`
     query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {

@@ -5,9 +5,9 @@ import ReactPlayer from "react-player";
 import {
     UploadYouTubeVideos_YouTubeUploadFragment,
     useUploadYouTubeVideos_GetYouTubeUploadsQuery,
-} from "../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { useConference } from "../../useConference";
+} from "../../../../../generated/graphql";
+import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import { useConference } from "../../../useConference";
 
 gql`
     query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {

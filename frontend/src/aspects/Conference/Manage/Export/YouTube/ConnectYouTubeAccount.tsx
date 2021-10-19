@@ -8,11 +8,11 @@ import {
     useManageExport_DeleteRegistrantGoogleAccountMutation,
     useManageExport_GetGoogleOAuthUrlMutation,
     useManageExport_GetRegistrantGoogleAccountsQuery,
-} from "../../../../generated/graphql";
-import { useGoogleOAuthRedirectPath } from "../../../Google/useGoogleOAuthRedirectUrl";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
-import { FAIcon } from "../../../Icons/FAIcon";
-import useCurrentRegistrant from "../../useCurrentRegistrant";
+} from "../../../../../generated/graphql";
+import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
+import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import { FAIcon } from "../../../../Icons/FAIcon";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {

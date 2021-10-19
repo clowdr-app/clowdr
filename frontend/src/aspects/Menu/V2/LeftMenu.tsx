@@ -166,7 +166,7 @@ export default function LeftMenu(): JSX.Element {
                 />
                 {conference.forceSponsorsMenuLink?.[0]?.value ? (
                     <MenuButton
-                        label="Sponsors"
+                        label={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}
                         iconStyle="s"
                         icon={"star"}
                         px={0}

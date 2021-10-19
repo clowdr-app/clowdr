@@ -543,9 +543,7 @@ variables](/frontend/README.md#frontend-configuration).
 
 ## Local Development
 
-Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development".
-
-In most cases you will also need to start up your tunnel (Packetriot/Ngrok) before running this task.
+Once you have finished setup, it's easy to run the entire environment with a single VSCode task: "Run All -- Local Development". This task starts PacketRiot tunnels as well as all Midspace services.
 
 If you alter environment config, Docker Compose config, etc., then all tasks must be restarted. Tasks can be killed in VSCode using Ctrl+C or by closing the terminal window they are running in. To kill Docker containers, you will need to manually terminate the container (e.g. by pressing the stop button in Docker Desktop)
 

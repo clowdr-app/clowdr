@@ -24,8 +24,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
@@ -33,7 +32,7 @@ import {
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
 import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -857,13 +856,13 @@ export default function ChecklistPage(): JSX.Element {
                 !event.item.elements.some((element) => {
                     if (isElementDataBlob(element.data)) {
                         const data = element.data as ElementDataBlob;
-                        return data.some(
-                            (version) =>
-                                version.data.type === Content_ElementType_Enum.VideoBroadcast &&
-                                version.data.transcode &&
-                                version.data.transcode.s3Url &&
-                                version.data.transcode.s3Url !== "" &&
-                                version.data.transcode.status === AWSJobStatus.Completed
+                        const version = R.last(data);
+                        return (
+                            version?.data.type === Content_ElementType_Enum.VideoBroadcast &&
+                            version?.data.transcode &&
+                            version?.data.transcode.s3Url &&
+                            version?.data.transcode.s3Url !== "" &&
+                            version?.data.transcode.status === AWSJobStatus.Completed
                         );
                     }
                     return false;
@@ -871,18 +870,14 @@ export default function ChecklistPage(): JSX.Element {
         );
         return (
             <ChecklistItem
-                title="All pre-recorded events have a broadcast video available"
+                title="All pre-recorded events whose items have a broadcast video element have had a video uploaded"
                 status="error"
                 description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has been assigned an item which has a broadcast video element for which a file has not been uploaded. This means the event will not be able to play back a video. This may be caused by a missing video submission. Please review your schedule and content to upload the missing video(s) or remove the events from the schedule."
                 action={{
                     title: "Manage Content",
                     url: "content",
                 }}
-                ok={
-                    checklistResponse.data?.prerecordedEventsWithoutVideo.length === 0 &&
-                    !!filteredEvents &&
-                    filteredEvents.length === 0
-                }
+                ok={!!filteredEvents && filteredEvents.length === 0}
             >
                 <Text>The following events do not meet the requirements of this rule:</Text>
                 <ExpandableList items={filteredEvents} sortBy={(x) => Date.parse(x.startTime)}>
@@ -896,7 +891,7 @@ export default function ChecklistPage(): JSX.Element {
                 </ExpandableList>
             </ChecklistItem>
         );
-    }, [checklistResponse.data?.prerecordedEventsWithoutVideo, checklistResponse.data?.prerecordedEventsWithVideo]);
+    }, [checklistResponse.data?.prerecordedEventsWithVideo]);
 
     const prerecordedEventsVideosDontExceedTime = useMemo(() => {
         const filteredEvents = checklistResponse.data?.prerecordedEventsWithVideo.filter(

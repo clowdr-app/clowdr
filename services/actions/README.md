@@ -79,6 +79,7 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
    | `SENDGRID_REPLYTO` | the 'reply-to' email address you wish to use for emails sent by Clowdr, as a JSON string |
    | `HOST_ORGANISATION_NAME` | Name of your organization to appear in email footers, as a JSON string |
    | `STOP_EMAILS_CONTACT_EMAIL_ADDRESS` | Contact address for emails received in error, as a JSON string |
+   | `DEFAULT_FRONTEND_HOST` | Either `http://localhost:3000` or your public frontend URL, as a JSON string |
 1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
 
 Now return to the main README.

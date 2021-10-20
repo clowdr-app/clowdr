@@ -372,6 +372,7 @@ function AddEventPeople_SingleProgramPersonPanel({
     const roleOptions = useMemo(
         () =>
             Object.keys(Schedule_EventProgramPersonRole_Enum)
+                .filter((x) => x !== "Participant")
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
                     const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
@@ -535,6 +536,7 @@ function AddEventPeople_FromGroupPanel({
     const roleOptions = useMemo(
         () =>
             Object.keys(Schedule_EventProgramPersonRole_Enum)
+                .filter((x) => x !== "Participant")
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
                     const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
@@ -695,6 +697,7 @@ function AddEventPeople_SingleRegistrantPanel({
     const roleOptions = useMemo(
         () =>
             Object.keys(Schedule_EventProgramPersonRole_Enum)
+                .filter((x) => x !== "Participant")
                 .sort((x, y) => x.localeCompare(y))
                 .map((x) => {
                     const v = (Schedule_EventProgramPersonRole_Enum as any)[x];

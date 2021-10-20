@@ -10,6 +10,7 @@ import * as cdk from "@aws-cdk/core";
 
 export interface AwsStackProps extends cdk.StackProps {
     stackPrefix: string;
+    vonageApiKey: string | null;
 }
 
 export class AwsStack extends cdk.Stack {
@@ -45,13 +46,22 @@ export class AwsStack extends cdk.Stack {
 
         const chimeManagerRole = this.createChimeManagerRole(actionsUser);
 
-        const accessKey = new iam.CfnAccessKey(this, "accessKey", {
+        const actionsUserAccessKey = new iam.CfnAccessKey(this, "accessKey", {
             userName: actionsUser.userName,
+        });
+
+        const vonageUser = new iam.User(this, "VonageUser", {});
+
+        const vonageUserAccessKey = new iam.CfnAccessKey(this, "VonageUserAccessKey", {
+            userName: vonageUser.userName,
         });
 
         /* S3 */
         bucket.grantPut(actionsUser);
         bucket.grantReadWrite(actionsUser);
+
+        bucket.grantPut(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
+        bucket.grantRead(vonageUser, props.vonageApiKey ? `${props.vonageApiKey}/*` : "*");
 
         /* Service Roles */
         mediaLiveServiceRole.grantPassRole(actionsUser);
@@ -96,8 +106,10 @@ export class AwsStack extends cdk.Stack {
         this.createOutput("ContentBucketId", bucket.bucketName);
 
         // IAM
-        this.createOutput("ActionsUserAccessKeyId", accessKey.ref);
-        this.createOutput("ActionsUserSecretAccessKey", accessKey.attrSecretAccessKey);
+        this.createOutput("ActionsUserAccessKeyId", actionsUserAccessKey.ref);
+        this.createOutput("ActionsUserSecretAccessKey", actionsUserAccessKey.attrSecretAccessKey);
+        this.createOutput("VonageUserAccessKeyId", vonageUserAccessKey.ref);
+        this.createOutput("VonageUserSecretAccessKey", vonageUserAccessKey.attrSecretAccessKey);
 
         // Service roles
         this.createOutput("ChimeManagerRoleArn", chimeManagerRole.roleArn);

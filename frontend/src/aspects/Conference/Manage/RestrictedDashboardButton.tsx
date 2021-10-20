@@ -10,6 +10,7 @@ export default function RestrictedDashboardButton({
     to,
     name,
     icon,
+    iconStyle,
     description,
     permissions,
     colorScheme,
@@ -18,6 +19,7 @@ export default function RestrictedDashboardButton({
     to: string;
     name: string;
     icon: string;
+    iconStyle?: "b" | "s" | "r";
     description: string;
     permissions?: Permissions_Permission_Enum[];
     colorScheme?: string;
@@ -46,7 +48,7 @@ export default function RestrictedDashboardButton({
                 {...rest}
             >
                 <Heading as="h2" fontSize="2xl" marginBottom="0.5rem">
-                    <FAIcon iconStyle="s" icon={icon} />
+                    <FAIcon iconStyle={iconStyle ?? "s"} icon={icon} />
                     <br />
                     {name}
                 </Heading>

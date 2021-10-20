@@ -70,7 +70,7 @@ export enum Content_ElementType_Enum {
 export type ElementDataBlob = ElementVersionData[];
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function isElementDataBlob(data: any): boolean {
+export function isElementDataBlob(data: any): data is ElementDataBlob {
     return is<ElementDataBlob>(data);
 }
 

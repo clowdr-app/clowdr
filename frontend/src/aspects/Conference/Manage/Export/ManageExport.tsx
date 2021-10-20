@@ -1,55 +1,23 @@
-import { Heading, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
-import PageNotFound from "../../../Errors/PageNotFound";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
-import { ConnectYouTubeAccount } from "./ConnectYouTubeAccount";
-import { UploadedYouTubeVideos } from "./UploadedYouTubeVideos";
-import { UploadYouTubeVideos } from "./UploadYouTubeVideos";
+import { Route } from "react-router";
+import { Switch, useRouteMatch } from "react-router-dom";
+import { Dashboard } from "./Dashboard";
+import { DownloadVideosPage } from "./Download/DownloadVideosPage";
+import { YouTubeExportPage } from "./YouTube/YouTubeExportPage";
 
 export default function ManageExport(): JSX.Element {
-    const conference = useConference();
-    const title = useTitle(`Export data from ${conference.shortName}`);
-
+    const { path } = useRouteMatch();
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
-            {title}
-            <Heading mt={4} as="h1" fontSize="4xl">
-                Manage {conference.shortName}
-            </Heading>
-            <Heading id="page-heading" as="h2" fontSize="2xl" fontStyle="italic">
-                Exports
-            </Heading>
-            <Text>
-                By using this &ldquo;Export to YouTube&rdquo; feature of Midspace, you agree to{" "}
-                <Link isExternal href="https://www.youtube.com/t/terms">
-                    YouTube&apos;s Terms of Service
-                </Link>
-                .
-            </Text>
-            <Tabs width="100%">
-                <TabList>
-                    <Tab>Connected YouTube accounts</Tab>
-                    <Tab>Upload videos to YouTube</Tab>
-                    <Tab>Uploaded videos</Tab>
-                </TabList>
-                <TabPanels>
-                    <TabPanel>
-                        <ConnectYouTubeAccount />
-                    </TabPanel>
-                    <TabPanel>
-                        <UploadYouTubeVideos />
-                    </TabPanel>
-                    <TabPanel>
-                        <UploadedYouTubeVideos />
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
-        </RequireAtLeastOnePermissionWrapper>
+        <Switch>
+            <Route path={`${path}/youtube`}>
+                <YouTubeExportPage />
+            </Route>
+            <Route path={`${path}/download-videos`}>
+                <DownloadVideosPage />
+            </Route>
+            <Route path="/">
+                <Dashboard />
+            </Route>
+        </Switch>
     );
 }

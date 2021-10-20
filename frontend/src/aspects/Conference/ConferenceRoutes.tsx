@@ -126,7 +126,6 @@ export default function ConferenceRoutes(): JSX.Element {
             <Route path={`${path}/manage/broadcasts`}>
                 <ManageBroadcast />
             </Route>
-
             <Route path={`${path}/manage/export`}>
                 <ManageExport />
             </Route>

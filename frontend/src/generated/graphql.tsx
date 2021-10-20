@@ -15217,6 +15217,30 @@ export type Job_Queues_UploadYouTubeVideoJob = {
   readonly videoDescription: Scalars['String'];
   readonly videoPrivacyStatus: Scalars['String'];
   readonly videoTitle: Scalars['String'];
+  /** An array relationship */
+  readonly youTubeUploads: ReadonlyArray<Video_YouTubeUpload>;
+  /** An aggregate relationship */
+  readonly youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
+};
+
+
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJobYouTubeUploadsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_YouTubeUpload_Order_By>>;
+  where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
+};
+
+
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJobYouTubeUploads_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Video_YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Video_YouTubeUpload_Order_By>>;
+  where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
 /** aggregated selection of "job_queues.UploadYouTubeVideoJob" */
@@ -15277,6 +15301,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
   readonly videoDescription?: Maybe<String_Comparison_Exp>;
   readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
   readonly videoTitle?: Maybe<String_Comparison_Exp>;
+  readonly youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "job_queues.UploadYouTubeVideoJob" */
@@ -15309,6 +15334,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
   readonly videoDescription?: Maybe<Scalars['String']>;
   readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
   readonly videoTitle?: Maybe<Scalars['String']>;
+  readonly youTubeUploads?: Maybe<Video_YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -15354,6 +15380,13 @@ export type Job_Queues_UploadYouTubeVideoJob_Mutation_Response = {
   readonly returning: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob>;
 };
 
+/** input type for inserting object relation for remote table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Obj_Rel_Insert_Input = {
+  readonly data: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
 /** on conflict condition type for table "job_queues.UploadYouTubeVideoJob" */
 export type Job_Queues_UploadYouTubeVideoJob_On_Conflict = {
   readonly constraint: Job_Queues_UploadYouTubeVideoJob_Constraint;
@@ -15380,6 +15413,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
   readonly videoDescription?: Maybe<Order_By>;
   readonly videoPrivacyStatus?: Maybe<Order_By>;
   readonly videoTitle?: Maybe<Order_By>;
+  readonly youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: job_queues_UploadYouTubeVideoJob */
@@ -39015,6 +39049,8 @@ export type Video_YouTubeUpload = {
   readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id: Scalars['uuid'];
   readonly updatedAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
   readonly videoId: Scalars['String'];
   readonly videoPrivacyStatus: Scalars['String'];
@@ -39070,6 +39106,7 @@ export type Video_YouTubeUpload_Bool_Exp = {
   readonly elementId?: Maybe<Uuid_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
   readonly uploadYouTubeVideoJobId?: Maybe<Uuid_Comparison_Exp>;
   readonly videoId?: Maybe<String_Comparison_Exp>;
   readonly videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
@@ -39094,6 +39131,7 @@ export type Video_YouTubeUpload_Insert_Input = {
   readonly elementId?: Maybe<Scalars['uuid']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+  readonly uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Obj_Rel_Insert_Input>;
   readonly uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
   readonly videoId?: Maybe<Scalars['String']>;
   readonly videoPrivacyStatus?: Maybe<Scalars['String']>;
@@ -39184,6 +39222,7 @@ export type Video_YouTubeUpload_Order_By = {
   readonly elementId?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
+  readonly uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Order_By>;
   readonly uploadYouTubeVideoJobId?: Maybe<Order_By>;
   readonly videoId?: Maybe<Order_By>;
   readonly videoPrivacyStatus?: Maybe<Order_By>;
@@ -40648,6 +40687,13 @@ export type ChooseElementModal_GetVideoElementsQueryVariables = Exact<{
 
 export type ChooseElementModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> };
 
+export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum }> }> };
+
 export type ManageExport_GetGoogleOAuthUrlMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   scopes: ReadonlyArray<Scalars['String']> | Scalars['String'];
@@ -40661,9 +40707,9 @@ export type ManageExport_GetRegistrantGoogleAccountsQueryVariables = Exact<{
 }>;
 
 
-export type ManageExport_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string }> };
+export type ManageExport_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
 
-export type ManageExport_RegistrantGoogleAccountFragment = { readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string };
+export type ManageExport_RegistrantGoogleAccountFragment = { readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> };
 
 export type ManageExport_DeleteRegistrantGoogleAccountMutationVariables = Exact<{
   registrantGoogleAccountId: Scalars['uuid'];
@@ -40671,15 +40717,6 @@ export type ManageExport_DeleteRegistrantGoogleAccountMutationVariables = Exact<
 
 
 export type ManageExport_DeleteRegistrantGoogleAccountMutation = { readonly __typename?: 'mutation_root', readonly delete_registrant_GoogleAccount_by_pk?: Maybe<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any }> };
-
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly ongoing_UploadYouTubeVideoJob: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } } }>, readonly recent_UploadYouTubeVideoJob: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } } }> };
-
-export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } } };
 
 export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -40719,14 +40756,16 @@ export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutation = { readonly __typename?: 'mutation_root', readonly refreshYouTubeData?: Maybe<{ readonly __typename?: 'RefreshYouTubeDataOutput', readonly message?: Maybe<string>, readonly success: boolean }> };
 
-export type UploadYouTubeVideos_GetYouTubeUploadsQueryVariables = Exact<{
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type UploadYouTubeVideos_GetYouTubeUploadsQuery = { readonly __typename?: 'query_root', readonly video_YouTubeUpload: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string }> }> };
 
-export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly element?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string };
+
+export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Video_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string }> };
 
 export type ImportRegistrantsMutationVariables = Exact<{
   insertRegistrants: ReadonlyArray<Registrant_Registrant_Insert_Input> | Registrant_Registrant_Insert_Input;
@@ -43050,20 +43089,7 @@ export const ManageExport_RegistrantGoogleAccountFragmentDoc = gql`
     fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
   id
   googleAccountEmail
-}
-    `;
-export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
-    fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
-  id
-  jobStatusName
-  element {
-    id
-    item {
-      id
-      title
-    }
-    name
-  }
+  youTubeData
 }
     `;
 export const UploadYouTubeVideos_ElementFragmentDoc = gql`
@@ -43079,16 +43105,22 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
   videoPrivacyStatus
   videoStatus
   videoTitle
+}
+    `;
+export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
+    fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
+  id
+  jobStatusName
+  message
   element {
     id
     name
-    item {
-      id
-      title
-    }
+  }
+  youTubeUploads {
+    ...UploadYouTubeVideos_YouTubeUpload
   }
 }
-    `;
+    ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
 export const ManageGroups_GroupFragmentDoc = gql`
     fragment ManageGroups_Group on permissions_Group {
   conferenceId
@@ -50030,6 +50062,51 @@ export function useChooseElementModal_GetVideoElementsLazyQuery(baseOptions?: Ap
 export type ChooseElementModal_GetVideoElementsQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsQuery>;
 export type ChooseElementModal_GetVideoElementsLazyQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsLazyQuery>;
 export type ChooseElementModal_GetVideoElementsQueryResult = Apollo.QueryResult<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>;
+export const DownloadVideos_GetAllVideosDocument = gql`
+    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    elements(
+      where: {typeName: {_in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    ) {
+      name
+      id
+      data
+      typeName
+    }
+    typeName
+    title
+  }
+}
+    `;
+
+/**
+ * __useDownloadVideos_GetAllVideosQuery__
+ *
+ * To run a query within a React component, call `useDownloadVideos_GetAllVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDownloadVideos_GetAllVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDownloadVideos_GetAllVideosQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useDownloadVideos_GetAllVideosQuery(baseOptions: Apollo.QueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+      }
+export function useDownloadVideos_GetAllVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+        }
+export type DownloadVideos_GetAllVideosQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosQuery>;
+export type DownloadVideos_GetAllVideosLazyQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosLazyQuery>;
+export type DownloadVideos_GetAllVideosQueryResult = Apollo.QueryResult<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>;
 export const ManageExport_GetGoogleOAuthUrlDocument = gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
   getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {
@@ -50132,52 +50209,6 @@ export function useManageExport_DeleteRegistrantGoogleAccountMutation(baseOption
 export type ManageExport_DeleteRegistrantGoogleAccountMutationHookResult = ReturnType<typeof useManageExport_DeleteRegistrantGoogleAccountMutation>;
 export type ManageExport_DeleteRegistrantGoogleAccountMutationResult = Apollo.MutationResult<ManageExport_DeleteRegistrantGoogleAccountMutation>;
 export type ManageExport_DeleteRegistrantGoogleAccountMutationOptions = Apollo.BaseMutationOptions<ManageExport_DeleteRegistrantGoogleAccountMutation, ManageExport_DeleteRegistrantGoogleAccountMutationVariables>;
-export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
-    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
-  ongoing_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
-    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_in: [NEW, IN_PROGRESS]}}
-    order_by: {createdAt: desc}
-    limit: 100
-  ) {
-    ...UploadYouTubeVideos_UploadYouTubeVideoJob
-  }
-  recent_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
-    where: {conferenceId: {_eq: $conferenceId}, jobStatusName: {_nin: [NEW, IN_PROGRESS]}}
-    order_by: {createdAt: desc}
-    limit: 10
-  ) {
-    ...UploadYouTubeVideos_UploadYouTubeVideoJob
-  }
-}
-    ${UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc}`;
-
-/**
- * __useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery__
- *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
-      }
-export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
-        }
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>;
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery>;
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>;
 export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
   registrant_GoogleAccount(where: {registrantId: {_eq: $registrantId}}) {
@@ -50412,41 +50443,45 @@ export function useUploadYouTubeVideos_RefreshYouTubeDataMutation(baseOptions?: 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationHookResult = ReturnType<typeof useUploadYouTubeVideos_RefreshYouTubeDataMutation>;
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationResult = Apollo.MutationResult<UploadYouTubeVideos_RefreshYouTubeDataMutation>;
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationOptions = Apollo.BaseMutationOptions<UploadYouTubeVideos_RefreshYouTubeDataMutation, UploadYouTubeVideos_RefreshYouTubeDataMutationVariables>;
-export const UploadYouTubeVideos_GetYouTubeUploadsDocument = gql`
-    query UploadYouTubeVideos_GetYouTubeUploads($conferenceId: uuid!) {
-  video_YouTubeUpload(where: {conferenceId: {_eq: $conferenceId}}) {
-    ...UploadYouTubeVideos_YouTubeUpload
+export const UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument = gql`
+    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
+  job_queues_UploadYouTubeVideoJob(
+    where: {conferenceId: {_eq: $conferenceId}}
+    order_by: {createdAt: desc}
+    limit: 100
+  ) {
+    ...UploadYouTubeVideos_UploadYouTubeVideoJob
   }
 }
-    ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
+    ${UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc}`;
 
 /**
- * __useUploadYouTubeVideos_GetYouTubeUploadsQuery__
+ * __useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery__
  *
- * To run a query within a React component, call `useUploadYouTubeVideos_GetYouTubeUploadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadYouTubeVideos_GetYouTubeUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUploadYouTubeVideos_GetYouTubeUploadsQuery({
+ * const { data, loading, error } = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
  *   variables: {
  *      conferenceId: // value for 'conferenceId'
  *   },
  * });
  */
-export function useUploadYouTubeVideos_GetYouTubeUploadsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery(baseOptions: Apollo.QueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, options);
+        return Apollo.useQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
       }
-export function useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>) {
+export function useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>(UploadYouTubeVideos_GetYouTubeUploadsDocument, options);
+          return Apollo.useLazyQuery<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>(UploadYouTubeVideos_GetUploadYouTubeVideoJobsDocument, options);
         }
-export type UploadYouTubeVideos_GetYouTubeUploadsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsQuery>;
-export type UploadYouTubeVideos_GetYouTubeUploadsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetYouTubeUploadsLazyQuery>;
-export type UploadYouTubeVideos_GetYouTubeUploadsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetYouTubeUploadsQuery, UploadYouTubeVideos_GetYouTubeUploadsQueryVariables>;
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery>;
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQueryHookResult = ReturnType<typeof useUploadYouTubeVideos_GetUploadYouTubeVideoJobsLazyQuery>;
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryResult = Apollo.QueryResult<UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery, UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables>;
 export const ImportRegistrantsDocument = gql`
     mutation ImportRegistrants($insertRegistrants: [registrant_Registrant_insert_input!]!, $insertInvitations: [registrant_Invitation_insert_input!]!, $insertGroupRegistrants: [permissions_GroupRegistrant_insert_input!]!) {
   insert_registrant_Registrant(objects: $insertRegistrants) {

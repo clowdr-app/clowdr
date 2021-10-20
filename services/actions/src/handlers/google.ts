@@ -100,7 +100,7 @@ export async function handleSubmitGoogleOAuthToken(
     try {
         assert(process.env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID environment variable not provided");
 
-        console.log("Retrieving Google auth token", userId, params.state);
+        console.log("Retrieving Google auth token", { userId, registrantId: params.state });
         const validRegistrant = await registrantBelongsToUser(params.state, userId);
         assert(validRegistrant, "Registrant does not belong to the user");
 
@@ -119,7 +119,6 @@ export async function handleSubmitGoogleOAuthToken(
 
         const oauth2Client = createOAuth2Client();
 
-        console.log(params.code);
         const token = await oauth2Client.getToken({
             code: params.code,
             client_id: process.env.GOOGLE_CLIENT_ID,
@@ -127,13 +126,13 @@ export async function handleSubmitGoogleOAuthToken(
         });
 
         if (!token.tokens.id_token) {
-            console.error("Failed to retrieve id_token", userId);
+            console.error("Failed to retrieve id_token", { userId });
             throw new Error("Failed to retrieve id_token");
         }
 
-        console.log("Retrieved Google auth token", userId);
+        console.log("Retrieved Google auth token", { userId });
 
-        console.log("Verifying Google JWT", userId, params.state);
+        console.log("Verifying Google JWT", { userId, registrantId: params.state });
         await oauth2Client.verifyIdToken({
             idToken: token.tokens.id_token,
             audience: oauth2Client._clientId,
@@ -141,7 +140,7 @@ export async function handleSubmitGoogleOAuthToken(
 
         const tokenData = jwt_decode<GoogleIdToken>(token.tokens.id_token);
 
-        console.log("Saving Google OAuth tokens", userId, params.state);
+        console.log("Saving Google OAuth tokens", { userId, registrantId: params.state });
         const result = await apolloClient.mutate({
             mutation: Google_CreateRegistrantGoogleAccountDocument,
             variables: {
@@ -170,8 +169,8 @@ export async function handleSubmitGoogleOAuthToken(
         return {
             success: true,
         };
-    } catch (e) {
-        console.error("Failed to exchange authorisation code for token", e);
+    } catch (err) {
+        console.error("Failed to exchange authorisation code for token", { err, userId, registrantId: params.state });
         return {
             success: false,
             message: "Failed to exchange authorisation code for token",

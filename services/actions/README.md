@@ -72,11 +72,13 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
      to AWS to `XXXX`.
    - `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
 1. Use the Hasura Console to add your Sendgrid API credentials to the system configuration. Open the `system.Configuration` table and insert the following rows:
-
-   - `key`: `SENDGRID_API_KEY`, `value`: your SendGrid API key, as a JSON string (i.e. wrapped in double quotes)
-   - `key`: `SENDGRID_SENDER`, `value`: the 'from' email address you wish to use for emails sent by Clowdr, as a JSON string
-   - `key`: `SENDGRID_REPLYTO`, `value`: the 'reply-to' email address you wish to use for emails sent by Clowdr, as a JSON string
-
+   | Key | Value |
+   | ------- | ---------- |
+   | `SENDGRID_API_KEY` | your SendGrid API key, as a JSON string (i.e. wrapped in double quotes) |
+   | `SENDGRID_SENDER` | the 'from' email address you wish to use for emails sent by Clowdr, as a JSON string |
+   | `SENDGRID_REPLYTO` | the 'reply-to' email address you wish to use for emails sent by Clowdr, as a JSON string |
+   | `HOST_ORGANISATION_NAME` | Name of your organization to appear in email footers, as a JSON string |
+   | `STOP_EMAILS_CONTACT_EMAIL_ADDRESS` | Contact address for emails received in error, as a JSON string |
 1. Run the `Actions service - GraphQL Codegen` task in VSCode to generate the GraphQL query code (Hasura must be running when you do this).
 
 Now return to the main README.

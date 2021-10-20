@@ -43,6 +43,7 @@ export default function LeftMenu(): JSX.Element {
             conferenceId: conference.id,
         },
         fetchPolicy: "cache-first",
+        skip: !maybeUser,
     });
 
     const { liveEventsByRoom } = useLiveEvents();

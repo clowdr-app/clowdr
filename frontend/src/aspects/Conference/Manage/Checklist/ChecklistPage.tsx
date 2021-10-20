@@ -870,7 +870,7 @@ export default function ChecklistPage(): JSX.Element {
         );
         return (
             <ChecklistItem
-                title="All pre-recorded events with a broadcast video element have had a video uploaded"
+                title="All pre-recorded events whose items have a broadcast video element have had a video uploaded"
                 status="error"
                 description="Pre-recorded events pick up the Broadcast Video from their assigned content item. One or more 'pre-recorded' mode events has been assigned an item which has a broadcast video element for which a file has not been uploaded. This means the event will not be able to play back a video. This may be caused by a missing video submission. Please review your schedule and content to upload the missing video(s) or remove the events from the schedule."
                 action={{

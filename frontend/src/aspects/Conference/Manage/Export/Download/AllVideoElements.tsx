@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client";
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
-import type {
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import {
+    AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
+    ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
@@ -44,6 +44,16 @@ function elementDataToMaybeText(elementData: any): string | null {
     }
 
     return null;
+}
+
+function toS3Url(s3Url: string): string | undefined {
+    try {
+        const { bucket, key } = new AmazonS3URI(s3Url);
+
+        return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+    } catch (err) {
+        return undefined;
+    }
 }
 
 export function AllVideoElements(): JSX.Element {
@@ -96,9 +106,23 @@ export function AllVideoElements(): JSX.Element {
         if (!s3Url) {
             return undefined;
         }
-        const { bucket, key } = new AmazonS3URI(s3Url);
 
-        return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        return toS3Url(s3Url);
+    }, []);
+
+    const extractCaptionUrls = useCallback((data: ElementDataBlob) => {
+        const elementData = R.last(data)?.data;
+
+        if (!elementData || elementData.baseType !== ElementBaseType.Video) {
+            return undefined;
+        }
+
+        const entries = Object.entries(elementData.subtitles)
+            .filter(([, v]) => v.status === AWSJobStatus.Completed)
+            .map(([k, v]): [string, string] => [k, toS3Url(v.s3Url) ?? ""])
+            .filter(([, v]) => Boolean(v.length));
+
+        return Object.fromEntries(entries);
     }, []);
 
     const downloadManifest = useCallback(() => {
@@ -108,6 +132,7 @@ export function AllVideoElements(): JSX.Element {
             itemTitle: item.title,
             elementName: element.name,
             fileName: extractVideoUrl(element.data),
+            captionUrls: extractCaptionUrls(element.data),
             text,
         }));
 

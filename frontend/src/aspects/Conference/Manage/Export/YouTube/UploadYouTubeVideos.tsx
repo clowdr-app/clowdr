@@ -11,13 +11,10 @@ import {
     ListIcon,
     ListItem,
     Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverCloseButton,
     PopoverContent,
-    PopoverHeader,
     PopoverTrigger,
     Select,
+    Spacer,
     Spinner,
     Text,
     Textarea,
@@ -26,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
-import Mustache from "mustache";
+import * as Handlebars from "handlebars";
 import * as R from "ramda";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -44,7 +41,8 @@ import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { ChooseElementByTagModal } from "./ChooseElementByTagModal";
 import { ChooseElementModal } from "./ChooseElementModal";
 import { MetadataPreview } from "./MetadataPreview";
-import { TemplateInstructions } from "./TemplateInstructions";
+import { TemplateHelpPopover } from "./TemplateHelpPopover";
+import { defaultDescriptionTemplate, defaultTitleTemplate } from "./templates";
 import { YouTubeExportContext } from "./YouTubeExportContext";
 
 gql`
@@ -181,31 +179,13 @@ export function UploadYouTubeVideos(): JSX.Element {
 
     const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
         "clowdr-youTubeTitleTemplate",
-        "{{{itemTitle}}} ({{{fileName}}})",
+        defaultTitleTemplate,
         (x) => x,
         (x) => x
     );
     const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
         "clowdr-youTubeDescriptionTemplate-v2",
-        `{{#abstract}}{{{abstract}}}
-
-{{/abstract}}
-{{#authors.length}}
-{{#authors}}{{{name}}}{{#affiliation}} ({{{affiliation}}}){{/affiliation}}, {{/authors}}
-
-{{/authors.length}}
-{{#paperLinks.length}}
-{{#paperLinks}}{{#url}}
-* {{{text}}}: {{{url}}}
-{{/url}}{{/paperLinks}}
-
-{{/paperLinks.length}}
-{{#paperUrls.length}}
-{{#paperUrls}}{{#.}}* {{{.}}}
-{{/.}}{{/paperUrls}}
-
-{{/paperUrls.length}}
-`,
+        defaultDescriptionTemplate,
         (x) => x,
         (x) => x
     );
@@ -324,6 +304,9 @@ export function UploadYouTubeVideos(): JSX.Element {
         ): Promise<{ [elementId: string]: { title: string; description: string } }> => {
             const result = await refetchTemplateData({ elementIds });
 
+            const titleTemplate = Handlebars.compile(titleTemplateString);
+            const descriptionTemplate = Handlebars.compile(descriptionTemplateString);
+
             if (!result || !result.data) {
                 console.error("Could not retrieve data for content item templates", result.error, result.errors);
                 throw new Error("Could not retrieve data for content item templates");
@@ -437,8 +420,8 @@ export function UploadYouTubeVideos(): JSX.Element {
                 return [
                     elementId,
                     {
-                        title: Mustache.render(titleTemplateString, view),
-                        description: Mustache.render(descriptionTemplateString, view),
+                        title: titleTemplate(view),
+                        description: descriptionTemplate(view),
                     },
                 ];
             });
@@ -665,7 +648,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                 </List>
             </FormControl>
 
-            <Heading as="h2" size="md" textAlign="left" my={4}>
+            <Heading as="h2" size="md" textAlign="left" my={4} mt={8}>
                 Set video privacy
             </Heading>
 
@@ -684,37 +667,66 @@ export function UploadYouTubeVideos(): JSX.Element {
                 <FormErrorMessage>{errors.videoPrivacyStatus?.message}</FormErrorMessage>
             </FormControl>
 
-            <Heading as="h2" size="md" textAlign="left" my={4}>
+            <Heading as="h2" size="md" textAlign="left" my={4} mt={8}>
                 Set video titles and descriptions
             </Heading>
-            <Popover>
-                <PopoverTrigger>
-                    <Button>
-                        <FAIcon icon="question-circle" iconStyle="s" mr={2} />
-                        Help
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>Title and description templates</PopoverHeader>
-                    <PopoverBody>
-                        <TemplateInstructions />
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
+
             <FormControl isInvalid={Boolean(errors.titleTemplate) && Boolean(touchedFields.titleTemplate)} isRequired>
-                <FormLabel mt={2}>Video title template</FormLabel>
-                <Input {...register("titleTemplate")} placeholder="{{fileName}}" mt={2} />
-                <FormErrorMessage>{errors.titleTemplate?.message}</FormErrorMessage>
+                <HStack mt={4}>
+                    <FormLabel mt={2}>Video title template</FormLabel>
+                    <Spacer />
+                    <TemplateHelpPopover />
+                    <Button
+                        aria-label="Reset video title template"
+                        onClick={() => {
+                            setValue("titleTemplate", defaultTitleTemplate);
+                            setYouTubeTitleTemplate(defaultTitleTemplate);
+                            trigger("titleTemplate");
+                        }}
+                        size="xs"
+                        leftIcon={<FAIcon icon="redo" iconStyle="s" />}
+                        isDisabled={defaultTitleTemplate === titleTemplate}
+                    >
+                        Reset
+                    </Button>
+                </HStack>
+                <Input {...register("titleTemplate", { required: true })} placeholder={defaultTitleTemplate} mt={2} />
+                <FormErrorMessage>
+                    {errors.titleTemplate?.type === "required" && "You must supply a title template. "}
+                    {errors.titleTemplate?.message}
+                </FormErrorMessage>
             </FormControl>
             <FormControl
                 isInvalid={Boolean(errors.descriptionTemplate) && Boolean(touchedFields.descriptionTemplate)}
                 isRequired
             >
-                <FormLabel mt={2}>Video description template</FormLabel>
-                <Textarea {...register("descriptionTemplate")} placeholder="{{abstract}}" mt={2} />
-                <FormErrorMessage>{errors.descriptionTemplate?.message}</FormErrorMessage>
+                <HStack justifyContent="space-between" mt={4}>
+                    <FormLabel mt={2}>Video description template</FormLabel>
+                    <Spacer />
+                    <TemplateHelpPopover />
+                    <Button
+                        aria-label="Reset video description template"
+                        onClick={() => {
+                            setValue("descriptionTemplate", defaultDescriptionTemplate);
+                            setYouTubeTitleTemplate(defaultDescriptionTemplate);
+                            trigger("descriptionTemplate");
+                        }}
+                        size="xs"
+                        leftIcon={<FAIcon icon="redo" iconStyle="s" />}
+                        isDisabled={defaultDescriptionTemplate === descriptionTemplate}
+                    >
+                        Reset
+                    </Button>
+                </HStack>
+                <Textarea
+                    {...register("descriptionTemplate", { required: true })}
+                    placeholder={defaultDescriptionTemplate}
+                    mt={2}
+                />
+                <FormErrorMessage>
+                    {errors.descriptionTemplate?.type === "required" && "You must supply a description template. "}
+                    {errors.descriptionTemplate?.message}
+                </FormErrorMessage>
             </FormControl>
 
             <Heading as="h2" size="md" textAlign="left" my={4}>
@@ -724,14 +736,17 @@ export function UploadYouTubeVideos(): JSX.Element {
             <FormControl isInvalid={Boolean(errors.channelId) && Boolean(touchedFields.channelId)} isRequired>
                 <FormLabel mt={2}>Channel</FormLabel>
                 <Select
-                    {...register("channelId")}
+                    {...register("channelId", { required: true })}
                     placeholder="Choose channel"
                     mt={2}
                     isDisabled={!selectedGoogleAccountId}
                 >
                     {channelOptions}
                 </Select>
-                <FormErrorMessage>{errors.channelId?.message}</FormErrorMessage>
+                <FormErrorMessage>
+                    {errors.channelId?.type === "required" && "You must choose a channel. "}
+                    {errors.channelId?.message}
+                </FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={Boolean(errors.playlistId) && Boolean(touchedFields.playlistId)}>
@@ -742,7 +757,7 @@ export function UploadYouTubeVideos(): JSX.Element {
                     {...register("playlistId")}
                     id="playlistId"
                     placeholder="Choose playlist"
-                    isDisabled={!selectedGoogleAccountId}
+                    isDisabled={!selectedGoogleAccountId || !channelId}
                     mt={2}
                 >
                     {playlistOptions}

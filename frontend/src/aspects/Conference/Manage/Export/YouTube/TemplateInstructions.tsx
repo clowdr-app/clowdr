@@ -6,7 +6,10 @@ export function TemplateInstructions(): JSX.Element {
         <>
             <Text mb={2}>
                 Titles and descriptions for uploaded YouTube videos are defined using{" "}
-                <Link href="https://mustache.github.io/">Mustache</Link> templates. The following fields are available:
+                <Link href="https://handlebarsjs.com/guide/" isExternal>
+                    Handlebars
+                </Link>{" "}
+                templates. The following fields are available:
             </Text>
             <List fontSize="sm">
                 <ListItem>

@@ -44,8 +44,10 @@ export function VideoDownloadLink({
                 size="sm"
                 to={videoURL ?? "#"}
                 isDisabled={!videoURL}
-                onClick={() => addDownloadedElementId(elementId)}
-                onContextMenu={() => addDownloadedElementId(elementId)}
+                linkProps={{
+                    onClick: () => videoURL && addDownloadedElementId(elementId),
+                    onContextMenu: () => videoURL && addDownloadedElementId(elementId),
+                }}
                 colorScheme={downloaded ? "gray" : "SecondaryActionButton"}
                 fileName={fileName}
             >

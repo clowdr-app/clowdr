@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
+import assert from "assert";
 import React, { useEffect, useMemo } from "react";
-import type { RouteComponentProps} from "react-router-dom";
+import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
@@ -219,7 +220,24 @@ function CheckSlug(): JSX.Element {
         return null;
     }, []);
     const origin = useMemo(() => window.location.origin, []);
-    const existingMapping = useMemo(() => slugCache?.[origin], [origin, slugCache]);
+    const existingMapping = useMemo(() => {
+        const entry = slugCache?.[origin];
+        if (entry) {
+            try {
+                assert(entry.expiry && typeof entry.expiry === "number");
+                assert(entry.value && typeof entry.expiry === "string");
+                if (entry.expiry > Date.now()) {
+                    return entry.value as string;
+                } else {
+                    delete slugCache[origin];
+                    window.localStorage.setItem("SLUG_CACHE", slugCache);
+                }
+            } catch {
+                window.localStorage.removeItem("SLUG_CACHE");
+            }
+        }
+        return undefined;
+    }, [origin, slugCache]);
     useEffect(() => {
         if (existingMapping) {
             window.location.replace(
@@ -250,7 +268,7 @@ function CheckSlugInner(): JSX.Element {
             } else {
                 cache = {};
             }
-            cache[origin] = response.data.getSlug.slug;
+            cache[origin] = { value: response.data.getSlug.slug, expiry: Date.now() + 7 * 24 * 60 * 60 * 1000 };
             window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
 
             window.location.replace(

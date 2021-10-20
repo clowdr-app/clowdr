@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useEffect, useState } from "react";
+import React, { createContext, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useManageExport_GetRegistrantGoogleAccountsQuery } from "../../../../../generated/graphql";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
@@ -10,6 +10,12 @@ function useValue() {
         },
     });
     const [selectedGoogleAccountId, setSelectedGoogleAccountId] = useState<string | null>(null);
+    const [finished, setFinished] = useState<boolean>(false);
+
+    const reset = useCallback(() => {
+        setSelectedGoogleAccountId(null);
+        setFinished(false);
+    }, []);
 
     useEffect(() => {
         if (
@@ -24,6 +30,9 @@ function useValue() {
         selectedGoogleAccountId,
         setSelectedGoogleAccountId,
         googleAccounts,
+        finished,
+        setFinished,
+        reset,
     };
 }
 

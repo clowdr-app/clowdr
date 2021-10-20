@@ -1,17 +1,5 @@
 import { gql } from "@apollo/client";
-import {
-    Box,
-    BoxProps,
-    Button,
-    Heading,
-    HStack,
-    List,
-    ListItem,
-    useColorModeValue,
-    useId,
-    useIds,
-    useToast,
-} from "@chakra-ui/react";
+import { Box, BoxProps, Button, Heading, HStack, List, ListItem, useId, useIds, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -42,6 +30,7 @@ gql`
     fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
         id
         googleAccountEmail
+        youTubeData
     }
 
     mutation ManageExport_DeleteRegistrantGoogleAccount($registrantGoogleAccountId: uuid!) {
@@ -51,15 +40,14 @@ gql`
     }
 `;
 export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
-    const listItemBgColour = useColorModeValue("gray.100", "gray.700");
-    const selectedListItemBgColour = useColorModeValue("purple.100", "purple.700");
     const toast = useToast();
 
     const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
 
-    const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId } = useContext(YouTubeExportContext);
+    const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId, finished } =
+        useContext(YouTubeExportContext);
 
     const [deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
@@ -125,7 +113,9 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
         }
     }, [history.location.pathname, mutation, registrant.id, setGoogleOAuthRedirectUrl, toast]);
 
-    return (
+    return finished ? (
+        <></>
+    ) : (
         <Box {...props}>
             <HStack justifyContent="space-between" mb={2}>
                 <Heading as="h3" size="md" textAlign="left" mb={2}>

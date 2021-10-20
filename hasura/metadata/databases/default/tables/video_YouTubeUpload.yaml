@@ -13,6 +13,9 @@ object_relationships:
 - name: element
   using:
     foreign_key_constraint_on: elementId
+- name: uploadYouTubeVideoJob
+  using:
+    foreign_key_constraint_on: uploadYouTubeVideoJobId
 select_permissions:
 - permission:
     columns:

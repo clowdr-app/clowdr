@@ -78,6 +78,6 @@ event_triggers:
   name: RegistrantGoogleAccountDeleted
   retry_conf:
     interval_sec: 10
-    num_retries: 0
-    timeout_sec: 60
+    num_retries: 10
+    timeout_sec: 600
   webhook: "{{ACTION_BASE_URL}}/registrantGoogleAccount/deleted"

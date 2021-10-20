@@ -1,15 +1,12 @@
 import { gql } from "@apollo/client";
 import {
-    Box,
     Button,
-    Code,
     FormControl,
     FormErrorMessage,
     FormLabel,
     Heading,
     HStack,
     Input,
-    Link,
     List,
     ListIcon,
     ListItem,
@@ -24,27 +21,21 @@ import {
     Spinner,
     Text,
     Textarea,
-    Tooltip,
     useDisclosure,
     useToast,
-    VStack,
 } from "@chakra-ui/react";
 import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
-import { Field, FieldArray, FieldProps, Form, Formik } from "formik";
 import Mustache from "mustache";
 import * as R from "ramda";
-import React, { useCallback, useContext, useMemo, useState } from "react";
-import { useAsync } from "react-async-hook";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import {
     Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetElementsQuery,
-    useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery,
     useUploadYouTubeVideos_GetTemplateDataQuery,
-    useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
-    Video_JobStatus_Enum,
 } from "../../../../../generated/graphql";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -52,40 +43,11 @@ import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { ChooseElementByTagModal } from "../ChooseElementByTagModal";
 import { ChooseElementModal } from "../ChooseElementModal";
+import { MetadataPreview } from "./MetadataPreview";
+import { TemplateInstructions } from "./TemplateInstructions";
 import { YouTubeExportContext } from "./YouTubeExportContext";
 
 gql`
-    query UploadYouTubeVideos_GetUploadYouTubeVideoJobs($conferenceId: uuid!) {
-        ongoing_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _in: [NEW, IN_PROGRESS] } }
-            order_by: { createdAt: desc }
-            limit: 100
-        ) {
-            ...UploadYouTubeVideos_UploadYouTubeVideoJob
-        }
-
-        recent_UploadYouTubeVideoJob: job_queues_UploadYouTubeVideoJob(
-            where: { conferenceId: { _eq: $conferenceId }, jobStatusName: { _nin: [NEW, IN_PROGRESS] } }
-            order_by: { createdAt: desc }
-            limit: 10
-        ) {
-            ...UploadYouTubeVideos_UploadYouTubeVideoJob
-        }
-    }
-
-    fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
-        id
-        jobStatusName
-        element {
-            id
-            item {
-                id
-                title
-            }
-            name
-        }
-    }
-
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
         registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
             id
@@ -179,103 +141,119 @@ gql`
 
 type FormValues = {
     elementIds: string[];
-    registrantGoogleAccountId: string | null;
     titleTemplate: string;
     descriptionTemplate: string;
     channelId: string | null;
     playlistId: string | null;
     videoPrivacyStatus: string;
-    titleCorrections: { [elementId: string]: string };
-    descriptionCorrections: { [elementId: string]: string };
+    titleCorrections: { value: string | null; id: string }[];
+    descriptionCorrections: { value: string | null; id: string }[];
 };
 
 function VideoIcon() {
     return <FAIcon icon="video" iconStyle="s" />;
 }
 
-function MetadataPreview({
-    compileTemplate,
-    elementId,
-    titleTemplate,
-    descriptionTemplate,
-}: {
-    compileTemplate: (
-        elementIds: string[],
-        titleTemplateString: string,
-        descriptionTemplateString: string
-    ) => Promise<{ [elementId: string]: { title: string; description: string } }>;
-    elementId: string;
-    titleTemplate: string;
-    descriptionTemplate: string;
-}): JSX.Element {
-    const { result, loading, error } = useAsync(async () => {
-        const result = await compileTemplate(
-            [elementId],
-            titleTemplate ?? "No title template found.",
-            descriptionTemplate ?? "No description template found."
-        );
-        return {
-            title: result[elementId]?.title ?? "Title could not be previewed",
-            description: result[elementId]?.description ?? "Description could not be previewed",
-        };
-    }, [elementId]);
-
-    return (
-        <>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverHeader>Preview</PopoverHeader>
-            <PopoverBody>
-                {loading ? <Spinner /> : undefined}
-                {error ? (
-                    <Text>
-                        An error occurred while loading the preview. ({error.name}: {error.message})
-                    </Text>
-                ) : undefined}
-                {result ? (
-                    <>
-                        <Heading as="h3" size="sm" textAlign="left">
-                            {result.title}
-                        </Heading>
-                        <Text whiteSpace="pre-wrap">{result.description}</Text>
-                    </>
-                ) : undefined}
-            </PopoverBody>
-        </>
-    );
-}
-
 export function UploadYouTubeVideos(): JSX.Element {
     const conference = useConference();
     const toast = useToast();
     const registrant = useCurrentRegistrant();
-    const { selectedGoogleAccountId } = useContext(YouTubeExportContext);
+    const { selectedGoogleAccountId, googleAccounts, finished, setFinished } = useContext(YouTubeExportContext);
 
-    const existingJobsResult = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
-        variables: {
-            conferenceId: conference.id,
+    const [refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
+    useEffect(() => {
+        async function fn() {
+            if (selectedGoogleAccountId) {
+                const result = await refreshYouTubeData({
+                    variables: {
+                        registrantId: registrant.id,
+                        registrantGoogleAccountId: selectedGoogleAccountId,
+                    },
+                });
+                if (!result.data?.refreshYouTubeData?.success) {
+                    throw new Error(result.data?.refreshYouTubeData?.message ?? "Unknown reason");
+                }
+                await googleAccounts.refetch();
+            }
+        }
+        fn();
+    }, [googleAccounts, refreshYouTubeData, registrant.id, selectedGoogleAccountId]);
+
+    const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
+        "clowdr-youTubeTitleTemplate",
+        "{{{itemTitle}}} ({{{fileName}}})",
+        (x) => x,
+        (x) => x
+    );
+    const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
+        "clowdr-youTubeDescriptionTemplate-v2",
+        `{{#abstract}}{{{abstract}}}
+
+{{/abstract}}
+{{#authors.length}}
+{{#authors}}{{{name}}}{{#affiliation}} ({{{affiliation}}}){{/affiliation}}, {{/authors}}
+
+{{/authors.length}}
+{{#paperLinks.length}}
+{{#paperLinks}}{{#url}}
+* {{{text}}}: {{{url}}}
+{{/url}}{{/paperLinks}}
+
+{{/paperLinks.length}}
+{{#paperUrls.length}}
+{{#paperUrls}}{{#.}}* {{{.}}}
+{{/.}}{{/paperUrls}}
+
+{{/paperUrls.length}}
+`,
+        (x) => x,
+        (x) => x
+    );
+
+    const {
+        formState: { errors, touchedFields, isSubmitting, isValid },
+        handleSubmit,
+        setValue,
+        trigger,
+        register,
+        reset,
+        watch,
+        control,
+    } = useForm<FormValues>({
+        defaultValues: {
+            elementIds: [],
+            titleTemplate: youTubeTitleTemplate,
+            descriptionTemplate: youTubeDescriptionTemplate,
+            channelId: "",
+            playlistId: "",
+            videoPrivacyStatus: "unlisted",
+            titleCorrections: [],
+            descriptionCorrections: [],
         },
-        pollInterval: 10000,
+        mode: "all",
+    });
+    const titleCorrectionsFields = useFieldArray({
+        control,
+        name: "titleCorrections",
+    });
+    const descriptionCorrectionsFields = useFieldArray({
+        control,
+        name: "descriptionCorrections",
     });
 
-    const googleAccountsResult = useUploadYouTubeVideos_GetRegistrantGoogleAccountsQuery({
-        variables: {
-            registrantId: registrant.id,
-        },
-    });
+    const elementIds = watch("elementIds");
+    const channelId = watch("channelId");
+    const titleTemplate = watch("titleTemplate");
+    const descriptionTemplate = watch("descriptionTemplate");
+    useEffect(() => setYouTubeTitleTemplate(titleTemplate), [setYouTubeTitleTemplate, titleTemplate]);
+    useEffect(
+        () => setYouTubeDescriptionTemplate(descriptionTemplate),
+        [setYouTubeDescriptionTemplate, descriptionTemplate]
+    );
 
-    const googleAccountOptions = useMemo(() => {
-        return googleAccountsResult.data?.registrant_GoogleAccount.map((account) => (
-            <option key={account.id} value={account.id}>
-                {account.googleAccountEmail}
-            </option>
-        ));
-    }, [googleAccountsResult.data?.registrant_GoogleAccount]);
-
-    const [registrantGoogleAccountId, setRegistrantGoogleAccountId] = useState<string | null>(null);
     const channelOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
-            (a) => a.id === registrantGoogleAccountId
+        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
+            (a) => a.id === selectedGoogleAccountId
         );
 
         if (!isYouTubeDataBlob(registrantGoogleAccount?.youTubeData)) {
@@ -291,12 +269,11 @@ export function UploadYouTubeVideos(): JSX.Element {
                 </option>
             )) ?? []
         );
-    }, [registrantGoogleAccountId, googleAccountsResult.data?.registrant_GoogleAccount]);
+    }, [selectedGoogleAccountId, googleAccounts.data?.registrant_GoogleAccount]);
 
-    const [channelId, setChannelId] = useState<string | null>(null);
     const playlistOptions = useMemo(() => {
-        const registrantGoogleAccount = googleAccountsResult.data?.registrant_GoogleAccount.find(
-            (a) => a.id === registrantGoogleAccountId
+        const registrantGoogleAccount = googleAccounts.data?.registrant_GoogleAccount.find(
+            (a) => a.id === selectedGoogleAccountId
         );
 
         if (!isYouTubeDataBlob(registrantGoogleAccount?.youTubeData)) {
@@ -314,14 +291,13 @@ export function UploadYouTubeVideos(): JSX.Element {
                     </option>
                 )) ?? []
         );
-    }, [registrantGoogleAccountId, channelId, googleAccountsResult.data?.registrant_GoogleAccount]);
+    }, [selectedGoogleAccountId, channelId, googleAccounts.data?.registrant_GoogleAccount]);
 
     const [createJobs] = useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation();
 
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
-    const [elementIds, setElementIds] = useState<string[]>([]);
     const { data } = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
             elementIds,
@@ -472,29 +448,6 @@ export function UploadYouTubeVideos(): JSX.Element {
         [refetchTemplateData]
     );
 
-    const jobStatus = useCallback((jobStatusName: Video_JobStatus_Enum) => {
-        switch (jobStatusName) {
-            case Video_JobStatus_Enum.Completed:
-                return (
-                    <Tooltip label="Upload completed">
-                        <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" />
-                    </Tooltip>
-                );
-            case Video_JobStatus_Enum.Expired:
-            case Video_JobStatus_Enum.Failed:
-                return (
-                    <Tooltip label="Upload failed">
-                        <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" />
-                    </Tooltip>
-                );
-            case Video_JobStatus_Enum.InProgress:
-            case Video_JobStatus_Enum.New:
-                return <Spinner size="sm" aria-label="in progress" />;
-        }
-    }, []);
-
-    const [refreshYouTubeData] = useUploadYouTubeVideos_RefreshYouTubeDataMutation();
-
     const getDescriptionError = useCallback((description: string) => {
         const length = new TextEncoder().encode(description).length;
         const invalid = description.includes("<") || description.includes(">");
@@ -505,756 +458,355 @@ export function UploadYouTubeVideos(): JSX.Element {
         return errors.join(" ");
     }, []);
 
-    const [youTubeTitleTemplate, setYouTubeTitleTemplate] = useRestorableState(
-        "clowdr-youTubeTitleTemplate",
-        "{{{itemTitle}}} ({{{fileName}}})",
-        (x) => x,
-        (x) => x
-    );
-    const [youTubeDescriptionTemplate, setYouTubeDescriptionTemplate] = useRestorableState(
-        "clowdr-youTubeDescriptionTemplate-v2",
-        `{{#abstract}}{{{abstract}}}
+    const onSubmit: SubmitHandler<FormValues> = useCallback(
+        async (data: FormValues) => {
+            try {
+                trigger(undefined);
+                const details = await compileTemplates(data.elementIds, data.titleTemplate, data.descriptionTemplate);
+                console.log(data);
+                const updatedPairs = R.mapObjIndexed(
+                    (x, key) => ({
+                        title: data.titleCorrections.find((x) => x.id === key)?.value ?? x.title,
+                        description: data.descriptionCorrections.find((x) => x.id === key)?.value ?? x.description,
+                    }),
+                    details
+                );
 
-{{/abstract}}
-{{#authors.length}}
-{{#authors}}{{{name}}}{{#affiliation}} ({{{affiliation}}}){{/affiliation}}, {{/authors}}
+                const invalidTitles = R.filter(([, x]) => x.title.length > 100, R.toPairs(updatedPairs));
+                console.log(invalidTitles);
 
-{{/authors.length}}
-{{#paperLinks.length}}
-{{#paperLinks}}{{#url}}
-* {{{text}}}: {{{url}}}
-{{/url}}{{/paperLinks}}
-
-{{/paperLinks.length}}
-{{#paperUrls.length}}
-{{#paperUrls}}{{#.}}* {{{.}}}
-{{/.}}{{/paperUrls}}
-
-{{/paperUrls.length}}
-`,
-        (x) => x,
-        (x) => x
-    );
-
-    return selectedGoogleAccountId ? (
-        <>
-            <HStack alignItems="stretch">
-                <VStack alignItems="flex-start" flexGrow={1}>
-                    <Formik<FormValues>
-                        initialValues={{
-                            elementIds: [],
-                            registrantGoogleAccountId: "",
-                            titleTemplate: youTubeTitleTemplate,
-                            descriptionTemplate: youTubeDescriptionTemplate,
-                            channelId: "",
-                            playlistId: "",
-                            videoPrivacyStatus: "unlisted",
-                            titleCorrections: {},
-                            descriptionCorrections: {},
-                        }}
-                        onSubmit={async (values, actions) => {
-                            try {
-                                const details = await compileTemplates(
-                                    values.elementIds,
-                                    values.titleTemplate,
-                                    values.descriptionTemplate
-                                );
-
-                                const updatedPairs = R.mapObjIndexed(
-                                    (x, key) => ({
-                                        title: values.titleCorrections[key] ?? x.title,
-                                        description: values.descriptionCorrections[key] ?? x.description,
-                                    }),
-                                    details
-                                );
-
-                                let correctionsNeeded = false;
-
-                                const invalidTitles = R.filter((x) => x.title.length > 100, updatedPairs);
-
-                                R.forEachObjIndexed((value, elementId) => {
-                                    const fieldName = `titleCorrections.${elementId}`;
-                                    actions.setFieldValue(fieldName, value.title ?? null);
-                                    actions.setFieldError(fieldName, "Title cannot be more than 100 characters");
-                                    correctionsNeeded = true;
-                                }, invalidTitles);
-
-                                R.forEachObjIndexed((value, elementId) => {
-                                    const fieldName = `descriptionCorrections.${elementId}`;
-                                    const error = getDescriptionError(value.description);
-                                    if (error) {
-                                        actions.setFieldValue(fieldName, value.description ?? null);
-                                        actions.setFieldError(fieldName, error);
-                                        correctionsNeeded = true;
-                                    }
-                                }, updatedPairs);
-
-                                if (correctionsNeeded) {
-                                    toast({
-                                        status: "info",
-                                        title: "You need to make some corrections before starting the upload",
-                                    });
-                                    return;
-                                }
-
-                                await createJobs({
-                                    variables: {
-                                        objects: values.elementIds.map(
-                                            (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
-                                                elementId: id,
-                                                registrantGoogleAccountId: values.registrantGoogleAccountId,
-                                                conferenceId: conference.id,
-                                                videoTitle: updatedPairs[id]?.title ?? id,
-                                                videoDescription: updatedPairs[id]?.description ?? "",
-                                                videoPrivacyStatus: values.videoPrivacyStatus,
-                                                playlistId: values.playlistId,
-                                            })
-                                        ),
-                                    },
-                                });
-                                toast({
-                                    status: "success",
-                                    title: "Starting upload to YouTube",
-                                });
-                                actions.resetForm();
-                                actions.setFieldValue("titleTemplate", youTubeTitleTemplate);
-                                actions.setFieldValue("descriptionTemplate", youTubeDescriptionTemplate);
-                                setRegistrantGoogleAccountId(null);
-                                await existingJobsResult.refetch();
-                            } catch (e) {
-                                console.error("Error while creating YouTube upload jobs", e);
-                                toast({
-                                    status: "error",
-                                    title: "Failed to create YouTube upload job",
-                                    description: e.message,
-                                });
+                titleCorrectionsFields.replace(
+                    invalidTitles.map(
+                        ([elementId, values]) =>
+                            data.titleCorrections.find((x) => x.id === elementId) ?? {
+                                id: elementId,
+                                value: values.title,
                             }
-                        }}
-                    >
-                        {({ isSubmitting, isValid, values, touched }) => {
-                            if (!R.isEmpty(R.symmetricDifference(values.elementIds, elementIds))) {
-                                setElementIds(values.elementIds);
+                    )
+                );
+                invalidTitles.forEach(([elementId], idx) => setValue(`titleCorrections.${idx}.id`, elementId));
+
+                const invalidDescriptions = R.filter(
+                    ([, x]) => Boolean(getDescriptionError(x.description)),
+                    R.toPairs(updatedPairs)
+                );
+                console.log(invalidDescriptions);
+
+                descriptionCorrectionsFields.replace(
+                    invalidDescriptions.map(
+                        ([elementId, values]) =>
+                            data.descriptionCorrections.find((x) => x.id === elementId) ?? {
+                                id: elementId,
+                                value: values.description,
                             }
+                    )
+                );
+                invalidDescriptions.forEach(([elementId], idx) =>
+                    setValue(`descriptionCorrections.${idx}.id`, elementId)
+                );
 
-                            return (
-                                <Form>
-                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                        Choose videos to upload
-                                    </Heading>
-                                    <Field
-                                        name="elementIds"
-                                        validate={(ids: string[]) =>
-                                            ids.length > 0 ? undefined : "Must choose at least one video"
-                                        }
-                                    >
-                                        {({ field, form }: FieldProps<string[]>) => (
-                                            <FormControl
-                                                isInvalid={!!form.errors.elementIds && !!form.touched.elementIds}
-                                                isRequired
-                                            >
-                                                <Button
-                                                    aria-label="add a single video"
-                                                    size="sm"
-                                                    onClick={() => chooseVideoDisclosure.onOpen()}
-                                                >
-                                                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
-                                                    Add a video
-                                                </Button>
-                                                <ChooseElementModal
-                                                    chooseItem={(elementId) =>
-                                                        form.setFieldValue(
-                                                            field.name,
-                                                            R.union(form.values.elementIds, [elementId])
-                                                        )
-                                                    }
-                                                    isOpen={chooseVideoDisclosure.isOpen}
-                                                    onClose={chooseVideoDisclosure.onClose}
-                                                />
-                                                <Button
-                                                    aria-label="add a videos by tag"
-                                                    size="sm"
-                                                    ml={4}
-                                                    onClick={() => chooseByTagDisclosure.onOpen()}
-                                                >
-                                                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
-                                                    Add videos by tag
-                                                </Button>
-                                                <ChooseElementByTagModal
-                                                    chooseItems={(elementIds) =>
-                                                        form.setFieldValue(
-                                                            field.name,
-                                                            R.union(form.values.elementIds, elementIds)
-                                                        )
-                                                    }
-                                                    isOpen={chooseByTagDisclosure.isOpen}
-                                                    onClose={chooseByTagDisclosure.onClose}
-                                                />
+                if (Object.keys(invalidTitles).length || Object.keys(invalidDescriptions).length) {
+                    toast({
+                        status: "info",
+                        title: "You need to make some corrections before starting the upload",
+                    });
+                    trigger(undefined, { shouldFocus: true });
+                    return;
+                }
 
-                                                <Button
-                                                    aria-label="clear all videos"
-                                                    size="sm"
-                                                    ml={4}
-                                                    onClick={() => form.setFieldValue(field.name, [])}
-                                                    isDisabled={form.values.elementIds.length === 0}
-                                                >
-                                                    <FAIcon icon="trash-alt" iconStyle="r" mr={2} />
-                                                    Clear all
-                                                </Button>
+                await createJobs({
+                    variables: {
+                        objects: data.elementIds.map(
+                            (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
+                                elementId: id,
+                                registrantGoogleAccountId: selectedGoogleAccountId,
+                                conferenceId: conference.id,
+                                videoTitle: updatedPairs[id]?.title ?? id,
+                                videoDescription: updatedPairs[id]?.description ?? "",
+                                videoPrivacyStatus: data.videoPrivacyStatus,
+                                playlistId: data.playlistId,
+                            })
+                        ),
+                    },
+                });
+                toast({
+                    status: "success",
+                    title: "Starting upload to YouTube",
+                });
+                reset();
+                setValue("titleTemplate", youTubeTitleTemplate);
+                setValue("descriptionTemplate", youTubeDescriptionTemplate);
+                setFinished(true);
+            } catch (err: any) {
+                console.error("Error while creating YouTube upload jobs", err);
+                toast({
+                    status: "error",
+                    title: "Failed to create YouTube upload job",
+                    description: err.message,
+                });
+            }
+        },
+        [
+            compileTemplates,
+            conference.id,
+            createJobs,
+            descriptionCorrectionsFields,
+            getDescriptionError,
+            reset,
+            selectedGoogleAccountId,
+            setFinished,
+            setValue,
+            titleCorrectionsFields,
+            toast,
+            trigger,
+            youTubeDescriptionTemplate,
+            youTubeTitleTemplate,
+        ]
+    );
 
-                                                <List mt={4} spacing={2}>
-                                                    {form.values.elementIds.map((id: string) => (
-                                                        <ListItem key={id}>
-                                                            <HStack>
-                                                                <ListIcon as={VideoIcon} />
-                                                                {elements[id] ? (
-                                                                    <Text pr={4}>
-                                                                        {elements[id].name} ({elements[id].itemTitle})
-                                                                    </Text>
-                                                                ) : (
-                                                                    <Spinner />
-                                                                )}
-                                                                <Popover isLazy>
-                                                                    <PopoverTrigger>
-                                                                        <Button
-                                                                            size="xs"
-                                                                            aria-label="preview title and description"
-                                                                            title="Preview title and description"
-                                                                            colorScheme="pink"
-                                                                            style={{ marginLeft: "auto" }}
-                                                                        >
-                                                                            <FAIcon
-                                                                                icon="file-alt"
-                                                                                iconStyle="r"
-                                                                                fontSize="xs"
-                                                                            />
-                                                                        </Button>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent>
-                                                                        <MetadataPreview
-                                                                            elementId={id}
-                                                                            compileTemplate={compileTemplates}
-                                                                            titleTemplate={youTubeTitleTemplate}
-                                                                            descriptionTemplate={
-                                                                                youTubeDescriptionTemplate
-                                                                            }
-                                                                        />
-                                                                    </PopoverContent>
-                                                                </Popover>
+    return !finished && selectedGoogleAccountId ? (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <Heading as="h2" size="md" textAlign="left" my={4}>
+                Choose videos to upload
+            </Heading>
 
-                                                                <Button
-                                                                    size="xs"
-                                                                    aria-label="remove video"
-                                                                    colorScheme="red"
-                                                                    style={{ marginLeft: "5px" }}
-                                                                    onClick={() => {
-                                                                        form.setFieldValue(
-                                                                            field.name,
-                                                                            R.without([id], form.values.elementIds)
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <FAIcon
-                                                                        icon="trash-alt"
-                                                                        iconStyle="r"
-                                                                        fontSize="xs"
-                                                                    />
-                                                                </Button>
-                                                            </HStack>
-                                                        </ListItem>
-                                                    ))}
-                                                    {form.values.elementIds.length === 0 ? (
-                                                        <Text fontStyle="italic">No videos selected.</Text>
-                                                    ) : (
-                                                        <Text fontStyle="italic">
-                                                            {form.values.elementIds.length} video
-                                                            {form.values.elementIds.length > 1 ? "s" : ""} selected
-                                                        </Text>
-                                                    )}
-                                                </List>
-                                                <FormErrorMessage>{form.errors.elementIds}</FormErrorMessage>
-                                            </FormControl>
-                                        )}
-                                    </Field>
+            <FormControl isInvalid={Boolean(errors.elementIds) && Boolean(touchedFields.elementIds)} isRequired>
+                <Button aria-label="add a single video" size="sm" onClick={() => chooseVideoDisclosure.onOpen()}>
+                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
+                    Add a video
+                </Button>
+                <ChooseElementModal
+                    chooseItem={(elementId) => setValue("elementIds", R.union(elementIds, [elementId]))}
+                    isOpen={chooseVideoDisclosure.isOpen}
+                    onClose={chooseVideoDisclosure.onClose}
+                />
+                <Button
+                    aria-label="add a videos by tag"
+                    size="sm"
+                    ml={4}
+                    onClick={() => chooseByTagDisclosure.onOpen()}
+                >
+                    <FAIcon icon="plus-square" iconStyle="s" mr={2} />
+                    Add videos by tag
+                </Button>
+                <ChooseElementByTagModal
+                    chooseItems={(newElementIds) => setValue("elementIds", R.union(elementIds, newElementIds))}
+                    isOpen={chooseByTagDisclosure.isOpen}
+                    onClose={chooseByTagDisclosure.onClose}
+                />
 
-                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                        Set video privacy
-                                    </Heading>
+                <Button
+                    aria-label="clear all videos"
+                    size="sm"
+                    ml={4}
+                    onClick={() => setValue("elementIds", [])}
+                    isDisabled={elementIds.length === 0}
+                >
+                    <FAIcon icon="trash-alt" iconStyle="r" mr={2} />
+                    Clear all
+                </Button>
 
-                                    <Field name="videoPrivacyStatus">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <FormControl
-                                                isInvalid={
-                                                    !!form.errors.videoPrivacyStatus &&
-                                                    !!form.touched.videoPrivacyStatus
-                                                }
-                                                isRequired
-                                            >
-                                                <FormLabel htmlFor="videoPrivacyStatus" mt={2}>
-                                                    Video privacy
-                                                </FormLabel>
-                                                <Select {...field} id="videoPrivacyStatus" mt={2}>
-                                                    <option value="private">Private</option>
-                                                    <option value="public">Public</option>
-                                                    <option value="unlisted">Unlisted</option>
-                                                </Select>
-                                                <FormErrorMessage>{form.errors.videoPrivacyStatus}</FormErrorMessage>
-                                            </FormControl>
-                                        )}
-                                    </Field>
+                <List mt={4} spacing={2}>
+                    {elementIds.map((id: string) => (
+                        <ListItem key={id}>
+                            <HStack>
+                                <ListIcon as={VideoIcon} />
+                                {elements[id] ? (
+                                    <Text pr={4}>
+                                        {elements[id].name} ({elements[id].itemTitle})
+                                    </Text>
+                                ) : (
+                                    <Spinner />
+                                )}
+                                <Popover isLazy>
+                                    <PopoverTrigger>
+                                        <Button
+                                            size="xs"
+                                            aria-label="preview title and description"
+                                            title="Preview title and description"
+                                            colorScheme="pink"
+                                            style={{ marginLeft: "auto" }}
+                                        >
+                                            <FAIcon icon="file-alt" iconStyle="r" fontSize="xs" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <MetadataPreview
+                                            elementId={id}
+                                            compileTemplate={compileTemplates}
+                                            titleTemplate={youTubeTitleTemplate}
+                                            descriptionTemplate={youTubeDescriptionTemplate}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
 
-                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                        Set video titles and descriptions
-                                    </Heading>
-                                    <Popover>
-                                        <PopoverTrigger>
-                                            <Button>
-                                                <FAIcon icon="question-circle" iconStyle="s" mr={2} />
-                                                Help
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            <PopoverArrow />
-                                            <PopoverCloseButton />
-                                            <PopoverHeader>Title and description templates</PopoverHeader>
-                                            <PopoverBody>
-                                                <Text mb={2}>
-                                                    Titles and descriptions for uploaded YouTube videos are defined
-                                                    using <Link href="https://mustache.github.io/">Mustache</Link>{" "}
-                                                    templates. The following fields are available:
-                                                </Text>
-                                                <List fontSize="sm">
-                                                    <ListItem>
-                                                        <Code>elementName</Code>: name of the element (i.e. the name
-                                                        given to the video itself)
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>itemTitle</Code>: title of the item this video element
-                                                        belongs to
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>itemShortTitle</Code>: short title of the item this video
-                                                        element belongs to
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>abstract</Code>: the abstract text for the item
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>paperUrls</Code>: list of URLs to papers
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>paperLinks</Code>: list of links to papers. Properties are{" "}
-                                                        <Code>url</Code>, <Code>text</Code>.
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>authors</Code>: list of authors. Sorted in priority order.
-                                                        Properties are <Code>name</Code>, <Code>affiliation</Code>.
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>presenters</Code>: list of presenters. Sorted in priority
-                                                        order. Properties are <Code>name</Code>,{" "}
-                                                        <Code>affiliation</Code>.
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>youTubeUploads</Code>: list of previously uploaded YouTube
-                                                        videos for this content item. Properties are <Code>url</Code>,{" "}
-                                                        <Code>title</Code>.
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>elementId</Code>: unique ID of the element
-                                                    </ListItem>
-                                                    <ListItem>
-                                                        <Code>itemId</Code>: unique ID of the item that contains this
-                                                        file
-                                                    </ListItem>
-                                                </List>
-                                                <Text mt={2}>Example:</Text>
-                                                <Code display="block" whiteSpace="pre">
-                                                    {`{{{abstract}}}
-{{#youTubeUploads}}
-    * {{{title}}}: {{{url}}}
-{{/youTubeUploads}}`}
-                                                </Code>
-                                            </PopoverBody>
-                                        </PopoverContent>
-                                    </Popover>
-                                    <Field name="titleTemplate">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <FormControl
-                                                isInvalid={!!form.errors.titleTemplate && !!form.touched.titleTemplate}
-                                                isRequired
-                                            >
-                                                <FormLabel htmlFor="titleTemplate" mt={2}>
-                                                    Video title template
-                                                </FormLabel>
-                                                <Input
-                                                    {...field}
-                                                    id="titleTemplate"
-                                                    placeholder="{{fileName}}"
-                                                    mt={2}
-                                                    onChange={(event) => {
-                                                        setYouTubeTitleTemplate(event.target.value);
-                                                        field.onChange(event);
-                                                    }}
-                                                />
-                                                <FormErrorMessage>{form.errors.titleTemplate}</FormErrorMessage>
-                                            </FormControl>
-                                        )}
-                                    </Field>
-                                    <Field name="descriptionTemplate">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <FormControl
-                                                isInvalid={
-                                                    !!form.errors.descriptionTemplate &&
-                                                    !!form.touched.descriptionTemplate
-                                                }
-                                                isRequired
-                                            >
-                                                <FormLabel htmlFor="descriptionTemplate" mt={2}>
-                                                    Video description template
-                                                </FormLabel>
-                                                <Textarea
-                                                    {...field}
-                                                    id="descriptionTemplate"
-                                                    placeholder="{{abstract}}"
-                                                    mt={2}
-                                                    onChange={(event) => {
-                                                        setYouTubeDescriptionTemplate(event.target.value);
-                                                        field.onChange(event);
-                                                    }}
-                                                />
-                                                <FormErrorMessage>{form.errors.descriptionTemplate}</FormErrorMessage>
-                                            </FormControl>
-                                        )}
-                                    </Field>
+                                <Button
+                                    size="xs"
+                                    aria-label="remove video"
+                                    colorScheme="red"
+                                    style={{ marginLeft: "5px" }}
+                                    onClick={() => {
+                                        setValue("elementIds", R.without([id], elementIds));
+                                    }}
+                                >
+                                    <FAIcon icon="trash-alt" iconStyle="r" fontSize="xs" />
+                                </Button>
+                            </HStack>
+                        </ListItem>
+                    ))}
+                    {elementIds.length === 0 ? (
+                        <Text fontStyle="italic">No videos selected.</Text>
+                    ) : (
+                        <Text fontStyle="italic">
+                            {elementIds.length} video
+                            {elementIds.length > 1 ? "s" : ""} selected
+                        </Text>
+                    )}
+                </List>
+            </FormControl>
 
-                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                        Choose upload location
-                                    </Heading>
-                                    <Field name="registrantGoogleAccountId">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <>
-                                                <FormControl
-                                                    isInvalid={
-                                                        !!form.errors.registrantGoogleAccountId &&
-                                                        !!form.touched.registrantGoogleAccountId
-                                                    }
-                                                    isRequired
-                                                >
-                                                    <FormLabel htmlFor="registrantGoogleAccountId" mt={2}>
-                                                        Google Account
-                                                    </FormLabel>
-                                                    <Select
-                                                        {...field}
-                                                        id="registrantGoogleAccountId"
-                                                        placeholder="Choose Google account"
-                                                        mt={2}
-                                                        onChange={(event) => {
-                                                            setRegistrantGoogleAccountId(event.target.value);
-                                                            field.onChange(event);
-                                                        }}
-                                                    >
-                                                        {googleAccountOptions}
-                                                    </Select>
-                                                    <FormErrorMessage>
-                                                        {form.errors.registrantGoogleAccountId}
-                                                    </FormErrorMessage>
-                                                </FormControl>
-                                                <Button
-                                                    display="block"
-                                                    my={2}
-                                                    size="sm"
-                                                    aria-label="refresh playlists"
-                                                    isDisabled={!form.values.registrantGoogleAccountId}
-                                                    onClick={async () => {
-                                                        try {
-                                                            const result = await refreshYouTubeData({
-                                                                variables: {
-                                                                    registrantId: registrant.id,
-                                                                    registrantGoogleAccountId:
-                                                                        form.values.registrantGoogleAccountId,
-                                                                },
-                                                            });
-                                                            if (!result.data?.refreshYouTubeData?.success) {
-                                                                throw new Error(
-                                                                    result.data?.refreshYouTubeData?.message ??
-                                                                        "Unknown reason"
-                                                                );
-                                                            }
+            <Heading as="h2" size="md" textAlign="left" my={4}>
+                Set video privacy
+            </Heading>
 
-                                                            await googleAccountsResult.refetch({
-                                                                registrantId: registrant.id,
-                                                            });
+            <FormControl
+                isInvalid={Boolean(errors.videoPrivacyStatus) && Boolean(touchedFields.videoPrivacyStatus)}
+                isRequired
+            >
+                <FormLabel htmlFor="videoPrivacyStatus" mt={2}>
+                    Video privacy
+                </FormLabel>
+                <Select {...register("videoPrivacyStatus")} id="videoPrivacyStatus" mt={2}>
+                    <option value="private">Private</option>
+                    <option value="public">Public</option>
+                    <option value="unlisted">Unlisted</option>
+                </Select>
+                <FormErrorMessage>{errors.videoPrivacyStatus?.message}</FormErrorMessage>
+            </FormControl>
 
-                                                            toast({
-                                                                status: "success",
-                                                                title: "Refreshed YouTube channel details",
-                                                            });
-                                                        } catch (e) {
-                                                            console.error(
-                                                                "Failed to refresh YouTube channel details",
-                                                                e
-                                                            );
-                                                            toast({
-                                                                status: "error",
-                                                                title: "Failed to refresh YouTube channel details",
-                                                                description: e.message,
-                                                            });
-                                                        }
-                                                    }}
-                                                >
-                                                    <HStack>
-                                                        <FAIcon icon="sync" iconStyle="s" />
-                                                        <Text ml={2}>Refresh</Text>
-                                                    </HStack>
-                                                </Button>
-                                            </>
-                                        )}
-                                    </Field>
+            <Heading as="h2" size="md" textAlign="left" my={4}>
+                Set video titles and descriptions
+            </Heading>
+            <Popover>
+                <PopoverTrigger>
+                    <Button>
+                        <FAIcon icon="question-circle" iconStyle="s" mr={2} />
+                        Help
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>Title and description templates</PopoverHeader>
+                    <PopoverBody>
+                        <TemplateInstructions />
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
+            <FormControl isInvalid={Boolean(errors.titleTemplate) && Boolean(touchedFields.titleTemplate)} isRequired>
+                <FormLabel mt={2}>Video title template</FormLabel>
+                <Input {...register("titleTemplate")} placeholder="{{fileName}}" mt={2} />
+                <FormErrorMessage>{errors.titleTemplate?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+                isInvalid={Boolean(errors.descriptionTemplate) && Boolean(touchedFields.descriptionTemplate)}
+                isRequired
+            >
+                <FormLabel mt={2}>Video description template</FormLabel>
+                <Textarea {...register("descriptionTemplate")} placeholder="{{abstract}}" mt={2} />
+                <FormErrorMessage>{errors.descriptionTemplate?.message}</FormErrorMessage>
+            </FormControl>
 
-                                    <Field name="channelId">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <>
-                                                <FormControl
-                                                    isInvalid={!!form.errors.channelId && !!form.touched.channelId}
-                                                    isRequired
-                                                >
-                                                    <FormLabel htmlFor="channelId" mt={2}>
-                                                        Channel
-                                                    </FormLabel>
-                                                    <Select
-                                                        {...field}
-                                                        id="channelId"
-                                                        placeholder="Choose channel"
-                                                        mt={2}
-                                                        isDisabled={!form.values.registrantGoogleAccountId}
-                                                        onChange={(event) => {
-                                                            setChannelId(event.target.value);
-                                                            field.onChange(event);
-                                                        }}
-                                                    >
-                                                        {channelOptions}
-                                                    </Select>
-                                                    <FormErrorMessage>{form.errors.channelId}</FormErrorMessage>
-                                                </FormControl>
-                                            </>
-                                        )}
-                                    </Field>
+            <Heading as="h2" size="md" textAlign="left" my={4}>
+                Choose upload location
+            </Heading>
 
-                                    <Field name="playlistId">
-                                        {({ field, form }: FieldProps<string>) => (
-                                            <>
-                                                <FormControl
-                                                    isInvalid={!!form.errors.playlistId && !!form.touched.playlistId}
-                                                >
-                                                    <FormLabel htmlFor="playlistId" mt={2}>
-                                                        Playlist
-                                                    </FormLabel>
-                                                    <Select
-                                                        {...field}
-                                                        id="playlistId"
-                                                        placeholder="Choose playlist"
-                                                        isDisabled={!form.values.registrantGoogleAccountId}
-                                                        mt={2}
-                                                    >
-                                                        {playlistOptions}
-                                                    </Select>
-                                                    <FormErrorMessage>{form.errors.playlistId}</FormErrorMessage>
-                                                </FormControl>
-                                            </>
-                                        )}
-                                    </Field>
+            <FormControl isInvalid={Boolean(errors.channelId) && Boolean(touchedFields.channelId)} isRequired>
+                <FormLabel mt={2}>Channel</FormLabel>
+                <Select
+                    {...register("channelId")}
+                    placeholder="Choose channel"
+                    mt={2}
+                    isDisabled={!selectedGoogleAccountId}
+                >
+                    {channelOptions}
+                </Select>
+                <FormErrorMessage>{errors.channelId?.message}</FormErrorMessage>
+            </FormControl>
 
-                                    <FieldArray
-                                        name="titleCorrections"
-                                        render={(_arrayHelpers) =>
-                                            values.titleCorrections &&
-                                            Object.keys(values.titleCorrections).length > 0 ? (
-                                                <>
-                                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                                        Corrected video titles
-                                                    </Heading>
-                                                    {R.toPairs<string>(values.titleCorrections).map(
-                                                        ([elementId, _title]) => (
-                                                            <Field
-                                                                key={elementId}
-                                                                name={`titleCorrections.${elementId}`}
-                                                                validate={(title: string) =>
-                                                                    title.length <= 100
-                                                                        ? undefined
-                                                                        : "Title cannot be more than 100 characters"
-                                                                }
-                                                                isRequired
-                                                            >
-                                                                {({ field, form }: FieldProps<string>) => (
-                                                                    <FormControl
-                                                                        isInvalid={
-                                                                            !!(form.errors.titleCorrections ??
-                                                                                ({} as any))[elementId] &&
-                                                                            !!(form.touched.titleCorrections ??
-                                                                                ({} as any))[elementId]
-                                                                        }
-                                                                        isRequired
-                                                                    >
-                                                                        <FormLabel
-                                                                            htmlFor={`titleCorrections.${elementId}`}
-                                                                            mt={2}
-                                                                        >
-                                                                            Title for {elements[elementId].name} (
-                                                                            {elements[elementId].itemTitle})
-                                                                        </FormLabel>
-                                                                        <Input
-                                                                            {...field}
-                                                                            id={`titleCorrections.${elementId}`}
-                                                                            placeholder="Replacement title"
-                                                                        />
-                                                                        <FormErrorMessage>
-                                                                            {
-                                                                                (form.errors.titleCorrections ??
-                                                                                    ({} as any))[elementId]
-                                                                            }
-                                                                        </FormErrorMessage>
-                                                                    </FormControl>
-                                                                )}
-                                                            </Field>
-                                                        )
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )
-                                        }
-                                    />
+            <FormControl isInvalid={Boolean(errors.playlistId) && Boolean(touchedFields.playlistId)}>
+                <FormLabel htmlFor="playlistId" mt={2}>
+                    Playlist
+                </FormLabel>
+                <Select
+                    {...register("playlistId")}
+                    id="playlistId"
+                    placeholder="Choose playlist"
+                    isDisabled={!selectedGoogleAccountId}
+                    mt={2}
+                >
+                    {playlistOptions}
+                </Select>
+                <FormErrorMessage>{errors.playlistId?.message}</FormErrorMessage>
+            </FormControl>
 
-                                    <FieldArray
-                                        name="descriptionCorrections"
-                                        render={(_arrayHelpers) =>
-                                            values.descriptionCorrections &&
-                                            Object.keys(values.descriptionCorrections).length > 0 ? (
-                                                <>
-                                                    <Heading as="h2" size="md" textAlign="left" my={4}>
-                                                        Corrected video descriptions
-                                                    </Heading>
-                                                    {R.toPairs<string>(values.descriptionCorrections).map(
-                                                        ([elementId, _description]) => (
-                                                            <Field
-                                                                key={elementId}
-                                                                name={`descriptionCorrections.${elementId}`}
-                                                                validate={getDescriptionError}
-                                                                isRequired
-                                                            >
-                                                                {({ field, form }: FieldProps<string>) => (
-                                                                    <FormControl
-                                                                        isInvalid={
-                                                                            !!(form.errors.descriptionCorrections ??
-                                                                                ({} as any))[elementId] &&
-                                                                            !!(form.touched.descriptionCorrections ??
-                                                                                ({} as any))[elementId]
-                                                                        }
-                                                                        isRequired
-                                                                    >
-                                                                        <FormLabel
-                                                                            htmlFor={`descriptionCorrections.${elementId}`}
-                                                                            mt={2}
-                                                                        >
-                                                                            Description for {elements[elementId].name} (
-                                                                            {elements[elementId].itemTitle})
-                                                                        </FormLabel>
-                                                                        <Textarea
-                                                                            {...field}
-                                                                            id={`descriptionCorrections.${elementId}`}
-                                                                            size="sm"
-                                                                            placeholder="Replacement description"
-                                                                        />
-                                                                        <FormErrorMessage>
-                                                                            {
-                                                                                (form.errors.descriptionCorrections ??
-                                                                                    ({} as any))[elementId]
-                                                                            }
-                                                                        </FormErrorMessage>
-                                                                    </FormControl>
-                                                                )}
-                                                            </Field>
-                                                        )
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )
-                                        }
-                                    />
+            {Boolean(titleCorrectionsFields.fields.length) && (
+                <Heading as="h2" size="md" textAlign="left" my={4}>
+                    Corrected video titles
+                </Heading>
+            )}
+            {titleCorrectionsFields.fields.map((field, idx) => (
+                <FormControl key={field.id} isInvalid={Boolean(errors.titleCorrections?.[idx]?.value)} isRequired>
+                    <FormLabel mt={2}>
+                        Title for {elements?.[field.id]?.name} ({elements?.[field.id]?.itemTitle})
+                    </FormLabel>
+                    <Input
+                        {...register(`titleCorrections.${idx}.value`, { maxLength: 100 })}
+                        placeholder="Replacement title"
+                    />
+                    <FormErrorMessage>
+                        {errors.titleCorrections?.[idx]?.value?.type === "maxLength" &&
+                            "Title must not exceed 100 characters."}
+                    </FormErrorMessage>
+                </FormControl>
+            ))}
 
-                                    <Button
-                                        type="submit"
-                                        isLoading={isSubmitting}
-                                        isDisabled={!isValid || !touched}
-                                        mt={4}
-                                        colorScheme="purple"
-                                    >
-                                        Upload videos
-                                    </Button>
-                                </Form>
-                            );
-                        }}
-                    </Formik>
-                </VStack>
-                <VStack maxWidth="30em" alignItems="flex-start" bgColor="gray.100" px={8}>
-                    <Heading as="h2" size="md" textAlign="left" mt={8} mb={2}>
-                        Recent uploads
-                    </Heading>
-                    {existingJobsResult.loading ? <Spinner /> : undefined}
-                    {existingJobsResult.error ? <Text>Could not get recent uploads.</Text> : undefined}
-                    <Heading as="h3" size="sm" textAlign="left" mt={4}>
-                        Ongoing
-                    </Heading>
-                    <List>
-                        {existingJobsResult.data?.ongoing_UploadYouTubeVideoJob.length ? (
-                            existingJobsResult.data.ongoing_UploadYouTubeVideoJob.map((job) => (
-                                <ListItem key={job.id}>
-                                    <HStack>
-                                        <Text data-jobid={job.id}>
-                                            {job.element?.item.title ?? "Unknown item"} (
-                                            {job.element?.name ?? "Unknown element"})
-                                        </Text>
-                                        <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
-                                    </HStack>
-                                </ListItem>
-                            ))
-                        ) : (
-                            <Text fontStyle="italic" fontSize="sm">
-                                No upload jobs in progress.
-                            </Text>
-                        )}
-                    </List>
-                    <Heading as="h3" size="sm" textAlign="left" mt={4}>
-                        Past uploads
-                    </Heading>
-                    <List>
-                        {existingJobsResult.data?.recent_UploadYouTubeVideoJob.length ? (
-                            <>
-                                {existingJobsResult.data.recent_UploadYouTubeVideoJob.map((job) => (
-                                    <ListItem key={job.id}>
-                                        <HStack>
-                                            <Text data-jobid={job.id}>
-                                                {job.element?.item.title ?? "Unknown item"} (
-                                                {job.element?.name ?? "Unknown element"})
-                                            </Text>
-                                            <Box ml={2}>{jobStatus(job.jobStatusName)}</Box>
-                                        </HStack>
-                                    </ListItem>
-                                ))}
-                                {existingJobsResult.data.recent_UploadYouTubeVideoJob.length === 10 ? (
-                                    <Text>Only the 10 most recent jobs are shown.</Text>
-                                ) : undefined}
-                            </>
-                        ) : (
-                            <Text fontStyle="italic" fontSize="sm">
-                                You haven&apos;t uploaded anything yet.
-                            </Text>
-                        )}
-                    </List>
-                </VStack>
-            </HStack>
-        </>
+            {Boolean(descriptionCorrectionsFields.fields.length) && (
+                <Heading as="h2" size="md" textAlign="left" my={4}>
+                    Corrected video descriptions
+                </Heading>
+            )}
+            {descriptionCorrectionsFields.fields.map((field, idx) => (
+                <FormControl key={field.id} isInvalid={Boolean(errors.descriptionCorrections?.[idx]?.value)} isRequired>
+                    <FormLabel mt={2}>
+                        Description for {elements?.[field.id]?.name} ({elements?.[field.id]?.itemTitle})
+                    </FormLabel>
+                    <Textarea
+                        {...register(`descriptionCorrections.${idx}.value`, {
+                            maxLength: 4950,
+                            validate: { angleBrackets: (x) => !x?.includes("<") && !x?.includes(">") },
+                        })}
+                        placeholder="Replacement description"
+                    />
+                    <FormErrorMessage>
+                        {errors.descriptionCorrections?.[idx]?.value?.type === "maxLength" &&
+                            "Description must not exceed 4950 characters. "}
+                        {errors.descriptionCorrections?.[idx]?.value?.type === "angleBrackets" &&
+                            "Description must not contain '<' or '>' characters. "}
+                    </FormErrorMessage>
+                </FormControl>
+            ))}
+
+            <Button
+                type="submit"
+                isLoading={isSubmitting}
+                isDisabled={!isValid || !elementIds.length}
+                mt={4}
+                colorScheme="purple"
+            >
+                Upload videos
+            </Button>
+        </form>
     ) : (
         <></>
     );

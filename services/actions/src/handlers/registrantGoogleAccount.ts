@@ -29,7 +29,8 @@ export async function handleRegistrantGoogleAccountDeleted(
     if (accessToken) {
         console.log("Revoking credentials for registrant Google account", { googleAccountId: oldRow.id });
         const oauth2Client = createOAuth2Client();
-        await callWithRetry(async () => await oauth2Client.revokeToken(accessToken));
+        oauth2Client.setCredentials(payload.event.data.old.tokenData);
+        await callWithRetry(async () => await oauth2Client.revokeCredentials());
         console.log("Revoked credentials for registrant Google account", { googleAccountId: oldRow.id });
     }
     return;
@@ -140,23 +141,21 @@ export async function handleRefreshYouTubeData(payload: refreshYouTubeDataArgs):
 
     const youTubeData: YouTubeDataBlob = {
         channels:
-            channels.data.items?.map(
-                (channel): YouTubeChannelDetails => {
-                    const playlists = allPlaylists.filter((p) => p.snippet && p.snippet.channelId === channel.id);
-                    return {
-                        description: channel.snippet?.description ?? "",
-                        title: channel.snippet?.title ?? "<unknown title>",
-                        id: channel.id ?? "",
-                        playlists: playlists.map(
-                            (p): YouTubePlaylistDetails => ({
-                                id: p.id ?? "",
-                                title: p.snippet?.title ?? "<unknown title>",
-                                description: p.snippet?.description ?? "",
-                            })
-                        ),
-                    };
-                }
-            ) ?? [],
+            channels.data.items?.map((channel): YouTubeChannelDetails => {
+                const playlists = allPlaylists.filter((p) => p.snippet && p.snippet.channelId === channel.id);
+                return {
+                    description: channel.snippet?.description ?? "",
+                    title: channel.snippet?.title ?? "<unknown title>",
+                    id: channel.id ?? "",
+                    playlists: playlists.map(
+                        (p): YouTubePlaylistDetails => ({
+                            id: p.id ?? "",
+                            title: p.snippet?.title ?? "<unknown title>",
+                            description: p.snippet?.description ?? "",
+                        })
+                    ),
+                };
+            }) ?? [],
     };
 
     await apolloClient.mutate({

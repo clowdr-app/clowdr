@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
@@ -32,10 +33,11 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
-import {
+import type {
     ManageContent_ItemExhibitionFragment,
+    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
+import {
     ManageContent_ItemExhibitionFragmentDoc,
-    ManageContent_ItemFragment,
     useManageContent_DeleteItemExhibitionMutation,
     useManageContent_InsertItemExhibitionMutation,
     useManageContent_SelectAllItemsQuery,

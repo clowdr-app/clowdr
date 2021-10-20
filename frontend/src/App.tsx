@@ -1,7 +1,8 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { useMemo } from "react";
-import { Route, RouteComponentProps, Switch } from "react-router-dom";
+import type { RouteComponentProps} from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";

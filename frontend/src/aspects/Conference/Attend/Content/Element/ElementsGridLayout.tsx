@@ -1,7 +1,8 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
-import { Content_ElementType_Enum, ElementDataFragment } from "../../../../../generated/graphql";
+import type { ElementDataFragment } from "../../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { Element } from "../Element/Element";
 

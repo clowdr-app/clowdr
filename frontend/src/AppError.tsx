@@ -1,5 +1,6 @@
 import { Button, chakra, Text, VStack } from "@chakra-ui/react";
-import React, { PropsWithChildren, useMemo } from "react";
+import type { PropsWithChildren} from "react";
+import React, { useMemo } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { hasOwnProperty } from "./aspects/Generic/ObjectUtils";
 

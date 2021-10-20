@@ -10,7 +10,8 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { Field, FieldProps } from "formik";
+import type { FieldProps } from "formik";
+import { Field } from "formik";
 import React from "react";
 import { FAIcon } from "../../Icons/FAIcon";
 

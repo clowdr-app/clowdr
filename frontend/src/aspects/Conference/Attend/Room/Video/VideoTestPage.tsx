@@ -1,5 +1,6 @@
 import { chakra, FormControl, FormLabel, Heading, HStack, Input, Select, Switch, Text } from "@chakra-ui/react";
-import React, { ChangeEvent, FocusEvent, useCallback, useState } from "react";
+import type { ChangeEvent, FocusEvent} from "react";
+import React, { useCallback, useState } from "react";
 import { HlsPlayer } from "./HlsPlayer";
 import { HlsPlayerV1 } from "./HlsPlayerV1";
 import { VideoAspectWrapper } from "./VideoAspectWrapper";

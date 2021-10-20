@@ -1,15 +1,17 @@
-import { ApolloClient, gql } from "@apollo/client";
+import type { ApolloClient} from "@apollo/client";
+import { gql } from "@apollo/client";
 import assert from "assert";
-import {
-    DeletePushNotificationSubscriptionDocument,
+import type {
     DeletePushNotificationSubscriptionMutation,
     DeletePushNotificationSubscriptionMutationVariables,
-    GetVapidPublicKeyDocument,
     GetVapidPublicKeyQuery,
     GetVapidPublicKeyQueryVariables,
-    UpsertPushNotificationSubscriptionDocument,
     UpsertPushNotificationSubscriptionMutation,
-    UpsertPushNotificationSubscriptionMutationVariables,
+    UpsertPushNotificationSubscriptionMutationVariables} from "../../generated/graphql";
+import {
+    DeletePushNotificationSubscriptionDocument,
+    GetVapidPublicKeyDocument,
+    UpsertPushNotificationSubscriptionDocument
 } from "../../generated/graphql";
 
 gql`

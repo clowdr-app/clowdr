@@ -18,13 +18,14 @@ import type {
     ProgramPersonDescriptor,
 } from "../../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import {
+import type {
     ChangeSummary,
+    IdMap} from "../Merge";
+import {
     convertOriginatingData,
     findExistingNamedItem,
     findExistingOriginatingData,
     findMatch,
-    IdMap,
     isMatch_Id,
     isMatch_Id_Generalised,
     isMatch_OriginatingDataId,

@@ -22,7 +22,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
-import ProfileBadge, { BadgeData } from "./ProfileBadge";
+import type { BadgeData } from "./ProfileBadge";
+import ProfileBadge from "./ProfileBadge";
 
 function BadgeColourModal({
     badge,

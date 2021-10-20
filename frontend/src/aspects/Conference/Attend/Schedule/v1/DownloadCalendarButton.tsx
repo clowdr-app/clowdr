@@ -1,5 +1,7 @@
-import { Button, ButtonProps, useToast } from "@chakra-ui/react";
-import ics, { EventAttributes } from "ics";
+import type { ButtonProps} from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
+import type { EventAttributes } from "ics";
+import ics from "ics";
 import React from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";

@@ -1,4 +1,5 @@
-import { ChatMessageDataFragment, ChatReactionDataFragment, Chat_MessageType_Enum } from "../../../generated/graphql";
+import type { ChatMessageDataFragment, ChatReactionDataFragment} from "../../../generated/graphql";
+import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import type {
     AnswerMessageData,
     MessageData,

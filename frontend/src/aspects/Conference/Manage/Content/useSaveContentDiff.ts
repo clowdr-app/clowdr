@@ -1,7 +1,8 @@
-import { ApolloError, gql } from "@apollo/client";
+import type { ApolloError} from "@apollo/client";
+import { gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
-import {
+import type {
     Collection_Exhibition_Insert_Input,
     Collection_ProgramPerson_Insert_Input,
     Collection_Tag_Insert_Input,
@@ -9,7 +10,8 @@ import {
     Content_Element_Insert_Input,
     Content_ItemExhibition_Insert_Input,
     Content_ItemProgramPerson_Insert_Input,
-    Content_Item_Insert_Input,
+    Content_Item_Insert_Input} from "../../../../generated/graphql";
+import {
     useDeleteExhibitionsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteProgramPeopleMutation,

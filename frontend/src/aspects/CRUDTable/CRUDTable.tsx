@@ -40,7 +40,8 @@ import {
 } from "@chakra-ui/react";
 import assert from "assert";
 import { formatISO9075 } from "date-fns";
-import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import type { Dispatch, SetStateAction} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import { LinkButton } from "../Chakra/LinkButton";

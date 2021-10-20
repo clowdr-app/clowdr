@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo } from "react";
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
+import type { RouteComponentProps} from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";

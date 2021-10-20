@@ -4,8 +4,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { validate } from "uuid";
+import type {
+    Room_EventSummaryFragment} from "../../../../../generated/graphql";
 import {
-    Room_EventSummaryFragment,
     Room_EventSummaryFragmentDoc,
     useDeleteEventParticipantMutation,
     useSaveVonageRoomRecordingMutation,
@@ -14,10 +15,12 @@ import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import { RegistrantIdSpec, useRegistrants } from "../../../RegistrantsContext";
+import type { RegistrantIdSpec} from "../../../RegistrantsContext";
+import { useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
-import { DevicesProps, PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
+import type { DevicesProps} from "../VideoChat/PermissionInstructionsContext";
+import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
 import { CameraViewport } from "./Components/CameraViewport";
 import Layout from "./Components/Layout";
 import type { Viewport } from "./Components/LayoutTypes";
@@ -26,7 +29,8 @@ import SelfScreenComponent from "./Components/SelfScreen";
 import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
-import { AvailableStream, useVonageLayout, VonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
+import type { AvailableStream, VonageLayout} from "./VonageLayoutProvider";
+import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
 gql`

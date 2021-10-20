@@ -14,9 +14,10 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import {
+import type {
     ExhibitionSummaryFragment,
-    ItemTagDataFragment,
+    ItemTagDataFragment} from "../../../../generated/graphql";
+import {
     useSelectAllExhibitionsQuery,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";

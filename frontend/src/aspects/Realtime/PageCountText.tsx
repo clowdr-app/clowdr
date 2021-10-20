@@ -1,4 +1,5 @@
-import { Box, chakra, TextProps, Tooltip } from "@chakra-ui/react";
+import type { TextProps} from "@chakra-ui/react";
+import { Box, chakra, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useMaybeConference } from "../Conference/useConference";
 import FAIcon from "../Icons/FAIcon";

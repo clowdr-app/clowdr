@@ -18,7 +18,8 @@ import { useConference } from "../../../useConference";
 import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../../Content/Types";
 import { useSaveContentDiff } from "../../Content/useSaveContentDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import { ChangeSummary, Set_toJSON } from "../Merge";
+import type { ChangeSummary} from "../Merge";
+import { Set_toJSON } from "../Merge";
 import mergeContent from "./MergeContent";
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryContentData> }): JSX.Element {

@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
 import React from "react";
+import type {
+    RoomPage_RoomDetailsFragment} from "../../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
-    RoomPage_RoomDetailsFragment,
     useRoomPage_GetRoomDetailsQuery,
 } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";

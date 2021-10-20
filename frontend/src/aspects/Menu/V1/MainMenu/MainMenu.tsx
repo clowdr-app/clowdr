@@ -25,7 +25,8 @@ import FAIcon from "../../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
 import { ToggleChatsButton } from "../ToggleChatsButton";
 import { ToggleNavButton } from "../ToggleNavButton";
-import { MenuState, MenuStateContext, useMainMenu } from "./MainMenuState";
+import type { MenuState} from "./MainMenuState";
+import { MenuStateContext, useMainMenu } from "./MainMenuState";
 
 interface Props {
     children: React.ReactNode | React.ReactNodeArray;

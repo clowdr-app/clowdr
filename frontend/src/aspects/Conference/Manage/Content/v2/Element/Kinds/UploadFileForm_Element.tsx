@@ -11,14 +11,16 @@ import {
 } from "@chakra-ui/react";
 import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy, { UppyFile } from "@uppy/core";
+import type { UppyFile } from "@uppy/core";
+import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import FAIcon from "../../../../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";

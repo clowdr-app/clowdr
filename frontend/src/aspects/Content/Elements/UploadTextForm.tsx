@@ -13,7 +13,8 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";

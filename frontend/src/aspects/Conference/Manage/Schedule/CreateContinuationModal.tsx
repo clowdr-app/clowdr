@@ -31,9 +31,10 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import type {
+    ContinuationTo} from "@clowdr-app/shared-types/build/continuation";
 import {
     ContinuationDefaultFor,
-    ContinuationTo,
     ContinuationType,
     NavigationView,
 } from "@clowdr-app/shared-types/build/continuation";
@@ -41,11 +42,12 @@ import { format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
+import type {
+    ContinuationsEditor_SelectContinuationsQuery,
+    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
 import {
     ContinuationsEditor_ContinuationFragmentDoc,
     ContinuationsEditor_SelectContinuationsDocument,
-    ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables,
     useContinuationsEditor_InsertMutation,
     useCreateContinuationModal_EventsQuery,
     useCreateContinuationModal_ExhibitionsQuery,

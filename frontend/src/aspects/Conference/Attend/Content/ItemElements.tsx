@@ -3,10 +3,11 @@ import { Box, Heading, Text, VStack } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
+import type {
+    Content_ItemType_Enum,
+    ItemElements_ItemDataFragment} from "../../../../generated/graphql";
 import {
     Content_ElementType_Enum,
-    Content_ItemType_Enum,
-    ItemElements_ItemDataFragment,
     Permissions_Permission_Enum,
     useItemElements_GetItemQuery,
 } from "../../../../generated/graphql";

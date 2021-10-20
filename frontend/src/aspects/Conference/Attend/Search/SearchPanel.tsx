@@ -16,7 +16,8 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
-import React, { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
+import React from "react";
 import {
     useSearchPanel_EventsLazyQuery,
     useSearchPanel_ItemsLazyQuery,

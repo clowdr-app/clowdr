@@ -21,8 +21,9 @@ import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import type {
+    Permissions_GroupRegistrant_Insert_Input} from "../../../../../generated/graphql";
 import {
-    Permissions_GroupRegistrant_Insert_Input,
     useImportRegistrantsMutation,
     useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,

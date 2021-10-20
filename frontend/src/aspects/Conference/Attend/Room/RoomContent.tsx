@@ -13,10 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
+import type {
+    RoomPage_RoomDetailsFragment,
+    Room_EventSummaryFragment} from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment,
     Room_Mode_Enum,
 } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";

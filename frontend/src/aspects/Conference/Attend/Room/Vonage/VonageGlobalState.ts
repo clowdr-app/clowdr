@@ -1,4 +1,5 @@
-import { isVonageSessionLayoutData, VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import type { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import { isVonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";

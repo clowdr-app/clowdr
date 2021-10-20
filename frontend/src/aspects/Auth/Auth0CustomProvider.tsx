@@ -1,4 +1,5 @@
-import { AppState as Auth0State, Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import type { AppState as Auth0State} from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import assert from "assert";
 import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";

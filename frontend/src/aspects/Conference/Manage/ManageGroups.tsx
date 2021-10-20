@@ -1,26 +1,29 @@
-import { FetchResult, gql } from "@apollo/client";
+import type { FetchResult} from "@apollo/client";
+import { gql } from "@apollo/client";
 import { Heading, Spinner } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
     CreateDeleteGroupsMutation,
+    UpdateGroupMutation} from "../../../generated/graphql";
+import {
     Permissions_Permission_Enum,
-    UpdateGroupMutation,
     useCreateDeleteGroupsMutation,
     useSelectAllGroupsQuery,
     useSelectAllRolesQuery,
     useUpdateGroupMutation,
 } from "../../../generated/graphql";
-import CRUDTable, {
-    BooleanFieldFormat,
+import type {
     CRUDTableProps,
-    defaultSelectFilter,
-    defaultStringFilter,
-    FieldType,
     PrimaryField,
     SelectOption,
-    UpdateResult,
+    UpdateResult} from "../../CRUDTable/CRUDTable";
+import CRUDTable, {
+    BooleanFieldFormat,
+    defaultSelectFilter,
+    defaultStringFilter,
+    FieldType
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";

@@ -2,8 +2,9 @@ import type { Reference } from "@apollo/client";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
+import type {
+    ManageContent_ElementFragment} from "../../../../../../generated/graphql";
 import {
-    ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";

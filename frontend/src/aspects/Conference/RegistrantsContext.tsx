@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { RegistrantDataFragment, useRegistrantsByIdQuery, useRegistrantsByUserIdQuery } from "../../generated/graphql";
+import type { RegistrantDataFragment} from "../../generated/graphql";
+import { useRegistrantsByIdQuery, useRegistrantsByUserIdQuery } from "../../generated/graphql";
 import usePolling from "../Generic/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";

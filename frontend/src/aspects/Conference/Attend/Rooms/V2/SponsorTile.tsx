@@ -1,10 +1,12 @@
 import { AspectRatio, Button, Center, Image, Text, Tooltip, useColorModeValue, VStack } from "@chakra-ui/react";
-import { ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import { isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
-import { Content_ElementType_Enum, SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
+import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";

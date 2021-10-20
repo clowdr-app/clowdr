@@ -1,4 +1,5 @@
-import { ComponentSingleStyleConfig, CSSObject, keyframes } from "@chakra-ui/react";
+import type { ComponentSingleStyleConfig, CSSObject} from "@chakra-ui/react";
+import { keyframes } from "@chakra-ui/react";
 import { defaultOutline_AsBoxShadow } from "../Outline";
 
 const joinRoomButtonBgKeyframes = keyframes`

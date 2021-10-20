@@ -1,10 +1,11 @@
 import { FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
-import {
-    ElementBaseType,
+import type {
     LinkBlob,
     LinkButtonBlob,
     PaperLinkBlob,
-    VideoLinkBlob,
+    VideoLinkBlob} from "@clowdr-app/shared-types/build/content";
+import {
+    ElementBaseType
 } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useState } from "react";

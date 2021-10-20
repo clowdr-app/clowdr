@@ -1,4 +1,5 @@
-import { Button, ButtonGroup, ButtonProps, StackProps, useColorModeValue } from "@chakra-ui/react";
+import type { ButtonProps, StackProps} from "@chakra-ui/react";
+import { Button, ButtonGroup, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";

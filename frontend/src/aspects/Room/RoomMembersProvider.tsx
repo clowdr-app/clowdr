@@ -2,7 +2,8 @@ import { gql } from "@apollo/client";
 import React, { useMemo } from "react";
 import { useGetRoomMembersQuery } from "../../generated/graphql";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { RoomMembersContext, RoomMembersInfos } from "./useRoomMembers";
+import type { RoomMembersInfos } from "./useRoomMembers";
+import { RoomMembersContext } from "./useRoomMembers";
 
 gql`
     query GetRoomMembers($roomId: uuid!) {

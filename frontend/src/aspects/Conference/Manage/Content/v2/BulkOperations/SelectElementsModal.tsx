@@ -25,11 +25,12 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-    Content_ElementType_Enum,
+import type {
     ManageContent_ItemFragment,
     SelectElements_ElementFragment,
-    SelectElements_ItemFragment,
+    SelectElements_ItemFragment} from "../../../../../../generated/graphql";
+import {
+    Content_ElementType_Enum,
     useSEoUm_InfosQuery,
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";

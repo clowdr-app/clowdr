@@ -3,9 +3,10 @@ import { VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import { AppError } from "../../AppError";
-import {
+import type {
     AuthdConferenceInfoFragment,
-    PublicConferenceInfoFragment,
+    PublicConferenceInfoFragment} from "../../generated/graphql";
+import {
     useConferenceBySlug_WithoutUserQuery,
     useConferenceBySlug_WithUserQuery,
 } from "../../generated/graphql";

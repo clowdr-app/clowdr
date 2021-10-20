@@ -3,8 +3,9 @@ import { Alert, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
+import type {
+    ConferenceConfiguration_ConferenceConfigurationsFragment} from "../../../../generated/graphql";
 import {
-    ConferenceConfiguration_ConferenceConfigurationsFragment,
     Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";

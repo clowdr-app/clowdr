@@ -1,5 +1,7 @@
-import { Box, BoxProps, VStack } from "@chakra-ui/react";
-import React, { RefObject } from "react";
+import type { BoxProps} from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
+import type { RefObject } from "react";
+import React from "react";
 import { ChatCompose } from "../Compose/ChatCompose";
 import { ComposeContextProvider } from "../Compose/ComposeContext";
 import SendMessageQueriesProvider from "../Compose/SendMessageQueries";

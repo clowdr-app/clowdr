@@ -27,11 +27,12 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
-import {
-    ManageShufflePeriods_SelectAllDocument,
+import type {
     ManageShufflePeriods_SelectAllQuery,
     ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment,
+    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
+import {
+    ManageShufflePeriods_SelectAllDocument,
     useDeleteShufflePeriodMutation,
 } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";

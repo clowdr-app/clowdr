@@ -15,15 +15,17 @@ import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
-import {
+import type {
     PrefetchShuffleQueueEntryDataFragment,
-    ShufflePeriodDataFragment,
+    ShufflePeriodDataFragment} from "../../generated/graphql";
+import {
     useJoinShuffleQueueMutation,
     useMyShuffleQueueEntryQuery,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
-import { ConferenceInfoFragment, useConference } from "../Conference/useConference";
+import type { ConferenceInfoFragment} from "../Conference/useConference";
+import { useConference } from "../Conference/useConference";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
 import { roundToNearest } from "../Generic/MathUtils";
 import { useRealTime } from "../Generic/useRealTime";

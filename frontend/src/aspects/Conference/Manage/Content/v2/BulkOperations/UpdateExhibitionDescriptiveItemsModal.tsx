@@ -12,8 +12,9 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
+import type {
+    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
 import {
-    ManageContent_ItemFragment,
     useUpdateExhibitionDescriptiveItemMutation,
     useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery,
 } from "../../../../../../generated/graphql";

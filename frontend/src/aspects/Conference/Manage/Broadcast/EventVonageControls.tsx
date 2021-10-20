@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { Button, FormControl, FormLabel, Select, useToast, VStack } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useMemo } from "react";
 import {
     useEventVonageControls_GetEventsQuery,

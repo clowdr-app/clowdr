@@ -17,19 +17,22 @@ import {
     Textarea,
     VStack,
 } from "@chakra-ui/react";
+import type {
+    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import {
-    EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import type {
+    EmailTemplate_Defaults} from "@clowdr-app/shared-types/build/email";
 import {
-    EmailTemplate_Defaults,
     EMAIL_TEMPLATE_SUBMISSION_REQUEST,
     EMAIL_TEMPLATE_SUBTITLES_GENERATED,
 } from "@clowdr-app/shared-types/build/email";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type {
+    ConfigureEmailTemplates_ConferenceConfigurationFragment} from "../../../../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
-    ConfigureEmailTemplates_ConferenceConfigurationFragment,
     ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc,
     useConfigureEmailTemplates_GetConferenceConfigurationsQuery,
     useConfigureEmailTemplates_UpdateConferenceConfigurationMutation,

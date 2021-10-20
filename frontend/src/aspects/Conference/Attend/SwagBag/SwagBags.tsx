@@ -1,19 +1,21 @@
 import { gql } from "@apollo/client";
 import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import type {
+    ElementBlob,
+    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import {
     ElementBaseType,
-    ElementBlob,
-    ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import type {
+    ElementDataFragment,
+    SwagBagFragment} from "../../../../generated/graphql";
 import {
     Content_ElementType_Enum,
-    ElementDataFragment,
-    SwagBagFragment,
     useSelectSwagBagsQuery,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";

@@ -1,7 +1,8 @@
 import { Divider, Heading, List, ListItem } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { SearchPanel_ItemFragment, useProfilePage_ItemsQuery } from "../../../../generated/graphql";
+import type { SearchPanel_ItemFragment} from "../../../../generated/graphql";
+import { useProfilePage_ItemsQuery } from "../../../../generated/graphql";
 import SearchResult_Item from "../Search/SearchResult_Item";
 
 export default function RegistrantItems({ registrantId }: { registrantId: string }): JSX.Element {

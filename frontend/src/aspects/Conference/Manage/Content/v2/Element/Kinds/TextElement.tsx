@@ -1,5 +1,6 @@
 import { Textarea, useToast } from "@chakra-ui/react";
-import { AbstractBlob, ElementBaseType, TextBlob } from "@clowdr-app/shared-types/build/content";
+import type { AbstractBlob, TextBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";

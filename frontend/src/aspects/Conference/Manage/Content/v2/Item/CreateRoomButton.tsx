@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
-import { Button, ButtonProps, useToast } from "@chakra-ui/react";
+import type { ButtonProps} from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import { useItem_CreateRoomMutation } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";

@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Room_EventSummaryFragment, Room_Mode_Enum } from "../../../../generated/graphql";
+import type { Room_EventSummaryFragment} from "../../../../generated/graphql";
+import { Room_Mode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
 interface Result {

@@ -3,9 +3,10 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Link, Spinner, Table, Tbody, Td, Th, Thead, Tooltip, Tr, VStack } from "@chakra-ui/react";
 import { default as React, useCallback } from "react";
 import ReactPlayer from "react-player";
-import {
+import type {
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
-    UploadYouTubeVideos_YouTubeUploadFragment,
+    UploadYouTubeVideos_YouTubeUploadFragment} from "../../../../../generated/graphql";
+import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     Video_JobStatus_Enum,
 } from "../../../../../generated/graphql";

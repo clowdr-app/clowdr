@@ -1,4 +1,5 @@
-import { Button, ButtonProps, Link, LinkProps } from "@chakra-ui/react";
+import type { ButtonProps, LinkProps } from "@chakra-ui/react";
+import { Button, Link } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import { FAIcon } from "../Icons/FAIcon";

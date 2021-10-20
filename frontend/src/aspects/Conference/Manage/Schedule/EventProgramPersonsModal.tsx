@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -24,17 +25,19 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
-import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { LegacyRef} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
     EventInfoFragment,
-    EventInfoFragmentDoc,
     EventProgramPersonInfoFragment,
-    EventProgramPersonInfoFragmentDoc,
     ProgramPersonInfoFragment,
+    Schedule_EventProgramPerson_Insert_Input} from "../../../../generated/graphql";
+import {
+    EventInfoFragmentDoc,
+    EventProgramPersonInfoFragmentDoc,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
-    Schedule_EventProgramPerson_Insert_Input,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectProgramPeople_ByRegistrantQuery,
@@ -44,11 +47,12 @@ import {
     useUpdateEventProgramPersonMutation,
 } from "../../../../generated/graphql";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification,
+    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";

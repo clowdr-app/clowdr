@@ -11,7 +11,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useSearchRegistrantsLazyQuery } from "../../../../generated/graphql";
 import { useConference } from "../../../Conference/useConference";
-import { Registrant, useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
+import type { Registrant} from "../../../Conference/useCurrentRegistrant";
+import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { RegistrantsList } from "./RegistrantsList";

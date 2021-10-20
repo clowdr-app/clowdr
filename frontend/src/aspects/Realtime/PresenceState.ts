@@ -1,5 +1,6 @@
 import { Mutex } from "async-mutex";
-import { Observable, Observer } from "../Observable";
+import type { Observer } from "../Observable";
+import { Observable } from "../Observable";
 import { realtimeService } from "./RealtimeService";
 
 export class PresenceState {

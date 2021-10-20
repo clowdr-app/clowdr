@@ -1,9 +1,10 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import {
+import type {
     ExhibitionWithContentFragment,
-    ItemEventFragment,
+    ItemEventFragment} from "../../../../generated/graphql";
+import {
     Permissions_Permission_Enum,
     useSelectExhibitionQuery,
 } from "../../../../generated/graphql";

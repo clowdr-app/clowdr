@@ -18,8 +18,9 @@ import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
+import type {
+    MenuSchedule_EventFragment} from "../../../../generated/graphql";
 import {
-    MenuSchedule_EventFragment,
     useMenuScheduleQuery,
     useMenuSchedule_SearchEventsLazyQuery,
 } from "../../../../generated/graphql";

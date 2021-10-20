@@ -25,12 +25,13 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
-import {
+import type {
     ContinuationsEditor_ContinuationFragment,
+    ContinuationsEditor_SelectContinuationsQuery,
+    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
+import {
     ContinuationsEditor_ContinuationFragmentDoc,
     ContinuationsEditor_SelectContinuationsDocument,
-    ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables,
     useContinuationsEditor_DeleteMutation,
     useContinuationsEditor_SelectContinuationsQuery,
     useContinuationsEditor_UpdateManyMutation,

@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -19,12 +20,14 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import Papa from "papaparse";
-import React, { LegacyRef, useCallback, useMemo, useRef } from "react";
+import type { LegacyRef} from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragment,
+    ManageProgramPeople_RegistrantFragment} from "../../../generated/graphql";
+import {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-    ManageProgramPeople_RegistrantFragment,
     Permissions_Permission_Enum,
     useManageProgramPeople_DeleteProgramPersonsMutation,
     useManageProgramPeople_InsertProgramPersonMutation,
@@ -34,15 +37,16 @@ import {
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     Delete,
     Insert,
     RowSpecification,
-    SortDirection,
-    Update,
+    Update} from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
+    SortDirection
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";

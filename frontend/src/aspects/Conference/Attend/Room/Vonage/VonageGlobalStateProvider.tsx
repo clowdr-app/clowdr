@@ -1,5 +1,6 @@
 import React from "react";
-import { State, VonageGlobalState } from "./VonageGlobalState";
+import type { VonageGlobalState } from "./VonageGlobalState";
+import { State } from "./VonageGlobalState";
 
 export const VonageGlobalStateContext = React.createContext<VonageGlobalState>(State);
 

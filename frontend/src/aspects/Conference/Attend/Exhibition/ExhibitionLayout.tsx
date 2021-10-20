@@ -10,14 +10,16 @@ import {
     useColorModeValue,
     useToken,
 } from "@chakra-ui/react";
-import { ElementBaseType, ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import {
-    Content_ElementType_Enum,
+import type {
     ElementDataFragment,
     ExhibitionItemFragment,
-    ExhibitionWithContentFragment,
+    ExhibitionWithContentFragment} from "../../../../generated/graphql";
+import {
+    Content_ElementType_Enum,
     useSelectExhibitionQuery,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";

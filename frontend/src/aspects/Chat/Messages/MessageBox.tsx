@@ -2,11 +2,12 @@ import { Button, Flex, HStack, Image, Text, useColorModeValue, VStack } from "@c
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
-import {
+import type {
     ChatReactionDataFragment,
+    RegistrantDataFragment} from "../../../generated/graphql";
+import {
     Chat_MessageType_Enum,
-    Chat_ReactionType_Enum,
-    RegistrantDataFragment,
+    Chat_ReactionType_Enum
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
 import { DownloadButton } from "../../Chakra/LinkButton";
@@ -19,7 +20,8 @@ import { Markdown } from "../../Text/Markdown";
 import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import { BaseMessageData, MediaType } from "../Types/Messages";
+import type { BaseMessageData} from "../Types/Messages";
+import { MediaType } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
 import ProfileBox from "./ProfileBox";

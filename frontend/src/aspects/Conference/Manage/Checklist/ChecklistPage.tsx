@@ -24,15 +24,17 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import type {
+    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
-    ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
-import React, { Fragment, PropsWithChildren, useMemo } from "react";
+import type { PropsWithChildren} from "react";
+import React, { Fragment, useMemo } from "react";
 import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";

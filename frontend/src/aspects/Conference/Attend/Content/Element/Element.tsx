@@ -1,5 +1,6 @@
 import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
-import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";

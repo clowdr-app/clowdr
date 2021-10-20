@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
-import { ApolloClient, ApolloError, gql } from "@apollo/client";
+import type { ApolloClient} from "@apollo/client";
+import { ApolloError, gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import type {
+    RenderProps} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -8,7 +11,6 @@ import {
     CloseButton,
     createStandaloneToast,
     Heading,
-    RenderProps,
     VStack,
 } from "@chakra-ui/react";
 import assert from "assert";
@@ -16,43 +18,45 @@ import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
     ChatReactionDataFragment,
     Chat_FlagType_Enum,
-    Chat_MessageType_Enum,
-    Chat_ReactionType_Enum,
-    InitialChatStateDocument,
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
-    InsertChatFlagDocument,
     Maybe,
-    PinChatDocument,
     PinChatMutation,
     PinChatMutationVariables,
-    Room_ManagementMode_Enum,
-    SelectInitialChatStateDocument,
     SelectInitialChatStateQuery,
     SelectInitialChatStateQueryVariables,
-    SelectInitialChatStatesDocument,
     SelectInitialChatStatesQuery,
     SelectInitialChatStatesQueryVariables,
-    SelectMessagesPageDocument,
     SelectMessagesPageQuery,
     SelectMessagesPageQueryVariables,
-    SubscribeChatDocument,
     SubscribeChatMutation,
     SubscribeChatMutationVariables,
-    UnpinChatDocument,
     UnpinChatMutation,
     UnpinChatMutationVariables,
-    UnsubscribeChatDocument,
     UnsubscribeChatMutation,
-    UnsubscribeChatMutationVariables,
+    UnsubscribeChatMutationVariables} from "../../generated/graphql";
+import {
+    Chat_MessageType_Enum,
+    Chat_ReactionType_Enum,
+    InitialChatStateDocument,
+    InsertChatFlagDocument,
+    PinChatDocument,
+    Room_ManagementMode_Enum,
+    SelectInitialChatStateDocument,
+    SelectInitialChatStatesDocument,
+    SelectMessagesPageDocument,
+    SubscribeChatDocument,
+    UnpinChatDocument,
+    UnsubscribeChatDocument
 } from "../../generated/graphql";
 import { theme } from "../Chakra/ChakraCustomProvider";
 import type { Registrant } from "../Conference/useCurrentRegistrant";
-import { Observable, Observer } from "../Observable";
+import type { Observer } from "../Observable";
+import { Observable } from "../Observable";
 import { realtimeService } from "../Realtime/RealtimeService";
 import type { Action, Message, Notification, Reaction } from "../Realtime/RealtimeServiceCommonTypes";
 import { Markdown } from "../Text/Markdown";

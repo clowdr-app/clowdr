@@ -5,9 +5,10 @@ import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import assert from "assert";
 import React, { useMemo } from "react";
+import type {
+    Content_Element_Insert_Input} from "../../../../../../generated/graphql";
 import {
     Content_ElementType_Enum,
-    Content_Element_Insert_Input,
     useAddContentMenu_CreateElementMutation,
 } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";

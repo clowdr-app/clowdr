@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client";
+import type {
+    StackProps} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -13,7 +15,6 @@ import {
     InputRightElement,
     SimpleGrid,
     Spinner,
-    StackProps,
     Text,
     useColorMode,
     useColorModeValue,
@@ -22,10 +23,11 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
-import {
+import type {
     ItemList_ItemDataFragment,
     ItemList_ItemTagDataFragment,
-    ItemList_TagInfoFragment,
+    ItemList_TagInfoFragment} from "../../../../generated/graphql";
+import {
     useContentOfTagQuery,
     useTagsQuery,
 } from "../../../../generated/graphql";

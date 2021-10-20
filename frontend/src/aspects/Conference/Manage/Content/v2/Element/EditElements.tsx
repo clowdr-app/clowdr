@@ -14,10 +14,11 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import {
-    Content_ItemType_Enum,
+import type {
     ManageContent_ElementFragment,
-    ManageContent_ItemSecondaryFragment,
+    ManageContent_ItemSecondaryFragment} from "../../../../../../generated/graphql";
+import {
+    Content_ItemType_Enum
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditItemPeoplePanel } from "../Item/EditItemPeople";

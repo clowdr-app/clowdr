@@ -1,12 +1,14 @@
 import type { BoxProps } from "@chakra-ui/react";
-import React, { RefObject, useMemo } from "react";
+import type { RefObject} from "react";
+import React, { useMemo } from "react";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../Generic/useRestorableState";
 import type { ChatState } from "./ChatGlobalState";
-import { ChatConfiguration, ChatConfigurationProvider, ChatSpacing } from "./Configuration";
+import type { ChatConfiguration} from "./Configuration";
+import { ChatConfigurationProvider, ChatSpacing } from "./Configuration";
 import { ChatFrame } from "./Frame/ChatFrame";
 import type { EmoteMessageData } from "./Types/Messages";
 

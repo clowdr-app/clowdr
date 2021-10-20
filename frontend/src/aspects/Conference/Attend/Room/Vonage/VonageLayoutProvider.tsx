@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
 import { useDisclosure, useToast } from "@chakra-ui/react";
+import type {
+    VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
 import {
     isVonageSessionLayoutData,
-    VonageSessionLayoutData,
     VonageSessionLayoutType,
 } from "@clowdr-app/shared-types/build/vonage";
-import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import type { PropsWithChildren} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     useInsertVonageSessionLayoutMutation,
     useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,

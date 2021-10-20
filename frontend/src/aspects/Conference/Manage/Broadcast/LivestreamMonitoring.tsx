@@ -25,9 +25,10 @@ import {
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
-import {
+import type {
     MonitorLivestreams_EventFragment,
-    MonitorLivestreams_PersonFragment,
+    MonitorLivestreams_PersonFragment} from "../../../../generated/graphql";
+import {
     Schedule_EventProgramPersonRole_Enum,
     useMonitorLivestreamsQuery,
     useRoomPage_GetRoomChannelStackQuery,

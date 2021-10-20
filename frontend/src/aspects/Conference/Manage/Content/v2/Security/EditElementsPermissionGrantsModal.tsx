@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     Button,
     FormLabel,
@@ -13,20 +14,23 @@ import {
     Text,
 } from "@chakra-ui/react";
 import * as R from "ramda";
-import React, { LegacyRef, useMemo } from "react";
+import type { LegacyRef} from "react";
+import React, { useMemo } from "react";
+import type {
+    ElementSecurity_ElementPgFragment} from "../../../../../../generated/graphql";
 import {
-    ElementSecurity_ElementPgFragment,
     ElementSecurity_ElementPgFragmentDoc,
     useElementSecurity_DeleteGrantsMutation,
     useElementSecurity_InsertGrantsMutation,
     useElementSecurity_SelectGrantsQuery,
 } from "../../../../../../generated/graphql";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     DeepWriteable,
-    RowSpecification,
+    RowSpecification} from "../../../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import { maybeCompare } from "../../../../../Utils/maybeSort";

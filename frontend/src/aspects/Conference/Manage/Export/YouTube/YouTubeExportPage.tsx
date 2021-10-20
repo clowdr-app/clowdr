@@ -1,18 +1,18 @@
 import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
-import { LinkButton } from "../../../Chakra/LinkButton";
-import PageNotFound from "../../../Errors/PageNotFound";
-import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
-import { DashboardPage } from "../DashboardPage";
-import { ConnectYouTubeAccount } from "./YouTube/ConnectYouTubeAccount";
-import { Finished } from "./YouTube/Finished";
-import { UploadedPage } from "./YouTube/UploadedPage";
-import { UploadYouTubeVideos } from "./YouTube/UploadYouTubeVideos";
-import { YouTubeExportProvider } from "./YouTube/YouTubeExportContext";
+import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
+import { LinkButton } from "../../../../Chakra/LinkButton";
+import PageNotFound from "../../../../Errors/PageNotFound";
+import { useTitle } from "../../../../Utils/useTitle";
+import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import { useConference } from "../../../useConference";
+import { DashboardPage } from "../../DashboardPage";
+import { ConnectYouTubeAccount } from "./ConnectYouTubeAccount";
+import { Finished } from "./Finished";
+import { UploadedPage } from "./UploadedPage";
+import { UploadYouTubeVideos } from "./UploadYouTubeVideos";
+import { YouTubeExportProvider } from "./YouTubeExportContext";
 
 export function YouTubeExportPage(): JSX.Element {
     const conference = useConference();
@@ -44,7 +44,7 @@ export function YouTubeExportPage(): JSX.Element {
                             mt={4}
                             size="md"
                         >
-                            Existing exports
+                            Previous exports
                         </LinkButton>
                         <YouTubeExportProvider>
                             <ConnectYouTubeAccount my={4} />

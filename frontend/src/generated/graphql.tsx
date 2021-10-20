@@ -40687,6 +40687,13 @@ export type ChooseElementModal_GetVideoElementsQueryVariables = Exact<{
 
 export type ChooseElementModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> };
 
+export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum }> }> };
+
 export type ManageExport_GetGoogleOAuthUrlMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   scopes: ReadonlyArray<Scalars['String']> | Scalars['String'];
@@ -50055,6 +50062,51 @@ export function useChooseElementModal_GetVideoElementsLazyQuery(baseOptions?: Ap
 export type ChooseElementModal_GetVideoElementsQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsQuery>;
 export type ChooseElementModal_GetVideoElementsLazyQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsLazyQuery>;
 export type ChooseElementModal_GetVideoElementsQueryResult = Apollo.QueryResult<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>;
+export const DownloadVideos_GetAllVideosDocument = gql`
+    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    elements(
+      where: {typeName: {_in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    ) {
+      name
+      id
+      data
+      typeName
+    }
+    typeName
+    title
+  }
+}
+    `;
+
+/**
+ * __useDownloadVideos_GetAllVideosQuery__
+ *
+ * To run a query within a React component, call `useDownloadVideos_GetAllVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDownloadVideos_GetAllVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDownloadVideos_GetAllVideosQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useDownloadVideos_GetAllVideosQuery(baseOptions: Apollo.QueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+      }
+export function useDownloadVideos_GetAllVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+        }
+export type DownloadVideos_GetAllVideosQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosQuery>;
+export type DownloadVideos_GetAllVideosLazyQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosLazyQuery>;
+export type DownloadVideos_GetAllVideosQueryResult = Apollo.QueryResult<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>;
 export const ManageExport_GetGoogleOAuthUrlDocument = gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
   getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {

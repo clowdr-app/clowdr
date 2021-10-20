@@ -2,8 +2,8 @@ import React from "react";
 import { Route } from "react-router";
 import { Switch, useRouteMatch } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
-import { DownloadVideos } from "./DownloadVideos";
-import { YouTubeExportPage } from "./YouTubeExportPage";
+import { DownloadVideosPage } from "./Download/DownloadVideosPage";
+import { YouTubeExportPage } from "./YouTube/YouTubeExportPage";
 
 export default function ManageExport(): JSX.Element {
     const { path } = useRouteMatch();
@@ -13,7 +13,7 @@ export default function ManageExport(): JSX.Element {
                 <YouTubeExportPage />
             </Route>
             <Route path={`${path}/download-videos`}>
-                <DownloadVideos />
+                <DownloadVideosPage />
             </Route>
             <Route path="/">
                 <Dashboard />

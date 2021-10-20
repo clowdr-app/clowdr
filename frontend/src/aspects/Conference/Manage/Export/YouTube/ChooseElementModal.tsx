@@ -18,8 +18,8 @@ import React, { useMemo, useState } from "react";
 import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
-} from "../../../../generated/graphql";
-import { useConference } from "../../useConference";
+} from "../../../../../generated/graphql";
+import { useConference } from "../../../useConference";
 
 gql`
     query ChooseElementModal_GetItems($conferenceId: uuid!) {

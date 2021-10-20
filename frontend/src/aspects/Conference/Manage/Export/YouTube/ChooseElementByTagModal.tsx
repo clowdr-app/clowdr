@@ -27,9 +27,9 @@ import React, { useMemo, useState } from "react";
 import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
-} from "../../../../generated/graphql";
-import { FAIcon } from "../../../Icons/FAIcon";
-import { useConference } from "../../useConference";
+} from "../../../../../generated/graphql";
+import { FAIcon } from "../../../../Icons/FAIcon";
+import { useConference } from "../../../useConference";
 
 gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {

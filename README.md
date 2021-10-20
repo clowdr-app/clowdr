@@ -133,6 +133,10 @@ Whenever your public URLs change, you will need to do the following:
    that Vonage can store the recording in S3. Without this recordings will only
    be stored temporarily in Vonage and won't be accessible from the app.
 
+   You can use the `VonageUserAccessKeyId` and `VonageUserSecretAccessKey` outputs
+   from the AWS deployment to configure the S3 connection. For extra security, you
+   can set the `VONAGE_API_KEY` env var and redeploy the AWS stack.
+
 1. Reconfigure any local environment variables that point at the URL or
    domain of the frontend, actions service or Hasura service.
 

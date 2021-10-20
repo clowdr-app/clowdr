@@ -1,5 +1,6 @@
 import { HStack, Tooltip } from "@chakra-ui/react";
 import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import * as R from "ramda";
 import React, { useContext, useMemo } from "react";
 import { DownloadButton } from "../../../../Chakra/LinkButton";
 import { FAIcon } from "../../../../Icons/FAIcon";
@@ -23,6 +24,10 @@ export function VideoDownloadLink({
     const downloaded = useMemo(() => downloadedElementIds.includes(elementId), [downloadedElementIds, elementId]);
 
     const videoURL = extractVideoUrl(data);
+    const fileName = useMemo(
+        () => (videoURL ? elementId + "." + R.last(videoURL.split(".")) : undefined),
+        [elementId, videoURL]
+    );
 
     return (
         <HStack>
@@ -42,6 +47,7 @@ export function VideoDownloadLink({
                 onClick={() => addDownloadedElementId(elementId)}
                 onContextMenu={() => addDownloadedElementId(elementId)}
                 colorScheme={downloaded ? "gray" : "SecondaryActionButton"}
+                fileName={fileName}
             >
                 {itemTitle} ({elementName})
             </DownloadButton>

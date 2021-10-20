@@ -1,5 +1,5 @@
 import { Button, ButtonProps, Link, LinkProps } from "@chakra-ui/react";
-import React, { Ref } from "react";
+import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import { FAIcon } from "../Icons/FAIcon";
 
@@ -10,11 +10,9 @@ export interface LinkButtonProps extends ButtonProps {
 }
 
 export const LinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(
-    props: LinkButtonProps,
+    { to, children, isExternal, linkProps, ...remaining }: LinkButtonProps,
     ref
 ): JSX.Element {
-    const { to, children, isExternal, linkProps, ...remaining } = props;
-
     return (
         <Link
             as={ReactLink}
@@ -32,9 +30,10 @@ export const LinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(f
     );
 });
 
-export function ExternalLinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
-    const { to, children, isExternal, linkProps, ref, ...remaining } = props;
-
+export const ExternalLinkButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps>(function ExternalLinkButton(
+    { to, children, isExternal, linkProps, ...remaining }: LinkButtonProps,
+    ref
+): JSX.Element {
     return (
         <Link
             href={to}
@@ -49,25 +48,28 @@ export function ExternalLinkButton(props: LinkButtonProps & { ref?: Ref<HTMLAnch
             </Button>
         </Link>
     );
-}
+});
 
-export function DownloadButton(props: LinkButtonProps & { ref?: Ref<HTMLAnchorElement> }): JSX.Element {
-    const { to, children, isExternal, linkProps, ref, ...remaining } = props;
-
-    return (
-        <Link
-            href={to}
-            isExternal={isExternal}
-            textDecoration="none !important"
-            display="inline-block"
-            {...linkProps}
-            target="_blank"
-            download={true}
-            ref={ref}
-        >
-            <Button as="div" {...remaining} leftIcon={<FAIcon iconStyle="s" icon="file-download" />}>
-                {children}
-            </Button>
-        </Link>
-    );
-}
+export const DownloadButton = React.forwardRef<HTMLAnchorElement, LinkButtonProps & { fileName?: string }>(
+    function DownloadButton(
+        { fileName, to, children, linkProps, ...remaining }: LinkButtonProps & { fileName?: string },
+        ref
+    ): JSX.Element {
+        return (
+            <Link
+                href={to}
+                isExternal={true}
+                textDecoration="none !important"
+                display="inline-block"
+                {...linkProps}
+                target="_blank"
+                download={fileName ?? true}
+                ref={ref}
+            >
+                <Button as="div" {...remaining} leftIcon={<FAIcon iconStyle="s" icon="file-download" />}>
+                    {children}
+                </Button>
+            </Link>
+        );
+    }
+);

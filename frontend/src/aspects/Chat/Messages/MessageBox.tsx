@@ -9,7 +9,7 @@ import {
     RegistrantDataFragment,
 } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
-import { ExternalLinkButton } from "../../Chakra/LinkButton";
+import { DownloadButton } from "../../Chakra/LinkButton";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
 import { useAddEmojiFloat, useEmojiFloat } from "../../Emoji/EmojiFloat";
 import { roundUpToNearest } from "../../Generic/MathUtils";
@@ -323,21 +323,18 @@ function MessageBody({
                         ) : messageData.media.type === MediaType.Image ? (
                             <Image src={messageData.media.url} alt={messageData.media.alt} />
                         ) : undefined}
-                        <ExternalLinkButton
+                        <DownloadButton
                             to={messageData.media.url}
-                            isExternal
                             size="xs"
                             colorScheme="SecondaryActionButton"
-                            linkProps={{
-                                download:
-                                    messageData.media.name ??
-                                    (urlParts ? urlParts[urlParts.length - 1] : "unknown-file"),
-                            }}
+                            fileName={
+                                messageData.media.name ?? (urlParts ? urlParts[urlParts.length - 1] : "unknown-file")
+                            }
                             variant="ghost"
                         >
                             <FAIcon iconStyle="s" icon="paperclip" />
                             &nbsp; {messageData.media.name ?? "Attachment"}
-                        </ExternalLinkButton>
+                        </DownloadButton>
                     </>
                 ) : undefined}
             </VStack>

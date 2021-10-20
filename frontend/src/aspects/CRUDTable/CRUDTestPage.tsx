@@ -2,16 +2,17 @@ import { Heading } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import isValidUUID from "../Utils/isValidUUID";
-import CRUDTable, {
+import type {
     BatchModeCUDCallbacks,
-    BooleanFieldFormat,
     BooleanFieldSpec,
     CRUDTableProps,
-    defaultStringFilter,
-    FieldType,
     InstantModeCUDCallbacks,
     StringFieldSpec,
-    UpdateResult,
+    UpdateResult} from "./CRUDTable";
+import CRUDTable, {
+    BooleanFieldFormat,
+    defaultStringFilter,
+    FieldType
 } from "./CRUDTable";
 
 type TestCRUDData = {

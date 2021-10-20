@@ -42,11 +42,12 @@ import {
     useToken,
     VStack,
 } from "@chakra-ui/react";
-import React, {
+import type {
     LegacyRef,
     MutableRefObject,
     ReactNode,
-    ReactNodeArray,
+    ReactNodeArray} from "react";
+import React, {
     useCallback,
     useEffect,
     useMemo,

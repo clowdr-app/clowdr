@@ -14,7 +14,8 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { RoomListRoomDetailsFragment, Room_ManagementMode_Enum } from "../../../../../generated/graphql";
+import type { RoomListRoomDetailsFragment} from "../../../../../generated/graphql";
+import { Room_ManagementMode_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import FAIcon from "../../../../Icons/FAIcon";
 import PageCountText from "../../../../Realtime/PageCountText";

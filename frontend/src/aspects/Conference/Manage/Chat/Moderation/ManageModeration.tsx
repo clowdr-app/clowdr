@@ -20,15 +20,17 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { Fragment, useMemo, useState } from "react";
+import type {
+    ManageModeration_ChatFlagFragment} from "../../../../../generated/graphql";
 import {
-    ManageModeration_ChatFlagFragment,
     Permissions_Permission_Enum,
     useManageModeration_SelectFlagsQuery,
     useManageModeration_UpdateFlagMutation,
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { MessageState } from "../../../../Chat/ChatGlobalState";
-import { ChatConfiguration, ChatConfigurationProvider, ChatSpacing } from "../../../../Chat/Configuration";
+import type { ChatConfiguration} from "../../../../Chat/Configuration";
+import { ChatConfigurationProvider, ChatSpacing } from "../../../../Chat/Configuration";
 import EmojiPickerProvider from "../../../../Chat/EmojiPickerProvider";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";

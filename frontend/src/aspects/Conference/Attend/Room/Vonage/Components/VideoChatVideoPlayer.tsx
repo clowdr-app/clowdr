@@ -1,4 +1,5 @@
-import { Box, ToastId, useToast } from "@chakra-ui/react";
+import type { ToastId} from "@chakra-ui/react";
+import { Box, useToast } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
 import { VideoPlayer } from "../../Video/VideoPlayer";

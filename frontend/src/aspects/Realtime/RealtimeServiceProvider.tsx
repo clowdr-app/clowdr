@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { RealtimeService, realtimeService } from "./RealtimeService";
+import type { RealtimeService} from "./RealtimeService";
+import { realtimeService } from "./RealtimeService";
 
 export const RealtimeServiceContext = React.createContext<RealtimeService>(realtimeService);
 

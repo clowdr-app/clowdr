@@ -1,5 +1,6 @@
 import { Center, useDisclosure } from "@chakra-ui/react";
-import { EmojiData, Picker } from "emoji-mart";
+import type { EmojiData} from "emoji-mart";
+import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import React, { useCallback, useMemo, useRef } from "react";
 

@@ -16,7 +16,8 @@ import {
     Switch,
     useToast,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React from "react";
 import {
     RoomListRoomDetailsFragmentDoc,

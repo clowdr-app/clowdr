@@ -25,8 +25,9 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
+import type {
+    SubmissionsReviewModal_ElementFragment} from "../../../../../../generated/graphql";
 import {
-    SubmissionsReviewModal_ElementFragment,
     useSubmissionsReviewModalDataQuery,
 } from "../../../../../../generated/graphql";
 import { Element } from "../../../../Attend/Content/Element/Element";

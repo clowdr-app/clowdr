@@ -1,4 +1,5 @@
-import { Button, ButtonProps, HStack, Tooltip } from "@chakra-ui/react";
+import type { ButtonProps} from "@chakra-ui/react";
+import { Button, HStack, Tooltip } from "@chakra-ui/react";
 import assert from "assert";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";

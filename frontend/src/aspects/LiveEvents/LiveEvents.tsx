@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
-import { MinimalEventInfoFragment, useGetEventsInNextHourQuery } from "../../generated/graphql";
+import type { MinimalEventInfoFragment} from "../../generated/graphql";
+import { useGetEventsInNextHourQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { roundDownToNearest, roundUpToNearest } from "../Generic/MathUtils";
 import { useRealTime } from "../Generic/useRealTime";

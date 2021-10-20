@@ -1,5 +1,7 @@
-import React, { ReactNode, useEffect } from "react";
-import { RaiseHandState, State } from "./RaiseHandState";
+import type { ReactNode} from "react";
+import React, { useEffect } from "react";
+import type { RaiseHandState} from "./RaiseHandState";
+import { State } from "./RaiseHandState";
 
 export const RaiseHandStateContext = React.createContext<RaiseHandState>(State);
 

@@ -21,7 +21,8 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Permissions_Permission_Enum, useUpdateConferenceMutation } from "../../../generated/graphql";

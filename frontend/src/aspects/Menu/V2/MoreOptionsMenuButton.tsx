@@ -1,6 +1,7 @@
+import type {
+    ButtonProps} from "@chakra-ui/react";
 import {
     Button,
-    ButtonProps,
     chakra,
     Image,
     Menu,

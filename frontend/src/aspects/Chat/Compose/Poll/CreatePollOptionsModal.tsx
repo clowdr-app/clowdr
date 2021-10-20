@@ -1,3 +1,5 @@
+import type {
+    ModalProps} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -16,7 +18,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    ModalProps,
     NumberDecrementStepper,
     NumberIncrementStepper,
     NumberInput,

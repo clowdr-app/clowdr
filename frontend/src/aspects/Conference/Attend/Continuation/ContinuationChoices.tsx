@@ -1,16 +1,18 @@
 import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/toast";
-import {
+import type {
     ContinuationDefaultFor,
+    ExtendedContinuationTo} from "@clowdr-app/shared-types/build/continuation";
+import {
     ContinuationType,
-    ExtendedContinuationTo,
     NavigationView,
 } from "@clowdr-app/shared-types/build/continuation";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router";
+import type {
+    ContinuationChoices_ContinuationFragment} from "../../../../generated/graphql";
 import {
-    ContinuationChoices_ContinuationFragment,
     useContinuationChoices_ContinuationsQuery,
     useContinuationChoices_RoomsQuery,
 } from "../../../../generated/graphql";

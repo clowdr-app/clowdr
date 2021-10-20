@@ -1,9 +1,10 @@
 import { ViewIcon } from "@chakra-ui/icons";
-import {
+import type {
     ComponentWithAs,
+    IconProps} from "@chakra-ui/react";
+import {
     Heading,
     Icon,
-    IconProps,
     List,
     ListItem,
     Text,

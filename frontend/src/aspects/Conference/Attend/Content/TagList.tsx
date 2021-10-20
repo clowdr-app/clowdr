@@ -1,4 +1,5 @@
-import { HStack, StackProps } from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { ItemTagDataFragment } from "../../../../generated/graphql";

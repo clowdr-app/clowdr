@@ -1,4 +1,5 @@
-import { ButtonProps, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import type { ButtonProps} from "@chakra-ui/react";
+import { useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../../Icons/FAIcon";
 import { useChatConfiguration } from "../../Configuration";

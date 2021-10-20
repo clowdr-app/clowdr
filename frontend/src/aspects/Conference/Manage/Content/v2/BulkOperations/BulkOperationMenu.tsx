@@ -14,10 +14,11 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useState } from "react";
-import {
-    Content_ElementType_Enum,
+import type {
     ManageContent_ItemFragment,
-    ManageContent_TagFragment,
+    ManageContent_TagFragment} from "../../../../../../generated/graphql";
+import {
+    Content_ElementType_Enum
 } from "../../../../../../generated/graphql";
 import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
 import { AddElementsModal } from "./AddElementsModal";

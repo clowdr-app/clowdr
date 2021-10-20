@@ -2,9 +2,10 @@ import { gql } from "@apollo/client";
 import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
+import type {
+    RoomListRoomDetailsFragment} from "../../../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
-    RoomListRoomDetailsFragment,
     useGetAllRoomsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";

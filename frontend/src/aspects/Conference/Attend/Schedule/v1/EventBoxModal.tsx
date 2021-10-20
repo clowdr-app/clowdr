@@ -15,16 +15,18 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import { format } from "date-fns";
 import { DateTime } from "luxon";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
-import {
-    Content_ElementType_Enum,
+import type {
     Schedule_ItemFragment,
-    Schedule_TagFragment,
+    Schedule_TagFragment} from "../../../../../generated/graphql";
+import {
+    Content_ElementType_Enum
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import FAIcon from "../../../../Icons/FAIcon";

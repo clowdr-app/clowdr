@@ -13,7 +13,8 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik } from "formik";
+import type { FieldProps} from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
     useChooseElementModal_GetItemsQuery,

@@ -16,9 +16,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
+import type {
+    UserInfoFragment} from "../../../generated/graphql";
 import {
     useAgreeToTermsMutation,
-    UserInfoFragment,
     useSelectCurrentUserQuery,
     useTermsConfigsQuery,
 } from "../../../generated/graphql";
@@ -27,7 +28,8 @@ import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
-import { CurrentUserContext, defaultCurrentUserContext, UserInfo } from "./useMaybeCurrentUser";
+import type { UserInfo } from "./useMaybeCurrentUser";
+import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
 
 gql`
     fragment RegistrantFields on registrant_Registrant {

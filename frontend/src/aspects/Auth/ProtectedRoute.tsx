@@ -1,7 +1,8 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { Button, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
+import type { RouteComponentProps, RouteProps } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import GenericErrorPage from "../Errors/GenericErrorPage";
 import { FAIcon } from "../Icons/FAIcon";

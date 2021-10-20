@@ -1,4 +1,5 @@
-import { Button, ButtonProps, Tooltip } from "@chakra-ui/react";
+import type { ButtonProps} from "@chakra-ui/react";
+import { Button, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
 import { useChatConfiguration } from "../Configuration";

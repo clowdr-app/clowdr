@@ -1,6 +1,7 @@
 import { Mutex } from "async-mutex";
 import type { Schedule_EventProgramPersonRole_Enum } from "../../generated/graphql";
-import { Observable, Observer } from "../Observable";
+import type { Observer } from "../Observable";
+import { Observable } from "../Observable";
 import { realtimeService } from "../Realtime/RealtimeService";
 
 export interface HandRaise_EventPerson {

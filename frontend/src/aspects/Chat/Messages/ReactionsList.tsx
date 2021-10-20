@@ -1,7 +1,9 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import type { ChatReactionDataFragment} from "../../../generated/graphql";
+import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
 import ReactionBadge from "./ReactionBadge";
 

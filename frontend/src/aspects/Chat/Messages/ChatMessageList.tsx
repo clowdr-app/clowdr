@@ -1,7 +1,9 @@
-import { Box, BoxProps, Button, Center, Flex, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
+import type { BoxProps} from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Heading, useColorModeValue, useToken } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import assert from "assert";
-import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
+import type { RefObject} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { Observable } from "../../Observable";
 import type { MessageState } from "../ChatGlobalState";

@@ -1,4 +1,5 @@
-import { gql, MutationTuple, QueryResult, Reference } from "@apollo/client";
+import type { MutationTuple, QueryResult, Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -30,7 +31,7 @@ import {
 import assert from "assert";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
+import type {
     AddEventPeople_InsertEventPeopleMutation,
     AddEventPeople_InsertEventPeopleMutationVariables,
     AddEventPeople_InsertProgramPeopleMutation,
@@ -42,13 +43,14 @@ import {
     AddEventPeople_SelectRegistrantsQueryVariables,
     Collection_ProgramPerson_Insert_Input,
     EventInfoFragment,
+    RoomInfoFragment,
+    Schedule_EventProgramPerson_Insert_Input} from "../../../../generated/graphql";
+import {
     EventInfoFragmentDoc,
     EventProgramPersonInfoFragmentDoc,
     Permissions_Permission_Enum,
     ProgramPersonInfoFragmentDoc,
-    RoomInfoFragment,
     Schedule_EventProgramPersonRole_Enum,
-    Schedule_EventProgramPerson_Insert_Input,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectGroupsQuery,

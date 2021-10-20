@@ -28,10 +28,11 @@ import {
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useEffect, useMemo, useState } from "react";
+import type {
+    Content_Element_Insert_Input,
+    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
 import {
     Content_ElementType_Enum,
-    Content_Element_Insert_Input,
-    ManageContent_ItemFragment,
     useBulkEdit_AddElementsMutation,
 } from "../../../../../../generated/graphql";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";

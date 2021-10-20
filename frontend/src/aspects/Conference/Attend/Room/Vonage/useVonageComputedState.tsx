@@ -2,7 +2,8 @@ import { createStandaloneToast, useToast } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { theme } from "../../../../Chakra/ChakraCustomProvider";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
-import { StateType, VonageGlobalState } from "./VonageGlobalState";
+import type { VonageGlobalState } from "./VonageGlobalState";
+import { StateType } from "./VonageGlobalState";
 import { useVonageGlobalState } from "./VonageGlobalStateProvider";
 import { useVonageLayout } from "./VonageLayoutProvider";
 

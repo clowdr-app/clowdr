@@ -2,11 +2,12 @@ import { gql } from "@apollo/client";
 import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
-import {
-    Content_ItemType_Enum,
+import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment,
+    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
+import {
+    Content_ItemType_Enum,
     Permissions_Permission_Enum,
     useGetItemQuery,
 } from "../../../../generated/graphql";

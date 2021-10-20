@@ -17,7 +17,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
-import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import {

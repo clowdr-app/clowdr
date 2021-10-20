@@ -1,10 +1,12 @@
 import { gql } from "@apollo/client";
-import { Box, BoxProps, Button, Heading, HStack, List, ListItem, useId, useIds, useToast } from "@chakra-ui/react";
+import type { BoxProps} from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, List, ListItem, useId, useIds, useToast } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
+import type {
+    ManageExport_RegistrantGoogleAccountFragment} from "../../../../../generated/graphql";
 import {
-    ManageExport_RegistrantGoogleAccountFragment,
     useManageExport_DeleteRegistrantGoogleAccountMutation,
     useManageExport_GetGoogleOAuthUrlMutation,
 } from "../../../../../generated/graphql";

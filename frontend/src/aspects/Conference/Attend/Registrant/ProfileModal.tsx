@@ -27,7 +27,8 @@ import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
-import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import type { Registrant} from "../../useCurrentRegistrant";
+import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
 import RegistrantItems from "../Profile/RegistrantItems";
 

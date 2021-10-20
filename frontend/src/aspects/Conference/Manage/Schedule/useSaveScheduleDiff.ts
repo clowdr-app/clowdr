@@ -1,11 +1,13 @@
-import { ApolloError, gql } from "@apollo/client";
+import type { ApolloError} from "@apollo/client";
+import { gql } from "@apollo/client";
 import assert from "assert";
 import { useEffect, useState } from "react";
-import {
+import type {
     Collection_Tag_Insert_Input,
     Conference_OriginatingData_Insert_Input,
+    Room_Room_Insert_Input} from "../../../../generated/graphql";
+import {
     Room_Mode_Enum,
-    Room_Room_Insert_Input,
     useDeleteEventsMutation,
     useDeleteOriginatingDatasMutation,
     useDeleteRoomsMutation,

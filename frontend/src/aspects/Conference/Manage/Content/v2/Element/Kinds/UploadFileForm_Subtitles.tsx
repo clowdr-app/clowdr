@@ -9,20 +9,22 @@ import {
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
-import {
+import type {
     AudioFileBlob,
-    AWSJobStatus,
-    ElementBaseType,
     VideoBroadcastBlob,
     VideoCountdownBlob,
     VideoFileBlob,
     VideoFillerBlob,
     VideoPrepublishBlob,
     VideoSponsorsFillerBlob,
-    VideoTitlesBlob,
+    VideoTitlesBlob} from "@clowdr-app/shared-types/build/content";
+import {
+    AWSJobStatus,
+    ElementBaseType
 } from "@clowdr-app/shared-types/build/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy, { UppyFile } from "@uppy/core";
+import type { UppyFile } from "@uppy/core";
+import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
@@ -32,7 +34,8 @@ import assert from "assert";
 import { Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import srtValidator, { SrtValidationError } from "srt-validator";
+import type { SrtValidationError } from "srt-validator";
+import srtValidator from "srt-validator";
 import FAIcon from "../../../../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";

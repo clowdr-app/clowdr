@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import type { RouteComponentProps} from "react-router-dom";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";

@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
 import { Grid, GridItem, Image, List, ListItem, Text, useToken, VStack } from "@chakra-ui/react";
-import { Content_ElementType_Enum, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import { MainMenuSponsors_ItemDataFragment, useMainMenuSponsors_GetSponsorsQuery } from "../../../../generated/graphql";
+import type { MainMenuSponsors_ItemDataFragment} from "../../../../generated/graphql";
+import { useMainMenuSponsors_GetSponsorsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { Participants } from "../../../Conference/Attend/Rooms/V1/RoomParticipants";
 import { useConference } from "../../../Conference/useConference";

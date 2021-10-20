@@ -29,7 +29,8 @@ import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser"
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
-import { Registrant, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import type { Registrant} from "../../useCurrentRegistrant";
+import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
 

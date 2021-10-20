@@ -2,9 +2,10 @@ import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import {
+import type {
     RoomParticipantDetailsFragment,
-    SocialRoomFragment,
+    SocialRoomFragment} from "../../../../../generated/graphql";
+import {
     useGetSocialRoomsQuery,
 } from "../../../../../generated/graphql";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";

@@ -1,4 +1,5 @@
-import { DateTime, Zone } from "luxon";
+import type { Zone } from "luxon";
+import { DateTime } from "luxon";
 import React, { createContext, useContext, useMemo } from "react";
 
 export interface TimelineParameters {

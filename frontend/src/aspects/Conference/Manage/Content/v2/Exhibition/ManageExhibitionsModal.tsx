@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,13 +26,15 @@ import {
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { LegacyRef, useCallback, useMemo, useState } from "react";
+import type { LegacyRef} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
     Collection_Exhibition_Set_Input,
-    ManageContent_ExhibitionFragment,
+    ManageContent_ExhibitionFragment} from "../../../../../../generated/graphql";
+import {
     ManageContent_ExhibitionFragmentDoc,
     useManageContent_DeleteExhibitionsMutation,
     useManageContent_InsertExhibitionMutation,
@@ -43,11 +46,12 @@ import {
     NumberRangeColumnFilter,
     TextColumnFilter,
 } from "../../../../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification,
+    RowSpecification} from "../../../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import { maybeCompare } from "../../../../../Utils/maybeSort";

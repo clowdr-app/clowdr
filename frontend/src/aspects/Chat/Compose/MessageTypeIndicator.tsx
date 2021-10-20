@@ -1,4 +1,5 @@
-import { chakra, Tag, TagProps, Tooltip } from "@chakra-ui/react";
+import type { TagProps} from "@chakra-ui/react";
+import { chakra, Tag, Tooltip } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";

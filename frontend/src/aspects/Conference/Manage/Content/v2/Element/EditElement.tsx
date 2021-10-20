@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
     AccordionButton,
     AccordionIcon,
@@ -24,8 +25,9 @@ import {
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useRef, useState } from "react";
+import type {
+    ManageContent_ElementFragment} from "../../../../../../generated/graphql";
 import {
-    ManageContent_ElementFragment,
     ManageContent_ElementFragmentDoc,
     useManageContent_DeleteElementMutation,
     useManageContent_UpdateElementMutation,

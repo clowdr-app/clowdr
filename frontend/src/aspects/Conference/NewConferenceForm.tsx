@@ -10,14 +10,16 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
-import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
+import type { FieldProps, FormikErrors } from "formik";
+import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import {
-    ConferenceTakenDocument,
+import type {
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
-    Conference_Conference,
+    Conference_Conference} from "../../generated/graphql";
+import {
+    ConferenceTakenDocument,
     useCreateConferenceMutation,
     useCreateNewConferenceMetaStructureMutation,
 } from "../../generated/graphql";

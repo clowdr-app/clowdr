@@ -26,11 +26,12 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
-import {
-    ManageShufflePeriods_SelectAllDocument,
+import type {
     ManageShufflePeriods_SelectAllQuery,
     ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment,
+    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
+import {
+    ManageShufflePeriods_SelectAllDocument,
     ManageShufflePeriods_ShufflePeriodFragmentDoc,
     Room_ShuffleAlgorithm_Enum,
     useUpdateShufflePeriodMutation,

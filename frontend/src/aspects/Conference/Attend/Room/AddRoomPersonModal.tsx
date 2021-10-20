@@ -1,10 +1,11 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
-import {
-    GetRoomMembersDocument,
+import type {
     GetRoomMembersQuery,
     GetRoomMembersQueryVariables,
-    RoomMemberFragment,
+    RoomMemberFragment} from "../../../../generated/graphql";
+import {
+    GetRoomMembersDocument,
     RoomMemberFragmentDoc,
     Room_PersonRole_Enum,
     useAddParticipantToRoomMutation,

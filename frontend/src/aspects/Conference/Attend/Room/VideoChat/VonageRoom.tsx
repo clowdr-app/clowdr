@@ -14,8 +14,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
+import type {
+    RoomPage_RoomDetailsFragment} from "../../../../../generated/graphql";
 import {
-    RoomPage_RoomDetailsFragment,
     useGetEventVonageTokenMutation,
     useGetRoomVonageSessionIdQuery,
     useGetRoomVonageTokenMutation,

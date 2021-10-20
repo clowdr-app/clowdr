@@ -1,4 +1,5 @@
-import React, { createContext, PropsWithChildren, useState } from "react";
+import type { PropsWithChildren} from "react";
+import React, { createContext, useState } from "react";
 
 function useValue() {
     const [paused, setPaused] = useState<boolean>(true);

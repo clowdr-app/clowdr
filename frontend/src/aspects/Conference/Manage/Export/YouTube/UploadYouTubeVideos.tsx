@@ -24,14 +24,18 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import { ElementBaseType, ElementDataBlob, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { isYouTubeDataBlob, YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+import { isYouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import type { SubmitHandler} from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
+import type {
+    Job_Queues_UploadYouTubeVideoJob_Insert_Input} from "../../../../../generated/graphql";
 import {
-    Job_Queues_UploadYouTubeVideoJob_Insert_Input,
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetElementsQuery,
     useUploadYouTubeVideos_GetTemplateDataQuery,

@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import React from "react";
 import type { ChatState } from "./ChatGlobalState";
 import type { Maybe, MinMax, MinMaxWithValue } from "./Types/Base";
 import type { EmoteMessageData } from "./Types/Messages";

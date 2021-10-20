@@ -19,7 +19,8 @@ import { useConference } from "../../../useConference";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import { useSaveScheduleDiff } from "../../Schedule/useSaveScheduleDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import { ChangeSummary, Set_toJSON } from "../Merge";
+import type { ChangeSummary} from "../Merge";
+import { Set_toJSON } from "../Merge";
 import mergeSchedule from "./MergeSchedule";
 
 export default function MergePanel({ data }: { data: Record<string, IntermediaryScheduleData> }): JSX.Element {

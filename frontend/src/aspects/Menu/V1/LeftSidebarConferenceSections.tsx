@@ -10,9 +10,10 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useEffect } from "react";
-import {
+import type {
     RegistrantFieldsFragment,
-    RoomListRoomDetailsFragment,
+    RoomListRoomDetailsFragment} from "../../../generated/graphql";
+import {
     useGetAllTodaysRoomsQuery,
 } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";

@@ -1,5 +1,6 @@
 import { chakra } from "@chakra-ui/react";
-import React, { ReactNode, useMemo, useState } from "react";
+import type { ReactNode} from "react";
+import React, { useMemo, useState } from "react";
 
 export function VideoAspectWrapper({
     initialAspectRatio,

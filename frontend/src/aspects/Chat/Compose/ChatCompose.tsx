@@ -1,6 +1,7 @@
+import type {
+    BoxProps} from "@chakra-ui/react";
 import {
     Box,
-    BoxProps,
     Button,
     Code,
     Flex,
@@ -24,7 +25,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { FAIcon } from "../../Icons/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import { AnswerMessageData, MediaType, MessageMediaData } from "../Types/Messages";
+import type { AnswerMessageData, MessageMediaData } from "../Types/Messages";
+import { MediaType } from "../Types/Messages";
 import { useComposeContext } from "./ComposeContext";
 import { InsertEmojiButton } from "./InsertEmojiButton";
 import { MessageTypeButtons } from "./MessageTypeButtons";

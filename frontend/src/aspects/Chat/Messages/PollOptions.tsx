@@ -1,6 +1,7 @@
 import { Button, Flex, Input, ListItem, OrderedList, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { ChatReactionDataFragment, Chat_ReactionType_Enum } from "../../../generated/graphql";
+import type { ChatReactionDataFragment} from "../../../generated/graphql";
+import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
 import type { PollMessageData } from "../Types/Messages";

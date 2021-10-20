@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -40,20 +41,22 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import Papa from "papaparse";
-import React, { LegacyRef, Ref, useEffect, useMemo, useRef, useState } from "react";
+import type { LegacyRef, Ref} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-    Content_ItemType_Enum,
+import type {
     EventInfoFragment,
-    EventInfoFragmentDoc,
     ExhibitionInfoFragment,
     ItemFullNestedInfoFragment,
-    Permissions_Permission_Enum,
     ProgramPersonInfoFragment,
     RoomInfoFragment,
+    ShufflePeriodInfoFragment} from "../../../../generated/graphql";
+import {
+    Content_ItemType_Enum,
+    EventInfoFragmentDoc,
+    Permissions_Permission_Enum,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
-    ShufflePeriodInfoFragment,
     useDeleteEventInfosMutation,
     useInsertEventInfoMutation,
     useManageSchedule_ShufflePeriodsQuery,
@@ -71,12 +74,13 @@ import {
     SelectColumnFilter,
     TextColumnFilter,
 } from "../../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     ExtraButton,
-    RowSpecification,
+    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";

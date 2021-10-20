@@ -1,7 +1,9 @@
-import { Alert, AlertDescription, AlertIcon, AlertProps, Button, chakra, CloseButton } from "@chakra-ui/react";
+import type { AlertProps} from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, Button, chakra, CloseButton } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
+import type { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
+import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "videojs-contrib-quality-levels";
 import hlsQualitySelector from "videojs-hls-quality-selector";

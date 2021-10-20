@@ -14,7 +14,8 @@ import {
 import React, { useEffect, useState } from "react";
 import useCSVJSONXMLFileSelector from "../../../../Files/useCSVJSONXMLFileSelector";
 import useCSVJSONXMLImportOptions from "../../../../Files/useCSVJSONXMLImportOptions";
-import useCSVJSONXMLParse, { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
+import type { ParsedData, ParserResult } from "../../../../Files/useCSVJSONXMLParser";
+import useCSVJSONXMLParse from "../../../../Files/useCSVJSONXMLParser";
 import FAIcon from "../../../../Icons/FAIcon";
 
 function parser(data: any): ParserResult<any[]> {

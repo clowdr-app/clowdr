@@ -13,14 +13,16 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
+import type { MutableRefObject} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
     Schedule_EventSummaryFragment,
     Schedule_HappeningSoonQuery,
     Schedule_ItemFieldsFragment,
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
-    Schedule_TagFragment,
+    Schedule_TagFragment} from "../../../../generated/graphql";
+import {
     useGetSponsorBoothsQuery,
     useSchedule_HappeningSoonQuery,
 } from "../../../../generated/graphql";

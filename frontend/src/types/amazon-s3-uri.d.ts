@@ -1,6 +1,8 @@
 // Included because original package doesn't include types properly for some reason
 // TODO: PR request to amazon-s3-uri
 
+import type { Url } from "url";
+
 declare module "amazon-s3-uri" {
     export = AmazonS3URI;
     /**
@@ -42,7 +44,7 @@ declare module "amazon-s3-uri" {
          * URL object from `url.parse`
          * @type { import('url').Url }
          * */
-        uri: import("url").Url;
+        uri: Url;
         /**
          * the bucket name parsed from the URI (or null if no bucket specified)
          * @type { string | null }

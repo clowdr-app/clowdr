@@ -1,10 +1,11 @@
 import { chakra, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    Content_ItemType_Enum,
+import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment,
+    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
+import {
+    Content_ItemType_Enum
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";

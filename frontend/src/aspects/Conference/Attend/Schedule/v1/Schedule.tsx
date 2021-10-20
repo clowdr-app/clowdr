@@ -6,15 +6,16 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
-import {
-    Permissions_Permission_Enum,
+import type {
     ProgramPersonDataFragment,
     Schedule_EventSummaryFragment,
     Schedule_ItemFieldsFragment,
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
-    Schedule_TagFragment,
+    Schedule_TagFragment} from "../../../../../generated/graphql";
+import {
+    Permissions_Permission_Enum,
     useSchedule_SelectSummariesQuery,
 } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
@@ -22,7 +23,8 @@ import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../../useConference";
-import DayList, { TimelineEvent } from "./DayList";
+import type { TimelineEvent } from "./DayList";
+import DayList from "./DayList";
 import DownloadCalendarButton from "./DownloadCalendarButton";
 import NowMarker from "./NowMarker";
 import RoomNameBox from "./RoomNameBox";

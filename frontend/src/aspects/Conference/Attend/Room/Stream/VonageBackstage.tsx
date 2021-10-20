@@ -2,8 +2,9 @@ import { gql } from "@apollo/client";
 import { Box, VStack } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
+import type {
+    RoomEventDetailsFragment} from "../../../../../generated/graphql";
 import {
-    RoomEventDetailsFragment,
     useGetEventDetailsQuery,
     useGetEventVonageTokenMutation,
 } from "../../../../../generated/graphql";

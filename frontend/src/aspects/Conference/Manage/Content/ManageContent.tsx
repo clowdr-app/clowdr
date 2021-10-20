@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -20,15 +21,17 @@ import {
 } from "@chakra-ui/react";
 import Papa from "papaparse";
 import * as R from "ramda";
-import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
+import type { LegacyRef} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-    Content_ItemType_Enum,
+import type {
     Content_Item_Set_Input,
     ManageContent_ExhibitionFragment,
     ManageContent_ItemFragment,
+    ManageContent_TagFragment} from "../../../../generated/graphql";
+import {
+    Content_ItemType_Enum,
     ManageContent_ItemFragmentDoc,
-    ManageContent_TagFragment,
     Permissions_Permission_Enum,
     useManageContent_DeleteItemsMutation,
     useManageContent_InsertItemMutation,
@@ -41,13 +44,14 @@ import {
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import { MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification,
+    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";

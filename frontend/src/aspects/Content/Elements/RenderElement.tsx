@@ -1,5 +1,6 @@
 import { Box, Container, Text, VStack } from "@chakra-ui/react";
-import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import React from "react";
 import { ExternalLinkButton } from "../../Chakra/LinkButton";

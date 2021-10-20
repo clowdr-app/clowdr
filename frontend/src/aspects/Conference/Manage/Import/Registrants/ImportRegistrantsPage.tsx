@@ -1,6 +1,7 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import type {
+    IntermediaryRegistrantData} from "@clowdr-app/shared-types/build/import/intermediary";
 import {
-    IntermediaryRegistrantData,
     JSONataToIntermediaryRegistrant,
 } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";

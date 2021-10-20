@@ -3,7 +3,8 @@
 
 import { chakra, FormControl, FormLabel, Select } from "@chakra-ui/react";
 import type { DeviceType, SelectedDeviceId } from "amazon-chime-sdk-component-library-react/lib/types";
-import React, { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
+import React from "react";
 
 interface Props {
     label: string;

@@ -30,7 +30,8 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
-import { MyBackstages_EventFragment, useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
+import type { MyBackstages_EventFragment} from "../../../../generated/graphql";
+import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";

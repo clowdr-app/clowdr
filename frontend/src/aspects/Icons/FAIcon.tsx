@@ -1,4 +1,5 @@
-import { chakra, ChakraProps, forwardRef, SystemStyleObject } from "@chakra-ui/system";
+import type { ChakraProps, SystemStyleObject } from "@chakra-ui/system";
+import { chakra, forwardRef } from "@chakra-ui/system";
 import { cx, __DEV__ } from "@chakra-ui/utils";
 import * as React from "react";
 

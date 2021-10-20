@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -40,11 +41,13 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import Papa from "papaparse";
-import React, { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { LegacyRef} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import type {
+    RoomWithParticipantInfoFragment} from "../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
-    RoomWithParticipantInfoFragment,
     RoomWithParticipantInfoFragmentDoc,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
@@ -67,13 +70,14 @@ import {
     SelectColumnFilter,
     TextColumnFilter,
 } from "../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification,
+    RowSpecification} from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
     SortDirection,
 } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";

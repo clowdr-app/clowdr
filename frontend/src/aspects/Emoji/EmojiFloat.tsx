@@ -1,6 +1,8 @@
 import { Box } from "@chakra-ui/react";
-import React, { Component, useCallback, useMemo, useState } from "react";
-import { createHtmlPortalNode, HtmlPortalNode, InPortal } from "react-reverse-portal";
+import type { Component} from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import type { HtmlPortalNode} from "react-reverse-portal";
+import { createHtmlPortalNode, InPortal } from "react-reverse-portal";
 import usePolling from "../Generic/usePolling";
 import { useRealTime } from "../Generic/useRealTime";
 import FloatingEmoji from "./FloatingEmoji";

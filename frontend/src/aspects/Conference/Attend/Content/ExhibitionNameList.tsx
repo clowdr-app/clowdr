@@ -1,4 +1,5 @@
-import { HStack, StackProps, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import type { StackProps} from "@chakra-ui/react";
+import { HStack, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import type { ItemExhibitionDataFragment } from "../../../../generated/graphql";

@@ -42,7 +42,8 @@ import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import { Profile, RegistrantContextT, useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
+import type { Profile, RegistrantContextT} from "../../useCurrentRegistrant";
+import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import EditProfilePitureForm from "./EditProfilePictureForm";
 
 function arraysEqual<T>(

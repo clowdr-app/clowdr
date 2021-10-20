@@ -1,6 +1,8 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import React from "react";
-import ProfileBadge, { BadgeData } from "./ProfileBadge";
+import type { BadgeData } from "./ProfileBadge";
+import ProfileBadge from "./ProfileBadge";
 
 export default function BadgeList({
     badges,

@@ -20,10 +20,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import type {
+    ManageContent_ElementFragment,
+    ManageContent_ItemSecondaryFragment} from "../../../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    ManageContent_ElementFragment,
-    ManageContent_ItemSecondaryFragment,
     useManageContent_SelectItemQuery,
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";

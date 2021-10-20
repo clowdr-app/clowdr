@@ -1,18 +1,16 @@
 import { gql } from "@apollo/client";
 import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy, { UppyFile } from "@uppy/core";
+import type { UppyFile } from "@uppy/core";
+import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    ProfileDataFragment,
-    ProfileDataFragmentDoc,
-    useSubmitProfilePhotoMutation,
-} from "../../../../generated/graphql";
+import type { ProfileDataFragment } from "../../../../generated/graphql";
+import { ProfileDataFragmentDoc, useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
@@ -184,7 +182,7 @@ export default function EditProfilePitureForm({
                         if (handleFormSubmitted) {
                             await handleFormSubmitted();
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to upload file", e);
                         toast({
                             status: "error",
@@ -196,7 +194,7 @@ export default function EditProfilePitureForm({
                     }
                 }}
             >
-                {({ dirty, ...props }) => (
+                {({ dirty, isSubmitting, isValid }) => (
                     <>
                         <UnsavedChangesWarning hasUnsavedChanges={dirty || files.length > 0} />
                         <Form style={{ width: "100%", maxWidth: "350px" }}>
@@ -329,9 +327,9 @@ export default function EditProfilePitureForm({
                             <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
                             <Button
                                 colorScheme="PrimaryActionButton"
-                                isLoading={props.isSubmitting}
+                                isLoading={isSubmitting}
                                 type="submit"
-                                isDisabled={!props.isValid || files.length !== 1}
+                                isDisabled={!isValid || files.length !== 1}
                                 mt={2}
                             >
                                 Upload

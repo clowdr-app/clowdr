@@ -1,4 +1,5 @@
-import { Center, CenterProps, Spinner, SpinnerProps } from "@chakra-ui/react";
+import type { CenterProps, SpinnerProps } from "@chakra-ui/react";
+import { Center, Spinner } from "@chakra-ui/react";
 import React from "react";
 
 export default function CenteredSpinner({

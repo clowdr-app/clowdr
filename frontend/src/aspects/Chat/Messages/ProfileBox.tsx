@@ -1,4 +1,5 @@
-import { Button, ButtonProps, Image, useToast } from "@chakra-ui/react";
+import type { ButtonProps} from "@chakra-ui/react";
+import { Button, Image, useToast } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantDataFragment } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";

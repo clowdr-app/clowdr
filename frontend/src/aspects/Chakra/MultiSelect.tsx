@@ -4,25 +4,26 @@
 // Demo: https://codesandbox.io/s/chakra-ui-react-select-648uv?file=/multi-select.js
 
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import {
-    Box,
+import type {
     BoxProps,
-    Center,
     CenterProps,
     ChakraProps,
-    CloseButton,
     CloseButtonProps,
-    Divider,
     DividerProps,
-    Flex,
     FlexProps,
+    TagCloseButtonProps,
+    TagLabelProps,
+    TagProps} from "@chakra-ui/react";
+import {
+    Box,
+    Center,
+    CloseButton,
+    Divider,
+    Flex,
     StylesProvider,
     Tag,
     TagCloseButton,
-    TagCloseButtonProps,
     TagLabel,
-    TagLabelProps,
-    TagProps,
     useColorModeValue,
     useMultiStyleConfig,
     useStyles,
@@ -30,7 +31,8 @@ import {
     useToken,
 } from "@chakra-ui/react";
 import React from "react";
-import Select, { components as selectComponents, MenuProps, Props as SelectProps, Theme } from "react-select";
+import type { MenuProps, Props as SelectProps, Theme } from "react-select";
+import Select, { components as selectComponents } from "react-select";
 
 const chakraStyles = {
     input: (provided: any) => ({

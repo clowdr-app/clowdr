@@ -1,4 +1,5 @@
-import { gql, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -22,12 +23,14 @@ import {
 } from "@chakra-ui/react";
 import assert from "assert";
 import Papa from "papaparse";
-import React, { LegacyRef, useMemo, useState } from "react";
+import type { LegacyRef} from "react";
+import React, { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import type {
+    RegistrantPartsFragment} from "../../../../generated/graphql";
 import {
     InvitationPartsFragmentDoc,
     Permissions_Permission_Enum,
-    RegistrantPartsFragment,
     RegistrantPartsFragmentDoc,
     useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
@@ -43,7 +46,7 @@ import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
 import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
-import CRUDTable, {
+import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
@@ -52,8 +55,9 @@ import CRUDTable, {
     ExtraButton,
     Insert,
     RowSpecification,
-    SortDirection,
-    Update,
+    Update} from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, {
+    SortDirection
 } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";

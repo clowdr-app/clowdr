@@ -1,5 +1,6 @@
 import assert from "assert";
-import React, { ReactNode, ReactNodeArray, useMemo } from "react";
+import type { ReactNode, ReactNodeArray} from "react";
+import React, { useMemo } from "react";
 import type { Maybe } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";

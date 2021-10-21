@@ -22,32 +22,13 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
-    - activeInputAttachmentName
-    - activeInputSwitchActionName
     - channelStackId
     - conferenceId
     - created_at
     - id
-    - pipelinesRunningCount
     - state
     - updated_at
     filter:
-      conference:
-        _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_VIEW_ATTENDEES
-                  - CONFERENCE_MANAGE_SCHEDULE
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: organizer

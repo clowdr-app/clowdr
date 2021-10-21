@@ -41,13 +41,6 @@ array_relationships:
       remote_table:
         name: ProfileBadges
         schema: registrant
-- name: groupRegistrants
-  using:
-    foreign_key_constraint_on:
-      column: registrantId
-      table:
-        name: GroupRegistrant
-        schema: permissions
 - name: programPeople
   using:
     foreign_key_constraint_on:
@@ -62,6 +55,13 @@ array_relationships:
       table:
         name: Participant
         schema: room
+- name: subconferenceMemberships
+  using:
+    foreign_key_constraint_on:
+      column: registrantId
+      table:
+        name: SubconferenceMembership
+        schema: registrant
 computed_fields:
 - comment: ""
   definition:
@@ -73,152 +73,95 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      conference:
-        _or:
-        - createdBy:
-            _eq: X-Hasura-User-Id
-        - _and:
-          - slug:
-              _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ROLES
-                    - CONFERENCE_MANAGE_GROUPS
-                    - CONFERENCE_MANAGE_ATTENDEES
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
     columns:
     - conferenceId
+    - conferenceRole
     - displayName
     - id
     - userId
-  role: user
+  role: main-conference-organizer
 select_permissions:
 - permission:
     columns:
-    - conferenceId
-    - created_at
+    - conferenceRole
     - displayName
-    - id
-    - updated_at
     - userId
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - userId:
+          _is_null: false
+  role: attendee
+- permission:
+    columns:
+    - conferenceRole
+    - displayName
+    - userId
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
     computed_fields:
     - inviteSent
     filter:
-      _or:
-      - _and:
-        - userId:
-            _is_null: false
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW_ATTENDEES
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_ROLES
-                  - CONFERENCE_MANAGE_GROUPS
-                  - CONFERENCE_MANAGE_ATTENDEES
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-      - _and:
-        - userId:
-            _is_null: false
-        - userId:
-            _eq: X-Hasura-User-Id
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+- permission:
+    columns:
+    - id
+    - conferenceId
+    - userId
+    - displayName
+    - created_at
+    - updated_at
+    - conferenceRole
+    computed_fields:
+    - inviteSent
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceMemberships:
+          subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - conferenceRole
+    - displayName
+    - userId
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    computed_fields:
+    - inviteSent
+    filter:
+      userId:
+        _eq: X-Hasura-User-Id
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
+    - conferenceRole
     - displayName
     - userId
     filter:
-      _or:
-      - userId:
-          _eq: X-Hasura-User-Id
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_ROLES
-                  - CONFERENCE_MANAGE_GROUPS
-                  - CONFERENCE_MANAGE_ATTENDEES
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
 delete_permissions:
 - permission:
     filter:
-      _or:
-      - userId:
-          _eq: X-Hasura-User-Id
-      - conference:
-          createdBy:
-            _eq: X-Hasura-User-Id
-      - _and:
-        - conference:
-            slug:
-              _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_MANAGE_ROLES
-                  - CONFERENCE_MANAGE_GROUPS
-                  - CONFERENCE_MANAGE_ATTENDEES
-  role: user
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer

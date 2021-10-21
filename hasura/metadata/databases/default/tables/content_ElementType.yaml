@@ -8,6 +8,30 @@ select_permissions:
     - description
     - name
     filter: {}
+  role: attendee
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: main-conference-organizer
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: organizer
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
   role: unauthenticated
 - permission:
     columns:

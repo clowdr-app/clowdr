@@ -14,13 +14,6 @@ object_relationships:
   using:
     foreign_key_constraint_on: originatingDataId
 array_relationships:
-- name: eventTags
-  using:
-    foreign_key_constraint_on:
-      column: tagId
-      table:
-        name: EventTag
-        schema: schedule
 - name: itemTags
   using:
     foreign_key_constraint_on:
@@ -32,24 +25,19 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _in:
-                - CONFERENCE_MANAGE_CONTENT
-                - CONFERENCE_MANAGE_SCHEDULE
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
     columns:
     - colour
     - conferenceId
@@ -57,32 +45,10 @@ insert_permissions:
     - name
     - originatingDataId
     - priority
-  role: user
+    - subconferenceId
+    - visibilityLevel
+  role: organizer
 select_permissions:
-- permission:
-    columns:
-    - colour
-    - conferenceId
-    - id
-    - name
-    - originatingDataId
-    - priority
-    filter:
-      conference:
-        _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: unauthenticated
 - permission:
     columns:
     - colour
@@ -90,41 +56,81 @@ select_permissions:
     - created_at
     - id
     - name
-    - originatingDataId
     - priority
+    - subconferenceId
+    - updated_at
+    - visibilityLevel
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - _or:
+        - subconferenceId:
+            _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - _or:
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+            - visibilityLevel:
+                _in:
+                - PUBLIC
+                - EXTERNAL
+  role: attendee
+- permission:
+    columns:
+    - priority
+    - colour
+    - name
+    - visibilityLevel
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    - originatingDataId
+    - subconferenceId
+    filter:
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - colour
+    - conferenceId
+    - created_at
+    - id
+    - name
+    - priority
+    - subconferenceId
     - updated_at
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_VIEW
-                  - CONFERENCE_MANAGE_CONTENT
-                  - CONFERENCE_MANAGE_SCHEDULE
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: user
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - visibilityLevel:
+          _eq: PUBLIC
+  role: unauthenticated
 update_permissions:
 - permission:
     check: null
@@ -133,45 +139,37 @@ update_permissions:
     - name
     - originatingDataId
     - priority
+    - subconferenceId
+    - visibilityLevel
     filter:
-      _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _in:
-                - CONFERENCE_MANAGE_CONTENT
-                - CONFERENCE_MANAGE_SCHEDULE
-  role: user
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: organizer
 delete_permissions:
 - permission:
     filter:
-      _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _in:
-                - CONFERENCE_MANAGE_CONTENT
-                - CONFERENCE_MANAGE_SCHEDULE
-  role: user
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
+  role: organizer

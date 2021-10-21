@@ -13,42 +13,34 @@ insert_permissions:
     backend_only: false
     check:
       _and:
-      - registrant:
-          userId:
-            _eq: X-Hasura-User-Id
+      - registrantId:
+          _in: X-Hasura-Registrant-Ids
       - recording:
-          room:
-            conference:
-              registrants:
-                id:
-                  _ceq:
-                  - $
-                  - registrantId
+          roomId:
+            _in: X-Hasura-Room-Ids
     columns:
     - recordingId
     - registrantId
-  role: user
+  role: attendee
 select_permissions:
 - permission:
     columns:
-    - id
+    - isHidden
     - created_at
     - updated_at
+    - id
     - recordingId
-    - isHidden
     - registrantId
     filter:
-      registrant:
-        userId:
-          _eq: X-Hasura-User-Id
-  role: user
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee
 update_permissions:
 - permission:
     check: null
     columns:
     - isHidden
     filter:
-      registrant:
-        userId:
-          _eq: X-Hasura-User-Id
-  role: user
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee

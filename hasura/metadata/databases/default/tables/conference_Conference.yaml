@@ -44,13 +44,6 @@ array_relationships:
       table:
         name: Exhibition
         schema: collection
-- name: groups
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Group
-        schema: permissions
 - name: items
   using:
     foreign_key_constraint_on:
@@ -72,15 +65,6 @@ array_relationships:
       table:
         name: ProgramPerson
         schema: collection
-- name: publicPermissions
-  using:
-    manual_configuration:
-      column_mapping:
-        slug: slug
-      insertion_order: null
-      remote_table:
-        name: FlatUnauthPermission
-        schema: public
 - name: registrants
   using:
     foreign_key_constraint_on:
@@ -88,13 +72,6 @@ array_relationships:
       table:
         name: Registrant
         schema: registrant
-- name: roles
-  using:
-    foreign_key_constraint_on:
-      column: conferenceId
-      table:
-        name: Role
-        schema: permissions
 - name: rooms
   using:
     foreign_key_constraint_on:
@@ -116,15 +93,6 @@ array_relationships:
       table:
         name: Tag
         schema: collection
-- name: userPermissions
-  using:
-    manual_configuration:
-      column_mapping:
-        slug: slug
-      insertion_order: null
-      remote_table:
-        name: FlatUserPermission
-        schema: public
 insert_permissions:
 - permission:
     backend_only: false
@@ -133,6 +101,8 @@ insert_permissions:
         usedById:
           _is_null: true
     columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
     - demoCodeId
     - name
     - shortName
@@ -143,32 +113,27 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - conferenceVisibilityLevel
     - createdBy
     - created_at
+    - defaultProgramVisibilityLevel
     - id
     - name
     - shortName
     - slug
     - updated_at
     filter:
-      _and:
-      - slug:
-          _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUnauthPermission
-            schema: public
-          _where:
-            _and:
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_VIEW
-  role: unauthenticated
+      id:
+        _in:
+        - X-Hasura-Conference-Ids
+  role: attendee
 - permission:
     columns:
+    - conferenceVisibilityLevel
     - createdBy
     - created_at
+    - defaultProgramVisibilityLevel
+    - demoCodeId
     - id
     - name
     - shortName
@@ -176,55 +141,44 @@ select_permissions:
     - updated_at
     filter:
       _or:
+      - id:
+          _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-      - registrants:
-          userId:
-            _eq: X-Hasura-User-Id
-      - _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: user
+  role: main-conference-organizer
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - created_at
+    - defaultProgramVisibilityLevel
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      conferenceVisibilityLevel:
+        _eq: PUBLIC
+  role: unauthenticated
 update_permissions:
 - permission:
     check: null
     columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
     - name
     - shortName
     - slug
     filter:
       _or:
+      - id:
+          _in: X-Hasura-Conference-Ids
       - createdBy:
           _eq: X-Hasura-User-Id
-      - _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_MANAGE_NAME
-  role: user
+  role: main-conference-organizer
 delete_permissions:
 - permission:
     filter:
       createdBy:
         _eq: X-Hasura-User-Id
-  role: user
+  role: main-conference-organizer

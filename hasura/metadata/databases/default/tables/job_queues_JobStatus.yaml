@@ -1,0 +1,17 @@
+table:
+  name: JobStatus
+  schema: job_queues
+is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: main-conference-organizer
+- permission:
+    columns:
+    - name
+    - description
+    filter: {}
+  role: organizer

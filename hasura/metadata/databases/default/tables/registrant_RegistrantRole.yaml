@@ -1,0 +1,4 @@
+table:
+  name: RegistrantRole
+  schema: registrant
+is_enum: true

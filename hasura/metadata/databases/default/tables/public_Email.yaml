@@ -13,3 +13,48 @@ object_relationships:
 - name: user
   using:
     foreign_key_constraint_on: userId
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - emailAddress
+    - htmlContents
+    - id
+    - invitationId
+    - plainTextContents
+    - reason
+    - recipientName
+    - retriesCount
+    - sentAt
+    - subject
+    - updated_at
+    - userId
+    filter:
+      invitation:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - registrant:
+            subconferenceMemberships:
+              subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - retriesCount
+    - emailAddress
+    - htmlContents
+    - plainTextContents
+    - reason
+    - recipientName
+    - subject
+    - userId
+    - created_at
+    - sentAt
+    - updated_at
+    - id
+    - invitationId
+    filter:
+      userId:
+        _eq: X-Hasura-User-Id
+  role: user

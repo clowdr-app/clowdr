@@ -1,0 +1,116 @@
+table:
+  name: SubconferenceMembership
+  schema: registrant
+object_relationships:
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId
+- name: subconference
+  using:
+    foreign_key_constraint_on: subconferenceId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+      - registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+    columns:
+    - registrantId
+    - role
+    - subconferenceId
+  role: main-conference-organizer
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - subconferenceId:
+          _in: X-Hasura-Subconference-Ids
+      - registrant:
+          conferenceId:
+            _in: X-Hasura-Conference-Ids
+    columns:
+    - registrantId
+    - role
+    - subconferenceId
+  role: organizer
+select_permissions:
+- permission:
+    columns:
+    - role
+    - created_at
+    - updated_at
+    - id
+    - registrantId
+    - subconferenceId
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: attendee
+- permission:
+    columns:
+    - role
+    - created_at
+    - updated_at
+    - id
+    - registrantId
+    - subconferenceId
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: main-conference-organizer
+- permission:
+    columns:
+    - role
+    - created_at
+    - updated_at
+    - id
+    - registrantId
+    - subconferenceId
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - role
+    - created_at
+    - updated_at
+    - id
+    - registrantId
+    - subconferenceId
+    filter:
+      registrantId:
+        _in: X-Hasura-Registrant-Ids
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - role
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: main-conference-organizer
+- permission:
+    check: null
+    columns:
+    - role
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: organizer
+delete_permissions:
+- permission:
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: main-conference-organizer
+- permission:
+    filter:
+      subconferenceId:
+        _in: X-Hasura-Subconference-Ids
+  role: organizer

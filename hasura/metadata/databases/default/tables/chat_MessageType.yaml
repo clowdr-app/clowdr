@@ -7,7 +7,12 @@ select_permissions:
     columns:
     - name
     filter: {}
-  role: unauthenticated
+  role: attendee
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: organizer
 - permission:
     columns:
     - name

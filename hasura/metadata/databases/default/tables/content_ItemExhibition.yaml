@@ -2,9 +2,6 @@ table:
   name: ItemExhibition
   schema: content
 object_relationships:
-- name: conference
-  using:
-    foreign_key_constraint_on: conferenceId
 - name: exhibition
   using:
     foreign_key_constraint_on: exhibitionId
@@ -16,93 +13,157 @@ insert_permissions:
     backend_only: false
     check:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
+      - item:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - exhibition:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
     columns:
-    - conferenceId
+    - id
     - itemId
     - exhibitionId
-    - id
-    - layout
     - priority
-  role: user
+    - layout
+  role: organizer
 select_permissions:
 - permission:
     columns:
-    - conferenceId
-    - itemId
+    - priority
+    - layout
     - exhibitionId
     - id
-    - layout
-    - priority
-    filter:
-      conference:
-        _and:
-        - slug:
-            _eq: X-Hasura-Conference-Slug
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: unauthenticated
-- permission:
-    columns:
-    - conferenceId
     - itemId
-    - exhibitionId
-    - id
-    - layout
-    - priority
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _or:
-        - _exists:
-            _table:
-              name: FlatUserPermission
-              schema: public
-            _where:
-              _and:
-              - user_id:
-                  _eq: X-Hasura-User-Id
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _in:
-                  - CONFERENCE_VIEW
-                  - CONFERENCE_MANAGE_CONTENT
-        - _exists:
-            _table:
-              name: FlatUnauthPermission
-              schema: public
-            _where:
-              _and:
-              - slug:
-                  _eq: X-Hasura-Conference-Slug
-              - permission_name:
-                  _eq: CONFERENCE_VIEW
-  role: user
+      - exhibition:
+          _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+            - subconferenceId:
+                _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - _or:
+                - subconferenceId:
+                    _in: X-Hasura-Subconference-Ids
+                - visibilityLevel:
+                    _in:
+                    - PUBLIC
+                    - EXTERNAL
+      - item:
+          _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - _or:
+            - subconferenceId:
+                _is_null: true
+            - _and:
+              - subconferenceId:
+                  _is_null: false
+              - _or:
+                - subconferenceId:
+                    _in: X-Hasura-Subconference-Ids
+                - visibilityLevel:
+                    _in:
+                    - PUBLIC
+                    - EXTERNAL
+                - typeName:
+                    _in:
+                    - LANDING_PAGE
+  role: attendee
+- permission:
+    columns:
+    - priority
+    - layout
+    - exhibitionId
+    - id
+    - itemId
+    filter:
+      item:
+        _or:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - priority
+    - layout
+    - exhibitionId
+    - id
+    - itemId
+    filter:
+      _and:
+      - item:
+          _and:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - _or:
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                - subconferenceId:
+                    _is_null: false
+                - subconferenceId:
+                    _in: X-Hasura-Subconference-Ids
+          - _or:
+            - visibilityLevel:
+                _in:
+                - PUBLIC_ONLY
+                - PUBLIC
+            - typeName:
+                _eq: LANDING_PAGE
+      - exhibition:
+          _and:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - _or:
+              - subconferenceId:
+                  _is_null: true
+              - _and:
+                - subconferenceId:
+                    _is_null: false
+                - subconferenceId:
+                    _in: X-Hasura-Subconference-Ids
+          - visibilityLevel:
+              _eq: PUBLIC
+  role: unauthenticated
 update_permissions:
 - permission:
     check: null
@@ -111,39 +172,65 @@ update_permissions:
     - priority
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-  role: user
+      - item:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - exhibition:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: organizer
 delete_permissions:
 - permission:
     filter:
       _and:
-      - conference:
-          slug:
-            _eq: X-Hasura-Conference-Slug
-      - _exists:
-          _table:
-            name: FlatUserPermission
-            schema: public
-          _where:
-            _and:
-            - user_id:
-                _eq: X-Hasura-User-Id
-            - slug:
-                _eq: X-Hasura-Conference-Slug
-            - permission_name:
-                _eq: CONFERENCE_MANAGE_CONTENT
-  role: user
+      - item:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+      - exhibition:
+          _or:
+          - _and:
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - conferenceId:
+                _in: X-Hasura-Conference-Ids
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: organizer

@@ -1,0 +1,131 @@
+table:
+  name: Subconference
+  schema: conference
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - name
+    - shortName
+    - conferenceId
+    - slug
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+  role: main-conference-organizer
+select_permissions:
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+      - conferenceVisibilityLevel:
+          _in:
+          - PUBLIC
+          - EXTERNAL
+  role: attendee
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+- permission:
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    - created_at
+    - updated_at
+    - conferenceId
+    - id
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+  role: organizer
+- permission:
+    columns:
+    - conferenceId
+    - conferenceVisibilityLevel
+    - created_at
+    - defaultProgramVisibilityLevel
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+      - conferenceVisibilityLevel:
+          _in:
+          - PUBLIC
+  role: unauthenticated
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+- permission:
+    check: null
+    columns:
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    - name
+    - shortName
+    - slug
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Subconference-Ids
+  role: organizer
+delete_permissions:
+- permission:
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer

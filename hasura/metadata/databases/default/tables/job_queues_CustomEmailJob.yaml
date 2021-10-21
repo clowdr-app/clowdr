@@ -9,34 +9,23 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      conference:
-        _and:
-        - _or:
-          - createdBy:
-              _eq: X-Hasura-User-Id
-          - groups:
-              _and:
-              - enabled:
-                  _eq: true
-              - groupRoles:
-                  role:
-                    rolePermissions:
-                      _or:
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ROLES
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_GROUPS
-                      - permissionName:
-                          _eq: CONFERENCE_MANAGE_ATTENDEES
-              - groupRegistrants:
-                  registrant:
-                    userId:
-                      _eq: X-Hasura-User-Id
-        - slug:
-            _eq: X-Hasura-Conference-Slug
+      _or:
+      - _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _is_null: true
+      - _and:
+        - subconferenceId:
+            _is_null: false
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - subconferenceId:
+            _in: X-Hasura-Subconference-Ids
     columns:
-    - registrantIds
     - conferenceId
     - markdownBody
+    - registrantIds
+    - subconferenceId
     - subject
-  role: user
+  role: organizer

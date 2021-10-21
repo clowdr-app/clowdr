@@ -14,47 +14,33 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - registrantId
+    - name
+    - colour
+    filter:
+      _or:
+      - registrantId:
+          _in: X-Hasura-Registrant-Ids
+      - registrant:
+          _and:
+          - userId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+  role: attendee
+- permission:
+    columns:
     - colour
     - name
     - registrantId
     filter:
-      registrant:
-        _or:
-        - _and:
+      _or:
+      - registrantId:
+          _in: X-Hasura-Registrant-Ids
+      - registrant:
+          _and:
           - userId:
               _is_null: false
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _eq: CONFERENCE_VIEW_ATTENDEES
-        - _and:
-          - conference:
-              slug:
-                _eq: X-Hasura-Conference-Slug
-          - _exists:
-              _table:
-                name: FlatUserPermission
-                schema: public
-              _where:
-                _and:
-                - user_id:
-                    _eq: X-Hasura-User-Id
-                - slug:
-                    _eq: X-Hasura-Conference-Slug
-                - permission_name:
-                    _in:
-                    - CONFERENCE_MANAGE_ROLES
-                    - CONFERENCE_MANAGE_GROUPS
-                    - CONFERENCE_MANAGE_ATTENDEES
-  role: user
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+  role: organizer

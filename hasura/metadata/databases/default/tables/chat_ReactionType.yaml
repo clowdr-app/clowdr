@@ -8,10 +8,16 @@ select_permissions:
     - description
     - name
     filter: {}
-  role: unauthenticated
+  role: attendee
 - permission:
     columns:
     - name
     - description
+    filter: {}
+  role: organizer
+- permission:
+    columns:
+    - description
+    - name
     filter: {}
   role: user

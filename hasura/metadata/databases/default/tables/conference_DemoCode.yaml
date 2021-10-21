@@ -22,21 +22,21 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
-    - id
     - note
     - usedById
+    - created_at
+    - updated_at
+    - id
     filter:
       usedById:
         _eq: X-Hasura-User-Id
-  role: user
+  role: main-conference-organizer
 update_permissions:
 - permission:
-    check: {}
+    check: null
     columns:
     - note
     filter:
       usedById:
         _is_null: true
-    set:
-      usedById: x-hasura-User-Id
-  role: user
+  role: main-conference-organizer

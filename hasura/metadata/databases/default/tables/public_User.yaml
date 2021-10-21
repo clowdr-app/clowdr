@@ -52,16 +52,15 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
-    - acceptedPrivacyPolicyAt
-    - acceptedTermsAt
-    - created_at
-    - email
     - id
+    - created_at
     - updated_at
+    - email
+    - acceptedTermsAt
+    - acceptedPrivacyPolicyAt
     filter:
       id:
         _eq: X-Hasura-User-Id
-    limit: 5000
   role: user
 update_permissions:
 - permission:
@@ -69,13 +68,6 @@ update_permissions:
     columns:
     - acceptedPrivacyPolicyAt
     - acceptedTermsAt
-    - email
-    filter:
-      id:
-        _eq: X-Hasura-User-Id
-  role: user
-delete_permissions:
-- permission:
     filter:
       id:
         _eq: X-Hasura-User-Id

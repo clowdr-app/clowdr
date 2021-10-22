@@ -44,7 +44,7 @@ export type EventInfo = {
 };
 
 const eventInfoCache = new Cache<EventInfo>(
-    "caches:EventInfo",
+    "realtime.caches:EventInfo",
     async (eventId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

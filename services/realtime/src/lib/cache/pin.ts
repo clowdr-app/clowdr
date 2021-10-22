@@ -18,7 +18,7 @@ export type Pins = {
 };
 
 const PinsCache = new Cache<Pins>(
-    "caches:Pins",
+    "realtime.caches:Pins",
     async (chatId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

@@ -19,7 +19,7 @@ export type UserPermission = {
 };
 
 const userPermissionCache = new Cache<UserPermission[]>(
-    "caches:UserPermission",
+    "realtime.caches:UserPermission",
     async (userId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

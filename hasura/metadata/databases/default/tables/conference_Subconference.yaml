@@ -1,6 +1,10 @@
 table:
   name: Subconference
   schema: conference
+object_relationships:
+- name: conference
+  using:
+    foreign_key_constraint_on: conferenceId
 insert_permissions:
 - permission:
     backend_only: false

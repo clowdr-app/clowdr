@@ -21,7 +21,7 @@ export type PushNotificationSubscriptions = {
 };
 
 const PushNotificationSubscriptionsCache = new Cache<PushNotificationSubscriptions>(
-    "caches:PushNotificationSubscriptions",
+    "realtime.caches:PushNotificationSubscriptions",
     async (userId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

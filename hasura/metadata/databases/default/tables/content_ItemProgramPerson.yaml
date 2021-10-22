@@ -137,15 +137,9 @@ select_permissions:
     computed_fields:
     - hasSubmissionRequestBeenSent
     filter:
-      _and:
-      - item:
-          itemPeople:
-            person:
-              accessToken:
-                _eq: X-Hasura-Magic-Token
-      - person:
-          accessToken:
-            _eq: X-Hasura-Magic-Token
+      person:
+        accessToken:
+          _eq: X-Hasura-Magic-Token
   role: submitter
 - permission:
     columns:

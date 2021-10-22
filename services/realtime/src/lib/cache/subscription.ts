@@ -18,7 +18,7 @@ export type Subscriptions = {
 };
 
 const SubscriptionsCache = new Cache<Subscriptions>(
-    "caches:Subscriptions",
+    "realtime.caches:Subscriptions",
     async (chatId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

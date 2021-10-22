@@ -62,7 +62,7 @@ export type ChatInfo = {
 };
 
 const chatInfoCache = new Cache<ChatInfo>(
-    "caches:ChatInfo",
+    "realtime.caches:ChatInfo",
     async (chatId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

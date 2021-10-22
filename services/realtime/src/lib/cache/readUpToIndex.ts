@@ -21,7 +21,7 @@ export type ReadUpToIndex = {
 };
 
 const ReadUpToIndexCache = new Cache<ReadUpToIndex>(
-    "caches:ReadUpToIndex",
+    "realtime.caches:ReadUpToIndex",
     async (key, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {
@@ -70,7 +70,7 @@ export async function getReadUpToIndex(
     return info;
 }
 
-const modifiedSetKey = "caches:ReadUpToIndex:modified";
+const modifiedSetKey = "realtime.caches:ReadUpToIndex:modified";
 
 export async function setReadUpToIndex(chatId: string, userId: string, messageSId: string): Promise<void> {
     const key = chatId + "¬" + userId;

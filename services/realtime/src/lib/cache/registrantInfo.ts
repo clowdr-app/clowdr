@@ -19,7 +19,7 @@ export type RegistrantInfo = {
 };
 
 const RegistrantInfoCache = new Cache<RegistrantInfo>(
-    "caches:RegistrantInfo",
+    "realtime.caches:RegistrantInfo",
     async (registrantId, testMode_ExpectedValue) => {
         return testMode(
             async (apolloClient) => {

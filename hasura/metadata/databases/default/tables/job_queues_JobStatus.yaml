@@ -5,6 +5,12 @@ is_enum: true
 select_permissions:
 - permission:
     columns:
+    - name
+    - description
+    filter: {}
+  role: attendee
+- permission:
+    columns:
     - description
     - name
     filter: {}
@@ -15,3 +21,33 @@ select_permissions:
     - description
     filter: {}
   role: organizer
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: room-admin
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: room-member
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: unauthenticated
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: user

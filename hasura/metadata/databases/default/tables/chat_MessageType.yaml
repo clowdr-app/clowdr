@@ -12,7 +12,32 @@ select_permissions:
     columns:
     - name
     filter: {}
+  role: main-conference-organizer
+- permission:
+    columns:
+    - name
+    filter: {}
   role: organizer
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: room-admin
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: room-member
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
+    - name
+    filter: {}
+  role: unauthenticated
 - permission:
     columns:
     - name

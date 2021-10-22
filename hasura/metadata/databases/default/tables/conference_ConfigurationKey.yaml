@@ -23,6 +23,24 @@ select_permissions:
   role: organizer
 - permission:
     columns:
+    - name
+    - description
+    filter: {}
+  role: room-admin
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: room-member
+- permission:
+    columns:
+    - description
+    - name
+    filter: {}
+  role: submitter
+- permission:
+    columns:
     - description
     - name
     filter: {}

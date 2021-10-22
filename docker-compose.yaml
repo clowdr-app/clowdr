@@ -1,25 +1,5 @@
 version: "3.6"
 services:
-  postgres:
-    image: postgres:12
-    restart: "no"
-    ports:
-      - 5432:5432
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    environment:
-      # TODO: set up Postgres security
-      POSTGRES_PASSWORD: postgrespassword
-  pgadmin:
-    image: dpage/pgadmin4:${PGADMIN_DOCKER_IMAGE:-6}
-    depends_on:
-      - "postgres"
-    ports:
-      - 5050:80
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    restart: "no"
   redis:
     image: redis
     ports:
@@ -32,7 +12,7 @@ services:
       - "postgres"
     restart: "no"
     volumes:
-      - ./hasura/migrations:/hasura-migrations
+      # - ./hasura/migrations:/hasura-migrations
       - ./hasura/metadata:/hasura-metadata
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
@@ -63,5 +43,3 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - ./rabbitmq/enabled-plugins.erl:/etc/rabbitmq/enabled_plugins
-volumes:
-  db_data:

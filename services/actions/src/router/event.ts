@@ -1,5 +1,6 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import {
     handleEventEndNotification,
@@ -8,7 +9,7 @@ import {
     handleStopEventBroadcasts,
 } from "../handlers/event";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { EventData, Payload, ScheduledEventPayload } from "../types/hasura/event";
+import type { EventData, Payload, ScheduledEventPayload } from "../types/hasura/event";
 
 export const router = express.Router();
 

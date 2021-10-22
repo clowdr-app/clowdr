@@ -1,4 +1,4 @@
-import { RedisClient } from "redis";
+import type { RedisClient } from "redis";
 import { redisClientPool, redlock } from "../redis";
 import { socketServer } from "../servers/socket-server";
 

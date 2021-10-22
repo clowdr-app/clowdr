@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatPinsChangedRoomName } from "../../lib/chat";

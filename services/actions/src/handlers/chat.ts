@@ -2,7 +2,7 @@ import { gql } from "@apollo/client/core";
 import assert from "assert";
 import { FlagInserted_GetSupportAddressDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { FlagData, Payload } from "../types/hasura/event";
+import type { FlagData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`

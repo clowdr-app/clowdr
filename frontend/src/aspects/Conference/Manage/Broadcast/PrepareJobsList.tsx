@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { Spinner, Table, TableCaption, Tbody, Td, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import React from "react";
+import { gql } from "urql";
 import { useConferencePrepareJobSubscriptionSubscription } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 

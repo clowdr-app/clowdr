@@ -1,16 +1,17 @@
 import { RootLogger } from "@eropple/nestjs-bunyan";
-import {
+import type {
     HasuraInsertEvent,
-    HasuraUpdateEvent,
+    HasuraUpdateEvent} from "@golevelup/nestjs-hasura";
+import {
     TrackedHasuraEventHandler,
     TrackedHasuraScheduledEventHandler,
 } from "@golevelup/nestjs-hasura";
 import { Injectable } from "@nestjs/common";
-import * as Bunyan from "bunyan";
-import { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
-import { Room_Mode_Enum } from "./generated/graphql";
-import { ImmediateSwitchService } from "./schedule/immediate-switch/immediate-switch.service";
-import { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
+import type * as Bunyan from "bunyan";
+import type { ChannelStackSyncService } from "./channel-stack/channel-stack-sync/channel-stack-sync.service";
+import type { Room_Mode_Enum } from "./generated/graphql";
+import type { ImmediateSwitchService } from "./schedule/immediate-switch/immediate-switch.service";
+import type { ScheduleSyncService } from "./schedule/schedule-sync/schedule-sync.service";
 
 @Injectable()
 export class AppService {

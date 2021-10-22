@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import assert from "assert";
 import genericPool from "generic-pool";
-import redis, { Callback, RedisClient } from "redis";
+import type { Callback, RedisClient } from "redis";
+import redis from "redis";
 import Redlock from "redlock";
 import { promisify } from "util";
 

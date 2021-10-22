@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Content_ElementType_Enum, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import {
     CompleteConferencePrepareJobDocument,
@@ -11,7 +12,7 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { createEventVonageSession } from "../lib/event";
-import { ConferencePrepareJobData, Payload } from "../types/hasura/event";
+import type { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

@@ -1,14 +1,15 @@
-import { App, Stack } from "@aws-cdk/core";
-import { Credentials as NewSdkCredentials } from "@aws-sdk/types";
+import type { App, Stack } from "@aws-cdk/core";
+import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { DeployStackResult, SdkProvider } from "aws-cdk";
+import type { ConfigService } from "@nestjs/config";
+import type { DeployStackResult} from "aws-cdk";
+import { SdkProvider } from "aws-cdk";
 import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deployments";
 import AWS, { CredentialProviderChain } from "aws-sdk";
-import * as Bunyan from "bunyan";
+import type * as Bunyan from "bunyan";
 import { AWS_MODULE_OPTIONS } from "../constants";
-import { AwsModuleOptions } from "./aws.module";
+import type { AwsModuleOptions } from "./aws.module";
 
 @Injectable()
 export class AwsService {

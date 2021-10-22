@@ -1,22 +1,24 @@
 import { gql } from "@apollo/client/core";
+import type {
+    Input} from "@aws-sdk/client-mediaconvert";
 import {
     AudioSelectorType,
     CaptionDestinationType,
     CaptionSourceType,
     ContainerType,
     EmbeddedConvert608To708,
-    Input,
     LanguageCode,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
+import type {
+    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
-    ElementBaseType,
-    ElementDataBlob,
+    ElementBaseType
 } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
-import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
+import type { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import assert from "assert";
 import * as R from "ramda";
 import { assertType } from "typescript-is";

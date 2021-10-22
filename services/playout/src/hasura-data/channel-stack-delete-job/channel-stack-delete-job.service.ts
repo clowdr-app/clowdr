@@ -1,14 +1,16 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
+import type { Bunyan} from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { sub } from "date-fns";
+import type {
+    Video_JobStatus_Enum} from "../../generated/graphql";
 import {
     ChannelStackSync_GetChannelStackDeleteJobsDocument,
     ChannelStackSync_GetStuckChannelStackDeleteJobsDocument,
-    ChannelStack_CompleteChannelStackDeleteJobDocument,
-    Video_JobStatus_Enum,
+    ChannelStack_CompleteChannelStackDeleteJobDocument
 } from "../../generated/graphql";
-import { GraphQlService } from "../graphql/graphql.service";
+import type { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ChannelStackDeleteJobService {

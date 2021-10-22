@@ -1,35 +1,39 @@
 import { gql } from "@apollo/client/core";
+import type {
+    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import {
-    EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
+import type {
     AudioElementBlob,
-    AWSJobStatus,
-    Content_ElementType_Enum,
-    ElementBaseType,
     ElementBlob,
     ElementVersionData,
-    VideoElementBlob,
+    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
+import {
+    AWSJobStatus,
+    Content_ElementType_Enum,
+    ElementBaseType
 } from "@clowdr-app/shared-types/build/content";
-import { EmailView_SubmissionRequest, EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
+import type { EmailView_SubmissionRequest} from "@clowdr-app/shared-types/build/email";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { compile } from "handlebars";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
+import type {
+    Email_Insert_Input,
+    UploadableElementFieldsFragment} from "../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
-    Email_Insert_Input,
     GetUploadersDocument,
     InsertSubmissionRequestEmailsDocument,
     MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
     SetUploadableElementUploadsRemainingDocument,
     UnmarkSubmissionRequestEmailJobsDocument,
-    UploadableElementDocument,
-    UploadableElementFieldsFragment,
+    UploadableElementDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";

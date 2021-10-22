@@ -1,19 +1,19 @@
-import type { ApolloError } from "@apollo/client";
 import { Box, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import type { CombinedError } from "urql";
 import FAIcon from "../Icons/FAIcon";
-import { useApolloCustomContext } from "./ApolloCustomProvider";
+import { useUrqlContext } from "./UrqlProvider";
 
 // let shownJWTIssuedAtFutureReloadWarning = false;
 let errorToastId: string | number | undefined = undefined;
 
 export default function useQueryErrorToast(
-    error: string | false | ApolloError | undefined,
+    error: string | false | CombinedError | undefined,
     reconnectOnError: boolean,
     queryName?: string
 ): void {
     const toast = useToast();
-    const ctx = useApolloCustomContext();
+    const ctx = useUrqlContext();
 
     useEffect(() => {
         let tId: number | undefined;

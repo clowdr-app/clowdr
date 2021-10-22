@@ -45,7 +45,7 @@ export default function ProfileModal({
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
     const mChatState = useMaybeGlobalChatState();
 
-    const [createDmMutation, { loading: creatingDM }] = useCreateDmMutation();
+    const [{ fetching: creatingDM }, createDmMutation] = useCreateDmMutation();
     const toast = useToast();
     const createDM = useCallback(async () => {
         if (registrant && mChatState?.openChatInSidebar) {

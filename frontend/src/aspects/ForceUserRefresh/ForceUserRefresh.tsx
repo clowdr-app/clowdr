@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Kbd,
     Modal,
@@ -15,7 +14,8 @@ import {
 import { compare } from "compare-versions";
 import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useGetForceUserRefreshConfigLazyQuery } from "../../generated/graphql";
+import { gql } from "urql";
+import { useGetForceUserRefreshConfigQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useRealTime } from "../Generic/useRealTime";
 import { useRestorableState } from "../Generic/useRestorableState";
@@ -33,11 +33,12 @@ gql`
 export default function ForceUserRefresh(): JSX.Element {
     const conference = useConference();
 
-    const [refetch, query] = useGetForceUserRefreshConfigLazyQuery({
+    const [query, refetch] = useGetForceUserRefreshConfigQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
+        pause: true,
     });
 
     const [version, setVersion] = useRestorableState(
@@ -66,7 +67,7 @@ export default function ForceUserRefresh(): JSX.Element {
 
     useEffect(() => {
         try {
-            if (!query.loading && !query.error && query.data && query.data.conference_Configuration_by_pk) {
+            if (!query.fetching && !query.error && query.data && query.data.conference_Configuration_by_pk) {
                 const config = query.data.conference_Configuration_by_pk;
                 if (config.value && config.value !== "") {
                     const latestVersion = config.value;
@@ -82,7 +83,7 @@ export default function ForceUserRefresh(): JSX.Element {
         } catch (e) {
             console.error("Error evaluating force refresh", e);
         }
-    }, [version, query.data, query.error, query.loading, setVersion, onOpen]);
+    }, [version, query.data, query.error, query.fetching, setVersion, onOpen]);
 
     const onClose = useCallback(() => {
         // Deliberately empty

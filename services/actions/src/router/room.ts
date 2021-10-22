@@ -1,5 +1,6 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import {
     handleCreateDmRoom,
@@ -10,7 +11,7 @@ import {
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkUserScopes } from "../middlewares/checkScopes";
-import { Payload, RoomData } from "../types/hasura/event";
+import type { Payload, RoomData } from "../types/hasura/event";
 
 export const router = express.Router();
 

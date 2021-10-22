@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -17,6 +16,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
+import { gql } from "urql";
 import {
     useSelectEventStreamTextEventIdQuery,
     useUpdateEventStreamTextEventIdMutation,
@@ -39,13 +39,13 @@ gql`
 `;
 
 export default function EditStreamTextIntegration({ eventId }: { eventId: string }): JSX.Element {
-    const response = useSelectEventStreamTextEventIdQuery({
+    const [response] = useSelectEventStreamTextEventIdQuery({
         variables: {
             eventId,
         },
         fetchPolicy: "no-cache",
     });
-    return response.loading && !response.data ? (
+    return response.fetching && !response.data ? (
         <Spinner />
     ) : (
         <EditStreamTextIntegrationInner
@@ -65,7 +65,7 @@ function EditStreamTextIntegrationInner({
     const [initialValue, setInitialValue] = useState<string | null>(outerValue ?? null);
     const [value, setValue] = useState<string | null>(initialValue);
 
-    const [updateMutation, updateResponse] = useUpdateEventStreamTextEventIdMutation();
+    const [updateResponse, updateMutation] = useUpdateEventStreamTextEventIdMutation();
     const update = useCallback(
         (newValue: string | null) => {
             setValue(newValue);
@@ -124,7 +124,7 @@ function EditStreamTextIntegrationInner({
                     onClick={() => {
                         update(null);
                     }}
-                    isDisabled={updateResponse.loading || value === null}
+                    isDisabled={updateResponse.fetching || value === null}
                 >
                     Clear
                 </Button>
@@ -133,7 +133,7 @@ function EditStreamTextIntegrationInner({
                     onClick={() => {
                         update(initialValue);
                     }}
-                    isDisabled={updateResponse.loading || value === initialValue}
+                    isDisabled={updateResponse.fetching || value === initialValue}
                 >
                     Reset
                 </Button>
@@ -143,7 +143,7 @@ function EditStreamTextIntegrationInner({
                         update(value);
                     }}
                     isDisabled={value === initialValue}
-                    isLoading={updateResponse.loading}
+                    isLoading={updateResponse.fetching}
                 >
                     Save
                 </Button>

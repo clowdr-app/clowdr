@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export async function flush(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     if (process.env.SECRET_FOR_FLUSHING) {

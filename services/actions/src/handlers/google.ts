@@ -1,12 +1,15 @@
 import { gql } from "@apollo/client/core";
-import { ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
-import { Credentials } from "google-auth-library";
+import type { Credentials } from "google-auth-library";
 import { google } from "googleapis";
 import jwt_decode from "jwt-decode";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
+import type {
+    UploadYouTubeVideoJobDataFragment} from "../generated/graphql";
 import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
@@ -15,13 +18,13 @@ import {
     Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
-    UnmarkUploadYouTubeVideoJobsDocument,
-    UploadYouTubeVideoJobDataFragment,
+    UnmarkUploadYouTubeVideoJobsDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { registrantBelongsToUser } from "../lib/authorisation";
 import { S3 } from "../lib/aws/awsClient";
-import { createOAuth2Client, GoogleIdToken } from "../lib/googleAuth";
+import type { GoogleIdToken } from "../lib/googleAuth";
+import { createOAuth2Client } from "../lib/googleAuth";
 import { callWithRetry } from "../utils";
 import { handleRefreshYouTubeData } from "./registrantGoogleAccount";
 

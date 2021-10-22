@@ -94,7 +94,7 @@ export default function LiveProgramRoomsModal({
         };
     }, [preloadEvents]);
 
-    const prefetchRoomTile = useRoomTile_GetRoomQuery({
+    const [prefetchRoomTile] = useRoomTile_GetRoomQuery({
         skip: true,
     });
     useEffect(() => {

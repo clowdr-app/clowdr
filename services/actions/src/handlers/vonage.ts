@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import { validate as validateUUID } from "uuid";
@@ -29,7 +30,7 @@ import {
 } from "../lib/vonage/sessionMonitoring";
 import Vonage from "../lib/vonage/vonageClient";
 import { stopRoomVonageArchiving } from "../lib/vonage/vonageTools";
-import {
+import type {
     ArchiveMonitoringWebhookReqBody,
     CustomConnectionData,
     SessionMonitoringWebhookReqBody,

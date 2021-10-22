@@ -1,6 +1,7 @@
-import { ElasticTranscoderEvent } from "@clowdr-app/shared-types/build/sns/elasticTranscoder";
+import type { ElasticTranscoderEvent } from "@clowdr-app/shared-types/build/sns/elasticTranscoder";
 import { text } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import * as VideoRenderJob from "../lib/videoRenderJob";

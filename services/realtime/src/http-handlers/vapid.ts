@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { getVAPIDKeys } from "../web-push/vapidKeys";
 
 export async function getVAPIDPublicKey(_req: Request, res: Response, _next?: NextFunction): Promise<void> {

@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
 import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
 import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
 import { ChatState } from "../../../Chat/ChatGlobalState";
@@ -63,7 +63,7 @@ export function ChatsPanel({
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
     const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
-    const [createDmMutation, createDMMutationResponse] = useCreateDmMutation();
+    const [createDMMutationResponse, createDmMutation] = useCreateDmMutation();
 
     useEffect(() => {
         let unsubs: (() => void)[] = [];
@@ -247,20 +247,18 @@ export function ChatsPanel({
             // TODO: Push createDM through the global chats state class?
             <PeopleSearch
                 createDM={async (registrantId) => {
-                    if (!createDMMutationResponse.loading) {
+                    if (!createDMMutationResponse.fetching) {
                         try {
                             const result = await createDmMutation({
-                                variables: {
-                                    registrantIds: [registrantId],
-                                    conferenceId: conference.id,
-                                },
+                                registrantIds: [registrantId],
+                                conferenceId: conference.id,
                             });
                             if (
-                                result.errors ||
+                                result.error ||
                                 !result.data?.createRoomDm?.roomId ||
                                 !result.data?.createRoomDm?.chatId
                             ) {
-                                console.error("Failed to create DM", result.errors);
+                                console.error("Failed to create DM", result.error);
                                 throw new Error("Failed to create DM");
                             } else {
                                 setCurrentChatId(result.data.createRoomDm.chatId);
@@ -282,7 +280,7 @@ export function ChatsPanel({
         ),
         [
             conference.id,
-            createDMMutationResponse.loading,
+            createDMMutationResponse.fetching,
             createDmMutation,
             pageChatId,
             setCurrentChatId,
@@ -376,7 +374,7 @@ export function ChatsPanel({
         [dmPinnedChats, mandatoryPinnedChats, nonDMPinnedChats, peopleSearch, pinnedChats]
     );
 
-    if (createDMMutationResponse.loading) {
+    if (createDMMutationResponse.fetching) {
         return (
             <VStack alignItems="center">
                 <Text>Setting up chat...</Text>

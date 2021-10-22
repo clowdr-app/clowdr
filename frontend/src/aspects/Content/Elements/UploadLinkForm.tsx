@@ -16,14 +16,14 @@ export default function UploadLinkForm({
     magicToken: string;
     uploadAgreementText?: string;
     uploadAgreementUrl?: string;
-    handleFormSubmitted?: () => Promise<void>;
+    handleFormSubmitted?: () => void;
     existingLink: {
         text: string;
         url: string;
     } | null;
 }): JSX.Element {
     const toast = useToast();
-    const [submitUploadableElement] = useSubmitUploadableElementMutation();
+    const [_submitUploadableElementResponse, submitUploadableElement] = useSubmitUploadableElementMutation();
     return (
         <>
             <Formik
@@ -35,19 +35,18 @@ export default function UploadLinkForm({
                 onSubmit={async (values) => {
                     try {
                         const submitResult = await submitUploadableElement({
-                            variables: {
-                                elementData: {
-                                    text: values.text,
-                                    url: values.url,
-                                },
-                                magicToken,
+                            elementData: {
+                                text: values.text,
+                                url: values.url,
                             },
+                            magicToken,
                         });
 
-                        if (submitResult.errors || !submitResult.data?.submitUploadableElement?.success) {
+                        if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(
                                 submitResult.data?.submitUploadableElement?.message ??
-                                    submitResult.errors?.join("; " ?? "Unknown reason for failure.")
+                                    submitResult.error?.message ??
+                                    "Unknown reason for failure."
                             );
                         }
 
@@ -57,7 +56,7 @@ export default function UploadLinkForm({
                         });
 
                         if (handleFormSubmitted) {
-                            await handleFormSubmitted();
+                            handleFormSubmitted();
                         }
                     } catch (e) {
                         console.error("Failed to submit item", e);

@@ -3,7 +3,7 @@ import { addRegistrantToChimeMeeting } from "../lib/aws/chime";
 import { canUserJoinRoom, getRoomByChimeMeetingId, getRoomChimeMeeting, getRoomConferenceId } from "../lib/room";
 import { deleteRoomChimeMeetingForRoom } from "../lib/roomChimeMeeting";
 import { addRoomParticipant, removeRoomParticipant } from "../lib/roomParticipant";
-import { ChimeMeetingEndedDetail, ChimeRegistrantJoinedDetail, ChimeRegistrantLeftDetail } from "../types/chime";
+import type { ChimeMeetingEndedDetail, ChimeRegistrantJoinedDetail, ChimeRegistrantLeftDetail } from "../types/chime";
 import { callWithRetry } from "../utils";
 
 export async function handleJoinRoom(

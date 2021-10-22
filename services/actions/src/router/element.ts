@@ -1,10 +1,11 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleElementUpdated, handleGetProgramPersonAccessToken, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ElementData, Payload } from "../types/hasura/event";
+import type { ElementData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { generateEventHandsRaisedKeyName } from "../lib/handRaise";
 import { redisClientP, redisClientPool } from "../redis";
-import { Action, EventEndedNotification } from "../types/hasura";
+import type { Action, EventEndedNotification } from "../types/hasura";
 
 export async function eventEnded(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {

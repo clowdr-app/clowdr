@@ -1,9 +1,9 @@
 import assert from "assert";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { validate as uuidValidate } from "uuid";
 import { action } from "../../rabbitmq/chat/reactions";
-import { Action, Reaction } from "../../types/chat";
+import type { Action, Reaction } from "../../types/chat";
 
 export function onSend(
     conferenceSlugs: string[],

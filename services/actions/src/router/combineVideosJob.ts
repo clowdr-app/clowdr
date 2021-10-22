@@ -1,5 +1,6 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { processCombineVideosJobQueue } from "../handlers/combineVideosJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
 

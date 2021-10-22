@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client/core";
-import { EventInfoDocument, Room_ManagementMode_Enum } from "../../generated/graphql";
+import type { Room_ManagementMode_Enum } from "../../generated/graphql";
+import { EventInfoDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
-import { Person } from "./chatInfo";
+import type { Person } from "./chatInfo";
 
 gql`
     query EventInfo($eventId: uuid!) {

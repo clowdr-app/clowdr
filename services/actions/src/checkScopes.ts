@@ -25,7 +25,7 @@
 //
 // https://github.com/auth0/express-jwt-authz/blob/master/lib/index.js
 
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export type AuthenticatedRequest = Request & { userId: string };
 

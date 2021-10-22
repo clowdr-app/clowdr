@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client/core";
-import jwksRsa, { SigningKey } from "jwks-rsa";
-import socketIO, { Socket } from "socket.io";
+import type { SigningKey } from "jwks-rsa";
+import jwksRsa from "jwks-rsa";
+import type { Socket } from "socket.io";
+import socketIO from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { GetUserConferenceSlugsDocument } from "../generated/graphql";
 import { testJWKs } from "../jwks";

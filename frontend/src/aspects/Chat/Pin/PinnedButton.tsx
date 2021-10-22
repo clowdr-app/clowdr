@@ -7,8 +7,8 @@ import { useChatPinnedQuery } from "./PinnedQuery";
 
 export function PinnedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
-    const pinnedQ = useChatPinnedQuery();
-    const isLoading = pinnedQ.loading;
+    const [pinnedQ] = useChatPinnedQuery();
+    const isLoading = pinnedQ.fetching;
     const isPinned = !!pinnedQ.data?.isPinned;
     const label = isLoading
         ? "Loading pinned status"

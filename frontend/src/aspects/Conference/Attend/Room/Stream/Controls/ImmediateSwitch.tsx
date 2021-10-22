@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -25,6 +24,7 @@ import type { FieldProps} from "formik";
 import { Field, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { gql } from "urql";
 import { validate } from "uuid";
 import type {
     RoomEventDetailsFragment} from "../../../../../../generated/graphql";
@@ -83,14 +83,14 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
     const live = offsetNow >= startTime && offsetNow <= endTime;
     const secondsUntilOffAir = (endTime - offsetNow) / 1000;
 
-    const { data: elementsData } = useImmediateSwitch_GetElementsQuery({
+    const [{ data: elementsData }] = useImmediateSwitch_GetElementsQuery({
         variables: {
             eventId: event.id,
         },
     });
 
     const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
-    const liveIndicatorLatest = useLiveIndicator_GetLatestQuery({
+    const [liveIndicatorLatest] = useLiveIndicator_GetLatestQuery({
         skip: true,
     });
 

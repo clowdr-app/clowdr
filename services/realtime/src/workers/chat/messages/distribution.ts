@@ -10,7 +10,7 @@ import { maxUnreadMessages, sendUnreadCount } from "../../../lib/unreadCounts";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
 import { redisClientP, redisClientPool } from "../../../redis";
 import { emitter } from "../../../socket-emitter/socket-emitter";
-import { Action, Message } from "../../../types/chat";
+import type { Action, Message } from "../../../types/chat";
 
 console.info("Chat messages distribution worker running");
 

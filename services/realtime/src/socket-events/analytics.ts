@@ -1,4 +1,4 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { onViewCount } from "../socket-handlers/analytics";
 import { onConnect as onConnectHandler } from "../socket-handlers/presence";
 

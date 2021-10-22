@@ -20,8 +20,9 @@ import { LinkButton } from "../../Chakra/LinkButton";
 import { RoomList } from "../../Conference/Attend/Rooms/V1/RoomList";
 import { useConference } from "../../Conference/useConference";
 import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
+import usePolling from "../../Generic/usePolling";
 import { useRestorableState } from "../../Generic/useRestorableState";
-import ApolloQueryWrapper from "../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../GQL/QueryWrapper";
 import { FAIcon } from "../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
@@ -33,23 +34,23 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
-    const result = useGetAllTodaysRoomsQuery({
+    const [result, refetch] = useGetAllTodaysRoomsQuery({
         variables: {
             conferenceId: conference.id,
             todayStart: DateTime.local().startOf("day").minus({ minutes: 10 }).toISO(),
             todayEnd: DateTime.local().endOf("day").plus({ minutes: 10 }).toISO(),
             registrantId: registrant.id,
         },
-        pollInterval: 5 * 60 * 1000,
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
+    usePolling(refetch, 5 * 60 * 1000, true);
 
     // const { isOpen: isCreateRoomOpen, onClose: onCreateRoomClose, onOpen: onCreateRoomOpen } = useDisclosure();
     // const history = useHistory();
 
     return (
         <>
-            <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+            <QueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList
                         rooms={rooms}
@@ -57,8 +58,8 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         noRoomsMessage={"Rooms for sessions will show here each day."}
                     />
                 )}
-            </ApolloQueryWrapper>
-            <ApolloQueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
+            </QueryWrapper>
+            <QueryWrapper getter={(data) => data.socialOrDiscussionRooms} queryResult={result} noSpinner>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "list" }} limit={5}>
                         <Flex mb={2} mt={4} ml={1} mr={1}>
@@ -68,7 +69,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                         </Flex>
                     </RoomList>
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             <LinkButton
                 size="xs"
                 to={`/conference/${confSlug}/rooms`}

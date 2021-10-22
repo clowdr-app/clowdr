@@ -1,6 +1,7 @@
-import { MediaPackageEvent } from "@clowdr-app/shared-types/build/sns/mediaPackage";
+import type { MediaPackageEvent } from "@clowdr-app/shared-types/build/sns/mediaPackage";
 import { text } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { completeMediaPackageHarvestJob, failMediaPackageHarvestJob } from "../handlers/recording";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";

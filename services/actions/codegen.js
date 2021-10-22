@@ -3,9 +3,8 @@ require("dotenv").config();
 module.exports = {
     schema: [
         {
-            [`http${process.env.GRAPHQL_API_SECURE_PROTOCOLS !== "false" ? "s" : ""}://${
-                process.env.GRAPHQL_API_DOMAIN
-            }/v1/graphql`]: {
+            [`http${process.env.GRAPHQL_API_SECURE_PROTOCOLS !== "false" ? "s" : ""}://${process.env.GRAPHQL_API_DOMAIN
+                }/v1/graphql`]: {
                 headers: {
                     "X-Hasura-Admin-Secret": process.env.HASURA_ADMIN_SECRET,
                 },
@@ -26,6 +25,9 @@ module.exports = {
         },
         "./graphql.schema.json": {
             plugins: ["introspection"],
+            config: {
+                minify: true,
+            }
         },
     },
 };

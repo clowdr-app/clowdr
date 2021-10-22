@@ -1,17 +1,20 @@
 import { gql } from "@apollo/client/core";
+import type {
+    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import {
-    EmailTemplate_BaseConfig,
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
-import { EmailView_SubtitlesGenerated, EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
+import type { EmailView_SubtitlesGenerated} from "@clowdr-app/shared-types/build/email";
+import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import assert from "assert";
 import { compile } from "handlebars";
 import R from "ramda";
+import type {
+    Email_Insert_Input} from "../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
-    Email_Insert_Input,
     FindMatchingProgramPersonForUploaderDocument,
     GetElementDetailsDocument,
     GetUploadAgreementDocument,
@@ -21,7 +24,7 @@ import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { EmailReason } from "../lib/email/sendingReasons";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
-import { ElementData, Payload } from "../types/hasura/event";
+import type { ElementData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`

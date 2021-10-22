@@ -1,9 +1,10 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleGetSlug } from "../handlers/conference";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ActionPayload } from "../types/hasura/action";
+import type { ActionPayload } from "../types/hasura/action";
 
 export const router = express.Router();
 

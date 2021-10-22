@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { Interval } from "@nestjs/schedule";
-import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
+import type { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { ChannelStatus_UpdatedMediaLiveChannelStatusesDocument } from "../generated/graphql";
-import { GraphQlService } from "../hasura-data/graphql/graphql.service";
+import type { GraphQlService } from "../hasura-data/graphql/graphql.service";
 
 @Injectable()
 export class ChannelStatusService {

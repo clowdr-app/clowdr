@@ -1,9 +1,10 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleProcessVideoRenderJobQueue, handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { Payload, VideoRenderJobData } from "../types/hasura/event";
+import type { Payload, VideoRenderJobData } from "../types/hasura/event";
 
 export const router = express.Router();
 

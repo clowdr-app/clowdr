@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Badge,
@@ -16,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Redirect } from "react-router-dom";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -180,7 +180,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
 
 function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useRegistrantByIdQuery({
+    const [{ loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             registrantId,
             conferenceId: conference.id,

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import webPush from "web-push";
+import type webPush from "web-push";
 import { PushNotificationSubscriptionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";

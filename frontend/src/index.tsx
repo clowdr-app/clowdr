@@ -8,7 +8,7 @@ import { AppError } from "./AppError";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
 import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
-import ApolloCustomProvider from "./aspects/GQL/ApolloCustomProvider";
+import UrqlProvider from "./aspects/GQL/UrqlProvider";
 import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
 import "./index.css";
@@ -20,14 +20,14 @@ ReactDOM.render(
                 <HelmetProvider>
                     <BrowserRouter>
                         <Auth0CustomProvider>
-                            <ApolloCustomProvider>
+                            <UrqlProvider>
                                 <ChakraCustomProvider>
                                     <UXChoiceProvider>
                                         <UXChoiceDialog />
                                         <App />
                                     </UXChoiceProvider>
                                 </ChakraCustomProvider>
-                            </ApolloCustomProvider>
+                            </UrqlProvider>
                         </Auth0CustomProvider>
                     </BrowserRouter>
                 </HelmetProvider>

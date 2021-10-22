@@ -1,5 +1,5 @@
 import assert from "assert";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 assert(process.env.EVENT_SECRET, "Missing EVENT_SECRET env var");
 

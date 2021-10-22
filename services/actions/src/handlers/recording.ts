@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import {
@@ -14,7 +15,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createHarvestJob } from "../lib/aws/mediaPackage";
-import { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
+import type { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

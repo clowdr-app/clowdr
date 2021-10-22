@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { Permissions_Permission_Enum, UserPermissionsDocument } from "../../generated/graphql";
+import type { Permissions_Permission_Enum} from "../../generated/graphql";
+import { UserPermissionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 

@@ -1,8 +1,9 @@
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
-import express, { Request, Response } from "express";
-import { AuthenticatedRequest } from "./checkScopes";
+import type { Request, Response } from "express";
+import express from "express";
+import type { AuthenticatedRequest } from "./checkScopes";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { checkEventSecret } from "./middlewares/checkEventSecret";

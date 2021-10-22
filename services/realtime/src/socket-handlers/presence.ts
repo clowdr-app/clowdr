@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { enterPresence, exitAllPresences, exitPresence, presenceChannelName, presenceListKey } from "../lib/presence";
 import { redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";

@@ -1,4 +1,3 @@
-import { useApolloClient } from "@apollo/client";
 import { WarningTwoIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -14,11 +13,12 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { useClient } from "urql";
 import { pushNotificationsState } from "./PushNotificationsState";
 
 export default function PushNotificationSettings(): JSX.Element {
     const [isSubscribed, setIsSubscribed] = useState<boolean | string | null>(null);
-    const apolloClient = useApolloClient();
+    const client = useClient();
 
     useEffect(() => {
         const unsub = pushNotificationsState.onIsSubscribed((isSub) => {
@@ -49,7 +49,7 @@ export default function PushNotificationSettings(): JSX.Element {
                     <Text>You are subscribed to push notifications in this browser.</Text>
                     <Button
                         onClick={() => {
-                            pushNotificationsState.unsubscribe(apolloClient);
+                            pushNotificationsState.unsubscribe(client);
                         }}
                     >
                         Unsubscribe
@@ -60,7 +60,7 @@ export default function PushNotificationSettings(): JSX.Element {
                     <Text>You are not currently subscribed to push notifications in this browser.</Text>
                     <Button
                         onClick={() => {
-                            pushNotificationsState.subscribe(apolloClient);
+                            pushNotificationsState.subscribe(client);
                         }}
                     >
                         Subscribe

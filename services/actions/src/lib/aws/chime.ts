@@ -1,9 +1,10 @@
-import {
+import type {
     Attendee,
+    Meeting} from "@aws-sdk/client-chime";
+import {
     CreateAttendeeCommand,
     CreateMeetingCommand,
-    GetMeetingCommand,
-    Meeting,
+    GetMeetingCommand
 } from "@aws-sdk/client-chime";
 import { callWithRetry } from "../../utils";
 import { Chime } from "./awsClient";

@@ -265,13 +265,13 @@ export function ExhibitionLayoutWrapper({
     exhibitionId: string;
     hideLiveViewButton?: boolean;
 }): JSX.Element {
-    const exhibitionResponse = useSelectExhibitionQuery({
+    const [exhibitionResponse] = useSelectExhibitionQuery({
         variables: {
             id: exhibitionId,
         },
     });
 
-    return exhibitionResponse.loading && !exhibitionResponse.data ? (
+    return exhibitionResponse.fetching && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionLayout

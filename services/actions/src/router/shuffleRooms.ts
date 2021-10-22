@@ -1,9 +1,10 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleShuffleQueueEntered, processShuffleQueues } from "../handlers/shuffleRoom";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
+import type { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
 
 export const router = express.Router();
 

@@ -1,27 +1,29 @@
-import { ChannelState, FollowPoint, InputTimecodeSource, ScheduleAction } from "@aws-sdk/client-medialive";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { ScheduleAction } from "@aws-sdk/client-medialive";
+import { ChannelState, FollowPoint, InputTimecodeSource } from "@aws-sdk/client-medialive";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { add } from "date-fns";
 import * as R from "ramda";
 import { v4 as uuidv4 } from "uuid";
-import { MediaLiveService } from "../../aws/medialive/medialive.service";
+import type { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
-import { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
-import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
-import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
-import {
+import type { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
+import type { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
+import type { ContentElementDataService } from "../../hasura-data/content/content-element.service";
+import type {
     LocalSchedule,
     LocalScheduleAction,
     LocalScheduleService,
     Room,
 } from "../../hasura-data/local-schedule/local-schedule.service";
-import {
+import type {
     EventAction,
     InvalidAction,
     RemoteSchedule,
     RemoteScheduleAction,
     RemoteScheduleService,
 } from "../remote-schedule/remote-schedule.service";
-import { VonageService } from "../vonage/vonage.service";
+import type { VonageService } from "../vonage/vonage.service";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;
@@ -112,7 +114,7 @@ export class ScheduleSyncService {
                     "Conference does not have a filler video, skipping"
                 );
             } else {
-                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], fillerVideoScheduleActions());
+                await this.mediaLiveService.updateSchedule(mediaLiveChannelId, [], scheduleActions);
             }
         };
 

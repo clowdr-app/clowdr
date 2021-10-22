@@ -2,17 +2,17 @@ import { Logger } from "@eropple/nestjs-bunyan";
 import { Body, Controller, Post } from "@nestjs/common";
 import parseArn from "@unbounce/parse-aws-arn";
 import axios from "axios";
-import * as Bunyan from "bunyan";
+import type * as Bunyan from "bunyan";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
-import { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
+import type { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
 import { MediaLiveNotification } from "../aws/medialive/medialive-notification.dto";
-import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
+import type { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { Video_JobStatus_Enum } from "../generated/graphql";
-import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
-import { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
-import { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
-import { SNSNotificationDto } from "./sns-notification.dto";
+import type { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import type { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
+import type { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
+import type { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")
 export class SnsController {

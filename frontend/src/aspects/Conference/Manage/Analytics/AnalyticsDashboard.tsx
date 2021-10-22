@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -29,6 +28,7 @@ import {
 } from "@chakra-ui/react";
 import Papa from "papaparse";
 import React, { useCallback, useMemo } from "react";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
@@ -134,7 +134,7 @@ function JSDateToExcelDate(inDate: Date) {
 
 export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
-    const statsResponse = useConferenceStatsQuery({
+    const [statsResponse] = useConferenceStatsQuery({
         variables: {
             id: conference.id,
         },

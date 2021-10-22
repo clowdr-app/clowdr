@@ -1,7 +1,10 @@
 import { Permissions_Permission_Enum, Room_ManagementMode_Enum } from "../generated/graphql";
-import { ChatInfo, getChatInfo, Item } from "./cache/chatInfo";
-import { getRegistrantInfo, RegistrantInfo } from "./cache/registrantInfo";
-import { EventInfo, getEventInfo } from "./cache/roomInfo";
+import type { ChatInfo, Item } from "./cache/chatInfo";
+import { getChatInfo } from "./cache/chatInfo";
+import type { RegistrantInfo } from "./cache/registrantInfo";
+import { getRegistrantInfo } from "./cache/registrantInfo";
+import type { EventInfo} from "./cache/roomInfo";
+import { getEventInfo } from "./cache/roomInfo";
 import { hasAtLeastOnePermissionForConfSlug } from "./cache/userPermission";
 
 export async function canSelectChat(

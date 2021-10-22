@@ -1,13 +1,15 @@
 import { gql } from "@apollo/client/core";
-import { VonageSessionLayoutData, VonageSessionLayoutType } from "../../../../shared/build/vonage";
+import type { VonageSessionLayoutData} from "../../../../shared/build/vonage";
+import { VonageSessionLayoutType } from "../../../../shared/build/vonage";
+import type {
+    RoomParticipantFragment} from "../generated/graphql";
 import {
     CountRoomParticipantsDocument,
     CreateRoomParticipantDocument,
     DeleteRoomParticipantsCreatedBeforeDocument,
     GetRoomParticipantDetailsDocument,
     InsertVonageSessionLayoutDocument,
-    RemoveRoomParticipantDocument,
-    RoomParticipantFragment,
+    RemoveRoomParticipantDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "./vonage/vonageTools";

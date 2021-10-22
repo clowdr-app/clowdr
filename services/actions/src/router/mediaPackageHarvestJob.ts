@@ -1,9 +1,10 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleMediaPackageHarvestJobUpdated } from "../handlers/recording";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
+import type { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

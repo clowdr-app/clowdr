@@ -1,11 +1,11 @@
 import assert from "assert";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import {
     deletePushNotificationSubscription,
     insertOrUpdatePushNotificationSubscription,
 } from "../lib/cache/pushNotificationSubscriptions";
-import { Payload, PushNotificationSubscription } from "../types/hasura";
+import type { Payload, PushNotificationSubscription } from "../types/hasura";
 
 export async function pushNotificationSubscriptionChanged(
     req: Request,

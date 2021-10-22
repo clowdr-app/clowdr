@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -21,6 +20,7 @@ import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
+import { gql } from "urql";
 import {
     useCombineVideosModal_CreateCombineVideosJobMutation,
     useCombineVideosModal_GetCombineVideosJobQuery,
@@ -112,14 +112,14 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
-    const combineVideosResponse = useCombineVideosModal_GetCombineVideosJobQuery({
+    const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
             conferenceId: conference.id,
         },
         fetchPolicy: "network-only",
     });
 
-    const elementsResponse = useCombineVideosModal_GetElementsQuery({
+    const [elementsResponse] = useCombineVideosModal_GetElementsQuery({
         variables: {
             itemIds,
             elementIds: elementIds_Flat,
@@ -223,8 +223,8 @@ function ModalInner({
         <>
             <ModalBody>
                 <VStack spacing={4}>
-                    {(elementsResponse.loading && !elementsResponse.data) ||
-                    (combineVideosResponse.loading && !combineVideosResponse.data) ? (
+                    {(elementsResponse.fetching && !elementsResponse.data) ||
+                    (combineVideosResponse.fetching && !combineVideosResponse.data) ? (
                         <Spinner label="Loading element information" />
                     ) : undefined}
                     {alreadyBeingCombined && alreadyBeingCombined.length > 0 ? (

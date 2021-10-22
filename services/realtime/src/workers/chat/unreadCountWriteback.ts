@@ -3,8 +3,9 @@
 
 import { gql } from "@apollo/client/core";
 import assert from "assert";
+import type {
+    Chat_ReadUpToIndex_Insert_Input} from "../../generated/graphql";
 import {
-    Chat_ReadUpToIndex_Insert_Input,
     InsertReadUpToIndexDocument,
     RegistrantIdsFromChatsAndUsersDocument,
 } from "../../generated/graphql";

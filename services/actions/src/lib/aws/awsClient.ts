@@ -8,7 +8,7 @@ import { S3 } from "@aws-sdk/client-s3";
 import { SNS } from "@aws-sdk/client-sns";
 import { AssumeRoleCommand, STS } from "@aws-sdk/client-sts";
 import { Transcribe } from "@aws-sdk/client-transcribe";
-import { Credentials } from "@aws-sdk/types";
+import type { Credentials } from "@aws-sdk/types";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
 import { getHostUrl } from "../../utils";

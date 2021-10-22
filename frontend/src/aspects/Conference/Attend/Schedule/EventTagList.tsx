@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { HStack, Tag, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import type { Schedule_EventTagFragment } from "../../../../generated/graphql";
 
 gql`

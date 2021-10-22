@@ -1,5 +1,6 @@
 import { json, text } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import {
     handleChimeMeetingEndedNotification,
@@ -9,13 +10,13 @@ import {
 } from "../handlers/chime";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import {
+import type {
     ChimeEventBase,
     ChimeMeetingEndedDetail,
     ChimeRegistrantJoinedDetail,
     ChimeRegistrantLeftDetail,
 } from "../types/chime";
-import { ActionPayload } from "../types/hasura/action";
+import type { ActionPayload } from "../types/hasura/action";
 
 export const router = express.Router();
 

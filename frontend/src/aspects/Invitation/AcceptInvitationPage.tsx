@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -18,6 +17,7 @@ import {
 import assert from "assert";
 import React, { useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
 import LoginButton from "../Auth/Buttons/LoginButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
@@ -53,13 +53,11 @@ const Spinner = () => (
 );
 
 function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: string }): JSX.Element {
-    const [confirmCurrentMutation, { loading, error, data }] = useInvitation_ConfirmCurrentMutation();
+    const [{ fetching: loading, error, data }, confirmCurrentMutation] = useInvitation_ConfirmCurrentMutation();
 
     useEffect(() => {
         confirmCurrentMutation({
-            variables: {
-                inviteCode,
-            },
+            inviteCode,
         });
     }, [confirmCurrentMutation, inviteCode]);
 
@@ -145,7 +143,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const title = useTitle("Accept invitation");
     const { user, loading } = useMaybeCurrentUser();
 
-    const { loading: inviteLoading, data: inviteData } = useSelectInvitationForAcceptQuery({
+    const [{ fetching: inviteLoading, data: inviteData }] = useSelectInvitationForAcceptQuery({
         context: {
             headers: {
                 "SEND-WITHOUT-AUTH": true,
@@ -155,7 +153,7 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
         variables: {
             inviteCode,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     if (loading) {

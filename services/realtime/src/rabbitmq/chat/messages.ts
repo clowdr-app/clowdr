@@ -1,9 +1,9 @@
-import { Channel, ConsumeMessage } from "amqplib";
+import type { Channel, ConsumeMessage } from "amqplib";
 import { is } from "typescript-is";
 import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { canIUDMessage } from "../../lib/permissions";
 import { downlink, uplink } from "../../rabbitmq";
-import { Action, Message } from "../../types/chat";
+import type { Action, Message } from "../../types/chat";
 import { MessageDistributionQueueSize, MessageWritebackQueueSize } from "./params";
 
 const exchange = "chat.messages";

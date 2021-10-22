@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
 import { Button, Center, Code, Container, Heading, List, ListItem, Text, useToast, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { gql, useClient } from "urql";
 import {
-    useSubmissions_GetProgramPersonAccessTokenQuery,
+    Submissions_GetProgramPersonAccessTokenDocument,
     useSubmissions_ListUploadersQuery,
 } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
@@ -42,8 +42,8 @@ export default function OldAccessFormatRedirectionPage({
 }): JSX.Element {
     const title = useTitle("Submission identification");
 
-    const response = useSubmissions_ListUploadersQuery({
-        fetchPolicy: "network-only",
+    const [response] = useSubmissions_ListUploadersQuery({
+        requestPolicy: "network-only",
         variables: {
             elementId,
         },
@@ -55,17 +55,15 @@ export default function OldAccessFormatRedirectionPage({
         },
     });
 
-    const accessToken = useSubmissions_GetProgramPersonAccessTokenQuery({
-        skip: true,
-    });
-
     const history = useHistory();
     const toast = useToast();
+    const client = useClient();
+    const [accessTokenFetching, setAccessTokenFetching] = useState<boolean>(false);
 
     return (
         <Center pt={6}>
             {title}
-            {response.loading && !response.data ? (
+            {response.fetching && !response.data ? (
                 <CenteredSpinner />
             ) : (
                 <Container maxW="container.md">
@@ -83,14 +81,17 @@ export default function OldAccessFormatRedirectionPage({
                                     <ListItem key={uploader.id}>
                                         <Button
                                             colorScheme="PrimaryActionButton"
-                                            isLoading={accessToken.loading}
+                                            isLoading={accessTokenFetching}
                                             onClick={async () => {
                                                 try {
-                                                    const tokenResponse = await accessToken.refetch({
-                                                        elementAccessToken: magicToken,
-                                                        elementId,
-                                                        uploaderEmail: uploader.email ?? "",
-                                                    });
+                                                    setAccessTokenFetching(true);
+                                                    const tokenResponse = await client
+                                                        .query(Submissions_GetProgramPersonAccessTokenDocument, {
+                                                            elementAccessToken: magicToken,
+                                                            elementId,
+                                                            uploaderEmail: uploader.email ?? "",
+                                                        })
+                                                        .toPromise();
 
                                                     if (
                                                         tokenResponse.data.getProgramPersonAccessToken.accessToken
@@ -110,6 +111,7 @@ export default function OldAccessFormatRedirectionPage({
                                                             duration: 1000000,
                                                         });
                                                     }
+                                                    setAccessTokenFetching(false);
                                                 } catch (e) {
                                                     toast({
                                                         status: "error",

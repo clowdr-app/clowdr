@@ -1,4 +1,5 @@
-import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
+import type { DynamicModule, FactoryProvider, ModuleMetadata } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { VONAGE_MODULE_OPTIONS } from "../constants";
 import { VonageClientService } from "./vonage/vonage-client.service";
 

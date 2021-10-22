@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { ChatInfoDocument, Room_ManagementMode_Enum } from "../../generated/graphql";
+import type { Room_ManagementMode_Enum } from "../../generated/graphql";
+import { ChatInfoDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 

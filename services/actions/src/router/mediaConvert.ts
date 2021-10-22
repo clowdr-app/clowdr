@@ -1,6 +1,8 @@
-import { MediaConvertEvent, TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import type { MediaConvertEvent} from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import { text } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { completeCombineVideosJob, failCombineVideosJob } from "../handlers/combineVideosJob";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";

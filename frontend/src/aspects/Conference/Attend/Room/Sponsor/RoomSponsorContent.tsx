@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
 import { Divider, Spinner } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { gql } from "urql";
 import { useRoomSponsorContent_GetElementsQuery } from "../../../../../generated/graphql";
 import ElementsGridLayout from "../../Content/Element/ElementsGridLayout";
 
@@ -29,7 +29,7 @@ gql`
 `;
 
 export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element {
-    const { data, error, loading } = useRoomSponsorContent_GetElementsQuery({
+    const [{ data, error, loading }] = useRoomSponsorContent_GetElementsQuery({
         variables: {
             itemId,
         },

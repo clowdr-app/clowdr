@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { AspectRatio, Box, Button, Center, Heading, Spinner, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
@@ -47,7 +47,7 @@ gql`
 
 export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?: string }): JSX.Element {
     const conference = useConference();
-    const response = useRoomTile_GetRoomQuery({
+    const [response] = useRoomTile_GetRoomQuery({
         variables: {
             roomId,
             eventId,

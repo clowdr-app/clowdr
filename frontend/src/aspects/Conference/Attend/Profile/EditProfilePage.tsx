@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { EditIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -28,6 +27,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql } from "urql";
 import {
     useRegistrantByIdQuery,
     useUpdateProfileMutation,
@@ -119,11 +119,11 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
     const isDirty = useMemo(() => !deepProfileIsEqual(registrant, editingRegistrant), [registrant, editingRegistrant]);
     const displayNameIsDirty = editingRegistrant.displayName !== registrant.displayName;
 
-    const [updateProfile, { loading: loadingUpdateAttendeProfile, error: errorUpdateProfile }] =
+    const [{ fetching: loadingUpdateAttendeProfile, error: errorUpdateProfile }, updateProfile] =
         useUpdateProfileMutation();
     const [
+        { fetching: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
         updateRegistrantDisplayName,
-        { loading: loadingUpdateAttendeDisplayName, error: errorUpdateRegistrantDisplayName },
     ] = useUpdateRegistrantDisplayNameMutation();
 
     const toast = useToast();
@@ -538,7 +538,7 @@ function EditCurrentProfilePage(): JSX.Element {
 
 function EditProfilePage_FetchWrapper({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const { loading, error, data } = useRegistrantByIdQuery({
+    const [{ loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             conferenceId: conference.id,
             registrantId,

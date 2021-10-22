@@ -1,7 +1,7 @@
 import { generateChatRoomName } from "../../../lib/chat";
 import { onDistributionReaction } from "../../../rabbitmq/chat/reactions";
 import { emitter } from "../../../socket-emitter/socket-emitter";
-import { Action, Reaction } from "../../../types/chat";
+import type { Action, Reaction } from "../../../types/chat";
 
 console.info("Chat reactions distribution worker running");
 

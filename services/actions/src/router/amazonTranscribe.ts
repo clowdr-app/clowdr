@@ -1,6 +1,7 @@
-import { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
+import type { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
 import { text } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import { completeTranscriptionJob, failTranscriptionJob } from "../lib/transcribe";

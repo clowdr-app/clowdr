@@ -1,4 +1,3 @@
-import type { ApolloQueryResult } from "@apollo/client";
 import { Button, Spinner, Text, Tooltip, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import type { GetElementQuery } from "../../../generated/graphql";
@@ -17,7 +16,7 @@ export default function UploadedElement({
     loading: boolean;
     error: boolean;
     data: GetElementQuery | undefined;
-    refetch: () => Promise<ApolloQueryResult<GetElementQuery>>;
+    refetch: () => void;
 }): JSX.Element {
     const [disableRefresh, setDisableRefresh] = useState<boolean>(false);
     useEffect(() => {
@@ -47,7 +46,7 @@ export default function UploadedElement({
                                         aria-label="Refresh submitted item"
                                         onClick={async () => {
                                             setDisableRefresh(true);
-                                            await refetch();
+                                            refetch();
                                         }}
                                         isDisabled={disableRefresh}
                                         size="md"

@@ -1,6 +1,6 @@
 import assert from "assert";
 import gql from "graphql-tag";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import {
     GetExistingProgramPersonDocument,

@@ -1,11 +1,12 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import {
+import type {
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
+    RegistrantWithInvitePartsFragment} from "../generated/graphql";
+import {
     MarkAndSelectUnprocessedInvitationEmailJobsDocument,
-    RegistrantWithInvitePartsFragment,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
     SetRegistrantUserIdDocument,

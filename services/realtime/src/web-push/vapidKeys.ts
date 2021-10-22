@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import { generateVAPIDKeys, setVapidDetails, VapidKeys } from "web-push";
+import type { VapidKeys } from "web-push";
+import { generateVAPIDKeys, setVapidDetails } from "web-push";
 import { SetVapidKeysDocument, VapidKeysDocument } from "../generated/graphql";
 import { testMode } from "../testMode";
 

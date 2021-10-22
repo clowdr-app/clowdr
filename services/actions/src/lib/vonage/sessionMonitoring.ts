@@ -7,7 +7,7 @@ import {
     OngoingBroadcastableVideoRoomEventsDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../types/vonage";
+import type { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
 import { getRoomByVonageSessionId } from "../room";
 import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";

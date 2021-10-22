@@ -1,15 +1,17 @@
-import { FollowPoint, ScheduleAction } from "@aws-sdk/client-medialive";
+import type { ScheduleAction } from "@aws-sdk/client-medialive";
+import { FollowPoint } from "@aws-sdk/client-medialive";
 import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { sub } from "date-fns";
-import { MediaLiveService } from "../../aws/medialive/medialive.service";
+import type { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Video_RtmpInput_Enum } from "../../generated/graphql";
-import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
-import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
-import { ImmediateSwitchDataService } from "../../hasura-data/immediate-switch/immediate-switch.service";
-import { ChannelStack, LocalScheduleService } from "../../hasura-data/local-schedule/local-schedule.service";
+import type { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
+import type { ContentElementDataService } from "../../hasura-data/content/content-element.service";
+import type { ImmediateSwitchDataService } from "../../hasura-data/immediate-switch/immediate-switch.service";
+import type { ChannelStack, LocalScheduleService } from "../../hasura-data/local-schedule/local-schedule.service";
 
 export class ImmediateSwitchService {
     private readonly logger: Bunyan;

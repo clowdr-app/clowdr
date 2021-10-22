@@ -1,9 +1,10 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
+import type { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 
 export const router = express.Router();
 

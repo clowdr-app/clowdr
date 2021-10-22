@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { Meeting } from "@aws-sdk/client-chime";
+import type { Meeting } from "@aws-sdk/client-chime";
 import assert from "assert";
 import { is } from "typescript-is";
 import {

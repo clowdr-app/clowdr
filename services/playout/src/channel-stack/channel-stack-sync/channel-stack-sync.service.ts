@@ -1,18 +1,19 @@
 import { gql } from "@apollo/client/core";
 import { StackStatus } from "@aws-sdk/client-cloudformation";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
-import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
+import type { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
 import {
     GetChannelStacksThatMightNeedUpdateDocument,
     GetObsoleteChannelStacksDocument,
     GetRoomsNeedingChannelStackDocument,
 } from "../../generated/graphql";
-import { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
-import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
+import type { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
+import type { GraphQlService } from "../../hasura-data/graphql/graphql.service";
 import { shortId } from "../../utils/id";
-import { ChannelStackService } from "../channel-stack/channel-stack.service";
+import type { ChannelStackService } from "../channel-stack/channel-stack.service";
 
 @Injectable()
 export class ChannelStackSyncService {

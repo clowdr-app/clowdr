@@ -1,15 +1,15 @@
-import type { LazyQueryResult, QueryResult } from "@apollo/client";
 import { Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import type { UseQueryState } from "urql";
 import useQueryErrorToast from "./useQueryErrorToast";
 
-export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
+export default function QueryWrapper<TData, TVariables, TInnerData>({
     queryResult,
     getter,
     children,
     noSpinner = false,
 }: {
-    queryResult: QueryResult<TData, TVariables> | LazyQueryResult<TData, TVariables>;
+    queryResult: UseQueryState<TData, TVariables>;
     getter: (data: TData) => TInnerData | undefined | null;
     children: (data: TInnerData) => React.ReactNode | React.ReactNodeArray;
     noSpinner?: boolean;
@@ -21,11 +21,11 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             return undefined;
         }
     }, [getter, queryResult.data]);
-    useQueryErrorToast(queryResult.error, false, "ApolloQueryWrapper");
+    useQueryErrorToast(queryResult.error, false, "QueryWrapper");
 
     return (
         <>
-            {queryResult.loading ? (
+            {queryResult.fetching ? (
                 noSpinner ? (
                     <></>
                 ) : (
@@ -34,7 +34,7 @@ export default function ApolloQueryWrapper<TData, TVariables, TInnerData>({
             ) : queryResult.error ? (
                 <Text>An error occurred loading in data - please see further information in notifications.</Text>
             ) : undefined}
-            {queryResult.loading && !innerData ? (
+            {queryResult.fetching && !innerData ? (
                 <></>
             ) : !innerData ? (
                 <>

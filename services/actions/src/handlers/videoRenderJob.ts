@@ -2,12 +2,13 @@ import { gql } from "@apollo/client/core";
 import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import assert from "assert";
 import { assertType } from "typescript-is";
+import type {
+    VideoRenderJobDataFragment} from "../generated/graphql";
 import {
     GetElementIdForVideoRenderJobDocument,
     MarkAndSelectNewVideoRenderJobsDocument,
     SelectNewVideoRenderJobsDocument,
     UnmarkVideoRenderJobsDocument,
-    VideoRenderJobDataFragment,
     Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -16,7 +17,7 @@ import * as Element from "../lib/element";
 import * as Transcode from "../lib/transcode";
 import * as VideoRenderJob from "../lib/videoRenderJob";
 import { updateVideoRenderJob } from "../lib/videoRenderJob";
-import { Payload, VideoRenderJobData } from "../types/hasura/event";
+import type { Payload, VideoRenderJobData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

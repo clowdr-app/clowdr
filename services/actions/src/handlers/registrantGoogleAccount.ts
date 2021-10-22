@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client/core";
-import {
+import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
     YouTubePlaylistDetails,
 } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import assert from "assert";
 import { IsNumber, IsString, validateSync } from "class-validator";
-import { OAuth2Client } from "google-auth-library";
-import { google, youtube_v3 } from "googleapis";
+import type { OAuth2Client } from "google-auth-library";
+import type { youtube_v3 } from "googleapis";
+import { google } from "googleapis";
 import * as R from "ramda";
 import {
     RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
@@ -15,7 +16,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createOAuth2Client } from "../lib/googleAuth";
-import { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
+import type { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 export async function handleRegistrantGoogleAccountDeleted(

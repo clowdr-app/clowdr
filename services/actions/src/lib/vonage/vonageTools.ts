@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
-import { VonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
-import OpenTok from "opentok";
+import type { VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
+import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import type OpenTok from "opentok";
 import {
     CreateVonageParticipantStreamDocument,
     CreateVonageRoomRecordingDocument,
@@ -13,7 +14,7 @@ import {
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import { StreamData } from "../../types/vonage";
+import type { StreamData } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
 import { getRegistrantDetails } from "../authorisation";
 import { Chime, shortId } from "../aws/awsClient";
@@ -768,7 +769,7 @@ export async function applyVonageSessionLayout(vonageSessionId: string, dirtyLay
             try {
                 switch (layout.layout.type) {
                     case "bestFit":
-                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, "verticalPresentation");
+                        await Vonage.setArchiveLayout(startedArchiveId, "bestFit", null, layout.layout.screenShareType);
                         break;
                     case "custom":
                         await Vonage.setArchiveLayout(startedArchiveId, "custom", layout.layout.stylesheet, null);

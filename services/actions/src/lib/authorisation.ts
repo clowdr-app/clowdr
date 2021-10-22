@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client/core";
+import type {
+    GetRegistrant_RegistrantFragment,
+    GetRegistrant_RegistrantWithPermissionsFragment} from "../generated/graphql";
 import {
     Authorisation_FindRegistrantDocument,
     Authorisation_GetRegistrantDocument,
     GetRegistrantByConferenceSlugDocument,
     GetRegistrantDocument,
-    GetRegistrantWithPermissionsDocument,
-    GetRegistrant_RegistrantFragment,
-    GetRegistrant_RegistrantWithPermissionsFragment,
+    GetRegistrantWithPermissionsDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 

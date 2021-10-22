@@ -1,13 +1,15 @@
-import { ApolloError, FetchResult, gql } from "@apollo/client/core";
-import { ConsumeMessage } from "amqplib";
-import {
+import type { FetchResult} from "@apollo/client/core";
+import { ApolloError, gql } from "@apollo/client/core";
+import type { ConsumeMessage } from "amqplib";
+import type {
     Chat_Reaction_Insert_Input,
-    DeleteChatReactionsDocument,
     DeleteChatReactionsMutation,
-    InsertChatReactionsDocument,
     InsertChatReactionsMutation,
-    UpdateChatReactionDocument,
-    UpdateChatReactionMutation,
+    UpdateChatReactionMutation} from "../../../generated/graphql";
+import {
+    DeleteChatReactionsDocument,
+    InsertChatReactionsDocument,
+    UpdateChatReactionDocument
 } from "../../../generated/graphql";
 import { ReactionWritebackIntervalMs, ReactionWritebackQueueSize } from "../../../rabbitmq/chat/params";
 import {
@@ -17,7 +19,7 @@ import {
 } from "../../../rabbitmq/chat/reactions";
 import { redlock } from "../../../redis";
 import { testMode } from "../../../testMode";
-import { Action, Reaction } from "../../../types/chat";
+import type { Action, Reaction } from "../../../types/chat";
 
 console.info("Chat reactions writeback worker running");
 

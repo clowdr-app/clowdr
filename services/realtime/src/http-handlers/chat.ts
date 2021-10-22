@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { assertType } from "typescript-is";
 import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
@@ -9,7 +9,7 @@ import { deleteSubscription, insertSubscription } from "../lib/cache/subscriptio
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
 import { sendNotifications } from "../lib/notifications";
 import { emitter } from "../socket-emitter/socket-emitter";
-import { Flag, Payload, Pin, Subscription } from "../types/hasura";
+import type { Flag, Payload, Pin, Subscription } from "../types/hasura";
 
 export async function subscriptionChanged(req: Request, res: Response, _next?: NextFunction): Promise<void> {
     try {

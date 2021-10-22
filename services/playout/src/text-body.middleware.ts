@@ -1,7 +1,8 @@
-import { Injectable, NestMiddleware } from "@nestjs/common";
+import type { NestMiddleware } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import type { NextFunction } from "connect";
 import { text } from "express";
-import { IncomingMessage, ServerResponse } from "http";
+import type { IncomingMessage, ServerResponse } from "http";
 
 @Injectable()
 export class TextBodyMiddleware implements NestMiddleware {

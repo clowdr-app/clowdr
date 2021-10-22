@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { promisify } from "util";
 import { presenceListKey } from "../lib/presence";
 import { redisClientPool } from "../redis";

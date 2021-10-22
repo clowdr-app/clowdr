@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client";
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
+import type {
+    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
-    ElementDataBlob,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";

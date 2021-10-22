@@ -28,7 +28,7 @@ import {
     useManageContent_SelectItemQuery,
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
-import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 import { EditElements } from "../Element/EditElements";
@@ -109,7 +109,7 @@ function SecondaryEditorInner({
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const itemResponse = useManageContent_SelectItemQuery({
+    const [itemResponse] = useManageContent_SelectItemQuery({
         variables: {
             itemId,
         },
@@ -195,7 +195,7 @@ function SecondaryEditorInner({
                     </>
                 ) : undefined}
             </HStack>
-            <ApolloQueryWrapper
+            <QueryWrapper
                 getter={(result) => ({
                     rooms: [],
                     ...result.content_Item_by_pk,
@@ -219,7 +219,7 @@ function SecondaryEditorInner({
                         {...result}
                     />
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             {itemResponse.data?.content_Item_by_pk ? (
                 <ButtonGroup>
                     <AddContentMenu

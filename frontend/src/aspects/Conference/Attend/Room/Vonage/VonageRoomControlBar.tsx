@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
     AlertDialog,
@@ -25,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gql } from "urql";
 import { useToggleVonageRecordingStateMutation } from "../../../../../generated/graphql";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../Vonage/useVonageRoom";
@@ -77,7 +77,7 @@ export function VonageRoomControlBar({
     const vonage = useVonageGlobalState();
     const { layoutChooser_isOpen, layoutChooser_onOpen, layoutChooser_onClose } = useVonageLayout();
 
-    const [toggleVonageRecording, toggleVonageRecordingResponse] = useToggleVonageRecordingStateMutation();
+    const [toggleVonageRecordingResponse, toggleVonageRecording] = useToggleVonageRecordingStateMutation();
 
     const [isOpening, setIsOpening] = useState<boolean>(false);
     const [userMediaPermissionGranted, setUserMediaPermissionGranted] = useState<{
@@ -578,7 +578,7 @@ export function VonageRoomControlBar({
                                     });
                                 }
                             }}
-                            isLoading={toggleVonageRecordingResponse.loading}
+                            isLoading={toggleVonageRecordingResponse.fetching}
                         >
                             {isRecordingActive ? "Stop recording" : "Start recording"}
                         </Button>

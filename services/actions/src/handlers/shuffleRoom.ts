@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client/core";
-import {
+import type {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
+    UnallocatedShuffleQueueEntryFragment} from "../generated/graphql";
+import {
     AddPeopleToExistingShuffleRoomDocument,
     ExpireShuffleQueueEntriesDocument,
     InsertManagedRoomDocument,
@@ -11,12 +13,11 @@ import {
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
     SetAutoPinOnManagedRoomDocument,
-    SetShuffleRoomsEndedDocument,
-    UnallocatedShuffleQueueEntryFragment,
+    SetShuffleRoomsEndedDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "../lib/vonage/vonageTools";
-import { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
+import type { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
 
 gql`
     fragment UnallocatedShuffleQueueEntry on room_ShuffleQueueEntry {

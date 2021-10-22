@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
 import { Spinner, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { gql } from "urql";
 import { useGoogleOAuth_SubmitGoogleOAuthCodeMutation } from "../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "./useGoogleOAuthRedirectUrl";
 
@@ -46,7 +46,7 @@ export function GoogleOAuthRedirect(): JSX.Element {
 export function GoogleOAuth(): JSX.Element {
     const location = useLocation();
 
-    const [submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
+    const [submitResponse, submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
     const [message, setMessage] = useState<string | null>(null);
     const [, , follow] = useGoogleOAuthRedirectPath();
 
@@ -59,10 +59,8 @@ export function GoogleOAuth(): JSX.Element {
 
                 if (code && registrantId) {
                     const result = await submit({
-                        variables: {
-                            code,
-                            state: registrantId,
-                        },
+                        code,
+                        state: registrantId,
                     });
 
                     if (!result.data?.submitGoogleOAuthCode?.success) {

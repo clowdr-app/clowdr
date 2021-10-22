@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -13,6 +12,7 @@ import {
     Textarea,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
+import { gql } from "urql";
 import { Permissions_Permission_Enum, useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
 import { useConferenceTheme } from "../../../Chakra/ChakraCustomProvider";
 import defaultTheme from "../../../Chakra/Colors/ComponentMap";
@@ -76,7 +76,7 @@ export default function ManageShuffle(): JSX.Element {
         };
     }, [applyTheme]);
 
-    const [saveTheme, saveThemeResponse] = useUpsertConferenceThemeMutation();
+    const [saveThemeResponse, saveTheme] = useUpsertConferenceThemeMutation();
 
     return (
         <RequireAtLeastOnePermissionWrapper
@@ -126,14 +126,12 @@ export default function ManageShuffle(): JSX.Element {
             <ButtonGroup>
                 <Button
                     colorScheme="DestructiveActionButton"
-                    isDisabled={saveThemeResponse.loading}
+                    isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(theme ?? defaultTheme, null, 4));
                         saveTheme({
-                            variables: {
-                                conferenceId: conference.id,
-                                value: theme ?? defaultTheme,
-                            },
+                            conferenceId: conference.id,
+                            value: theme ?? defaultTheme,
                         });
                     }}
                 >
@@ -141,14 +139,12 @@ export default function ManageShuffle(): JSX.Element {
                 </Button>
                 <Button
                     colorScheme="DestructiveActionButton"
-                    isDisabled={saveThemeResponse.loading}
+                    isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(defaultTheme, null, 4));
                         saveTheme({
-                            variables: {
-                                conferenceId: conference.id,
-                                value: defaultTheme,
-                            },
+                            conferenceId: conference.id,
+                            value: defaultTheme,
                         });
                     }}
                 >
@@ -156,15 +152,13 @@ export default function ManageShuffle(): JSX.Element {
                 </Button>
                 <Button
                     colorScheme="ConfirmButton"
-                    isLoading={saveThemeResponse.loading}
+                    isLoading={saveThemeResponse.fetching}
                     onClick={() => {
                         const value = applyTheme();
                         if (value) {
                             saveTheme({
-                                variables: {
-                                    conferenceId: conference.id,
-                                    value,
-                                },
+                                conferenceId: conference.id,
+                                value,
                             });
                         }
                     }}

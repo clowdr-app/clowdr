@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client/core";
-import {
+import type {
     BroadcastTranscodeDetails,
     Content_ElementType_Enum,
-    ElementBaseType,
     ElementDataBlob,
     ElementVersionData,
     TranscodeDetails,
-    VideoElementBlob,
+    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
+import {
+    ElementBaseType
 } from "@clowdr-app/shared-types/build/content";
 import assert from "assert";
 import R from "ramda";

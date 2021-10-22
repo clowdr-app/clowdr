@@ -1,6 +1,8 @@
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
-import { DynamicModule, FactoryProvider, Global, Module, ModuleMetadata } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import type { Bunyan} from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
+import type { DynamicModule, FactoryProvider, ModuleMetadata } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
+import type { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../constants";
 import { AwsService } from "./aws.service";

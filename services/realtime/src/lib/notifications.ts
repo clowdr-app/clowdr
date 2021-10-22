@@ -1,7 +1,8 @@
 import { emitter } from "../socket-emitter/socket-emitter";
-import { Notification } from "../types/chat";
+import type { Notification } from "../types/chat";
 import { sendNotification } from "../web-push/sendNotification";
-import { getPushNotificationSubscriptions, PushNotificationSubscriptions } from "./cache/pushNotificationSubscriptions";
+import type { PushNotificationSubscriptions } from "./cache/pushNotificationSubscriptions";
+import { getPushNotificationSubscriptions } from "./cache/pushNotificationSubscriptions";
 import { notificationsRoomName } from "./chat";
 
 export async function sendNotifications(userIds: Set<string>, notification: Notification): Promise<void> {

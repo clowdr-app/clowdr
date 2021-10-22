@@ -1,7 +1,7 @@
 import assert from "assert";
 import fetch from "node-fetch";
 import { io } from "socket.io-client";
-import { Message } from "../types/chat";
+import type { Message } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
 assert(

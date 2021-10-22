@@ -1,9 +1,10 @@
 import { gql } from "@apollo/client/core";
-import { Bunyan, RootLogger } from "@eropple/nestjs-bunyan";
+import type { Bunyan} from "@eropple/nestjs-bunyan";
+import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
-import { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
+import type { ChannelStackDescription } from "../../channel-stack/channel-stack/channelStack";
 import {
     ChannelStack_CreateChannelStackDeleteJobDocument,
     ChannelStack_CreateChannelStackUpdateJobDocument,
@@ -17,9 +18,9 @@ import {
     FindChannelStacksByStackArnDocument,
     GetChannelStackByRoomDocument,
 } from "../../generated/graphql";
-import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
-import { GraphQlService } from "../graphql/graphql.service";
-import { ChannelStackDetails } from "./channel-stack-details";
+import type { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
+import type { GraphQlService } from "../graphql/graphql.service";
+import type { ChannelStackDetails } from "./channel-stack-details";
 
 @Injectable()
 export class ChannelStackDataService {

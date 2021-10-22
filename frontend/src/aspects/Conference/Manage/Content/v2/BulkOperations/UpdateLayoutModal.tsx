@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -23,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import React, { useCallback, useState } from "react";
+import { gql } from "urql";
 import { useUpdateLayoutMutation } from "../../../../../../generated/graphql";
 
 gql`
@@ -71,7 +71,7 @@ function ModalInner({
     const [wide, setWide] = useState<boolean | null>(null);
     const [priority, setPriority] = useState<string | null>(null);
 
-    const [doUpdate, updateResponse] = useUpdateLayoutMutation();
+    const [updateResponse, doUpdate] = useUpdateLayoutMutation();
 
     const update = useCallback(async () => {
         try {
@@ -177,7 +177,7 @@ function ModalInner({
                     <Button onClick={onClose}>Cancel</Button>
                     <Button
                         colorScheme="purple"
-                        isLoading={updateResponse.loading}
+                        isLoading={updateResponse.fetching}
                         onClick={update}
                         isDisabled={(!priority || priority.trim() === "") && wide === null && hidden === null}
                     >

@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -22,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import ReactPlayer from "react-player";
+import { gql } from "urql";
 import { useGetChannelStacksQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
@@ -41,7 +41,7 @@ gql`
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data, loading, error, refetch } = useGetChannelStacksQuery({ variables: { conferenceId } });
+    const [{ data, loading, error, refetch }] = useGetChannelStacksQuery({ variables: { conferenceId } });
     useQueryErrorToast(error, false);
 
     const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {

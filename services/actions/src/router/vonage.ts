@@ -1,6 +1,7 @@
 import assert from "assert";
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { assertType } from "typescript-is";
 import {
     handleJoinEvent,
@@ -10,8 +11,8 @@ import {
     handleVonageSessionMonitoringWebhook,
 } from "../handlers/vonage";
 import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { ActionPayload } from "../types/hasura/action";
-import { ArchiveMonitoringWebhookReqBody, SessionMonitoringWebhookReqBody } from "../types/vonage";
+import type { ActionPayload } from "../types/hasura/action";
+import type { ArchiveMonitoringWebhookReqBody, SessionMonitoringWebhookReqBody } from "../types/vonage";
 
 assert(process.env.VONAGE_WEBHOOK_SECRET, "VONAGE_WEBHOOK_SECRET environment variable must be set");
 

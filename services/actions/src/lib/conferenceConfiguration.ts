@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { is } from "typescript-is";
-import { Conference_ConfigurationKey_Enum, GetConfigurationValueDocument } from "../generated/graphql";
+import type { Conference_ConfigurationKey_Enum} from "../generated/graphql";
+import { GetConfigurationValueDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
 gql`

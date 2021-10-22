@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../generated/graphql";
-import { Action, Message, Reaction } from "../types/chat";
+import type { Action, Message, Reaction } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
 assert(

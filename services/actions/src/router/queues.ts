@@ -1,5 +1,6 @@
 import { json } from "body-parser";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import express from "express";
 import { processCustomEmailsJobQueue } from "../handlers/customEmail";
 import { processEmailsJobQueue } from "../handlers/email";
 import { processInvitationEmailsQueue } from "../handlers/invitation";

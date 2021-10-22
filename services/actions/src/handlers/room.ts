@@ -16,7 +16,7 @@ import { getRegistrant } from "../lib/authorisation";
 import { createItemVideoChatRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
-import { Payload, RoomData } from "../types/hasura/event";
+import type { Payload, RoomData } from "../types/hasura/event";
 
 export async function handleRoomCreated(payload: Payload<RoomData>): Promise<void> {
     assert(payload.event.data.new, "Expected new row data");

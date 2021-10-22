@@ -1,16 +1,18 @@
 import { gql } from "@apollo/client/core";
-import { ContinuationTo, ContinuationType } from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationTo} from "@clowdr-app/shared-types/build/continuation";
+import { ContinuationType } from "@clowdr-app/shared-types/build/continuation";
 import { is } from "typescript-is";
+import type {
+    EndChatDuplicationMutationVariables,
+    StartChatDuplicationMutationVariables} from "../generated/graphql";
 import {
     EndChatDuplicationDocument,
-    EndChatDuplicationMutationVariables,
     Event_GetEventVonageSessionDocument,
     GetEventChatInfoDocument,
     GetEventTimingsDocument,
     NotifyRealtimeEventEndedDocument,
     Room_Mode_Enum,
-    StartChatDuplicationDocument,
-    StartChatDuplicationMutationVariables,
+    StartChatDuplicationDocument
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import {
@@ -29,7 +31,7 @@ import {
     stopEventBroadcasts,
     stopRoomVonageArchiving,
 } from "../lib/vonage/vonageTools";
-import { EventData, Payload } from "../types/hasura/event";
+import type { EventData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 

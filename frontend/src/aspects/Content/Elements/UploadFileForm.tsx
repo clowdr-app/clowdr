@@ -40,12 +40,12 @@ export default function UploadFileForm({
     uploadAgreementText?: string;
     uploadAgreementUrl?: string;
     existingAltText?: string;
-    handleFormSubmitted?: () => Promise<void>;
+    handleFormSubmitted?: () => void;
     isVideo: boolean;
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
-    const [submitUploadableElement] = useSubmitUploadableElementMutation();
+    const [_submitUploadableElementResponse, submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
         const uppy = new Uppy({
             id: "required-content-item-upload",
@@ -132,19 +132,18 @@ export default function UploadFileForm({
 
                     try {
                         const submitResult = await submitUploadableElement({
-                            variables: {
-                                elementData: {
-                                    s3Url: result.successful[0].uploadURL,
-                                    altText: values.altText,
-                                },
-                                magicToken,
+                            elementData: {
+                                s3Url: result.successful[0].uploadURL,
+                                altText: values.altText,
                             },
+                            magicToken,
                         });
 
-                        if (submitResult.errors || !submitResult.data?.submitUploadableElement?.success) {
+                        if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(
                                 submitResult.data?.submitUploadableElement?.message ??
-                                    submitResult.errors?.join("; " ?? "Unknown reason for failure.")
+                                    submitResult.error?.message ??
+                                    "Unknown reason for failure."
                             );
                         }
 
@@ -155,7 +154,7 @@ export default function UploadFileForm({
                         uppy.reset();
 
                         if (handleFormSubmitted) {
-                            await handleFormSubmitted();
+                            handleFormSubmitted();
                         }
                     } catch (e) {
                         console.error("Failed to submit item", e);

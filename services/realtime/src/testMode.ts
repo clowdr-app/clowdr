@@ -1,4 +1,4 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
+import type { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 import { apolloClient } from "./graphqlClient";
 
 const isInTestMode = process.env.TEST_MODE === "true";

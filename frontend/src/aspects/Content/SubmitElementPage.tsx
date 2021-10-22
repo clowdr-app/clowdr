@@ -16,18 +16,17 @@ import UploadUrlForm from "./Elements/UploadUrlForm";
 
 gql`
     query GetElement($accessToken: String!, $elementId: uuid!) {
-        content_ElementByPersonAccessToken(where: { id: { _eq: $elementId } }) {
+        content_Element(where: { id: { _eq: $elementId } }) {
             typeName
             data
             name
             id
             uploadsRemaining
-            accessToken
             item {
                 title
             }
         }
-        collection_ProgramPersonByAccessToken(where: { accessToken: { _eq: $accessToken } }) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
             id
             name
         }

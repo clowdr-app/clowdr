@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import type { RouteComponentProps} from "react-router-dom";
+import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
@@ -64,13 +64,13 @@ export default function ConferenceRoutes(): JSX.Element {
 
             {mUser.user ? (
                 <Route exact path={`${path}/profile`}>
-                    <Redirect to={`/conference/${conference.slug}/profile/edit`} />
+                    <Redirect to={`${path}/profile/edit`} />
                 </Route>
             ) : undefined}
 
             {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
                 <Route path={path}>
-                    <Redirect to={`/conference/${conference.slug}/profile/edit`} />
+                    <Redirect to={`${path}/profile/edit`} />
                 </Route>
             ) : undefined}
 
@@ -177,7 +177,7 @@ export default function ConferenceRoutes(): JSX.Element {
 
             <Route path={`${path}/registrants`}>
                 <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    componentIfDenied={<Redirect to={path} />}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceViewAttendees,
                         Permissions_Permission_Enum.ConferenceManageAttendees,
@@ -191,7 +191,7 @@ export default function ConferenceRoutes(): JSX.Element {
 
             <Route path={`${path}/swag`}>
                 <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    componentIfDenied={<Redirect to={path} />}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceViewAttendees,
                         Permissions_Permission_Enum.ConferenceView,
@@ -213,7 +213,7 @@ export default function ConferenceRoutes(): JSX.Element {
 
             <Route path={`${path}/schedule/v2`}>
                 <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    componentIfDenied={<Redirect to={path} />}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceView,
                         Permissions_Permission_Enum.ConferenceManageSchedule,
@@ -225,7 +225,7 @@ export default function ConferenceRoutes(): JSX.Element {
 
             <Route path={`${path}/schedule`}>
                 <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    componentIfDenied={<Redirect to={path} />}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceView,
                         Permissions_Permission_Enum.ConferenceManageSchedule,
@@ -246,7 +246,7 @@ export default function ConferenceRoutes(): JSX.Element {
                             }
                         />
                     ) : (
-                        <Redirect to={`/conference/${conference.slug}`} />
+                        <Redirect to={path} />
                     )
                 }
             </Route>
@@ -262,7 +262,7 @@ export default function ConferenceRoutes(): JSX.Element {
                             }
                         />
                     ) : (
-                        <Redirect to={`/conference/${conference.slug}`} />
+                        <Redirect to={path} />
                     )
                 }
             </Route>
@@ -272,13 +272,13 @@ export default function ConferenceRoutes(): JSX.Element {
                     props.match?.params.chatId ? (
                         <ChatRedirectPage chatId={props.match.params.chatId} />
                     ) : (
-                        <Redirect to={`/conference/${conference.slug}`} />
+                        <Redirect to={path} />
                     )
                 }
             </Route>
             <Route path={`${path}/shuffle`}>
                 <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={`/conference/${conference.slug}`} />}
+                    componentIfDenied={<Redirect to={path} />}
                     permissions={[
                         Permissions_Permission_Enum.ConferenceViewAttendees,
                         Permissions_Permission_Enum.ConferenceManageAttendees,

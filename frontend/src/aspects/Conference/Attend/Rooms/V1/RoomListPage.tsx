@@ -1,13 +1,9 @@
-import { gql } from "@apollo/client";
 import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import type {
-    RoomListRoomDetailsFragment} from "../../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useGetAllRoomsQuery,
-} from "../../../../../generated/graphql";
+import type { RoomListRoomDetailsFragment } from "../../../../../generated/graphql";
+import { Permissions_Permission_Enum, useGetAllRoomsQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
@@ -29,7 +25,7 @@ gql`
                 originatingEventId: { _is_null: true }
                 _or: [
                     { managementModeName: { _eq: PUBLIC } }
-                    { managementModeName: { _eq: PRIVATE }, roomPeople: { registrantId: { _eq: $registrantId } } }
+                    { managementModeName: { _eq: PRIVATE }, roomMemberships: { registrantId: { _eq: $registrantId } } }
                 ]
             }
             order_by: { name: asc }
@@ -83,7 +79,7 @@ gql`
                             { managementModeName: { _eq: PUBLIC } }
                             {
                                 managementModeName: { _eq: PRIVATE }
-                                roomPeople: { registrantId: { _eq: $registrantId } }
+                                roomMemberships: { registrantId: { _eq: $registrantId } }
                             }
                         ]
                     }
@@ -150,7 +146,7 @@ export default function RoomListPage(): JSX.Element {
             // Wait, because Vonage session creation is not instantaneous
             setTimeout(() => {
                 cb();
-                history.push(`/conference/${conference.slug}/room/${id}`);
+                history.push(`${conferenceUrl}/room/${id}`);
             }, 2000);
         },
         [conference.slug, history]
@@ -172,7 +168,7 @@ export default function RoomListPage(): JSX.Element {
             </Heading>
             <HStack flexWrap="wrap" justifyContent="center" mt={2} w="100%">
                 <LinkButton
-                    to={`/conference/${conference.slug}/shuffle`}
+                    to={`${conferenceUrl}/shuffle`}
                     colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"
@@ -181,7 +177,7 @@ export default function RoomListPage(): JSX.Element {
                     Networking
                 </LinkButton>
                 <LinkButton
-                    to={`/conference/${conference.slug}/registrants`}
+                    to={`${conferenceUrl}/registrants`}
                     colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"

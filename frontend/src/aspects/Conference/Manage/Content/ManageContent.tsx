@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -19,16 +18,18 @@ import {
     Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import Papa from "papaparse";
 import * as R from "ramda";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     Content_Item_Set_Input,
     ManageContent_ExhibitionFragment,
     ManageContent_ItemFragment,
-    ManageContent_TagFragment} from "../../../../generated/graphql";
+    ManageContent_TagFragment,
+} from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     ManageContent_ItemFragmentDoc,
@@ -50,10 +51,9 @@ import type {
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -80,7 +80,6 @@ gql`
 
     fragment ManageContent_ItemExhibition on content_ItemExhibition {
         id
-        conferenceId
         item {
             id
             title
@@ -126,7 +125,7 @@ gql`
         conferenceId
     }
 
-    fragment ManageContent_ProgramPerson on collection_ProgramPersonWithAccessToken {
+    fragment ManageContent_ProgramPerson on collection_ProgramPerson {
         id
         name
         affiliation
@@ -139,7 +138,7 @@ gql`
         itemId
         priority
         roleName
-        person: personWithAccessToken {
+        person {
             ...ManageContent_ProgramPerson
         }
     }
@@ -830,7 +829,7 @@ export default function ManageContentV2(): JSX.Element {
                         <LinkButton
                             key="import-button"
                             colorScheme="purple"
-                            to={`/conference/${conference.slug}/manage/import/content`}
+                            to={`${conferenceUrl}/manage/import/content`}
                         >
                             Import
                         </LinkButton>

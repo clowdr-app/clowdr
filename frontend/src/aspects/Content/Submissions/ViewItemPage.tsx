@@ -26,16 +26,15 @@ import RenderElement from "../Elements/RenderElement";
 
 gql`
     query ItemByPersonAccessToken($accessToken: String!, $itemId: uuid!) {
-        collection_ProgramPersonByAccessToken(where: { accessToken: { _eq: $accessToken } }) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
             id
             name
         }
-        content_ItemByPersonAccessToken(where: { id: { _eq: $itemId } }) {
+        content_Item(where: { id: { _eq: $itemId } }) {
             id
             title
             elements {
                 id
-                accessToken
                 typeName
                 name
                 data

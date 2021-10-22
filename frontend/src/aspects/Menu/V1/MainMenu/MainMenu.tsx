@@ -25,7 +25,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
 import { ToggleChatsButton } from "../ToggleChatsButton";
 import { ToggleNavButton } from "../ToggleNavButton";
-import type { MenuState} from "./MainMenuState";
+import type { MenuState } from "./MainMenuState";
 import { MenuStateContext, useMainMenu } from "./MainMenuState";
 
 interface Props {
@@ -54,12 +54,7 @@ export function MenuBar(): JSX.Element {
     const homeButton = useMemo(
         () =>
             conference ? (
-                <LinkButton
-                    to={`/conference/${conference.slug}`}
-                    size="sm"
-                    aria-label="Conference home"
-                    variant="solid"
-                >
+                <LinkButton to={conferenceUrl} size="sm" aria-label="Conference home" variant="solid">
                     {conference.shortName}
                 </LinkButton>
             ) : (
@@ -74,9 +69,9 @@ export function MenuBar(): JSX.Element {
         () =>
             conference ? (
                 <Switch>
-                    <Route path={`/conference/${conference.slug}/manage`} exact></Route>
-                    <Route path={`/conference/${conference.slug}/manage/`}>
-                        <LinkButton to={`/conference/${conference.slug}/manage`} size="sm">
+                    <Route path={`${conferenceUrl}/manage`} exact></Route>
+                    <Route path={`${conferenceUrl}/manage/`}>
+                        <LinkButton to={`${conferenceUrl}/manage`} size="sm">
                             Back to dashboard
                         </LinkButton>
                     </Route>
@@ -134,11 +129,7 @@ export function MenuBar(): JSX.Element {
                             </Route>
                             <Route path="/">
                                 {conference && registrant ? (
-                                    <MenuItem
-                                        as={ReactLink}
-                                        to={`/conference/${conference.slug}/profile`}
-                                        display="block"
-                                    >
+                                    <MenuItem as={ReactLink} to={`${conferenceUrl}/profile`} display="block">
                                         {registrant && registrant.profile && registrant.profile.photoURL_50x50 ? (
                                             <Image
                                                 borderRadius={5}
@@ -183,7 +174,7 @@ export function MenuBar(): JSX.Element {
                                             Permissions_Permission_Enum.ConferenceModerateAttendees,
                                         ]}
                                     >
-                                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage`}>
+                                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage`}>
                                             <FAIcon
                                                 display="inline"
                                                 verticalAlign="middle"

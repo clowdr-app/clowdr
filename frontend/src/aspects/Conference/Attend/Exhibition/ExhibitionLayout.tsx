@@ -17,11 +17,9 @@ import Color from "tinycolor2";
 import type {
     ElementDataFragment,
     ExhibitionItemFragment,
-    ExhibitionWithContentFragment} from "../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSelectExhibitionQuery,
+    ExhibitionWithContentFragment,
 } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -146,13 +144,13 @@ function ItemTile({
         );
         return liveEvents.length > 0 ? liveEvents[0] : undefined;
     }, [item.events, now]);
-    const liveRoomUrl = liveEvent ? `/conference/${conference.slug}/room/${liveEvent.roomId}` : undefined;
+    const liveRoomUrl = liveEvent ? `${conferenceUrl}/room/${liveEvent.roomId}` : undefined;
 
     const discussionRoomUrl = item.discussionRoom?.length
-        ? `/conference/${conference.slug}/room/${item.discussionRoom[0].id}`
+        ? `${conferenceUrl}/room/${item.discussionRoom[0].id}`
         : undefined;
 
-    const itemUrl = `/conference/${conference.slug}/item/${item.id}`;
+    const itemUrl = `${conferenceUrl}/item/${item.id}`;
 
     const shadow = useColorModeValue("md", "light-md");
     return (
@@ -169,7 +167,7 @@ function ItemTile({
             <HStack spacing={2}>
                 <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
                     <chakra.span mr={4}>{item.title}</chakra.span>
-                    <PageCountText path={`/conference/${conference.slug}/item/${item.id}`} />
+                    <PageCountText path={`${conferenceUrl}/item/${item.id}`} />
                 </Heading>
                 {liveRoomUrl && !hideLiveViewButton ? (
                     <LinkButton

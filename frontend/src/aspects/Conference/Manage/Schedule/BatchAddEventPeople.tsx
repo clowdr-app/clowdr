@@ -1,5 +1,4 @@
 import type { MutationTuple, QueryResult, Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -28,6 +27,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -44,7 +44,8 @@ import type {
     Collection_ProgramPerson_Insert_Input,
     EventInfoFragment,
     RoomInfoFragment,
-    Schedule_EventProgramPerson_Insert_Input} from "../../../../generated/graphql";
+    Schedule_EventProgramPerson_Insert_Input,
+} from "../../../../generated/graphql";
 import {
     EventInfoFragmentDoc,
     EventProgramPersonInfoFragmentDoc,
@@ -75,7 +76,7 @@ gql`
         roleName
     }
 
-    fragment AddEventPeople_ProgramPerson on collection_ProgramPersonWithAccessToken {
+    fragment AddEventPeople_ProgramPerson on collection_ProgramPerson {
         id
         name
         affiliation
@@ -96,10 +97,10 @@ gql`
         }
     }
 
-    fragment AddEventPeople_Group on permissions_Group {
-        id
-        name
-    }
+    # fragment AddEventPeople_Group on permissions_Group {
+    #     id
+    #     name
+    # }
 
     query AddEventPeople_SelectItemPeople($itemIds: [uuid!]!, $exhibitionIds: [uuid!]!) {
         content_ItemProgramPerson(where: { itemId: { _in: $itemIds }, roleName: { _neq: "REVIEWER" } }) {
@@ -118,7 +119,7 @@ gql`
     }
 
     query AddEventPeople_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...AddEventPeople_ProgramPerson
         }
     }
@@ -130,25 +131,25 @@ gql`
     }
 
     query AddEventPeople_SelectProgramPeople_ByRegistrant($registrantIds: [uuid!]!) {
-        collection_ProgramPersonWithAccessToken(where: { registrantId: { _in: $registrantIds } }) {
+        collection_ProgramPerson(where: { registrantId: { _in: $registrantIds } }) {
             ...AddEventPeople_ProgramPerson
         }
     }
 
-    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
-        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...AddEventPeople_Group
-        }
-    }
+    # query AddEventPeople_SelectGroups($conferenceId: uuid!) {
+    #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    #         ...AddEventPeople_Group
+    #     }
+    # }
 
-    query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
-        registrant_Registrant(where: { groupRegistrants: { groupId: { _eq: $groupId } } }) {
-            ...AddEventPeople_Registrant
-        }
-    }
+    # query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
+    #     registrant_Registrant(where: { groupRegistrants: { groupId: { _eq: $groupId } } }) {
+    #         ...AddEventPeople_Registrant
+    #     }
+    # }
 
-    mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
-        insert_collection_ProgramPersonWithAccessToken(objects: $objects) {
+    mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPerson_insert_input!]!) {
+        insert_collection_ProgramPerson(objects: $objects) {
             returning {
                 ...AddEventPeople_ProgramPerson
             }
@@ -358,7 +359,7 @@ function AddEventPeople_SingleProgramPersonPanel({
     const peopleOptions = useMemo(
         () =>
             selectProgramPeopleQuery.data
-                ? [...selectProgramPeopleQuery.data.collection_ProgramPersonWithAccessToken]
+                ? [...selectProgramPeopleQuery.data.collection_ProgramPerson]
                       .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b)))
                       .map((x) => (
                           <option key={x.id} value={x.id}>
@@ -404,7 +405,7 @@ function AddEventPeople_SingleProgramPersonPanel({
 
         try {
             assert(selectProgramPeopleQuery.data);
-            const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPersonWithAccessToken.find(
+            const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPerson.find(
                 (x) => x.id === selectedPersonId
             );
             assert(selectedPerson);
@@ -884,9 +885,7 @@ export async function addRegistrantsToEvent(
     const personIds: string[] = [];
     const insertProgramPersons: Collection_ProgramPerson_Insert_Input[] = [];
     for (const registrantId of registrantIds) {
-        const personId = programPeople.data.collection_ProgramPersonWithAccessToken.find(
-            (x) => x.registrantId === registrantId
-        )?.id;
+        const personId = programPeople.data.collection_ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
         if (personId) {
             personIds.push(personId);
         } else {
@@ -908,11 +907,11 @@ export async function addRegistrantsToEvent(
                 objects: insertProgramPersons,
             },
             update: (cache, result) => {
-                if (result.data?.insert_collection_ProgramPersonWithAccessToken) {
-                    const data = result.data.insert_collection_ProgramPersonWithAccessToken;
+                if (result.data?.insert_collection_ProgramPerson) {
+                    const data = result.data.insert_collection_ProgramPerson;
                     cache.modify({
                         fields: {
-                            collection_ProgramPersonWithAccessToken(existingRefs: Reference[] = []) {
+                            collection_ProgramPerson(existingRefs: Reference[] = []) {
                                 const newRefs = data.returning.map((x) =>
                                     cache.writeFragment({
                                         data: x,
@@ -927,11 +926,8 @@ export async function addRegistrantsToEvent(
                 }
             },
         });
-        assert(
-            newPeople.data?.insert_collection_ProgramPersonWithAccessToken?.returning,
-            "Failed to insert content people"
-        );
-        personIds.push(...newPeople.data.insert_collection_ProgramPersonWithAccessToken.returning.map((x) => x.id));
+        assert(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
+        personIds.push(...newPeople.data.insert_collection_ProgramPerson.returning.map((x) => x.id));
     }
 
     const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];

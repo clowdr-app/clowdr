@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -12,10 +11,10 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
-import type {
-    RoomPage_RoomDetailsFragment} from "../../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import {
     useGetEventVonageTokenMutation,
     useGetRoomVonageSessionIdQuery,

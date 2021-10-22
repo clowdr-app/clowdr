@@ -1,13 +1,9 @@
-import { gql } from "@apollo/client";
 import { Box, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
-import type {
-    RoomEventDetailsFragment} from "../../../../../generated/graphql";
-import {
-    useGetEventDetailsQuery,
-    useGetEventVonageTokenMutation,
-} from "../../../../../generated/graphql";
+import type { RoomEventDetailsFragment } from "../../../../../generated/graphql";
+import { useGetEventDetailsQuery, useGetEventVonageTokenMutation } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import { BackstageControls } from "./Controls/BackstageControls";

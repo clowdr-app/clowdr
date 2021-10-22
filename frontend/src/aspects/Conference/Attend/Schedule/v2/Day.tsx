@@ -1,7 +1,7 @@
 import type { QueryHookOptions } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { Box, Skeleton, Td, Th, Tr, useColorModeValue } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
+import { gql } from "@urql/core";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
@@ -12,7 +12,8 @@ import type {
     ScheduleV2_DayLightweightEventsQueryVariables,
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
-    Schedule_Event_Bool_Exp} from "../../../../../generated/graphql";
+    Schedule_Event_Bool_Exp,
+} from "../../../../../generated/graphql";
 import {
     useScheduleV2_DayEventsQuery,
     useScheduleV2_DayLightweightEventsQuery,

@@ -7,6 +7,7 @@ import { GlobalChatStateContext } from "../Chat/GlobalChatStateProvider";
 import { useMaybeConference } from "../Conference/useConference";
 import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import MainMenu from "../Menu/V1/MainMenu/MainMenu";
 import LeftMenu from "../Menu/V2/LeftMenu";
 import RightMenu from "../Menu/V2/RightMenu";
@@ -15,7 +16,6 @@ import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 export default function AppPageV2(): JSX.Element {
     const user = useMaybeCurrentUser();
     const conference = useMaybeConference();
-    const confSlug = conference?.slug;
     const attendee = useMaybeCurrentRegistrant();
     const permissions = useConferenceCurrentUserActivePermissions();
     const isPermittedAccess = !!attendee && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
@@ -24,24 +24,25 @@ export default function AppPageV2(): JSX.Element {
 
     const bgColour = useColorModeValue("AppPageV2.pageBackground-light", "AppPageV2.pageBackground-dark");
 
+    const { path } = useRouteMatch();
     const locationMatchRoot = useRouteMatch({
         path: "/",
         exact: true,
     });
-    const locationMatchConferenceRoot = useRouteMatch({
-        path: `/conference/${conference?.slug}`,
+    const locationConferenceMatchRoot = useRouteMatch({
+        path,
         exact: true,
     });
-    const locationMatchRoom = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/room`]);
-    const locationMatchItem = useRouteMatch([`/conference/${conference?.slug ?? "NONE"}/item`]);
+    const { conferenceId } = useAuthParameters();
+    const locationMatchRoom = useRouteMatch([`${path}/room`]);
+    const locationMatchItem = useRouteMatch([`${path}/item`]);
     const isRootPage = locationMatchRoot !== null;
-    const isConferenceRootPage = locationMatchConferenceRoot !== null;
+    const isConferenceRootPage = !!conferenceId && locationConferenceMatchRoot !== null;
     const isRoomPage = locationMatchRoom !== null;
     const isItemPage = locationMatchItem !== null;
 
     const isAppLandingPage = isRootPage && !user?.user;
 
-    // const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
     const centerAlwaysVisible = useBreakpointValue({
         base: false,
         lg: true,
@@ -55,9 +56,9 @@ export default function AppPageV2(): JSX.Element {
         }
     }, [isRoomPage, isItemPage, centerAlwaysVisible]);
 
-    const centerVisible = !confSlug || centerAlwaysVisible || !rightVisible;
+    const centerVisible = !conference || centerAlwaysVisible || !rightVisible;
 
-    const center = useMemo(() => <Routing confSlug={confSlug} />, [confSlug]);
+    const center = useMemo(() => <Routing />, []);
 
     const onRightBarOpen = useCallback(() => {
         setRightOpen(true);
@@ -87,7 +88,7 @@ export default function AppPageV2(): JSX.Element {
         [onRightBarOpen, rightVisible]
     );
 
-    const leftBar = useMemo(() => (confSlug ? <LeftBar /> : undefined), [confSlug]);
+    const leftBar = useMemo(() => (conference ? <LeftBar /> : undefined), [conference]);
     const rightBar = useMemo(
         () => (
             <RightBar

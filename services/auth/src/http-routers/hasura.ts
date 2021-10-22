@@ -64,21 +64,21 @@ router.post("/auth", json({ limit: "20mb" }) as any, async (req: Request, res: R
         const getHeader = (normalcaseHeaderName: string): string | undefined => {
             if (payload.headers[normalcaseHeaderName]) {
                 const header = payload.headers[normalcaseHeaderName];
-                if (typeof header === "string") {
+                if (typeof header === "string" && header.length) {
                     return header;
                 }
             }
             const lowercaseHeaderName = normalcaseHeaderName.toLowerCase();
             if (payload.headers[lowercaseHeaderName]) {
                 const header = payload.headers[lowercaseHeaderName];
-                if (typeof header === "string") {
+                if (typeof header === "string" && header.length) {
                     return header;
                 }
             }
             const uppercaseHeaderName = normalcaseHeaderName.toUpperCase();
             if (payload.headers[uppercaseHeaderName]) {
                 const header = payload.headers[uppercaseHeaderName];
-                if (typeof header === "string") {
+                if (typeof header === "string" && header.length) {
                     return header;
                 }
             }

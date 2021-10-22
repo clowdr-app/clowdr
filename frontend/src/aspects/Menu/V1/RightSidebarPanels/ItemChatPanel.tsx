@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, HStack, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { gql } from "urql";
 import { useGetItemChatId_V1Query } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
@@ -20,12 +20,10 @@ gql`
 
 export function ItemChatPanel({
     itemId,
-    confSlug,
     onChatIdLoaded,
     setUnread,
 }: {
     itemId: string;
-    confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
 }): JSX.Element {
@@ -70,6 +68,7 @@ export function ItemChatPanel({
     const history = useHistory();
 
     const isVisible = React.useRef<boolean>(true);
+    const { path } = useRouteMatch();
 
     if (loading || chat === undefined) {
         return <Spinner label="Loading room chat" />;
@@ -121,7 +120,7 @@ export function ItemChatPanel({
                             key="room-button"
                             size="xs"
                             colorScheme="PrimaryActionButton"
-                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
+                            onClick={() => history.push(`${path}/room/${chat.RoomId}`)}
                             aria-label="Go to video room for this chat"
                         >
                             <FAIcon iconStyle="s" icon="video" />

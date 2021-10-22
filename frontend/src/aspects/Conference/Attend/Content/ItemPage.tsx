@@ -1,16 +1,13 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, HStack, useBreakpointValue, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    Permissions_Permission_Enum,
-    useGetItemQuery,
+    ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, Permissions_Permission_Enum, useGetItemQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
@@ -95,18 +92,16 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
 
                     if (itemData.descriptionOfExhibitions.length === 1) {
                         return (
-                            <Redirect
-                                to={`/conference/${conference.slug}/exhibition/${itemData.descriptionOfExhibitions[0].id}`}
-                            />
+                            <Redirect to={`${conferenceUrl}/exhibition/${itemData.descriptionOfExhibitions[0].id}`} />
                         );
                     }
 
                     if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.rooms.length > 0) {
-                        return <Redirect to={`/conference/${conference.slug}/room/${itemData.rooms[0].id}`} />;
+                        return <Redirect to={`${conferenceUrl}/room/${itemData.rooms[0].id}`} />;
                     }
 
                     if (itemData.typeName === Content_ItemType_Enum.LandingPage) {
-                        return <Redirect to={`/conference/${conference.slug}`} />;
+                        return <Redirect to={conferenceUrl} />;
                     }
 
                     return (

@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -24,15 +23,17 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     EventInfoFragment,
     EventProgramPersonInfoFragment,
     ProgramPersonInfoFragment,
-    Schedule_EventProgramPerson_Insert_Input} from "../../../../generated/graphql";
+    Schedule_EventProgramPerson_Insert_Input,
+} from "../../../../generated/graphql";
 import {
     EventInfoFragmentDoc,
     EventProgramPersonInfoFragmentDoc,
@@ -51,10 +52,9 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import FAIcon from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { addRegistrantsToEvent } from "./BatchAddEventPeople";

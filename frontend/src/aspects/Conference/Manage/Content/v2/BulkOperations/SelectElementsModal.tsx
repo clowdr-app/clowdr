@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     ButtonGroup,
@@ -24,15 +23,14 @@ import {
     UnorderedList,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
 import type {
     ManageContent_ItemFragment,
     SelectElements_ElementFragment,
-    SelectElements_ItemFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSEoUm_InfosQuery,
+    SelectElements_ItemFragment,
 } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum, useSEoUm_InfosQuery } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
 
 gql`

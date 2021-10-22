@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -23,13 +22,11 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    SubmissionsReviewModal_ElementFragment} from "../../../../../../generated/graphql";
-import {
-    useSubmissionsReviewModalDataQuery,
-} from "../../../../../../generated/graphql";
+import type { SubmissionsReviewModal_ElementFragment } from "../../../../../../generated/graphql";
+import { useSubmissionsReviewModalDataQuery } from "../../../../../../generated/graphql";
 import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
@@ -45,7 +42,7 @@ gql`
         hasUnsubmittedElements
         itemPeople {
             id
-            person: personWithAccessToken {
+            person {
                 id
                 name
                 submissionRequestsSentCount

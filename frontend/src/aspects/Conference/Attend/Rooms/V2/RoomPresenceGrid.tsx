@@ -3,7 +3,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import FAIcon from "../../../../Icons/FAIcon";
 import { usePresenceState } from "../../../../Realtime/PresenceStateProvider";
-import type { RegistrantIdSpec} from "../../../RegistrantsContext";
+import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
 import { useConference } from "../../../useConference";
 import type { Registrant } from "../../../useCurrentRegistrant";
@@ -14,7 +14,7 @@ export default function RoomPresenceGrid({ roomId, noGapFill }: { roomId: string
     const presence = usePresenceState();
 
     useEffect(() => {
-        return presence.observePage(`/conference/${conference.slug}/room/${roomId}`, conference.slug, (ids) => {
+        return presence.observePage(`${conferenceUrl}/room/${roomId}`, conference.slug, (ids) => {
             setUserIds([...ids.values()].map((x) => ({ user: x })));
         });
     }, [roomId, conference.slug, presence]);

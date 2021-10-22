@@ -1,10 +1,9 @@
-import { gql } from "@apollo/client";
 import { Alert, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import React, { useMemo } from "react";
 import ReactPlayer from "react-player";
-import type {
-    ConferenceConfiguration_ConferenceConfigurationsFragment} from "../../../../generated/graphql";
+import type { ConferenceConfiguration_ConferenceConfigurationsFragment } from "../../../../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,

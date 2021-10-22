@@ -1,17 +1,11 @@
-import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/toast";
-import type {
-    ContinuationDefaultFor,
-    ExtendedContinuationTo} from "@clowdr-app/shared-types/build/continuation";
-import {
-    ContinuationType,
-    NavigationView,
-} from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationDefaultFor, ExtendedContinuationTo } from "@clowdr-app/shared-types/build/continuation";
+import { ContinuationType, NavigationView } from "@clowdr-app/shared-types/build/continuation";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router";
-import type {
-    ContinuationChoices_ContinuationFragment} from "../../../../generated/graphql";
+import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import {
     useContinuationChoices_ContinuationsQuery,
     useContinuationChoices_RoomsQuery,
@@ -301,7 +295,7 @@ function ContinuationChoices_Inner({
                                         activateChoice,
                                         activatedChoice,
                                     });
-                                    history.push(`/conference/${conference.slug}/room/${to.id}`);
+                                    history.push(`${conferenceUrl}/room/${to.id}`);
                                 }
                                 break;
                             case ContinuationType.Event:
@@ -311,7 +305,7 @@ function ContinuationChoices_Inner({
                                     );
                                     if (event && event?.roomId) {
                                         if (currentRoomId !== event.roomId) {
-                                            history.push(`/conference/${conference.slug}/room/${event.roomId}`);
+                                            history.push(`${conferenceUrl}/room/${event.roomId}`);
                                         }
                                     } else {
                                         if (roomsResponse.error) {
@@ -334,7 +328,7 @@ function ContinuationChoices_Inner({
                                     const item = roomsResponse.data?.content_Item.find((item) => item.id === toItemId);
                                     if (item && item.rooms.length > 0) {
                                         if (currentRoomId !== item.rooms[0].id) {
-                                            history.push(`/conference/${conference.slug}/room/${item.rooms[0].id}`);
+                                            history.push(`${conferenceUrl}/room/${item.rooms[0].id}`);
                                         }
                                     } else {
                                         if (roomsResponse.error) {
@@ -346,19 +340,19 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.Item:
-                                history.push(`/conference/${conference.slug}/item/${to.id}`);
+                                history.push(`${conferenceUrl}/item/${to.id}`);
                                 break;
                             case ContinuationType.Exhibition:
-                                history.push(`/conference/${conference.slug}/exhibition/${to.id}`);
+                                history.push(`${conferenceUrl}/exhibition/${to.id}`);
                                 break;
                             case ContinuationType.ShufflePeriod:
-                                history.push(`/conference/${conference.slug}/shuffle`);
+                                history.push(`${conferenceUrl}/shuffle`);
                                 break;
                             case ContinuationType.Profile:
-                                history.push(`/conference/${conference.slug}/profile/view/${to.id}`);
+                                history.push(`${conferenceUrl}/profile/view/${to.id}`);
                                 break;
                             case ContinuationType.OwnProfile:
-                                history.push(`/conference/${conference.slug}/profile`);
+                                history.push(`${conferenceUrl}/profile`);
                                 break;
                             case ContinuationType.NavigationView:
                                 switch (to.view) {
@@ -398,7 +392,7 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.ConferenceLandingPage:
-                                history.push(`/conference/${conference.slug}`);
+                                history.push(conferenceUrl);
                                 break;
                         }
                     } else {
@@ -411,9 +405,9 @@ function ContinuationChoices_Inner({
 
             if ("shufflePeriodId" in from) {
                 if (from.eventRoomId) {
-                    history.push(`/conference/${conference.slug}/room/${from.eventRoomId}`);
+                    history.push(`${conferenceUrl}/room/${from.eventRoomId}`);
                 } else {
-                    history.push(`/conference/${conference.slug}/shuffle`);
+                    history.push(`${conferenceUrl}/shuffle`);
                 }
                 setTimeout(() => activateChosenOption(), 200);
             } else {

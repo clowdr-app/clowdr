@@ -20,7 +20,7 @@ import { useTitle } from "../../Utils/useTitle";
 
 gql`
     query ItemsByPersonAccessToken($accessToken: String!) {
-        collection_ProgramPersonByAccessToken(where: { accessToken: { _eq: $accessToken } }) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
             id
             name
             itemPeople(order_by: { item: { title: asc } }) {

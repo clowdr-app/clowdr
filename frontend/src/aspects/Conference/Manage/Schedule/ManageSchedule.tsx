@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -39,9 +38,10 @@ import {
     useDisclosure,
     VisuallyHidden,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { DateTime } from "luxon";
 import Papa from "papaparse";
-import type { LegacyRef, Ref} from "react";
+import type { LegacyRef, Ref } from "react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -50,7 +50,8 @@ import type {
     ItemFullNestedInfoFragment,
     ProgramPersonInfoFragment,
     RoomInfoFragment,
-    ShufflePeriodInfoFragment} from "../../../../generated/graphql";
+    ShufflePeriodInfoFragment,
+} from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     EventInfoFragmentDoc,
@@ -79,10 +80,9 @@ import type {
     ColumnHeaderProps,
     ColumnSpecification,
     ExtraButton,
-    RowSpecification} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useRealTime } from "../../../Generic/useRealTime";
 import FAIcon from "../../../Icons/FAIcon";
@@ -546,7 +546,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/room/${value.id}`}
+                                    to={`${conferenceUrl}/room/${value.id}`}
                                     size="xs"
                                     aria-label="Go to room in new tab"
                                 >
@@ -753,7 +753,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/item/${value.id}`}
+                                    to={`${conferenceUrl}/item/${value.id}`}
                                     size="xs"
                                     aria-label="Go to content in new tab"
                                 >
@@ -838,7 +838,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/exhibition/${value.id}`}
+                                    to={`${conferenceUrl}/exhibition/${value.id}`}
                                     size="xs"
                                     aria-label="Go to exhibition in new tab"
                                 >
@@ -921,7 +921,7 @@ function EditableScheduleTable(): JSX.Element {
                             {value ? (
                                 <LinkButton
                                     linkProps={{ target: "_blank" }}
-                                    to={`/conference/${conference.slug}/manage/shuffle`}
+                                    to={`${conferenceUrl}/manage/shuffle`}
                                     size="xs"
                                     aria-label="Go to shuffle period in new tab"
                                 >
@@ -1000,7 +1000,6 @@ function EditableScheduleTable(): JSX.Element {
             wholeSchedule.data?.room_Room,
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
-            conference.slug,
             roomOptions,
             roomModeOptions,
             itemOptions,
@@ -1222,7 +1221,6 @@ function EditableScheduleTable(): JSX.Element {
                 delete variables.id;
                 delete variables.endTime;
                 delete variables.eventPeople;
-                delete variables.eventTags;
                 delete variables.conferenceId;
                 delete variables.__typename;
                 updateEvent({
@@ -1297,7 +1295,7 @@ function EditableScheduleTable(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/schedule`}>
+                        <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/schedule`}>
                             Import
                         </LinkButton>
                     );
@@ -1343,7 +1341,7 @@ function EditableScheduleTable(): JSX.Element {
                                 "Shuffle Period Id": event.shufflePeriodId ?? "",
 
                                 People: event.eventPeople.map((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return `${eventPerson.personId} (${eventPerson.roleName}) [${
@@ -1355,7 +1353,7 @@ function EditableScheduleTable(): JSX.Element {
                                     }]`;
                                 }),
                                 "Registered People": event.eventPeople.flatMap((eventPerson) => {
-                                    const person = wholeSchedule.data?.collection_ProgramPersonWithAccessToken.find(
+                                    const person = wholeSchedule.data?.collection_ProgramPerson.find(
                                         (person) => person.id === eventPerson.personId
                                     );
                                     return person?.registrantId
@@ -1371,24 +1369,22 @@ function EditableScheduleTable(): JSX.Element {
                                         : [];
                                 }),
 
-                                "Participate Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                "Participate Link": `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
                                 "Info link": event.itemId
-                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
+                                    ? `${window.location.origin}${conferenceUrl}/item/${event.itemId}`
                                     : event.exhibitionId
-                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
-                                    : `${window.location.origin}/conference/${conference.slug}/schedule`,
-                                "Room Link": `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                                    ? `${window.location.origin}${conferenceUrl}/exhibition/${event.exhibitionId}`
+                                    : `${window.location.origin}${conferenceUrl}/schedule`,
+                                "Room Link": `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
                                 "Content Link": event.itemId
-                                    ? `${window.location.origin}/conference/${conference.slug}/item/${event.itemId}`
+                                    ? `${window.location.origin}${conferenceUrl}/item/${event.itemId}`
                                     : "",
                                 "Exhibition Link": event.exhibitionId
-                                    ? `${window.location.origin}/conference/${conference.slug}/exhibition/${event.exhibitionId}`
+                                    ? `${window.location.origin}${conferenceUrl}/exhibition/${event.exhibitionId}`
                                     : "",
                                 "Shuffle Link": event.shufflePeriodId
-                                    ? `${window.location.origin}/conference/${conference.slug}/shuffle`
+                                    ? `${window.location.origin}${conferenceUrl}/shuffle`
                                     : "",
-
-                                "Tag Ids": event.eventTags.map((eventTag) => eventTag.tagId),
                             })),
                             {
                                 columns: [
@@ -1503,12 +1499,11 @@ function EditableScheduleTable(): JSX.Element {
             },
         ],
         [
-            conference.slug,
             wholeSchedule.data?.room_Room,
             wholeSchedule.data?.content_Item,
             wholeSchedule.data?.collection_Exhibition,
             wholeSchedule.data?.schedule_Event,
-            wholeSchedule.data?.collection_ProgramPersonWithAccessToken,
+            wholeSchedule.data?.collection_ProgramPerson,
         ]
     );
 
@@ -1519,11 +1514,7 @@ function EditableScheduleTable(): JSX.Element {
                     <FAIcon icon="clock" iconStyle="s" mr={2} />
                     <Text as="span">Timezone: {localTimeZone}</Text>
                 </Center>
-                <LinkButton
-                    linkProps={{ m: "3px" }}
-                    to={`/conference/${conference.slug}/manage/rooms`}
-                    colorScheme="yellow"
-                >
+                <LinkButton linkProps={{ m: "3px" }} to={`${conferenceUrl}/manage/rooms`} colorScheme="yellow">
                     Manage Rooms
                 </LinkButton>
                 <Button onClick={batchAddPeopleDisclosure.onOpen}>Add people to events (batch)</Button>
@@ -1564,7 +1555,7 @@ function EditableScheduleTable(): JSX.Element {
             />
             <EventSecondaryEditor
                 yellowC={yellow}
-                programPeople={wholeSchedule.data?.collection_ProgramPersonWithAccessToken ?? []}
+                programPeople={wholeSchedule.data?.collection_ProgramPerson ?? []}
                 events={wholeSchedule.data?.schedule_Event ?? []}
                 index={editingIndex}
                 isSecondaryPanelOpen={isSecondaryPanelOpen}

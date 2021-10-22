@@ -1,11 +1,9 @@
-import { gql } from "@apollo/client";
 import { Box, Heading, Text, VStack } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import type {
-    Content_ItemType_Enum,
-    ItemElements_ItemDataFragment} from "../../../../generated/graphql";
+import type { Content_ItemType_Enum, ItemElements_ItemDataFragment } from "../../../../generated/graphql";
 import {
     Content_ElementType_Enum,
     Permissions_Permission_Enum,
@@ -206,7 +204,7 @@ export function ItemElements({
                 <TagList my={3} tags={itemData.itemTags} />
             ) : linkToItem ? (
                 <LinkButton
-                    to={`/conference/${conference.slug}/item/${itemData.id}`}
+                    to={`${conferenceUrl}/item/${itemData.id}`}
                     width="auto"
                     height="auto"
                     p={3}

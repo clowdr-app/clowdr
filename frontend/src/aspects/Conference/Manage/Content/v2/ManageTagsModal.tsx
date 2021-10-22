@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -24,14 +23,13 @@ import {
     useColorMode,
     useDisclosure,
 } from "@chakra-ui/react";
-import type { LegacyRef} from "react";
+import { gql } from "@urql/core";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    Collection_Tag_Set_Input,
-    ManageContent_TagFragment} from "../../../../../generated/graphql";
+import type { Collection_Tag_Set_Input, ManageContent_TagFragment } from "../../../../../generated/graphql";
 import {
     ManageContent_TagFragmentDoc,
     useManageContent_DeleteTagsMutation,
@@ -44,10 +42,9 @@ import type {
     CellProps,
     ColumnHeaderProps,
     ColumnSpecification,
-    RowSpecification} from "../../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";
 

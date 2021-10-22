@@ -1,4 +1,4 @@
-import type { StackProps} from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
 import { HStack, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
@@ -67,7 +67,7 @@ function ExhibitionButton({ exhibition }: { exhibition: { id: any; name: string;
     const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
-            to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
+            to={`${conferenceUrl}/exhibition/${exhibition.id}`}
             w="auto"
             h="auto"
             fontSize="sm"

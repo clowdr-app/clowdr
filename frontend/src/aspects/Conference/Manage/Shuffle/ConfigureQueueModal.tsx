@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,11 +24,13 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
 import type {
     ManageShufflePeriods_SelectAllQuery,
     ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
+    ManageShufflePeriods_ShufflePeriodFragment,
+} from "../../../../generated/graphql";
 import {
     ManageShufflePeriods_SelectAllDocument,
     ManageShufflePeriods_ShufflePeriodFragmentDoc,

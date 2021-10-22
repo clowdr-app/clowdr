@@ -1,11 +1,12 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Link, Spinner, Table, Tbody, Td, Th, Thead, Tooltip, Tr, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { default as React, useCallback } from "react";
 import ReactPlayer from "react-player";
 import type {
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
-    UploadYouTubeVideos_YouTubeUploadFragment} from "../../../../../generated/graphql";
+    UploadYouTubeVideos_YouTubeUploadFragment,
+} from "../../../../../generated/graphql";
 import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
     Video_JobStatus_Enum,

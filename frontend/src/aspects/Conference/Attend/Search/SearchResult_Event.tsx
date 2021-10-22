@@ -24,10 +24,10 @@ export default function SearchResult_Event({ event }: { event: SearchPanel_Event
             h="auto"
             to={
                 event.item
-                    ? `/conference/${conference.slug}/item/${event.item.id}`
+                    ? `${conferenceUrl}/item/${event.item.id}`
                     : event.exhibition
-                    ? `/conference/${conference.slug}/exhibition/${event.exhibition.id}`
-                    : `/conference/${conference.slug}/room/${event.roomId}`
+                    ? `${conferenceUrl}/exhibition/${event.exhibition.id}`
+                    : `${conferenceUrl}/room/${event.roomId}`
             }
             shadow={shadow}
             size="md"

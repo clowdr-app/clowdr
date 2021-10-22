@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Badge,
     Button,
@@ -18,19 +17,16 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
+import { gql } from "@urql/core";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    RoomEventDetailsFragment} from "../../../../../../generated/graphql";
-import {
-    useLiveIndicator_GetElementQuery,
-    useLiveIndicator_GetLatestQuery,
-} from "../../../../../../generated/graphql";
+import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
+import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";

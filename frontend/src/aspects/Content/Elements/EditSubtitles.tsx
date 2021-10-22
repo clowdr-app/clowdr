@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -22,6 +21,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
+import { gql } from "@urql/core";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import * as R from "ramda";

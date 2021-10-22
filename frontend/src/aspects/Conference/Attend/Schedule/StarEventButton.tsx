@@ -1,13 +1,14 @@
-import { gql } from "@apollo/client";
-import type { BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import { Box, Button, Spinner } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
 import type {
     StarEventButton_GetStarsQuery,
     StarEventButton_GetStarsQueryVariables,
     StarredEvents_SelectEventIdsQuery,
-    StarredEvents_SelectEventIdsQueryVariables} from "../../../../generated/graphql";
+    StarredEvents_SelectEventIdsQueryVariables,
+} from "../../../../generated/graphql";
 import {
     StarEventButton_GetStarsDocument,
     StarredEventFragmentDoc,
@@ -17,7 +18,7 @@ import {
     useStarEventButton_InsertStarsMutation,
 } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
-import type { Registrant} from "../../useCurrentRegistrant";
+import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 
 gql`

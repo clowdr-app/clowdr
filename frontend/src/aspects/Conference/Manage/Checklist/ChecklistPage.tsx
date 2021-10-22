@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -31,6 +30,7 @@ import {
     ElementBaseType,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
@@ -65,7 +65,7 @@ gql`
             itemPeople(where: { person: { registrantId: { _is_null: true } } }) {
                 id
                 roleName
-                person: personWithAccessToken {
+                person {
                     id
                     name
                     affiliation
@@ -74,7 +74,7 @@ gql`
             }
         }
 
-        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPersonWithAccessToken(
+        requiredProgramPeopleNotLinkedToRegistrant: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -89,7 +89,7 @@ gql`
             email
         }
 
-        requiredProgramPeopleNotRegistered: collection_ProgramPersonWithAccessToken(
+        requiredProgramPeopleNotRegistered: collection_ProgramPerson(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 eventPeople: {
@@ -1500,7 +1500,7 @@ function ChecklistItem({
                     <AccordionPanel>
                         <VStack spacing={3} alignItems="flex-start">
                             <Text>{description}</Text>
-                            <LinkButton isExternal size="md" to={`/conference/${conference.slug}/manage/${actionURL}`}>
+                            <LinkButton isExternal size="md" to={`${conferenceUrl}/manage/${actionURL}`}>
                                 <FAIcon iconStyle="s" icon="link" mr={2} />
                                 <chakra.span>{actionTitle}</chakra.span>
                                 <ExternalLinkIcon ml={2} />

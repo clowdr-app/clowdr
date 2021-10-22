@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -26,10 +25,10 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
-import type {
-    ManageContent_ItemProgramPersonFragment} from "../../../../../../generated/graphql";
+import type { ManageContent_ItemProgramPersonFragment } from "../../../../../../generated/graphql";
 import {
     ManageContent_ItemProgramPersonFragmentDoc,
     useManageContent_DeleteItemProgramPersonMutation,
@@ -66,7 +65,7 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
             </Text>
             <ButtonGroup>
                 {itemPeopleIds ? <AddItemPerson itemId={itemId} existingPeopleIds={itemPeopleIds} /> : undefined}
-                <LinkButton size="sm" to={`/conference/${conference.slug}/manage/people`}>
+                <LinkButton size="sm" to={`${conferenceUrl}/manage/people`}>
                     <Tooltip label="Link opens in the same tab">
                         <>
                             <FAIcon iconStyle="s" icon="link" mr={2} />
@@ -83,26 +82,19 @@ export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element
 
 gql`
     query ManageContent_SelectProgramPeople($conferenceId: uuid!) {
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageContent_ProgramPerson
         }
     }
 
     mutation ManageContent_InsertItemProgramPerson(
-        $conferenceId: uuid!
         $personId: uuid!
         $roleName: String!
         $priority: Int!
         $itemId: uuid!
     ) {
         insert_content_ItemProgramPerson_one(
-            object: {
-                conferenceId: $conferenceId
-                personId: $personId
-                itemId: $itemId
-                priority: $priority
-                roleName: $roleName
-            }
+            object: { personId: $personId, itemId: $itemId, priority: $priority, roleName: $roleName }
         ) {
             ...ManageContent_ItemProgramPerson
         }
@@ -145,10 +137,10 @@ function AddItemPersonBody({
 
     const sortedPeople = useMemo(
         () =>
-            peopleResponse.data?.collection_ProgramPersonWithAccessToken
+            peopleResponse.data?.collection_ProgramPerson
                 .filter((person) => !existingPeopleIds.includes(person.id))
                 .sort((x, y) => maybeCompare(x.name, y.name, (a, b) => a.localeCompare(b))),
-        [existingPeopleIds, peopleResponse.data?.collection_ProgramPersonWithAccessToken]
+        [existingPeopleIds, peopleResponse.data?.collection_ProgramPerson]
     );
 
     const toast = useToast();

@@ -1,4 +1,4 @@
-import { Box, useToast } from "@chakra-ui/react";
+import { Box, Tooltip, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import type { CombinedError } from "urql";
 import FAIcon from "../Icons/FAIcon";
@@ -20,18 +20,6 @@ export default function useQueryErrorToast(
         if (error) {
             const message = typeof error === "string" ? error : error.message;
             if (message.includes("JWTIssuedAtFuture")) {
-                // if (!shownJWTIssuedAtFutureReloadWarning) {
-                //     shownJWTIssuedAtFutureReloadWarning = true;
-                //     toast({
-                //         position: "top",
-                //         status: "warning",
-                //         isClosable: false,
-                //         title: "Need to refresh",
-                //         duration: 5000,
-                //         description: "We just need to refresh for a moment to finalise your login…",
-                //     });
-                //     ctx.reconnect();
-                // }
                 console.error(
                     "Oh not this again... Hasura's clock is out of sync with the rest of the world. Lookup JWT Leeway in the Hasura docs."
                 );
@@ -48,7 +36,9 @@ export default function useQueryErrorToast(
                     render: function QueryError(_props): JSX.Element {
                         return (
                             <Box w="100%" textAlign="right">
-                                <FAIcon color="red.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                <Tooltip label="Attempting to reconnect to server, please wait.">
+                                    <FAIcon color="red.500" opacity={0.8} iconStyle="s" icon="heartbeat" />
+                                </Tooltip>
                             </Box>
                         );
                     },

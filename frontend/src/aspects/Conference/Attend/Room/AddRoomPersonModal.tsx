@@ -3,7 +3,8 @@ import React, { useCallback, useMemo } from "react";
 import type {
     GetRoomMembersQuery,
     GetRoomMembersQueryVariables,
-    RoomMemberFragment} from "../../../../generated/graphql";
+    RoomMemberFragment,
+} from "../../../../generated/graphql";
 import {
     GetRoomMembersDocument,
     RoomMemberFragmentDoc,
@@ -38,10 +39,10 @@ export function AddRoomPersonModal({
                     roomId,
                 },
                 update: (cache, result) => {
-                    if (result.data?.insert_room_RoomPerson_one) {
+                    if (result.data?.insert_room_RoomMembership_one) {
                         const data: RoomMemberFragment = {
-                            __typename: "room_RoomPerson",
-                            id: result.data.insert_room_RoomPerson_one.id,
+                            __typename: "room_RoomMembership",
+                            id: result.data.insert_room_RoomMembership_one.id,
                             registrantId,
                             personRoleName: Room_PersonRole_Enum.Participant,
                             roomId,
@@ -70,7 +71,7 @@ export function AddRoomPersonModal({
                                 broadcast: true,
                                 data: {
                                     __typename: query.__typename,
-                                    room_RoomPerson: [...query.room_RoomPerson, data],
+                                    room_RoomMembership: [...query.room_RoomMembership, data],
                                 },
                             });
                         }

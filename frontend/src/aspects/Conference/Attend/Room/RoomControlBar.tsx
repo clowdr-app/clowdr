@@ -44,7 +44,7 @@ export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDeta
 
 gql`
     mutation AddParticipantToRoom($registrantId: uuid!, $roomId: uuid!) {
-        insert_room_RoomPerson_one(
+        insert_room_RoomMembership_one(
             object: { registrantId: $registrantId, roomId: $roomId, personRoleName: PARTICIPANT }
         ) {
             id
@@ -97,7 +97,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                     <ListItem key={registrant.id} whiteSpace="normal">
                         <LinkButton
                             justifyContent="flex-start"
-                            to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
+                            to={`${conferenceUrl}/profile/view/${registrant.id}`}
                             size="sm"
                             linkProps={{ width: "100%" }}
                             w="100%"

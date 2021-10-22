@@ -22,12 +22,8 @@ import { DateTime } from "luxon";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Link as ReactLink } from "react-router-dom";
-import type {
-    Schedule_ItemFragment,
-    Schedule_TagFragment} from "../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum
-} from "../../../../../generated/graphql";
+import type { Schedule_ItemFragment, Schedule_TagFragment } from "../../../../../generated/graphql";
+import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import FAIcon from "../../../../Icons/FAIcon";
 import { Markdown } from "../../../../Text/Markdown";
@@ -78,8 +74,8 @@ export default function EventBoxModal({
             abstractText = innerAbstractData.data.text;
         }
     }
-    const roomUrl = `/conference/${conference.slug}/room/${event0.roomId}`;
-    const itemUrl = content ? `/conference/${conference.slug}/item/${content.id}` : roomUrl;
+    const roomUrl = `${conferenceUrl}/room/${event0.roomId}`;
+    const itemUrl = content ? `${conferenceUrl}/item/${content.id}` : roomUrl;
     const exhibitionId = useMemo(() => {
         for (const event of events) {
             if (event.exhibitionId) {
@@ -88,7 +84,7 @@ export default function EventBoxModal({
         }
         return null;
     }, [events]);
-    const exhibitionUrl = exhibitionId ? `/conference/${conference.slug}/exhibition/${exhibitionId}` : null;
+    const exhibitionUrl = exhibitionId ? `${conferenceUrl}/exhibition/${exhibitionId}` : null;
 
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {

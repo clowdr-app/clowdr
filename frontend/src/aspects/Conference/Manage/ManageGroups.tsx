@@ -1,12 +1,10 @@
-import type { FetchResult} from "@apollo/client";
-import { gql } from "@apollo/client";
+import type { FetchResult } from "@apollo/client";
 import { Heading, Spinner } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    CreateDeleteGroupsMutation,
-    UpdateGroupMutation} from "../../../generated/graphql";
+import type { CreateDeleteGroupsMutation, UpdateGroupMutation } from "../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
     useCreateDeleteGroupsMutation,
@@ -14,16 +12,12 @@ import {
     useSelectAllRolesQuery,
     useUpdateGroupMutation,
 } from "../../../generated/graphql";
-import type {
-    CRUDTableProps,
-    PrimaryField,
-    SelectOption,
-    UpdateResult} from "../../CRUDTable/CRUDTable";
+import type { CRUDTableProps, PrimaryField, SelectOption, UpdateResult } from "../../CRUDTable/CRUDTable";
 import CRUDTable, {
     BooleanFieldFormat,
     defaultSelectFilter,
     defaultStringFilter,
-    FieldType
+    FieldType,
 } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
@@ -33,83 +27,83 @@ import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWr
 import { useConference } from "../useConference";
 
 gql`
-    fragment ManageGroups_Group on permissions_Group {
-        conferenceId
-        enabled
-        id
-        includeUnauthenticated
-        name
-        groupRoles {
-            id
-            roleId
-            groupId
-        }
-    }
+    # fragment ManageGroups_Group on permissions_Group {
+    #     conferenceId
+    #     enabled
+    #     id
+    #     includeUnauthenticated
+    #     name
+    #     groupRoles {
+    #         id
+    #         roleId
+    #         groupId
+    #     }
+    # }
 
-    query SelectAllGroups($conferenceId: uuid!) {
-        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-            ...ManageGroups_Group
-        }
-    }
+    # query SelectAllGroups($conferenceId: uuid!) {
+    #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    #         ...ManageGroups_Group
+    #     }
+    # }
 
-    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [permissions_Group_insert_input!]!) {
-        delete_permissions_Group(where: { id: { _in: $deleteGroupIds } }) {
-            returning {
-                id
-            }
-        }
-        insert_permissions_Group(objects: $insertGroups) {
-            returning {
-                id
-                conferenceId
-                name
-                enabled
-                includeUnauthenticated
-                groupRoles {
-                    id
-                    groupId
-                    roleId
-                }
-            }
-        }
-    }
+    # mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [permissions_Group_insert_input!]!) {
+    #     delete_permissions_Group(where: { id: { _in: $deleteGroupIds } }) {
+    #         returning {
+    #             id
+    #         }
+    #     }
+    #     insert_permissions_Group(objects: $insertGroups) {
+    #         returning {
+    #             id
+    #             conferenceId
+    #             name
+    #             enabled
+    #             includeUnauthenticated
+    #             groupRoles {
+    #                 id
+    #                 groupId
+    #                 roleId
+    #             }
+    #         }
+    #     }
+    # }
 
-    mutation UpdateGroup(
-        $groupId: uuid!
-        $groupName: String!
-        $enabled: Boolean!
-        $includeUnauthenticated: Boolean!
-        $insertRoles: [permissions_GroupRole_insert_input!]!
-        $deleteRoleIds: [uuid!] = []
-    ) {
-        update_permissions_Group(
-            where: { id: { _eq: $groupId } }
-            _set: { name: $groupName, enabled: $enabled, includeUnauthenticated: $includeUnauthenticated }
-        ) {
-            returning {
-                id
-                name
-                groupRoles {
-                    id
-                    groupId
-                    roleId
-                }
-                conferenceId
-            }
-        }
-        insert_permissions_GroupRole(objects: $insertRoles) {
-            returning {
-                id
-                groupId
-                roleId
-            }
-        }
-        delete_permissions_GroupRole(where: { groupId: { _eq: $groupId }, roleId: { _in: $deleteRoleIds } }) {
-            returning {
-                id
-            }
-        }
-    }
+    # mutation UpdateGroup(
+    #     $groupId: uuid!
+    #     $groupName: String!
+    #     $enabled: Boolean!
+    #     $includeUnauthenticated: Boolean!
+    #     $insertRoles: [permissions_GroupRole_insert_input!]!
+    #     $deleteRoleIds: [uuid!] = []
+    # ) {
+    #     update_permissions_Group(
+    #         where: { id: { _eq: $groupId } }
+    #         _set: { name: $groupName, enabled: $enabled, includeUnauthenticated: $includeUnauthenticated }
+    #     ) {
+    #         returning {
+    #             id
+    #             name
+    #             groupRoles {
+    #                 id
+    #                 groupId
+    #                 roleId
+    #             }
+    #             conferenceId
+    #         }
+    #     }
+    #     insert_permissions_GroupRole(objects: $insertRoles) {
+    #         returning {
+    #             id
+    #             groupId
+    #             roleId
+    #         }
+    #     }
+    #     delete_permissions_GroupRole(where: { groupId: { _eq: $groupId }, roleId: { _in: $deleteRoleIds } }) {
+    #         returning {
+    #             id
+    #         }
+    #     }
+    # }
 `;
 
 type RoleOption = SelectOption;

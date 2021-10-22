@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     FormControl,
@@ -24,17 +23,17 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
 import { isYouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+import { gql } from "@urql/core";
 import Mustache from "mustache";
 import * as R from "ramda";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import type { SubmitHandler} from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import { useFieldArray, useForm } from "react-hook-form";
-import type {
-    Job_Queues_UploadYouTubeVideoJob_Insert_Input} from "../../../../../generated/graphql";
+import type { Job_Queues_UploadYouTubeVideoJob_Insert_Input } from "../../../../../generated/graphql";
 import {
     useUploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutation,
     useUploadYouTubeVideos_GetElementsQuery,

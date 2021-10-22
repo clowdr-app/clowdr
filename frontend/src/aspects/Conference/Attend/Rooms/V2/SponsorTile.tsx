@@ -1,5 +1,5 @@
 import { AspectRatio, Button, Center, Image, Text, Tooltip, useColorModeValue, VStack } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -57,17 +57,17 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             overflow="hidden"
             onClick={() => {
                 if (sponsor.rooms.length > 0) {
-                    history.push(`/conference/${conference.slug}/room/${sponsor.rooms[0].id}`);
+                    history.push(`${conferenceUrl}/room/${sponsor.rooms[0].id}`);
                 } else {
-                    history.push(`/conference/${conference.slug}/item/${sponsor.id}`);
+                    history.push(`${conferenceUrl}/item/${sponsor.id}`);
                 }
             }}
             onKeyUp={(ev) => {
                 if (ev.key === "Enter") {
                     if (sponsor.rooms.length > 0) {
-                        history.push(`/conference/${conference.slug}/room/${sponsor.rooms[0].id}`);
+                        history.push(`${conferenceUrl}/room/${sponsor.rooms[0].id}`);
                     } else {
-                        history.push(`/conference/${conference.slug}/item/${sponsor.id}`);
+                        history.push(`${conferenceUrl}/item/${sponsor.id}`);
                     }
                 }
             }}

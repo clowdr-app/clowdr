@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     CircularProgress,
@@ -11,20 +10,19 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
-import type {
-    PrefetchShuffleQueueEntryDataFragment,
-    ShufflePeriodDataFragment} from "../../generated/graphql";
+import type { PrefetchShuffleQueueEntryDataFragment, ShufflePeriodDataFragment } from "../../generated/graphql";
 import {
     useJoinShuffleQueueMutation,
     useMyShuffleQueueEntryQuery,
     useShufflePeriodsQuery,
 } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
-import type { ConferenceInfoFragment} from "../Conference/useConference";
+import type { ConferenceInfoFragment } from "../Conference/useConference";
 import { useConference } from "../Conference/useConference";
 import useCurrentRegistrant from "../Conference/useCurrentRegistrant";
 import { roundToNearest } from "../Generic/MathUtils";
@@ -162,7 +160,7 @@ function QueuedShufflePeriodBox({
     }
 
     if (isWaitingForAllocatedRoom && allocatedRoomId && !isJoining) {
-        return <Redirect to={`/conference/${conference.slug}/room/${allocatedRoomId}`} />;
+        return <Redirect to={`${conferenceUrl}/room/${allocatedRoomId}`} />;
     } else if (lastEntry.shuffleRoom) {
         const intendedEnd =
             period.roomDurationMinutes * 60 * 1000 + new Date(lastEntry.shuffleRoom.startedAt).getTime();
@@ -170,7 +168,7 @@ function QueuedShufflePeriodBox({
             return (
                 <>
                     <LinkButton
-                        to={`/conference/${conference.slug}/room/${lastEntry.shuffleRoom.roomId}`}
+                        to={`${conferenceUrl}/room/${lastEntry.shuffleRoom.roomId}`}
                         colorScheme="PrimaryActionButton"
                         h="auto"
                         p={4}

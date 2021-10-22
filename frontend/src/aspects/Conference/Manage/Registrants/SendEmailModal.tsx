@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -30,21 +29,22 @@ import {
     Textarea,
     useToast,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback, useMemo } from "react";
-import type { SubmitHandler} from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 
 gql`
-    query SendEmail_GetAllGroups($conferenceId: uuid!) {
-        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-            id
-            enabled
-            name
-        }
-    }
+    # query SendEmail_GetAllGroups($conferenceId: uuid!) {
+    #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    #         id
+    #         enabled
+    #         name
+    #     }
+    # }
 `;
 
 type Inputs = { subject: string; markdownBody: string };

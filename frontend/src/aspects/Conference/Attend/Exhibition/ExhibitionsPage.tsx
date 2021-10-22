@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Grid,
     GridItem,
@@ -11,15 +10,12 @@ import {
     useToken,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
-import type {
-    ExhibitionSummaryFragment,
-    ItemTagDataFragment} from "../../../../generated/graphql";
-import {
-    useSelectAllExhibitionsQuery,
-} from "../../../../generated/graphql";
+import type { ExhibitionSummaryFragment, ItemTagDataFragment } from "../../../../generated/graphql";
+import { useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageCountText from "../../../Realtime/PageCountText";
@@ -99,7 +95,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     return (
         <GridItem>
             <LinkButton
-                to={`/conference/${conference.slug}/exhibition/${exhibition.id}`}
+                to={`${conferenceUrl}/exhibition/${exhibition.id}`}
                 w="100%"
                 h="auto"
                 minH="100%"
@@ -150,7 +146,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     <Text whiteSpace="normal" mr="auto" fontWeight="bold">
                         {exhibition.name}
                     </Text>
-                    <PageCountText path={`/conference/${conference.slug}/exhibition/${exhibition.id}`} />
+                    <PageCountText path={`${conferenceUrl}/exhibition/${exhibition.id}`} />
                 </HStack>
                 <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
             </LinkButton>

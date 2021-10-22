@@ -72,7 +72,7 @@ export default function RoomNameBox({
             ) : shouldLink ? (
                 <Link
                     as={ReactLink}
-                    to={`/conference/${conference.slug}/room/${room.id}`}
+                    to={`${conferenceUrl}/room/${room.id}`}
                     textDecoration="none"
                     aria-label={`${room.name} room`}
                 >

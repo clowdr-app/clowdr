@@ -1,13 +1,12 @@
-import { gql } from "@apollo/client";
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
-import type {
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
     isElementDataBlob,
 } from "@clowdr-app/shared-types/build/content";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useCallback, useContext, useMemo } from "react";

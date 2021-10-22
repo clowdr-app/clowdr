@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -21,13 +20,13 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    RegistrantPartsFragment} from "../../../../generated/graphql";
+import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import {
     InvitationPartsFragmentDoc,
     Permissions_Permission_Enum,
@@ -55,10 +54,9 @@ import type {
     ExtraButton,
     Insert,
     RowSpecification,
-    Update} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection
+    Update,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -82,11 +80,7 @@ gql`
     fragment RegistrantParts on registrant_Registrant {
         conferenceId
         id
-        groupRegistrants {
-            registrantId
-            id
-            groupId
-        }
+        conferenceRole
         invitation {
             ...InvitationParts
         }
@@ -152,31 +146,9 @@ gql`
         }
     }
 
-    mutation UpdateRegistrant(
-        $registrantId: uuid!
-        $registrantName: String!
-        $upsertGroups: [permissions_GroupRegistrant_insert_input!]!
-        $remainingGroupIds: [uuid!]
-    ) {
+    mutation UpdateRegistrant($registrantId: uuid!, $registrantName: String!) {
         update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
             ...RegistrantParts
-        }
-        insert_permissions_GroupRegistrant(
-            objects: $upsertGroups
-            on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
-        ) {
-            returning {
-                id
-                registrantId
-                groupId
-            }
-        }
-        delete_permissions_GroupRegistrant(
-            where: { registrantId: { _eq: $registrantId }, groupId: { _nin: $remainingGroupIds } }
-        ) {
-            returning {
-                id
-            }
         }
     }
 
@@ -747,10 +719,7 @@ export default function ManageRegistrants(): JSX.Element {
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton
-                            colorScheme="purple"
-                            to={`/conference/${conference.slug}/manage/import/registrants`}
-                        >
+                        <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/registrants`}>
                             Import
                         </LinkButton>
                     );
@@ -1241,7 +1210,6 @@ export default function ManageRegistrants(): JSX.Element {
         [
             allGroups?.permissions_Group,
             conference.id,
-            conference.slug,
             data,
             disabledGroups,
             enabledGroups,

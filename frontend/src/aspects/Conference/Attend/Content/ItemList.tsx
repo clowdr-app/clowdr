@@ -1,6 +1,4 @@
-import { gql } from "@apollo/client";
-import type {
-    StackProps} from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -20,17 +18,16 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
 import type {
     ItemList_ItemDataFragment,
     ItemList_ItemTagDataFragment,
-    ItemList_TagInfoFragment} from "../../../../generated/graphql";
-import {
-    useContentOfTagQuery,
-    useTagsQuery,
+    ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
+import { useContentOfTagQuery, useTagsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -186,7 +183,7 @@ function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Elemen
     const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
-            to={`/conference/${conference.slug}/item/${group.id}`}
+            to={`${conferenceUrl}/item/${group.id}`}
             p={[2, 4]}
             alignItems="flex-start"
             justifyContent="flex-start"

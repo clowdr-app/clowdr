@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { RoomListRoomDetailsFragment} from "../../../../../generated/graphql";
+import type { RoomListRoomDetailsFragment } from "../../../../../generated/graphql";
 import { Room_ManagementMode_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -77,7 +77,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                             >
                                 {room.name}
                             </Text>
-                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                            <PageCountText path={`${conferenceUrl}/room/${room.id}`} />
                         </Center>
                         <Participants
                             roomId={room.id}
@@ -111,7 +111,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                                 {room.name}
                             </Text>
                             <Spacer />
-                            <PageCountText path={`/conference/${conference.slug}/room/${room.id}`} />
+                            <PageCountText path={`${conferenceUrl}/room/${room.id}`} />
                         </HStack>
                         <Participants
                             roomId={room.id}
@@ -139,7 +139,7 @@ export function RoomList({ rooms, layout, limit, onClick, noRoomsMessage, childr
                 el: (
                     <LinkButton
                         key={room.id}
-                        to={`/conference/${conference.slug}/room/${room.id}`}
+                        to={`${conferenceUrl}/room/${room.id}`}
                         p={1}
                         alignItems="center"
                         justifyContent="center"

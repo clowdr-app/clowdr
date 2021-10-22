@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import type { Permissions_Permission_Enum } from "../../../generated/graphql";
@@ -30,7 +30,7 @@ export default function RestrictedDashboardButton({
     return (
         <RequireAtLeastOnePermissionWrapper permissions={permissions}>
             <LinkButton
-                to={`/conference/${conference.slug}/manage/${to}`}
+                to={`${conferenceUrl}/manage/${to}`}
                 padding={4}
                 overflow="hidden"
                 whiteSpace="normal"

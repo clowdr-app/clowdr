@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, Link, MenuDivider, MenuItem } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
@@ -129,7 +129,7 @@ export default function LeftMenu(): JSX.Element {
                     colorScheme={colorScheme}
                     side="left"
                     onClick={() => {
-                        history.push(`/conference/${conference.slug}`);
+                        history.push(conferenceUrl);
                     }}
                     mb={1}
                     showLabel={isExpanded}
@@ -229,16 +229,16 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
                                 My events
                             </MenuItem>
-                            <MenuItem as={ReactLink} to={`/conference/${conference.slug}/profile`}>
+                            <MenuItem as={ReactLink} to={`${conferenceUrl}/profile`}>
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                 My profile
                             </MenuItem>
-                            <MenuItem as={ReactLink} to={`/conference/${conference.slug}/recordings`}>
+                            <MenuItem as={ReactLink} to={`${conferenceUrl}/recordings`}>
                                 <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                                 My recordings
                             </MenuItem>
                             {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
-                                <MenuItem as={ReactLink} to={`/conference/${conference.slug}/swag`}>
+                                <MenuItem as={ReactLink} to={`${conferenceUrl}/swag`}>
                                     <FAIcon iconStyle="s" icon="gift" mr={2} aria-hidden={true} w="1.2em" />
                                     My conference swag
                                 </MenuItem>
@@ -276,32 +276,32 @@ export default function LeftMenu(): JSX.Element {
                         mb={1}
                         showLabel={isExpanded}
                     >
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/checklist`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/checklist`}>
                             <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
                             Checklist
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage`}>
                             <FAIcon iconStyle="s" icon="cog" mr={2} aria-hidden={true} w="1.2em" />
                             Dashboard
                         </MenuItem>
                         <MenuDivider />
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/content`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/content`}>
                             <FAIcon iconStyle="s" icon="align-left" mr={2} aria-hidden={true} w="1.2em" />
                             Content
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/schedule`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/schedule`}>
                             <FAIcon iconStyle="s" icon="calendar" mr={2} aria-hidden={true} w="1.2em" />
                             Schedule
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/rooms`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/rooms`}>
                             <FAIcon iconStyle="s" icon="coffee" mr={2} aria-hidden={true} w="1.2em" />
                             Rooms
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/people`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/people`}>
                             <FAIcon iconStyle="s" icon="people-arrows" mr={2} aria-hidden={true} w="1.2em" />
                             Program People
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`/conference/${conference.slug}/manage/registrants`}>
+                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/registrants`}>
                             <FAIcon iconStyle="s" icon="users" mr={2} aria-hidden={true} w="1.2em" />
                             Registrants
                         </MenuItem>

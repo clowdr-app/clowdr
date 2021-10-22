@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
-import type { TextProps} from "@chakra-ui/react";
+import type { TextProps } from "@chakra-ui/react";
 import { Badge, Button, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type {

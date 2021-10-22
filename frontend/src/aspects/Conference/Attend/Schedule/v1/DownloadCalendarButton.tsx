@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, useToast } from "@chakra-ui/react";
 import type { EventAttributes } from "ics";
 import ics from "ics";
@@ -29,8 +29,8 @@ export default function DownloadCalendarButton({
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,
-                        url: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
-                        location: `${window.location.origin}/conference/${conference.slug}/room/${event.roomId}`,
+                        url: `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
+                        location: `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
                         start: [
                             startTime.getUTCFullYear(),
                             startTime.getUTCMonth() + 1,

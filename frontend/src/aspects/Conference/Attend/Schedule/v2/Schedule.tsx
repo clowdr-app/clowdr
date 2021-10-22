@@ -1,16 +1,14 @@
-import { gql } from "@apollo/client";
 import { Box, Table, Text, Th, Tr, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
 import type {
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
-    Schedule_Event_Bool_Exp} from "../../../../../generated/graphql";
-import {
-    useScheduleV2_RoomsQuery,
-    useScheduleV2_TagsQuery,
+    Schedule_Event_Bool_Exp,
 } from "../../../../../generated/graphql";
+import { useScheduleV2_RoomsQuery, useScheduleV2_TagsQuery } from "../../../../../generated/graphql";
 import { useConference } from "../../../useConference";
 import Day from "./Day";
 

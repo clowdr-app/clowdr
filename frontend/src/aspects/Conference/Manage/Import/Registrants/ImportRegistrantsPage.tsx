@@ -1,9 +1,6 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type {
-    IntermediaryRegistrantData} from "@clowdr-app/shared-types/build/import/intermediary";
-import {
-    JSONataToIntermediaryRegistrant,
-} from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
+import { JSONataToIntermediaryRegistrant } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
 import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
@@ -80,7 +77,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
                 <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                     Import Registrants
                 </Heading>
-                <LinkButton to={`/conference/${conference.slug}/manage/registrants`} colorScheme="red">
+                <LinkButton to={`${conferenceUrl}/manage/registrants`} colorScheme="red">
                     Go to Manage Registrants
                 </LinkButton>
                 <Tabs defaultIndex={0} w="100%" mt={4}>

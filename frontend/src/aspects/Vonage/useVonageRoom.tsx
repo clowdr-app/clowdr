@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { WeakRef } from "@ungap/weakrefs";
+import { gql } from "@urql/core";
 import { detect } from "detect-browser";
 import * as R from "ramda";
-import type { Dispatch} from "react";
+import type { Dispatch } from "react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 import { useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery } from "../../generated/graphql";
 import type { DevicesProps } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";

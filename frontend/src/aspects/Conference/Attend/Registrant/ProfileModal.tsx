@@ -27,7 +27,7 @@ import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
-import type { Registrant} from "../../useCurrentRegistrant";
+import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "../Profile/RegistrantExtraInfo";
 import RegistrantItems from "../Profile/RegistrantItems";
@@ -153,7 +153,7 @@ export default function ProfileModal({
                                             </Button>
                                         ) : undefined}
                                         <LinkButton
-                                            to={`/conference/${conference.slug}/profile/view/${registrant.id}`}
+                                            to={`${conferenceUrl}/profile/view/${registrant.id}`}
                                             size="sm"
                                             variant="outline"
                                             colorScheme="SecondaryActionButton"

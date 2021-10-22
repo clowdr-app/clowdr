@@ -34,7 +34,7 @@ gql`
                 url
                 streamKey
             }
-            channelStack: channelStackWithStreamKey {
+            channelStack {
                 id
                 rtmpOutputUri
                 rtmpOutputStreamKey

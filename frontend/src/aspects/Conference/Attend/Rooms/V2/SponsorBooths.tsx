@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
-import type { SponsorBoothsList_ItemFragment} from "../../../../../generated/graphql";
+import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { useGetSponsorBoothsQuery } from "../../../../../generated/graphql";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";

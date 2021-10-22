@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Button,
     Divider,
@@ -16,6 +15,7 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import type { MutableRefObject } from "react";
 import React from "react";
 import {

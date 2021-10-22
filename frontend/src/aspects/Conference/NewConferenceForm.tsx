@@ -17,7 +17,8 @@ import { useHistory } from "react-router-dom";
 import type {
     ConferenceTakenQuery,
     ConferenceTakenQueryVariables,
-    Conference_Conference} from "../../generated/graphql";
+    Conference_Conference,
+} from "../../generated/graphql";
 import {
     ConferenceTakenDocument,
     useCreateConferenceMutation,
@@ -58,7 +59,9 @@ gql`
         $registrantDisplayName: String!
         $userId: String!
         $abstractData: jsonb!
-        $itemListData: jsonb!
+        $exploreProgramData: jsonb!
+        $exploreScheduleData: jsonb!
+        $registerButtonData: jsonb!
     ) {
         insert_registrant_Registrant(
             objects: [
@@ -66,183 +69,11 @@ gql`
                     displayName: $registrantDisplayName
                     userId: $userId
                     conferenceId: $conferenceId
-                    groupRegistrants: {
-                        data: {
-                            group: {
-                                data: {
-                                    conferenceId: $conferenceId
-                                    includeUnauthenticated: false
-                                    name: "Organisers"
-                                    groupRoles: {
-                                        data: {
-                                            role: {
-                                                data: {
-                                                    conferenceId: $conferenceId
-                                                    name: "Organiser"
-                                                    rolePermissions: {
-                                                        data: [
-                                                            { permissionName: CONFERENCE_MANAGE_NAME }
-                                                            { permissionName: CONFERENCE_MANAGE_ATTENDEES }
-                                                            { permissionName: CONFERENCE_MODERATE_ATTENDEES }
-                                                            { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                                            { permissionName: CONFERENCE_VIEW }
-                                                            { permissionName: CONFERENCE_MANAGE_ROLES }
-                                                            { permissionName: CONFERENCE_MANAGE_GROUPS }
-                                                            { permissionName: CONFERENCE_MANAGE_CONTENT }
-                                                            { permissionName: CONFERENCE_MANAGE_SCHEDULE }
-                                                            { permissionName: CONFERENCE_MANAGE_SHUFFLE }
-                                                        ]
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    conferenceRole: ORGANIZER
                 }
             ]
         ) {
             affected_rows
-        }
-
-        insert_permissions_Group(
-            objects: [
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Registrants"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Registrant"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_VIEW }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Public"
-                    includeUnauthenticated: true
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Public"
-                                        rolePermissions: { data: [{ permissionName: CONFERENCE_VIEW }] }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Registrars"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Registrar"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_MANAGE_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Moderators"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Moderator"
-                                        rolePermissions: {
-                                            data: [
-                                                { permissionName: CONFERENCE_MODERATE_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW_ATTENDEES }
-                                                { permissionName: CONFERENCE_VIEW }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-                {
-                    conferenceId: $conferenceId
-                    enabled: false
-                    name: "Social Chairs"
-                    includeUnauthenticated: false
-                    groupRoles: {
-                        data: [
-                            {
-                                role: {
-                                    data: {
-                                        conferenceId: $conferenceId
-                                        name: "Social Chair"
-                                        rolePermissions: { data: [{ permissionName: CONFERENCE_MANAGE_SHUFFLE }] }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
-        ) {
-            returning {
-                id
-                conferenceId
-                name
-                enabled
-                groupRoles {
-                    id
-                    roleId
-                    groupId
-                    role {
-                        id
-                        name
-                        conferenceId
-                        rolePermissions {
-                            id
-                            roleId
-                            permissionName
-                        }
-                    }
-                }
-            }
         }
 
         insert_content_Item(
@@ -261,15 +92,31 @@ gql`
                         }
                         {
                             conferenceId: $conferenceId
-                            typeName: CONTENT_GROUP_LIST
-                            data: $itemListData
+                            typeName: EXPLORE_PROGRAM_BUTTON
+                            data: $exploreProgramData
                             isHidden: false
                             layoutData: null
-                            name: "Content group list"
+                            name: "Explore program button"
+                        }
+                        {
+                            conferenceId: $conferenceId
+                            typeName: EXPLORE_SCHEDULE_BUTTON
+                            data: $exploreScheduleData
+                            isHidden: false
+                            layoutData: null
+                            name: "Explore program button"
+                        }
+                        {
+                            conferenceId: $conferenceId
+                            typeName: LINK_BUTTON
+                            data: $registerButtonData
+                            isHidden: false
+                            layoutData: null
+                            name: "Register button"
                         }
                     ]
                 }
-                shortTitle: "Landing"
+                shortTitle: "Welcome Lobby"
                 title: "Landing page"
             }
         ) {
@@ -413,11 +260,25 @@ export default function NewConferenceForm(): JSX.Element {
                                             },
                                         },
                                     ],
-                                    itemListData: [
+                                    exploreProgramData: [
                                         {
                                             createdAt: now,
                                             createdBy: "system",
-                                            data: { type: "CONTENT_GROUP_LIST", baseType: "component" },
+                                            data: { type: "EXPLORE_PROGRAM_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    exploreScheduleData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "EXPLORE_SCHEDULE_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    registerButtonData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "LINK_BUTTON", baseType: "link", text: "Register", url: "" },
                                         },
                                     ],
                                 },

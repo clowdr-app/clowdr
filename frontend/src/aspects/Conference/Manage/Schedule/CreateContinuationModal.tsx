@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -31,20 +30,17 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    ContinuationTo} from "@clowdr-app/shared-types/build/continuation";
-import {
-    ContinuationDefaultFor,
-    ContinuationType,
-    NavigationView,
-} from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationTo } from "@clowdr-app/shared-types/build/continuation";
+import { ContinuationDefaultFor, ContinuationType, NavigationView } from "@clowdr-app/shared-types/build/continuation";
+import { gql } from "@urql/core";
 import { format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import Color from "tinycolor2";
 import type {
     ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
+    ContinuationsEditor_SelectContinuationsQueryVariables,
+} from "../../../../generated/graphql";
 import {
     ContinuationsEditor_ContinuationFragmentDoc,
     ContinuationsEditor_SelectContinuationsDocument,

@@ -21,8 +21,7 @@ import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    Permissions_GroupRegistrant_Insert_Input} from "../../../../../generated/graphql";
+import type { Permissions_GroupRegistrant_Insert_Input } from "../../../../../generated/graphql";
 import {
     useImportRegistrantsMutation,
     useSelectAllGroupsQuery,
@@ -36,15 +35,11 @@ gql`
     mutation ImportRegistrants(
         $insertRegistrants: [registrant_Registrant_insert_input!]!
         $insertInvitations: [registrant_Invitation_insert_input!]!
-        $insertGroupRegistrants: [permissions_GroupRegistrant_insert_input!]!
     ) {
         insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
         }
         insert_registrant_Invitation(objects: $insertInvitations) {
-            affected_rows
-        }
-        insert_permissions_GroupRegistrant(objects: $insertGroupRegistrants) {
             affected_rows
         }
     }
@@ -263,7 +258,7 @@ export default function ImportPanel({
                     Import
                 </Button>
                 <LinkButton
-                    to={`/conference/${conference.slug}/manage/registrants`}
+                    to={`${conferenceUrl}/manage/registrants`}
                     colorScheme="red"
                     isDisabled={!!totalOutputLength && (!hasImported || importLoading)}
                 >
@@ -327,7 +322,7 @@ export default function ImportPanel({
                                           .substring(2)}`
                                     : "Unable to load the list of groups - please refresh to try again."}
                             </Text>
-                            <LinkButton to={`/conference/${conference.slug}/manage/groups`} colorScheme="red" mt={2}>
+                            <LinkButton to={`${conferenceUrl}/manage/groups`} colorScheme="red" mt={2}>
                                 Go to Manage Groups
                             </LinkButton>
                         </VStack>

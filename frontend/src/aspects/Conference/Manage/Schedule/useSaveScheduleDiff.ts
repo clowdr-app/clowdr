@@ -1,11 +1,12 @@
-import type { ApolloError} from "@apollo/client";
-import { gql } from "@apollo/client";
+import type { ApolloError } from "@apollo/client";
+import { gql } from "@urql/core";
 import assert from "assert";
 import { useEffect, useState } from "react";
 import type {
     Collection_Tag_Insert_Input,
     Conference_OriginatingData_Insert_Input,
-    Room_Room_Insert_Input} from "../../../../generated/graphql";
+    Room_Room_Insert_Input,
+} from "../../../../generated/graphql";
 import {
     Room_Mode_Enum,
     useDeleteEventsMutation,
@@ -53,9 +54,6 @@ gql`
         eventPeople {
             ...EventProgramPersonInfo
         }
-        eventTags {
-            ...EventTagInfo
-        }
         id
         intendedRoomModeName
         name
@@ -74,12 +72,6 @@ gql`
         eventId
         roleName
         personId
-    }
-
-    fragment EventTagInfo on schedule_EventTag {
-        eventId
-        id
-        tagId
     }
 
     query SelectWholeSchedule($conferenceId: uuid!) {
@@ -104,7 +96,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ProgramPersonInfo
         }
     }
@@ -177,14 +169,7 @@ gql`
         $durationSeconds: Int!
         $itemId: uuid = null
         $exhibitionId: uuid = null
-        $newEventTags: [schedule_EventTag_insert_input!]!
-        $deleteEventTagIds: [uuid!]!
     ) {
-        insert_schedule_EventTag(objects: $newEventTags) {
-            returning {
-                ...EventTagInfo
-            }
-        }
         update_schedule_Event_by_pk(
             pk_columns: { id: $eventId }
             _set: {
@@ -199,11 +184,6 @@ gql`
             }
         ) {
             ...EventInfo
-        }
-        delete_schedule_EventTag(where: { eventId: { _eq: $eventId }, tagId: { _in: $deleteEventTagIds } }) {
-            returning {
-                id
-            }
         }
     }
 `;
@@ -581,11 +561,6 @@ export function useSaveScheduleDiff():
                                             startTime: new Date(event.startTime).toISOString(),
                                             durationSeconds: event.durationSeconds,
                                             originatingDataId: event.originatingDataId,
-                                            eventTags: {
-                                                data: Array.from(event.tagIds.values()).map((tagId) => ({
-                                                    tagId,
-                                                })),
-                                            },
                                             enableRecording: event.enableRecording,
                                         },
                                         newEventId: event.id,
@@ -620,22 +595,8 @@ export function useSaveScheduleDiff():
                     Array.from(updatedEvents.values()).map(async (event): Promise<[string, boolean]> => {
                         let ok = false;
                         try {
-                            const newEventTags = new Set<string>();
-                            const deleteEventTagKeys = new Set<string>();
-
                             const existingEvent = original.events.get(event.id);
                             assert(existingEvent);
-
-                            for (const tagId of event.tagIds) {
-                                if (!existingEvent.tagIds.has(tagId)) {
-                                    newEventTags.add(tagId);
-                                }
-                            }
-                            for (const tagId of existingEvent.tagIds) {
-                                if (!event.tagIds.has(tagId)) {
-                                    deleteEventTagKeys.add(tagId);
-                                }
-                            }
 
                             await updateEventMutation({
                                 variables: {
@@ -648,11 +609,6 @@ export function useSaveScheduleDiff():
                                     name: event.name,
                                     startTime: new Date(event.startTime).toISOString(),
                                     durationSeconds: event.durationSeconds,
-                                    deleteEventTagIds: Array.from(deleteEventTagKeys.values()),
-                                    newEventTags: Array.from(newEventTags.values()).map((tagId) => ({
-                                        eventId: event.id,
-                                        tagId,
-                                    })),
                                 },
                             });
 

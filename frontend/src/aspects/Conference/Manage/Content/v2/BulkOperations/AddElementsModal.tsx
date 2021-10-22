@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Alert,
     AlertDescription,
@@ -27,14 +26,10 @@ import {
 } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
-import type {
-    Content_Element_Insert_Input,
-    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useBulkEdit_AddElementsMutation,
-} from "../../../../../../generated/graphql";
+import type { Content_Element_Insert_Input, ManageContent_ItemFragment } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum, useBulkEdit_AddElementsMutation } from "../../../../../../generated/graphql";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";
 
 gql`

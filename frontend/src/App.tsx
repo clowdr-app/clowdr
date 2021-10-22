@@ -1,8 +1,6 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
-import React, { useMemo } from "react";
-import type { RouteComponentProps} from "react-router-dom";
-import { Route, Switch } from "react-router-dom";
+import React from "react";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";
@@ -21,6 +19,7 @@ import ConferenceCurrentUserActivePermissionsProvider from "./aspects/Conference
 import { CurrentRegistrantProvider } from "./aspects/Conference/useCurrentRegistrant";
 import { EmojiFloatProvider } from "./aspects/Emoji/EmojiFloat";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
+import { useAuthParameters } from "./aspects/GQL/AuthParameters";
 import { LiveEventsProvider } from "./aspects/LiveEvents/LiveEvents";
 import { RightSidebarCurrentTabProvider } from "./aspects/Menu/V2/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
@@ -45,35 +44,19 @@ export default function App(): JSX.Element {
     //     return <DownForMaintenancePage />;
     // }
 
-    const routed = useMemo(
-        () => (
-            <Switch>
-                <Route
-                    path="/conference/:confSlug"
-                    component={(
-                        props: RouteComponentProps<{
-                            confSlug: string;
-                        }>
-                    ) => <AppInner confSlug={props.match.params.confSlug} />}
-                />
-                <Route path="/">
-                    <AppInner confSlug={undefined} />
-                </Route>
-            </Switch>
-        ),
-        []
-    );
-
     return (
         <AppSettingsProvider>
             <ThemeProvider theme={chimeTheme}>
-                <MeetingProvider>{routed}</MeetingProvider>
+                <MeetingProvider>
+                    <AppInner />
+                </MeetingProvider>
             </ThemeProvider>
         </AppSettingsProvider>
     );
 }
 
-function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
+function AppInner(): JSX.Element {
+    const { conferenceId } = useAuthParameters();
     const { choice } = useUXChoice();
     const page = choice === UXChoice.V1 ? <AppPageV1 /> : <AppPageV2 />;
 
@@ -81,8 +64,8 @@ function AppInner({ confSlug }: { confSlug?: string }): JSX.Element {
         <EmojiFloatProvider>
             <RightSidebarCurrentTabProvider>
                 <CurrentUserProvider>
-                    {confSlug ? (
-                        <ConferenceProvider confSlug={confSlug}>
+                    {conferenceId ? (
+                        <ConferenceProvider conferenceId={conferenceId}>
                             <ForceUserRefresh />
                             <ConferenceCurrentUserActivePermissionsProvider>
                                 <CurrentRegistrantProvider>

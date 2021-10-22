@@ -1,18 +1,9 @@
 /* eslint-disable react/prop-types */
-import type { ApolloClient} from "@apollo/client";
+import type { ApolloClient } from "@apollo/client";
 import { ApolloError, gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import type {
-    RenderProps} from "@chakra-ui/react";
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    CloseButton,
-    createStandaloneToast,
-    Heading,
-    VStack,
-} from "@chakra-ui/react";
+import type { RenderProps } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
 import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -38,7 +29,8 @@ import type {
     UnpinChatMutation,
     UnpinChatMutationVariables,
     UnsubscribeChatMutation,
-    UnsubscribeChatMutationVariables} from "../../generated/graphql";
+    UnsubscribeChatMutationVariables,
+} from "../../generated/graphql";
 import {
     Chat_MessageType_Enum,
     Chat_ReactionType_Enum,
@@ -51,7 +43,7 @@ import {
     SelectMessagesPageDocument,
     SubscribeChatDocument,
     UnpinChatDocument,
-    UnsubscribeChatDocument
+    UnsubscribeChatDocument,
 } from "../../generated/graphql";
 import { theme } from "../Chakra/ChakraCustomProvider";
 import type { Registrant } from "../Conference/useCurrentRegistrant";
@@ -87,7 +79,7 @@ gql`
         DMRoom: rooms(where: { managementModeName: { _eq: DM } }) {
             id
             name
-            roomPeople {
+            roomMemberships {
                 id
                 registrant {
                     id

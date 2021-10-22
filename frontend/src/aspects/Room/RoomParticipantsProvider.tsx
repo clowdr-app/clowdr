@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
-import type { PropsWithChildren} from "react";
+import { gql } from "@urql/core";
+import type { PropsWithChildren } from "react";
 import React, { useContext } from "react";
 import { useGetAllRoomParticipantsQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";

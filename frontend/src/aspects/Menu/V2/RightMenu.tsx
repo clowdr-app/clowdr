@@ -37,9 +37,8 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
 
     const rightSections = useMemo(
         () =>
-            maybeConference?.slug && maybeRegistrant ? (
+            maybeRegistrant ? (
                 <RightSidebarSections
-                    confSlug={maybeConference.slug}
                     onClose={onRightBarClose}
                     externalSetPageChatUnreadCount={setPageChatUnreadCount}
                     externalSetChatsUnreadCount={setChatsUnreadCount}
@@ -47,7 +46,7 @@ export default function RightMenu({ isVisible }: { isVisible: boolean }): JSX.El
                     isVisible={isVisible}
                 />
             ) : undefined,
-        [maybeConference?.slug, maybeRegistrant, onRightBarClose, isVisible]
+        [maybeRegistrant, onRightBarClose, isVisible]
     );
     const sidebarBg = useColorModeValue(`${colorScheme}.50`, `${colorScheme}.900`);
     const [_isExpanded, setIsExpanded] = useRestorableState<boolean>(

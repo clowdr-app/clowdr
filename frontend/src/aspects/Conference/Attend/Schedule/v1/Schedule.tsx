@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
 import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
@@ -13,11 +13,9 @@ import type {
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
-    Schedule_TagFragment} from "../../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useSchedule_SelectSummariesQuery,
+    Schedule_TagFragment,
 } from "../../../../../generated/graphql";
+import { Permissions_Permission_Enum, useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";

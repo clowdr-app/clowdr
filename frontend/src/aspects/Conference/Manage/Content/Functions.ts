@@ -26,7 +26,7 @@ export function convertContentToDescriptors(allContent: SelectAllContentQuery): 
             ])
         ),
         people: new Map(
-            allContent.collection_ProgramPersonWithAccessToken.map((person): [string, ProgramPersonDescriptor] => [
+            allContent.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,

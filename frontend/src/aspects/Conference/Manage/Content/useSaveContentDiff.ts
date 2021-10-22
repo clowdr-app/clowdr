@@ -1,5 +1,5 @@
-import type { ApolloError} from "@apollo/client";
-import { gql } from "@apollo/client";
+import type { ApolloError } from "@apollo/client";
+import { gql } from "@urql/core";
 import assert from "assert";
 import { useEffect, useState } from "react";
 import type {
@@ -10,7 +10,8 @@ import type {
     Content_Element_Insert_Input,
     Content_ItemExhibition_Insert_Input,
     Content_ItemProgramPerson_Insert_Input,
-    Content_Item_Insert_Input} from "../../../../generated/graphql";
+    Content_Item_Insert_Input,
+} from "../../../../generated/graphql";
 import {
     useDeleteExhibitionsMutation,
     useDeleteOriginatingDatasMutation,
@@ -65,7 +66,7 @@ gql`
         data
     }
 
-    fragment ProgramPersonInfo on collection_ProgramPersonWithAccessToken {
+    fragment ProgramPersonInfo on collection_ProgramPerson {
         id
         conferenceId
         name
@@ -85,14 +86,12 @@ gql`
         id
         itemId
         exhibitionId
-        conferenceId
         priority
         layout
     }
 
     fragment ItemPersonInfo on content_ItemProgramPerson {
         id
-        conferenceId
         itemId
         personId
         priority
@@ -145,7 +144,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId }, typeName: { _neq: SPONSOR } }) {
             ...ItemFullNestedInfo
         }
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ProgramPersonInfo
         }
         conference_OriginatingData(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -228,8 +227,8 @@ gql`
         }
     }
 
-    mutation InsertProgramPeople($newPeople: [collection_ProgramPersonWithAccessToken_insert_input!]!) {
-        insert_collection_ProgramPersonWithAccessToken(objects: $newPeople) {
+    mutation InsertProgramPeople($newPeople: [collection_ProgramPerson_insert_input!]!) {
+        insert_collection_ProgramPerson(objects: $newPeople) {
             returning {
                 ...ProgramPersonInfo
             }
@@ -237,7 +236,7 @@ gql`
     }
 
     mutation DeleteProgramPeople($deletePersonIds: [uuid!]!) {
-        delete_collection_ProgramPersonWithAccessToken(where: { id: { _in: $deletePersonIds } }) {
+        delete_collection_ProgramPerson(where: { id: { _in: $deletePersonIds } }) {
             returning {
                 id
             }
@@ -356,7 +355,7 @@ gql`
         $originatingDataId: uuid = null
         $registrantId: uuid = null
     ) {
-        update_collection_ProgramPersonWithAccessToken(
+        update_collection_ProgramPerson(
             where: { id: { _eq: $id } }
             _set: {
                 name: $name

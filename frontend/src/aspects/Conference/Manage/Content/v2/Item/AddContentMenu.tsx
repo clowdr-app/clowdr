@@ -1,16 +1,12 @@
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
 import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { gql } from "@urql/core";
 import assert from "assert";
 import React, { useMemo } from "react";
-import type {
-    Content_Element_Insert_Input} from "../../../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useAddContentMenu_CreateElementMutation,
-} from "../../../../../../generated/graphql";
+import type { Content_Element_Insert_Input } from "../../../../../../generated/graphql";
+import { Content_ElementType_Enum, useAddContentMenu_CreateElementMutation } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
 import { ElementBaseTemplates } from "../Element/Kinds/Templates";
 

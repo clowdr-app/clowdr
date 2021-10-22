@@ -2,10 +2,10 @@ import { chakra, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/reac
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../Chat/GlobalChatStateProvider";
+import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import { FAIcon } from "../../Icons/FAIcon";
 import PageCountText from "../../Realtime/PageCountText";
-import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import { ChatsPanel } from "./RightSidebarPanels/ChatsPanel";
 import { ItemChatPanel } from "./RightSidebarPanels/ItemChatPanel";
 import { PresencePanel } from "./RightSidebarPanels/PresencePanel";
@@ -20,7 +20,7 @@ enum RightSidebarTabs {
     RaiseHand = 4,
 }
 
-function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }): JSX.Element {
+function RightSidebarConferenceSections_Inner(): JSX.Element {
     const { path } = useRouteMatch();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
@@ -70,16 +70,8 @@ function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }
         [roomId]
     );
     const itemPanel = useMemo(
-        () =>
-            itemId && (
-                <ItemChatPanel
-                    itemId={itemId}
-                    onChatIdLoaded={setPageChatId}
-                    confSlug={confSlug}
-                    setUnread={setPageChatUnread}
-                />
-            ),
-        [confSlug, itemId]
+        () => itemId && <ItemChatPanel itemId={itemId} onChatIdLoaded={setPageChatId} setUnread={setPageChatUnread} />,
+        [itemId]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -88,7 +80,6 @@ function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }
     const chatsPanel = useMemo(
         () => (
             <ChatsPanel
-                confSlug={confSlug}
                 pageChatId={pageChatId}
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
@@ -96,7 +87,7 @@ function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }
                 setUnread={setChatsUnread}
             />
         ),
-        [confSlug, pageChatId, switchToPageChat]
+        [pageChatId, switchToPageChat]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
@@ -189,18 +180,10 @@ function RightSidebarConferenceSections_Inner({ confSlug }: { confSlug: string }
     );
 }
 
-export default function RightSidebarConferenceSections({
-    confSlug,
-}: {
-    confSlug: string;
-    onClose: () => void;
-}): JSX.Element {
-    const user = useMaybeCurrentUser();
-    if (user.user && user.user.registrants.length > 0) {
-        const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
-        if (registrant) {
-            return <RightSidebarConferenceSections_Inner confSlug={confSlug} />;
-        }
+export default function RightSidebarConferenceSections(): JSX.Element {
+    const registrant = useMaybeCurrentRegistrant();
+    if (registrant) {
+        return <RightSidebarConferenceSections_Inner />;
     }
     return <></>;
 }

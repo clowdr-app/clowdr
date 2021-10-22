@@ -11,14 +11,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { contains, getRelatedTarget } from "@chakra-ui/utils";
-import type {
-    ElementDataBlob,
-    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    Content_ElementType_Enum,
-    ElementBaseType,
-    isElementDataBlob
-} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
+import { Content_ElementType_Enum, ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
@@ -90,7 +84,7 @@ export function VideoPlayer({
 
     const conference = useConference();
     const itemPath = data?.content_Element_by_pk?.item
-        ? `/conference/${conference.slug}/item/${data.content_Element_by_pk.item.id}`
+        ? `${conferenceUrl}/item/${data.content_Element_by_pk.item.id}`
         : undefined;
 
     const popoverRef = useRef<HTMLDivElement>(null);

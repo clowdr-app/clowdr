@@ -17,7 +17,7 @@ export default function SearchResult_Item({ item }: { item: SearchPanel_ItemFrag
             }}
             py={2}
             h="auto"
-            to={`/conference/${conference.slug}/item/${item.id}`}
+            to={`${conferenceUrl}/item/${item.id}`}
             shadow={shadow}
             size="md"
         >

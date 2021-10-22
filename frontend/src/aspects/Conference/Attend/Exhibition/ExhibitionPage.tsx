@@ -1,13 +1,8 @@
-import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useMemo } from "react";
-import type {
-    ExhibitionWithContentFragment,
-    ItemEventFragment} from "../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useSelectExhibitionQuery,
-} from "../../../../generated/graphql";
+import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -134,7 +129,7 @@ function ExhibitionPageInner({
                             {descriptiveItemDiscussionRoom ? (
                                 <LinkButton
                                     width="100%"
-                                    to={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                    to={`${conferenceUrl}/room/${descriptiveItemDiscussionRoom.id}`}
                                     size="lg"
                                     colorScheme="PrimaryActionButton"
                                     height="auto"
@@ -156,7 +151,7 @@ function ExhibitionPageInner({
                                             </chakra.span>
                                         </Text>
                                         <PageCountText
-                                            path={`/conference/${conference.slug}/room/${descriptiveItemDiscussionRoom.id}`}
+                                            path={`${conferenceUrl}/room/${descriptiveItemDiscussionRoom.id}`}
                                         />
                                     </VStack>
                                 </LinkButton>

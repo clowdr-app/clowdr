@@ -29,7 +29,7 @@ import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser"
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
-import type { Registrant} from "../../useCurrentRegistrant";
+import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
 import RegistrantItems from "./RegistrantItems";
@@ -60,11 +60,11 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                     Permissions_Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferenceUrl} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
-                            to={`/conference/${conference.slug}/profile/edit${
+                            to={`${conferenceUrl}/profile/edit${
                                 maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id
                                     ? ""
                                     : `/${registrant.id}`
@@ -241,7 +241,7 @@ export default function ViewProfilePage({ registrantId }: { registrantId?: strin
             Permissions_Permission_Enum.ConferenceManageRoles,
         ].some((permission) => activePermissions.has(permission))
     ) {
-        return <Redirect to={`/conference/${conference.slug}`} />;
+        return <Redirect to={conferenceUrl} />;
     }
 
     if (registrantId) {

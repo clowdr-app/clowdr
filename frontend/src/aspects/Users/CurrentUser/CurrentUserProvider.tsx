@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Alert,
@@ -15,14 +14,10 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import React, { useCallback, useMemo, useState } from "react";
-import type {
-    UserInfoFragment} from "../../../generated/graphql";
-import {
-    useAgreeToTermsMutation,
-    useSelectCurrentUserQuery,
-    useTermsConfigsQuery,
-} from "../../../generated/graphql";
+import type { UserInfoFragment } from "../../../generated/graphql";
+import { useAgreeToTermsMutation, useSelectCurrentUserQuery, useTermsConfigsQuery } from "../../../generated/graphql";
 import useUserId from "../../Auth/useUserId";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { useRestorableState } from "../../Generic/useRestorableState";
@@ -49,25 +44,7 @@ gql`
             shortName
             slug
         }
-        groupRegistrants {
-            id
-            group {
-                id
-                enabled
-                name
-                groupRoles {
-                    id
-                    role {
-                        id
-                        name
-                        rolePermissions {
-                            id
-                            permissionName
-                        }
-                    }
-                }
-            }
-        }
+        conferenceRole
     }
 
     fragment UserInfo on User {

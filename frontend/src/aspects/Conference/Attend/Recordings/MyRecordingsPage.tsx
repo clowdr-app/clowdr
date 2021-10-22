@@ -167,7 +167,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                     ) : save.recording.room ? (
                                                         <LinkButton
                                                             linkProps={{ m: "3px" }}
-                                                            to={`/conference/${conference.slug}/room/${save.recording.room.id}`}
+                                                            to={`${conferenceUrl}/room/${save.recording.room.id}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
                                                             Go to room

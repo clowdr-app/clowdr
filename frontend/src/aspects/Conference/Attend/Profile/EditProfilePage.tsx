@@ -42,7 +42,7 @@ import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import type { Profile, RegistrantContextT} from "../../useCurrentRegistrant";
+import type { Profile, RegistrantContextT } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import EditProfilePitureForm from "./EditProfilePictureForm";
 
@@ -419,14 +419,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="PrimaryActionButton">
+                        <LinkButton to={conferenceUrl} colorScheme="PrimaryActionButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
+                                    ? `${conferenceUrl}/profile/view`
+                                    : `${conferenceUrl}/profile/view/${registrant.id}`
                             }
                             colorScheme="PrimaryActionButton"
                         >
@@ -507,14 +507,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={`/conference/${conference.slug}`} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferenceUrl} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `/conference/${conference.slug}/profile/view`
-                                    : `/conference/${conference.slug}/profile/view/${registrant.id}`
+                                    ? `${conferenceUrl}/profile/view`
+                                    : `${conferenceUrl}/profile/view/${registrant.id}`
                             }
                             colorScheme="SecondaryActionButton"
                         >

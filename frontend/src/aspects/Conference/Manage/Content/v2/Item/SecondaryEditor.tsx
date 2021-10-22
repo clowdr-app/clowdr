@@ -22,11 +22,9 @@ import {
 import React, { useState } from "react";
 import type {
     ManageContent_ElementFragment,
-    ManageContent_ItemSecondaryFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    useManageContent_SelectItemQuery,
+    ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
+import { Content_ItemType_Enum, useManageContent_SelectItemQuery } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
@@ -122,7 +120,7 @@ function SecondaryEditorInner({
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
-                    to={`/conference/${conference.slug}/item/${itemId}`}
+                    to={`${conferenceUrl}/item/${itemId}`}
                     isExternal
                     aria-label="View item"
                     title="View item"
@@ -136,7 +134,7 @@ function SecondaryEditorInner({
                         {itemResponse.data.content_Item_by_pk.rooms.length === 1 ? (
                             <LinkButton
                                 size="sm"
-                                to={`/conference/${conference.slug}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
+                                to={`${conferenceUrl}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
                                 isExternal
                                 aria-label={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
@@ -166,7 +164,7 @@ function SecondaryEditorInner({
                                         <MenuItem key={room.id}>
                                             <Link
                                                 size="sm"
-                                                href={`/conference/${conference.slug}/room/${room.id}`}
+                                                href={`${conferenceUrl}/room/${room.id}`}
                                                 isExternal
                                                 aria-label="View discussion room"
                                                 title="View discussion room"

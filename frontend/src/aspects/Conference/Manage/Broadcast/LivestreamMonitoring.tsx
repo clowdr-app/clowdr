@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -22,12 +21,14 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type {
     MonitorLivestreams_EventFragment,
-    MonitorLivestreams_PersonFragment} from "../../../../generated/graphql";
+    MonitorLivestreams_PersonFragment,
+} from "../../../../generated/graphql";
 import {
     Schedule_EventProgramPersonRole_Enum,
     useMonitorLivestreamsQuery,
@@ -322,10 +323,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                                             <Text fontSize="sm" mr="auto">
                                                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                                                 &nbsp;
-                                                <Link
-                                                    as={ReactLink}
-                                                    to={`/conference/${conference.slug}/room/${room.id}`}
-                                                >
+                                                <Link as={ReactLink} to={`${conferenceUrl}/room/${room.id}`}>
                                                     {room.name}
                                                 </Link>
                                             </Text>
@@ -560,7 +558,7 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
             <Text p={1} fontSize="sm">
                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                 &nbsp;
-                <Link as={ReactLink} to={`/conference/${conference.slug}/room/${id}`}>
+                <Link as={ReactLink} to={`${conferenceUrl}/room/${id}`}>
                     {name}
                 </Link>
             </Text>
@@ -587,7 +585,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
     const [presences, setPresences] = useState<Set<string>>(new Set());
     useEffect(() => {
         const unobserve = presence.observePage(
-            `/conference/${conference.slug}/room/${event.room.id}`,
+            `${conferenceUrl}/room/${event.room.id}`,
             conference.slug,
             (newPresences) => {
                 setPresences(new Set(newPresences));
@@ -629,7 +627,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                             minute: "2-digit",
                         })}{" "}
                         in{" "}
-                        <Link as={ReactLink} to={`/conference/${conference.slug}/room/${event.room.id}`}>
+                        <Link as={ReactLink} to={`${conferenceUrl}/room/${event.room.id}`}>
                             {event.room.name}
                         </Link>
                     </Text>
@@ -647,7 +645,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                         {event.item ? (
                             <>
                                 {": "}
-                                <Link as={ReactLink} to={`/conference/${conference.slug}/item/${event.item.id}`}>
+                                <Link as={ReactLink} to={`${conferenceUrl}/item/${event.item.id}`}>
                                     {event.item.title}
                                 </Link>
                             </>

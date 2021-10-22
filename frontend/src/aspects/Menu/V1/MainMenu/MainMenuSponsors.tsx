@@ -1,12 +1,12 @@
-import { gql } from "@apollo/client";
 import { Grid, GridItem, Image, List, ListItem, Text, useToken, VStack } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
-import type { MainMenuSponsors_ItemDataFragment} from "../../../../generated/graphql";
+import type { MainMenuSponsors_ItemDataFragment } from "../../../../generated/graphql";
 import { useMainMenuSponsors_GetSponsorsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { Participants } from "../../../Conference/Attend/Rooms/V1/RoomParticipants";
@@ -119,8 +119,8 @@ export function MainMenuSponsors(): JSX.Element {
                         sponsorItems
                     ).map((sponsorItem) => {
                         const url = sponsorItem.rooms.length
-                            ? `/conference/${conference.slug}/room/${sponsorItem.rooms[0].id}`
-                            : `/conference/${conference.slug}/item/${sponsorItem.id}`;
+                            ? `${conferenceUrl}/room/${sponsorItem.rooms[0].id}`
+                            : `${conferenceUrl}/item/${sponsorItem.id}`;
                         return (
                             <ListItem key={sponsorItem.id} mb={2} h="auto" width="100%">
                                 <LinkButton

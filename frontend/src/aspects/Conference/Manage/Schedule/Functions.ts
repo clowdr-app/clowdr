@@ -28,7 +28,6 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
                     originatingDataId: event.originatingDataId,
                     roomId: event.roomId,
                     startTime: event.startTime,
-                    tagIds: new Set(event.eventTags.map((x) => x.tagId)),
                     enableRecording: event.enableRecording,
                 },
             ])
@@ -81,7 +80,7 @@ export function convertScheduleToDescriptors(schedule: SelectWholeScheduleQuery)
             ])
         ),
         people: new Map(
-            schedule.collection_ProgramPersonWithAccessToken.map((person): [string, ProgramPersonDescriptor] => [
+            schedule.collection_ProgramPerson.map((person): [string, ProgramPersonDescriptor] => [
                 person.id,
                 {
                     id: person.id,
@@ -108,7 +107,6 @@ export function deepCloneEventDescriptor(event: EventDescriptor): EventDescripto
         originatingDataId: event.originatingDataId,
         roomId: event.roomId,
         startTime: event.startTime,
-        tagIds: new Set(event.tagIds),
         enableRecording: event.enableRecording,
     };
 }

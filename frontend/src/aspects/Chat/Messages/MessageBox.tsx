@@ -2,13 +2,8 @@ import { Button, Flex, HStack, Image, Text, useColorModeValue, VStack } from "@c
 import React, { useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import ReactPlayer from "react-player";
-import type {
-    ChatReactionDataFragment,
-    RegistrantDataFragment} from "../../../generated/graphql";
-import {
-    Chat_MessageType_Enum,
-    Chat_ReactionType_Enum
-} from "../../../generated/graphql";
+import type { ChatReactionDataFragment, RegistrantDataFragment } from "../../../generated/graphql";
+import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";
 import ProfileBadge from "../../Badges/ProfileBadge";
 import { DownloadButton } from "../../Chakra/LinkButton";
 import { useRegistrant } from "../../Conference/RegistrantsContext";
@@ -20,7 +15,7 @@ import { Markdown } from "../../Text/Markdown";
 import type { MessageState } from "../ChatGlobalState";
 import { MessageTypeIndicator } from "../Compose/MessageTypeIndicator";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
-import type { BaseMessageData} from "../Types/Messages";
+import type { BaseMessageData } from "../Types/Messages";
 import { MediaType } from "../Types/Messages";
 import MessageControls from "./MessageControls";
 import PollOptions from "./PollOptions";
@@ -371,7 +366,7 @@ function MessageBody({
         //                 borderRadius={5}
         //                 fontFamily="monospace"
         //                 noOfLines={1}
-        //                 to={`/conference/${conference.slug}/room/${data.room.id}`}
+        //                 to={`${conferenceUrl}/room/${data.room.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,
@@ -389,7 +384,7 @@ function MessageBody({
         //                 m={0}
         //                 minH={0}
         //                 h="100%"
-        //                 to={`/conference/${conference.slug}/item/${data.item.id}`}
+        //                 to={`${conferenceUrl}/item/${data.item.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,

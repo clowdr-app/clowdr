@@ -1,13 +1,9 @@
-import { gql } from "@apollo/client";
 import { Spinner } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    RoomParticipantDetailsFragment,
-    SocialRoomFragment} from "../../../../../generated/graphql";
-import {
-    useGetSocialRoomsQuery,
-} from "../../../../../generated/graphql";
+import type { RoomParticipantDetailsFragment, SocialRoomFragment } from "../../../../../generated/graphql";
+import { useGetSocialRoomsQuery } from "../../../../../generated/graphql";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -23,7 +19,7 @@ gql`
                 originatingEventId: { _is_null: true }
                 _or: [
                     { managementModeName: { _eq: PUBLIC } }
-                    { managementModeName: { _eq: PRIVATE }, roomPeople: { registrantId: { _eq: $registrantId } } }
+                    { managementModeName: { _eq: PRIVATE }, roomMemberships: { registrantId: { _eq: $registrantId } } }
                 ]
             }
             order_by: { name: asc }

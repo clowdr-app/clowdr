@@ -3,7 +3,7 @@ import React from "react";
 import Sections from "./LeftSidebarConferenceSections";
 import { useMainMenu } from "./MainMenu/MainMenuState";
 
-export default function LeftSidebar({ confSlug }: { confSlug: string }): JSX.Element {
+export default function LeftSidebar(): JSX.Element {
     const { onLeftBarClose } = useMainMenu();
 
     return (
@@ -18,7 +18,7 @@ export default function LeftSidebar({ confSlug }: { confSlug: string }): JSX.Ele
             role="navigation"
             aria-label="Main navigation"
         >
-            <Sections confSlug={confSlug} onClose={onLeftBarClose} />
+            <Sections onClose={onLeftBarClose} />
         </VStack>
     );
 }

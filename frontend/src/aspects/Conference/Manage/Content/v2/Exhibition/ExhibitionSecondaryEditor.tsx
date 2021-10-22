@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
@@ -31,11 +30,13 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo, useState } from "react";
 import type {
     ManageContent_ItemExhibitionFragment,
-    ManageContent_ItemFragment} from "../../../../../../generated/graphql";
+    ManageContent_ItemFragment,
+} from "../../../../../../generated/graphql";
 import {
     ManageContent_ItemExhibitionFragmentDoc,
     useManageContent_DeleteItemExhibitionMutation,
@@ -56,14 +57,9 @@ gql`
         }
     }
 
-    mutation ManageContent_InsertItemExhibition(
-        $conferenceId: uuid!
-        $exhibitionId: uuid!
-        $itemId: uuid!
-        $priority: Int!
-    ) {
+    mutation ManageContent_InsertItemExhibition($exhibitionId: uuid!, $itemId: uuid!, $priority: Int!) {
         insert_content_ItemExhibition_one(
-            object: { conferenceId: $conferenceId, exhibitionId: $exhibitionId, itemId: $itemId, priority: $priority }
+            object: { exhibitionId: $exhibitionId, itemId: $itemId, priority: $priority }
         ) {
             ...ManageContent_ItemExhibition
         }
@@ -168,7 +164,7 @@ function SecondaryEditorInner({
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
-                    to={`/conference/${conference.slug}/exhibition/${exhibitionId}`}
+                    to={`${conferenceUrl}/exhibition/${exhibitionId}`}
                     isExternal
                     aria-label="View item"
                     title="View item"

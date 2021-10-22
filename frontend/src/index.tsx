@@ -8,6 +8,7 @@ import { AppError } from "./AppError";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
 import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
+import { AuthParametersProvider } from "./aspects/GQL/AuthParameters";
 import UrqlProvider from "./aspects/GQL/UrqlProvider";
 import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";
@@ -17,20 +18,22 @@ ReactDOM.render(
     <React.StrictMode>
         <ErrorBoundary FallbackComponent={AppError}>
             <VonageGlobalStateProvider>
-                <HelmetProvider>
-                    <BrowserRouter>
-                        <Auth0CustomProvider>
-                            <UrqlProvider>
-                                <ChakraCustomProvider>
-                                    <UXChoiceProvider>
-                                        <UXChoiceDialog />
-                                        <App />
-                                    </UXChoiceProvider>
-                                </ChakraCustomProvider>
-                            </UrqlProvider>
-                        </Auth0CustomProvider>
-                    </BrowserRouter>
-                </HelmetProvider>
+                <AuthParametersProvider>
+                    <HelmetProvider>
+                        <BrowserRouter>
+                            <Auth0CustomProvider>
+                                <UrqlProvider>
+                                    <ChakraCustomProvider>
+                                        <UXChoiceProvider>
+                                            <UXChoiceDialog />
+                                            <App />
+                                        </UXChoiceProvider>
+                                    </ChakraCustomProvider>
+                                </UrqlProvider>
+                            </Auth0CustomProvider>
+                        </BrowserRouter>
+                    </HelmetProvider>
+                </AuthParametersProvider>
             </VonageGlobalStateProvider>
         </ErrorBoundary>
     </React.StrictMode>,

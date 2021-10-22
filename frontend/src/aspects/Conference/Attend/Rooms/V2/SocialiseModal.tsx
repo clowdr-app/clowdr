@@ -129,7 +129,7 @@ export default function SocialiseModal({
             // Wait, because Vonage session creation is not instantaneous
             setTimeout(() => {
                 cb();
-                history.push(`/conference/${conference.slug}/room/${id}`);
+                history.push(`${conferenceUrl}/room/${id}`);
             }, 2000);
         },
         [conference.slug, history]

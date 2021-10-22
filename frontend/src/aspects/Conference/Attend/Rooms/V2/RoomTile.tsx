@@ -73,7 +73,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
             py={0}
             overflow="hidden"
             onClick={() => {
-                history.push(`/conference/${conference.slug}/room/${roomId}`);
+                history.push(`${conferenceUrl}/room/${roomId}`);
             }}
             pos="relative"
         >

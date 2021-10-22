@@ -7,12 +7,12 @@ import { RoomMembersContext } from "./useRoomMembers";
 
 gql`
     query GetRoomMembers($roomId: uuid!) {
-        room_RoomPerson(where: { roomId: { _eq: $roomId } }) {
+        room_RoomMembership(where: { roomId: { _eq: $roomId } }) {
             ...RoomMember
         }
     }
 
-    fragment RoomMember on room_RoomPerson {
+    fragment RoomMember on room_RoomMembership {
         id
         roomId
         personRoleName
@@ -35,7 +35,7 @@ export default function RoomMembersProvider({
     useQueryErrorToast(error, true, "RoomMembersProvider:GetRoomMembers");
 
     const value: RoomMembersInfos = useMemo(
-        () => (data ? data.room_RoomPerson : loading ? false : undefined),
+        () => (data ? data.room_RoomMembership : loading ? false : undefined),
         [data, loading]
     );
 

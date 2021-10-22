@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -40,12 +39,12 @@ import {
     useClipboard,
     useDisclosure,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    RoomWithParticipantInfoFragment} from "../../../generated/graphql";
+import type { RoomWithParticipantInfoFragment } from "../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
     RoomWithParticipantInfoFragmentDoc,
@@ -76,10 +75,9 @@ import type {
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification} from "../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
@@ -134,12 +132,12 @@ gql`
         }
     }
 
-    query ManageRooms_SelectGroups($conferenceId: uuid!) {
-        permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-            id
-            name
-        }
-    }
+    # query ManageRooms_SelectGroups($conferenceId: uuid!) {
+    #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+    #         id
+    #         name
+    #     }
+    # }
 
     query ManageRooms_SelectItems($conferenceId: uuid!) {
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -148,15 +146,15 @@ gql`
         }
     }
 
-    query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
-        permissions_GroupRegistrant(where: { groupId: { _eq: $groupId } }) {
-            id
-            groupId
-            registrantId
-        }
-    }
+    # query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
+    #     permissions_GroupRegistrant(where: { groupId: { _eq: $groupId } }) {
+    #         id
+    #         groupId
+    #         registrantId
+    #     }
+    # }
 
-    fragment RoomPersonInfo on room_RoomPerson {
+    fragment RoomPersonInfo on room_RoomMembership {
         id
         registrant {
             id
@@ -166,7 +164,7 @@ gql`
     }
 
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
-        room_RoomPerson(where: { roomId: { _eq: $roomId } }) {
+        room_RoomMembership(where: { roomId: { _eq: $roomId } }) {
             ...RoomPersonInfo
         }
     }
@@ -221,8 +219,8 @@ gql`
         }
     }
 
-    mutation InsertRoomPeople($people: [room_RoomPerson_insert_input!]!) {
-        insert_room_RoomPerson(
+    mutation InsertRoomPeople($people: [room_RoomMembership_insert_input!]!) {
+        insert_room_RoomMembership(
             objects: $people
             on_conflict: { constraint: RoomPerson_registrantId_roomId_key, update_columns: [] }
         ) {
@@ -345,7 +343,7 @@ function RoomSecondaryEditor({
                             <>
                                 <ButtonGroup>
                                     <LinkButton
-                                        to={`/conference/${conference.slug}/room/${room.id}`}
+                                        to={`${conferenceUrl}/room/${room.id}`}
                                         colorScheme="purple"
                                         mb={4}
                                         isExternal={true}
@@ -457,11 +455,11 @@ function RoomSecondaryEditor({
                                                 <AccordionIcon />
                                             </AccordionButton>
                                             <AccordionPanel pt={4} pb={4}>
-                                                {people.data.room_RoomPerson.length === 0 ? (
+                                                {people.data.room_RoomMembership.length === 0 ? (
                                                     "Room has no members."
                                                 ) : (
                                                     <UnorderedList>
-                                                        {people.data.room_RoomPerson.map((member) => (
+                                                        {people.data.room_RoomMembership.map((member) => (
                                                             <ListItem key={member.id}>
                                                                 {member.registrant.displayName}
                                                             </ListItem>
@@ -1149,7 +1147,7 @@ function EditableRoomsCRUDTable() {
             // {
             //     render: function ImportButton(_selectedData) {
             //         return (
-            //             <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/schedule`}>
+            //             <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/schedule`}>
             //                 Import
             //             </LinkButton>
             //         );

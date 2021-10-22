@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -25,16 +24,15 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import React, { useEffect, useMemo } from "react";
 import type {
     ManageShufflePeriods_SelectAllQuery,
     ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment} from "../../../../generated/graphql";
-import {
-    ManageShufflePeriods_SelectAllDocument,
-    useDeleteShufflePeriodMutation,
+    ManageShufflePeriods_ShufflePeriodFragment,
 } from "../../../../generated/graphql";
+import { ManageShufflePeriods_SelectAllDocument, useDeleteShufflePeriodMutation } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import ContinuationsEditor from "../Schedule/ContinuationsEditor";

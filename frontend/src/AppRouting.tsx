@@ -1,9 +1,8 @@
-import { gql } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import React, { useEffect, useMemo } from "react";
-import type { RouteComponentProps } from "react-router-dom";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
@@ -12,9 +11,7 @@ import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
 import { useConferenceTheme } from "./aspects/Chakra/ChakraCustomProvider";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
 import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
-import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
-import OldAccessFormatRedirectionPage from "./aspects/Content/OldAccessFormatRedirectionPage";
 import ViewItemPage from "./aspects/Content/Submissions/ViewItemPage";
 import ViewItemsPage from "./aspects/Content/Submissions/ViewItemsPage";
 import SubmitElementPage from "./aspects/Content/SubmitElementPage";
@@ -22,6 +19,7 @@ import CRUDTestPage from "./aspects/CRUDTable/CRUDTestPage";
 import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import { GoogleOAuth, GoogleOAuthRedirect } from "./aspects/Google/GoogleOAuth";
+import { useAuthParameters } from "./aspects/GQL/AuthParameters";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import PushNotificationSettings from "./aspects/PushNotifications/PushNotificationSettings";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
@@ -29,13 +27,110 @@ import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
 
-export default function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
+gql`
+    query GetSlugForUrl($url: String!) {
+        getSlug(url: $url) {
+            slug
+        }
+    }
+`;
+
+export default function DetectSlug(): JSX.Element {
+    return (
+        <Switch>
+            <Route
+                path="/conference/:confSlug"
+                component={(
+                    props: RouteComponentProps<{
+                        confSlug: string;
+                    }>
+                ) => <Routing confSlug={props.match.params.confSlug} />}
+            />
+            <Route path="/">
+                <CheckSlug />
+            </Route>
+        </Switch>
+    );
+}
+
+function CheckSlug(): JSX.Element {
+    const slugCache = useMemo(() => {
+        const str = window.localStorage.getItem("SLUG_CACHE");
+        if (str) {
+            return JSON.parse(str);
+        }
+        return null;
+    }, []);
+    const origin = useMemo(() => window.location.origin, []);
+    const existingMapping = useMemo(() => {
+        const entry = slugCache?.[origin];
+        if (entry) {
+            try {
+                assert(entry.expiry && typeof entry.expiry === "number");
+                assert(entry.value && typeof entry.expiry === "string");
+                if (entry.expiry > Date.now()) {
+                    return entry.value as string;
+                } else {
+                    delete slugCache[origin];
+                    window.localStorage.setItem("SLUG_CACHE", slugCache);
+                }
+            } catch {
+                window.localStorage.removeItem("SLUG_CACHE");
+            }
+        }
+        return undefined;
+    }, [origin, slugCache]);
+    if (!existingMapping) {
+        return <CheckSlugInner />;
+    } else {
+        return <Routing confSlug={existingMapping} />;
+    }
+}
+
+function CheckSlugInner(): JSX.Element {
+    const origin = useMemo(() => window.location.origin, []);
+    const response = useGetSlugForUrlQuery({
+        variables: {
+            url: origin,
+        },
+    });
+    useEffect(() => {
+        if (response.data?.getSlug?.slug) {
+            const cacheStr = window.localStorage.getItem("SLUG_CACHE");
+            let cache;
+            if (cacheStr) {
+                cache = JSON.parse(cacheStr);
+            } else {
+                cache = {};
+            }
+            cache[origin] = { value: response.data.getSlug.slug, expiry: Date.now() + 7 * 24 * 60 * 60 * 1000 };
+            window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
+        }
+    }, [origin, response.data?.getSlug?.slug]);
+    if (!response.loading && response.data) {
+        if (!response.data.getSlug?.slug) {
+            return <Routing />;
+        } else {
+            return <Routing confSlug={response.data.getSlug.slug} />;
+        }
+    }
+
+    return <CenteredSpinner />;
+}
+
+function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
+    const { path } = useRouteMatch();
+    const { setConferenceSlug, setConferenceUrl } = useAuthParameters();
     const { setTheme } = useConferenceTheme();
     useEffect(() => {
         if (!confSlug) {
             setTheme(undefined);
         }
-    }, [confSlug, setTheme]);
+
+        setConferenceSlug(confSlug ?? null);
+        setConferenceUrl(confSlug ? path : null);
+    }, [confSlug, setTheme, setConferenceSlug, setConferenceUrl, path]);
+
     return (
         <Switch>
             <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />
@@ -137,27 +232,8 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
 
             <ProtectedRoute altIfNotAuthed={<Redirect to="/" />} exact path="/googleoauth2" component={GoogleOAuth} />
 
-            {confSlug && <ConferenceRoutes />}
-
             {/* A page for easy testing of the HLS video player */}
             <Route path="/video-player" component={VideoTestPage} />
-
-            {
-                <Route
-                    path="/upload/:id/:token"
-                    component={(
-                        props: RouteComponentProps<{
-                            token: string;
-                            id: string;
-                        }>
-                    ) => (
-                        <OldAccessFormatRedirectionPage
-                            magicToken={props.match.params.token}
-                            elementId={props.match.params.id}
-                        />
-                    )}
-                />
-            }
 
             <Route
                 path="/submissions/:token/item/:itemId/element/:elementId"
@@ -196,111 +272,23 @@ export default function Routing({ confSlug }: { confSlug?: string }): JSX.Elemen
 
             <Route exact path="/googleoauth" component={GoogleOAuthRedirect} />
 
-            <Route path="/">
-                <CheckSlug />
-            </Route>
-        </Switch>
-    );
-}
-
-gql`
-    query GetSlugForUrl($url: String!) {
-        getSlug(url: $url) {
-            slug
-        }
-    }
-`;
-
-function CheckSlug(): JSX.Element {
-    const slugCache = useMemo(() => {
-        const str = window.localStorage.getItem("SLUG_CACHE");
-        if (str) {
-            return JSON.parse(str);
-        }
-        return null;
-    }, []);
-    const origin = useMemo(() => window.location.origin, []);
-    const existingMapping = useMemo(() => {
-        const entry = slugCache?.[origin];
-        if (entry) {
-            try {
-                assert(entry.expiry && typeof entry.expiry === "number");
-                assert(entry.value && typeof entry.expiry === "string");
-                if (entry.expiry > Date.now()) {
-                    return entry.value as string;
-                } else {
-                    delete slugCache[origin];
-                    window.localStorage.setItem("SLUG_CACHE", slugCache);
-                }
-            } catch {
-                window.localStorage.removeItem("SLUG_CACHE");
-            }
-        }
-        return undefined;
-    }, [origin, slugCache]);
-    useEffect(() => {
-        if (existingMapping) {
-            window.location.replace(
-                `/conference/${existingMapping}${window.location.pathname}${window.location.hash}${window.location.search}`
-            );
-        }
-    }, [existingMapping]);
-    if (!existingMapping) {
-        return <CheckSlugInner />;
-    } else {
-        return <></>;
-    }
-}
-
-function CheckSlugInner(): JSX.Element {
-    const origin = useMemo(() => window.location.origin, []);
-    const response = useGetSlugForUrlQuery({
-        variables: {
-            url: origin,
-        },
-    });
-    useEffect(() => {
-        if (response.data?.getSlug?.slug) {
-            const cacheStr = window.localStorage.getItem("SLUG_CACHE");
-            let cache;
-            if (cacheStr) {
-                cache = JSON.parse(cacheStr);
-            } else {
-                cache = {};
-            }
-            cache[origin] = { value: response.data.getSlug.slug, expiry: Date.now() + 7 * 24 * 60 * 60 * 1000 };
-            window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
-
-            window.location.replace(
-                `/conference/${response.data.getSlug.slug}${window.location.pathname}${window.location.hash}${window.location.search}`
-            );
-        }
-    }, [origin, response.data?.getSlug?.slug]);
-    if (!response.loading && response.data) {
-        if (!response.data.getSlug?.slug) {
-            return <NoSlug />;
-        }
-    }
-
-    return <CenteredSpinner />;
-}
-
-function NoSlug(): JSX.Element {
-    return (
-        <Switch>
-            <ProtectedRoute
-                altIfNotAuthed={
-                    <Route exact path="/">
-                        <NewUserLandingPage />
+            {!confSlug ? (
+                <Switch>
+                    <ProtectedRoute
+                        altIfNotAuthed={
+                            <Route exact path="/">
+                                <NewUserLandingPage />
+                            </Route>
+                        }
+                        exact
+                        path="/"
+                        component={ExistingUserLandingPage}
+                    />
+                    <Route path="/">
+                        <PageNotFound />
                     </Route>
-                }
-                exact
-                path="/"
-                component={ExistingUserLandingPage}
-            />
-            <Route path="/">
-                <PageNotFound />
-            </Route>
+                </Switch>
+            ) : undefined}
         </Switch>
     );
 }

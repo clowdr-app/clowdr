@@ -1,5 +1,4 @@
 import type { Reference } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -19,13 +18,15 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragment,
-    ManageProgramPeople_RegistrantFragment} from "../../../generated/graphql";
+    ManageProgramPeople_RegistrantFragment,
+} from "../../../generated/graphql";
 import {
     ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
     Permissions_Permission_Enum,
@@ -44,10 +45,9 @@ import type {
     Delete,
     Insert,
     RowSpecification,
-    Update} from "../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection
+    Update,
 } from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -73,7 +73,7 @@ gql`
         }
     }
 
-    fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPersonWithAccessToken {
+    fragment ManageProgramPeople_ProgramPersonWithAccessToken on collection_ProgramPerson {
         id
         conferenceId
         name
@@ -85,7 +85,7 @@ gql`
     }
 
     query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
-        collection_ProgramPersonWithAccessToken(where: { conferenceId: { _eq: $conferenceId } }) {
+        collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
@@ -96,14 +96,14 @@ gql`
         }
     }
 
-    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPersonWithAccessToken_insert_input!) {
-        insert_collection_ProgramPersonWithAccessToken_one(object: $person) {
+    mutation ManageProgramPeople_InsertProgramPerson($person: collection_ProgramPerson_insert_input!) {
+        insert_collection_ProgramPerson_one(object: $person) {
             ...ManageProgramPeople_ProgramPersonWithAccessToken
         }
     }
 
     mutation ManageProgramPeople_DeleteProgramPersons($ids: [uuid!] = []) {
-        delete_collection_ProgramPersonWithAccessToken(where: { id: { _in: $ids } }) {
+        delete_collection_ProgramPerson(where: { id: { _in: $ids } }) {
             returning {
                 id
             }
@@ -117,7 +117,7 @@ gql`
         $email: String
         $registrantId: uuid
     ) {
-        update_collection_ProgramPersonWithAccessToken(
+        update_collection_ProgramPerson(
             where: { id: { _eq: $id } }
             _set: { name: $name, affiliation: $affiliation, email: $email, registrantId: $registrantId }
         ) {
@@ -500,8 +500,8 @@ export default function ManageProgramPeople(): JSX.Element {
     });
     useQueryErrorToast(errorAllProgramPersons, false);
     const data = useMemo(
-        () => [...(allProgramPersons?.collection_ProgramPersonWithAccessToken ?? [])],
-        [allProgramPersons?.collection_ProgramPersonWithAccessToken]
+        () => [...(allProgramPersons?.collection_ProgramPerson ?? [])],
+        [allProgramPersons?.collection_ProgramPerson]
     );
 
     const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
@@ -533,8 +533,8 @@ export default function ManageProgramPeople(): JSX.Element {
                         },
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.insert_collection_ProgramPersonWithAccessToken_one) {
-                            const data = _data.insert_collection_ProgramPersonWithAccessToken_one;
+                        if (_data?.insert_collection_ProgramPerson_one) {
+                            const data = _data.insert_collection_ProgramPerson_one;
                             cache.writeFragment({
                                 data,
                                 fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
@@ -559,8 +559,8 @@ export default function ManageProgramPeople(): JSX.Element {
                     email: record.email !== "" ? record.email ?? null : null,
                 },
                 update: (cache, { data: _data }) => {
-                    if (_data?.update_collection_ProgramPersonWithAccessToken?.returning.length) {
-                        const data = _data.update_collection_ProgramPersonWithAccessToken.returning[0];
+                    if (_data?.update_collection_ProgramPerson?.returning.length) {
+                        const data = _data.update_collection_ProgramPerson.returning[0];
                         cache.writeFragment({
                             data,
                             fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
@@ -590,15 +590,12 @@ export default function ManageProgramPeople(): JSX.Element {
                         ids: keys,
                     },
                     update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_ProgramPersonWithAccessToken) {
-                            const data = _data.delete_collection_ProgramPersonWithAccessToken;
+                        if (_data?.delete_collection_ProgramPerson) {
+                            const data = _data.delete_collection_ProgramPerson;
                             const deletedIds = data.returning.map((x) => x.id);
                             cache.modify({
                                 fields: {
-                                    collection_ProgramPersonWithAccessToken(
-                                        existingRefs: Reference[] = [],
-                                        { readField }
-                                    ) {
+                                    collection_ProgramPerson(existingRefs: Reference[] = [], { readField }) {
                                         deletedIds.forEach((x) => {
                                             cache.evict({
                                                 id: x.id,
@@ -691,7 +688,7 @@ export default function ManageProgramPeople(): JSX.Element {
             {
                 render: function ImportButton(_selectedData: any) {
                     return (
-                        <LinkButton colorScheme="purple" to={`/conference/${conference.slug}/manage/import/content`}>
+                        <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/content`}>
                             Import
                         </LinkButton>
                     );
@@ -871,7 +868,7 @@ export default function ManageProgramPeople(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Program People
             </Heading>
-            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPersonWithAccessToken ? (
+            {loadingAllProgramPersons && !allProgramPersons?.collection_ProgramPerson ? (
                 <></>
             ) : errorAllProgramPersons ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
@@ -879,10 +876,7 @@ export default function ManageProgramPeople(): JSX.Element {
                 <></>
             )}
             <CRUDTable
-                data={
-                    !loadingAllProgramPersons &&
-                    (allProgramPersons?.collection_ProgramPersonWithAccessToken ? data : null)
-                }
+                data={!loadingAllProgramPersons && (allProgramPersons?.collection_ProgramPerson ? data : null)}
                 tableUniqueName="ManageConferenceProgramPeople"
                 row={row}
                 columns={columns}

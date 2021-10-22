@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -21,6 +20,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { SketchPicker } from "react-color";
@@ -28,7 +28,8 @@ import Color from "tinycolor2";
 import type {
     ContinuationsEditor_ContinuationFragment,
     ContinuationsEditor_SelectContinuationsQuery,
-    ContinuationsEditor_SelectContinuationsQueryVariables} from "../../../../generated/graphql";
+    ContinuationsEditor_SelectContinuationsQueryVariables,
+} from "../../../../generated/graphql";
 import {
     ContinuationsEditor_ContinuationFragmentDoc,
     ContinuationsEditor_SelectContinuationsDocument,

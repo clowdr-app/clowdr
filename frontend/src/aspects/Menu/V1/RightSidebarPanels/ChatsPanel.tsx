@@ -2,7 +2,7 @@ import { AtSignIcon, ChatIcon, LockIcon } from "@chakra-ui/icons";
 import { Button, Divider, List, ListIcon, ListItem, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { gql } from "urql";
 import { useCreateDmMutation } from "../../../../generated/graphql";
 import { Chat } from "../../../Chat/Chat";
@@ -45,14 +45,12 @@ export function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () =
 }
 
 export function ChatsPanel({
-    confSlug,
     pageChatId,
     switchToPageChat,
     openChat,
     closeChat,
     setUnread,
 }: {
-    confSlug: string;
     pageChatId: string | null;
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
@@ -290,6 +288,7 @@ export function ChatsPanel({
     );
 
     const chat_IsVisible = React.useRef<boolean>(true);
+    const { path } = useRouteMatch();
     const chatEl = useMemo(() => {
         if (currentChatId && currentChatId !== pageChatId) {
             if (currentChat) {
@@ -314,9 +313,7 @@ export function ChatsPanel({
                                             key="room-button"
                                             size="xs"
                                             colorScheme="PrimaryActionButton"
-                                            onClick={() =>
-                                                history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
-                                            }
+                                            onClick={() => history.push(`${path}/room/${currentChat.RoomId}`)}
                                             aria-label="Go to video room for this chat"
                                         >
                                             <FAIcon iconStyle="s" icon="video" />
@@ -333,7 +330,7 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [confSlug, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
+    }, [path, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
 
     const chatLists = useMemo(
         () => (

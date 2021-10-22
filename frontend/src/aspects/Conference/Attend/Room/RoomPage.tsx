@@ -1,11 +1,7 @@
-import { gql } from "@apollo/client";
+import { gql } from "@urql/core";
 import React from "react";
-import type {
-    RoomPage_RoomDetailsFragment} from "../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useRoomPage_GetRoomDetailsQuery,
-} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
@@ -41,7 +37,9 @@ gql`
             title
         }
         managementModeName
-        selfAdminPerson: roomPeople(where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId } }) {
+        selfAdminPerson: roomMemberships(
+            where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId } }
+        ) {
             id
         }
         shuffleRooms(limit: 1, order_by: { id: desc }) {

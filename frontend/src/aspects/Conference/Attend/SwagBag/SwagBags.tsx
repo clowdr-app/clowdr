@@ -1,23 +1,13 @@
-import { gql } from "@apollo/client";
 import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
-import type {
-    ElementBlob,
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    ElementBaseType,
-    isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+import type { ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
-import type {
-    ElementDataFragment,
-    SwagBagFragment} from "../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSelectSwagBagsQuery,
-} from "../../../../generated/graphql";
+import type { ElementDataFragment, SwagBagFragment } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, useSelectSwagBagsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
@@ -298,7 +288,7 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
         }
     }, [logoElement]);
 
-    const itemUrl = `/conference/${conference.slug}/item/${bag.id}`;
+    const itemUrl = `${conferenceUrl}/item/${bag.id}`;
 
     return (
         <Flex

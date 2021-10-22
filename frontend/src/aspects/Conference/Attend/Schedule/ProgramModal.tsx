@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Modal,
     ModalBody,
@@ -13,7 +12,8 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import type { MutableRefObject} from "react";
+import { gql } from "@urql/core";
+import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
     Schedule_EventSummaryFragment,
@@ -21,11 +21,9 @@ import type {
     Schedule_ItemFieldsFragment,
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
-    Schedule_TagFragment} from "../../../../generated/graphql";
-import {
-    useGetSponsorBoothsQuery,
-    useSchedule_HappeningSoonQuery,
+    Schedule_TagFragment,
 } from "../../../../generated/graphql";
+import { useGetSponsorBoothsQuery, useSchedule_HappeningSoonQuery } from "../../../../generated/graphql";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useRestorableState } from "../../../Generic/useRestorableState";

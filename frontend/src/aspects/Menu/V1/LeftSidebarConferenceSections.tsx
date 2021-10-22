@@ -10,21 +10,16 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import React, { useEffect } from "react";
-import type {
-    RegistrantFieldsFragment,
-    RoomListRoomDetailsFragment} from "../../../generated/graphql";
-import {
-    useGetAllTodaysRoomsQuery,
-} from "../../../generated/graphql";
+import type { RoomListRoomDetailsFragment } from "../../../generated/graphql";
+import { useGetAllTodaysRoomsQuery } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { RoomList } from "../../Conference/Attend/Rooms/V1/RoomList";
 import { useConference } from "../../Conference/useConference";
-import useCurrentRegistrant from "../../Conference/useCurrentRegistrant";
+import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import usePolling from "../../Generic/usePolling";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import QueryWrapper from "../../GQL/QueryWrapper";
 import { FAIcon } from "../../Icons/FAIcon";
-import useMaybeCurrentUser from "../../Users/CurrentUser/useMaybeCurrentUser";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
 import { MainMenuProgram } from "./MainMenu/MainMenuProgram";
 import { MainMenuSponsors } from "./MainMenu/MainMenuSponsors";
@@ -147,13 +142,7 @@ function LazySponsorsPanel({
     return useLazyRenderAndRetain(() => <MainMenuSponsors />, isExpanded);
 }
 
-export function LeftSidebarConferenceSections_Inner({
-    confSlug,
-}: {
-    confSlug: string;
-    registrant: RegistrantFieldsFragment;
-    onClose: () => void;
-}): JSX.Element {
+export function LeftSidebarConferenceSections_Inner(): JSX.Element {
     const conference = useConference();
     const [defaultIndex, setDefaultIndex] = useRestorableState<number>(
         "LEFT_SIDEBAR_DEFAULT_PANEL_INDEX",
@@ -278,21 +267,10 @@ export function LeftSidebarConferenceSections_Inner({
     );
 }
 
-export default function LeftSidebarConferenceSections({
-    confSlug,
-    onClose,
-}: {
-    confSlug: string;
-    onClose: () => void;
-}): JSX.Element {
-    const user = useMaybeCurrentUser();
-    if (user.user && user.user.registrants.length > 0) {
-        const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
-        if (registrant) {
-            return (
-                <LeftSidebarConferenceSections_Inner confSlug={confSlug} registrant={registrant} onClose={onClose} />
-            );
-        }
+export default function LeftSidebarConferenceSections(): JSX.Element {
+    const registrant = useMaybeCurrentRegistrant();
+    if (registrant) {
+        return <LeftSidebarConferenceSections_Inner />;
     }
     return <></>;
 }

@@ -39,7 +39,7 @@ export function YouTubeExportPage(): JSX.Element {
                             .
                         </Text>
                         <LinkButton
-                            to={`/conference/${conference.slug}/manage/export/youtube/uploads`}
+                            to={`${conferenceUrl}/manage/export/youtube/uploads`}
                             colorScheme="PrimaryActionButton"
                             mt={4}
                             size="md"

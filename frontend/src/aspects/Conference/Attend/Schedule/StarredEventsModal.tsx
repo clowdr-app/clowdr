@@ -1,9 +1,8 @@
-import { gql } from "@apollo/client";
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
+import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import type {
-    Schedule_ItemFieldsFragment} from "../../../../generated/graphql";
+import type { Schedule_ItemFieldsFragment } from "../../../../generated/graphql";
 import {
     useStarredEvents_SelectEventIdsQuery,
     useStarredEvents_SelectEventsQuery,

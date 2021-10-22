@@ -13,7 +13,6 @@ import RightSidebar from "../Menu/V1/RightSidebar";
 
 export default function AppPageV1(): JSX.Element {
     const conference = useMaybeConference();
-    const confSlug = conference?.slug;
     const attendee = useMaybeCurrentRegistrant();
     const permissions = useConferenceCurrentUserActivePermissions();
     const isPermittedAccess = attendee && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
@@ -22,7 +21,8 @@ export default function AppPageV1(): JSX.Element {
     const rightSidebarWidthPc = 20;
     const contentWidthPc = 100 - leftSidebarWidthPc - rightSidebarWidthPc;
 
-    const isAdminPage = !!useRouteMatch("/conference/:confSlug/manage/");
+    const { path } = useRouteMatch();
+    const isAdminPage = !!useRouteMatch(`${path}/manage/`);
     const leftDefaultVisible = useBreakpointValue({
         base: false,
         lg: !isAdminPage,
@@ -52,11 +52,11 @@ export default function AppPageV1(): JSX.Element {
         }
     }, [rightDefaultVisible, rightOpen]);
 
-    const centerVisible = !confSlug || centerAlwaysVisible || (!leftVisible && !rightVisible);
+    const centerVisible = !conference || centerAlwaysVisible || (!leftVisible && !rightVisible);
 
-    const left = useMemo(() => (confSlug ? <LeftSidebar confSlug={confSlug} /> : undefined), [confSlug]);
-    const right = useMemo(() => (confSlug ? <RightSidebar confSlug={confSlug} /> : undefined), [confSlug]);
-    const center = useMemo(() => <Routing confSlug={confSlug} />, [confSlug]);
+    const left = useMemo(() => (conference ? <LeftSidebar /> : undefined), [conference]);
+    const right = useMemo(() => (conference ? <RightSidebar /> : undefined), [conference]);
+    const center = useMemo(() => <Routing />, []);
 
     const onRightBarOpen = useCallback(() => {
         if (!rightDefaultVisible) {
@@ -85,7 +85,7 @@ export default function AppPageV1(): JSX.Element {
         [leftVisible, onRightBarOpen, rightVisible]
     );
 
-    const leftBar = confSlug ? (
+    const leftBar = conference ? (
         <Box
             overflow="hidden"
             height="100%"
@@ -98,7 +98,7 @@ export default function AppPageV1(): JSX.Element {
             {left}
         </Box>
     ) : undefined;
-    const rightBar = confSlug ? (
+    const rightBar = conference ? (
         <Box
             overflow="hidden"
             height="100%"
@@ -113,10 +113,7 @@ export default function AppPageV1(): JSX.Element {
         </Box>
     ) : undefined;
 
-    const locationMatchSchedule = useRouteMatch([
-        `/conference/${conference?.slug ?? "NONE"}/schedule`,
-        `/conference/${conference?.slug ?? "NONE"}/schedule2`,
-    ]);
+    const locationMatchSchedule = useRouteMatch([`${path}/schedule`, `${path}/schedule2`]);
     const isSchedulePage = locationMatchSchedule !== null;
 
     const centerBgColour = useColorModeValue(

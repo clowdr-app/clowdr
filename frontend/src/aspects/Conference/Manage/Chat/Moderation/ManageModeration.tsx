@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import {
     Box,
     Button,
@@ -18,10 +17,10 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Fragment, useMemo, useState } from "react";
-import type {
-    ManageModeration_ChatFlagFragment} from "../../../../../generated/graphql";
+import type { ManageModeration_ChatFlagFragment } from "../../../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
     useManageModeration_SelectFlagsQuery,
@@ -29,7 +28,7 @@ import {
 } from "../../../../../generated/graphql";
 import CenteredSpinner from "../../../../Chakra/CenteredSpinner";
 import { MessageState } from "../../../../Chat/ChatGlobalState";
-import type { ChatConfiguration} from "../../../../Chat/Configuration";
+import type { ChatConfiguration } from "../../../../Chat/Configuration";
 import { ChatConfigurationProvider, ChatSpacing } from "../../../../Chat/Configuration";
 import EmojiPickerProvider from "../../../../Chat/EmojiPickerProvider";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";

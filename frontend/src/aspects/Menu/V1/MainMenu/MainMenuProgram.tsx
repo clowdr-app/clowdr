@@ -1,11 +1,8 @@
-import { gql } from "@apollo/client";
 import {
-    Badge,
     Box,
     FormControl,
     FormHelperText,
     Heading,
-    HStack,
     Input,
     InputGroup,
     InputLeftAddon,
@@ -14,16 +11,13 @@ import {
     ListItem,
     Text,
 } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import type {
-    MenuSchedule_EventFragment} from "../../../../generated/graphql";
-import {
-    useMenuScheduleQuery,
-    useMenuSchedule_SearchEventsLazyQuery,
-} from "../../../../generated/graphql";
+import type { MenuSchedule_EventFragment } from "../../../../generated/graphql";
+import { useMenuScheduleQuery, useMenuSchedule_SearchEventsLazyQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useConference } from "../../../Conference/useConference";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
@@ -71,7 +65,6 @@ gql`
                             person: { _or: [{ name: { _ilike: $search } }, { affiliation: { _ilike: $search } }] }
                         }
                     }
-                    { eventTags: { tag: { name: { _ilike: $search } } } }
                 ]
             }
             limit: 10
@@ -88,13 +81,6 @@ gql`
         room {
             id
             name
-        }
-        eventTags {
-            tag {
-                id
-                colour
-                name
-            }
         }
         item {
             id
@@ -251,7 +237,7 @@ export function MainMenuProgram(): JSX.Element {
             <LinkButton
                 linkProps={{ w: "100%", mt: 2 }}
                 size="sm"
-                to={`/conference/${conference.slug}/schedule`}
+                to={`${conferenceUrl}/schedule`}
                 width="100%"
                 colorScheme="pink"
             >
@@ -277,8 +263,6 @@ export function MainMenuProgramInner({
     fromMillis: number;
     toMillis: number;
 }): JSX.Element {
-    const conference = useConference();
-
     const filteredEvents = useMemo(
         () =>
             R.sortBy((e) => e.startTime, events).filter((event) => {
@@ -311,10 +295,10 @@ export function MainMenuProgramInner({
                             <LinkButton
                                 to={
                                     linkToRoom
-                                        ? `/conference/${conference.slug}/room/${event.room.id}`
+                                        ? `${conferenceUrl}/room/${event.room.id}`
                                         : event.item
-                                        ? `/conference/${conference.slug}/item/${event.item.id}`
-                                        : `/conference/${conference.slug}/room/${event.room.id}`
+                                        ? `${conferenceUrl}/item/${event.item.id}`
+                                        : `${conferenceUrl}/room/${event.room.id}`
                                 }
                                 width="100%"
                                 linkProps={{ width: "100%" }}
@@ -322,25 +306,9 @@ export function MainMenuProgramInner({
                                 py={2}
                                 size="sm"
                             >
-                                <HStack width="100%" justifyContent="space-between">
-                                    <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
-                                        <Twemoji className="twemoji" text={eventName} />
-                                    </Text>
-                                    <Text flex="0 1 1">
-                                        {event.eventTags.map((tag) => (
-                                            <Badge
-                                                key={tag.tag.id}
-                                                color="gray.50"
-                                                backgroundColor={tag.tag.colour}
-                                                ml={1}
-                                                p={1}
-                                                borderRadius={4}
-                                            >
-                                                {tag.tag.name}
-                                            </Badge>
-                                        ))}
-                                    </Text>
-                                </HStack>
+                                <Text flex="0 1 1" overflow="hidden" title={eventName} whiteSpace="normal">
+                                    <Twemoji className="twemoji" text={eventName} />
+                                </Text>
                             </LinkButton>
                         </ListItem>
                     );

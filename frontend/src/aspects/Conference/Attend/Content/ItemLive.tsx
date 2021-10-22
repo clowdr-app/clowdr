@@ -3,10 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type {
     ItemElements_ItemDataFragment,
     ItemEventFragment,
-    ItemPage_ItemRoomsFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum
+    ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
+import { Content_ItemType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
 import FAIcon from "../../../Icons/FAIcon";
@@ -47,7 +46,7 @@ export function ItemLive({
             {currentRoom ? (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${currentRoom.id}`}
+                    to={`${conferenceUrl}/room/${currentRoom.id}`}
                     size="lg"
                     colorScheme="PrimaryActionButton"
                     height="auto"
@@ -73,14 +72,14 @@ export function ItemLive({
                                 </>
                             )}
                         </Text>
-                        <PageCountText path={`/conference/${conference.slug}/room/${currentRoom.id}`} />
+                        <PageCountText path={`${conferenceUrl}/room/${currentRoom.id}`} />
                     </VStack>
                 </LinkButton>
             ) : undefined}
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
-                    to={`/conference/${conference.slug}/room/${event.roomId}`}
+                    to={`${conferenceUrl}/room/${event.roomId}`}
                     key={event.id}
                     size="lg"
                     colorScheme="LiveActionButton"

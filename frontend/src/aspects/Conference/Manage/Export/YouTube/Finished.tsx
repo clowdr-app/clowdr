@@ -24,7 +24,7 @@ export function Finished(): JSX.Element {
             </AlertTitle>
             <AlertDescription maxWidth="sm">This will take a few minutes.</AlertDescription>
             <LinkButton
-                to={`/conference/${conference.slug}/manage/export/youtube/uploads`}
+                to={`${conferenceUrl}/manage/export/youtube/uploads`}
                 colorScheme="ConfirmButton"
                 mt={4}
                 size="lg"

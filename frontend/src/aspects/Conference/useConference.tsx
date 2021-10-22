@@ -1,29 +1,24 @@
-import { gql } from "@apollo/client";
 import { VStack } from "@chakra-ui/react";
+import { gql } from "@urql/core";
 import assert from "assert";
 import React from "react";
 import { AppError } from "../../AppError";
-import type {
-    AuthdConferenceInfoFragment,
-    PublicConferenceInfoFragment} from "../../generated/graphql";
-import {
-    useConferenceBySlug_WithoutUserQuery,
-    useConferenceBySlug_WithUserQuery,
-} from "../../generated/graphql";
+import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
+import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
-    query ConferenceBySlug_WithUser($slug: String!, $userId: String!) {
-        conference_Conference(where: { slug: { _eq: $slug } }) {
+    query ConferenceById_WithUser($id: uuid!, $userId: String!) {
+        conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
             ...AuthdConferenceInfo
         }
     }
 
-    query ConferenceBySlug_WithoutUser($slug: String!) {
-        conference_Conference(where: { slug: { _eq: $slug } }) {
+    query ConferenceById_WithoutUser($id: uuid!) {
+        conference_Conference_by_pk(id: $id) {
             ...PublicConferenceInfo
         }
     }
@@ -31,15 +26,6 @@ gql`
     fragment AuthdConferenceInfo on conference_Conference {
         registrants(where: { userId: { _eq: $userId } }) {
             ...RegistrantData
-
-            groupRegistrants {
-                group {
-                    ...GroupData
-                }
-                id
-                groupId
-                registrantId
-            }
         }
 
         myBackstagesNotice: configurations(where: { key: { _eq: MY_BACKSTAGES_NOTICE } }) {
@@ -109,33 +95,6 @@ gql`
             key
             value
         }
-
-        publicGroups: groups(where: { enabled: { _eq: true }, includeUnauthenticated: { _eq: true } }) {
-            ...GroupData
-        }
-    }
-
-    fragment GroupData on permissions_Group {
-        groupRoles {
-            role {
-                rolePermissions {
-                    permissionName
-                    id
-                    roleId
-                }
-                id
-                name
-                conferenceId
-            }
-            id
-            roleId
-            groupId
-        }
-        enabled
-        id
-        includeUnauthenticated
-        name
-        conferenceId
     }
 
     fragment ProfileData on registrant_Profile {
@@ -160,6 +119,7 @@ gql`
         userId
         conferenceId
         displayName
+        conferenceRole
         profile {
             ...ProfileData
         }
@@ -183,15 +143,15 @@ export function useMaybeConference(): ConferenceInfoFragment | undefined {
 }
 
 function ConferenceProvider_WithoutUser({
-    confSlug,
     children,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
+    conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithoutUserQuery({
+    const { loading, error, data } = useConferenceById_WithoutUserQuery({
         variables: {
-            slug: confSlug,
+            id: conferenceId,
         },
     });
 
@@ -207,7 +167,7 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    if (!data || data.conference_Conference.length === 0) {
+    if (!data || !data.conference_Conference_by_pk) {
         return (
             <VStack>
                 <PageNotFound />
@@ -215,21 +175,21 @@ function ConferenceProvider_WithoutUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
 }
 
 function ConferenceProvider_WithUser({
-    confSlug,
     children,
     userId,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
     userId: string;
+    conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceBySlug_WithUserQuery({
+    const { loading, error, data } = useConferenceById_WithUserQuery({
         variables: {
-            slug: confSlug,
+            id: conferenceId,
             userId,
         },
     });
@@ -251,7 +211,7 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    if (!data || data.conference_Conference.length === 0) {
+    if (!data || !data.conference_Conference_by_pk) {
         return (
             <VStack>
                 <PageNotFound />
@@ -259,15 +219,15 @@ function ConferenceProvider_WithUser({
         );
     }
 
-    return <ConferenceContext.Provider value={data.conference_Conference[0]}>{children}</ConferenceContext.Provider>;
+    return <ConferenceContext.Provider value={data.conference_Conference_by_pk}>{children}</ConferenceContext.Provider>;
 }
 
 export default function ConferenceProvider({
-    confSlug,
     children,
+    conferenceId,
 }: {
-    confSlug: string;
     children: string | JSX.Element | JSX.Element[];
+    conferenceId: string;
 }): JSX.Element {
     const user = useMaybeCurrentUser();
 
@@ -277,11 +237,11 @@ export default function ConferenceProvider({
 
     if (user.user) {
         return (
-            <ConferenceProvider_WithUser userId={user.user.id} confSlug={confSlug}>
+            <ConferenceProvider_WithUser userId={user.user.id} conferenceId={conferenceId}>
                 {children}
             </ConferenceProvider_WithUser>
         );
     } else {
-        return <ConferenceProvider_WithoutUser confSlug={confSlug}>{children}</ConferenceProvider_WithoutUser>;
+        return <ConferenceProvider_WithoutUser conferenceId={conferenceId}>{children}</ConferenceProvider_WithoutUser>;
     }
 }

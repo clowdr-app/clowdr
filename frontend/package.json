@@ -53,7 +53,10 @@
         "@uppy/core": "^2.1.0",
         "@uppy/drag-drop": "^2.0.3",
         "@uppy/react": "^2.1.0",
+        "@urql/exchange-auth": "^0.1.6",
         "@urql/exchange-graphcache": "^4.3.5",
+        "@urql/exchange-request-policy": "^0.1.4",
+        "@urql/exchange-retry": "^0.3.0",
         "amazon-chime-sdk-component-library-react": "^2.8.0",
         "amazon-chime-sdk-js": "^2.16.1",
         "amazon-s3-uri": "^0.1.1",
@@ -127,7 +130,8 @@
         "@graphql-codegen/typescript-document-nodes": "2.1.1",
         "@graphql-codegen/typescript-graphql-files-modules": "2.1.0",
         "@graphql-codegen/typescript-operations": "2.1.1",
-        "@graphql-codegen/typescript-urql": "^3.2.0",
+        "@graphql-codegen/typescript-urql": "^3.2.2",
+        "@graphql-codegen/typescript-urql-graphcache": "^2.1.6",
         "dotenv": "^10.0.0",
         "prettier": "^2.3.2"
     }

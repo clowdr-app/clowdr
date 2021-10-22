@@ -25,7 +25,7 @@ export default function SearchResult_Person({ person }: { person: SearchPanel_Pe
                 <FAIcon iconStyle="s" icon="user" mr={2} mb={1} />
                 {person.registrantId ? (
                     <>
-                        <Link as={ReactLink} to={`/conference/${conference.slug}/profile/view/${person.registrantId}`}>
+                        <Link as={ReactLink} to={`${conferenceUrl}/profile/view/${person.registrantId}`}>
                             {person.name}
                             {person.affiliation ? ` (${person.affiliation})` : ""}
                         </Link>
@@ -44,7 +44,7 @@ export default function SearchResult_Person({ person }: { person: SearchPanel_Pe
                         <ListItem key={itemPerson.id}>
                             <HStack alignItems="flex-start">
                                 <FAIcon iconStyle="s" icon="tag" fontSize="xs" mt={1} />
-                                <Link as={ReactLink} to={`/conference/${conference.slug}/item/${itemPerson.item.id}`}>
+                                <Link as={ReactLink} to={`${conferenceUrl}/item/${itemPerson.item.id}`}>
                                     {itemPerson.item.title.trim()}
                                 </Link>
                             </HStack>

@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { RegistrantDataFragment} from "../../generated/graphql";
+import type { RegistrantDataFragment } from "../../generated/graphql";
 import { useRegistrantsByIdQuery, useRegistrantsByUserIdQuery } from "../../generated/graphql";
 import usePolling from "../Generic/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";

@@ -3,7 +3,7 @@ import assert from "assert";
 import webPush from "web-push";
 import { DeletePushNotificationSubscriptionDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { Notification } from "../types/chat";
+import type { Notification } from "../types/chat";
 import { getVAPIDKeys } from "./vapidKeys";
 
 gql`
@@ -27,8 +27,14 @@ export async function sendNotification(
                 subject: process.env.HOST_PUBLIC_URL,
             },
         });
-    } catch (e) {
-        console.warn("ERROR in sending Notification, endpoint removed " + subscription.endpoint, subscription, e);
+    } catch (error) {
+        if (!(error.toString().includes("unsubscribed") || error.toString().includes("expired"))) {
+            console.warn("ERROR in sending Notification.\nRemoving the endpoint record: " + subscription.endpoint, {
+                subscription,
+                error,
+            });
+        }
+
         try {
             await apolloClient?.mutate({
                 mutation: DeletePushNotificationSubscriptionDocument,

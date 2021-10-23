@@ -25,10 +25,6 @@ gql`
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
                 originatingItemId: { _is_null: true }
                 originatingEventId: { _is_null: true }
-                _or: [
-                    { managementModeName: { _eq: PUBLIC } }
-                    { managementModeName: { _eq: PRIVATE }, roomMemberships: { registrantId: { _eq: $registrantId } } }
-                ]
             }
             order_by: { name: asc }
         ) {
@@ -68,23 +64,9 @@ gql`
         socialOrDiscussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
-                _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] }
                 _and: [
-                    {
-                        _or: [
-                            { originatingItemId: { _is_null: true } }
-                            { originatingItem: { typeName: { _neq: SPONSOR } } }
-                        ]
-                    }
-                    {
-                        _or: [
-                            { managementModeName: { _eq: PUBLIC } }
-                            {
-                                managementModeName: { _eq: PRIVATE }
-                                roomMemberships: { registrantId: { _eq: $registrantId } }
-                            }
-                        ]
-                    }
+                    { originatingItem: { typeName: { _neq: SPONSOR } } }
+                    { _not: { _or: [{ events: {} }, { chat: { enableMandatorySubscribe: { _eq: true } } }] } }
                 ]
             }
             order_by: { name: asc }

@@ -47,7 +47,7 @@ export default function ConferenceRoutes(): JSX.Element {
     const mUser = useMaybeCurrentUser();
     const mRegistrant = useMaybeCurrentRegistrant();
 
-    const { path } = useRouteMatch();
+    const { path, url } = useRouteMatch();
 
     useEffect(() => {
         setTheme(conference.themeComponentColors?.[0]?.value);
@@ -61,13 +61,13 @@ export default function ConferenceRoutes(): JSX.Element {
 
             {mUser.user ? (
                 <Route exact path={`${path}/profile`}>
-                    <Redirect to={`${path}/profile/edit`} />
+                    <Redirect to={`${url}/profile/edit`} />
                 </Route>
             ) : undefined}
 
             {mRegistrant && mRegistrant.profile && !mRegistrant.profile.hasBeenEdited ? (
                 <Route path={path}>
-                    <Redirect to={`${path}/profile/edit`} />
+                    <Redirect to={`${url}/profile/edit`} />
                 </Route>
             ) : undefined}
 

@@ -132,6 +132,7 @@ insert_permissions:
   role: organizer
 select_permissions:
 - permission:
+    allow_aggregations: true
     columns:
     - chatId
     - conferenceId

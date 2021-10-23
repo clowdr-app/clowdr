@@ -18,12 +18,14 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { useRoomPage_IsAdminQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { useRegistrants } from "../../RegistrantsContext";
+import useCurrentRegistrant from "../../useCurrentRegistrant";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -79,6 +81,7 @@ function RoomMembersModal({
 }
 
 function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
+    const registrant = useCurrentRegistrant();
     const roomMembers = useRoomMembers();
     const { conferencePath } = useAuthParameters();
     const addMemberModal = useDisclosure();
@@ -112,6 +115,25 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
         [conferencePath, sortedRegistrants]
     );
 
+    const requestContext = useMemo(
+        () => ({
+            fetchOptions: {
+                headers: {
+                    "X-Auth-Role": "room-member",
+                    "X-Auth-Room-Id": roomDetails.id,
+                },
+            },
+        }),
+        [roomDetails.id]
+    );
+    const [selfIsAdminResponse] = useRoomPage_IsAdminQuery({
+        variables: {
+            roomId: roomDetails.id,
+            registrantId: registrant.id,
+        },
+        context: requestContext,
+    });
+
     return (
         <>
             <AddRoomPersonModal
@@ -124,7 +146,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             ) : (
                 roomMembersList
             )}
-            {roomDetails.selfAdminPerson?.length ? (
+            {selfIsAdminResponse.data?.room_RoomMembership.length ? (
                 <Box textAlign="right" mb={2}>
                     <Button
                         mt={2}

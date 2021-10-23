@@ -230,7 +230,7 @@ export default function ViewProfilePage({ registrantId }: { registrantId?: strin
         (!maybeCurrentUser.user ||
             !maybeCurrentRegistrant ||
             maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
-            maybeCurrentRegistrant?.id !== registrantId) &&
+            (registrantId && maybeCurrentRegistrant.id !== registrantId)) &&
         maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
         maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
     ) {

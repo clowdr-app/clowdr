@@ -152,7 +152,6 @@ function UrqlProviderInner({
                                 storage,
                                 // TODO: resolvers (for queries) -- not sure if these are needed since we supply the schema
                                 // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
-                                // TODO: optimistic (for optimistic and offline-first updates)
                             }),
                             authExchange(authOptions),
                             retryExchange(retryOptions),

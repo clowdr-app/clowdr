@@ -551,10 +551,25 @@ export class ChatState {
                 if (!this.EnableMandatoryPin) {
                     try {
                         await this.globalState.client
-                            .mutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, {
-                                registrantId: this.globalState.registrant.id,
-                                chatId: this.Id,
-                            })
+                            .mutation<UnpinChatMutation, UnpinChatMutationVariables>(
+                                UnpinChatDocument,
+                                {
+                                    registrantId: this.globalState.registrant.id,
+                                    chatId: this.Id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers:
+                                            this.DMRoomId || this.NonDMRoomId
+                                                ? {
+                                                      "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  }
+                                                : {
+                                                      "X-Auth-Include-Room-Ids": "true",
+                                                  },
+                                    },
+                                }
+                            )
                             .toPromise();
                     } catch (e) {
                         this.isPinned = isPind;
@@ -564,10 +579,25 @@ export class ChatState {
             } else {
                 try {
                     const result = await this.globalState.client
-                        .mutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, {
-                            registrantId: this.globalState.registrant.id,
-                            chatId: this.Id,
-                        })
+                        .mutation<PinChatMutation, PinChatMutationVariables>(
+                            PinChatDocument,
+                            {
+                                registrantId: this.globalState.registrant.id,
+                                chatId: this.Id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers:
+                                        this.DMRoomId || this.NonDMRoomId
+                                            ? {
+                                                  "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                              }
+                                            : {
+                                                  "X-Auth-Include-Room-Ids": "true",
+                                              },
+                                },
+                            }
+                        )
                         .toPromise();
                     this.isPinned = !!result.data?.insert_chat_Pin && !!result.data.insert_chat_Pin.returning;
                     if (this.latestReadUpToMessageSId) {
@@ -630,6 +660,18 @@ export class ChatState {
                                 {
                                     registrantId: this.globalState.registrant.id,
                                     chatId: this.Id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers:
+                                            this.DMRoomId || this.NonDMRoomId
+                                                ? {
+                                                      "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                                  }
+                                                : {
+                                                      "X-Auth-Include-Room-Ids": "true",
+                                                  },
+                                    },
                                 }
                             )
                             .toPromise();
@@ -641,10 +683,25 @@ export class ChatState {
             } else {
                 try {
                     const result = await this.globalState.client
-                        .mutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, {
-                            registrantId: this.globalState.registrant.id,
-                            chatId: this.Id,
-                        })
+                        .mutation<SubscribeChatMutation, SubscribeChatMutationVariables>(
+                            SubscribeChatDocument,
+                            {
+                                registrantId: this.globalState.registrant.id,
+                                chatId: this.Id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers:
+                                        this.DMRoomId || this.NonDMRoomId
+                                            ? {
+                                                  "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                              }
+                                            : {
+                                                  "X-Auth-Include-Room-Ids": "true",
+                                              },
+                                },
+                            }
+                        )
                         .toPromise();
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
@@ -727,6 +784,16 @@ export class ChatState {
                                 this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1
                                     ? "network-only"
                                     : undefined,
+                            fetchOptions: {
+                                headers:
+                                    this.DMRoomId || this.NonDMRoomId
+                                        ? {
+                                              "X-Auth-Room-Id": this.DMRoomId ?? this.NonDMRoomId ?? "",
+                                          }
+                                        : {
+                                              "X-Auth-Include-Room-Ids": "true",
+                                          },
+                            },
                         }
                     )
                     .toPromise();
@@ -1351,6 +1418,11 @@ export class GlobalChatState {
                                             },
                                             {
                                                 requestPolicy: "network-only",
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Include-Room-Ids": "true",
+                                                    },
+                                                },
                                             }
                                         )
                                         .toPromise();
@@ -1456,9 +1528,19 @@ export class GlobalChatState {
                     });
 
                     const initialData = await this.client
-                        .query<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, {
-                            registrantId: this.registrant.id,
-                        })
+                        .query<InitialChatStateQuery, InitialChatStateQueryVariables>(
+                            InitialChatStateDocument,
+                            {
+                                registrantId: this.registrant.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Include-Room-Ids": "true",
+                                    },
+                                },
+                            }
+                        )
                         .toPromise();
 
                     if (initialData.error) {
@@ -1563,6 +1645,11 @@ export class GlobalChatState {
                             },
                             {
                                 requestPolicy: "network-only",
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Include-Room-Ids": "true",
+                                    },
+                                },
                             }
                         )
                         .toPromise();

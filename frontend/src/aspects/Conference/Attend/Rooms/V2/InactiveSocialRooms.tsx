@@ -6,21 +6,16 @@ import type { RoomParticipantDetailsFragment, SocialRoomFragment } from "../../.
 import { useGetSocialRoomsQuery } from "../../../../../generated/graphql";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { useConference } from "../../../useConference";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import RoomSummary from "./RoomsSummary";
 
 gql`
-    query GetSocialRooms($conferenceId: uuid!, $registrantId: uuid!) {
+    query GetSocialRooms($conferenceId: uuid!) {
         socialRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
                 _not: { _or: [{ events: {} }, { chat: { enableMandatoryPin: { _eq: true } } }] }
                 originatingItemId: { _is_null: true }
                 originatingEventId: { _is_null: true }
-                _or: [
-                    { managementModeName: { _eq: PUBLIC } }
-                    { managementModeName: { _eq: PRIVATE }, roomMemberships: { registrantId: { _eq: $registrantId } } }
-                ]
             }
             order_by: { name: asc }
         ) {
@@ -37,11 +32,9 @@ gql`
 
 export default function InactiveSocialRooms(): JSX.Element {
     const conference = useConference();
-    const registrant = useCurrentRegistrant();
     const [result] = useGetSocialRoomsQuery({
         variables: {
             conferenceId: conference.id,
-            registrantId: registrant.id,
         },
         requestPolicy: "cache-and-network",
     });

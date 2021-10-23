@@ -1,16 +1,15 @@
 import { gql } from "@urql/core";
-import React from "react";
+import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
-import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
 gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!) {
         room_Room_by_pk(id: $roomId) {
             ...RoomPage_RoomDetails
         }
@@ -37,11 +36,6 @@ gql`
             title
         }
         managementModeName
-        selfAdminPerson: roomMemberships(
-            where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId } }
-        ) {
-            id
-        }
         shuffleRooms(limit: 1, order_by: { id: desc }) {
             id
             startedAt
@@ -50,6 +44,14 @@ gql`
             shufflePeriodId
         }
         backendName
+    }
+
+    query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
+        room_RoomMembership(
+            where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId }, roomId: { _eq: $roomId } }
+        ) {
+            id
+        }
     }
 
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
@@ -74,12 +76,21 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
-    const registrant = useCurrentRegistrant();
+    const requestContext = useMemo(
+        () => ({
+            fetchOptions: {
+                headers: {
+                    "X-Auth-Room-Id": roomId,
+                },
+            },
+        }),
+        [roomId]
+    );
     const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
-            registrantId: registrant.id,
         },
+        context: requestContext,
     });
     const title = useTitle(
         roomDetailsResponse.fetching

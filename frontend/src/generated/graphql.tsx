@@ -35190,13 +35190,20 @@ export type AddParticipantToRoomMutation = { readonly __typename?: 'mutation_roo
 
 export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
   roomId: Scalars['uuid'];
+}>;
+
+
+export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> }> };
+
+export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
+
+export type RoomPage_IsAdminQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
   registrantId: Scalars['uuid'];
 }>;
 
 
-export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> }> };
-
-export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
+export type RoomPage_IsAdminQuery = { readonly __typename?: 'query_root', readonly room_RoomMembership: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any }> };
 
 export type RoomPage_GetRoomChannelStackQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -35384,7 +35391,6 @@ export type RoomListRoomDetailsFragment = { readonly __typename?: 'room_Room', r
 
 export type GetSocialRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -37652,11 +37658,6 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     title
   }
   managementModeName
-  selfAdminPerson: roomMemberships(
-    where: {personRoleName: {_eq: ADMIN}, registrantId: {_eq: $registrantId}}
-  ) {
-    id
-  }
   shuffleRooms(limit: 1, order_by: {id: desc}) {
     id
     startedAt
@@ -39501,7 +39502,7 @@ export function useAddParticipantToRoomMutation() {
   return Urql.useMutation<AddParticipantToRoomMutation, AddParticipantToRoomMutationVariables>(AddParticipantToRoomDocument);
 };
 export const RoomPage_GetRoomDetailsDocument = gql`
-    query RoomPage_GetRoomDetails($roomId: uuid!, $registrantId: uuid!) {
+    query RoomPage_GetRoomDetails($roomId: uuid!) {
   room_Room_by_pk(id: $roomId) {
     ...RoomPage_RoomDetails
   }
@@ -39510,6 +39511,19 @@ export const RoomPage_GetRoomDetailsDocument = gql`
 
 export function useRoomPage_GetRoomDetailsQuery(options: Omit<Urql.UseQueryArgs<RoomPage_GetRoomDetailsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<RoomPage_GetRoomDetailsQuery>({ query: RoomPage_GetRoomDetailsDocument, ...options });
+};
+export const RoomPage_IsAdminDocument = gql`
+    query RoomPage_IsAdmin($roomId: uuid!, $registrantId: uuid!) {
+  room_RoomMembership(
+    where: {personRoleName: {_eq: ADMIN}, registrantId: {_eq: $registrantId}, roomId: {_eq: $roomId}}
+  ) {
+    id
+  }
+}
+    `;
+
+export function useRoomPage_IsAdminQuery(options: Omit<Urql.UseQueryArgs<RoomPage_IsAdminQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RoomPage_IsAdminQuery>({ query: RoomPage_IsAdminDocument, ...options });
 };
 export const RoomPage_GetRoomChannelStackDocument = gql`
     query RoomPage_GetRoomChannelStack($roomId: uuid!) {
@@ -39854,7 +39868,7 @@ export function useToggleVonageRecordingStateMutation() {
 export const GetAllRoomsDocument = gql`
     query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
   socialRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, _or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomMemberships: {registrantId: {_eq: $registrantId}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -39874,7 +39888,7 @@ export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQ
 export const GetAllTodaysRoomsDocument = gql`
     query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!, $registrantId: uuid!) {
   socialOrDiscussionRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}, _and: [{_or: [{originatingItemId: {_is_null: true}}, {originatingItem: {typeName: {_neq: SPONSOR}}}]}, {_or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomMemberships: {registrantId: {_eq: $registrantId}}}]}]}
+    where: {conferenceId: {_eq: $conferenceId}, _and: [{originatingItem: {typeName: {_neq: SPONSOR}}}, {_not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}}]}
     order_by: {name: asc}
   ) {
     ...RoomListRoomDetails
@@ -39892,9 +39906,9 @@ export function useGetAllTodaysRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAll
   return Urql.useQuery<GetAllTodaysRoomsQuery>({ query: GetAllTodaysRoomsDocument, ...options });
 };
 export const GetSocialRoomsDocument = gql`
-    query GetSocialRooms($conferenceId: uuid!, $registrantId: uuid!) {
+    query GetSocialRooms($conferenceId: uuid!) {
   socialRooms: room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}, _or: [{managementModeName: {_eq: PUBLIC}}, {managementModeName: {_eq: PRIVATE}, roomMemberships: {registrantId: {_eq: $registrantId}}}]}
+    where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}}
     order_by: {name: asc}
   ) {
     ...SocialRoom

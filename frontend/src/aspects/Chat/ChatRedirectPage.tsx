@@ -21,7 +21,7 @@ gql`
 `;
 
 export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.Element {
-    const [{ loading, error, data }] = useGetChatPathQuery({
+    const [{ fetching: loading, error, data }] = useGetChatPathQuery({
         variables: {
             chatId,
         },

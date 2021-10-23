@@ -41,7 +41,7 @@ gql`
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const [{ data, loading, error, refetch }] = useGetChannelStacksQuery({ variables: { conferenceId } });
+    const [{ data, fetching: loading, error }, refetch] = useGetChannelStacksQuery({ variables: { conferenceId } });
     useQueryErrorToast(error, false);
 
     const toStreamingEndpoint = useCallback((endpointUri: string, cloudFrontDomain: string): string => {

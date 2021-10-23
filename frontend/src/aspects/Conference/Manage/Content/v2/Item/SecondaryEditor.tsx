@@ -1,7 +1,6 @@
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
-    ButtonGroup,
     Code,
     Drawer,
     DrawerBody,
@@ -19,7 +18,7 @@ import {
     useClipboard,
     VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import type {
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
@@ -112,7 +111,6 @@ function SecondaryEditorInner({
             itemId,
         },
     });
-    const [defaultOpenSecurityForId, setDefaultOpenSecurityForId] = useState<string | null>(null);
 
     return (
         <VStack w="100%" alignItems="flex-start">
@@ -207,10 +205,6 @@ function SecondaryEditorInner({
                 ) => (
                     <EditElements
                         itemId={itemId}
-                        refetchElements={() => {
-                            refetchItem();
-                        }}
-                        defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
                         itemType={itemType}
                         openSendSubmissionRequests={openSendSubmissionRequests}
                         {...result}
@@ -218,15 +212,12 @@ function SecondaryEditorInner({
                 )}
             </QueryWrapper>
             {itemResponse.data?.content_Item_by_pk ? (
-                <ButtonGroup>
-                    <AddContentMenu
-                        itemId={itemId}
-                        onCreate={(newId) => {
-                            setDefaultOpenSecurityForId(newId);
-                            refetchItem();
-                        }}
-                    />
-                </ButtonGroup>
+                <AddContentMenu
+                    itemId={itemId}
+                    onCreate={() => {
+                        refetchItem();
+                    }}
+                />
             ) : undefined}
         </VStack>
     );

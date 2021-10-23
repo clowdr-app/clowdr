@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
@@ -7,8 +7,8 @@ import { useChatPinnedQuery } from "./PinnedQuery";
 
 export function PinnedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
-    const [pinnedQ] = useChatPinnedQuery();
-    const isLoading = pinnedQ.fetching;
+    const pinnedQ = useChatPinnedQuery();
+    const isLoading = pinnedQ.loading;
     const isPinned = !!pinnedQ.data?.isPinned;
     const label = isLoading
         ? "Loading pinned status"

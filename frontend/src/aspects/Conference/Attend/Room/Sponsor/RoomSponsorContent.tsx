@@ -29,7 +29,7 @@ gql`
 `;
 
 export function RoomSponsorContent({ itemId }: { itemId: string }): JSX.Element {
-    const [{ data, error, loading }] = useRoomSponsorContent_GetElementsQuery({
+    const [{ data, error, fetching: loading }] = useRoomSponsorContent_GetElementsQuery({
         variables: {
             itemId,
         },

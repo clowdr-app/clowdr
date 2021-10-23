@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import FAIcon from "../../Icons/FAIcon";
@@ -7,8 +7,8 @@ import { useChatSubscribedQuery } from "./SubscribedQuery";
 
 export function SubscribedButton(props: ButtonProps): JSX.Element {
     const config = useChatConfiguration();
-    const [subscribedQ] = useChatSubscribedQuery();
-    const isLoading = subscribedQ.fetching;
+    const subscribedQ = useChatSubscribedQuery();
+    const isLoading = subscribedQ.loading;
     const isSubscribed = !!subscribedQ.data?.isSubscribed;
     const label = isLoading
         ? "Loading subscribed status"

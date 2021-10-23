@@ -23,6 +23,7 @@ import { useCreateDmMutation } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useMaybeGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
 import { Markdown } from "../../../Text/Markdown";
@@ -42,6 +43,7 @@ export default function ProfileModal({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const mCurrentRegistrant = useMaybeCurrentRegistrant();
     const mChatState = useMaybeGlobalChatState();
 
@@ -51,13 +53,11 @@ export default function ProfileModal({
         if (registrant && mChatState?.openChatInSidebar) {
             try {
                 const result = await createDmMutation({
-                    variables: {
-                        registrantIds: [registrant.id],
-                        conferenceId: conference.id,
-                    },
+                    registrantIds: [registrant.id],
+                    conferenceId: conference.id,
                 });
-                if (result.errors || !result.data?.createRoomDm) {
-                    console.error("Failed to create DM", result.errors);
+                if (result.error || !result.data?.createRoomDm) {
+                    console.error("Failed to create DM", result.error);
                     throw new Error("Failed to create DM");
                 } else {
                     if (result.data.createRoomDm.message !== "DM already exists") {

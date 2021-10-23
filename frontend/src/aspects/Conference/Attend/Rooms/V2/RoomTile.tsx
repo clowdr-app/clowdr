@@ -3,6 +3,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
@@ -55,6 +56,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
     const shadow = useColorModeValue("md", "light-md");
     const bgColour = useColorModeValue("gray.100", "gray.800");
     const history = useHistory();
+    const { conferencePath } = useAuthParameters();
     return (
         <Button
             as={VStack}

@@ -1,14 +1,16 @@
 import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
-import {
+import type {
     RegistrantDataFragment,
-    RegistrantsByIdDocument,
     RegistrantsByIdQuery,
     RegistrantsByIdQueryVariables,
-    RegistrantsByUserIdDocument,
     RegistrantsByUserIdQuery,
     RegistrantsByUserIdQueryVariables,
+} from "../../generated/graphql";
+import {
+    RegistrantsByIdDocument,
+    RegistrantsByUserIdDocument,
     useRegistrantsByIdQuery,
     useRegistrantsByUserIdQuery,
 } from "../../generated/graphql";
@@ -335,7 +337,15 @@ export default function RegistrantsContextProvider({
         return () => {
             clearInterval(tId);
         };
-    }, [registrantsByIdQ, registrantsByUserIdQ, checkInterval, conference.id, fullRefetchInterval, currentUser]);
+    }, [
+        client,
+        registrantsByIdQ,
+        registrantsByUserIdQ,
+        checkInterval,
+        conference.id,
+        fullRefetchInterval,
+        currentUser,
+    ]);
 
     const ctx = useMemo(
         () => ({

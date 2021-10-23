@@ -62,23 +62,17 @@ export function VideoChatVonageRoom({
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
-    const [getRoomVonageToken] = useGetRoomVonageTokenMutation({
-        variables: {
-            roomId: room.id,
-        },
-    });
-    const [getEventVonageToken] = useGetEventVonageTokenMutation({
-        variables: {
-            eventId,
-        },
-    });
+    const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
+    const [, getEventVonageToken] = useGetEventVonageTokenMutation();
 
     const completeGetAccessToken = useRef<{ resolve: () => void; reject: (reason?: any) => void } | undefined>();
 
     const getAccessToken = useCallback(() => {
         return new Promise<string>((resolve, reject) => {
             if (eventId) {
-                getEventVonageToken()
+                getEventVonageToken({
+                    eventId,
+                })
                     .then((result) => {
                         if (!result.data?.joinEventVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
@@ -102,7 +96,9 @@ export function VideoChatVonageRoom({
                     })
                     .catch(reject);
             } else {
-                getRoomVonageToken()
+                getRoomVonageToken({
+                    roomId: room.id,
+                })
                     .then((result) => {
                         if (!result.data?.joinRoomVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
@@ -127,7 +123,7 @@ export function VideoChatVonageRoom({
                     .catch(reject);
             }
         });
-    }, [getRoomVonageToken, getEventVonageToken, eventId]);
+    }, [eventId, getEventVonageToken, getRoomVonageToken, room.id]);
 
     const [publicVonageSessionId, setPublicVonageSessionId] = useState<string | null | undefined>(
         room.publicVonageSessionId

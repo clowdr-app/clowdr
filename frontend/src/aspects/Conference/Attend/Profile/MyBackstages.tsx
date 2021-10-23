@@ -35,6 +35,7 @@ import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/gr
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { Markdown } from "../../../Text/Markdown";
 import { useTitle } from "../../../Utils/useTitle";
@@ -74,6 +75,7 @@ gql`
 
 function MyBackstages(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const registrant = useCurrentRegistrant();
 
     const [myBackstagesResponse] = useRegistrantEventsWithBackstagesQuery({
@@ -143,7 +145,7 @@ function MyBackstages(): JSX.Element {
                 Backstages are only available for live-stream events. If you are presenting at a video-chat event, you
                 can go directly to your room at the start time. You will not see any backstages in this list.
             </Text>
-            {myBackstagesResponse.loading && !eventsGroupedByDay ? (
+            {myBackstagesResponse.fetching && !eventsGroupedByDay ? (
                 <CenteredSpinner spinnerProps={{ label: "Loading backstages" }} />
             ) : undefined}
             {eventsTodayAndFuture ? (

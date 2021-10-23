@@ -163,7 +163,7 @@ query ItemEvent_RoomNearbyEvents {
         [events, roomId]
     );
     const queryDocument = useMemo(() => gql(queryString), [queryString]);
-    const query = useQuery(queryDocument, {});
+    const [query] = useQuery({ query: queryDocument });
     useQueryErrorToast(query.error, false, "ItemEvents:ItemEvents_RoomLocalisedSchedule");
 
     // console.log(query.data);

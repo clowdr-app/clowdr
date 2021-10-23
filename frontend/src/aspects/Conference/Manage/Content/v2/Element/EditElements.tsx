@@ -16,10 +16,9 @@ import {
 import React, { useMemo } from "react";
 import type {
     ManageContent_ElementFragment,
-    ManageContent_ItemSecondaryFragment} from "../../../../../../generated/graphql";
-import {
-    Content_ItemType_Enum
+    ManageContent_ItemSecondaryFragment,
 } from "../../../../../../generated/graphql";
+import { Content_ItemType_Enum } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditItemPeoplePanel } from "../Item/EditItemPeople";
 import { EditElement } from "./EditElement";
@@ -28,14 +27,10 @@ export function EditElements({
     itemId,
     elements,
     originatingData,
-    refetchElements,
-    defaultOpenSecurityForId,
     itemType,
     openSendSubmissionRequests,
 }: {
     itemId: string;
-    refetchElements: () => void;
-    defaultOpenSecurityForId?: string;
     itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 } & Partial<ManageContent_ItemSecondaryFragment> & {
@@ -146,8 +141,6 @@ export function EditElements({
                     idx={idx}
                     previousElement={sortedElements[idx - 1]}
                     nextElement={sortedElements[idx + 1]}
-                    refetchElements={refetchElements}
-                    defaultOpenSecurity={item.id === defaultOpenSecurityForId}
                     openSendSubmissionRequests={(personIds) => openSendSubmissionRequests(itemId, personIds)}
                 />
             ))}

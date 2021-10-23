@@ -82,7 +82,6 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             uploadsRemaining: item.uploadsRemaining,
         })),
         people: group.itemPeople.map((groupPerson) => ({
-            conferenceId: groupPerson.conferenceId,
             itemId: groupPerson.itemId,
             id: groupPerson.id,
             personId: groupPerson.personId,
@@ -90,7 +89,6 @@ export function convertItemToDescriptor(group: ItemFullNestedInfoFragment): Item
             roleName: groupPerson.roleName,
         })),
         exhibitions: group.itemExhibitions.map((groupExhibition) => ({
-            conferenceId: groupExhibition.conferenceId,
             itemId: groupExhibition.itemId,
             exhibitionId: groupExhibition.exhibitionId,
             id: groupExhibition.id,
@@ -120,7 +118,6 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
             uploadsRemaining: item.uploadsRemaining,
         })),
         people: group.people.map((groupPerson) => ({
-            conferenceId: groupPerson.conferenceId,
             itemId: groupPerson.itemId,
             id: groupPerson.id,
             personId: groupPerson.personId,

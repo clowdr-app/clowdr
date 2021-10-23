@@ -103,7 +103,7 @@ export function LiveIndicator({
         variables: {
             elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
         },
-        skip: latestSwitchData?.data.kind !== "video",
+        pause: latestSwitchData?.data.kind !== "video",
     });
     const currentElementData = latestSwitchData?.data.kind === "video" ? _currentElementData : undefined;
 

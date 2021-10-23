@@ -6,6 +6,7 @@ import { useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { useTitle } from "../../../Utils/useTitle";
@@ -102,6 +103,7 @@ function ExhibitionPageInner({
     events: readonly ItemEventFragment[];
 }): JSX.Element {
     const title = useTitle(exhibition.name);
+    const { conferencePath } = useAuthParameters();
 
     const descriptiveItemDiscussionRoom = useMemo(
         () => exhibition.descriptiveItem?.rooms[0],
@@ -177,7 +179,7 @@ export default function ExhibitionPage({ exhibitionId }: { exhibitionId: string 
         },
     });
 
-    return exhibitionResponse.loading && !exhibitionResponse.data ? (
+    return exhibitionResponse.fetching && !exhibitionResponse.data ? (
         <CenteredSpinner spinnerProps={{ label: "Loading exhibition" }} />
     ) : exhibitionResponse.data?.collection_Exhibition_by_pk ? (
         <ExhibitionPageInner

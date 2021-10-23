@@ -8,6 +8,7 @@ import type {
 import { Content_ItemType_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 
@@ -16,6 +17,7 @@ export function ItemLive({
 }: {
     itemData: ItemElements_ItemDataFragment & { events: readonly ItemEventFragment[] } & ItemPage_ItemRoomsFragment;
 }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const [liveEvents, setLiveEvents] = useState<ItemEventFragment[] | null>(null);
     // const [nextEvent, setNextEvent] = useState<ItemEventFragment | null>(null);
     // const [now, setNow] = useState<number>(Date.now());

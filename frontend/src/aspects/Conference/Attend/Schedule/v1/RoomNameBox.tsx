@@ -3,6 +3,7 @@ import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type { Schedule_RoomSummaryFragment } from "../../../../../generated/graphql";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 
 export default function RoomNameBox({
     room,
@@ -20,7 +21,7 @@ export default function RoomNameBox({
     marginLeft?: string;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const activePermissions = useConferenceCurrentUserActivePermissions();
+    const registrant = useMaybeCurrentRegistrant();
     // let roomIcon: JSX.Element | undefined;
     // if (typeof room !== "string") {
     //     switch (room.currentModeName) {
@@ -40,10 +41,7 @@ export default function RoomNameBox({
     //     }
     // }
 
-    const shouldLink = [
-        Permissions_Permission_Enum.ConferenceViewAttendees,
-        Permissions_Permission_Enum.ConferenceManageSchedule,
-    ].some((permission) => activePermissions.has(permission));
+    const shouldLink = !!registrant;
 
     return (
         <Center

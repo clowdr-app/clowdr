@@ -571,10 +571,8 @@ export function VonageRoomControlBar({
                                 if (vonage.state.type === StateType.Connected) {
                                     setRecentlyToggledRecording(true);
                                     toggleVonageRecording({
-                                        variables: {
-                                            vonageSessionId: vonage.state.session.sessionId,
-                                            recordingActive: !isRecordingActive,
-                                        },
+                                        vonageSessionId: vonage.state.session.sessionId,
+                                        recordingActive: !isRecordingActive,
                                     });
                                 }
                             }}

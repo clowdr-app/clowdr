@@ -18,9 +18,7 @@ import type {
     ProgramPersonDescriptor,
 } from "../../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import type {
-    ChangeSummary,
-    IdMap} from "../Merge";
+import type { ChangeSummary, IdMap } from "../Merge";
 import {
     convertOriginatingData,
     findExistingNamedItem,
@@ -242,7 +240,6 @@ function mergeItemPerson(
 
     mergeIdInPlace("ItemPerson", context, changes, result, element1, element2);
     mergeIsNewInPlace(context, result, element1, element2);
-    mergeFieldInPlace(context, changes, result, "conferenceId", element1, element2);
     mergeFieldInPlace(context, changes, result, "itemId", element1, element2, false);
     mergeFieldInPlace(context, changes, result, "personId", element1, element2);
     mergeFieldInPlace(context, changes, result, "priority", element1, element2);
@@ -270,7 +267,6 @@ function convertItemPerson(
         id: element.id ?? uuidv4(),
         isNew: ("isNew" in element && element.isNew) || !element.id,
 
-        conferenceId: context.conferenceId,
         itemId: "itemId" in element ? element.itemId : undefined,
         roleName: "roleName" in element ? element.roleName : element.role,
         priority: element.priority,

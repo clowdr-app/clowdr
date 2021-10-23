@@ -9,8 +9,7 @@ import "@uppy/status-bar/dist/style.css";
 import { gql } from "@urql/core";
 import { Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { ProfileDataFragment } from "../../../../generated/graphql";
-import { ProfileDataFragmentDoc, useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
+import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
@@ -34,7 +33,7 @@ export default function EditProfilePitureForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
-    const [submitProfilePhoto] = useSubmitProfilePhotoMutation();
+    const [, submitProfilePhoto] = useSubmitProfilePhotoMutation();
     const allowedFileTypes = useMemo(() => ["image/*", ".jpg", ".jpeg", ".png", ".gif", ".webp"], []);
     const uppy = useMemo(() => {
         const uppy = new Uppy({
@@ -130,44 +129,11 @@ export default function EditProfilePitureForm({
                     try {
                         const s3URL = result.successful[0].uploadURL;
                         const submitResult = await submitProfilePhoto({
-                            variables: {
-                                s3URL,
-                                registrantId: registrant.id,
-                            },
-                            update: (cache, result) => {
-                                if (result.data?.updateProfilePhoto) {
-                                    const data = result.data.updateProfilePhoto;
-
-                                    const id = cache.identify({
-                                        __typename: "registrant_Profile",
-                                        registrantId: registrant.id,
-                                    });
-
-                                    const frag = cache.readFragment<ProfileDataFragment>({
-                                        fragment: ProfileDataFragmentDoc,
-                                        fragmentName: "ProfileData",
-                                        id,
-                                    });
-
-                                    if (frag) {
-                                        cache.writeFragment({
-                                            id,
-                                            data: {
-                                                ...frag,
-                                                photoURL_350x350: data.photoURL_350x350 ?? "",
-                                                photoURL_50x50: data.photoURL_50x50 ?? "",
-                                                hasBeenEdited: true,
-                                            },
-                                            fragment: ProfileDataFragmentDoc,
-                                            fragmentName: "ProfileData",
-                                            broadcast: true,
-                                        });
-                                    }
-                                }
-                            },
+                            s3URL,
+                            registrantId: registrant.id,
                         });
 
-                        if (submitResult.errors || !submitResult.data?.updateProfilePhoto?.ok) {
+                        if (submitResult.error || !submitResult.data?.updateProfilePhoto?.ok) {
                             throw new Error("Upload failed.");
                         }
 
@@ -277,36 +243,8 @@ export default function EditProfilePitureForm({
                                                 (async () => {
                                                     try {
                                                         await submitProfilePhoto({
-                                                            variables: {
-                                                                s3URL: "",
-                                                                registrantId: registrant.id,
-                                                            },
-                                                            update: (cache) => {
-                                                                const id = cache.identify({
-                                                                    __typename: "registrant_Profile",
-                                                                    registrantId: registrant.id,
-                                                                });
-
-                                                                const frag = cache.readFragment<ProfileDataFragment>({
-                                                                    fragment: ProfileDataFragmentDoc,
-                                                                    fragmentName: "ProfileData",
-                                                                    id,
-                                                                });
-
-                                                                if (frag) {
-                                                                    cache.writeFragment({
-                                                                        id,
-                                                                        data: {
-                                                                            ...frag,
-                                                                            photoURL_350x350: "",
-                                                                            photoURL_50x50: "",
-                                                                        },
-                                                                        fragment: ProfileDataFragmentDoc,
-                                                                        fragmentName: "ProfileData",
-                                                                        broadcast: true,
-                                                                    });
-                                                                }
-                                                            },
+                                                            s3URL: "",
+                                                            registrantId: registrant.id,
                                                         });
                                                     } finally {
                                                         setIsDeleting(false);

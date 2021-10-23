@@ -34,7 +34,9 @@ gql`
 `;
 
 export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const { data, loading, error } = useConferencePrepareJobSubscriptionSubscription({ variables: { conferenceId } });
+    const [{ data, fetching: loading, error }] = useConferencePrepareJobSubscriptionSubscription({
+        variables: { conferenceId },
+    });
     useQueryErrorToast(error, false);
 
     return loading && !data ? (

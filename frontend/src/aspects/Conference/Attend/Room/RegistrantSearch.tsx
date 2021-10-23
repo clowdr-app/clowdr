@@ -24,7 +24,7 @@ export function RegistrantSearch({
     const [search, searchDebounced, setSearch] = useDebouncedState<string>("");
     const [options, setOptions] = useState<{ label: string; value: string; inRoom: boolean }[]>([]);
     const ariaSearchResultStr = `${options.length} people`;
-    const [{ refetch }] = useSearchRegistrantsQuery({ pause: true });
+    const [, refetch] = useSearchRegistrantsQuery({ pause: true });
     const conference = useConference();
 
     const getSelectOptions = useCallback(

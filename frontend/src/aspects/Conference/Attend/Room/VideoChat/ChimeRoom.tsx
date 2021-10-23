@@ -24,14 +24,12 @@ export function VideoChatChimeRoom({
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
-    const [getRoomChimeData] = useGetRoomChimeDataMutation({
-        variables: {
-            roomId: room.id,
-        },
-    });
+    const [, getRoomChimeData] = useGetRoomChimeDataMutation();
 
     const getMeetingData = useCallback(async () => {
-        const result = await getRoomChimeData();
+        const result = await getRoomChimeData({
+            roomId: room.id,
+        });
         if (!result.data?.joinRoomChimeSession?.registrant || !result.data.joinRoomChimeSession.meeting) {
             throw new Error(`Could not join meeting: ${result.data?.joinRoomChimeSession?.message}`);
         }
@@ -39,7 +37,7 @@ export function VideoChatChimeRoom({
             attendeeInfo: result.data.joinRoomChimeSession.registrant,
             meetingInfo: result.data.joinRoomChimeSession.meeting,
         };
-    }, [getRoomChimeData]);
+    }, [getRoomChimeData, room.id]);
 
     return sharedRoomContext ? (
         <portals.OutPortal

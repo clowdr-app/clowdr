@@ -17,10 +17,9 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { gql } from "urql";
 import { useImportRegistrantsMutation, useSelectAllRegistrantsQuery } from "../../../../../generated/graphql";
-import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import { useConference } from "../../../useConference";
 
@@ -57,8 +56,8 @@ export default function ImportPanel({
     data: Record<string, IntermediaryRegistrantData[]>;
 }): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
-    const [hasImported, setHasImported] = useState<boolean>(false);
+    // const { conferencePath } = useAuthParameters();
+    // const [hasImported, setHasImported] = useState<boolean>(false);
 
     // TODO: Subconferences
     // const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
@@ -68,7 +67,7 @@ export default function ImportPanel({
     // });
     // useQueryErrorToast(groupsError, false);
 
-    const [{ fetching: registrantsLoading, data: registrantsData, error: registrantsError }, refetchRegistrants] =
+    const [{ fetching: registrantsLoading, data: _registrantsData, error: registrantsError }, refetchRegistrants] =
         useSelectAllRegistrantsQuery({
             requestPolicy: "network-only",
             variables: {
@@ -97,8 +96,8 @@ export default function ImportPanel({
     const finalData = useMemo(() => {
         return Object.values(inputData).reduce((acc, input) => {
             for (const row of input) {
-                const email = row.email.trim().toLowerCase();
-                // TODO: Subconferences
+                // TODO: Subconferences and main conference
+                // const email = row.email.trim().toLowerCase();
                 // const group = groupsData?.permissions_Group.find(
                 //     (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
                 // );
@@ -161,17 +160,17 @@ export default function ImportPanel({
         }, [] as RegistrantFinalData[]);
     }, [inputData]);
 
-    const missingGroups = useMemo<string[]>(
-        () => [
-            ...(finalData?.reduce<Set<string>>((acc, x) => {
-                if (x.missingGroups) {
-                    x.missingGroups.forEach((y) => acc.add(y));
-                }
-                return acc;
-            }, new Set<string>()) ?? []),
-        ],
-        [finalData]
-    );
+    // const missingGroups = useMemo<string[]>(
+    //     () => [
+    //         ...(finalData?.reduce<Set<string>>((acc, x) => {
+    //             if (x.missingGroups) {
+    //                 x.missingGroups.forEach((y) => acc.add(y));
+    //             }
+    //             return acc;
+    //         }, new Set<string>()) ?? []),
+    //     ],
+    //     [finalData]
+    // );
     const noEmail = finalData.some((x) => x.email.length === 0);
     const noName = finalData.some((x) => x.name.length === 0);
 
@@ -252,7 +251,7 @@ export default function ImportPanel({
                             // TODO: Subconferences
                             // insertGroupRegistrants: newGroupRegistrants,
                         });
-                        setHasImported(true);
+                        // setHasImported(true);
                     }}
                 >
                     Import

@@ -42,7 +42,6 @@ export type ItemExhibitionDescriptor = {
     isNew?: boolean;
 
     id: string;
-    conferenceId?: string;
     itemId: string;
     exhibitionId: string;
     priority?: number | null;
@@ -53,7 +52,6 @@ export type ItemPersonDescriptor = {
     isNew?: boolean;
 
     id: string;
-    conferenceId: string;
     itemId: string;
     priority?: number | null;
     roleName: string;

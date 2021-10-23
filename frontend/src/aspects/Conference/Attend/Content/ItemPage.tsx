@@ -97,7 +97,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         return <Redirect to={`${conferencePath}/room/${itemData.rooms[0].id}`} />;
                     }
 
-                    if (itemData.typeName === Content_ItemType_Enum.LandingPage) {
+                    if (itemData.typeName === Content_ItemType_Enum.LandingPage && conferencePath) {
                         return <Redirect to={conferencePath} />;
                     }
 

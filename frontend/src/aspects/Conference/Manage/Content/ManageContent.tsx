@@ -5,7 +5,6 @@ import {
     FormLabel,
     Heading,
     HStack,
-    IconButton,
     Input,
     Menu,
     MenuButton,
@@ -22,22 +21,24 @@ import Papa from "papaparse";
 import * as R from "ramda";
 import type { LegacyRef } from "react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import type {
     Content_Item_Set_Input,
     ManageContent_ExhibitionFragment,
     ManageContent_ItemFragment,
+    ManageContent_SelectItemsForExportQuery,
+    ManageContent_SelectItemsForExportQueryVariables,
     ManageContent_TagFragment,
 } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    ManageContent_ItemFragmentDoc,
+    ManageContent_SelectItemsForExportDocument,
     useManageContent_DeleteItemsMutation,
     useManageContent_InsertItemMutation,
     useManageContent_SelectAllExhibitionsQuery,
     useManageContent_SelectAllItemsQuery,
     useManageContent_SelectAllTagsQuery,
-    useManageContent_SelectItemsForExportQuery,
     useManageContent_UpdateItemMutation,
 } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -53,8 +54,8 @@ import type {
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { FAIcon } from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -63,7 +64,6 @@ import { BulkOperationMenu } from "./v2/BulkOperations/BulkOperationMenu";
 import ManageExhibitionsModal from "./v2/Exhibition/ManageExhibitionsModal";
 import { SecondaryEditor } from "./v2/Item/SecondaryEditor";
 import ManageTagsModal from "./v2/ManageTagsModal";
-import { EditElementsPermissionGrantsModal } from "./v2/Security/EditElementsPermissionGrantsModal";
 import { SendSubmissionRequestsModal } from "./v2/Submissions/SubmissionRequestsModal";
 import { SubmissionsReviewModal } from "./v2/Submissions/SubmissionsReviewModal";
 
@@ -296,44 +296,34 @@ function formatEnumValueForLabel(value: string): string {
 
 export default function ManageContentV2(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllTags,
-        error: errorAllTags,
-        data: allTags,
-        refetch: refetchAllTags,
-    } = useManageContent_SelectAllTagsQuery({
-        requestPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags }, refetchAllTags] =
+        useManageContent_SelectAllTagsQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllTags, false);
 
-    const {
-        loading: loadingAllExhibitions,
-        error: errorAllExhibitions,
-        data: allExhibitions,
-    } = useManageContent_SelectAllExhibitionsQuery({
-        requestPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllExhibitions, error: errorAllExhibitions, data: allExhibitions }] =
+        useManageContent_SelectAllExhibitionsQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllExhibitions, false);
 
-    const {
-        loading: loadingAllItems,
-        error: errorAllItems,
-        data: allItems,
-        refetch: refetchAllItems,
-    } = useManageContent_SelectAllItemsQuery({
-        requestPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllItems, error: errorAllItems, data: allItems }, refetchAllItems] =
+        useManageContent_SelectAllItemsQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllItems, false);
     const data = useMemo(() => [...(allItems?.content_Item ?? [])], [allItems?.content_Item]);
 
@@ -646,7 +636,7 @@ export default function ManageContentV2(): JSX.Element {
         [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
 
-    const [insertItem, insertItemResponse] = useManageContent_InsertItemMutation();
+    const [insertItemResponse, insertItem] = useManageContent_InsertItemMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_ItemFragment>;
@@ -656,7 +646,7 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertItemResponse.loading,
+            ongoing: insertItemResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -668,43 +658,21 @@ export default function ManageContentV2(): JSX.Element {
             makeWhole: (d) => d as ManageContent_ItemFragment,
             start: (record) => {
                 insertItem({
-                    variables: {
-                        item: {
-                            conferenceId: record.conferenceId,
-                            id: record.id,
-                            title: record.title,
-                            shortTitle: record.shortTitle,
-                            typeName: record.typeName,
-                        },
-                        itemTags: record.itemTags,
+                    item: {
+                        conferenceId: record.conferenceId,
+                        id: record.id,
+                        title: record.title,
+                        shortTitle: record.shortTitle,
+                        typeName: record.typeName,
                     },
-                    update: (cache, response) => {
-                        if (response.data?.insert_content_Item_one) {
-                            const data = response.data?.insert_content_Item_one;
-                            cache.modify({
-                                fields: {
-                                    content_Item(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ItemFragmentDoc,
-                                            fragmentName: "ManageContent_Item",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    itemTags: record.itemTags,
                 });
             },
         }),
-        [conference.id, insertItem, insertItemResponse.loading]
+        [conference.id, insertItem, insertItemResponse.fetching]
     );
 
-    const [updateItem, updateItemResponse] = useManageContent_UpdateItemMutation();
+    const [updateItemResponse, updateItem] = useManageContent_UpdateItemMutation();
     const update:
         | {
               start: (record: ManageContent_ItemFragment) => void;
@@ -712,7 +680,7 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateItemResponse.loading,
+            ongoing: updateItemResponse.fetching,
             start: (record) => {
                 const itemUpdateInput: Content_Item_Set_Input = {
                     title: record.title,
@@ -720,45 +688,20 @@ export default function ManageContentV2(): JSX.Element {
                     typeName: record.typeName,
                 };
                 updateItem({
-                    variables: {
-                        id: record.id,
-                        item: itemUpdateInput,
-                        tags: record.itemTags.map((x) => ({
-                            itemId: x.itemId,
-                            tagId: x.tagId,
-                        })),
-                        tagIds: record.itemTags.map((x) => x.tagId),
-                    },
-                    optimisticResponse: {
-                        update_content_Item_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_content_Item_by_pk) {
-                            const data = _data.update_content_Item_by_pk;
-                            cache.modify({
-                                fields: {
-                                    content_Item(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ItemFragmentDoc,
-                                            fragmentName: "ManageContent_Item",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    id: record.id,
+                    item: itemUpdateInput,
+                    tags: record.itemTags.map((x) => ({
+                        itemId: x.itemId,
+                        tagId: x.tagId,
+                    })),
+                    tagIds: record.itemTags.map((x) => x.tagId),
                 });
             },
         }),
-        [updateItem, updateItemResponse.loading]
+        [updateItem, updateItemResponse.fetching]
     );
 
-    const [deleteItems, deleteItemsResponse] = useManageContent_DeleteItemsMutation();
+    const [deleteItemsResponse, deleteItems] = useManageContent_DeleteItemsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -766,29 +709,14 @@ export default function ManageContentV2(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteItemsResponse.loading,
+            ongoing: deleteItemsResponse.fetching,
             start: (keys) => {
                 deleteItems({
-                    variables: {
-                        ids: keys,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_content_Item) {
-                            const data = _data.delete_content_Item;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            deletedIds.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "ManageContent_Item",
-                                    broadcast: true,
-                                });
-                            });
-                        }
-                    },
+                    ids: keys,
                 });
             },
         }),
-        [deleteItems, deleteItemsResponse.loading]
+        [deleteItems, deleteItemsResponse.fetching]
     );
 
     const forceReloadRef = useRef<() => void>(() => {
@@ -816,9 +744,7 @@ export default function ManageContentV2(): JSX.Element {
         },
         [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_PersonIds]
     );
-    const [selectItemsForExport] = useManageContent_SelectItemsForExportQuery({
-        pause: true,
-    });
+    const client = useClient();
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
             {
@@ -904,79 +830,89 @@ export default function ManageContentV2(): JSX.Element {
                     }
 
                     async function doContentExport(dataToExport: readonly ManageContent_ItemFragment[]) {
-                        const contentForExport = await selectItemsForExport.refetch({
-                            itemIds: dataToExport.map((x) => x.id),
-                        });
-
-                        const csvText = Papa.unparse(
-                            contentForExport.data.content_Item.map((item) => {
-                                const result: any = {
-                                    "Conference Id": item.conferenceId,
-                                    "Content Id": item.id,
-                                    "Externally Sourced Data Id": item.originatingDataId,
-
-                                    Title: item.title,
-                                    "Short Title": item.shortTitle ?? "",
-                                    Type: item.typeName,
-                                    "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
-                                    Exhibitions: item.itemExhibitions.map(
-                                        (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
-                                    ),
-                                    "Discussion Room Ids": item.rooms.map((room) => room.id),
-                                    "Chat Id": item.chatId ?? "",
-
-                                    People: item.itemPeople.map(
-                                        (itemPerson) =>
-                                            `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
-                                                itemPerson.roleName
-                                            }) [${itemPerson.person?.name} (${
-                                                itemPerson.person?.affiliation ?? "No affiliation"
-                                            }) <${itemPerson.person?.email ?? "No email"}>]`
-                                    ),
-                                };
-
-                                for (let idx = 0; idx < item.elements.length; idx++) {
-                                    const baseName = `Element ${idx}`;
-                                    const element = item.elements[idx];
-                                    result[`${baseName}: Id`] = element.id;
-                                    result[`${baseName}: Name`] = element.name;
-                                    result[`${baseName}: Type`] = element.typeName;
-                                    result[`${baseName}: Data`] =
-                                        element.data && element.data instanceof Array
-                                            ? JSON.stringify(element.data[element.data.length - 1])
-                                            : null;
-                                    result[`${baseName}: Layout`] = element.layoutData
-                                        ? JSON.stringify(element.layoutData)
-                                        : null;
-                                    result[`${baseName}: Uploads Remaining`] = element.uploadsRemaining ?? "Unlimited";
-                                    result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
-                                    result[`${baseName}: Updated At`] = element.updatedAt;
-                                }
-
-                                return result;
+                        const contentForExport = await client
+                            .query<
+                                ManageContent_SelectItemsForExportQuery,
+                                ManageContent_SelectItemsForExportQueryVariables
+                            >(ManageContent_SelectItemsForExportDocument, {
+                                itemIds: dataToExport.map((x) => x.id),
                             })
-                        );
+                            .toPromise();
 
-                        const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
-                        let csvURL: string | null = null;
-                        const now = new Date();
-                        const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now
-                            .getDate()
-                            .toString()
-                            .padStart(2, "0")}T${now.getHours().toString().padStart(2, "0")}-${now
-                            .getMinutes()
-                            .toString()
-                            .padStart(2, "0")} - Midspace Content.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
+                        if (contentForExport.data) {
+                            const csvText = Papa.unparse(
+                                contentForExport.data.content_Item.map((item) => {
+                                    const result: any = {
+                                        "Conference Id": item.conferenceId,
+                                        "Content Id": item.id,
+                                        "Externally Sourced Data Id": item.originatingDataId,
+
+                                        Title: item.title,
+                                        "Short Title": item.shortTitle ?? "",
+                                        Type: item.typeName,
+                                        "Tag Ids": item.itemTags.map((itemTag) => itemTag.tagId),
+                                        Exhibitions: item.itemExhibitions.map(
+                                            (itemExh) => `${itemExh.priority ?? "N"}: ${itemExh.exhibitionId}`
+                                        ),
+                                        "Discussion Room Ids": item.rooms.map((room) => room.id),
+                                        "Chat Id": item.chatId ?? "",
+
+                                        People: item.itemPeople.map(
+                                            (itemPerson) =>
+                                                `${itemPerson.priority ?? "N"}: ${itemPerson.person?.id} (${
+                                                    itemPerson.roleName
+                                                }) [${itemPerson.person?.name} (${
+                                                    itemPerson.person?.affiliation ?? "No affiliation"
+                                                }) <${itemPerson.person?.email ?? "No email"}>]`
+                                        ),
+                                    };
+
+                                    for (let idx = 0; idx < item.elements.length; idx++) {
+                                        const baseName = `Element ${idx}`;
+                                        const element = item.elements[idx];
+                                        result[`${baseName}: Id`] = element.id;
+                                        result[`${baseName}: Name`] = element.name;
+                                        result[`${baseName}: Type`] = element.typeName;
+                                        result[`${baseName}: Data`] =
+                                            element.data && element.data instanceof Array
+                                                ? JSON.stringify(element.data[element.data.length - 1])
+                                                : null;
+                                        result[`${baseName}: Layout`] = element.layoutData
+                                            ? JSON.stringify(element.layoutData)
+                                            : null;
+                                        result[`${baseName}: Uploads Remaining`] =
+                                            element.uploadsRemaining ?? "Unlimited";
+                                        result[`${baseName}: Hidden`] = element.isHidden ? "Yes" : "No";
+                                        result[`${baseName}: Updated At`] = element.updatedAt;
+                                    }
+
+                                    return result;
+                                })
+                            );
+
+                            const csvData = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+                            let csvURL: string | null = null;
+                            const now = new Date();
+                            const fileName = `${now.getFullYear()}-${(now.getMonth() + 1)
+                                .toString()
+                                .padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}T${now
+                                .getHours()
+                                .toString()
+                                .padStart(2, "0")}-${now
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")} - Midspace Content.csv`;
+                            if (navigator.msSaveBlob) {
+                                navigator.msSaveBlob(csvData, fileName);
+                            } else {
+                                csvURL = window.URL.createObjectURL(csvData);
+                            }
+
+                            const tempLink = document.createElement("a");
+                            tempLink.href = csvURL ?? "";
+                            tempLink.setAttribute("download", fileName);
+                            tempLink.click();
                         }
-
-                        const tempLink = document.createElement("a");
-                        tempLink.href = csvURL ?? "";
-                        tempLink.setAttribute("download", fileName);
-                        tempLink.click();
                     }
 
                     const tooltip = (filler: string) => `Exports ${filler}.`;
@@ -1233,7 +1169,8 @@ export default function ManageContentV2(): JSX.Element {
             },
         ],
         [
-            selectItemsForExport,
+            conferencePath,
+            client,
             allTags?.collection_Tag,
             allExhibitions?.collection_Exhibition,
             allItems?.content_Item,
@@ -1241,13 +1178,6 @@ export default function ManageContentV2(): JSX.Element {
             submissionsReview_OnOpen,
         ]
     );
-
-    const { isOpen: editPGs_IsOpen, onOpen: editPGs_OnOpen, onClose: editPGs_OnClose } = useDisclosure();
-    const editPGs_OnCloseFull = useCallback(async () => {
-        await refetchAllItems();
-        forceReloadRef.current();
-        editPGs_OnClose();
-    }, [editPGs_OnClose, refetchAllItems]);
 
     const alert = useMemo<
         | {
@@ -1303,15 +1233,6 @@ export default function ManageContentV2(): JSX.Element {
                         forceReloadRef.current();
                     }}
                 />
-                <Tooltip label="Manage global element security">
-                    <IconButton
-                        ml="auto"
-                        colorScheme="yellow"
-                        aria-label="Manage global element security"
-                        icon={<FAIcon iconStyle="s" icon="lock" />}
-                        onClick={editPGs_OnOpen}
-                    />
-                </Tooltip>
             </HStack>
             <CRUDTable<ManageContent_ItemFragment>
                 columns={columns}
@@ -1351,12 +1272,6 @@ export default function ManageContentV2(): JSX.Element {
                 isOpen={submissionsReview_IsOpen}
                 onClose={submissionsReview_OnClose}
                 itemIds={submissionsReview_ItemIds}
-            />
-            <EditElementsPermissionGrantsModal
-                isOpen={editPGs_IsOpen}
-                onClose={editPGs_OnCloseFull}
-                elementIds={[]}
-                treatEmptyAsAny={true}
             />
         </RequireRole>
     );

@@ -467,7 +467,7 @@ export class ChatState {
                 : initialState.nonDMRoom.length > 0
                 ? initialState.nonDMRoom[0].name
                 : initialState.DMRoom.length > 0
-                ? initialState.DMRoom[0].roomPeople.find((x) => x?.registrant?.id !== globalState.registrant.id)
+                ? initialState.DMRoom[0].roomMemberships.find((x) => x?.registrant?.id !== globalState.registrant.id)
                       ?.registrant?.displayName
                 : undefined) ?? "<No name available>";
 

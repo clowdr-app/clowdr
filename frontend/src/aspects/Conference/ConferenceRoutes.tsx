@@ -30,10 +30,8 @@ import ManageEmail from "./Manage/Email/ManageEmail";
 import ManageExport from "./Manage/Export/ManageExport";
 import ManageImport from "./Manage/Import/ManageImport";
 import ManageDetails from "./Manage/ManageDetails";
-import ManageGroups from "./Manage/ManageGroups";
 import ManageProgramPeople from "./Manage/ManageProgramPeople";
 import ManagerLanding from "./Manage/ManagerLanding";
-import ManageRoles from "./Manage/ManageRoles";
 import ManageRooms from "./Manage/ManageRooms";
 import ManageRegistrants from "./Manage/Registrants/ManageRegistrants";
 import ManageSchedule from "./Manage/Schedule/ManageSchedule";
@@ -86,12 +84,6 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
             <Route path={`${path}/manage/details`}>
                 <ManageDetails />
-            </Route>
-            <Route path={`${path}/manage/roles`}>
-                <ManageRoles />
-            </Route>
-            <Route path={`${path}/manage/groups`}>
-                <ManageGroups />
             </Route>
             <Route path={`${path}/manage/registrants`}>
                 <ManageRegistrants />

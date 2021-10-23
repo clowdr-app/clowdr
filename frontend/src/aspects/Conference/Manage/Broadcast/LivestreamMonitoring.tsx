@@ -145,6 +145,7 @@ interface EventStatus {
 
 export default function LivestreamMonitoring(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const now = useRealTime(1000);
     const nowRoundedDown = roundDownToNearest(now, 60 * 1000);
     const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
@@ -457,7 +458,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                 </List>
             </>
         );
-    }, [bgColor, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
+    }, [bgColor, conferencePath, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
 
     const secondsToNextRefresh = Math.round((nowRoundedUp - now) / 1000);
 
@@ -505,7 +506,7 @@ export default function LivestreamMonitoring(): JSX.Element {
             </Grid>
             <Divider />
             <Center h="60px">
-                {response.loading ? (
+                {response.fetching ? (
                     <Spinner label="Loading backstage info" size="sm" />
                 ) : (
                     <>
@@ -574,6 +575,7 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
 
 function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const { hasCopied, onCopy } = useClipboard(event.id);
     const now = useRealTime(60 * 1000);
 
@@ -595,7 +597,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
         return () => {
             unobserve();
         };
-    }, [conference.slug, event.room.id, presence]);
+    }, [conferencePath, conference.slug, event.room.id, presence]);
 
     const itemEl = useMemo(
         () =>
@@ -819,6 +821,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                 </VStack>
             ),
         [
+            conferencePath,
             isLive,
             isFuture,
             event.id,

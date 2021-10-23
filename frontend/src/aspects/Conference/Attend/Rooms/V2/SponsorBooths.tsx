@@ -57,7 +57,7 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);
     }, [setAnySponsors, result.data]);
 
-    if (result.loading && !result?.data) {
+    if (result.fetching && !result?.data) {
         return <Spinner label="Loading rooms" />;
     }
 

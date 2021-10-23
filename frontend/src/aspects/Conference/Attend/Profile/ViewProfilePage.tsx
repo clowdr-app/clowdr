@@ -16,11 +16,12 @@ import {
 import React from "react";
 import { Redirect } from "react-router-dom";
 import { gql } from "urql";
-import { Permissions_Permission_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
+import { Registrant_RegistrantRole_Enum, useRegistrantByIdQuery } from "../../../../generated/graphql";
 import BadgeList from "../../../Badges/BadgeList";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageFailedToLoad from "../../../Errors/PageFailedToLoad";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import PronounList from "../../../Pronouns/PronounList";
@@ -28,7 +29,6 @@ import { Markdown } from "../../../Text/Markdown";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
-import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import type { Registrant } from "../../useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../useCurrentRegistrant";
 import RegistrantExtraInfo from "./RegistrantExtraInfo";
@@ -44,8 +44,9 @@ gql`
 
 function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.Element {
     const conference = useConference();
-    const activePermissions = useConferenceCurrentUserActivePermissions();
+    const { conferencePath } = useAuthParameters();
     const maybeCurrentUser = useMaybeCurrentUser();
+    const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
 
     const title = useTitle(`${registrant.displayName} at ${conference.shortName}`);
 
@@ -54,13 +55,10 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
             {title}
             <VStack spacing={0} maxW={1100} w="100%" m={2}>
                 {(maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id) ||
-                [
-                    Permissions_Permission_Enum.ConferenceManageAttendees,
-                    Permissions_Permission_Enum.ConferenceManageGroups,
-                    Permissions_Permission_Enum.ConferenceManageRoles,
-                ].some((permission) => activePermissions.has(permission)) ? (
+                maybeCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+                maybeCurrentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ? (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={conferencePath} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -180,7 +178,7 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
 
 function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const [{ loading, error, data }] = useRegistrantByIdQuery({
+    const [{ fetching: loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             registrantId,
             conferenceId: conference.id,
@@ -224,23 +222,19 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
 }
 
 export default function ViewProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
-    const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
     const maybeCurrentUser = useMaybeCurrentUser();
+    const { conferencePath } = useAuthParameters();
 
     if (
         (!maybeCurrentUser.user ||
             !maybeCurrentRegistrant ||
             maybeCurrentRegistrant.userId !== maybeCurrentUser.user.id ||
             maybeCurrentRegistrant?.id !== registrantId) &&
-        ![
-            Permissions_Permission_Enum.ConferenceViewAttendees,
-            Permissions_Permission_Enum.ConferenceManageAttendees,
-            Permissions_Permission_Enum.ConferenceManageGroups,
-            Permissions_Permission_Enum.ConferenceManageRoles,
-        ].some((permission) => activePermissions.has(permission))
+        maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Organizer &&
+        maybeCurrentRegistrant?.conferenceRole !== Registrant_RegistrantRole_Enum.Moderator
     ) {
-        return <Redirect to={conferencePath} />;
+        return <Redirect to={conferencePath ?? "/"} />;
     }
 
     if (registrantId) {

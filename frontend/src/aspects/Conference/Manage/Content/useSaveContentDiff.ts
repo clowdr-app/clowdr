@@ -1,3 +1,4 @@
+import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
 import assert from "assert";
 import { useEffect, useState } from "react";
@@ -464,30 +465,26 @@ export function useSaveContentDiff():
       } {
     const conference = useConference();
 
-    const [insertProgramPeopleMutation] = useInsertProgramPeopleMutation();
-    const [deleteProgramPeopleMutation] = useDeleteProgramPeopleMutation();
-    const [updatePersonMutation] = useUpdatePersonMutation();
-    const [insertExhibitionsMutation] = useInsertExhibitionsMutation();
-    const [deleteExhibitionsMutation] = useDeleteExhibitionsMutation();
-    const [updateExhibitionMutation] = useUpdateExhibitionMutation();
-    const [insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
-    const [deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
-    const [insertTagsMutation] = useInsertTagsMutation();
-    const [deleteTagsMutation] = useDeleteTagsMutation();
-    const [updateTagMutation] = useUpdateTagMutation();
+    const [, insertProgramPeopleMutation] = useInsertProgramPeopleMutation();
+    const [, deleteProgramPeopleMutation] = useDeleteProgramPeopleMutation();
+    const [, updatePersonMutation] = useUpdatePersonMutation();
+    const [, insertExhibitionsMutation] = useInsertExhibitionsMutation();
+    const [, deleteExhibitionsMutation] = useDeleteExhibitionsMutation();
+    const [, updateExhibitionMutation] = useUpdateExhibitionMutation();
+    const [, insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
+    const [, deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
+    const [, insertTagsMutation] = useInsertTagsMutation();
+    const [, deleteTagsMutation] = useDeleteTagsMutation();
+    const [, updateTagMutation] = useUpdateTagMutation();
 
-    const [insertDeleteItemsMutation] = useInsertDeleteItemsMutation();
-    const [insertElementsMutation] = useInsertElementsMutation();
-    const [updateItemMutation] = useUpdateItemMutation();
-    const [updateElementMutation] = useUpdateElementMutation();
-    const [updateGroupPersonMutation] = useUpdateGroupPersonMutation();
-    const [updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
+    const [, insertDeleteItemsMutation] = useInsertDeleteItemsMutation();
+    const [, insertElementsMutation] = useInsertElementsMutation();
+    const [, updateItemMutation] = useUpdateItemMutation();
+    const [, updateElementMutation] = useUpdateElementMutation();
+    const [, updateGroupPersonMutation] = useUpdateGroupPersonMutation();
+    const [, updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
-    const {
-        loading: loadingContent,
-        error: errorContent,
-        data: allContent,
-    } = useSelectAllContentQuery({
+    const [{ fetching: loadingContent, error: errorContent, data: allContent }] = useSelectAllContentQuery({
         requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
@@ -657,18 +654,16 @@ export function useSaveContentDiff():
                 try {
                     if (newTags.size > 0) {
                         await insertTagsMutation({
-                            variables: {
-                                newTags: Array.from(newTags.values()).map(
-                                    (tag): Collection_Tag_Insert_Input => ({
-                                        id: tag.id,
-                                        name: tag.name,
-                                        colour: tag.colour,
-                                        priority: tag.priority,
-                                        conferenceId: conference.id,
-                                        originatingDataId: tag.originatingDataId,
-                                    })
-                                ),
-                            },
+                            newTags: Array.from(newTags.values()).map(
+                                (tag): Collection_Tag_Insert_Input => ({
+                                    id: tag.id,
+                                    name: tag.name,
+                                    colour: tag.colour,
+                                    priority: tag.priority,
+                                    conferenceId: conference.id,
+                                    originatingDataId: tag.originatingDataId,
+                                })
+                            ),
                         });
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
@@ -680,13 +675,11 @@ export function useSaveContentDiff():
                             let ok = false;
                             try {
                                 await updateTagMutation({
-                                    variables: {
-                                        id: tag.id,
-                                        colour: tag.colour,
-                                        name: tag.name,
-                                        originatingDataId: tag.originatingDataId,
-                                        priority: tag.priority,
-                                    },
+                                    id: tag.id,
+                                    colour: tag.colour,
+                                    name: tag.name,
+                                    originatingDataId: tag.originatingDataId,
+                                    priority: tag.priority,
                                 });
                                 ok = true;
                             } catch (e) {
@@ -702,16 +695,14 @@ export function useSaveContentDiff():
 
                     if (newOriginatingDatas.size > 0) {
                         await insertOriginatingDatasMutation({
-                            variables: {
-                                newDatas: Array.from(newOriginatingDatas.values()).map(
-                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
-                                        id: originatingData.id,
-                                        conferenceId: conference.id,
-                                        data: originatingData.data,
-                                        sourceId: originatingData.sourceId,
-                                    })
-                                ),
-                            },
+                            newDatas: Array.from(newOriginatingDatas.values()).map(
+                                (originatingData): Conference_OriginatingData_Insert_Input => ({
+                                    id: originatingData.id,
+                                    conferenceId: conference.id,
+                                    data: originatingData.data,
+                                    sourceId: originatingData.sourceId,
+                                })
+                            ),
                         });
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
@@ -720,19 +711,17 @@ export function useSaveContentDiff():
 
                     if (newPeople.size > 0) {
                         await insertProgramPeopleMutation({
-                            variables: {
-                                newPeople: Array.from(newPeople.values()).map(
-                                    (person): Collection_ProgramPerson_Insert_Input => ({
-                                        id: person.id,
-                                        conferenceId: conference.id,
-                                        affiliation: person.affiliation,
-                                        email: person.email,
-                                        name: person.name,
-                                        originatingDataId: person.originatingDataId,
-                                        registrantId: person.registrantId,
-                                    })
-                                ),
-                            },
+                            newPeople: Array.from(newPeople.values()).map(
+                                (person): Collection_ProgramPerson_Insert_Input => ({
+                                    id: person.id,
+                                    conferenceId: conference.id,
+                                    affiliation: person.affiliation,
+                                    email: person.email,
+                                    name: person.name,
+                                    originatingDataId: person.originatingDataId,
+                                    registrantId: person.registrantId,
+                                })
+                            ),
                         });
                         for (const key of newPeople.keys()) {
                             peopleResults.set(key, true);
@@ -744,14 +733,12 @@ export function useSaveContentDiff():
                             let ok = false;
                             try {
                                 await updatePersonMutation({
-                                    variables: {
-                                        id: person.id,
-                                        affiliation: person.affiliation,
-                                        email: person.email,
-                                        name: person.name,
-                                        originatingDataId: person.originatingDataId,
-                                        registrantId: person.registrantId,
-                                    },
+                                    id: person.id,
+                                    affiliation: person.affiliation,
+                                    email: person.email,
+                                    name: person.name,
+                                    originatingDataId: person.originatingDataId,
+                                    registrantId: person.registrantId,
                                 });
                                 ok = true;
                             } catch (e) {
@@ -767,18 +754,16 @@ export function useSaveContentDiff():
 
                     if (newExhibitions.size > 0) {
                         await insertExhibitionsMutation({
-                            variables: {
-                                newExhibitions: Array.from(newExhibitions.values()).map(
-                                    (exhibition): Collection_Exhibition_Insert_Input => ({
-                                        id: exhibition.id,
-                                        conferenceId: conference.id,
-                                        name: exhibition.name,
-                                        colour: exhibition.colour,
-                                        priority: exhibition.priority,
-                                        isHidden: exhibition.isHidden,
-                                    })
-                                ),
-                            },
+                            newExhibitions: Array.from(newExhibitions.values()).map(
+                                (exhibition): Collection_Exhibition_Insert_Input => ({
+                                    id: exhibition.id,
+                                    conferenceId: conference.id,
+                                    name: exhibition.name,
+                                    colour: exhibition.colour,
+                                    priority: exhibition.priority,
+                                    isHidden: exhibition.isHidden,
+                                })
+                            ),
                         });
                         for (const key of newExhibitions.keys()) {
                             exhibitionResults.set(key, true);
@@ -790,13 +775,11 @@ export function useSaveContentDiff():
                             let ok = false;
                             try {
                                 await updateExhibitionMutation({
-                                    variables: {
-                                        id: exhibition.id,
-                                        name: exhibition.name,
-                                        colour: exhibition.colour,
-                                        priority: exhibition.priority,
-                                        isHidden: exhibition.isHidden,
-                                    },
+                                    id: exhibition.id,
+                                    name: exhibition.name,
+                                    colour: exhibition.colour,
+                                    priority: exhibition.priority,
+                                    isHidden: exhibition.isHidden,
                                 });
                                 ok = true;
                             } catch (e) {
@@ -814,83 +797,77 @@ export function useSaveContentDiff():
                         const elementsToPostInsert: Content_Element_Insert_Input[] = [];
 
                         await insertDeleteItemsMutation({
-                            variables: {
-                                deleteGroupIds: Array.from(deletedGroupKeys.values()),
-                                newGroups: Array.from(newGroups.values()).map((group) => {
-                                    const groupResult: Content_Item_Insert_Input = {
-                                        id: group.id,
-                                        conferenceId: conference.id,
-                                        itemTags: {
-                                            data: Array.from(group.tagIds.values()).map((tagId) => ({
-                                                tagId,
-                                            })),
-                                        },
-                                        typeName: group.typeName,
-                                        elements: {
-                                            data: group.elements.map((item) => {
-                                                const itemResult: Content_Element_Insert_Input = {
-                                                    id: item.id,
-                                                    conferenceId: conference.id,
-                                                    typeName: item.typeName,
-                                                    data: item.data,
-                                                    layoutData: item.layoutData,
-                                                    name: item.name,
-                                                    isHidden: item.isHidden,
-                                                    originatingDataId: item.originatingDataId,
-                                                    uploadsRemaining: item.uploadsRemaining,
-                                                };
-                                                return itemResult;
-                                            }),
-                                        },
-                                        itemPeople: {
-                                            data: group.people.map((personGroup) => {
-                                                const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
-                                                    id: personGroup.id,
-                                                    conferenceId: conference.id,
-                                                    priority: personGroup.priority,
-                                                    roleName: personGroup.roleName,
-                                                    personId: personGroup.personId,
-                                                };
-                                                return personGroupResult;
-                                            }),
-                                        },
-                                        itemExhibitions: {
-                                            data: group.exhibitions.map((exhibitionGroup) => {
-                                                const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
-                                                    id: exhibitionGroup.id,
-                                                    conferenceId: conference.id,
-                                                    priority: exhibitionGroup.priority,
-                                                    layout: exhibitionGroup.layout,
-                                                    exhibitionId: exhibitionGroup.exhibitionId,
-                                                };
-                                                return exhibitionGroupResult;
-                                            }),
-                                        },
-                                        originatingDataId: group.originatingDataId,
-                                        shortTitle: group.shortTitle,
-                                        title: group.title,
-                                    };
-                                    return groupResult;
-                                }),
-                            },
+                            deleteGroupIds: Array.from(deletedGroupKeys.values()),
+                            newGroups: Array.from(newGroups.values()).map((group) => {
+                                const groupResult: Content_Item_Insert_Input = {
+                                    id: group.id,
+                                    conferenceId: conference.id,
+                                    itemTags: {
+                                        data: Array.from(group.tagIds.values()).map((tagId) => ({
+                                            tagId,
+                                        })),
+                                    },
+                                    typeName: group.typeName,
+                                    elements: {
+                                        data: group.elements.map((item) => {
+                                            const itemResult: Content_Element_Insert_Input = {
+                                                id: item.id,
+                                                conferenceId: conference.id,
+                                                typeName: item.typeName,
+                                                data: item.data,
+                                                layoutData: item.layoutData,
+                                                name: item.name,
+                                                isHidden: item.isHidden,
+                                                originatingDataId: item.originatingDataId,
+                                                uploadsRemaining: item.uploadsRemaining,
+                                            };
+                                            return itemResult;
+                                        }),
+                                    },
+                                    itemPeople: {
+                                        data: group.people.map((personGroup) => {
+                                            const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
+                                                id: personGroup.id,
+                                                priority: personGroup.priority,
+                                                roleName: personGroup.roleName,
+                                                personId: personGroup.personId,
+                                            };
+                                            return personGroupResult;
+                                        }),
+                                    },
+                                    itemExhibitions: {
+                                        data: group.exhibitions.map((exhibitionGroup) => {
+                                            const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
+                                                id: exhibitionGroup.id,
+                                                priority: exhibitionGroup.priority,
+                                                layout: exhibitionGroup.layout,
+                                                exhibitionId: exhibitionGroup.exhibitionId,
+                                            };
+                                            return exhibitionGroupResult;
+                                        }),
+                                    },
+                                    originatingDataId: group.originatingDataId,
+                                    shortTitle: group.shortTitle,
+                                    title: group.title,
+                                };
+                                return groupResult;
+                            }),
                         });
 
                         if (elementsToPostInsert.length > 0) {
                             await insertElementsMutation({
-                                variables: {
-                                    newElements: elementsToPostInsert.map((item) => ({
-                                        id: item.id,
-                                        conferenceId: conference.id,
-                                        typeName: item.typeName,
-                                        data: item.data,
-                                        layoutData: item.layoutData,
-                                        name: item.name,
-                                        isHidden: item.isHidden,
-                                        originatingDataId: item.originatingDataId,
-                                        itemId: item.itemId,
-                                        uploadsRemaining: item.uploadsRemaining,
-                                    })),
-                                },
+                                newElements: elementsToPostInsert.map((item) => ({
+                                    id: item.id,
+                                    conferenceId: conference.id,
+                                    typeName: item.typeName,
+                                    data: item.data,
+                                    layoutData: item.layoutData,
+                                    name: item.name,
+                                    isHidden: item.isHidden,
+                                    originatingDataId: item.originatingDataId,
+                                    itemId: item.itemId,
+                                    uploadsRemaining: item.uploadsRemaining,
+                                })),
                             });
                         }
 
@@ -988,16 +965,14 @@ export function useSaveContentDiff():
                                 await Promise.all(
                                     Array.from(updatedItems.values()).map(async (item) => {
                                         await updateElementMutation({
-                                            variables: {
-                                                typeName: item.typeName,
-                                                data: item.data,
-                                                id: item.id,
-                                                layoutData: item.layoutData,
-                                                name: item.name,
-                                                isHidden: item.isHidden,
-                                                originatingDataId: item.originatingDataId,
-                                                uploadsRemaining: item.uploadsRemaining,
-                                            },
+                                            typeName: item.typeName,
+                                            data: item.data,
+                                            id: item.id,
+                                            layoutData: item.layoutData,
+                                            name: item.name,
+                                            isHidden: item.isHidden,
+                                            originatingDataId: item.originatingDataId,
+                                            uploadsRemaining: item.uploadsRemaining,
                                         });
                                     })
                                 );
@@ -1007,11 +982,9 @@ export function useSaveContentDiff():
                                 await Promise.all(
                                     Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
                                         await updateGroupPersonMutation({
-                                            variables: {
-                                                id: groupPerson.id,
-                                                priority: groupPerson.priority,
-                                                roleName: groupPerson.roleName,
-                                            },
+                                            id: groupPerson.id,
+                                            priority: groupPerson.priority,
+                                            roleName: groupPerson.roleName,
                                         });
                                     })
                                 );
@@ -1021,62 +994,58 @@ export function useSaveContentDiff():
                                 await Promise.all(
                                     Array.from(updatedGroupExhibitions.values()).map(async (groupExhibition) => {
                                         await updateGroupExhibitionMutation({
-                                            variables: {
-                                                id: groupExhibition.id,
-                                                priority: groupExhibition.priority,
-                                                layout: groupExhibition.layout,
-                                            },
+                                            id: groupExhibition.id,
+                                            priority: groupExhibition.priority,
+                                            layout: groupExhibition.layout,
                                         });
                                     })
                                 );
                             }
 
                             await updateItemMutation({
-                                variables: {
-                                    typeName: group.typeName,
-                                    deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
-                                    deleteItemIds: Array.from(deleteItemKeys.values()),
-                                    deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
-                                    deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
-                                    groupId: group.id,
-                                    newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
-                                        itemId: group.id,
-                                        tagId,
-                                    })),
-                                    newItems: Array.from(newItems.values()).map((item) => ({
+                                typeName: group.typeName,
+                                deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
+                                deleteItemIds: Array.from(deleteItemKeys.values()),
+                                deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
+                                deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
+                                groupId: group.id,
+                                newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
+                                    itemId: group.id,
+                                    tagId,
+                                })),
+                                newItems: Array.from(newItems.values()).map((item) => ({
+                                    conferenceId: conference.id,
+                                    itemId: group.id,
+                                    typeName: item.typeName,
+                                    data: item.data,
+                                    id: item.id,
+                                    layoutData: item.layoutData,
+                                    isHidden: item.isHidden,
+                                    name: item.name,
+                                    originatingDataId: item.originatingDataId,
+                                    uploadsRemaining: item.uploadsRemaining,
+                                })),
+                                newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
+                                    conferenceId: conference.id,
+                                    id: groupPerson.id,
+                                    personId: groupPerson.personId,
+                                    priority: groupPerson.priority,
+                                    roleName: groupPerson.roleName,
+                                    itemId: group.id,
+                                })),
+                                newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
+                                    (groupExhibition) => ({
                                         conferenceId: conference.id,
+                                        id: groupExhibition.id,
+                                        exhibitionId: groupExhibition.exhibitionId,
+                                        priority: groupExhibition.priority,
+                                        layout: groupExhibition.layout,
                                         itemId: group.id,
-                                        typeName: item.typeName,
-                                        data: item.data,
-                                        id: item.id,
-                                        layoutData: item.layoutData,
-                                        isHidden: item.isHidden,
-                                        name: item.name,
-                                        originatingDataId: item.originatingDataId,
-                                        uploadsRemaining: item.uploadsRemaining,
-                                    })),
-                                    newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
-                                        conferenceId: conference.id,
-                                        id: groupPerson.id,
-                                        personId: groupPerson.personId,
-                                        priority: groupPerson.priority,
-                                        roleName: groupPerson.roleName,
-                                        itemId: group.id,
-                                    })),
-                                    newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
-                                        (groupExhibition) => ({
-                                            conferenceId: conference.id,
-                                            id: groupExhibition.id,
-                                            exhibitionId: groupExhibition.exhibitionId,
-                                            priority: groupExhibition.priority,
-                                            layout: groupExhibition.layout,
-                                            itemId: group.id,
-                                        })
-                                    ),
-                                    originatingDataId: group.originatingDataId,
-                                    shortTitle: group.shortTitle,
-                                    title: group.title,
-                                },
+                                    })
+                                ),
+                                originatingDataId: group.originatingDataId,
+                                shortTitle: group.shortTitle,
+                                title: group.title,
                             });
 
                             ok = true;
@@ -1094,9 +1063,7 @@ export function useSaveContentDiff():
                 try {
                     if (deletedTagKeys.size > 0) {
                         await deleteTagsMutation({
-                            variables: {
-                                deleteTagIds: Array.from(deletedTagKeys.values()),
-                            },
+                            deleteTagIds: Array.from(deletedTagKeys.values()),
                         });
                         for (const key of deletedTagKeys.keys()) {
                             tagResults.set(key, true);
@@ -1112,9 +1079,7 @@ export function useSaveContentDiff():
                 try {
                     if (deletedExhibitionKeys.size > 0) {
                         await deleteExhibitionsMutation({
-                            variables: {
-                                deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
-                            },
+                            deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
                         });
                         for (const key of deletedExhibitionKeys.keys()) {
                             exhibitionResults.set(key, true);
@@ -1130,9 +1095,7 @@ export function useSaveContentDiff():
                 try {
                     if (deletedPersonKeys.size > 0) {
                         await deleteProgramPeopleMutation({
-                            variables: {
-                                deletePersonIds: Array.from(deletedPersonKeys.values()),
-                            },
+                            deletePersonIds: Array.from(deletedPersonKeys.values()),
                         });
                         for (const key of deletedPersonKeys.keys()) {
                             peopleResults.set(key, true);
@@ -1148,9 +1111,7 @@ export function useSaveContentDiff():
                 try {
                     if (deletedOriginatingDataKeys.size > 0) {
                         await deleteOriginatingDatasMutation({
-                            variables: {
-                                deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
-                            },
+                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
                         });
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);

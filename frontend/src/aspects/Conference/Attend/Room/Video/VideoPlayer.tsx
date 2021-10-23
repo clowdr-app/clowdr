@@ -18,6 +18,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { useVideoPlayer_GetElementQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { VideoElement } from "../../Content/Element/VideoElement";
 
@@ -32,6 +33,7 @@ export function VideoPlayer({
     onPlay?: () => void;
     onPause?: () => void;
 }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     gql`
         query VideoPlayer_GetElement($elementId: uuid!) {
             content_Element_by_pk(id: $elementId) {
@@ -48,7 +50,7 @@ export function VideoPlayer({
         }
     `;
 
-    const [{ data, error, loading }] = useVideoPlayer_GetElementQuery({
+    const [{ data, error, fetching: loading }] = useVideoPlayer_GetElementQuery({
         variables: {
             elementId,
         },

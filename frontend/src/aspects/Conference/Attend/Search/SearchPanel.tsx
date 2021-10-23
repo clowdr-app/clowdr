@@ -127,9 +127,9 @@ export default function SearchPanel({
         changeSearch.current = setSearch;
     }
 
-    const [fetchEventsQuery, eventsResponse] = useSearchPanel_EventsLazyQuery();
-    const [fetchItemsQuery, itemsResponse] = useSearchPanel_ItemsLazyQuery();
-    const [fetchPeopleQuery, peopleResponse] = useSearchPanel_PeopleLazyQuery();
+    const [eventsResponse, fetchEventsQuery] = useSearchPanel_EventsLazyQuery();
+    const [itemsResponse, fetchItemsQuery] = useSearchPanel_ItemsLazyQuery();
+    const [peopleResponse, fetchPeopleQuery] = useSearchPanel_PeopleLazyQuery();
 
     return (
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
@@ -183,7 +183,7 @@ export default function SearchPanel({
                         <Button
                             colorScheme="PrimaryActionButton"
                             aria-label="Search"
-                            isLoading={eventsResponse.loading || itemsResponse.loading || peopleResponse.loading}
+                            isLoading={eventsResponse.fetching || itemsResponse.fetching || peopleResponse.fetching}
                             isDisabled={search.length < 3}
                             onClick={() => {
                                 switch (searchType) {

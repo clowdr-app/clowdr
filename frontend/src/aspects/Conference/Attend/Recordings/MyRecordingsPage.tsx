@@ -21,6 +21,7 @@ import React from "react";
 import { gql } from "urql";
 import { useMyRecordingsQuery } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useTitle } from "../../../Utils/useTitle";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
@@ -48,6 +49,7 @@ gql`
 export default function MyRecordingsPage(): JSX.Element {
     const title = useTitle("Recordings");
 
+    const { conferencePath } = useAuthParameters();
     const registrant = useCurrentRegistrant();
     const [response] = useMyRecordingsQuery({
         variables: {

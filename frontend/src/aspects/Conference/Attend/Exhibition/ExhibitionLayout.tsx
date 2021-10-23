@@ -23,6 +23,7 @@ import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
@@ -39,6 +40,7 @@ function ItemTile({
     exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const { colorMode } = useColorMode();
     const baseBgColour =
         colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";

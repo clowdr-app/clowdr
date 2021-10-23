@@ -22,14 +22,18 @@ import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import Color from "tinycolor2";
+import { useClient } from "urql";
 import type {
+    ContentOfTagQuery,
+    ContentOfTagQueryVariables,
     ItemList_ItemDataFragment,
     ItemList_ItemTagDataFragment,
     ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
-import { useContentOfTagQuery } from "../../../../generated/graphql";
+import { ContentOfTagDocument, useTagsQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRestorableState } from "../../../Generic/useRestorableState";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
@@ -180,6 +184,7 @@ export function TagButton({
 
 function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Element {
     const shadow = useColorModeValue("md", "light-md");
+    const { conferencePath } = useAuthParameters();
     return (
         <LinkButton
             to={`${conferencePath}/item/${group.id}`}
@@ -209,20 +214,20 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         (x) => x
     );
 
-    const [contentOfTag] = useContentOfTagQuery({
-        pause: true,
-    });
+    const client = useClient();
     const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
     useEffect(() => {
         if (isExpanded && !content) {
             (async () => {
-                const data = await contentOfTag.refetch({
-                    id: tag.id,
-                });
+                const data = await client
+                    .query<ContentOfTagQuery, ContentOfTagQueryVariables>(ContentOfTagDocument, {
+                        id: tag.id,
+                    })
+                    .toPromise();
                 setContent(data.data?.content_ItemTag ? [...data.data.content_ItemTag] : []);
             })();
         }
-    }, [content, contentOfTag, isExpanded, tag.id]);
+    }, [content, client, isExpanded, tag.id]);
 
     const sortedGroups = useMemo(
         () => content?.map((x) => x.item).sort((x, y) => x.title.localeCompare(y.title)),
@@ -329,7 +334,7 @@ export default function ItemList(
 ): JSX.Element {
     const { overrideSelectedTag, setOverrideSelectedTag, ...remainingProps } = props;
     const conference = useConference();
-    const [{ loading, data, error }] = usesQuery({
+    const [{ fetching: loading, data, error }] = useTagsQuery({
         variables: {
             conferenceId: conference.id,
         },

@@ -1236,7 +1236,7 @@ export default function ChecklistPage(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Pre-conference Checklist
             </Heading>
-            {checklistResponse.loading && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
+            {checklistResponse.fetching && !checklistResponse.data ? <Spinner label="Loading checks" /> : undefined}
             {checklistResponse.data ? (
                 <Accordion allowToggle maxW={800}>
                     <Grid alignItems="stretch" rowGap={2} columnGap={4} templateColumns="auto auto">

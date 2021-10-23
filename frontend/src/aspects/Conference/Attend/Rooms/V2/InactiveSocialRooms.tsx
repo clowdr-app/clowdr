@@ -51,7 +51,7 @@ export default function InactiveSocialRooms(): JSX.Element {
         return <></>;
     }
 
-    if (result.loading && !result?.data) {
+    if (result.fetching && !result?.data) {
         return <Spinner label="Loading rooms" />;
     }
 

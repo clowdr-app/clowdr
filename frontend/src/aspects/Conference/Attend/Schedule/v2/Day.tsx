@@ -4,10 +4,9 @@ import { gql } from "@urql/core";
 import * as luxon from "luxon";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import type Urql from "urql";
 import type {
-    ScheduleV2_DayEventsQuery,
     ScheduleV2_DayEventsQueryVariables,
-    ScheduleV2_DayLightweightEventsQuery,
     ScheduleV2_DayLightweightEventsQueryVariables,
     ScheduleV2_RoomFragment,
     ScheduleV2_TagFragment,
@@ -80,9 +79,9 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     const dayHeadingBgColor = useColorModeValue("SecondaryActionButton.400", "SecondaryActionButton.500");
 
     const conference = useConference();
-    const lwDayEventsQueryObj: QueryHookOptions<
-        ScheduleV2_DayLightweightEventsQuery,
-        ScheduleV2_DayLightweightEventsQueryVariables
+    const lwDayEventsQueryObj: Omit<
+        Urql.UseQueryArgs<ScheduleV2_DayLightweightEventsQueryVariables>,
+        "query"
     > = useMemo(
         () => ({
             variables: {
@@ -97,16 +96,15 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
     );
     const [lwEventsResponse] = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
 
-    const fullDayEventsQueryObj: QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables> =
-        useMemo(
-            () => ({
-                variables: {
-                    eventIds: lwEventsResponse.data?.schedule_Event.map((event) => event.id) ?? [],
-                },
-                skip: !lwEventsResponse.data || !isRendered,
-            }),
-            [lwEventsResponse.data, isRendered]
-        );
+    const fullDayEventsQueryObj: Omit<Urql.UseQueryArgs<ScheduleV2_DayEventsQueryVariables>, "query"> = useMemo(
+        () => ({
+            variables: {
+                eventIds: lwEventsResponse.data?.schedule_Event.map((event) => event.id) ?? [],
+            },
+            skip: !lwEventsResponse.data || !isRendered,
+        }),
+        [lwEventsResponse.data, isRendered]
+    );
     const [fullEventsResponse] = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
 
     const parsedEvents: ParsedEvent[] = useMemo(

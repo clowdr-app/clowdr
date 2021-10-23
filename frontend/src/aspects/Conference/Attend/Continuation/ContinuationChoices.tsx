@@ -392,7 +392,9 @@ function ContinuationChoices_Inner({
                                 }
                                 break;
                             case ContinuationType.ConferenceLandingPage:
-                                history.push(conferencePath);
+                                if (conferencePath) {
+                                    history.push(conferencePath);
+                                }
                                 break;
                         }
                     } else {

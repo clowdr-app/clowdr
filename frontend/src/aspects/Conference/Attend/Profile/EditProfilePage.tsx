@@ -37,6 +37,7 @@ import BadgeInput from "../../../Badges/BadgeInput";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import PronounInput from "../../../Pronouns/PronounInput";
 import useCurrentUser from "../../../Users/CurrentUser/useCurrentUser";
@@ -112,6 +113,7 @@ gql`
 
 function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const currentUser = useCurrentUser();
 
     const [editingRegistrant, setEditingRegistrant] = useState<RegistrantContextT>(registrant);
@@ -172,21 +174,19 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 (async () => {
                     try {
                         await updateProfile({
-                            variables: {
-                                registrantId: registrant.id,
-                                profile: {
-                                    affiliation: editingRegistrant.profile.affiliation,
-                                    affiliationURL: editingRegistrant.profile.affiliationURL,
-                                    country: editingRegistrant.profile.country,
-                                    timezoneUTCOffset: editingRegistrant.profile.timezoneUTCOffset,
-                                    bio: editingRegistrant.profile.bio,
-                                    website: editingRegistrant.profile.website,
-                                    github: editingRegistrant.profile.github,
-                                    twitter: editingRegistrant.profile.twitter,
-                                    badges: editingRegistrant.profile.badges,
-                                    pronouns: editingRegistrant.profile.pronouns,
-                                    hasBeenEdited: true,
-                                },
+                            registrantId: registrant.id,
+                            profile: {
+                                affiliation: editingRegistrant.profile.affiliation,
+                                affiliationURL: editingRegistrant.profile.affiliationURL,
+                                country: editingRegistrant.profile.country,
+                                timezoneUTCOffset: editingRegistrant.profile.timezoneUTCOffset,
+                                bio: editingRegistrant.profile.bio,
+                                website: editingRegistrant.profile.website,
+                                github: editingRegistrant.profile.github,
+                                twitter: editingRegistrant.profile.twitter,
+                                badges: editingRegistrant.profile.badges,
+                                pronouns: editingRegistrant.profile.pronouns,
+                                hasBeenEdited: true,
                             },
                         });
                     } catch (e) {
@@ -384,10 +384,8 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
         if (editingRegistrant.displayName !== registrant.displayName && !isEditingName) {
             (async () => {
                 await updateRegistrantDisplayName({
-                    variables: {
-                        registrantId: registrant.id,
-                        name: editingRegistrant.displayName,
-                    },
+                    registrantId: registrant.id,
+                    name: editingRegistrant.displayName,
                 });
                 toast({
                     title: "Name saved",
@@ -419,7 +417,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={conferencePath} colorScheme="PrimaryActionButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="PrimaryActionButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -507,7 +505,7 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={conferencePath} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath ?? "/"} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
@@ -538,7 +536,7 @@ function EditCurrentProfilePage(): JSX.Element {
 
 function EditProfilePage_FetchWrapper({ registrantId }: { registrantId: string }): JSX.Element {
     const conference = useConference();
-    const [{ loading, error, data }] = useRegistrantByIdQuery({
+    const [{ fetching: loading, error, data }] = useRegistrantByIdQuery({
         variables: {
             conferenceId: conference.id,
             registrantId,

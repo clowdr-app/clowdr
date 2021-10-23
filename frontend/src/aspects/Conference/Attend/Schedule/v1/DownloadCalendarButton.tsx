@@ -3,6 +3,7 @@ import { Button, useToast } from "@chakra-ui/react";
 import type { EventAttributes } from "ics";
 import ics from "ics";
 import React from "react";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";
@@ -16,6 +17,7 @@ export default function DownloadCalendarButton({
     calendarName: string;
 } & ButtonProps): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const toast = useToast();
     return (
         <Button

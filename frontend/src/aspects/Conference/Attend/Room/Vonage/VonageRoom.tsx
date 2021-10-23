@@ -2,12 +2,9 @@ import { Box, Flex } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
-import { gql, useClient } from "urql";
+import { gql } from "urql";
 import { validate } from "uuid";
-import type {
-    Room_EventSummaryFragment} from "../../../../../generated/graphql";
 import {
-    Room_EventSummaryFragmentDoc,
     useDeleteEventParticipantMutation,
     useSaveVonageRoomRecordingMutation,
 } from "../../../../../generated/graphql";
@@ -15,11 +12,11 @@ import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import type { RegistrantIdSpec} from "../../../RegistrantsContext";
+import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
-import type { DevicesProps} from "../VideoChat/PermissionInstructionsContext";
+import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
 import { CameraViewport } from "./Components/CameraViewport";
 import Layout from "./Components/Layout";
@@ -29,7 +26,7 @@ import SelfScreenComponent from "./Components/SelfScreen";
 import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
-import type { AvailableStream, VonageLayout} from "./VonageLayoutProvider";
+import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
@@ -99,7 +96,6 @@ export function VonageRoom({
     const raiseHand = useRaiseHandState();
 
     const [deleteEventParticipant] = useDeleteEventParticipantMutation();
-    const client = useClient();
 
     const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 
@@ -149,43 +145,8 @@ export function VonageRoom({
                                           if (!joined) {
                                               if (eventId) {
                                                   deleteEventParticipant({
-                                                      variables: {
-                                                          eventId,
-                                                          registrantId: mRegistrant.id,
-                                                      },
-                                                      update: (cache, response) => {
-                                                          if (
-                                                              response.data?.delete_schedule_EventProgramPerson
-                                                                  ?.returning
-                                                          ) {
-                                                              const data =
-                                                                  response.data.delete_schedule_EventProgramPerson
-                                                                      .returning;
-                                                              const fragmentId = client.cache.identify({
-                                                                  __typename: "schedule_Event",
-                                                                  id: eventId,
-                                                              });
-                                                              const eventFragment =
-                                                                  client.cache.readFragment<Room_EventSummaryFragment>({
-                                                                      fragment: Room_EventSummaryFragmentDoc,
-                                                                      id: fragmentId,
-                                                                      fragmentName: "Room_EventSummary",
-                                                                  });
-                                                              if (eventFragment) {
-                                                                  client.cache.writeFragment({
-                                                                      fragment: Room_EventSummaryFragmentDoc,
-                                                                      id: fragmentId,
-                                                                      fragmentName: "Room_EventSummary",
-                                                                      data: {
-                                                                          ...eventFragment,
-                                                                          eventPeople: eventFragment.eventPeople.filter(
-                                                                              (x) => !data.some((y) => x.id === y.id)
-                                                                          ),
-                                                                      },
-                                                                  });
-                                                              }
-                                                          }
-                                                      },
+                                                      eventId,
+                                                      registrantId: mRegistrant.id,
                                                   });
                                               }
 
@@ -239,7 +200,7 @@ function VonageRoomInner({
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
 
     const currentRegistrant = useCurrentRegistrant();
-    const [saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
+    const [, saveVonageRoomRecording] = useSaveVonageRoomRecordingMutation();
 
     const [playVideoElementId, setPlayVideoElementId] = useState<string | null>(null);
 
@@ -253,10 +214,8 @@ function VonageRoomInner({
     const onRecordingIdReceived = useCallback(
         (recordingId: string) => {
             saveVonageRoomRecording({
-                variables: {
-                    recordingId,
-                    registrantId: currentRegistrant.id,
-                },
+                recordingId,
+                registrantId: currentRegistrant.id,
             });
         },
         [currentRegistrant.id, saveVonageRoomRecording]

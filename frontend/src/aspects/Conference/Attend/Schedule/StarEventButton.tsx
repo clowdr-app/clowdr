@@ -3,16 +3,7 @@ import { Box, Button, Spinner } from "@chakra-ui/react";
 import Observer from "@researchgate/react-intersection-observer";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
-import type {
-    StarEventButton_GetStarsQuery,
-    StarEventButton_GetStarsQueryVariables,
-    StarredEvents_SelectEventIdsQuery,
-    StarredEvents_SelectEventIdsQueryVariables,
-} from "../../../../generated/graphql";
 import {
-    StarEventButton_GetStarsDocument,
-    StarredEventFragmentDoc,
-    StarredEvents_SelectEventIdsDocument,
     useStarEventButton_DeleteStarsMutation,
     useStarEventButton_GetStarsQuery,
     useStarEventButton_InsertStarsMutation,
@@ -118,152 +109,14 @@ function StarEventButtonInner({
         },
     });
 
-    const [insertStars, insertStarsResponse] = useStarEventButton_InsertStarsMutation({
-        update: (cache, response) => {
-            if (response.data?.insert_schedule_StarredEvent) {
-                const datas = response.data?.insert_schedule_StarredEvent.returning;
-                datas.forEach((data) => {
-                    cache.writeFragment({
-                        data,
-                        fragment: StarredEventFragmentDoc,
-                        fragmentName: "StarredEvent",
-                    });
-                });
+    const [insertStarsResponse, insertStars] = useStarEventButton_InsertStarsMutation();
+    const [deleteStarsResponse, deleteStars] = useStarEventButton_DeleteStarsMutation();
 
-                {
-                    const query = cache.readQuery<
-                        StarEventButton_GetStarsQuery,
-                        StarEventButton_GetStarsQueryVariables
-                    >({
-                        query: StarEventButton_GetStarsDocument,
-                        variables: {
-                            eventIds,
-                            registrantId: registrant.id,
-                        },
-                    });
-                    if (query) {
-                        cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
-                            query: StarEventButton_GetStarsDocument,
-                            data: {
-                                ...query,
-                                schedule_StarredEvent: [...query.schedule_StarredEvent, ...datas],
-                            },
-                            variables: {
-                                eventIds,
-                                registrantId: registrant.id,
-                            },
-                        });
-                    }
-                }
-                {
-                    const query = cache.readQuery<
-                        StarredEvents_SelectEventIdsQuery,
-                        StarredEvents_SelectEventIdsQueryVariables
-                    >({
-                        query: StarredEvents_SelectEventIdsDocument,
-                        variables: {
-                            registrantId: registrant.id,
-                        },
-                    });
-                    if (query) {
-                        cache.writeQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(
-                            {
-                                query: StarredEvents_SelectEventIdsDocument,
-                                data: {
-                                    ...query,
-                                    schedule_StarredEvent: [...query.schedule_StarredEvent, ...datas],
-                                },
-                                variables: {
-                                    registrantId: registrant.id,
-                                },
-                            }
-                        );
-                    }
-                }
-            }
-        },
-    });
-    const [deleteStars, deleteStarsResponse] = useStarEventButton_DeleteStarsMutation({
-        update: (cache, response) => {
-            if (response.data?.delete_schedule_StarredEvent) {
-                const data = response.data.delete_schedule_StarredEvent;
-                const deletedIds = data.returning.map((x) => x.id);
-                deletedIds.forEach((x) => {
-                    cache.evict({
-                        id: x.id,
-                        fieldName: "StarredEvents_SelectEventIds",
-                        broadcast: true,
-                    });
-
-                    cache.evict({
-                        id: x.id,
-                        fieldName: "schedule_StarredEvent",
-                        broadcast: true,
-                    });
-                });
-                {
-                    const query = cache.readQuery<
-                        StarEventButton_GetStarsQuery,
-                        StarEventButton_GetStarsQueryVariables
-                    >({
-                        query: StarEventButton_GetStarsDocument,
-                        variables: {
-                            eventIds,
-                            registrantId: registrant.id,
-                        },
-                    });
-                    if (query) {
-                        cache.writeQuery<StarEventButton_GetStarsQuery, StarEventButton_GetStarsQueryVariables>({
-                            query: StarEventButton_GetStarsDocument,
-                            data: {
-                                ...query,
-                                schedule_StarredEvent: query.schedule_StarredEvent.filter(
-                                    (x) => !deletedIds.includes(x.id)
-                                ),
-                            },
-                            variables: {
-                                eventIds,
-                                registrantId: registrant.id,
-                            },
-                        });
-                    }
-                }
-                {
-                    const query = cache.readQuery<
-                        StarredEvents_SelectEventIdsQuery,
-                        StarredEvents_SelectEventIdsQueryVariables
-                    >({
-                        query: StarredEvents_SelectEventIdsDocument,
-                        variables: {
-                            registrantId: registrant.id,
-                        },
-                    });
-                    if (query) {
-                        cache.writeQuery<StarredEvents_SelectEventIdsQuery, StarredEvents_SelectEventIdsQueryVariables>(
-                            {
-                                query: StarredEvents_SelectEventIdsDocument,
-                                data: {
-                                    ...query,
-                                    schedule_StarredEvent: query.schedule_StarredEvent.filter(
-                                        (x) => !deletedIds.includes(x.id)
-                                    ),
-                                },
-                                variables: {
-                                    registrantId: registrant.id,
-                                },
-                            }
-                        );
-                    }
-                }
-            }
-        },
-    });
-
-    if (starsResponse.loading) {
+    if (starsResponse.fetching) {
         return <Spinner size="xs" speed="0.6s" />;
     }
 
-    if (insertStarsResponse.loading || deleteStarsResponse.loading) {
+    if (insertStarsResponse.fetching || deleteStarsResponse.fetching) {
         return <Spinner size="xs" color="gold" speed="0.4s" />;
     }
 
@@ -282,9 +135,7 @@ function StarEventButtonInner({
                     const ids = starsResponse.data?.schedule_StarredEvent.map((x) => x.id);
                     if (ids) {
                         deleteStars({
-                            variables: {
-                                ids,
-                            },
+                            ids,
                         });
                     }
                 }}
@@ -315,12 +166,10 @@ function StarEventButtonInner({
                     ev.stopPropagation();
 
                     insertStars({
-                        variables: {
-                            objects: eventIds.map((eventId) => ({
-                                eventId,
-                                registrantId: registrant.id,
-                            })),
-                        },
+                        objects: eventIds.map((eventId) => ({
+                            eventId,
+                            registrantId: registrant.id,
+                        })),
                     });
                 }}
                 variant="ghost"

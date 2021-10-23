@@ -44,17 +44,6 @@ type Context = {
     items: ItemDescriptor[];
 };
 
-function convertTagName(context: Context, name: string): string {
-    const r = findMatch(context, context.tags, name, (ctx, item1, item2) =>
-        isMatch_String_Exact()(ctx, item1.name, item2)
-    );
-    if (r !== undefined) {
-        return context.tags[r].id;
-    } else {
-        throw new Error(`Tag ${name} not found!`);
-    }
-}
-
 function convertExhibitionName(context: Context, name: string): string {
     const r = findMatch(context, context.exhibitions, name, (ctx, item1, item2) =>
         isMatch_String_Exact()(ctx, item1.name, item2)

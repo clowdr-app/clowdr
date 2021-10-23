@@ -88,7 +88,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
         },
     });
 
-    const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
+    const [, createImmediateSwitch] = useImmediateSwitch_CreateMutation();
     const [liveIndicatorLatest] = useLiveIndicator_GetLatestQuery({
         pause: true,
     });
@@ -143,11 +143,9 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             kind: "filler",
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
+                            data,
+                            eventId: event.id,
+                            conferenceId: conference.id,
                         });
                         await liveIndicatorLatest.refetch({
                             eventId: event.id,
@@ -200,11 +198,9 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             elementId: choice,
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
+                            data,
+                            eventId: event.id,
+                            conferenceId: conference.id,
                         });
                     } catch (err: any) {
                         toast({

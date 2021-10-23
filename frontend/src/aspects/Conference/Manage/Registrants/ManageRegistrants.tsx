@@ -25,11 +25,13 @@ import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
 import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import {
-    ManageRegistrants_SelectProfilesDocument,
+import type {
     ManageRegistrants_SelectProfilesQuery,
     ManageRegistrants_SelectProfilesQueryVariables,
     RegistrantPartsFragment,
+} from "../../../../generated/graphql";
+import {
+    ManageRegistrants_SelectProfilesDocument,
     useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
     useInsertRegistrantMutation,
@@ -1173,6 +1175,8 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ],
         [
+            conferencePath,
+            client,
             conference.id,
             data,
             exportWithProfileData,

@@ -18,6 +18,7 @@ import type { ExhibitionSummaryFragment, ItemTagDataFragment } from "../../../..
 import { useSelectAllExhibitionsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import PageCountText from "../../../Realtime/PageCountText";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
@@ -51,6 +52,7 @@ gql`
 `;
 
 function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const borderColour = useColorModeValue("Exhibition.tileBorderColor-light", "Exhibition.tileBorderColor-dark");
 
     const { colorMode } = useColorMode();
@@ -163,10 +165,10 @@ export function ExhibitionsGrid(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(
         () =>
@@ -203,10 +205,10 @@ export default function ExhibitionsPage(): JSX.Element {
 
     const exhibitions = useMemo(
         () =>
-            exhibitionsResponse.loading && !exhibitionsResponse.data
+            exhibitionsResponse.fetching && !exhibitionsResponse.data
                 ? undefined
                 : [...(exhibitionsResponse.data?.collection_Exhibition ?? [])],
-        [exhibitionsResponse.data, exhibitionsResponse.loading]
+        [exhibitionsResponse.data, exhibitionsResponse.fetching]
     );
     const sortedExhibitions = useMemo(() => exhibitions?.sort((x, y) => x.priority - y.priority), [exhibitions]);
 

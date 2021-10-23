@@ -29,7 +29,7 @@ export default function ManageBroadcast(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
 
-    const [{ loading, error }, create] = useCreateConferencePrepareJobMutation();
+    const [{ fetching: loading, error }, create] = useCreateConferencePrepareJobMutation();
     useQueryErrorToast(error, false);
     const toast = useToast();
 
@@ -63,9 +63,7 @@ export default function ManageBroadcast(): JSX.Element {
                                 aria-label="Prepare broadcasts"
                                 onClick={async () => {
                                     await create({
-                                        variables: {
-                                            conferenceId: conference.id,
-                                        },
+                                        conferenceId: conference.id,
                                     });
                                     toast({
                                         status: "success",

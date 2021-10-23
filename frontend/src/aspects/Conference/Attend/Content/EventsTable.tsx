@@ -63,6 +63,7 @@ function Event({
     includeRoom: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const now = useRealTime(60000);
 

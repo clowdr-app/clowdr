@@ -1,6 +1,7 @@
 import { Box, Center, Grid, GridItem, Image, Text, Tooltip } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 import { usePresenceState } from "../../../../Realtime/PresenceStateProvider";
 import type { RegistrantIdSpec } from "../../../RegistrantsContext";
@@ -11,13 +12,14 @@ import type { Registrant } from "../../../useCurrentRegistrant";
 export default function RoomPresenceGrid({ roomId, noGapFill }: { roomId: string; noGapFill?: boolean }): JSX.Element {
     const [userIds, setUserIds] = useState<RegistrantIdSpec[]>([]);
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const presence = usePresenceState();
 
     useEffect(() => {
         return presence.observePage(`${conferencePath}/room/${roomId}`, conference.slug, (ids) => {
             setUserIds([...ids.values()].map((x) => ({ user: x })));
         });
-    }, [roomId, conference.slug, presence]);
+    }, [roomId, conference.slug, presence, conferencePath]);
 
     return userIds.length > 10 ? (
         <Text pb={2} textAlign="left" w="100%" px={4}>

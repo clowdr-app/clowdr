@@ -105,7 +105,7 @@ function ModerationList(): JSX.Element {
 
     return (
         <>
-            {flagsResponse.loading && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
+            {flagsResponse.fetching && sortedFlags === undefined ? <CenteredSpinner /> : undefined}
             <ModerationChatConfigurationProvider>
                 <List spacing={8} mt={4} px={2} py={2}>
                     {sortedFlags?.map((flag, idx) =>
@@ -280,7 +280,7 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
     const messageState = useMemo(() => new MessageState(chatState, flag.message), [chatState, flag.message]);
     const registrant = useCurrentRegistrant();
 
-    const [update, updateResponse] = useManageModeration_UpdateFlagMutation();
+    const [updateResponse, update] = useManageModeration_UpdateFlagMutation();
 
     const [newNote, setNewNote] = useState<string>("");
     const [resolution, setResolution] = useState<string>("");
@@ -344,20 +344,18 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={newNote.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
                                 update({
-                                    variables: {
-                                        flagId: flag.id,
-                                        update: {
-                                            notes:
-                                                (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
-                                                registrant.displayName +
-                                                ", " +
-                                                new Date().toUTCString() +
-                                                "\n\n" +
-                                                newNote.trim(),
-                                        },
+                                    flagId: flag.id,
+                                    update: {
+                                        notes:
+                                            (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
+                                            registrant.displayName +
+                                            ", " +
+                                            new Date().toUTCString() +
+                                            "\n\n" +
+                                            newNote.trim(),
                                     },
                                 });
                             }}
@@ -384,15 +382,13 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             colorScheme="purple"
                             size="sm"
                             isDisabled={resolution.trim().length === 0}
-                            isLoading={updateResponse.loading}
+                            isLoading={updateResponse.fetching}
                             onClick={() => {
                                 update({
-                                    variables: {
-                                        flagId: flag.id,
-                                        update: {
-                                            resolution: resolution.trim(),
-                                            resolved_at: new Date().toISOString(),
-                                        },
+                                    flagId: flag.id,
+                                    update: {
+                                        resolution: resolution.trim(),
+                                        resolved_at: new Date().toISOString(),
                                     },
                                 });
                             }}

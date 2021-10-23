@@ -1,5 +1,5 @@
 import { Button, FormControl, FormLabel, Select, useToast, VStack } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo } from "react";
 import { gql } from "urql";
@@ -35,7 +35,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
         },
     });
 
-    const [stopEventBroadcastMutation] = useEventVonageControls_StopEventBroadcastMutation();
+    const [, stopEventBroadcastMutation] = useEventVonageControls_StopEventBroadcastMutation();
 
     const toast = useToast();
 
@@ -59,9 +59,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                         throw new Error("No event selected");
                     }
                     const result = await stopEventBroadcastMutation({
-                        variables: {
-                            eventId: values.eventId,
-                        },
+                        eventId: values.eventId,
                     });
 
                     if (result.data?.stopEventBroadcast) {

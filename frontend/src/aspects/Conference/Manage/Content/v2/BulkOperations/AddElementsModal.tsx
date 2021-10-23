@@ -99,12 +99,12 @@ function ModalInner({
     const [wide, setWide] = useState<boolean>(true);
     const [priority, setPriority] = useState<number>(100);
 
-    const [insert, insertResponse] = useBulkEdit_AddElementsMutation();
+    const [insertResponse, insert] = useBulkEdit_AddElementsMutation();
 
     const toast = useToast();
     useEffect(() => {
         if (
-            !insertResponse.loading &&
+            !insertResponse.fetching &&
             insertResponse.data?.insert_content_Element &&
             insertResponse.data.insert_content_Element.affected_rows > 0 &&
             !insertResponse.error
@@ -118,7 +118,7 @@ function ModalInner({
             });
             onClose();
         }
-    }, [toast, onClose, insertResponse.loading, insertResponse.data?.insert_content_Element, insertResponse.error]);
+    }, [toast, onClose, insertResponse.fetching, insertResponse.data?.insert_content_Element, insertResponse.error]);
 
     return (
         <>
@@ -238,15 +238,13 @@ function ModalInner({
                                 });
 
                                 insert({
-                                    variables: {
-                                        objects,
-                                    },
+                                    objects,
                                 });
                             }
                         }}
                         colorScheme="purple"
                         isDisabled={elementType === "" || name.trim() === ""}
-                        isLoading={insertResponse.loading}
+                        isLoading={insertResponse.fetching}
                     >
                         Add elements
                     </Button>

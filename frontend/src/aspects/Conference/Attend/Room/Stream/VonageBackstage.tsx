@@ -83,19 +83,17 @@ export function EventVonageRoomInner({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const [getEventVonageToken] = useGetEventVonageTokenMutation({
-        variables: {
-            eventId: event.id,
-        },
-    });
+    const [, getEventVonageToken] = useGetEventVonageTokenMutation();
 
     const getAccessToken = useCallback(async () => {
-        const result = await getEventVonageToken();
+        const result = await getEventVonageToken({
+            eventId: event.id,
+        });
         if (!result.data?.joinEventVonageSession?.accessToken) {
             throw new Error("No Vonage session ID");
         }
         return result.data?.joinEventVonageSession.accessToken;
-    }, [getEventVonageToken]);
+    }, [getEventVonageToken, event.id]);
 
     const sharedRoomContext = useSharedRoomContext();
 

@@ -51,16 +51,12 @@ export function EditElement({
     idx,
     previousElement,
     nextElement,
-    refetchElements,
-    defaultOpenSecurity,
     openSendSubmissionRequests,
 }: {
     element: ManageContent_ElementFragment | ManageContent_ElementFragment;
     idx: number;
     previousElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
     nextElement?: ManageContent_ElementFragment | ManageContent_ElementFragment;
-    refetchElements: () => void;
-    defaultOpenSecurity: boolean;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
     const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();

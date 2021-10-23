@@ -14,10 +14,15 @@ import {
 import { gql } from "@urql/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
-import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
+import { useClient } from "urql";
+import type {
+    GetRoomVonageSessionIdQuery,
+    GetRoomVonageSessionIdQueryVariables,
+    RoomPage_RoomDetailsFragment,
+} from "../../../../../generated/graphql";
 import {
+    GetRoomVonageSessionIdDocument,
     useGetEventVonageTokenMutation,
-    useGetRoomVonageSessionIdQuery,
     useGetRoomVonageTokenMutation,
 } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
@@ -132,27 +137,30 @@ export function VideoChatVonageRoom({
         setPublicVonageSessionId(room.publicVonageSessionId);
     }, [room.publicVonageSessionId]);
 
-    const [roomVonageSessionIdResponse] = useGetRoomVonageSessionIdQuery({
-        pause: true,
-    });
     const attempts = React.useRef<number>(0);
     const lastAttempt = React.useRef<number>(Date.now());
     const now = useRealTime(1000);
+    const client = useClient();
     useEffect(() => {
         if (!publicVonageSessionId && attempts.current < 3 && now - lastAttempt.current > 3000) {
             attempts.current++;
             lastAttempt.current = now;
 
             (async () => {
-                const response = await roomVonageSessionIdResponse.refetch({
-                    roomId: room.id,
-                });
+                const response = await client
+                    .query<GetRoomVonageSessionIdQuery, GetRoomVonageSessionIdQueryVariables>(
+                        GetRoomVonageSessionIdDocument,
+                        {
+                            roomId: room.id,
+                        }
+                    )
+                    .toPromise();
                 if (response.data?.room_Room_by_pk?.publicVonageSessionId) {
                     setPublicVonageSessionId(response.data.room_Room_by_pk.publicVonageSessionId);
                 }
             })();
         }
-    }, [publicVonageSessionId, room.id, roomVonageSessionIdResponse, now]);
+    }, [publicVonageSessionId, room.id, client, now]);
 
     const recordingAlert_leastDestructiveRef = useRef<HTMLButtonElement | null>(null);
 

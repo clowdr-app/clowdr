@@ -82,7 +82,9 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
         },
     });
     const title = useTitle(
-        roomDetailsResponse.loading ? "Loading room" : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
+        roomDetailsResponse.fetching
+            ? "Loading room"
+            : roomDetailsResponse.data?.room_Room_by_pk?.name ?? "Unknown room"
     );
 
     return (

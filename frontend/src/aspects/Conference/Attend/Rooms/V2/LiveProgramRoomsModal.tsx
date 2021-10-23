@@ -10,7 +10,9 @@ import {
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
+import { useClient } from "urql";
+import type { RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables } from "../../../../../generated/graphql";
+import { RoomTile_GetRoomDocument } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
 import { useLiveEvents } from "../../../../LiveEvents/LiveEvents";
 import LiveProgramRooms from "./LiveProgramRooms";
@@ -94,21 +96,19 @@ export default function LiveProgramRoomsModal({
         };
     }, [preloadEvents]);
 
-    const [prefetchRoomTile] = useRoomTile_GetRoomQuery({
-        pause: true,
-    });
+    const client = useClient();
     useEffect(() => {
         if (shouldPreload && Date.now() - lastPreloadTime.current > 30 * 60 * 1000) {
             lastPreloadTime.current = Date.now();
             preloadEvents.map((event) =>
-                prefetchRoomTile.refetch({
+                client.query<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, {
                     eventId: event.id,
                     roomId: event.room.id,
                     withEvent: true,
                 })
             );
         }
-    }, [prefetchRoomTile, preloadEvents, shouldPreload]);
+    }, [client, preloadEvents, shouldPreload]);
 
     const closeRef = useRef<HTMLButtonElement | null>(null);
     return (

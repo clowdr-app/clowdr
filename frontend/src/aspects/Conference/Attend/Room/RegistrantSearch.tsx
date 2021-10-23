@@ -9,7 +9,9 @@ import {
     ListItem,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSearchRegistrantsQuery } from "../../../../generated/graphql";
+import { useClient } from "urql";
+import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../generated/graphql";
+import { SearchRegistrantsDocument } from "../../../../generated/graphql";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
@@ -24,27 +26,31 @@ export function RegistrantSearch({
     const [search, searchDebounced, setSearch] = useDebouncedState<string>("");
     const [options, setOptions] = useState<{ label: string; value: string; inRoom: boolean }[]>([]);
     const ariaSearchResultStr = `${options.length} people`;
-    const [, refetch] = useSearchRegistrantsQuery({ pause: true });
     const conference = useConference();
 
+    const client = useClient();
     const getSelectOptions = useCallback(
         async (searchTerm) => {
             if (searchTerm.length < 3) {
                 return [];
             }
-            const result = await refetch({
-                conferenceId: conference.id,
-                search: `%${searchTerm}%`,
-            });
-            return result.data.registrant_Registrant
-                .filter((item) => !!item.userId)
-                .map((item) => ({
-                    value: item.id,
-                    label: item.displayName,
-                    inRoom: selectedRegistrantIds.includes(item.id as string),
-                }));
+            const result = await client
+                .query<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, {
+                    conferenceId: conference.id,
+                    search: `%${searchTerm}%`,
+                })
+                .toPromise();
+            return (
+                result.data?.registrant_Registrant
+                    .filter((item) => !!item.userId)
+                    .map((item) => ({
+                        value: item.id,
+                        label: item.displayName,
+                        inRoom: selectedRegistrantIds.includes(item.id as string),
+                    })) ?? []
+            );
         },
-        [conference.id, refetch, selectedRegistrantIds]
+        [conference.id, client, selectedRegistrantIds]
     );
     useEffect(() => {
         async function fn() {

@@ -24,13 +24,17 @@ import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { gql } from "urql";
+import { gql, useClient } from "urql";
 import { validate } from "uuid";
-import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
+import type {
+    LiveIndicator_GetLatestQuery,
+    LiveIndicator_GetLatestQueryVariables,
+    RoomEventDetailsFragment,
+} from "../../../../../../generated/graphql";
 import {
+    LiveIndicator_GetLatestDocument,
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
-    useLiveIndicator_GetLatestQuery,
 } from "../../../../../../generated/graphql";
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import FAIcon from "../../../../../Icons/FAIcon";
@@ -89,9 +93,6 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
     });
 
     const [, createImmediateSwitch] = useImmediateSwitch_CreateMutation();
-    const [liveIndicatorLatest] = useLiveIndicator_GetLatestQuery({
-        pause: true,
-    });
 
     const [lastSwitched, setLastSwitched] = useState<number>(0);
     const enableSwitchButton = now - lastSwitched > 5000;
@@ -134,6 +135,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const client = useClient();
     const performSwitch = useCallback(
         async (choice: string) => {
             switch (choice) {
@@ -147,9 +149,14 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             eventId: event.id,
                             conferenceId: conference.id,
                         });
-                        await liveIndicatorLatest.refetch({
-                            eventId: event.id,
-                        });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -166,12 +173,18 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             kind: "rtmp_push",
                         };
                         await createImmediateSwitch({
-                            variables: {
-                                data,
-                                eventId: event.id,
-                                conferenceId: conference.id,
-                            },
+                            data,
+                            eventId: event.id,
+                            conferenceId: conference.id,
                         });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -202,6 +215,14 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
                             eventId: event.id,
                             conferenceId: conference.id,
                         });
+                        await client
+                            .query<LiveIndicator_GetLatestQuery, LiveIndicator_GetLatestQueryVariables>(
+                                LiveIndicator_GetLatestDocument,
+                                {
+                                    eventId: event.id,
+                                }
+                            )
+                            .toPromise();
                     } catch (err: any) {
                         toast({
                             status: "error",
@@ -215,7 +236,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
             }
             setLastSwitched(now);
         },
-        [conference.id, createImmediateSwitch, event.id, liveIndicatorLatest, now, toast]
+        [conference.id, createImmediateSwitch, event.id, client, now, toast]
     );
 
     const cancelRef = useRef<HTMLButtonElement>(null);

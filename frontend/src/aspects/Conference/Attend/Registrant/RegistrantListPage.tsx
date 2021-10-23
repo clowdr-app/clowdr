@@ -10,8 +10,9 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { gql } from "urql";
-import { useSearchRegistrantsLazyQuery, useSelectRegistrantsQuery } from "../../../../generated/graphql";
+import { gql, useClient } from "urql";
+import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../generated/graphql";
+import { SearchRegistrantsDocument, useSelectRegistrantsQuery } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
@@ -34,7 +35,7 @@ gql`
                     {
                         _or: [
                             { displayName: { _ilike: $search } }
-                            { profile: { _or: [{ affiliation: { _ilike: $search } }, { bio: { _ilike: $search } }] } }
+                            { profile: { { affiliation: { _ilike: $search } } } }
                             { badges: { name: { _ilike: $search } } }
                         ]
                     }
@@ -51,10 +52,6 @@ export function AllRegistrantsList(): JSX.Element {
     const [search, setSearch] = useState<string>("");
 
     const conference = useConference();
-
-    const [{ fetching: loadingSearch, error: errorSearch, data: dataSearch }, searchQuery] =
-        useSearchRegistrantsLazyQuery();
-    useQueryErrorToast(errorSearch, false, "RegistrantListPage.tsx -- search");
 
     const [{ fetching: loadingRegistrants, error: errorRegistrants, data: dataRegistrants }] =
         useSelectRegistrantsQuery({
@@ -93,35 +90,35 @@ export function AllRegistrantsList(): JSX.Element {
         setIsLoadingMore(false);
     }, [allSearched, loadedCount]);
 
+    const client = useClient();
+    const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
     useEffect(() => {
-        function doSearch() {
-            if ((loadingSearch && !dataSearch) || errorSearch) {
-                return undefined;
-            }
-
-            if (!dataSearch) {
-                return undefined;
-            }
-
-            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
-        }
-
-        setLoadedCount(30);
-        setAllSearched((oldSearched) => doSearch() ?? oldSearched ?? null);
-        // We need `search` in the sensitivity list because Apollo cache may not
-        // change the data/error/loading state if the result comes straight from
-        // the cache of the last run the search query
-    }, [dataSearch, errorSearch, loadingSearch, search]);
-
-    useEffect(() => {
-        const tId = setTimeout(() => {
+        const tId = setTimeout(async () => {
             if (search.length >= 3) {
-                searchQuery({
-                    variables: {
-                        conferenceId: conference.id,
-                        search: `%${search}%`,
-                    },
-                });
+                const doSearch = async () => {
+                    setLoadingSearch(true);
+                    const { data: dataSearch, error: errorSearch } = await client
+                        .query<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, {
+                            conferenceId: conference.id,
+                            search: `%${search}%`,
+                        })
+                        .toPromise();
+                    setLoadingSearch(false);
+
+                    if (!dataSearch || errorSearch) {
+                        return undefined;
+                    }
+
+                    if (!dataSearch) {
+                        return undefined;
+                    }
+
+                    return dataSearch.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
+                };
+
+                setLoadedCount(30);
+                const results = await doSearch();
+                setAllSearched((oldSearched) => results ?? oldSearched ?? null);
             } else {
                 setAllSearched(null);
             }
@@ -129,7 +126,7 @@ export function AllRegistrantsList(): JSX.Element {
         return () => {
             clearTimeout(tId);
         };
-    }, [conference.id, search, searchQuery]);
+    }, [conference.id, search, client]);
 
     const loadMore = useCallback(() => {
         setIsLoadingMore(true);

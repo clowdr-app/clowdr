@@ -1,10 +1,15 @@
 import { Button, chakra, Divider, HStack, Text, useColorModeValue, useDisclosure, VStack } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import type { Schedule_TagFragment} from "../../../../../generated/graphql";
-import { useSchedule_SelectItemLazyQuery } from "../../../../../generated/graphql";
+import { useClient } from "urql";
+import type {
+    Schedule_SelectItemQuery,
+    Schedule_SelectItemQueryVariables,
+    Schedule_TagFragment,
+} from "../../../../../generated/graphql";
+import { Schedule_SelectItemDocument } from "../../../../../generated/graphql";
 import { PlainAuthorsList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
@@ -155,16 +160,20 @@ export default function EventBox({
         });
     }, [sortedEvents, scrollToEvent, scrollToEventCbs]);
 
-    const [[getContent, content]] = useSchedule_SelectItemLazyQuery();
+    const [content, setContent] = useState<Schedule_SelectItemQuery | null>(null);
+    const client = useClient();
     useEffect(() => {
-        if (isOpen && !content.data && event.itemId) {
-            getContent({
-                variables: {
-                    id: event.itemId,
-                },
-            });
+        if (isOpen && !content && event.itemId) {
+            (async () => {
+                const response = await client
+                    .query<Schedule_SelectItemQuery, Schedule_SelectItemQueryVariables>(Schedule_SelectItemDocument, {
+                        id: event.itemId,
+                    })
+                    .toPromise();
+                setContent(response.data ?? null);
+            })();
         }
-    }, [content.data, getContent, isOpen, event.itemId]);
+    }, [content, isOpen, event.itemId, client]);
 
     const borderColour = useColorModeValue("PrimaryActionButton.200", "PrimaryActionButton.800");
     return (
@@ -219,7 +228,7 @@ export default function EventBox({
                     durationSeconds={durationSeconds}
                     roomName={roomName}
                     events={sortedEvents}
-                    content={content.data?.content_Item_by_pk}
+                    content={content?.content_Item_by_pk}
                     isOpen={isOpen}
                     onClose={onClose}
                     finalFocusRef={eventFocusRef}

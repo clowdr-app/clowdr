@@ -14,11 +14,10 @@ import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/c
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useClient } from "urql";
-import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    Room_EventSummaryFragmentDoc,
+    RoomPage_RoomDetailsFragment,
+    Room_EventSummaryFragment,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
@@ -115,9 +114,7 @@ export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomD
     });
 
     useEffect(() => {
-        refetchDefaultVideoRoomBackend()?.catch((e) =>
-            console.error("Could not refetch default video room backend", e)
-        );
+        refetchDefaultVideoRoomBackend();
     }, [refetchDefaultVideoRoomBackend, roomDetails.id]);
 
     const defaultVideoBackend: "CHIME" | "VONAGE" | undefined = defaultvideoRoomBackendLoading
@@ -154,7 +151,7 @@ function Room({
         [now]
     );
 
-    const [{ fetching: loadingEvents, data }] = useRoom_GetEventsQuery({
+    const [{ fetching: loadingEvents, data }, refetchRoomEvents] = useRoom_GetEventsQuery({
         requestPolicy: "cache-and-network",
         variables: {
             roomId: roomDetails.id,
@@ -176,10 +173,11 @@ function Room({
                 <RoomInner
                     roomDetails={roomDetails}
                     roomEvents={cachedRoomEvents}
+                    refetchRoomEvents={refetchRoomEvents}
                     defaultVideoBackend={defaultVideoBackend}
                 />
             ) : undefined,
-        [cachedRoomEvents, defaultVideoBackend, roomDetails]
+        [cachedRoomEvents, defaultVideoBackend, roomDetails, refetchRoomEvents]
     );
 
     return (
@@ -193,10 +191,12 @@ function Room({
 function RoomInner({
     roomDetails,
     roomEvents,
+    refetchRoomEvents,
     defaultVideoBackend,
 }: {
     roomDetails: RoomPage_RoomDetailsFragment;
     roomEvents: readonly Room_EventSummaryFragment[];
+    refetchRoomEvents: () => void;
     defaultVideoBackend: "CHIME" | "VONAGE" | "NO_DEFAULT" | undefined;
 }): JSX.Element {
     const currentRegistrant = useCurrentRegistrant();
@@ -387,7 +387,6 @@ function RoomInner({
     const [backstageSelectedEventId, setBackstageSelectedEventId] = useState<string | null>(null);
 
     const raiseHand = useRaiseHandState();
-    const client = useClient();
     const currentUser = useCurrentUser().user;
     useEffect(() => {
         if (currentRegistrant.userId) {
@@ -459,38 +458,7 @@ function RoomInner({
             ? raiseHand.observe(currentRoomEvent.id, (update) => {
                   if ("userId" in update && update.userId === currentUser.id && update.wasAccepted) {
                       setTimeout(() => {
-                          // alert("Auto revealing backstage room");
-                          const fragmentId = client.cache.identify({
-                              __typename: "schedule_Event",
-                              id: currentRoomEvent.id,
-                          });
-                          const eventFragment = client.cache.readFragment<Room_EventSummaryFragment>({
-                              fragment: Room_EventSummaryFragmentDoc,
-                              id: fragmentId,
-                              fragmentName: "Room_EventSummary",
-                          });
-                          if (eventFragment) {
-                              client.cache.writeFragment({
-                                  fragment: Room_EventSummaryFragmentDoc,
-                                  id: fragmentId,
-                                  fragmentName: "Room_EventSummary",
-                                  data: {
-                                      ...eventFragment,
-                                      eventPeople: !eventFragment.eventPeople.some(
-                                          (x) => x.id === update.eventPerson.id
-                                      )
-                                          ? [
-                                                ...eventFragment.eventPeople,
-                                                {
-                                                    id: update.eventPerson.id,
-                                                    roleName: update.eventPerson.roleName,
-                                                    person: update.eventPerson.person,
-                                                },
-                                            ]
-                                          : eventFragment.eventPeople,
-                                  },
-                              });
-                          }
+                          refetchRoomEvents();
                           setWatchStreamForEventId(null);
                           setBackstageSelectedEventId(currentRoomEvent.id);
                       }, 150);
@@ -503,7 +471,7 @@ function RoomInner({
         return () => {
             unobserve();
         };
-    }, [client.cache, currentRoomEvent?.id, currentUser.id, raiseHand]);
+    }, [refetchRoomEvents, currentRoomEvent?.id, currentUser.id, raiseHand]);
 
     const onLeaveBackstage = useCallback(() => {
         const isParticipantOfCurrentEvent =

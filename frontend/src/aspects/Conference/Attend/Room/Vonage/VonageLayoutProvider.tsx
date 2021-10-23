@@ -43,7 +43,7 @@ export interface VonageLayout {
     layout: { layout: VonageSessionLayoutData; createdAt: number };
     updateLayout: (layout: { layout: VonageSessionLayoutData; createdAt: number }) => void;
     saveLayout: (_layoutData?: { layout: VonageSessionLayoutData; createdAt: number }) => Promise<void>;
-    refetchLayout: () => Promise<void>;
+    refetchLayout: () => void;
 
     availableStreams: AvailableStream[];
     setAvailableStreams: (streams: AvailableStream[]) => void;
@@ -67,7 +67,7 @@ export function VonageLayoutProvider({
     vonageSessionId,
     children,
 }: PropsWithChildren<{ vonageSessionId: string }>): JSX.Element {
-    const [result] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
+    const [result, refetchLayout] = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
         variables: {
             vonageSessionId,
         },
@@ -76,18 +76,19 @@ export function VonageLayoutProvider({
         layout: VonageSessionLayoutData;
         createdAt: number;
     } | null>(null);
+    const [layoutData, setLayoutData] = useState<{ layout: VonageSessionLayoutData; createdAt: number } | null>(null);
     useEffect(() => {
         if (!result.data?.video_VonageSessionLayout.length) {
             return;
         }
         if (isVonageSessionLayoutData(result.data.video_VonageSessionLayout[0].layoutData)) {
+            setLayoutData(null);
             setInitialLayoutData({
                 layout: result.data.video_VonageSessionLayout[0].layoutData,
                 createdAt: Date.parse(result.data.video_VonageSessionLayout[0].created_at),
             });
         }
     }, [result.data?.video_VonageSessionLayout]);
-    const [layoutData, setLayoutData] = useState<{ layout: VonageSessionLayoutData; createdAt: number } | null>(null);
 
     const currentLayout: { layout: VonageSessionLayoutData; createdAt: number } = useMemo(
         () =>
@@ -102,7 +103,7 @@ export function VonageLayoutProvider({
         [initialLayoutData, layoutData]
     );
 
-    const [insertLayout] = useInsertVonageSessionLayoutMutation();
+    const [, insertLayout] = useInsertVonageSessionLayoutMutation();
     const toast = useToast();
     const { id: conferenceId } = useConference();
 
@@ -195,11 +196,9 @@ export function VonageLayoutProvider({
                         createdAt: _layoutData?.createdAt ?? layoutData?.createdAt ?? Date.now(),
                     });
                     await insertLayout({
-                        variables: {
-                            conferenceId,
-                            vonageSessionId,
-                            layoutData: data,
-                        },
+                        conferenceId,
+                        vonageSessionId,
+                        layoutData: data,
                     });
                 }
             } catch (e) {
@@ -214,19 +213,6 @@ export function VonageLayoutProvider({
         [vonageSessionId, layoutData, availableStreams, insertLayout, conferenceId, toast]
     );
 
-    const refetchLayout = useCallback(async () => {
-        const newResult = await result.refetch();
-        if (newResult.data.video_VonageSessionLayout.length > 0) {
-            if (isVonageSessionLayoutData(newResult.data.video_VonageSessionLayout[0].layoutData)) {
-                setLayoutData(null);
-                setInitialLayoutData({
-                    layout: newResult.data.video_VonageSessionLayout[0].layoutData,
-                    createdAt: Date.parse(newResult.data.video_VonageSessionLayout[0].created_at),
-                });
-            }
-        }
-    }, [result]);
-
     const {
         isOpen: layoutChooser_isOpen,
         onOpen: layoutChooser_onOpen,
@@ -238,7 +224,7 @@ export function VonageLayoutProvider({
             layout: currentLayout,
             updateLayout: setLayoutData,
             saveLayout,
-            refetchLayout,
+            refetchLayout: () => refetchLayout(),
             availableStreams,
             setAvailableStreams,
             layoutChooser_isOpen,

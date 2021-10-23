@@ -95,7 +95,7 @@ export function VonageRoom({
 
     const raiseHand = useRaiseHandState();
 
-    const [deleteEventParticipant] = useDeleteEventParticipantMutation();
+    const [, deleteEventParticipant] = useDeleteEventParticipantMutation();
 
     const { onPermissionsProblem } = useContext(PermissionInstructionsContext);
 

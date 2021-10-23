@@ -6,6 +6,7 @@ import type { RoomListRoomDetailsFragment } from "../../../../../generated/graph
 import { useGetAllRoomsQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
+import usePolling from "../../../../Generic/usePolling";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -130,14 +131,14 @@ export default function RoomListPage(): JSX.Element {
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
-    const [result] = useGetAllRoomsQuery({
+    const [result, refetchAllRooms] = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
             registrantId: registrant.id,
         },
-        pollInterval: 2.5 * 60 * 1000,
         requestPolicy: "cache-and-network",
     });
+    usePolling(refetchAllRooms, 2.5 * 60 * 1000);
 
     const { isOpen, onClose, onOpen } = useDisclosure();
 

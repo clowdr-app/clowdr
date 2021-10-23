@@ -27,6 +27,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
+import usePolling from "../../../../../Generic/usePolling";
 import { useRealTime } from "../../../../../Generic/useRealTime";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { formatRemainingTime } from "../../formatRemainingTime";
@@ -73,12 +74,12 @@ export function LiveIndicator({
     const secondsUntilOffAir = (endTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
-    const [{ data: latestImmediateSwitchData }] = useLiveIndicator_GetLatestQuery({
+    const [{ data: latestImmediateSwitchData }, refetchLiveIndicator] = useLiveIndicator_GetLatestQuery({
         variables: {
             eventId: event.id,
         },
-        pollInterval: 10000,
     });
+    usePolling(refetchLiveIndicator, 10000);
 
     const latestSwitchData = useMemo(() => {
         if (!latestImmediateSwitchData?.video_ImmediateSwitch?.length) {

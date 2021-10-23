@@ -17,11 +17,20 @@ import {
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import type { MutableRefObject } from "react";
-import React from "react";
+import React, { useState } from "react";
+import { useClient } from "urql";
+import type {
+    SearchPanel_EventsQuery,
+    SearchPanel_EventsQueryVariables,
+    SearchPanel_ItemsQuery,
+    SearchPanel_ItemsQueryVariables,
+    SearchPanel_PeopleQuery,
+    SearchPanel_PeopleQueryVariables,
+} from "../../../../generated/graphql";
 import {
-    useSearchPanel_EventsLazyQuery,
-    useSearchPanel_ItemsLazyQuery,
-    useSearchPanel_PeopleLazyQuery,
+    SearchPanel_EventsDocument,
+    SearchPanel_ItemsDocument,
+    SearchPanel_PeopleDocument,
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -127,9 +136,15 @@ export default function SearchPanel({
         changeSearch.current = setSearch;
     }
 
-    const [eventsResponse, fetchEventsQuery] = useSearchPanel_EventsLazyQuery();
-    const [itemsResponse, fetchItemsQuery] = useSearchPanel_ItemsLazyQuery();
-    const [peopleResponse, fetchPeopleQuery] = useSearchPanel_PeopleLazyQuery();
+    const [eventsResponse, setEventsResponse] = useState<SearchPanel_EventsQuery | null>(null);
+    const [itemsResponse, setItemsResponse] = useState<SearchPanel_ItemsQuery | null>(null);
+    const [peopleResponse, setPeopleResponse] = useState<SearchPanel_PeopleQuery | null>(null);
+
+    const [eventsResponseLoading, setEventsResponseLoading] = useState<boolean>(false);
+    const [itemsResponseLoading, setItemsResponseLoading] = useState<boolean>(false);
+    const [peopleResponseLoading, setPeopleResponseLoading] = useState<boolean>(false);
+
+    const client = useClient();
 
     return (
         <Flex flexDir="column" spacing={4} w="100%" h="100%" alignItems="center">
@@ -183,48 +198,79 @@ export default function SearchPanel({
                         <Button
                             colorScheme="PrimaryActionButton"
                             aria-label="Search"
-                            isLoading={eventsResponse.fetching || itemsResponse.fetching || peopleResponse.fetching}
+                            isLoading={eventsResponseLoading || itemsResponseLoading || peopleResponseLoading}
                             isDisabled={search.length < 3}
-                            onClick={() => {
+                            onClick={async () => {
                                 switch (searchType) {
                                     case "events":
-                                        fetchEventsQuery({
-                                            variables: {
-                                                conferenceId: conference.id,
-                                                search: `${search}`,
-                                            },
-                                        });
+                                        {
+                                            setEventsResponseLoading(true);
+                                            const result =
+                                                (
+                                                    await client
+                                                        .query<
+                                                            SearchPanel_EventsQuery,
+                                                            SearchPanel_EventsQueryVariables
+                                                        >(SearchPanel_EventsDocument, {
+                                                            conferenceId: conference.id,
+                                                            search: `${search}`,
+                                                        })
+                                                        .toPromise()
+                                                )?.data ?? null;
+                                            setEventsResponse(result);
+                                            setEventsResponseLoading(false);
+                                        }
                                         break;
                                     case "items":
-                                        fetchItemsQuery({
-                                            variables: {
-                                                conferenceId: conference.id,
-                                                search: `${search}`,
-                                            },
-                                        });
+                                        {
+                                            setItemsResponseLoading(true);
+                                            const result =
+                                                (
+                                                    await client
+                                                        .query<SearchPanel_ItemsQuery, SearchPanel_ItemsQueryVariables>(
+                                                            SearchPanel_ItemsDocument,
+                                                            {
+                                                                conferenceId: conference.id,
+                                                                search: `${search}`,
+                                                            }
+                                                        )
+                                                        .toPromise()
+                                                )?.data ?? null;
+                                            setItemsResponse(result);
+                                            setItemsResponseLoading(false);
+                                        }
                                         break;
                                     case "people":
-                                        fetchPeopleQuery({
-                                            variables: {
-                                                conferenceId: conference.id,
-                                                search: `${search}`,
-                                            },
-                                        });
+                                        {
+                                            setPeopleResponseLoading(true);
+                                            const result =
+                                                (
+                                                    await client
+                                                        .query<
+                                                            SearchPanel_PeopleQuery,
+                                                            SearchPanel_PeopleQueryVariables
+                                                        >(SearchPanel_PeopleDocument, {
+                                                            conferenceId: conference.id,
+                                                            search: `${search}`,
+                                                        })
+                                                        .toPromise()
+                                                )?.data ?? null;
+                                            setPeopleResponse(result);
+                                            setPeopleResponseLoading(false);
+                                        }
                                         break;
                                 }
                             }}
                         >
                             <FAIcon iconStyle="s" icon="search" />
                             &nbsp;&nbsp;
-                            {eventsResponse.data || itemsResponse.data || peopleResponse.data
-                                ? "Search again"
-                                : "Search"}
+                            {eventsResponse || itemsResponse || peopleResponse ? "Search again" : "Search"}
                         </Button>
                     </div>
                 </Tooltip>
             </VStack>
 
-            {searchType === "events" && eventsResponse.data ? (
+            {searchType === "events" && eventsResponse ? (
                 <>
                     <Divider my={4} />
                     <Text w="auto" textAlign="left" p={0} mb={4}>
@@ -232,42 +278,40 @@ export default function SearchPanel({
                         Times are shown in your local timezone.
                     </Text>
                     <List spacing={3} w="100%" px={2}>
-                        {eventsResponse.data.schedule_searchEvents.map((event) => (
+                        {eventsResponse.schedule_searchEvents.map((event) => (
                             <ListItem key={event.id} w="100%">
                                 <SearchResult_Event event={event} />
                             </ListItem>
                         ))}
-                        {eventsResponse.data.schedule_searchEvents.length === 0 ? (
+                        {eventsResponse.schedule_searchEvents.length === 0 ? (
                             <ListItem>No results</ListItem>
                         ) : undefined}
                     </List>
                 </>
             ) : undefined}
-            {searchType === "items" && itemsResponse.data ? (
+            {searchType === "items" && itemsResponse ? (
                 <>
                     <Divider my={2} />
                     <List spacing={3} w="100%" px={2}>
-                        {itemsResponse.data.content_searchItems.map((item) => (
+                        {itemsResponse.content_searchItems.map((item) => (
                             <ListItem key={item.id} w="100%">
                                 <SearchResult_Item item={item} />
                             </ListItem>
                         ))}
-                        {itemsResponse.data.content_searchItems.length === 0 ? (
-                            <ListItem>No results</ListItem>
-                        ) : undefined}
+                        {itemsResponse.content_searchItems.length === 0 ? <ListItem>No results</ListItem> : undefined}
                     </List>
                 </>
             ) : undefined}
-            {searchType === "people" && peopleResponse.data ? (
+            {searchType === "people" && peopleResponse ? (
                 <>
                     <Divider my={2} />
                     <List spacing={3} w="100%" overflowY="auto" flex="0 1 100%" px={2}>
-                        {peopleResponse.data.collection_searchProgramPerson.map((person) => (
+                        {peopleResponse.collection_searchProgramPerson.map((person) => (
                             <ListItem key={person.id} w="100%">
                                 <SearchResult_Person person={person} />
                             </ListItem>
                         ))}
-                        {peopleResponse.data.collection_searchProgramPerson.length === 0 ? (
+                        {peopleResponse.collection_searchProgramPerson.length === 0 ? (
                             <ListItem>No results</ListItem>
                         ) : undefined}
                     </List>

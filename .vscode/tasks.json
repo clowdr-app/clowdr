@@ -299,6 +299,7 @@
                 "Packetriot",
                 "Hasura Console -- Local Development",
                 "Auth Service -- Local Development",
+                "Actions Service -- Local Development",
                 "Frontend -- Local Development"
             ],
             "dependsOrder": "parallel",
@@ -362,6 +363,13 @@
             "command": "aws-vault",
             "problemMatcher": [],
             "args": ["login", "${input:aws-profile-name}-internal"]
+        },
+        {
+            "label": "Fix Frontend ESLint errors/warnings",
+            "type": "shell",
+            "command": "npx",
+            "problemMatcher": [],
+            "args": ["eslint", "--ext", ".tsx", "--ext", ".ts", "--fix", "./frontend/src/aspects"]
         }
     ],
     "inputs": [

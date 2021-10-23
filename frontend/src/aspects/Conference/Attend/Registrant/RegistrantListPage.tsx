@@ -35,7 +35,7 @@ gql`
                     {
                         _or: [
                             { displayName: { _ilike: $search } }
-                            { profile: { { affiliation: { _ilike: $search } } } }
+                            { profile: { affiliation: { _ilike: $search } } }
                             { badges: { name: { _ilike: $search } } }
                         ]
                     }

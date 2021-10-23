@@ -21,7 +21,6 @@ import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as elementRouter } from "./router/element";
 import { router as eventRouter } from "./router/event";
 import { router as googleRouter } from "./router/google";
-import { router as hasuraRouter } from "./router/hasura";
 import { router as mediaConvertRouter } from "./router/mediaConvert";
 import { router as mediaPackageRouter } from "./router/mediaPackage";
 import { router as mediaPackageHarvestJobRouter } from "./router/mediaPackageHarvestJob";
@@ -81,7 +80,6 @@ app.use("/chat", chatRouter);
 app.use("/queues", queuesRouter);
 app.use("/analytics", analyticsRouter);
 
-app.use("/hasura", hasuraRouter);
 app.use("/conference", conferenceRouter);
 
 app.get("/", function (_req, res) {

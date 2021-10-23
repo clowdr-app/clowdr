@@ -29,17 +29,6 @@ actions:
       value_from_env: EVENT_SECRET
   permissions:
   - role: user
-- name: getProgramPersonAccessToken
-  definition:
-    kind: ""
-    handler: '{{ACTION_BASE_URL}}/element/getProgramPersonAccessToken'
-    forward_client_headers: true
-    headers:
-    - name: x-hasura-event-secret
-      value_from_env: EVENT_SECRET
-  permissions:
-  - role: user
-  - role: unauthenticated
 - name: getSlug
   definition:
     kind: ""

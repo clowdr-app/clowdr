@@ -82,6 +82,8 @@ export async function handleAuthWebhook(
     if (!verifiedParams.userId) {
         const result: Partial<Record<HasuraHeaders, string>> = {
             [HasuraHeaders.Role]: HasuraRoleNames.Unauthenticated,
+            [HasuraHeaders.ConferenceIds]: formatArrayForHasuraHeader([]),
+            [HasuraHeaders.SubconferenceIds]: formatArrayForHasuraHeader([]),
         };
 
         if (unverifiedParams.conferenceId) {
@@ -392,6 +394,9 @@ export async function handleAuthWebhook(
                 }
             } else {
                 result[HasuraHeaders.RegistrantIds] = formatArrayForHasuraHeader(user.registrantIds.map((x) => x.id));
+                result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(
+                    user.registrantIds.map((x) => x.conferenceId)
+                );
             }
         }
 

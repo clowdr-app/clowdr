@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type {
-    Input} from "@aws-sdk/client-mediaconvert";
+import type { Input } from "@aws-sdk/client-mediaconvert";
 import {
     AudioSelectorType,
     CaptionDestinationType,
@@ -10,13 +9,8 @@ import {
     LanguageCode,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
-import type {
-    ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    AWSJobStatus,
-    Content_ElementType_Enum,
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
 import type { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import assert from "assert";
@@ -30,8 +24,8 @@ import {
     CombineVideosJob_GetElementsDocument,
     CombineVideosJob_GetJobsDocument,
     CombineVideosJob_StartJobDocument,
+    Job_Queues_JobStatus_Enum,
     MediaConvert_GetCombineVideosJobDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { MediaConvert } from "../lib/aws/awsClient";
@@ -68,7 +62,7 @@ export async function processCombineVideosJobQueue(): Promise<void> {
     });
 
     jobsResponse.data.job_queues_CombineVideosJob.forEach(async (row) => {
-        if (row.jobStatusName !== Video_JobStatus_Enum.New) {
+        if (row.jobStatusName !== Job_Queues_JobStatus_Enum.New) {
             if (Date.now() - Date.parse(row.created_at) > 6 * 60 * 60 * 1000) {
                 console.error(
                     "Error: CombineVideosJob timed out after 6 hours (failing the job to avoid queue starvation)"

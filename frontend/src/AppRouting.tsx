@@ -12,6 +12,7 @@ import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
 import { useConferenceTheme } from "./aspects/Chakra/ChakraCustomProvider";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
 import { VideoTestPage } from "./aspects/Conference/Attend/Room/Video/VideoTestPage";
+import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import UseInviteOrCreateView from "./aspects/Conference/UseInviteOrCreateView";
 import ViewItemPage from "./aspects/Content/Submissions/ViewItemPage";
 import ViewItemsPage from "./aspects/Content/Submissions/ViewItemsPage";
@@ -120,7 +121,7 @@ function CheckSlugInner(): JSX.Element {
 }
 
 function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
-    const { path } = useRouteMatch();
+    const { url } = useRouteMatch();
     const { setConferenceSlug, setConferencePath } = useAuthParameters();
     const { setTheme } = useConferenceTheme();
     useEffect(() => {
@@ -129,8 +130,10 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
         }
 
         setConferenceSlug(confSlug ?? null);
-        setConferencePath(confSlug ? path : null);
-    }, [confSlug, setTheme, setConferenceSlug, setConferencePath, path]);
+        setConferencePath(confSlug ? (url.endsWith("/") ? url.substring(0, url.length - 1) : url) : null);
+    }, [confSlug, setTheme, setConferenceSlug, setConferencePath, url]);
+
+    const { conferenceId } = useAuthParameters();
 
     return (
         <Switch>
@@ -289,7 +292,11 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
                         <PageNotFound />
                     </Route>
                 </Switch>
-            ) : undefined}
+            ) : conferenceId ? (
+                <ConferenceRoutes />
+            ) : (
+                <CenteredSpinner centerProps={{ minHeight: "calc(100vh - 40px)" }} />
+            )}
         </Switch>
     );
 }

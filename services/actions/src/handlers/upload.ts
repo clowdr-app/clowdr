@@ -1,20 +1,14 @@
 import { gql } from "@apollo/client/core";
-import type {
-    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
-    isEmailTemplate_BaseConfig,
-} from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import type {
     AudioElementBlob,
     ElementBlob,
     ElementVersionData,
-    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    AWSJobStatus,
-    Content_ElementType_Enum,
-    ElementBaseType
+    VideoElementBlob,
 } from "@clowdr-app/shared-types/build/content";
-import type { EmailView_SubmissionRequest} from "@clowdr-app/shared-types/build/email";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { EmailView_SubmissionRequest } from "@clowdr-app/shared-types/build/email";
 import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
@@ -22,9 +16,7 @@ import { compile } from "handlebars";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    Email_Insert_Input,
-    UploadableElementFieldsFragment} from "../generated/graphql";
+import type { Email_Insert_Input, UploadableElementFieldsFragment } from "../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
@@ -33,7 +25,7 @@ import {
     MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
     SetUploadableElementUploadsRemainingDocument,
     UnmarkSubmissionRequestEmailJobsDocument,
-    UploadableElementDocument
+    UploadableElementDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
@@ -44,7 +36,7 @@ import { insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
-        content_Element(where: { accessToken: { _eq: $accessToken } }) {
+        content_Element(where: { item: { itemPeople: { person: { accessToken: { _eq: $accessToken } } } } }) {
             ...UploadableElementFields
             conference {
                 configurations(where: { key: { _eq: UPLOAD_CUTOFF_TIMESTAMP } }) {
@@ -56,18 +48,9 @@ gql`
         }
     }
 
-    fragment UploadableElementPermissionGrantFields on content_ElementPermissionGrant {
-        id
-        permissionSetId
-        groupId
-        entityId
-        conferenceSlug
-    }
-
     fragment UploadableElementFields on content_Element {
         id
         typeName
-        accessToken
         name
         uploadsRemaining
         isHidden
@@ -79,9 +62,6 @@ gql`
         item {
             id
             title
-        }
-        permissionGrants {
-            ...UploadableElementPermissionGrantFields
         }
     }
 `;
@@ -534,99 +514,12 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 }
 
 gql`
-    fragment UploaderParts on content_Uploader {
-        id
-        conference {
-            id
-            name
-            shortName
-        }
-        email
-        emailsSentCount
-        name
-        element {
-            ...UploadableElementFields
-        }
-    }
-
     mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!, $personIds: [uuid!]!) {
-        update_content_Uploader(where: { id: { _in: $uploaderIds } }, _inc: { emailsSentCount: 1 }) {
-            affected_rows
-        }
         update_collection_ProgramPerson(where: { id: { _in: $personIds } }, _inc: { submissionRequestsSentCount: 1 }) {
             affected_rows
         }
     }
 `;
-
-function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
-    switch (type) {
-        case Content_ElementType_Enum.Abstract:
-            return "Abstract";
-        case Content_ElementType_Enum.ContentGroupList:
-            return "Content group list";
-        case Content_ElementType_Enum.ImageFile:
-            return "Image file";
-        case Content_ElementType_Enum.ImageUrl:
-            return "Image URL";
-        case Content_ElementType_Enum.Link:
-            return "Link";
-        case Content_ElementType_Enum.LinkButton:
-            return "Link button";
-        case Content_ElementType_Enum.PaperFile:
-            return "Paper file";
-        case Content_ElementType_Enum.PaperLink:
-            return "Paper link";
-        case Content_ElementType_Enum.PaperUrl:
-            return "Paper URL";
-        case Content_ElementType_Enum.PosterFile:
-            return "Poster file";
-        case Content_ElementType_Enum.PosterUrl:
-            return "Poster URL";
-        case Content_ElementType_Enum.Text:
-            return "Text";
-        case Content_ElementType_Enum.VideoBroadcast:
-            return "Video for broadcast";
-        case Content_ElementType_Enum.VideoCountdown:
-            return "Video countdown";
-        case Content_ElementType_Enum.VideoFile:
-            return "Video file";
-        case Content_ElementType_Enum.VideoFiller:
-            return "Filler video";
-        case Content_ElementType_Enum.VideoLink:
-            return "Link to video";
-        case Content_ElementType_Enum.VideoPrepublish:
-            return "Video for pre-publication";
-        case Content_ElementType_Enum.VideoSponsorsFiller:
-            return "Sponsors filler video";
-        case Content_ElementType_Enum.VideoTitles:
-            return "Pre-roll titles video";
-        case Content_ElementType_Enum.VideoUrl:
-            return "Video URL";
-        case Content_ElementType_Enum.WholeSchedule:
-            return "Whole schedule";
-        case Content_ElementType_Enum.Zoom:
-            return "Zoom";
-        case Content_ElementType_Enum.ActiveSocialRooms:
-            return "Active social rooms";
-        case Content_ElementType_Enum.LiveProgramRooms:
-            return "Live program rooms";
-        case Content_ElementType_Enum.Divider:
-            return "Divider";
-        case Content_ElementType_Enum.SponsorBooths:
-            return "Sponsor booths";
-        case Content_ElementType_Enum.ExploreProgramButton:
-            return "Explore program button";
-        case Content_ElementType_Enum.ExploreScheduleButton:
-            return "Explore schedule button";
-        case Content_ElementType_Enum.AudioFile:
-            return "Audio file";
-        case Content_ElementType_Enum.AudioLink:
-            return "Audio link";
-        case Content_ElementType_Enum.AudioUrl:
-            return "Audio URL";
-    }
-}
 
 gql`
     mutation MarkAndSelectUnprocessedSubmissionRequestEmailJobs {
@@ -634,9 +527,6 @@ gql`
             returning {
                 id
                 emailTemplate
-                uploader {
-                    ...UploaderParts
-                }
                 person {
                     id
                     name
@@ -683,55 +573,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         let result: SubmissionRequestEmail | undefined;
         let conferenceId: string | undefined;
 
-        if (job.uploader) {
-            const contentTypeFriendlyName = generateContentTypeFriendlyName(job.uploader.element.typeName);
-            const uploadLink = `{{frontendHost}}/upload/${job.uploader.element.id}/${job.uploader.element.accessToken}`;
-            const context: EmailView_SubmissionRequest = {
-                uploader: {
-                    name: job.uploader.name,
-                },
-                file: {
-                    name: job.uploader.element.name,
-                    typeName: contentTypeFriendlyName,
-                },
-                conference: {
-                    name: job.uploader.conference.name,
-                    shortName: job.uploader.conference.shortName,
-                },
-                item: {
-                    title: job.uploader.element.item.title,
-                },
-                uploadLink,
-            };
-
-            const emailTemplate: EmailTemplate_BaseConfig | null = isEmailTemplate_BaseConfig(job.emailTemplate)
-                ? job.emailTemplate
-                : await getConferenceConfiguration<EmailTemplate_BaseConfig>(
-                      job.uploader.conference.id,
-                      Conference_ConfigurationKey_Enum.EmailTemplateSubmissionRequest
-                  );
-
-            const bodyTemplate = compile(
-                emailTemplate?.htmlBodyTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.htmlBodyTemplate
-            );
-            const subjectTemplate = compile(
-                emailTemplate?.subjectTemplate ?? EMAIL_TEMPLATE_SUBMISSION_REQUEST.subjectTemplate
-            );
-
-            const htmlBody = bodyTemplate(context);
-            const subject = subjectTemplate(context);
-
-            const newEmail: Email_Insert_Input = {
-                recipientName: job.uploader.name,
-                emailAddress: job.uploader.email,
-                htmlContents: htmlBody,
-                reason: "upload-request",
-                subject,
-            };
-            conferenceId = job.uploader.conference.id;
-
-            result = { email: newEmail, uploaderId: job.uploader.id, jobId: job.id };
-        } else if (job.person) {
+        if (job.person) {
             const uploadLink = `{{frontendHost}}/submissions/${job.person.accessToken}`;
 
             const context: EmailView_SubmissionRequest = {

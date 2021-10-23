@@ -5,10 +5,10 @@ import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import {
     Chat_FlagType_Enum,
     Content_ElementType_Enum,
+    Job_Queues_JobStatus_Enum,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
-    Video_JobStatus_Enum,
 } from "../../generated/graphql";
 
 export interface Payload<T = any> {
@@ -91,13 +91,13 @@ export interface SubmissionRequestEmailJobData extends BaseData {
 }
 
 export interface ConferencePrepareJobData extends BaseData {
-    jobStatusName: Video_JobStatus_Enum;
+    jobStatusName: Job_Queues_JobStatus_Enum;
     conferenceId: string;
 }
 
 export interface VideoRenderJobData extends BaseData {
     conferencePrepareJobId: string;
-    jobStatusName: Video_JobStatus_Enum;
+    jobStatusName: Job_Queues_JobStatus_Enum;
     conferenceId: string;
     elementId: string;
     data: VideoRenderJobDataBlob;
@@ -107,7 +107,7 @@ export interface VideoRenderJobData extends BaseData {
 export interface CombineVideosJobData extends BaseData {
     data: CombineVideosJobDataBlob;
     createdByRegistrantId: string | null;
-    jobStatusName: Video_JobStatus_Enum;
+    jobStatusName: Job_Queues_JobStatus_Enum;
     conferenceId: string;
     message: string | null;
 }
@@ -159,7 +159,7 @@ export interface EventPersonData extends BaseData {
 
 export interface MediaPackageHarvestJob extends BaseData {
     eventId: string;
-    jobStatusName: Video_JobStatus_Enum;
+    jobStatusName: Job_Queues_JobStatus_Enum;
     message: string | null;
     mediaPackageHarvestJobId: string | null;
     conferenceId: string;

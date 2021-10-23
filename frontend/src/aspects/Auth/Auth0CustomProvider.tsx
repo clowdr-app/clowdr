@@ -1,7 +1,7 @@
-import type { AppState as Auth0State} from "@auth0/auth0-react";
+import type { AppState as Auth0State } from "@auth0/auth0-react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import assert from "assert";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 
 export default function Auth0CustomProvider({ children }: { children: JSX.Element | Array<JSX.Element> }): JSX.Element {
@@ -15,13 +15,16 @@ export default function Auth0CustomProvider({ children }: { children: JSX.Elemen
 
     const history = useHistory();
 
-    const onRedirectCallback = (appState: Auth0State) => {
-        if (appState?.returnTo) {
-            window.location.replace(appState?.returnTo);
-        } else {
-            history.replace(window.location.pathname);
-        }
-    };
+    const onRedirectCallback = useCallback(
+        (appState: Auth0State) => {
+            if (appState?.returnTo) {
+                window.location.replace(appState?.returnTo);
+            } else {
+                history.replace(window.location.pathname);
+            }
+        },
+        [history]
+    );
 
     return (
         <Auth0Provider

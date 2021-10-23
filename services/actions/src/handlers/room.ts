@@ -3,7 +3,7 @@ import assert from "assert";
 import { sub } from "date-fns";
 import * as R from "ramda";
 import {
-    AddRegistrantToRoomPeopleDocument,
+    AddRegistrantToRoomMembershipsDocument,
     CreateDmRoomDocument,
     CreateDmRoom_GetExistingRoomsDocument,
     CreateDmRoom_GetRegistrantsDocument,
@@ -27,7 +27,7 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
 
     // If room was created by a user, add them as an admin
     if (payload.event.session_variables && "x-hasura-user-id" in payload.event.session_variables) {
-        await addUserToRoomPeople(
+        await addUserToRoomMemberships(
             payload.event.session_variables["x-hasura-user-id"],
             payload.event.data.new.id,
             Room_PersonRole_Enum.Admin
@@ -61,7 +61,11 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
     return sessionResult.sessionId;
 }
 
-export async function addUserToRoomPeople(userId: string, roomId: string, role: Room_PersonRole_Enum): Promise<void> {
+export async function addUserToRoomMemberships(
+    userId: string,
+    roomId: string,
+    role: Room_PersonRole_Enum
+): Promise<void> {
     gql`
         query GetRegistrantsForRoomAndUser($roomId: uuid!, $userId: String!) {
             room_Room_by_pk(id: $roomId) {
@@ -102,12 +106,12 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     const registrantId = result.data.room_Room_by_pk.conference.registrants[0].id;
 
     gql`
-        mutation AddRegistrantToRoomPeople(
+        mutation AddRegistrantToRoomMemberships(
             $registrantId: uuid!
             $roomId: uuid!
             $roomPersonRoleName: room_PersonRole_enum!
         ) {
-            insert_room_RoomPerson_one(
+            insert_room_RoomMembership_one(
                 object: { registrantId: $registrantId, roomId: $roomId, personRoleName: $roomPersonRoleName }
             ) {
                 id
@@ -116,7 +120,7 @@ export async function addUserToRoomPeople(userId: string, roomId: string, role: 
     `;
 
     await apolloClient.mutate({
-        mutation: AddRegistrantToRoomPeopleDocument,
+        mutation: AddRegistrantToRoomMembershipsDocument,
         variables: {
             registrantId,
             roomId,
@@ -165,7 +169,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             room_Room(
                 where: {
                     conferenceId: { _eq: $conferenceId }
-                    roomPeople: {
+                    roomMemberships: {
                         registrantId: { _in: $registrantIds }
                         _not: { registrantId: { _nin: $registrantIds } }
                     }
@@ -174,7 +178,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             ) {
                 id
                 chatId
-                roomPeople {
+                roomMemberships {
                     registrantId
                     id
                 }
@@ -193,7 +197,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
     const fullMatch = existingRoomsResult.data.room_Room.find((room) =>
         R.isEmpty(
             R.symmetricDifference(
-                room.roomPeople.map((person) => person.registrantId),
+                room.roomMemberships.map((person) => person.registrantId),
                 [...filteredRegistrants, myRegistrant.id]
             )
         )
@@ -213,7 +217,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
             $capacity: Int!
             $conferenceId: uuid!
             $name: String!
-            $data: [room_RoomPerson_insert_input!]!
+            $data: [room_RoomMembership_insert_input!]!
         ) {
             insert_room_Room_one(
                 object: {
@@ -222,7 +226,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                     currentModeName: VIDEO_CHAT
                     name: $name
                     managementModeName: DM
-                    roomPeople: { data: $data }
+                    roomMemberships: { data: $data }
                 }
             ) {
                 id

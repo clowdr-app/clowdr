@@ -166,6 +166,18 @@ select_permissions:
       conferenceVisibilityLevel:
         _eq: PUBLIC
   role: unauthenticated
+- permission:
+    columns:
+    - created_at
+    - id
+    - name
+    - shortName
+    - slug
+    - updated_at
+    filter:
+      id:
+        _in: X-Hasura-Conference-Ids
+  role: user
 update_permissions:
 - permission:
     check: null

@@ -136,7 +136,7 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
-    const [{ fetching: loading, error, data }, refetch] = useSelectCurrentUserQuery({
+    const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
@@ -150,11 +150,10 @@ function CurrentUserProvider_IsAuthenticated({
         const result: UserInfo = {
             loading,
             user: value ? (value?.User_by_pk as UserInfoFragment) ?? false : value,
-            refetchUser: refetch,
         };
 
         return result;
-    }, [loading, refetch, value]);
+    }, [loading, value]);
 
     const acceptedTermsAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedTermsAt), [ctx.user]);
     const acceptedPPAt = useMemo(() => ctx.user && Date.parse(ctx.user.acceptedPrivacyPolicyAt), [ctx.user]);

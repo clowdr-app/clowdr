@@ -6,12 +6,12 @@ import { formatRFC7231 } from "date-fns";
 import {
     CreateMediaPackageHarvestJobDocument,
     FailMediaPackageHarvestJobDocument,
+    Job_Queues_JobStatus_Enum,
     Recording_CompleteMediaPackageHarvestJobDocument,
     Recording_GetEventDocument,
     Recording_GetMediaPackageHarvestJobDocument,
     Recording_IgnoreMediaPackageHarvestJobDocument,
     StartMediaPackageHarvestJobDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createHarvestJob } from "../lib/aws/mediaPackage";
@@ -49,10 +49,10 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
 
     const newRow = payload.event.data.new;
 
-    if (newRow.jobStatusName === Video_JobStatus_Enum.New) {
+    if (newRow.jobStatusName === Job_Queues_JobStatus_Enum.New) {
         if (
             !payload.event.data.old ||
-            (payload.event.data.old && payload.event.data.old.jobStatusName !== Video_JobStatus_Enum.New)
+            (payload.event.data.old && payload.event.data.old.jobStatusName !== Job_Queues_JobStatus_Enum.New)
         ) {
             console.log("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
             const eventResult = await apolloClient.query({

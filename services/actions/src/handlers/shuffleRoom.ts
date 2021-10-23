@@ -2,7 +2,8 @@ import { gql } from "@apollo/client/core";
 import type {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
-    UnallocatedShuffleQueueEntryFragment} from "../generated/graphql";
+    UnallocatedShuffleQueueEntryFragment,
+} from "../generated/graphql";
 import {
     AddPeopleToExistingShuffleRoomDocument,
     ExpireShuffleQueueEntriesDocument,
@@ -13,7 +14,7 @@ import {
     SelectActiveShufflePeriodsDocument,
     SelectShufflePeriodDocument,
     SetAutoPinOnManagedRoomDocument,
-    SetShuffleRoomsEndedDocument
+    SetShuffleRoomsEndedDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "../lib/vonage/vonageTools";
@@ -32,7 +33,7 @@ gql`
         durationMinutes
         room {
             id
-            people: roomPeople {
+            people: roomMemberships {
                 id
                 registrantId
             }
@@ -84,10 +85,10 @@ gql`
 
     mutation AddPeopleToExistingShuffleRoom(
         $shuffleRoomId: Int!
-        $roomPeople: [room_RoomPerson_insert_input!]!
+        $roomMemberships: [room_RoomMembership_insert_input!]!
         $queueEntryIds: [bigint!]!
     ) {
-        insert_room_RoomPerson(objects: $roomPeople) {
+        insert_room_RoomMembership(objects: $roomMemberships) {
             affected_rows
         }
         update_room_ShuffleQueueEntry(
@@ -182,7 +183,7 @@ async function allocateToExistingRoom(
         variables: {
             queueEntryIds: entries.map((x) => x.id),
             shuffleRoomId: room.id,
-            roomPeople: entries.map((entry) => ({
+            roomMemberships: entries.map((entry) => ({
                 registrantId: entry.registrantId,
                 roomId: room.roomId,
                 personRoleName: Room_PersonRole_Enum.Participant,

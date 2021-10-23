@@ -73,10 +73,6 @@ export default function ConferenceRoutes(): JSX.Element {
 
             {mRegistrant && <Route exact path={`${path}/profile/backstages`} component={MyBackstages} />}
 
-            <Route exact path={`${path}`}>
-                <ConferenceLandingPage />
-            </Route>
-
             <Route exact path={`${path}/manage`}>
                 <RequireRole organizerRole moderatorRole componentIfDenied={<PageNotFound />}>
                     <ManagerLanding />
@@ -239,6 +235,10 @@ export default function ConferenceRoutes(): JSX.Element {
                 <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
                     <MyRecordingsPage />
                 </RequireRole>
+            </Route>
+
+            <Route exact path={`${path}`}>
+                <ConferenceLandingPage />
             </Route>
 
             <Route path={path}>

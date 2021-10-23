@@ -14,10 +14,9 @@ import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/c
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,

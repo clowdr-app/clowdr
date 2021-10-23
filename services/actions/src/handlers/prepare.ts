@@ -17,7 +17,7 @@ import { callWithRetry } from "../utils";
 
 gql`
     query OtherConferencePrepareJobs($conferenceId: uuid!, $conferencePrepareJobId: uuid!) {
-        conference_PrepareJob(
+        job_queues_PrepareJob(
             where: {
                 jobStatusName: { _eq: IN_PROGRESS }
                 conferenceId: { _eq: $conferenceId }
@@ -57,14 +57,14 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
             },
         });
 
-        if (otherJobs.data.conference_PrepareJob.length > 0) {
+        if (otherJobs.data.job_queues_PrepareJob.length > 0) {
             console.log(
                 "Conference prepare: another job in progress, aborting.",
-                otherJobs.data.conference_PrepareJob[0].id,
+                otherJobs.data.job_queues_PrepareJob[0].id,
                 newRow.id
             );
             throw new Error(
-                `Another conference prepare job (${otherJobs.data.conference_PrepareJob[0].id}) is already in progress`
+                `Another conference prepare job (${otherJobs.data.job_queues_PrepareJob[0].id}) is already in progress`
             );
         }
 

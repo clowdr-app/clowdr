@@ -2,14 +2,13 @@ import { gql } from "@apollo/client/core";
 import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import assert from "assert";
 import { assertType } from "typescript-is";
-import type {
-    VideoRenderJobDataFragment} from "../generated/graphql";
+import type { VideoRenderJobDataFragment } from "../generated/graphql";
 import {
     GetElementIdForVideoRenderJobDocument,
+    Job_Queues_JobStatus_Enum,
     MarkAndSelectNewVideoRenderJobsDocument,
     SelectNewVideoRenderJobsDocument,
     UnmarkVideoRenderJobsDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import * as ConferencePrepareJob from "../lib/conferencePrepareJob";
@@ -35,9 +34,9 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
     switch (payload.event.data.new.data.type) {
         case "BroadcastRenderJob": {
             switch (payload.event.data.new.jobStatusName) {
-                case Video_JobStatus_Enum.New:
+                case Job_Queues_JobStatus_Enum.New:
                     break;
-                case Video_JobStatus_Enum.Completed: {
+                case Job_Queues_JobStatus_Enum.Completed: {
                     console.log("Completed broadcast render job", payload.event.data.new.id);
                     try {
                         if (!payload.event.data.new.data.broadcastContentItemData) {
@@ -67,7 +66,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     }
                     break;
                 }
-                case Video_JobStatus_Enum.Failed: {
+                case Job_Queues_JobStatus_Enum.Failed: {
                     console.log(`Failed broadcast render job ${payload.event.data.new.id}`);
                     await ConferencePrepareJob.failConferencePrepareJob(
                         payload.event.data.new.conferencePrepareJobId,
@@ -75,7 +74,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                     );
                     break;
                 }
-                case Video_JobStatus_Enum.InProgress: {
+                case Job_Queues_JobStatus_Enum.InProgress: {
                     console.log(`In progress broadcast render job ${payload.event.data.new.id}`);
                     break;
                 }

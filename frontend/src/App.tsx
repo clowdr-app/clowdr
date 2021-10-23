@@ -13,6 +13,7 @@ import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms
 import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModal";
 import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
 import StarredEventsModalProvider from "./aspects/Conference/Attend/Schedule/StarredEventsModal";
+import useConferenceIdUpdater from "./aspects/Conference/ConferenceIdUpdater";
 import AttendeesContextProvider from "./aspects/Conference/RegistrantsContext";
 import ConferenceProvider from "./aspects/Conference/useConference";
 import { CurrentRegistrantProvider } from "./aspects/Conference/useCurrentRegistrant";
@@ -43,14 +44,18 @@ export default function App(): JSX.Element {
     //     return <DownForMaintenancePage />;
     // }
 
+    useConferenceIdUpdater();
+
     return (
-        <AppSettingsProvider>
-            <ThemeProvider theme={chimeTheme}>
-                <MeetingProvider>
-                    <AppInner />
-                </MeetingProvider>
-            </ThemeProvider>
-        </AppSettingsProvider>
+        <CurrentUserProvider>
+            <AppSettingsProvider>
+                <ThemeProvider theme={chimeTheme}>
+                    <MeetingProvider>
+                        <AppInner />
+                    </MeetingProvider>
+                </ThemeProvider>
+            </AppSettingsProvider>
+        </CurrentUserProvider>
     );
 }
 
@@ -62,45 +67,43 @@ function AppInner(): JSX.Element {
     return (
         <EmojiFloatProvider>
             <RightSidebarCurrentTabProvider>
-                <CurrentUserProvider>
-                    {conferenceId ? (
-                        <ConferenceProvider conferenceId={conferenceId}>
-                            <ForceUserRefresh />
-                            <CurrentRegistrantProvider>
-                                <GlobalChatStateProvider>
-                                    <RaiseHandProvider>
-                                        <AttendeesContextProvider>
-                                            <LiveEventsProvider>
-                                                <EnableRoomParticipantsPollingProvider>
-                                                    <RoomParticipantsProvider>
-                                                        <ScheduleModalProvider>
-                                                            <LiveProgramRoomsModalProvider>
-                                                                <StarredEventsModalProvider>
-                                                                    <MyBackstagesModalProvider>
-                                                                        <SocialiseModalProvider>
-                                                                            {/* <ShuffleRoomsQueueMonitor /> */}
-                                                                            <PermissionInstructionsProvider>
-                                                                                <SharedRoomContextProvider>
-                                                                                    {page}
-                                                                                </SharedRoomContextProvider>
-                                                                            </PermissionInstructionsProvider>
-                                                                        </SocialiseModalProvider>
-                                                                    </MyBackstagesModalProvider>
-                                                                </StarredEventsModalProvider>
-                                                            </LiveProgramRoomsModalProvider>
-                                                        </ScheduleModalProvider>
-                                                    </RoomParticipantsProvider>
-                                                </EnableRoomParticipantsPollingProvider>
-                                            </LiveEventsProvider>
-                                        </AttendeesContextProvider>
-                                    </RaiseHandProvider>
-                                </GlobalChatStateProvider>
-                            </CurrentRegistrantProvider>
-                        </ConferenceProvider>
-                    ) : (
-                        page
-                    )}
-                </CurrentUserProvider>
+                {conferenceId ? (
+                    <ConferenceProvider conferenceId={conferenceId}>
+                        <ForceUserRefresh />
+                        <CurrentRegistrantProvider>
+                            <GlobalChatStateProvider>
+                                <RaiseHandProvider>
+                                    <AttendeesContextProvider>
+                                        <LiveEventsProvider>
+                                            <EnableRoomParticipantsPollingProvider>
+                                                <RoomParticipantsProvider>
+                                                    <ScheduleModalProvider>
+                                                        <LiveProgramRoomsModalProvider>
+                                                            <StarredEventsModalProvider>
+                                                                <MyBackstagesModalProvider>
+                                                                    <SocialiseModalProvider>
+                                                                        {/* <ShuffleRoomsQueueMonitor /> */}
+                                                                        <PermissionInstructionsProvider>
+                                                                            <SharedRoomContextProvider>
+                                                                                {page}
+                                                                            </SharedRoomContextProvider>
+                                                                        </PermissionInstructionsProvider>
+                                                                    </SocialiseModalProvider>
+                                                                </MyBackstagesModalProvider>
+                                                            </StarredEventsModalProvider>
+                                                        </LiveProgramRoomsModalProvider>
+                                                    </ScheduleModalProvider>
+                                                </RoomParticipantsProvider>
+                                            </EnableRoomParticipantsPollingProvider>
+                                        </LiveEventsProvider>
+                                    </AttendeesContextProvider>
+                                </RaiseHandProvider>
+                            </GlobalChatStateProvider>
+                        </CurrentRegistrantProvider>
+                    </ConferenceProvider>
+                ) : (
+                    page
+                )}
             </RightSidebarCurrentTabProvider>
         </EmojiFloatProvider>
     );

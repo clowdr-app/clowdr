@@ -4,6 +4,7 @@ import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { offlineExchange } from "@urql/exchange-graphcache";
+import { makeDefaultStorage } from "@urql/exchange-graphcache/default-storage";
 import { requestPolicyExchange } from "@urql/exchange-request-policy";
 import { retryExchange } from "@urql/exchange-retry";
 import { Mutex } from "async-mutex";
@@ -55,9 +56,7 @@ function UrqlProviderInner({
     // We deliberately cut the React auto-update chain here so that the urql
     // client doesn't get recreated. It doesn't need to since the values are
     // used imperatively within the operation formation function.
-    useEffect(() => {
-        authCtxRef.current = authParams;
-    }, [authParams]);
+    authCtxRef.current = authParams;
 
     const connect = useCallback(
         async (cb?: () => void) => {
@@ -88,7 +87,11 @@ function UrqlProviderInner({
                                     : operation.context.fetchOptions || {};
 
                             const headers: Record<string, string> = {
-                                "X-Auth-Role": "attendee",
+                                "X-Auth-Role": authCtxRef.current.conferenceId
+                                    ? "attendee"
+                                    : (fetchOptions as any)?.headers?.["X-Auth-Magic-Token"]
+                                    ? "unauthenticated"
+                                    : "user",
                                 ...(authCtxRef.current.conferenceId && {
                                     "X-Auth-Conference-Id": authCtxRef.current.conferenceId,
                                 }),
@@ -117,6 +120,11 @@ function UrqlProviderInner({
                         retryIf: (err: CombinedError, _operation: Operation) => !!err && !!err.networkError,
                     };
 
+                    const storage = makeDefaultStorage({
+                        idbName: "graphcache-v3", // The name of the IndexedDB database
+                        maxAge: 7, // The maximum age of the persisted data in days
+                    });
+
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
@@ -141,6 +149,7 @@ function UrqlProviderInner({
                                     system_Configuration: (data) => data.key as string,
                                 },
                                 schema: schema as any,
+                                storage,
                                 // TODO: resolvers (for queries) -- not sure if these are needed since we supply the schema
                                 // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
                                 // TODO: optimistic (for optimistic and offline-first updates)

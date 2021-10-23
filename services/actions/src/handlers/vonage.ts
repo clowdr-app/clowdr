@@ -12,7 +12,7 @@ import {
     FindRoomByVonageSessionIdDocument,
     GetEventForArchiveDocument,
     InsertVonageArchiveElementDocument,
-    Permissions_Permission_Enum,
+    Registrant_RegistrantRole_Enum,
     Room_Mode_Enum,
     SaveVonageRoomRecordingDocument,
     Vonage_GetEventDetailsDocument,
@@ -357,22 +357,6 @@ gql`
                 id
                 registrants(where: { userId: { _eq: $userId } }) {
                     ...GetRegistrant_Registrant
-                    groupRegistrants {
-                        id
-                        group {
-                            id
-                            groupRoles {
-                                id
-                                role {
-                                    id
-                                    rolePermissions {
-                                        id
-                                        permissionName
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -424,18 +408,8 @@ export async function handleJoinEvent(
                 eventPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
                 eventPerson.roleName.toUpperCase() === "ORGANIZER"
         ) ||
-        result.data.schedule_Event_by_pk.conference.registrants[0].groupRegistrants.some((groupRegistrant) =>
-            groupRegistrant.group.groupRoles.some((groupRole) =>
-                groupRole.role.rolePermissions.some(
-                    (rolePermission) =>
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
-                        rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
-                )
-            )
-        );
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
     const connectionData: CustomConnectionData = {
         registrantId: registrant.id,
         userId,
@@ -499,18 +473,9 @@ export async function handleJoinRoom(
         userId,
     };
 
-    const isConferenceOrganizerOrConferenceModerator = registrant.groupRegistrants.some((groupRegistrant) =>
-        groupRegistrant.group.groupRoles.some((groupRole) =>
-            groupRole.role.rolePermissions.some(
-                (rolePermission) =>
-                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageAttendees ||
-                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageGroups ||
-                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageRoles ||
-                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceManageSchedule ||
-                    rolePermission.permissionName === Permissions_Permission_Enum.ConferenceModerateAttendees
-            )
-        )
-    );
+    const isConferenceOrganizerOrConferenceModerator =
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+        registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
 
     const accessToken = Vonage.vonage.generateToken(maybeVonageMeetingId, {
         data: JSON.stringify(connectionData),
@@ -585,28 +550,7 @@ gql`
                 }
             }
             conference {
-                registrants(
-                    where: {
-                        userId: { _eq: $userId }
-                        groupRegistrants: {
-                            group: {
-                                groupRoles: {
-                                    role: {
-                                        rolePermissions: {
-                                            permissionName: {
-                                                _in: [
-                                                    CONFERENCE_MANAGE_SCHEDULE
-                                                    CONFERENCE_MODERATE_ATTENDEES
-                                                    CONFERENCE_VIEW_ATTENDEES
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ) {
+                registrants(where: { userId: { _eq: $userId } }) {
                     id
                 }
             }

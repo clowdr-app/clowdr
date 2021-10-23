@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client/core";
 import type {
     GetRegistrant_RegistrantFragment,
-    GetRegistrant_RegistrantWithPermissionsFragment} from "../generated/graphql";
+    GetRegistrant_RegistrantWithPermissionsFragment,
+} from "../generated/graphql";
 import {
     Authorisation_FindRegistrantDocument,
     Authorisation_GetRegistrantDocument,
     GetRegistrantByConferenceSlugDocument,
     GetRegistrantDocument,
-    GetRegistrantWithPermissionsDocument
+    GetRegistrantWithPermissionsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
@@ -23,6 +24,7 @@ export async function getRegistrant(userId: string, conferenceId: string): Promi
             id
             displayName
             conferenceId
+            conferenceRole
         }
     `;
 
@@ -57,22 +59,7 @@ export async function getRegistrantWithPermissions(
             id
             displayName
             conferenceId
-            groupRegistrants {
-                id
-                group {
-                    id
-                    groupRoles {
-                        id
-                        role {
-                            id
-                            rolePermissions {
-                                id
-                                permissionName
-                            }
-                        }
-                    }
-                }
-            }
+            conferenceRole
         }
     `;
 

@@ -4,7 +4,8 @@ import type {
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
-    RegistrantWithInvitePartsFragment} from "../generated/graphql";
+    RegistrantWithInvitePartsFragment,
+} from "../generated/graphql";
 import {
     MarkAndSelectUnprocessedInvitationEmailJobsDocument,
     SelectInvitationAndUserDocument,
@@ -94,22 +95,7 @@ gql`
     }
 
     query SelectRegistrantsWithInvitation($registrantIds: [uuid!]!) {
-        registrant_Registrant(
-            where: {
-                _and: [
-                    { id: { _in: $registrantIds } }
-                    { userId: { _is_null: true } }
-                    {
-                        groupRegistrants: {
-                            group: {
-                                enabled: { _eq: true }
-                                groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
-                            }
-                        }
-                    }
-                ]
-            }
-        ) {
+        registrant_Registrant(where: { _and: [{ id: { _in: $registrantIds } }, { userId: { _is_null: true } }] }) {
             ...RegistrantWithInviteParts
         }
     }

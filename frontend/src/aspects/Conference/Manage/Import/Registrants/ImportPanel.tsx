@@ -94,67 +94,67 @@ export default function ImportPanel({
     }, [importData?.insert_registrant_Registrant, refetchRegistrants, toast]);
 
     const finalData = useMemo(() => {
-        return Object.values(inputData).reduce((acc, input) => {
-            for (const row of input) {
-                // TODO: Subconferences and main conference
-                // const email = row.email.trim().toLowerCase();
-                // const group = groupsData?.permissions_Group.find(
-                //     (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
-                // );
-                //
-                // const existingFinal = acc.find((x) => x.email === email);
-                // if (existingFinal) {
-                //     if (group) {
-                //         const existingOriginal =
-                //             !existingFinal.isNew &&
-                //             registrantsData?.registrant_Registrant &&
-                //             registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
-                //         if (
-                //             !existingFinal.groups.some((x) => x.id === group.id) &&
-                //             (!existingOriginal ||
-                //                 !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id))
-                //         ) {
-                //             existingFinal.groups.push(group);
-                //         }
-                //     } else {
-                //         if (!existingFinal.missingGroups) {
-                //             existingFinal.missingGroups = [row.group.trim()];
-                //         } else if (
-                //             !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
-                //         ) {
-                //             existingFinal.missingGroups.push(row.group.trim());
-                //         }
-                //     }
-                // } else {
-                //     const existingOriginal =
-                //         registrantsData?.registrant_Registrant &&
-                //         registrantsData.registrant_Registrant.find((x) => {
-                //             return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
-                //         });
-                //     if (existingOriginal) {
-                //         if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
-                //             acc.push({
-                //                 id: existingOriginal.id,
-                //                 isNew: false,
-                //                 email,
-                //                 name: existingOriginal.displayName,
-                //                 groups: group ? [group] : [],
-                //                 missingGroups: !group ? [row.group.trim()] : undefined,
-                //             });
-                //         }
-                //     } else {
-                //         const name = row.name.trim();
-                //         acc.push({
-                //             id: uuidv4(),
-                //             isNew: true,
-                //             email,
-                //             name,
-                //             groups: group ? [group] : [],
-                //             missingGroups: !group ? [row.group.trim()] : undefined,
-                //         });
-                //     }
-                // }
-            }
+        return Object.values(inputData).reduce((acc, _input) => {
+            // for (const row of input) {
+            // TODO: Subconferences and main conference
+            // const email = row.email.trim().toLowerCase();
+            // const group = groupsData?.permissions_Group.find(
+            //     (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
+            // );
+            //
+            // const existingFinal = acc.find((x) => x.email === email);
+            // if (existingFinal) {
+            //     if (group) {
+            //         const existingOriginal =
+            //             !existingFinal.isNew &&
+            //             registrantsData?.registrant_Registrant &&
+            //             registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
+            //         if (
+            //             !existingFinal.groups.some((x) => x.id === group.id) &&
+            //             (!existingOriginal ||
+            //                 !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id))
+            //         ) {
+            //             existingFinal.groups.push(group);
+            //         }
+            //     } else {
+            //         if (!existingFinal.missingGroups) {
+            //             existingFinal.missingGroups = [row.group.trim()];
+            //         } else if (
+            //             !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
+            //         ) {
+            //             existingFinal.missingGroups.push(row.group.trim());
+            //         }
+            //     }
+            // } else {
+            //     const existingOriginal =
+            //         registrantsData?.registrant_Registrant &&
+            //         registrantsData.registrant_Registrant.find((x) => {
+            //             return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
+            //         });
+            //     if (existingOriginal) {
+            //         if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
+            //             acc.push({
+            //                 id: existingOriginal.id,
+            //                 isNew: false,
+            //                 email,
+            //                 name: existingOriginal.displayName,
+            //                 groups: group ? [group] : [],
+            //                 missingGroups: !group ? [row.group.trim()] : undefined,
+            //             });
+            //         }
+            //     } else {
+            //         const name = row.name.trim();
+            //         acc.push({
+            //             id: uuidv4(),
+            //             isNew: true,
+            //             email,
+            //             name,
+            //             groups: group ? [group] : [],
+            //             missingGroups: !group ? [row.group.trim()] : undefined,
+            //         });
+            //     }
+            // }
+            // }
 
             return acc;
         }, [] as RegistrantFinalData[]);

@@ -40,7 +40,6 @@ gql`
         name
         shortName
         slug
-        createdBy
 
         supportAddress: configurations(where: { key: { _eq: SUPPORT_ADDRESS } }) {
             conferenceId

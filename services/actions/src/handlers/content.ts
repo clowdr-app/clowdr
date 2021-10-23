@@ -1,21 +1,16 @@
 import { gql } from "@apollo/client/core";
-import type {
-    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
-    isEmailTemplate_BaseConfig,
-} from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
-import type { EmailView_SubtitlesGenerated} from "@clowdr-app/shared-types/build/email";
+import type { EmailView_SubtitlesGenerated } from "@clowdr-app/shared-types/build/email";
 import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import assert from "assert";
 import { compile } from "handlebars";
 import R from "ramda";
-import type {
-    Email_Insert_Input} from "../generated/graphql";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
-    FindMatchingProgramPersonForUploaderDocument,
     GetElementDetailsDocument,
     GetUploadAgreementDocument,
 } from "../generated/graphql";
@@ -402,7 +397,7 @@ path            /item/${element.item.id}/element/${elementId}
 
 gql`
     query GetUploadAgreement($accessToken: String!) {
-        content_Element(where: { accessToken: { _eq: $accessToken } }) {
+        collection_ProgramPerson(where: { accessToken: { _eq: $accessToken } }) {
             conference {
                 configurations(where: { key: { _eq: UPLOAD_AGREEMENT } }) {
                     conferenceId
@@ -427,10 +422,10 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
     }
 
     if (
-        result.data.content_Element.length === 1 &&
-        result.data.content_Element[0].conference.configurations.length === 1
+        result.data.collection_ProgramPerson.length === 1 &&
+        result.data.collection_ProgramPerson[0].conference.configurations.length === 1
     ) {
-        const value = result.data.content_Element[0].conference.configurations[0].value;
+        const value = result.data.collection_ProgramPerson[0].conference.configurations[0].value;
         if ("text" in value && "url" in value) {
             return {
                 agreementText: value.text,
@@ -444,68 +439,6 @@ export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Pr
             return {
                 agreementUrl: value.url,
             };
-        }
-    }
-
-    return {};
-}
-
-gql`
-    query FindMatchingProgramPersonForUploader(
-        $elementId: uuid!
-        $elementAccessToken: String!
-        $uploaderEmail: String!
-    ) {
-        content_Element(
-            where: {
-                id: { _eq: $elementId }
-                accessToken: { _eq: $elementAccessToken }
-                uploaders: { email: { _eq: $uploaderEmail } }
-            }
-        ) {
-            id
-            itemId
-            conference {
-                id
-                programPeople(where: { email: { _eq: $uploaderEmail } }) {
-                    id
-                    accessToken
-                    itemPeople {
-                        id
-                        itemId
-                    }
-                }
-            }
-        }
-    }
-`;
-
-export async function handleGetProgramPersonAccessToken(
-    args: getProgramPersonAccessTokenArgs
-): Promise<MatchingPersonOutput> {
-    const response = await apolloClient.query({
-        query: FindMatchingProgramPersonForUploaderDocument,
-        variables: {
-            ...args,
-        },
-    });
-
-    if (response.data.content_Element.length > 0) {
-        const element = response.data.content_Element[0];
-
-        if (element.conference.programPeople.length === 1) {
-            return {
-                accessToken: element.conference.programPeople[0].accessToken,
-            };
-        } else if (element.conference.programPeople.length > 0) {
-            const person = element.conference.programPeople.find((person) =>
-                person.itemPeople.some((itemPerson) => itemPerson.itemId === element.itemId)
-            );
-            if (person) {
-                return {
-                    accessToken: person.accessToken,
-                };
-            }
         }
     }
 

@@ -117,7 +117,7 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
                     id: { _eq: $roomId }
                     conference: { registrants: { id: { _eq: $registrantId } }, id: { _eq: $conferenceId } }
                     _or: [
-                        { roomPeople: { registrant: { id: { _eq: $registrantId } } } }
+                        { roomMemberships: { registrant: { id: { _eq: $registrantId } } } }
                         { managementModeName: { _eq: PUBLIC } }
                     ]
                 }
@@ -129,15 +129,6 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
                         id
                     }
                 }
-            }
-            FlatUserPermission(
-                where: {
-                    user: { registrants: { id: { _eq: $registrantId } } }
-                    conference: { id: { _eq: $conferenceId } }
-                    permission_name: { _eq: "CONFERENCE_VIEW_ATTENDEES" }
-                }
-            ) {
-                permission_name
             }
         }
     `;
@@ -151,7 +142,7 @@ export async function canUserJoinRoom(registrantId: string, roomId: string, conf
             },
         })
     );
-    return result.data.FlatUserPermission.length > 0 && result.data.room_Room.length > 0;
+    return result.data.room_Room.length > 0;
 }
 
 export async function createRoomChimeMeeting(roomId: string, conferenceId: string): Promise<Meeting> {

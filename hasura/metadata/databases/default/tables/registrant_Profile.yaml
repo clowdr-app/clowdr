@@ -52,6 +52,29 @@ select_permissions:
         conferenceId:
           _in: X-Hasura-Conference-Ids
   role: organizer
+- permission:
+    columns:
+    - affiliation
+    - affiliationURL
+    - badges
+    - bio
+    - country
+    - created_at
+    - github
+    - hasBeenEdited
+    - photoURL_350x350
+    - photoURL_50x50
+    - pronouns
+    - registrantId
+    - timezoneUTCOffset
+    - twitter
+    - updated_at
+    - website
+    filter:
+      registrant:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: user
 update_permissions:
 - permission:
     check: null

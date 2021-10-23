@@ -5,8 +5,8 @@ import {
     ExpireVideoRenderJobDocument,
     FailVideoRenderJobDocument,
     GetBroadcastVideoRenderJobDetailsDocument,
+    Job_Queues_JobStatus_Enum,
     UpdateVideoRenderJobDocument,
-    Video_JobStatus_Enum,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
@@ -54,7 +54,7 @@ export async function completeVideoRenderJob(
 
     const videoRenderJob = broadcastRenderJobResult.data.video_VideoRenderJob_by_pk;
 
-    if (videoRenderJob.conferencePrepareJob.jobStatusName !== Video_JobStatus_Enum.InProgress) {
+    if (videoRenderJob.conferencePrepareJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
         console.warn(
             "Could not complete video render job: conference prepare job not in progress",
             videoRenderJobId,
@@ -69,13 +69,13 @@ export async function completeVideoRenderJob(
         };
     }
 
-    if (videoRenderJob.jobStatusName !== Video_JobStatus_Enum.InProgress) {
+    if (videoRenderJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
         console.warn(
             "Could not complete video render job: video render job not in progress",
             videoRenderJobId,
             videoRenderJob.jobStatusName
         );
-        if (videoRenderJob.jobStatusName === Video_JobStatus_Enum.New) {
+        if (videoRenderJob.jobStatusName === Job_Queues_JobStatus_Enum.New) {
             await failVideoRenderJob(videoRenderJobId, "Tried to complete job before it started.");
         }
         return {

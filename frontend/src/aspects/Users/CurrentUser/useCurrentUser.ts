@@ -5,7 +5,6 @@ import { CurrentUserContext } from "./useMaybeCurrentUser";
 
 export default function useCurrentUser(): {
     user: NonNullable<SelectCurrentUserQuery["User_by_pk"]>;
-    refetchUser: () => void;
 } {
     const info = React.useContext(CurrentUserContext);
     assert(info.user, "Current user not available");

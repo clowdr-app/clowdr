@@ -18,6 +18,40 @@ select_permissions:
         - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
         - COOKIE_POLICY_URL
         - DEFAULT_VIDEO_ROOM_BACKEND
+  role: attendee
+- permission:
+    columns:
+    - key
+    - updated_at
+    - value
+    filter:
+      key:
+        _in:
+        - HOST_ORGANISATION_NAME
+        - TERMS_LATEST_REVISION_TIMESTAMP
+        - TERMS_URL
+        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+        - PRIVACY_POLICY_URL
+        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+        - COOKIE_POLICY_URL
+        - DEFAULT_VIDEO_ROOM_BACKEND
+  role: organizer
+- permission:
+    columns:
+    - key
+    - updated_at
+    - value
+    filter:
+      key:
+        _in:
+        - HOST_ORGANISATION_NAME
+        - TERMS_LATEST_REVISION_TIMESTAMP
+        - TERMS_URL
+        - PRIVACY_POLICY_LATEST_REVISION_TIMESTAMP
+        - PRIVACY_POLICY_URL
+        - COOKIE_POLICY_LATEST_REVISION_TIMESTAMP
+        - COOKIE_POLICY_URL
+        - DEFAULT_VIDEO_ROOM_BACKEND
   role: unauthenticated
 - permission:
     columns:

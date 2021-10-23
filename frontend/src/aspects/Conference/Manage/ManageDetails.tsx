@@ -20,18 +20,18 @@ import {
     Tooltip,
     useToast,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
-import { Permissions_Permission_Enum, useUpdateConferenceMutation } from "../../../generated/graphql";
+import { useUpdateConferenceMutation } from "../../../generated/graphql";
 import PageNotFound from "../../Errors/PageNotFound";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import { useTitle } from "../../Utils/useTitle";
 import { validateName, validateShortName } from "../NewConferenceForm";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 
 const _updateConferenceQueries = gql`
@@ -69,18 +69,15 @@ export function validateSlug(inValue: string | null | undefined): string | undef
 
 export default function ManageName(): JSX.Element {
     const conference = useConference();
-    const title = useTitle(`Manage name of ${conference.shortName}`);
+    const title = useTitle(`Manage details of ${conference.shortName}`);
 
     const [slugWarningAccepted, setSlugWarningAccepted] = useState<boolean>(false);
-    const [updateConferenceMutation] = useUpdateConferenceMutation();
+    const [_updateConferenceMutationResponse, updateConferenceMutation] = useUpdateConferenceMutation();
     const toast = useToast();
     const history = useHistory();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageName]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -102,12 +99,10 @@ export default function ManageName(): JSX.Element {
                             shortName: values.shortName,
                             slug: slugWarningAccepted ? values.slug : conference.slug,
                         };
-                        const result = await updateConferenceMutation({
-                            variables,
-                        });
+                        const result = await updateConferenceMutation(variables);
 
-                        if (result.errors || !result.data) {
-                            throw new Error(JSON.stringify(result.errors));
+                        if (result.error || !result.data) {
+                            throw new Error(JSON.stringify(result.error));
                         } else {
                             toast({
                                 title: "Changes saved",
@@ -281,6 +276,6 @@ export default function ManageName(): JSX.Element {
                     </>
                 )}
             </Formik>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

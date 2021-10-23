@@ -60,11 +60,11 @@ function ViewProfilePageInner({ registrant }: { registrant: Registrant }): JSX.E
                     Permissions_Permission_Enum.ConferenceManageRoles,
                 ].some((permission) => activePermissions.has(permission)) ? (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={conferenceUrl} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
-                            to={`${conferenceUrl}/profile/edit${
+                            to={`${conferencePath}/profile/edit${
                                 maybeCurrentUser.user && registrant.userId === maybeCurrentUser.user.id
                                     ? ""
                                     : `/${registrant.id}`
@@ -224,7 +224,6 @@ function ViewProfilePage_FetchRegistrant({ registrantId }: { registrantId: strin
 }
 
 export default function ViewProfilePage({ registrantId }: { registrantId?: string }): JSX.Element {
-    const conference = useConference();
     const activePermissions = useConferenceCurrentUserActivePermissions();
     const maybeCurrentRegistrant = useMaybeCurrentRegistrant();
     const maybeCurrentUser = useMaybeCurrentUser();
@@ -241,7 +240,7 @@ export default function ViewProfilePage({ registrantId }: { registrantId?: strin
             Permissions_Permission_Enum.ConferenceManageRoles,
         ].some((permission) => activePermissions.has(permission))
     ) {
-        return <Redirect to={conferenceUrl} />;
+        return <Redirect to={conferencePath} />;
     }
 
     if (registrantId) {

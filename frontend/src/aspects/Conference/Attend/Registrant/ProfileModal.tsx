@@ -153,7 +153,7 @@ export default function ProfileModal({
                                             </Button>
                                         ) : undefined}
                                         <LinkButton
-                                            to={`${conferenceUrl}/profile/view/${registrant.id}`}
+                                            to={`${conferencePath}/profile/view/${registrant.id}`}
                                             size="sm"
                                             variant="outline"
                                             colorScheme="SecondaryActionButton"

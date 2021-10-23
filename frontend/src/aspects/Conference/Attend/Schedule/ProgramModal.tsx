@@ -27,7 +27,7 @@ import { useGetSponsorBoothsQuery, useSchedule_HappeningSoonQuery } from "../../
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useRestorableState } from "../../../Generic/useRestorableState";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useConference } from "../../useConference";
 import ItemList from "../Content/ItemList";
@@ -202,7 +202,7 @@ export function ScheduleModal({
         () => new Date(roundUpToNearest(now + 2 * 60 * 60 * 1000, 15 * 60 * 1000)).toISOString(),
         [now]
     );
-    const roomsResult = useSchedule_HappeningSoonQuery({
+    const [roomsResult] = useSchedule_HappeningSoonQuery({
         variables: {
             conferenceId: conference.id,
             endAfter,
@@ -214,7 +214,7 @@ export function ScheduleModal({
     }, [setAnyHappeningSoon, roomsResult.data]);
     const happeningSoon = useMemo(
         () => (
-            <ApolloQueryWrapper<
+            <QueryWrapper<
                 Schedule_HappeningSoonQuery,
                 unknown,
                 {
@@ -235,18 +235,17 @@ export function ScheduleModal({
                 })}
             >
                 {(data) => <ScheduleInner titleStr={"Happening Soon"} {...data} />}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         ),
         [roomsResult]
     );
 
     const [anySponsors, setAnySponsors] = useState<boolean>(false);
-    const result = useGetSponsorBoothsQuery({
+    const [result] = useGetSponsorBoothsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
     });
     useEffect(() => {
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);

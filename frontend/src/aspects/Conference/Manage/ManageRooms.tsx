@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Accordion,
@@ -42,21 +41,15 @@ import {
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type { RoomWithParticipantInfoFragment } from "../../../generated/graphql";
 import {
-    Permissions_Permission_Enum,
-    RoomWithParticipantInfoFragmentDoc,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
-    Room_PersonRole_Enum,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useGetIsExternalRtmpBroadcastEnabledQuery,
-    useInsertRoomPeopleMutation,
-    useManageRooms_SelectGroupRegistrantsQuery,
-    useManageRooms_SelectGroupsQuery,
     useManageRooms_SelectItemsQuery,
     useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
@@ -79,10 +72,10 @@ import type {
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
-import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ExternalRtmpBroadcastEditor from "./Room/ExternalRtmpBroadcastEditor";
 
@@ -250,50 +243,52 @@ function RoomSecondaryEditor({
     onSecondaryPanelClose: () => void;
     externalRtmpBroadcastEnabled: boolean;
 }): JSX.Element {
-    const conference = useConference();
-    const groups = useManageRooms_SelectGroupsQuery({
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-    const people = useManageRooms_SelectRoomPeopleQuery({
+    // const conference = useConference();
+    const { conferencePath } = useAuthParameters();
+    // TODO
+    // const [groups] = useManageRooms_SelectGroupsQuery({
+    //     variables: {
+    //         conferenceId: conference.id,
+    //     },
+    // });
+    const [people] = useManageRooms_SelectRoomPeopleQuery({
         variables: {
             roomId: room?.id,
         },
-        skip: !room,
+        pause: !room,
     });
-    const groupRegistrantsQ = useManageRooms_SelectGroupRegistrantsQuery({
-        skip: true,
-    });
-    const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
-    useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
-    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+    // const [groupRegistrantsQ] = useManageRooms_SelectGroupRegistrantsQuery({
+    //     pause: true,
+    // });
+    // const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
+    // useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
+    // useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
 
-    const addUsersFromGroup = useCallback(
-        async (groupId: string) => {
-            if (room) {
-                try {
-                    const result = await groupRegistrantsQ.refetch({
-                        groupId,
-                    });
-                    if (!result.error && result.data) {
-                        insertRoomPeople({
-                            variables: {
-                                people: result.data.permissions_GroupRegistrant.map((x) => ({
-                                    registrantId: x.registrantId,
-                                    roomId: room.id,
-                                    personRoleName: Room_PersonRole_Enum.Participant,
-                                })),
-                            },
-                        });
-                    }
-                } catch (e) {
-                    console.error("Error inserting room people", e);
-                }
-            }
-        },
-        [groupRegistrantsQ, insertRoomPeople, room]
-    );
+    // const addUsersFromGroup = useCallback(
+    //     async (groupId: string) => {
+    //         if (room) {
+    //             try {
+    //                 const result = await groupRegistrantsQ.refetch({
+    //                     groupId,
+    //                 });
+    //                 if (!result.error && result.data) {
+    //                     insertRoomPeople({
+    //                         variables: {
+    //                             people: result.data.permissions_GroupRegistrant.map((x) => ({
+    //                                 registrantId: x.registrantId,
+    //                                 roomId: room.id,
+    //                                 personRoleName: Room_PersonRole_Enum.Participant,
+    //                             })),
+    //                         },
+    //                     });
+    //                 }
+    //             } catch (e) {
+    //                 console.error("Error inserting room people", e);
+    //             }
+    //         }
+    //     },
+    //     [groupRegistrantsQ, insertRoomPeople, room]
+    // );
 
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
     const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
@@ -343,7 +338,7 @@ function RoomSecondaryEditor({
                             <>
                                 <ButtonGroup>
                                     <LinkButton
-                                        to={`${conferenceUrl}/room/${room.id}`}
+                                        to={`${conferencePath}/room/${room.id}`}
                                         colorScheme="purple"
                                         mb={4}
                                         isExternal={true}
@@ -353,12 +348,15 @@ function RoomSecondaryEditor({
                                         <FAIcon icon="external-link-alt" iconStyle="s" mr={3} />
                                         View room
                                     </LinkButton>
+                                    {/* TODO: Add individuals
+                                        TODO: Add by role?
+                                        TODO: Add by subconference?
                                     {room.managementModeName === Room_ManagementMode_Enum.Private ? (
                                         <Menu>
                                             <MenuButton
                                                 as={Button}
                                                 isLoading={
-                                                    groupRegistrantsQ.loading || insertRoomPeopleResponse.loading
+                                                    groupRegistrantsQ.fetching || insertRoomPeopleResponse.fetching
                                                 }
                                             >
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
@@ -375,7 +373,7 @@ function RoomSecondaryEditor({
                                                 ))}
                                             </MenuList>
                                         </Menu>
-                                    ) : undefined}
+                                    ) : undefined} */}
                                 </ButtonGroup>
                                 <Accordion>
                                     <AccordionItem>
@@ -503,11 +501,11 @@ function RoomSecondaryEditor({
 
 function EditableRoomsCRUDTable() {
     const conference = useConference();
-    const [insertRoom, insertRoomResponse] = useCreateRoomMutation();
-    const [deleteRooms, deleteRoomsResponse] = useDeleteRoomsMutation();
-    const [updateRoom, updateRoomResponse] = useUpdateRoomsWithParticipantsMutation();
+    const [insertRoomResponse, insertRoom] = useCreateRoomMutation();
+    const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
+    const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
 
-    const externalRtmpBroadcastEnabledResponse = useGetIsExternalRtmpBroadcastEnabledQuery({
+    const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -515,13 +513,13 @@ function EditableRoomsCRUDTable() {
     const externalRtmpBroadcastEnabled =
         externalRtmpBroadcastEnabledResponse.data?.conference_Configuration_by_pk?.value === true;
 
-    const items = useManageRooms_SelectItemsQuery({
+    const [items] = useManageRooms_SelectItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
     });
 
-    const selectAllRoomsResult = useSelectAllRoomsWithParticipantsQuery({
+    const [selectAllRoomsResult] = useSelectAllRoomsWithParticipantsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -1147,7 +1145,7 @@ function EditableRoomsCRUDTable() {
             // {
             //     render: function ImportButton(_selectedData) {
             //         return (
-            //             <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/schedule`}>
+            //             <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/schedule`}>
             //                 Import
             //             </LinkButton>
             //         );
@@ -1336,7 +1334,7 @@ function EditableRoomsCRUDTable() {
     return (
         <>
             <CRUDTable
-                data={!selectAllRoomsResult.loading && (selectAllRoomsResult.data?.room_Room ? data : null)}
+                data={!selectAllRoomsResult.fetching && (selectAllRoomsResult.data?.room_Room ? data : null)}
                 tableUniqueName="ManageConferenceRooms"
                 row={row}
                 columns={columns}
@@ -1347,7 +1345,7 @@ function EditableRoomsCRUDTable() {
                     },
                 }}
                 insert={{
-                    ongoing: insertRoomResponse.loading,
+                    ongoing: insertRoomResponse.fetching,
                     generateDefaults: () => ({
                         id: uuidv4(),
                         conferenceId: conference.id,
@@ -1361,93 +1359,42 @@ function EditableRoomsCRUDTable() {
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
                         insertRoom({
-                            variables: {
-                                room: {
-                                    id: record.id,
-                                    conferenceId: record.conferenceId,
-                                    capacity: record.capacity,
-                                    priority: record.priority,
-                                    currentModeName: record.currentModeName,
-                                    name: record.name,
-                                    managementModeName: record.managementModeName,
-                                    originatingItemId: record.originatingItemId,
-                                },
-                            },
-                            update: (cache, { data: _data }) => {
-                                if (_data?.insert_room_Room_one) {
-                                    const data = _data.insert_room_Room_one;
-                                    cache.writeFragment({
-                                        data,
-                                        fragment: RoomWithParticipantInfoFragmentDoc,
-                                        fragmentName: "RoomWithParticipantInfo",
-                                    });
-                                }
+                            room: {
+                                id: record.id,
+                                conferenceId: record.conferenceId,
+                                capacity: record.capacity,
+                                priority: record.priority,
+                                currentModeName: record.currentModeName,
+                                name: record.name,
+                                managementModeName: record.managementModeName,
+                                originatingItemId: record.originatingItemId,
                             },
                         });
                     },
                 }}
                 update={{
-                    ongoing: updateRoomResponse.loading,
+                    ongoing: updateRoomResponse.fetching,
                     start: (record) => {
                         updateRoom({
-                            variables: {
-                                id: record.id,
-                                name: record.name,
-                                priority: record.priority,
-                                capacity: record.capacity,
-                                managementModeName: record.managementModeName,
-                                originatingItemId: record.originatingItemId,
-                                chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
-                                enableMandatoryPin: !!record.chat?.enableMandatoryPin,
-                                enableAutoPin: !!record.chat?.enableAutoPin,
-                                enableMandatorySubscribe: !!record.chat?.enableMandatorySubscribe,
-                                enableAutoSubscribe: !!record.chat?.enableAutoSubscribe,
-                            },
-                            optimisticResponse: {
-                                update_room_Room_by_pk: record,
-                            },
-                            update: (cache, { data: _data }) => {
-                                if (_data?.update_room_Room_by_pk) {
-                                    const data = _data.update_room_Room_by_pk;
-                                    cache.writeFragment({
-                                        data,
-                                        fragment: RoomWithParticipantInfoFragmentDoc,
-                                        fragmentName: "RoomWithParticipantInfo",
-                                    });
-                                }
-                            },
+                            id: record.id,
+                            name: record.name,
+                            priority: record.priority,
+                            capacity: record.capacity,
+                            managementModeName: record.managementModeName,
+                            originatingItemId: record.originatingItemId,
+                            chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
+                            enableMandatoryPin: !!record.chat?.enableMandatoryPin,
+                            enableAutoPin: !!record.chat?.enableAutoPin,
+                            enableMandatorySubscribe: !!record.chat?.enableMandatorySubscribe,
+                            enableAutoSubscribe: !!record.chat?.enableAutoSubscribe,
                         });
                     },
                 }}
                 delete={{
-                    ongoing: deleteRoomsResponse.loading,
+                    ongoing: deleteRoomsResponse.fetching,
                     start: (keys) => {
                         deleteRooms({
-                            variables: {
-                                deleteRoomIds: keys,
-                            },
-                            update: (cache, { data: _data }) => {
-                                if (_data?.delete_room_Room) {
-                                    const data = _data.delete_room_Room;
-                                    const deletedIds = data.returning.map((x) => x.id);
-                                    cache.modify({
-                                        fields: {
-                                            room_Room(existingRefs: Reference[] = [], { readField }) {
-                                                deletedIds.forEach((x) => {
-                                                    cache.evict({
-                                                        id: x.id,
-                                                        fieldName: "RoomWithParticipantInfo",
-                                                        broadcast: true,
-                                                    });
-                                                });
-                                                return existingRefs.filter(
-                                                    (ref) => !deletedIds.includes(readField("id", ref))
-                                                );
-                                            },
-                                        },
-                                    });
-                                }
-                            },
+                            deleteRoomIds: keys,
                         });
                     },
                 }}
@@ -1487,10 +1434,7 @@ export default function ManageRooms(): JSX.Element {
     const title = useTitle(`Manage rooms at ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1499,6 +1443,6 @@ export default function ManageRooms(): JSX.Element {
                 Rooms
             </Heading>
             <EditableRoomsCRUDTable />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

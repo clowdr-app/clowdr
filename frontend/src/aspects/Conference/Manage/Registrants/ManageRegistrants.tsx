@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -10,7 +9,6 @@ import {
     Input,
     Menu,
     MenuButton,
-    MenuGroup,
     MenuItem,
     MenuItemOption,
     MenuList,
@@ -25,26 +23,24 @@ import assert from "assert";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
+import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import {
-    InvitationPartsFragmentDoc,
-    Permissions_Permission_Enum,
-    RegistrantPartsFragmentDoc,
+    ManageRegistrants_SelectProfilesDocument,
+    ManageRegistrants_SelectProfilesQuery,
+    ManageRegistrants_SelectProfilesQueryVariables,
+    RegistrantPartsFragment,
     useDeleteRegistrantsMutation,
     useInsertInvitationEmailJobsMutation,
     useInsertRegistrantMutation,
     useInsertRegistrantWithoutInviteMutation,
     useManagePeople_InsertCustomEmailJobMutation,
-    useManageRegistrants_SelectProfilesQuery,
-    useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
     useUpdateRegistrantMutation,
 } from "../../../../generated/graphql";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import MultiSelect from "../../../Chakra/MultiSelect";
-import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
+import { CheckBoxColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import type {
     CellProps,
     ColumnHeaderProps,
@@ -58,10 +54,11 @@ import type {
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { SendEmailModal } from "./SendEmailModal";
 
@@ -183,36 +180,37 @@ gql`
 
 type RegistrantDescriptor = RegistrantPartsFragment & {
     id?: string;
-    groupRegistrants?: ReadonlyArray<
-        RegistrantPartsFragment["groupRegistrants"][0] & {
-            id?: string;
-        }
-    >;
+    // TODO: Subconferences
+    // groupRegistrants?: ReadonlyArray<
+    //     RegistrantPartsFragment["groupRegistrants"][0] & {
+    //         id?: string;
+    //     }
+    // >;
 };
 
 export default function ManageRegistrants(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const {
-        loading: loadingAllGroups,
-        error: errorAllGroups,
-        data: allGroups,
-    } = useSelectAllGroupsQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-    useQueryErrorToast(errorAllGroups, false);
+    // TODO: By subconference
+    // const {
+    //     loading: loadingAllGroups,
+    //     error: errorAllGroups,
+    //     data: allGroups,
+    // } = useSelectAllGroupsQuery({
+    //     requestPolicy: "network-only",
+    //     variables: {
+    //         conferenceId: conference.id,
+    //     },
+    // });
+    // useQueryErrorToast(errorAllGroups, false);
 
-    const {
-        loading: loadingAllRegistrants,
-        error: errorAllRegistrants,
-        data: allRegistrants,
-        refetch: refetchAllRegistrants,
-    } = useSelectAllRegistrantsQuery({
-        fetchPolicy: "network-only",
+    const [
+        { fetching: loadingAllRegistrants, error: errorAllRegistrants, data: allRegistrants },
+        refetchAllRegistrants,
+    ] = useSelectAllRegistrantsQuery({
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -223,11 +221,11 @@ export default function ManageRegistrants(): JSX.Element {
         [allRegistrants?.registrant_Registrant]
     );
 
-    const [insertRegistrant, insertRegistrantResponse] = useInsertRegistrantMutation();
-    const [insertRegistrantWithoutInvite, insertRegistrantWithoutInviteResponse] =
+    const [insertRegistrantResponse, insertRegistrant] = useInsertRegistrantMutation();
+    const [insertRegistrantWithoutInviteResponse, insertRegistrantWithoutInvite] =
         useInsertRegistrantWithoutInviteMutation();
-    const [deleteRegistrants, deleteRegistrantsResponse] = useDeleteRegistrantsMutation();
-    const [updateRegistrant, updateRegistrantResponse] = useUpdateRegistrantMutation();
+    const [deleteRegistrantsResponse, deleteRegistrants] = useDeleteRegistrantsMutation();
+    const [updateRegistrantResponse, updateRegistrant] = useUpdateRegistrantMutation();
 
     const row: RowSpecification<RegistrantDescriptor> = useMemo(
         () => ({
@@ -247,311 +245,343 @@ export default function ManageRegistrants(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
-        const groupOptions: { value: string; label: string }[] =
-            allGroups?.permissions_Group.map((group) => ({
-                value: group.id,
-                label: group.name,
-            })) ?? [];
+    const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(
+        () => {
+            // TODO: By subconference
+            // const groupOptions: { value: string; label: string }[] =
+            //     allGroups?.permissions_Group.map((group) => ({
+            //         value: group.id,
+            //         label: group.name,
+            //     })) ?? [];
 
-        const result: ColumnSpecification<RegistrantDescriptor>[] = [
-            {
-                id: "name",
-                defaultSortDirection: SortDirection.Asc,
-                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return isInCreate ? (
-                        <FormLabel>Name</FormLabel>
-                    ) : (
-                        <Button size="xs" onClick={onClick}>
-                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.displayName,
-                set: (record, value: string) => {
-                    record.displayName = value;
-                },
-                sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    if (filterValue === "") {
-                        return rows.filter((row) => (row.displayName ?? "") === "");
-                    } else {
-                        return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
-                    }
-                },
-                filterEl: TextColumnFilter,
-                cell: function NameCell({ value, onChange, onBlur, ref }: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(value ?? "");
-                    return (
-                        <Flex alignItems="center">
-                            <Input
-                                type="text"
-                                value={value ?? ""}
-                                onChange={(ev) => onChange?.(ev.target.value)}
-                                onBlur={onBlur}
-                                border="1px solid"
-                                borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={ref as LegacyRef<HTMLInputElement>}
-                                mr={2}
-                            />
-                            <Button onClick={onCopy} size="xs" ml="auto">
-                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                            </Button>
-                        </Flex>
-                    );
-                },
-            },
-            {
-                id: "inviteSent",
-                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
+            const result: ColumnSpecification<RegistrantDescriptor>[] = [
+                {
+                    id: "name",
+                    defaultSortDirection: SortDirection.Asc,
+                    header: function NameHeader({
+                        isInCreate,
+                        onClick,
+                        sortDir,
+                    }: ColumnHeaderProps<RegistrantDescriptor>) {
+                        return isInCreate ? (
+                            <FormLabel>Name</FormLabel>
+                        ) : (
                             <Button size="xs" onClick={onClick}>
-                                Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
+                                Name{sortDir !== null ? ` ${sortDir}` : undefined}
                             </Button>
                         );
-                    }
-                },
-                get: (data) => data.inviteSent,
-                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
-                    return rows.filter((row) => row.inviteSent === filterValue);
-                },
-                filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell({
-                    isInCreate,
-                    value,
-                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
-                            <Center>
-                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
-                            </Center>
-                        );
-                    }
-                },
-            },
-            {
-                id: "inviteAccepted",
-                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
-                            <Button size="xs" onClick={onClick}>
-                                Invite accepted?{sortDir !== null ? ` ${sortDir}` : undefined}
-                            </Button>
-                        );
-                    }
-                },
-                get: (data) => !!data.userId,
-                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
-                    return rows.filter((row) => !!row.userId === filterValue);
-                },
-                filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell({
-                    isInCreate,
-                    value,
-                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
-                            <Center>
-                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
-                            </Center>
-                        );
-                    }
-                },
-            },
-            {
-                id: "invitedEmailAddress",
-                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return isInCreate ? (
-                        <FormLabel>Invitation address</FormLabel>
-                    ) : (
-                        <Button size="xs" onClick={onClick}>
-                            Invitation address{sortDir !== null ? ` ${sortDir}` : undefined}
-                        </Button>
-                    );
-                },
-                get: (data) => data.invitation?.invitedEmailAddress ?? "",
-                set: (record, value: string) => {
-                    if (!record.invitation) {
-                        assert(record.id);
-                        record.invitation = {
-                            registrantId: record.id as DeepWriteable<any>,
-                            createdAt: new Date().toISOString() as any as DeepWriteable<any>,
-                            updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
-                            invitedEmailAddress: value,
-                            inviteCode: "" as any as DeepWriteable<any>,
-                            id: "" as any as DeepWriteable<any>,
-                        };
-                    } else {
-                        record.invitation.invitedEmailAddress = value;
-                    }
-                },
-                sort: (x: string, y: string) => x.localeCompare(y),
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    if (filterValue === "") {
-                        return rows.filter((row) => (row.invitation?.invitedEmailAddress ?? "") === "");
-                    } else {
-                        return rows.filter((row) =>
-                            row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
-                        );
-                    }
-                },
-                filterEl: TextColumnFilter,
-                cell: function InvitedEmailAddressCell({
-                    isInCreate,
-                    value,
-                    onChange,
-                    onBlur,
-                    ref,
-                }: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(value ?? "");
-                    if (isInCreate) {
-                        return (
-                            <Input
-                                type="email"
-                                value={value ?? ""}
-                                onChange={(ev) => onChange?.(ev.target.value)}
-                                onBlur={onBlur}
-                                border="1px solid"
-                                borderColor="rgba(255, 255, 255, 0.16)"
-                                ref={ref as LegacyRef<HTMLInputElement>}
-                            />
-                        );
-                    } else {
+                    },
+                    get: (data) => data.displayName,
+                    set: (record, value: string) => {
+                        record.displayName = value;
+                    },
+                    sort: (x: string, y: string) => x.localeCompare(y),
+                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                        if (filterValue === "") {
+                            return rows.filter((row) => (row.displayName ?? "") === "");
+                        } else {
+                            return rows.filter((row) =>
+                                row.displayName.toLowerCase().includes(filterValue.toLowerCase())
+                            );
+                        }
+                    },
+                    filterEl: TextColumnFilter,
+                    cell: function NameCell({
+                        value,
+                        onChange,
+                        onBlur,
+                        ref,
+                    }: CellProps<Partial<RegistrantDescriptor>>) {
+                        const { onCopy, hasCopied } = useClipboard(value ?? "");
                         return (
                             <Flex alignItems="center">
-                                <Text px={2}>{value}</Text>
-                                {value ? (
-                                    <Button onClick={onCopy} size="xs" ml="auto">
-                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                                    </Button>
-                                ) : undefined}
+                                <Input
+                                    type="text"
+                                    value={value ?? ""}
+                                    onChange={(ev) => onChange?.(ev.target.value)}
+                                    onBlur={onBlur}
+                                    border="1px solid"
+                                    borderColor="rgba(255, 255, 255, 0.16)"
+                                    ref={ref as LegacyRef<HTMLInputElement>}
+                                    mr={2}
+                                />
+                                <Button onClick={onCopy} size="xs" ml="auto">
+                                    <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                </Button>
                             </Flex>
                         );
-                    }
+                    },
                 },
-            },
-            {
-                id: "inviteCode",
-                header: function NameHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
-                            <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
-                                Invite code
-                            </Text>
+                {
+                    id: "inviteSent",
+                    header: function NameHeader({
+                        isInCreate,
+                        onClick,
+                        sortDir,
+                    }: ColumnHeaderProps<RegistrantDescriptor>) {
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Button size="xs" onClick={onClick}>
+                                    Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
+                                </Button>
+                            );
+                        }
+                    },
+                    get: (data) => data.inviteSent,
+                    sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
+                        return rows.filter((row) => row.inviteSent === filterValue);
+                    },
+                    filterEl: CheckBoxColumnFilter,
+                    cell: function InviteSentCell({
+                        isInCreate,
+                        value,
+                    }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Center>
+                                    <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                                </Center>
+                            );
+                        }
+                    },
+                },
+                {
+                    id: "inviteAccepted",
+                    header: function NameHeader({
+                        isInCreate,
+                        onClick,
+                        sortDir,
+                    }: ColumnHeaderProps<RegistrantDescriptor>) {
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Button size="xs" onClick={onClick}>
+                                    Invite accepted?{sortDir !== null ? ` ${sortDir}` : undefined}
+                                </Button>
+                            );
+                        }
+                    },
+                    get: (data) => !!data.userId,
+                    sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
+                        return rows.filter((row) => !!row.userId === filterValue);
+                    },
+                    filterEl: CheckBoxColumnFilter,
+                    cell: function InviteSentCell({
+                        isInCreate,
+                        value,
+                    }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Center>
+                                    <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                                </Center>
+                            );
+                        }
+                    },
+                },
+                {
+                    id: "invitedEmailAddress",
+                    header: function NameHeader({
+                        isInCreate,
+                        onClick,
+                        sortDir,
+                    }: ColumnHeaderProps<RegistrantDescriptor>) {
+                        return isInCreate ? (
+                            <FormLabel>Invitation address</FormLabel>
+                        ) : (
+                            <Button size="xs" onClick={onClick}>
+                                Invitation address{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
                         );
-                    }
+                    },
+                    get: (data) => data.invitation?.invitedEmailAddress ?? "",
+                    set: (record, value: string) => {
+                        if (!record.invitation) {
+                            assert(record.id);
+                            record.invitation = {
+                                registrantId: record.id as DeepWriteable<any>,
+                                createdAt: new Date().toISOString() as any as DeepWriteable<any>,
+                                updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
+                                invitedEmailAddress: value,
+                                inviteCode: "" as any as DeepWriteable<any>,
+                                id: "" as any as DeepWriteable<any>,
+                            };
+                        } else {
+                            record.invitation.invitedEmailAddress = value;
+                        }
+                    },
+                    sort: (x: string, y: string) => x.localeCompare(y),
+                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                        if (filterValue === "") {
+                            return rows.filter((row) => (row.invitation?.invitedEmailAddress ?? "") === "");
+                        } else {
+                            return rows.filter((row) =>
+                                row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
+                            );
+                        }
+                    },
+                    filterEl: TextColumnFilter,
+                    cell: function InvitedEmailAddressCell({
+                        isInCreate,
+                        value,
+                        onChange,
+                        onBlur,
+                        ref,
+                    }: CellProps<Partial<RegistrantDescriptor>>) {
+                        const { onCopy, hasCopied } = useClipboard(value ?? "");
+                        if (isInCreate) {
+                            return (
+                                <Input
+                                    type="email"
+                                    value={value ?? ""}
+                                    onChange={(ev) => onChange?.(ev.target.value)}
+                                    onBlur={onBlur}
+                                    border="1px solid"
+                                    borderColor="rgba(255, 255, 255, 0.16)"
+                                    ref={ref as LegacyRef<HTMLInputElement>}
+                                />
+                            );
+                        } else {
+                            return (
+                                <Flex alignItems="center">
+                                    <Text px={2}>{value}</Text>
+                                    {value ? (
+                                        <Button onClick={onCopy} size="xs" ml="auto">
+                                            <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                        </Button>
+                                    ) : undefined}
+                                </Flex>
+                            );
+                        }
+                    },
                 },
-                get: (data) => data.invitation?.inviteCode ?? "",
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                    if (filterValue === "") {
-                        return rows.filter((row) => (row.invitation?.inviteCode ?? "") === "");
-                    } else {
-                        return rows.filter(
-                            (row) =>
-                                !!row.invitation?.inviteCode &&
-                                row.invitation?.inviteCode.toLowerCase().includes(filterValue.toLowerCase())
-                        );
-                    }
-                },
-                filterEl: TextColumnFilter,
-                cell: function InviteCodeCell({ isInCreate, value }: CellProps<Partial<RegistrantDescriptor>>) {
-                    const { onCopy, hasCopied } = useClipboard(value ?? "");
-                    if (isInCreate) {
-                        return undefined;
-                    } else {
-                        return (
-                            <Flex alignItems="center">
-                                <Text fontFamily="monospace" px={2}>
-                                    {value}
+                {
+                    id: "inviteCode",
+                    header: function NameHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                                    Invite code
                                 </Text>
-                                {value ? (
-                                    <Button onClick={onCopy} size="xs" ml="auto">
-                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                                    </Button>
-                                ) : undefined}
-                            </Flex>
-                        );
-                    }
+                            );
+                        }
+                    },
+                    get: (data) => data.invitation?.inviteCode ?? "",
+                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                        if (filterValue === "") {
+                            return rows.filter((row) => (row.invitation?.inviteCode ?? "") === "");
+                        } else {
+                            return rows.filter(
+                                (row) =>
+                                    !!row.invitation?.inviteCode &&
+                                    row.invitation?.inviteCode.toLowerCase().includes(filterValue.toLowerCase())
+                            );
+                        }
+                    },
+                    filterEl: TextColumnFilter,
+                    cell: function InviteCodeCell({ isInCreate, value }: CellProps<Partial<RegistrantDescriptor>>) {
+                        const { onCopy, hasCopied } = useClipboard(value ?? "");
+                        if (isInCreate) {
+                            return undefined;
+                        } else {
+                            return (
+                                <Flex alignItems="center">
+                                    <Text fontFamily="monospace" px={2}>
+                                        {value}
+                                    </Text>
+                                    {value ? (
+                                        <Button onClick={onCopy} size="xs" ml="auto">
+                                            <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                        </Button>
+                                    ) : undefined}
+                                </Flex>
+                            );
+                        }
+                    },
                 },
-            },
-            {
-                id: "groups",
-                header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
-                    return isInCreate ? (
-                        <FormLabel>Groups</FormLabel>
-                    ) : (
-                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
-                            Groups
-                        </Text>
-                    );
-                },
-                get: (data) =>
-                    data.groupRegistrants?.map(
-                        (ga) =>
-                            groupOptions.find((group) => group.value === ga.groupId) ?? {
-                                label: "<Unknown>",
-                                value: ga.groupId,
-                            }
-                    ) ?? [],
-                set: (record, value: { label: string; value: string }[]) => {
-                    record.groupRegistrants = value.map((x) => ({
-                        registrantId: record.id as any as DeepWriteable<any>,
-                        groupId: x.value as any as DeepWriteable<any>,
-                        id: undefined as any as DeepWriteable<any>,
-                    }));
-                },
-                filterFn: (
-                    rows: Array<RegistrantDescriptor>,
-                    filterValue: ReadonlyArray<{ label: string; value: string }>
-                ) => {
-                    return filterValue.length === 0
-                        ? rows
-                        : rows.filter((row) => {
-                              return row.groupRegistrants.some((x) => filterValue.some((y) => y.value === x.groupId));
-                          });
-                },
-                filterEl: MultiSelectColumnFilter(groupOptions),
-                cell: function ContentCell({
-                    value,
-                    onChange,
-                    onBlur,
-                }: CellProps<
-                    Partial<RegistrantDescriptor>,
-                    ReadonlyArray<{ label: string; value: string }> | undefined
-                >) {
-                    return (
-                        <MultiSelect
-                            name="groups"
-                            options={groupOptions}
-                            value={value ?? []}
-                            placeholder="Select one or more groups"
-                            onChange={(ev) => onChange?.(ev)}
-                            onBlur={onBlur}
-                            styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
-                        />
-                    );
-                },
-            },
-        ];
-        return result;
-    }, [allGroups?.permissions_Group]);
+                // TODO: Subconferences
+                // {
+                //     id: "groups",
+                //     header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                //         return isInCreate ? (
+                //             <FormLabel>Groups</FormLabel>
+                //         ) : (
+                //             <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                //                 Groups
+                //             </Text>
+                //         );
+                //     },
+                //     get: (data) =>
+                //         data.groupRegistrants?.map(
+                //             (ga) =>
+                //                 groupOptions.find((group) => group.value === ga.groupId) ?? {
+                //                     label: "<Unknown>",
+                //                     value: ga.groupId,
+                //                 }
+                //         ) ?? [],
+                //     set: (record, value: { label: string; value: string }[]) => {
+                //         record.groupRegistrants = value.map((x) => ({
+                //             registrantId: record.id as any as DeepWriteable<any>,
+                //             groupId: x.value as any as DeepWriteable<any>,
+                //             id: undefined as any as DeepWriteable<any>,
+                //         }));
+                //     },
+                //     filterFn: (
+                //         rows: Array<RegistrantDescriptor>,
+                //         filterValue: ReadonlyArray<{ label: string; value: string }>
+                //     ) => {
+                //         return filterValue.length === 0
+                //             ? rows
+                //             : rows.filter((row) => {
+                //                   return row.groupRegistrants.some((x) =>
+                //                       filterValue.some((y) => y.value === x.groupId)
+                //                   );
+                //               });
+                //     },
+                //     filterEl: MultiSelectColumnFilter(groupOptions),
+                //     cell: function ContentCell({
+                //         value,
+                //         onChange,
+                //         onBlur,
+                //     }: CellProps<
+                //         Partial<RegistrantDescriptor>,
+                //         ReadonlyArray<{ label: string; value: string }> | undefined
+                //     >) {
+                //         return (
+                //             <MultiSelect
+                //                 name="groups"
+                //                 options={groupOptions}
+                //                 value={value ?? []}
+                //                 placeholder="Select one or more groups"
+                //                 onChange={(ev) => onChange?.(ev)}
+                //                 onBlur={onBlur}
+                //                 styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
+                //             />
+                //         );
+                //     },
+                // },
+            ];
+            return result;
+        },
+        [
+            /* allGroups?.permissions_Group */
+        ]
+    );
 
-    const [insertInvitationEmailJobsMutation, { loading: insertInvitationEmailJobsLoading }] =
+    const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
-    const [insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
+    const [, insertCustomEmailJobMutation] = useManagePeople_InsertCustomEmailJobMutation();
     const [sendCustomEmailRegistrants, setSendCustomEmailRegistrants] = useState<RegistrantDescriptor[]>([]);
     const sendCustomEmailModal = useDisclosure();
 
@@ -559,7 +589,7 @@ export default function ManageRegistrants(): JSX.Element {
 
     const insert: Insert<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: insertRegistrantResponse.loading,
+            ongoing: insertRegistrantResponse.fetching,
             generateDefaults: () => {
                 const registrantId = uuidv4();
                 return {
@@ -572,154 +602,87 @@ export default function ManageRegistrants(): JSX.Element {
             start: (record) => {
                 if (record.invitation?.invitedEmailAddress) {
                     insertRegistrant({
-                        variables: {
-                            registrant: {
-                                id: record.id,
-                                conferenceId: conference.id,
-                                displayName: record.displayName,
-                                groupRegistrants: {
-                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
-                                },
-                            },
-                            invitation: {
-                                registrantId: record.id,
-                                invitedEmailAddress: record.invitation?.invitedEmailAddress,
-                            },
+                        registrant: {
+                            id: record.id,
+                            conferenceId: conference.id,
+                            displayName: record.displayName,
+                            // TODO: Subconferences
+                            // groupRegistrants: {
+                            //     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                            // },
                         },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.insert_registrant_Registrant_one) {
-                                const data = _data.insert_registrant_Registrant_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: RegistrantPartsFragmentDoc,
-                                    fragmentName: "RegistrantParts",
-                                });
-                            }
-                            if (_data?.insert_registrant_Invitation_one) {
-                                const data = _data.insert_registrant_Invitation_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: InvitationPartsFragmentDoc,
-                                    fragmentName: "InvitationParts",
-                                });
-                            }
+                        invitation: {
+                            registrantId: record.id,
+                            invitedEmailAddress: record.invitation?.invitedEmailAddress,
                         },
                     });
                 } else {
                     insertRegistrantWithoutInvite({
-                        variables: {
-                            registrant: {
-                                id: record.id,
-                                conferenceId: conference.id,
-                                displayName: record.displayName,
-                                groupRegistrants: {
-                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
-                                },
-                            },
-                        },
-                        update: (cache, { data: _data }) => {
-                            if (_data?.insert_registrant_Registrant_one) {
-                                const data = _data.insert_registrant_Registrant_one;
-                                cache.writeFragment({
-                                    data,
-                                    fragment: RegistrantPartsFragmentDoc,
-                                    fragmentName: "RegistrantParts",
-                                });
-                            }
+                        registrant: {
+                            id: record.id,
+                            conferenceId: conference.id,
+                            displayName: record.displayName,
+                            // TODO: Subconferences
+                            // groupRegistrants: {
+                            //     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                            // },
                         },
                     });
                 }
             },
         }),
-        [conference.id, insertRegistrant, insertRegistrantResponse.loading, insertRegistrantWithoutInvite]
+        [conference.id, insertRegistrant, insertRegistrantResponse.fetching, insertRegistrantWithoutInvite]
     );
 
     const update: Update<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: updateRegistrantResponse.loading,
+            ongoing: updateRegistrantResponse.fetching,
             start: (record) => {
                 updateRegistrant({
-                    variables: {
-                        registrantId: record.id,
-                        registrantName: record.displayName,
-                        upsertGroups: record.groupRegistrants.map((x) => ({
-                            groupId: x.groupId,
-                            registrantId: x.registrantId,
-                        })),
-                        remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
-                    },
-                    optimisticResponse: {
-                        update_registrant_Registrant_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_registrant_Registrant_by_pk) {
-                            const data = _data.update_registrant_Registrant_by_pk;
-                            cache.writeFragment({
-                                data,
-                                fragment: RegistrantPartsFragmentDoc,
-                                fragmentName: "RegistrantParts",
-                            });
-                        }
-                    },
+                    registrantId: record.id,
+                    registrantName: record.displayName,
+                    // TODO: Subconferences
+                    // upsertGroups: record.groupRegistrants.map((x) => ({
+                    //     groupId: x.groupId,
+                    //     registrantId: x.registrantId,
+                    // })),
+                    // remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
                 });
             },
         }),
-        [updateRegistrant, updateRegistrantResponse.loading]
+        [updateRegistrant, updateRegistrantResponse.fetching]
     );
 
     const deleteP: Delete<RegistrantDescriptor> = useMemo(
         () => ({
-            ongoing: deleteRegistrantsResponse.loading,
+            ongoing: deleteRegistrantsResponse.fetching,
             start: (keys) => {
                 deleteRegistrants({
-                    variables: {
-                        deleteRegistrantIds: keys,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_registrant_Registrant) {
-                            const data = _data.delete_registrant_Registrant;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    registrant_Registrant(existingRefs: Reference[] = [], { readField }) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "RegistrantParts",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    deleteRegistrantIds: keys,
                 });
             },
         }),
-        [deleteRegistrants, deleteRegistrantsResponse.loading]
+        [deleteRegistrants, deleteRegistrantsResponse.fetching]
     );
 
-    const enabledGroups = useMemo(
-        () => allGroups?.permissions_Group.filter((x) => x.enabled),
-        [allGroups?.permissions_Group]
-    );
-    const disabledGroups = useMemo(
-        () => allGroups?.permissions_Group.filter((x) => !x.enabled),
-        [allGroups?.permissions_Group]
-    );
+    // TODO: By subconference
+    // const enabledGroups = useMemo(
+    //     () => allGroups?.permissions_Group.filter((x) => x.enabled),
+    //     [allGroups?.permissions_Group]
+    // );
+    // const disabledGroups = useMemo(
+    //     () => allGroups?.permissions_Group.filter((x) => !x.enabled),
+    //     [allGroups?.permissions_Group]
+    // );
 
     const [exportWithProfileData, setExportWithProfileData] = useState<boolean>(false);
-    const selectProfiles = useManageRegistrants_SelectProfilesQuery({
-        skip: true,
-    });
+    const client = useClient();
     const buttons: ExtraButton<RegistrantDescriptor>[] = useMemo(
         () => [
             {
                 render: function ImportButton(_selectedData) {
                     return (
-                        <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/registrants`}>
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/registrants`}>
                             Import
                         </LinkButton>
                     );
@@ -730,10 +693,15 @@ export default function ManageRegistrants(): JSX.Element {
                     async function doExport(dataToExport: RegistrantDescriptor[]) {
                         const profiles = exportWithProfileData
                             ? (
-                                  await selectProfiles.refetch({
-                                      registrantIds: dataToExport.map((x) => x.id),
-                                  })
-                              ).data.registrant_Profile
+                                  await client
+                                      .query<
+                                          ManageRegistrants_SelectProfilesQuery,
+                                          ManageRegistrants_SelectProfilesQueryVariables
+                                      >(ManageRegistrants_SelectProfilesDocument, {
+                                          registrantIds: dataToExport.map((x) => x.id),
+                                      })
+                                      .toPromise()
+                              ).data?.registrant_Profile ?? []
                             : [];
 
                         const csvText = Papa.unparse(
@@ -747,12 +715,13 @@ export default function ManageRegistrants(): JSX.Element {
                                     "Invite code": registrant.invitation?.inviteCode ?? "",
                                     "Invite sent": registrant.inviteSent ? "Yes" : "No",
                                     "Invite accepted": registrant.userId ? "Yes" : "No",
-                                    "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
-                                    "Group Names": registrant.groupRegistrants.map(
-                                        (x) =>
-                                            allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
-                                            "<Hidden>"
-                                    ),
+                                    // TODO: Subconferences and roles
+                                    // "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
+                                    // "Group Names": registrant.groupRegistrants.map(
+                                    //     (x) =>
+                                    //         allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
+                                    //         "<Hidden>"
+                                    // ),
                                     "Created At": registrant.createdAt,
                                     "Updated At": registrant.updatedAt,
                                 };
@@ -859,6 +828,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     >
                                         All
                                     </MenuItem>
+                                    {/* TODO: Subconference
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (
@@ -898,7 +868,7 @@ export default function ManageRegistrants(): JSX.Element {
                                         </MenuGroup>
                                     ) : (
                                         <></>
-                                    )}
+                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -932,6 +902,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
+                                    {/* TODO: Subconference
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (
@@ -939,22 +910,20 @@ export default function ManageRegistrants(): JSX.Element {
                                                     key={group.id}
                                                     onClick={async () => {
                                                         const result = await insertInvitationEmailJobsMutation({
-                                                            variables: {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
+                                                            registrantIds: data
+                                                                .filter((a) =>
+                                                                    a.groupRegistrants.some(
+                                                                        (ga) => ga.groupId === group.id
                                                                     )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: false,
-                                                            },
+                                                                )
+                                                                .map((a) => a.id),
+                                                            conferenceId: conference.id,
+                                                            sendRepeat: false,
                                                         });
-                                                        if (result.errors && result.errors.length > 0) {
+                                                        if (result.error) {
                                                             toast({
                                                                 title: "Failed to send invitation emails",
-                                                                description: result.errors[0].message,
+                                                                description: result.error.message,
                                                                 isClosable: true,
                                                                 status: "error",
                                                             });
@@ -975,7 +944,7 @@ export default function ManageRegistrants(): JSX.Element {
                                         </MenuGroup>
                                     ) : (
                                         <Text px={2}>No groups enabled.</Text>
-                                    )}
+                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -994,16 +963,14 @@ export default function ManageRegistrants(): JSX.Element {
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
                                             const result = await insertInvitationEmailJobsMutation({
-                                                variables: {
-                                                    registrantIds: selectedData.map((x) => x.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: false,
-                                                },
+                                                registrantIds: selectedData.map((x) => x.id),
+                                                conferenceId: conference.id,
+                                                sendRepeat: false,
                                             });
-                                            if (result.errors && result.errors.length > 0) {
+                                            if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
-                                                    description: result.errors[0].message,
+                                                    description: result.error.message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
@@ -1038,6 +1005,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
+                                    {/* TODO: Subconference
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (
@@ -1045,22 +1013,20 @@ export default function ManageRegistrants(): JSX.Element {
                                                     key={group.id}
                                                     onClick={async () => {
                                                         const result = await insertInvitationEmailJobsMutation({
-                                                            variables: {
-                                                                registrantIds: data
-                                                                    .filter((a) =>
-                                                                        a.groupRegistrants.some(
-                                                                            (ga) => ga.groupId === group.id
-                                                                        )
+                                                            registrantIds: data
+                                                                .filter((a) =>
+                                                                    a.groupRegistrants.some(
+                                                                        (ga) => ga.groupId === group.id
                                                                     )
-                                                                    .map((a) => a.id),
-                                                                conferenceId: conference.id,
-                                                                sendRepeat: true,
-                                                            },
+                                                                )
+                                                                .map((a) => a.id),
+                                                            conferenceId: conference.id,
+                                                            sendRepeat: true,
                                                         });
-                                                        if (result.errors && result.errors.length > 0) {
+                                                        if (result.error) {
                                                             toast({
                                                                 title: "Failed to send invitation emails",
-                                                                description: result.errors[0].message,
+                                                                description: result.error.message,
                                                                 isClosable: true,
                                                                 status: "error",
                                                             });
@@ -1081,7 +1047,7 @@ export default function ManageRegistrants(): JSX.Element {
                                         </MenuGroup>
                                     ) : (
                                         <Text px={2}>No groups enabled.</Text>
-                                    )}
+                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -1097,16 +1063,14 @@ export default function ManageRegistrants(): JSX.Element {
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
                                             const result = await insertInvitationEmailJobsMutation({
-                                                variables: {
-                                                    registrantIds: selectedData.map((x) => x.id),
-                                                    conferenceId: conference.id,
-                                                    sendRepeat: true,
-                                                },
+                                                registrantIds: selectedData.map((x) => x.id),
+                                                conferenceId: conference.id,
+                                                sendRepeat: true,
                                             });
-                                            if (result.errors && result.errors.length > 0) {
+                                            if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
-                                                    description: result.errors[0].message,
+                                                    description: result.error.message,
                                                     isClosable: true,
                                                     status: "error",
                                                 });
@@ -1141,6 +1105,7 @@ export default function ManageRegistrants(): JSX.Element {
                                 </MenuButton>
                                 {/*</Tooltip>*/}
                                 <MenuList>
+                                    {/* TODO: By subconference:
                                     {enabledGroups?.length ? (
                                         <MenuGroup title="Enabled groups">
                                             {enabledGroups.map((group) => (
@@ -1182,7 +1147,7 @@ export default function ManageRegistrants(): JSX.Element {
                                         </MenuGroup>
                                     ) : (
                                         <></>
-                                    )}
+                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -1208,30 +1173,19 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ],
         [
-            allGroups?.permissions_Group,
             conference.id,
             data,
-            disabledGroups,
-            enabledGroups,
             exportWithProfileData,
             insertInvitationEmailJobsLoading,
             insertInvitationEmailJobsMutation,
             refetchAllRegistrants,
-            selectProfiles,
             sendCustomEmailModal,
             toast,
         ]
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceManageAttendees,
-                Permissions_Permission_Enum.ConferenceManageRoles,
-                Permissions_Permission_Enum.ConferenceManageGroups,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1239,20 +1193,21 @@ export default function ManageRegistrants(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Registrants
             </Heading>
+            {/* TODO: Subconference
             {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
                 <></>
             ) : errorAllRegistrants || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
-            )}
+            )} */}
             <CRUDTable<RegistrantDescriptor>
                 columns={columns}
                 row={row}
                 data={
-                    !loadingAllGroups &&
-                    !loadingAllRegistrants &&
-                    (allGroups?.permissions_Group && allRegistrants?.registrant_Registrant ? data : null)
+                    /* TODO: Subconference: !loadingAllGroups && */
+                    !loadingAllRegistrants /* TODO: Subconference: allGroups?.permissions_Group && */ &&
+                    (allRegistrants?.registrant_Registrant ? data : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
@@ -1283,19 +1238,17 @@ export default function ManageRegistrants(): JSX.Element {
                 registrants={sendCustomEmailRegistrants}
                 send={async (registrantIds: string[], markdownBody: string, subject: string) => {
                     const result = await insertCustomEmailJobMutation({
-                        variables: {
-                            registrantIds,
-                            conferenceId: conference.id,
-                            markdownBody,
-                            subject,
-                        },
+                        registrantIds,
+                        conferenceId: conference.id,
+                        markdownBody,
+                        subject,
                     });
-                    if (result?.errors && result.errors.length > 0) {
-                        console.error("Failed to insert CustomEmailJob", result.errors);
+                    if (result?.error) {
+                        console.error("Failed to insert CustomEmailJob", result.error);
                         throw new Error("Error submitting query");
                     }
                 }}
             />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

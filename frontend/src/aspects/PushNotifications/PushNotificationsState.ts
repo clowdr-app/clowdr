@@ -1,4 +1,4 @@
-import type { ApolloClient } from "@apollo/client";
+import type { Client } from "@urql/core";
 import { gql } from "@urql/core";
 import assert from "assert";
 import type {
@@ -142,7 +142,7 @@ class PushNotificationsState {
 
     // Subscribe and unsubscribe inspired by https://serviceworke.rs/push-subscription-management_index_doc.html
 
-    async subscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
+    async subscribe(client: Client): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -158,12 +158,9 @@ class PushNotificationsState {
                 }
 
                 try {
-                    const keyResponse = await apolloClient.query<
-                        GetVapidPublicKeyQuery,
-                        GetVapidPublicKeyQueryVariables
-                    >({
-                        query: GetVapidPublicKeyDocument,
-                    });
+                    const keyResponse = await client
+                        .query<GetVapidPublicKeyQuery, GetVapidPublicKeyQueryVariables>(GetVapidPublicKeyDocument)
+                        .toPromise();
 
                     if (keyResponse.data?.vapidPublicKey?.key) {
                         console.info("Push notifications: Attempting to subscribe...");
@@ -182,19 +179,18 @@ class PushNotificationsState {
                                 assert(subJSON.keys.auth, "Subscription JSON keys did not have auth information");
                                 assert(subJSON.keys.p256dh, "Subscription JSON keys did not have p256dh information");
 
-                                await apolloClient.mutate<
-                                    UpsertPushNotificationSubscriptionMutation,
-                                    UpsertPushNotificationSubscriptionMutationVariables
-                                >({
-                                    mutation: UpsertPushNotificationSubscriptionDocument,
-                                    variables: {
+                                await client
+                                    .mutation<
+                                        UpsertPushNotificationSubscriptionMutation,
+                                        UpsertPushNotificationSubscriptionMutationVariables
+                                    >(UpsertPushNotificationSubscriptionDocument, {
                                         object: {
                                             auth: subJSON.keys.auth,
                                             endpoint: subJSON.endpoint,
                                             p256dh: subJSON.keys.p256dh,
                                         },
-                                    },
-                                });
+                                    })
+                                    .toPromise();
                             } catch (e) {
                                 console.error("Error saving subscription information to the server", e);
                                 this.pushSubscription = `Could not save subscription to the server!\n${e.toString()}`;
@@ -222,7 +218,7 @@ class PushNotificationsState {
         }
     }
 
-    async unsubscribe(apolloClient: ApolloClient<unknown>): Promise<void> {
+    async unsubscribe(client: Client): Promise<void> {
         try {
             this.pushSubscription = undefined;
 
@@ -244,15 +240,14 @@ class PushNotificationsState {
                     console.info("Push notifications: Unsubscribed. Deleting from server...");
 
                     try {
-                        await apolloClient.mutate<
-                            DeletePushNotificationSubscriptionMutation,
-                            DeletePushNotificationSubscriptionMutationVariables
-                        >({
-                            mutation: DeletePushNotificationSubscriptionDocument,
-                            variables: {
+                        await client
+                            .mutation<
+                                DeletePushNotificationSubscriptionMutation,
+                                DeletePushNotificationSubscriptionMutationVariables
+                            >(DeletePushNotificationSubscriptionDocument, {
                                 endpoint: sub.endpoint,
-                            },
-                        });
+                            })
+                            .toPromise();
                     } catch (e) {
                         console.error("Error deleting subscription information from the server", e);
                         this.pushSubscription = `Could not delete subscription from the server!\n${e.toString()}`;

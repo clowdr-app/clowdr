@@ -26,7 +26,6 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
-import { useConference } from "../../useConference";
 import { AuthorList } from "../Content/AuthorList";
 import { Element } from "../Content/Element/Element";
 import TagList from "../Content/TagList";
@@ -40,8 +39,6 @@ function ItemTile({
     exhibitionColour: string;
     hideLiveViewButton: boolean;
 }): JSX.Element {
-    const conference = useConference();
-
     const { colorMode } = useColorMode();
     const baseBgColour =
         colorMode === "light" ? "Exhibition.defaultBackgroundColor-light" : "Exhibition.defaultBackgroundColor-dark";
@@ -144,13 +141,13 @@ function ItemTile({
         );
         return liveEvents.length > 0 ? liveEvents[0] : undefined;
     }, [item.events, now]);
-    const liveRoomUrl = liveEvent ? `${conferenceUrl}/room/${liveEvent.roomId}` : undefined;
+    const liveRoomUrl = liveEvent ? `${conferencePath}/room/${liveEvent.roomId}` : undefined;
 
     const discussionRoomUrl = item.discussionRoom?.length
-        ? `${conferenceUrl}/room/${item.discussionRoom[0].id}`
+        ? `${conferencePath}/room/${item.discussionRoom[0].id}`
         : undefined;
 
-    const itemUrl = `${conferenceUrl}/item/${item.id}`;
+    const itemUrl = `${conferencePath}/item/${item.id}`;
 
     const shadow = useColorModeValue("md", "light-md");
     return (
@@ -167,7 +164,7 @@ function ItemTile({
             <HStack spacing={2}>
                 <Heading as="h2" fontSize="lg" textAlign="left" mb={4}>
                     <chakra.span mr={4}>{item.title}</chakra.span>
-                    <PageCountText path={`${conferenceUrl}/item/${item.id}`} />
+                    <PageCountText path={`${conferencePath}/item/${item.id}`} />
                 </Heading>
                 {liveRoomUrl && !hideLiveViewButton ? (
                     <LinkButton

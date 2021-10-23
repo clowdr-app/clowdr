@@ -59,7 +59,7 @@ function toS3Url(s3Url: string): string | undefined {
 export function AllVideoElements(): JSX.Element {
     const conference = useConference();
     const { reset } = useContext(VideoDownloadContext);
-    const result = useDownloadVideos_GetAllVideosQuery({
+    const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -151,11 +151,11 @@ export function AllVideoElements(): JSX.Element {
 
         link.dispatchEvent(evt);
         link.remove();
-    }, [extractVideoUrl, videoElements]);
+    }, [extractCaptionUrls, extractVideoUrl, videoElements]);
 
     return (
         <>
-            {result.loading && <Spinner />}
+            {result.fetching && <Spinner />}
             {result.data ? (
                 <ButtonGroup mb={4}>
                     <Button

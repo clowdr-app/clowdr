@@ -19,11 +19,11 @@ import React, { useMemo } from "react";
 import { gql } from "urql";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { useRegistrants } from "../../RegistrantsContext";
-import { useConference } from "../../useConference";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -80,7 +80,7 @@ function RoomMembersModal({
 
 function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
     const roomMembers = useRoomMembers();
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const addMemberModal = useDisclosure();
 
     const memberRegistrantIds = useMemo(
@@ -97,7 +97,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                     <ListItem key={registrant.id} whiteSpace="normal">
                         <LinkButton
                             justifyContent="flex-start"
-                            to={`${conferenceUrl}/profile/view/${registrant.id}`}
+                            to={`${conferencePath}/profile/view/${registrant.id}`}
                             size="sm"
                             linkProps={{ width: "100%" }}
                             w="100%"
@@ -109,7 +109,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
                 ))}
             </List>
         ),
-        [conference.slug, sortedRegistrants]
+        [conferencePath, sortedRegistrants]
     );
 
     return (

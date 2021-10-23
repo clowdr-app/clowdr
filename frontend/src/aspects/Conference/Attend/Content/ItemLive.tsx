@@ -10,7 +10,6 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import usePolling from "../../../Generic/usePolling";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
-import { useConference } from "../../useConference";
 
 export function ItemLive({
     itemData,
@@ -39,14 +38,12 @@ export function ItemLive({
 
     const currentRoom = useMemo(() => (itemData.rooms.length > 0 ? itemData.rooms[0] : undefined), [itemData.rooms]);
 
-    const conference = useConference();
-
     return (
         <Flex mb={2} flexWrap="wrap">
             {currentRoom ? (
                 <LinkButton
                     width="100%"
-                    to={`${conferenceUrl}/room/${currentRoom.id}`}
+                    to={`${conferencePath}/room/${currentRoom.id}`}
                     size="lg"
                     colorScheme="PrimaryActionButton"
                     height="auto"
@@ -72,14 +69,14 @@ export function ItemLive({
                                 </>
                             )}
                         </Text>
-                        <PageCountText path={`${conferenceUrl}/room/${currentRoom.id}`} />
+                        <PageCountText path={`${conferencePath}/room/${currentRoom.id}`} />
                     </VStack>
                 </LinkButton>
             ) : undefined}
             {liveEvents?.map((event) => (
                 <LinkButton
                     width="100%"
-                    to={`${conferenceUrl}/room/${event.roomId}`}
+                    to={`${conferencePath}/room/${event.roomId}`}
                     key={event.id}
                     size="lg"
                     colorScheme="LiveActionButton"

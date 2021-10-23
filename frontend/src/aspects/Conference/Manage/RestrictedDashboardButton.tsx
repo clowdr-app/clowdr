@@ -1,11 +1,10 @@
 import type { ButtonProps } from "@chakra-ui/react";
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import type { Permissions_Permission_Enum } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import FAIcon from "../../Icons/FAIcon";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../useConference";
+import RequireRole from "../RequireRole";
 
 export default function RestrictedDashboardButton({
     to,
@@ -13,7 +12,9 @@ export default function RestrictedDashboardButton({
     icon,
     iconStyle,
     description,
-    permissions,
+    organizerRole,
+    moderatorRole,
+    attendeeRole,
     colorScheme,
     ...rest
 }: ButtonProps & {
@@ -22,15 +23,17 @@ export default function RestrictedDashboardButton({
     icon: string;
     iconStyle?: "b" | "s" | "r";
     description: string;
-    permissions?: Permissions_Permission_Enum[];
+    organizerRole?: boolean;
+    moderatorRole?: boolean;
+    attendeeRole?: boolean;
     colorScheme?: string;
 }): JSX.Element | null {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     return (
-        <RequireAtLeastOnePermissionWrapper permissions={permissions}>
+        <RequireRole organizerRole={organizerRole} moderatorRole={moderatorRole} attendeeRole={attendeeRole}>
             <LinkButton
-                to={`${conferenceUrl}/manage/${to}`}
+                to={`${conferencePath}/manage/${to}`}
                 padding={4}
                 overflow="hidden"
                 whiteSpace="normal"
@@ -55,6 +58,6 @@ export default function RestrictedDashboardButton({
                 </Heading>
                 <Text fontSize="sm">{description}</Text>
             </LinkButton>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

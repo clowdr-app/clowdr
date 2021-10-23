@@ -31,7 +31,7 @@ module.exports = {
             },
         },
         "./src/generated/graphql.schema.json": {
-            plugins: ["introspection"],
+            plugins: ["urql-introspection"],
             config: {
                 minify: true,
             }

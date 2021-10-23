@@ -44,7 +44,7 @@ import {
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
-import ApolloQueryWrapper from "../../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
@@ -124,15 +124,15 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
-    const result = useSubmissionRequestsModalDataQuery({
+    const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
             conferenceId: conference.id,
             itemIds,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
     });
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(result) => result}>
+        <QueryWrapper queryResult={result} getter={(result) => result}>
             {({
                 conference_Configuration,
                 content_Item,
@@ -162,7 +162,7 @@ function SendSubmissionRequestsModalLazyInner({
                     />
                 );
             }}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -249,7 +249,7 @@ export function SendSubmissionRequestsModalInner({
 
     const toast = useToast();
 
-    const [sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
+    const [, sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
     const roleOptions = useMemo(
         () => [
             {
@@ -292,18 +292,16 @@ export function SendSubmissionRequestsModalInner({
                 onSubmit={async (values, actions) => {
                     try {
                         const result = await sendSubmissionRequests({
-                            variables: {
-                                objs: personIds.map((id) => ({
-                                    personId: id,
-                                    emailTemplate: {
-                                        htmlBodyTemplate: values.htmlBodyTemplate,
-                                        subjectTemplate: values.subjectTemplate,
-                                    },
-                                })),
-                            },
+                            objs: personIds.map((id) => ({
+                                personId: id,
+                                emailTemplate: {
+                                    htmlBodyTemplate: values.htmlBodyTemplate,
+                                    subjectTemplate: values.subjectTemplate,
+                                },
+                            })),
                         });
-                        if (result?.errors && result.errors.length > 0) {
-                            console.error("Failed to insert SubmissionRequestEmailJob", result.errors);
+                        if (result?.error) {
+                            console.error("Failed to insert SubmissionRequestEmailJob", result.error);
                             throw new Error("Error submitting query");
                         }
                         actions.resetForm();

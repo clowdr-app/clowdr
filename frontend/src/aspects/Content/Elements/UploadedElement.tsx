@@ -32,8 +32,8 @@ export default function UploadedElement({
         <>
             {loading ? <Spinner /> : undefined}
             {error ? <Text>Could not load item.</Text> : undefined}
-            {data?.content_ElementByPersonAccessToken?.length ? (
-                data?.content_ElementByPersonAccessToken?.map((item) =>
+            {data?.content_Element?.length ? (
+                data?.content_Element?.map((item) =>
                     item ? (
                         <VStack spacing={4} key={item.id} alignItems="flex-start" w="100%">
                             <Tooltip

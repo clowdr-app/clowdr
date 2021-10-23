@@ -1,11 +1,11 @@
 import { gql } from "@urql/core";
 import React from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
-import { Permissions_Permission_Enum, useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
+import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import Room from "./Room";
 
@@ -67,21 +67,15 @@ gql`
 
 export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[
-                Permissions_Permission_Enum.ConferenceViewAttendees,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-        >
+        <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
             <RoomPageInner roomId={roomId} />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     const registrant = useCurrentRegistrant();
-    const roomDetailsResponse = useRoomPage_GetRoomDetailsQuery({
+    const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,
             registrantId: registrant.id,
@@ -94,9 +88,9 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
             {title}
-            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
+            <QueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
         </>
     );
 }

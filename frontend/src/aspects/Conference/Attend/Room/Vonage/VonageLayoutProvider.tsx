@@ -4,10 +4,7 @@ import { isVonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/
 import { gql } from "@urql/core";
 import type { PropsWithChildren } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    useInsertVonageSessionLayoutMutation,
-    useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery,
-} from "../../../../../generated/graphql";
+import { useInsertVonageSessionLayoutMutation } from "../../../../../generated/graphql";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -67,7 +64,7 @@ export function VonageLayoutProvider({
     vonageSessionId,
     children,
 }: PropsWithChildren<{ vonageSessionId: string }>): JSX.Element {
-    const result = useVonageLayoutProvider_GetLatestVonageSessionLayoutQuery({
+    const [result] = usetQuery({
         variables: {
             vonageSessionId,
         },

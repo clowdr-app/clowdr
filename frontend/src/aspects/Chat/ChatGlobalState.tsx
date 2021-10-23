@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import type { ApolloClient } from "@apollo/client";
-import { ApolloError, gql } from "@apollo/client";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { RenderProps } from "@chakra-ui/react";
 import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
+import type { Client } from "@urql/core";
+import { CombinedError, gql } from "@urql/core";
 import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -15,6 +15,8 @@ import type {
     InitialChatStateQuery,
     InitialChatStateQueryVariables,
     InitialChatState_ChatFragment,
+    InsertChatFlagMutation,
+    InsertChatFlagMutationVariables,
     Maybe,
     PinChatMutation,
     PinChatMutationVariables,
@@ -415,15 +417,14 @@ export class MessageState {
     }
 
     public async report(type: Chat_FlagType_Enum, reason: string): Promise<void> {
-        await this.globalState.apolloClient.mutate({
-            mutation: InsertChatFlagDocument,
-            variables: {
+        await this.globalState.client
+            .mutation<InsertChatFlagMutation, InsertChatFlagMutationVariables>(InsertChatFlagDocument, {
                 messageSId: this.sId,
                 registrantId: this.globalState.registrant.id,
                 type,
                 reason,
-            },
-        });
+            })
+            .toPromise();
     }
 
     public async delete(): Promise<void> {
@@ -549,13 +550,12 @@ export class ChatState {
             if (isPind) {
                 if (!this.EnableMandatoryPin) {
                     try {
-                        await this.globalState.apolloClient.mutate<UnpinChatMutation, UnpinChatMutationVariables>({
-                            mutation: UnpinChatDocument,
-                            variables: {
+                        await this.globalState.client
+                            .mutation<UnpinChatMutation, UnpinChatMutationVariables>(UnpinChatDocument, {
                                 registrantId: this.globalState.registrant.id,
                                 chatId: this.Id,
-                            },
-                        });
+                            })
+                            .toPromise();
                     } catch (e) {
                         this.isPinned = isPind;
                         throw e;
@@ -563,16 +563,12 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
-                        PinChatMutation,
-                        PinChatMutationVariables
-                    >({
-                        mutation: PinChatDocument,
-                        variables: {
+                    const result = await this.globalState.client
+                        .mutation<PinChatMutation, PinChatMutationVariables>(PinChatDocument, {
                             registrantId: this.globalState.registrant.id,
                             chatId: this.Id,
-                        },
-                    });
+                        })
+                        .toPromise();
                     this.isPinned = !!result.data?.insert_chat_Pin && !!result.data.insert_chat_Pin.returning;
                     if (this.latestReadUpToMessageSId) {
                         this.globalState.socket?.emit(
@@ -582,7 +578,7 @@ export class ChatState {
                         );
                     }
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isPinned = isPind;
                         throw e;
                     } else {
@@ -628,16 +624,15 @@ export class ChatState {
             if (isSubd) {
                 if (!this.EnableMandatorySubscribe) {
                     try {
-                        await this.globalState.apolloClient.mutate<
-                            UnsubscribeChatMutation,
-                            UnsubscribeChatMutationVariables
-                        >({
-                            mutation: UnsubscribeChatDocument,
-                            variables: {
-                                registrantId: this.globalState.registrant.id,
-                                chatId: this.Id,
-                            },
-                        });
+                        await this.globalState.client
+                            .mutation<UnsubscribeChatMutation, UnsubscribeChatMutationVariables>(
+                                UnsubscribeChatDocument,
+                                {
+                                    registrantId: this.globalState.registrant.id,
+                                    chatId: this.Id,
+                                }
+                            )
+                            .toPromise();
                     } catch (e) {
                         this.isSubscribed = isSubd;
                         throw e;
@@ -645,20 +640,16 @@ export class ChatState {
                 }
             } else {
                 try {
-                    const result = await this.globalState.apolloClient.mutate<
-                        SubscribeChatMutation,
-                        SubscribeChatMutationVariables
-                    >({
-                        mutation: SubscribeChatDocument,
-                        variables: {
+                    const result = await this.globalState.client
+                        .mutation<SubscribeChatMutation, SubscribeChatMutationVariables>(SubscribeChatDocument, {
                             registrantId: this.globalState.registrant.id,
                             chatId: this.Id,
-                        },
-                    });
+                        })
+                        .toPromise();
                     this.isSubscribed =
                         !!result.data?.insert_chat_Subscription && !!result.data.insert_chat_Subscription.returning;
                 } catch (e) {
-                    if (!(e instanceof ApolloError) || !e.message.includes("uniqueness violation")) {
+                    if (!(e instanceof CombinedError) || !e.message.includes("uniqueness violation")) {
                         this.isSubscribed = isSubd;
                         throw e;
                     } else {
@@ -723,19 +714,31 @@ export class ChatState {
 
         try {
             if (this.lastHistoricallyFetchedMessageId !== -1) {
-                const result = await this.globalState.apolloClient.query<
-                    SelectMessagesPageQuery,
-                    SelectMessagesPageQueryVariables
-                >({
-                    query: SelectMessagesPageDocument,
-                    variables: {
-                        chatId: this.Id,
-                        maxCount: pageSize,
-                        startAtIndex: this.lastHistoricallyFetchedMessageId,
-                    },
-                    fetchPolicy:
-                        this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1 ? "network-only" : undefined,
-                });
+                const result = await this.globalState.client
+                    .query<SelectMessagesPageQuery, SelectMessagesPageQueryVariables>(
+                        SelectMessagesPageDocument,
+                        {
+                            chatId: this.Id,
+                            maxCount: pageSize,
+                            startAtIndex: this.lastHistoricallyFetchedMessageId,
+                        },
+                        {
+                            requestPolicy:
+                                this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1
+                                    ? "network-only"
+                                    : undefined,
+                        }
+                    )
+                    .toPromise();
+
+                if (result.error) {
+                    throw result.error;
+                }
+
+                if (!result.data) {
+                    throw new Error("Data was undefined.");
+                }
+
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
                         const existing = this.messages.get(msg.sId);
@@ -1169,7 +1172,7 @@ export class GlobalChatState {
             shortName: string;
         },
         public readonly registrant: Registrant,
-        public readonly apolloClient: ApolloClient<unknown>
+        public readonly client: Client
     ) {}
 
     private chatStates: Map<string, ChatState> | undefined;
@@ -1339,17 +1342,26 @@ export class GlobalChatState {
                                 existing.setIsPinned(true);
                             } else {
                                 try {
-                                    const newlyPinSubChats = await this.apolloClient.query<
-                                        SelectInitialChatStatesQuery,
-                                        SelectInitialChatStatesQueryVariables
-                                    >({
-                                        query: SelectInitialChatStatesDocument,
-                                        variables: {
-                                            registrantId: this.registrant.id,
-                                            chatIds: [chatId],
-                                        },
-                                        fetchPolicy: "network-only",
-                                    });
+                                    const newlyPinSubChats = await this.client
+                                        .query<SelectInitialChatStatesQuery, SelectInitialChatStatesQueryVariables>(
+                                            SelectInitialChatStatesDocument,
+                                            {
+                                                registrantId: this.registrant.id,
+                                                chatIds: [chatId],
+                                            },
+                                            {
+                                                requestPolicy: "network-only",
+                                            }
+                                        )
+                                        .toPromise();
+
+                                    if (newlyPinSubChats.error) {
+                                        throw newlyPinSubChats.error;
+                                    }
+
+                                    if (!newlyPinSubChats.data) {
+                                        throw new Error("Data was undefined.");
+                                    }
 
                                     const release = await this.mutex.acquire();
                                     try {
@@ -1443,15 +1455,19 @@ export class GlobalChatState {
                         this.offSocketEvents(socket, true);
                     });
 
-                    const initialData = await this.apolloClient.query<
-                        InitialChatStateQuery,
-                        InitialChatStateQueryVariables
-                    >({
-                        query: InitialChatStateDocument,
-                        variables: {
+                    const initialData = await this.client
+                        .query<InitialChatStateQuery, InitialChatStateQueryVariables>(InitialChatStateDocument, {
                             registrantId: this.registrant.id,
-                        },
-                    });
+                        })
+                        .toPromise();
+
+                    if (initialData.error) {
+                        throw initialData.error;
+                    }
+
+                    if (!initialData.data) {
+                        throw new Error("Data was undefined.");
+                    }
 
                     console.info("Initial chat data", initialData);
 
@@ -1538,17 +1554,26 @@ export class GlobalChatState {
 
             try {
                 if (!this.chatStates?.has(chatId)) {
-                    const result = await this.apolloClient.query<
-                        SelectInitialChatStateQuery,
-                        SelectInitialChatStateQueryVariables
-                    >({
-                        query: SelectInitialChatStateDocument,
-                        variables: {
-                            chatId,
-                            registrantId: this.registrant.id,
-                        },
-                        fetchPolicy: "network-only",
-                    });
+                    const result = await this.client
+                        .query<SelectInitialChatStateQuery, SelectInitialChatStateQueryVariables>(
+                            SelectInitialChatStateDocument,
+                            {
+                                chatId,
+                                registrantId: this.registrant.id,
+                            },
+                            {
+                                requestPolicy: "network-only",
+                            }
+                        )
+                        .toPromise();
+
+                    if (result.error) {
+                        throw result.error;
+                    }
+
+                    if (!result.data) {
+                        throw new Error("Data was undefined.");
+                    }
 
                     if (result.data.chat_Chat_by_pk) {
                         if (!this.chatStates) {

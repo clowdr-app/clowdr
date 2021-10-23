@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -33,7 +32,6 @@ import type {
 import {
     Content_ItemType_Enum,
     ManageContent_ItemFragmentDoc,
-    Permissions_Permission_Enum,
     useManageContent_DeleteItemsMutation,
     useManageContent_InsertItemMutation,
     useManageContent_SelectAllExhibitionsQuery,
@@ -59,7 +57,7 @@ import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { BulkOperationMenu } from "./v2/BulkOperations/BulkOperationMenu";
 import ManageExhibitionsModal from "./v2/Exhibition/ManageExhibitionsModal";
@@ -306,7 +304,7 @@ export default function ManageContentV2(): JSX.Element {
         data: allTags,
         refetch: refetchAllTags,
     } = useManageContent_SelectAllTagsQuery({
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -318,7 +316,7 @@ export default function ManageContentV2(): JSX.Element {
         error: errorAllExhibitions,
         data: allExhibitions,
     } = useManageContent_SelectAllExhibitionsQuery({
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -331,7 +329,7 @@ export default function ManageContentV2(): JSX.Element {
         data: allItems,
         refetch: refetchAllItems,
     } = useManageContent_SelectAllItemsQuery({
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -818,8 +816,8 @@ export default function ManageContentV2(): JSX.Element {
         },
         [setSendSubmissionRequests_ItemIds, sendSubmissionRequests_OnOpen, setSendSubmissionRequests_PersonIds]
     );
-    const selectItemsForExport = useManageContent_SelectItemsForExportQuery({
-        skip: true,
+    const [selectItemsForExport] = useManageContent_SelectItemsForExportQuery({
+        pause: true,
     });
     const buttons: ExtraButton<ManageContent_ItemFragment>[] = useMemo(
         () => [
@@ -829,7 +827,7 @@ export default function ManageContentV2(): JSX.Element {
                         <LinkButton
                             key="import-button"
                             colorScheme="purple"
-                            to={`${conferenceUrl}/manage/import/content`}
+                            to={`${conferencePath}/manage/import/content`}
                         >
                             Import
                         </LinkButton>
@@ -1235,7 +1233,6 @@ export default function ManageContentV2(): JSX.Element {
             },
         ],
         [
-            conference.slug,
             selectItemsForExport,
             allTags?.collection_Tag,
             allExhibitions?.collection_Exhibition,
@@ -1276,10 +1273,7 @@ export default function ManageContentV2(): JSX.Element {
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1364,6 +1358,6 @@ export default function ManageContentV2(): JSX.Element {
                 elementIds={[]}
                 treatEmptyAsAny={true}
             />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

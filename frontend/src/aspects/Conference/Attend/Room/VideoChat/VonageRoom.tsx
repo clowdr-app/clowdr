@@ -136,8 +136,8 @@ export function VideoChatVonageRoom({
         setPublicVonageSessionId(room.publicVonageSessionId);
     }, [room.publicVonageSessionId]);
 
-    const roomVonageSessionIdResponse = useGetRoomVonageSessionIdQuery({
-        skip: true,
+    const [roomVonageSessionIdResponse] = useGetRoomVonageSessionIdQuery({
+        pause: true,
     });
     const attempts = React.useRef<number>(0);
     const lastAttempt = React.useRef<number>(Date.now());

@@ -95,7 +95,7 @@ export default function LiveProgramRoomsModal({
     }, [preloadEvents]);
 
     const [prefetchRoomTile] = useRoomTile_GetRoomQuery({
-        skip: true,
+        pause: true,
     });
     useEffect(() => {
         if (shouldPreload && Date.now() - lastPreloadTime.current > 30 * 60 * 1000) {

@@ -366,7 +366,7 @@ function MessageBody({
         //                 borderRadius={5}
         //                 fontFamily="monospace"
         //                 noOfLines={1}
-        //                 to={`${conferenceUrl}/room/${data.room.id}`}
+        //                 to={`${conferencePath}/room/${data.room.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,
@@ -384,7 +384,7 @@ function MessageBody({
         //                 m={0}
         //                 minH={0}
         //                 h="100%"
-        //                 to={`${conferenceUrl}/item/${data.item.id}`}
+        //                 to={`${conferencePath}/item/${data.item.id}`}
         //                 fontSize="inherit"
         //                 linkProps={{
         //                     p: 0,

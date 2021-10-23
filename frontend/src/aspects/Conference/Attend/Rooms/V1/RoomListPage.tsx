@@ -3,13 +3,14 @@ import { gql } from "@urql/core";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import type { RoomListRoomDetailsFragment } from "../../../../../generated/graphql";
-import { Permissions_Permission_Enum, useGetAllRoomsQuery } from "../../../../../generated/graphql";
+import { useGetAllRoomsQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import FAIcon from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";
@@ -123,19 +124,19 @@ gql`
 `;
 
 export default function RoomListPage(): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
-    const result = useGetAllRoomsQuery({
+    const [result] = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
             registrantId: registrant.id,
         },
         pollInterval: 2.5 * 60 * 1000,
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
     });
 
     const { isOpen, onClose, onOpen } = useDisclosure();
@@ -146,21 +147,14 @@ export default function RoomListPage(): JSX.Element {
             // Wait, because Vonage session creation is not instantaneous
             setTimeout(() => {
                 cb();
-                history.push(`${conferenceUrl}/room/${id}`);
+                history.push(`${conferencePath}/room/${id}`);
             }, 2000);
         },
-        [conference.slug, history]
+        [conferencePath, history]
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[
-                Permissions_Permission_Enum.ConferenceViewAttendees,
-                Permissions_Permission_Enum.ConferenceView,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-        >
+        <RequireRole attendeeRole componentIfDenied={<PageNotFound />}>
             {title}
             <CreateRoomModal isOpen={isOpen} onClose={onClose} onCreated={refetch} />
             <Heading as="h1" id="page-heading" display="none">
@@ -168,7 +162,7 @@ export default function RoomListPage(): JSX.Element {
             </Heading>
             <HStack flexWrap="wrap" justifyContent="center" mt={2} w="100%">
                 <LinkButton
-                    to={`${conferenceUrl}/shuffle`}
+                    to={`${conferencePath}/shuffle`}
                     colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"
@@ -177,7 +171,7 @@ export default function RoomListPage(): JSX.Element {
                     Networking
                 </LinkButton>
                 <LinkButton
-                    to={`${conferenceUrl}/registrants`}
+                    to={`${conferencePath}/registrants`}
                     colorScheme="PrimaryActionButton"
                     linkProps={{ flex: "40% 1 1", maxW: "600px" }}
                     w="100%"
@@ -186,26 +180,26 @@ export default function RoomListPage(): JSX.Element {
                     People
                 </LinkButton>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
+            <QueryWrapper getter={(data) => data.socialRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Social Rooms" }} />
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             <HStack flexWrap="wrap" justifyContent="center" mt={2}>
                 <Button onClick={onOpen} colorScheme="PrimaryActionButton">
                     Create new room
                 </Button>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.programRooms} queryResult={result}>
+            <QueryWrapper getter={(data) => data.programRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Program Rooms" }} />
                 )}
-            </ApolloQueryWrapper>
-            {/* <ApolloQueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
+            </QueryWrapper>
+            {/* <QueryWrapper getter={(data) => data.discussionRooms} queryResult={result}>
                 {(rooms: readonly RoomListRoomDetailsFragment[]) => (
                     <RoomList rooms={rooms} layout={{ type: "grid", title: "Discussion Rooms" }} limit={25} />
                 )}
-            </ApolloQueryWrapper> */}
-        </RequireAtLeastOnePermissionWrapper>
+            </QueryWrapper> */}
+        </RequireRole>
     );
 }

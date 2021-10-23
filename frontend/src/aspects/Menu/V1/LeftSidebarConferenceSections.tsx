@@ -18,6 +18,7 @@ import { useConference } from "../../Conference/useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import usePolling from "../../Generic/usePolling";
 import { useRestorableState } from "../../Generic/useRestorableState";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import QueryWrapper from "../../GQL/QueryWrapper";
 import { FAIcon } from "../../Icons/FAIcon";
 import useLazyRenderAndRetain from "./LazyRenderAndRetain";
@@ -25,8 +26,9 @@ import { MainMenuProgram } from "./MainMenu/MainMenuProgram";
 import { MainMenuSponsors } from "./MainMenu/MainMenuSponsors";
 import { ToggleNavButton } from "./ToggleNavButton";
 
-function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
+function RoomsPanel(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const registrant = useCurrentRegistrant();
 
     const [result, refetch] = useGetAllTodaysRoomsQuery({
@@ -67,7 +69,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
             </QueryWrapper>
             <LinkButton
                 size="xs"
-                to={`/conference/${confSlug}/rooms`}
+                to={`${conferencePath}/rooms`}
                 linkProps={{ width: "100%", mt: 2, px: 1 }}
                 width="100%"
                 colorScheme="PrimaryActionButton"
@@ -83,7 +85,7 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
                     // Wait, because Vonage session creation is not instantaneous
                     setTimeout(() => {
                         cb();
-                        history.push(`/conference/${confSlug}/room/${id}`);
+                        history.push(`${conferencePath}/room/${id}`);
                     }, 2000);
                 }}
             /> */}
@@ -93,11 +95,9 @@ function RoomsPanel({ confSlug }: { confSlug: string }): JSX.Element {
 
 function LazyRoomsPanel({
     isExpanded,
-    confSlug,
     setDefaultIndex,
 }: {
     isExpanded: boolean;
-    confSlug: string;
     setDefaultIndex: (index: number) => void;
 }): JSX.Element {
     useEffect(() => {
@@ -105,7 +105,7 @@ function LazyRoomsPanel({
             setDefaultIndex(0);
         }
     }, [isExpanded, setDefaultIndex]);
-    return useLazyRenderAndRetain(() => <RoomsPanel confSlug={confSlug} />, isExpanded);
+    return useLazyRenderAndRetain(() => <RoomsPanel />, isExpanded);
 }
 
 function SchedulePanel(): JSX.Element {
@@ -144,6 +144,7 @@ function LazySponsorsPanel({
 
 export function LeftSidebarConferenceSections_Inner(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const [defaultIndex, setDefaultIndex] = useRestorableState<number>(
         "LEFT_SIDEBAR_DEFAULT_PANEL_INDEX",
         -1,
@@ -156,26 +157,26 @@ export function LeftSidebarConferenceSections_Inner(): JSX.Element {
                 {/* <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
-                        to={`/conference/${confSlug}/schedule`}
+                        to={`${conferencePath}/schedule`}
                         width="100%"
                     >
                         <FAIcon icon="calendar" iconStyle="r" mr={3} />
                         Schedule
                     </LinkButton> */}
-                <LinkButton size="sm" to={`/conference/${confSlug}/exhibitions`} width="100%">
+                <LinkButton size="sm" to={`${conferencePath}/exhibitions`} width="100%">
                     <FAIcon icon="images" iconStyle="r" mr={3} />
                     Exhibitions
                 </LinkButton>
                 {/* <LinkButton
                         linkProps={{ flexBasis: "40%", flexGrow: 1, flexShrink: 0 }}
                         size="sm"
-                        to={`/conference/${confSlug}/registrants`}
+                        to={`${conferencePath}/registrants`}
                         width="100%"
                     >
                         <FAIcon icon="cat" iconStyle="s" mr={3} />
                         People
                     </LinkButton> */}
-                <LinkButton size="sm" to={`/conference/${confSlug}/profile/backstages`} width="100%" mx={2}>
+                <LinkButton size="sm" to={`${conferencePath}/profile/backstages`} width="100%" mx={2}>
                     <FAIcon icon="video" iconStyle="s" mr={3} />
                     My Backstages
                 </LinkButton>
@@ -184,7 +185,7 @@ export function LeftSidebarConferenceSections_Inner(): JSX.Element {
             <Flex w="100%" justifyContent="center">
                 <LinkButton
                     size="sm"
-                    to={`/conference/${confSlug}/rooms`}
+                    to={`${conferencePath}/rooms`}
                     linkProps={{ width: "60%", height: 10, mt: 2, mb: 4, px: 2 }}
                     width="100%"
                     height="100%"
@@ -211,11 +212,7 @@ export function LeftSidebarConferenceSections_Inner(): JSX.Element {
                                 <AccordionIcon />
                             </AccordionButton>
                             <AccordionPanel pb={4} px={"3px"}>
-                                <LazyRoomsPanel
-                                    isExpanded={isExpanded}
-                                    setDefaultIndex={setDefaultIndex}
-                                    confSlug={confSlug}
-                                />
+                                <LazyRoomsPanel isExpanded={isExpanded} setDefaultIndex={setDefaultIndex} />
                             </AccordionPanel>
                         </>
                     )}

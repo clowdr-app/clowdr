@@ -14,7 +14,7 @@ export default function RoomPresenceGrid({ roomId, noGapFill }: { roomId: string
     const presence = usePresenceState();
 
     useEffect(() => {
-        return presence.observePage(`${conferenceUrl}/room/${roomId}`, conference.slug, (ids) => {
+        return presence.observePage(`${conferencePath}/room/${roomId}`, conference.slug, (ids) => {
             setUserIds([...ids.values()].map((x) => ({ user: x })));
         });
     }, [roomId, conference.slug, presence]);

@@ -12,15 +12,14 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Link as ReactLink, Route, Switch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import AuthenticationButton from "../../../Auth/Buttons/AuthenticationButton";
 import SignupButton from "../../../Auth/Buttons/SignUpButton";
 import ColorModeButton from "../../../Chakra/ColorModeButton";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import RequireAtLeastOnePermissionWrapper from "../../../Conference/RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../Conference/RequireRole";
 import { useMaybeConference } from "../../../Conference/useConference";
-import { useConferenceCurrentUserActivePermissions } from "../../../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
 import { ToggleChatsButton } from "../ToggleChatsButton";
@@ -36,9 +35,9 @@ interface Props {
 export function MenuBar(): JSX.Element {
     const { user } = useMaybeCurrentUser();
     const conference = useMaybeConference();
+    const { conferencePath } = useAuthParameters();
     const registrant = useMaybeCurrentRegistrant();
-    const permissions = useConferenceCurrentUserActivePermissions();
-    const isPermittedAccess = registrant && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
+    const isPermittedAccess = !!registrant;
     const mainMenu = useMainMenu();
 
     const navButton = useMemo(
@@ -54,7 +53,7 @@ export function MenuBar(): JSX.Element {
     const homeButton = useMemo(
         () =>
             conference ? (
-                <LinkButton to={conferenceUrl} size="sm" aria-label="Conference home" variant="solid">
+                <LinkButton to={conferencePath ?? ""} size="sm" aria-label="Conference home" variant="solid">
                     {conference.shortName}
                 </LinkButton>
             ) : (
@@ -62,22 +61,22 @@ export function MenuBar(): JSX.Element {
                     <Image src="/android-chrome-192x192.png" objectFit="contain" aria-hidden />
                 </LinkButton>
             ),
-        [conference]
+        [conference, conferencePath]
     );
 
     const backToDashboardButton = useMemo(
         () =>
             conference ? (
                 <Switch>
-                    <Route path={`${conferenceUrl}/manage`} exact></Route>
-                    <Route path={`${conferenceUrl}/manage/`}>
-                        <LinkButton to={`${conferenceUrl}/manage`} size="sm">
+                    <Route path={`${conferencePath}/manage`} exact></Route>
+                    <Route path={`${conferencePath}/manage/`}>
+                        <LinkButton to={`${conferencePath}/manage`} size="sm">
                             Back to dashboard
                         </LinkButton>
                     </Route>
                 </Switch>
             ) : undefined,
-        [conference]
+        [conference, conferencePath]
     );
 
     const primaryMenuButtons = useMemo(
@@ -129,7 +128,7 @@ export function MenuBar(): JSX.Element {
                             </Route>
                             <Route path="/">
                                 {conference && registrant ? (
-                                    <MenuItem as={ReactLink} to={`${conferenceUrl}/profile`} display="block">
+                                    <MenuItem as={ReactLink} to={`${conferencePath}/profile`} display="block">
                                         {registrant && registrant.profile && registrant.profile.photoURL_50x50 ? (
                                             <Image
                                                 borderRadius={5}
@@ -162,19 +161,8 @@ export function MenuBar(): JSX.Element {
                                     </MenuItem>
                                 ) : undefined}
                                 {conference ? (
-                                    <RequireAtLeastOnePermissionWrapper
-                                        permissions={[
-                                            Permissions_Permission_Enum.ConferenceManageAttendees,
-                                            Permissions_Permission_Enum.ConferenceManageContent,
-                                            Permissions_Permission_Enum.ConferenceManageGroups,
-                                            Permissions_Permission_Enum.ConferenceManageName,
-                                            Permissions_Permission_Enum.ConferenceManageRoles,
-                                            Permissions_Permission_Enum.ConferenceManageSchedule,
-                                            Permissions_Permission_Enum.ConferenceManageShuffle,
-                                            Permissions_Permission_Enum.ConferenceModerateAttendees,
-                                        ]}
-                                    >
-                                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage`}>
+                                    <RequireRole organizerRole moderatorRole>
+                                        <MenuItem as={ReactLink} to={`${conferencePath}/manage`}>
                                             <FAIcon
                                                 display="inline"
                                                 verticalAlign="middle"
@@ -185,7 +173,7 @@ export function MenuBar(): JSX.Element {
                                             />
                                             Manage conference
                                         </MenuItem>
-                                    </RequireAtLeastOnePermissionWrapper>
+                                    </RequireRole>
                                 ) : undefined}
                                 {user ? (
                                     <MenuItem as={ReactLink} to="/user/pushNotifications">
@@ -226,7 +214,7 @@ export function MenuBar(): JSX.Element {
                 </Menu>
             </>
         ),
-        [registrant, conference, user]
+        [registrant, conference, user, conferencePath]
     );
 
     const borderColour = useColorModeValue("gray.200", "gray.600");

@@ -2,12 +2,12 @@ import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-u
 import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
 import { JSONataToIntermediaryRegistrant } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
@@ -37,6 +37,7 @@ const presetJSONata_CSV = `
 
 export default function ImportRegistrantsPage(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Import registrants to ${conference.shortName}`);
 
     const [data, setData] = useState<ParsedData<any[]>[]>();
@@ -65,10 +66,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
     const importPanel = useMemo(() => <ImportPanel data={intermediaryData} />, [intermediaryData]);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Box mb="auto" w="100%" minH="100vh">
                 <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
@@ -77,7 +75,7 @@ export default function ImportRegistrantsPage(): JSX.Element {
                 <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                     Import Registrants
                 </Heading>
-                <LinkButton to={`${conferenceUrl}/manage/registrants`} colorScheme="red">
+                <LinkButton to={`${conferencePath}/manage/registrants`} colorScheme="red">
                     Go to Manage Registrants
                 </LinkButton>
                 <Tabs defaultIndex={0} w="100%" mt={4}>
@@ -96,6 +94,6 @@ export default function ImportRegistrantsPage(): JSX.Element {
                     </TabPanels>
                 </Tabs>
             </Box>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

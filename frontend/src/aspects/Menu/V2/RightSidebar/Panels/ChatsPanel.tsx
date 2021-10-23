@@ -9,6 +9,7 @@ import { Chat } from "../../../../Chat/Chat";
 import { ChatState } from "../../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import { useConference } from "../../../../Conference/useConference";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 import { PeopleSearch } from "./PeopleSearch";
 
@@ -45,7 +46,6 @@ export function ChatListItem({ chat, onClick }: { chat: ChatState; onClick: () =
 }
 
 export function ChatsPanel({
-    confSlug,
     pageChatId,
     switchToPageChat,
     openChat,
@@ -53,7 +53,6 @@ export function ChatsPanel({
     setUnread,
     isVisible,
 }: {
-    confSlug: string;
     pageChatId: string | null;
     switchToPageChat: () => void;
     openChat: React.MutableRefObject<((chatId: string) => void) | null>;
@@ -62,6 +61,7 @@ export function ChatsPanel({
     isVisible: boolean;
 }): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const toast = useToast();
     const [pinnedChatsMap, setPinnedChatsMap] = useState<Map<string, ChatState> | null>(null);
     const unreadCountsRef = React.useRef<Map<string, string>>(new Map());
@@ -330,9 +330,7 @@ export function ChatsPanel({
                                             key="room-button"
                                             size="xs"
                                             colorScheme="PrimaryActionButton"
-                                            onClick={() =>
-                                                history.push(`/conference/${confSlug}/room/${currentChat.RoomId}`)
-                                            }
+                                            onClick={() => history.push(`${conferencePath}/room/${currentChat.RoomId}`)}
                                             aria-label="Go to video room for this chat"
                                         >
                                             <FAIcon iconStyle="s" icon="video" />
@@ -349,7 +347,7 @@ export function ChatsPanel({
             }
         }
         return undefined;
-    }, [confSlug, currentChat, currentChatId, history, pageChatId, setCurrentChatId]);
+    }, [currentChat, currentChatId, history, pageChatId, setCurrentChatId, conferencePath]);
 
     const chatLists = useMemo(
         () => (

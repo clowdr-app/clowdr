@@ -10,6 +10,7 @@ import type { ElementDataFragment, SwagBagFragment } from "../../../../generated
 import { Content_ElementType_Enum, useSelectSwagBagsQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
@@ -35,7 +36,7 @@ gql`
 
 export default function SwagBags(): JSX.Element {
     const conference = useConference();
-    const swagBagsResponse = useSelectSwagBagsQuery({
+    const [swagBagsResponse] = useSelectSwagBagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -78,7 +79,7 @@ function SwagBagsInner({ bags }: { bags: readonly SwagBagFragment[] }): JSX.Elem
 }
 
 function BagTile({ bag }: { bag: SwagBagFragment }) {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const primaryElement: ElementDataFragment | undefined = useMemo(() => {
         const sortOrder = [
@@ -288,7 +289,7 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
         }
     }, [logoElement]);
 
-    const itemUrl = `${conferenceUrl}/item/${bag.id}`;
+    const itemUrl = `${conferencePath}/item/${bag.id}`;
 
     return (
         <Flex

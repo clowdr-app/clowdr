@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Box, Button, CircularProgress, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
@@ -51,7 +51,7 @@ export default function SendLockoutButton({
     // const showCheckMarkFor = 2000;
     const showingCheckMark = false; // showCheckMarkParams.time + showCheckMarkFor > now;
 
-    const showCheckMarkProgress = false; // Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
+    // const showCheckMarkProgress = Math.abs(now - showCheckMarkParams.time) / showCheckMarkFor;
     const checkMarkOpacity = 0; // showCheckMarkProgress < 0.5 ? 0.3 + 1.4 * showCheckMarkProgress : 2 * (1 - showCheckMarkProgress);
 
     return (

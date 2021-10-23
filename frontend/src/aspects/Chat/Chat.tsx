@@ -1,13 +1,12 @@
 import type { BoxProps } from "@chakra-ui/react";
-import type { RefObject} from "react";
+import type { RefObject } from "react";
 import React, { useMemo } from "react";
-import { Permissions_Permission_Enum } from "../../generated/graphql";
-import RequireAtLeastOnePermissionWrapper from "../Conference/RequireAtLeastOnePermissionWrapper";
-import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
+import { Registrant_RegistrantRole_Enum } from "../../generated/graphql";
+import RequireRole from "../Conference/RequireRole";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../Generic/useRestorableState";
 import type { ChatState } from "./ChatGlobalState";
-import type { ChatConfiguration} from "./Configuration";
+import type { ChatConfiguration } from "./Configuration";
 import { ChatConfigurationProvider, ChatSpacing } from "./Configuration";
 import { ChatFrame } from "./Frame/ChatFrame";
 import type { EmoteMessageData } from "./Types/Messages";
@@ -29,7 +28,6 @@ export function Chat({
     ...rest
 }: ChatProps & BoxProps): JSX.Element {
     const currentRegistrant = useMaybeCurrentRegistrant();
-    const currentPermissions = useConferenceCurrentUserActivePermissions();
     const [spacing, setSpacing] = useRestorableState<ChatSpacing>(
         "clowdr-chatSpacing",
         ChatSpacing.COMFORTABLE,
@@ -44,12 +42,12 @@ export function Chat({
     );
     const fontSizeMin = 10;
     const fontSizeMax = 28;
-    // TODO: This is a temporary hack
+    const isMod =
+        currentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
+        currentRegistrant?.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
     const canCompose =
-        chat.Name !== "Announcements" ||
-        currentPermissions.has(Permissions_Permission_Enum.ConferenceManageAttendees) ||
-        currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees) ||
-        currentPermissions.has(Permissions_Permission_Enum.ConferenceManageSchedule);
+        // TODO: This is a temporary hack
+        chat.Name !== "Announcements" || isMod;
     const config = useMemo<ChatConfiguration>(
         () => ({
             customHeadingElements,
@@ -87,12 +85,12 @@ export function Chat({
                 canEditAnswer: false, // TODO
                 canEditPoll: false, // TODO
 
-                canDeleteMessage: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
-                canDeleteEmote: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
-                canDeleteReaction: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
-                canDeleteQuestion: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
-                canDeleteAnswer: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
-                canDeletePoll: currentPermissions.has(Permissions_Permission_Enum.ConferenceModerateAttendees),
+                canDeleteMessage: isMod,
+                canDeleteEmote: isMod,
+                canDeleteReaction: isMod,
+                canDeleteQuestion: isMod,
+                canDeleteAnswer: isMod,
+                canDeletePoll: isMod,
 
                 canFlag: true,
             },
@@ -173,17 +171,17 @@ export function Chat({
             setFontSize,
             setSpacing,
             spacing,
-            currentPermissions,
+            isMod,
         ]
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
+        <RequireRole attendeeRole>
             {/* <ReflectionInfoModalProvider> */}
             <ChatConfigurationProvider config={config}>
                 <ChatFrame {...rest} />
             </ChatConfigurationProvider>
             {/* </ReflectionInfoModalProvider> */}
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

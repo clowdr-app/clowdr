@@ -26,7 +26,7 @@ export function CreateRoomButton({
 } & ButtonProps): JSX.Element {
     const conference = useConference();
     const toast = useToast();
-    const [createVideoChatMutation] = useItem_CreateRoomMutation();
+    const [, createVideoChatMutation] = useItem_CreateRoomMutation();
     const [creatingVideoChat, setCreatingVideoChat] = useState<boolean>(false);
     const createVideoChat = useCallback(async () => {
         if (!groupId) {
@@ -36,10 +36,8 @@ export function CreateRoomButton({
         try {
             setCreatingVideoChat(true);
             const { data } = await createVideoChatMutation({
-                variables: {
-                    conferenceId: conference.id,
-                    itemId: groupId,
-                },
+                conferenceId: conference.id,
+                itemId: groupId,
             });
 
             if (!data?.createItemRoom || !data.createItemRoom.roomId) {

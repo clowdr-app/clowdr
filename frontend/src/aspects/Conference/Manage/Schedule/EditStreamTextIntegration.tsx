@@ -43,7 +43,7 @@ export default function EditStreamTextIntegration({ eventId }: { eventId: string
         variables: {
             eventId,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
     });
     return response.fetching && !response.data ? (
         <Spinner />
@@ -73,10 +73,8 @@ function EditStreamTextIntegrationInner({
 
             if (newValue !== initialValue) {
                 updateMutation({
-                    variables: {
-                        eventId,
-                        streamTextEventId: newValue?.trim() === "" ? null : newValue,
-                    },
+                    eventId,
+                    streamTextEventId: newValue?.trim() === "" ? null : newValue,
                 });
             }
         },

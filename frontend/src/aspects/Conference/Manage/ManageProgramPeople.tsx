@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
@@ -28,8 +27,6 @@ import type {
     ManageProgramPeople_RegistrantFragment,
 } from "../../../generated/graphql";
 import {
-    ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-    Permissions_Permission_Enum,
     useManageProgramPeople_DeleteProgramPersonsMutation,
     useManageProgramPeople_InsertProgramPersonMutation,
     useManageProgramPeople_SelectAllPeopleQuery,
@@ -49,11 +46,12 @@ import type {
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 
 // TODO: Handle duplicate email addresses (edit/create)
@@ -130,9 +128,10 @@ gql`
 
 export default function ManageProgramPeople(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
-    const { data: registrantsData } = useManageProgramPeople_SelectAllRegistrantsQuery({
+    const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -487,30 +486,26 @@ export default function ManageProgramPeople(): JSX.Element {
         [registrantOptions, registrants]
     );
 
-    const {
-        loading: loadingAllProgramPersons,
-        error: errorAllProgramPersons,
-        data: allProgramPersons,
-        refetch,
-    } = useManageProgramPeople_SelectAllPeopleQuery({
-        fetchPolicy: "network-only",
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
+    const [{ fetching: loadingAllProgramPersons, error: errorAllProgramPersons, data: allProgramPersons }, refetch] =
+        useManageProgramPeople_SelectAllPeopleQuery({
+            requestPolicy: "network-only",
+            variables: {
+                conferenceId: conference.id,
+            },
+        });
     useQueryErrorToast(errorAllProgramPersons, false);
     const data = useMemo(
         () => [...(allProgramPersons?.collection_ProgramPerson ?? [])],
         [allProgramPersons?.collection_ProgramPerson]
     );
 
-    const [insertProgramPerson, insertProgramPersonResponse] = useManageProgramPeople_InsertProgramPersonMutation();
-    const [deleteProgramPersons, deleteProgramPersonsResponse] = useManageProgramPeople_DeleteProgramPersonsMutation();
-    const [updateProgramPerson, updateProgramPersonResponse] = useManageProgramPeople_UpdateProgramPersonMutation();
+    const [insertProgramPersonResponse, insertProgramPerson] = useManageProgramPeople_InsertProgramPersonMutation();
+    const [deleteProgramPersonsResponse, deleteProgramPersons] = useManageProgramPeople_DeleteProgramPersonsMutation();
+    const [updateProgramPersonResponse, updateProgramPerson] = useManageProgramPeople_UpdateProgramPersonMutation();
 
     const insert: Insert<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: insertProgramPersonResponse.loading,
+            ongoing: insertProgramPersonResponse.fetching,
             generateDefaults: () => {
                 const programpersonId = uuidv4();
                 return {
@@ -522,52 +517,28 @@ export default function ManageProgramPeople(): JSX.Element {
                 d.name?.length ? (d as ManageProgramPeople_ProgramPersonWithAccessTokenFragment) : undefined,
             start: (record) => {
                 insertProgramPerson({
-                    variables: {
-                        person: {
-                            id: record.id,
-                            conferenceId: conference.id,
-                            affiliation: record.affiliation,
-                            registrantId: record.registrantId,
-                            email: record.email,
-                            name: record.name,
-                        },
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.insert_collection_ProgramPerson_one) {
-                            const data = _data.insert_collection_ProgramPerson_one;
-                            cache.writeFragment({
-                                data,
-                                fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-                                fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                            });
-                        }
+                    person: {
+                        id: record.id,
+                        conferenceId: conference.id,
+                        affiliation: record.affiliation,
+                        registrantId: record.registrantId,
+                        email: record.email,
+                        name: record.name,
                     },
                 });
             },
         }),
-        [conference.id, insertProgramPerson, insertProgramPersonResponse.loading]
+        [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching]
     );
 
     const startUpdate = useCallback(
         async (record: ManageProgramPeople_ProgramPersonWithAccessTokenFragment) => {
             return updateProgramPerson({
-                variables: {
-                    id: record.id,
-                    name: record.name as string,
-                    affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
-                    registrantId: record.registrantId ?? null,
-                    email: record.email !== "" ? record.email ?? null : null,
-                },
-                update: (cache, { data: _data }) => {
-                    if (_data?.update_collection_ProgramPerson?.returning.length) {
-                        const data = _data.update_collection_ProgramPerson.returning[0];
-                        cache.writeFragment({
-                            data,
-                            fragment: ManageProgramPeople_ProgramPersonWithAccessTokenFragmentDoc,
-                            fragmentName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                        });
-                    }
-                },
+                id: record.id,
+                name: record.name as string,
+                affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
+                registrantId: record.registrantId ?? null,
+                email: record.email !== "" ? record.email ?? null : null,
             });
         },
         [updateProgramPerson]
@@ -575,44 +546,22 @@ export default function ManageProgramPeople(): JSX.Element {
 
     const update: Update<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: updateProgramPersonResponse.loading,
+            ongoing: updateProgramPersonResponse.fetching,
             start: startUpdate,
         }),
-        [updateProgramPersonResponse.loading, startUpdate]
+        [updateProgramPersonResponse.fetching, startUpdate]
     );
 
     const deleteP: Delete<ManageProgramPeople_ProgramPersonWithAccessTokenFragment> = useMemo(
         () => ({
-            ongoing: deleteProgramPersonsResponse.loading,
+            ongoing: deleteProgramPersonsResponse.fetching,
             start: (keys) => {
                 deleteProgramPersons({
-                    variables: {
-                        ids: keys,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_ProgramPerson) {
-                            const data = _data.delete_collection_ProgramPerson;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            cache.modify({
-                                fields: {
-                                    collection_ProgramPerson(existingRefs: Reference[] = [], { readField }) {
-                                        deletedIds.forEach((x) => {
-                                            cache.evict({
-                                                id: x.id,
-                                                fieldName: "ManageProgramPeople_ProgramPersonWithAccessToken",
-                                                broadcast: true,
-                                            });
-                                        });
-                                        return existingRefs.filter((ref) => !deletedIds.includes(readField("id", ref)));
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    ids: keys,
                 });
             },
         }),
-        [deleteProgramPersons, deleteProgramPersonsResponse.loading]
+        [deleteProgramPersons, deleteProgramPersonsResponse.fetching]
     );
 
     const toast = useToast();
@@ -688,7 +637,7 @@ export default function ManageProgramPeople(): JSX.Element {
             {
                 render: function ImportButton(_selectedData: any) {
                     return (
-                        <LinkButton colorScheme="purple" to={`${conferenceUrl}/manage/import/content`}>
+                        <LinkButton colorScheme="purple" to={`${conferencePath}/manage/import/content`}>
                             Import
                         </LinkButton>
                     );
@@ -847,20 +796,13 @@ export default function ManageProgramPeople(): JSX.Element {
                 },
             },
         ],
-        [autoLink, conference.slug, data, green, greenAlt]
+        [autoLink, conferencePath, data, green, greenAlt]
     );
 
     const pageSizes = useMemo(() => [10, 20, 35, 50], []);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceManageAttendees,
-                Permissions_Permission_Enum.ConferenceManageRoles,
-                Permissions_Permission_Enum.ConferenceManageGroups,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -887,6 +829,6 @@ export default function ManageProgramPeople(): JSX.Element {
                 buttons={buttons}
                 forceReload={forceReloadRef}
             />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

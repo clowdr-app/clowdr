@@ -29,11 +29,11 @@ import {
 import Papa from "papaparse";
 import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
-import { Permissions_Permission_Enum, useConferenceStatsQuery } from "../../../../generated/graphql";
+import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -549,10 +549,7 @@ export default function AnalyticsDashboard(): JSX.Element {
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="4xl">
                 Manage {conference.shortName}
@@ -798,6 +795,6 @@ export default function AnalyticsDashboard(): JSX.Element {
                     </MenuList>
                 </Menu>
             </HStack>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

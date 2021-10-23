@@ -1,15 +1,11 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type {
-    IntermediaryScheduleData} from "@clowdr-app/shared-types/build/import/intermediary";
-import {
-    JSONataToIntermediarySchedule,
-} from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryScheduleData } from "@clowdr-app/shared-types/build/import/intermediary";
+import { JSONataToIntermediarySchedule } from "@clowdr-app/shared-types/build/import/intermediary";
 import React, { useMemo, useState } from "react";
-import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import ConfigPanel from "../Shared/ConfigPanel";
 import DataPanel from "../Shared/DataPanel";
@@ -114,10 +110,7 @@ export default function ImportSchedulePage(): JSX.Element {
     const mergePanel = useMemo(() => <MergePanel data={intermediaryData} />, [intermediaryData]);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Box mb="auto" w="100%" minH="100vh">
                 <Heading as="h1" fontSize="2.3rem" lineHeight="3rem">
@@ -142,6 +135,6 @@ export default function ImportSchedulePage(): JSX.Element {
                     </TabPanels>
                 </Tabs>
             </Box>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

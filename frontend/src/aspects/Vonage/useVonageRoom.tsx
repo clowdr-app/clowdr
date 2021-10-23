@@ -469,7 +469,7 @@ export function VonageRoomStateProvider({
     }, [cameraTrack, microphoneTrack]);
 
     const { id: conferenceId } = useConference();
-    const maxSimultaneousScreenSharesResponse = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
+    const [maxSimultaneousScreenSharesResponse] = useVonageRoomStateProvider_GetVonageMaxSimultaneousScreenSharesQuery({
         variables: {
             conferenceId,
         },

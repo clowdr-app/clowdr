@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
 
 export interface AuthParameters {
-    conferenceUrl: string | null;
+    conferencePath: string | null;
     conferenceSlug: string | null;
     conferenceId: string | null;
     subconferenceId: string | null;
-    setConferenceUrl: (value: string | null) => void;
+    setConferencePath: (value: string | null) => void;
     setConferenceSlug: (value: string | null) => void;
     setConferenceId: (value: string | null) => void;
     setSubconferenceId: (value: string | null) => void;
@@ -30,7 +30,7 @@ export function useAuthParameters(): AuthParameters {
 */
 
 export function AuthParametersProvider({ children }: React.PropsWithChildren<Record<string, any>>): JSX.Element {
-    const [conferenceUrl, setConferenceUrl] = useState<string | null>(null);
+    const [conferencePath, setConferencePath] = useState<string | null>(null);
     const [conferenceSlug, setConferenceSlug] = useState<string | null>(null);
     // TODO: Use conference slug to detect or fetch corresponding conference id
 
@@ -38,8 +38,8 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
     const [subconferenceId, setSubconferenceId] = useState<string | null>(null);
     const ctx = useMemo(
         () => ({
-            conferenceUrl,
-            setConferenceUrl,
+            conferencePath,
+            setConferencePath,
             conferenceSlug,
             setConferenceSlug,
             conferenceId,
@@ -47,7 +47,7 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
             subconferenceId,
             setSubconferenceId,
         }),
-        [conferenceUrl, conferenceSlug, conferenceId, subconferenceId]
+        [conferencePath, conferenceSlug, conferenceId, subconferenceId]
     );
 
     return <AuthParameters.Provider value={ctx}>{children}</AuthParameters.Provider>;

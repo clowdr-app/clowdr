@@ -73,7 +73,7 @@ export function LiveIndicator({
     const secondsUntilOffAir = (endTime - now) / 1000;
     const shouldModalBeOpen = isOpen && secondsUntilLive > 10;
 
-    const { data: latestImmediateSwitchData } = useLiveIndicator_GetLatestQuery({
+    const [{ data: latestImmediateSwitchData }] = useLiveIndicator_GetLatestQuery({
         variables: {
             eventId: event.id,
         },
@@ -99,7 +99,7 @@ export function LiveIndicator({
         return transformed;
     }, [latestImmediateSwitchData]);
 
-    const { data: _currentElementData } = useLiveIndicator_GetElementQuery({
+    const [{ data: _currentElementData }] = useLiveIndicator_GetElementQuery({
         variables: {
             elementId: latestSwitchData?.data.kind === "video" ? latestSwitchData.data.elementId : null,
         },

@@ -1,4 +1,3 @@
-import type { ApolloError } from "@apollo/client";
 import { gql } from "@urql/core";
 import assert from "assert";
 import { useEffect, useState } from "react";
@@ -409,7 +408,7 @@ export type AllContentStateT =
 export function useSaveContentDiff():
     | {
           loadingContent: true;
-          errorContent: ApolloError | undefined;
+          errorContent: CombinedError | undefined;
           originalItems: undefined;
           originalPeople: undefined;
           originalTags: undefined;
@@ -418,7 +417,7 @@ export function useSaveContentDiff():
       }
     | {
           loadingContent: false;
-          errorContent: ApolloError;
+          errorContent: CombinedError;
           originalItems: undefined;
           originalPeople: undefined;
           originalTags: undefined;
@@ -489,7 +488,7 @@ export function useSaveContentDiff():
         error: errorContent,
         data: allContent,
     } = useSelectAllContentQuery({
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },

@@ -16,13 +16,20 @@ import { formatRelative } from "date-fns";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
-import type { MenuSchedule_EventFragment } from "../../../../generated/graphql";
-import { useMenuScheduleQuery, useMenuSchedule_SearchEventsLazyQuery } from "../../../../generated/graphql";
+import { useClient } from "urql";
+import type { MenuSchedule_EventFragment ,
+    MenuSchedule_SearchEventsQuery,
+    MenuSchedule_SearchEventsQueryVariables} from "../../../../generated/graphql";
+import {
+    MenuSchedule_SearchEventsDocument,
+    useMenuScheduleQuery,
+} from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useConference } from "../../../Conference/useConference";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";
 import usePolling from "../../../Generic/usePolling";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../Icons/FAIcon";
 
 gql`
@@ -119,12 +126,13 @@ function makeTimes(): Times {
 
 export function MainMenuProgram(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const [times, setTimes] = useState<Times>(makeTimes());
     const updateTimes = useCallback(() => setTimes(makeTimes()), [setTimes]);
     usePolling(updateTimes, 180000, true);
 
-    const scheduleResult = useMenuScheduleQuery({
+    const [scheduleResult] = useMenuScheduleQuery({
         variables: {
             conferenceId: conference.id,
             now: times.now,
@@ -140,19 +148,28 @@ export function MainMenuProgram(): JSX.Element {
 
     const [search, debouncedSearch, setSearch] = useDebouncedState<string>("", 1000);
 
-    const [performSearch, searchResult] = useMenuSchedule_SearchEventsLazyQuery({
-        variables: {
-            conferenceId: conference.id,
-            search: `%${debouncedSearch}%`,
-        },
-    });
+    const [searchResult, setSearchResult] = useState<MenuSchedule_SearchEventsQuery | null>(null);
 
+    const client = useClient();
     useEffect(() => {
-        if (debouncedSearch.length) performSearch();
-    }, [debouncedSearch, performSearch]);
+        if (debouncedSearch.length) {
+            (async () => {
+                const result = await client
+                    .query<MenuSchedule_SearchEventsQuery, MenuSchedule_SearchEventsQueryVariables>(
+                        MenuSchedule_SearchEventsDocument,
+                        {
+                            conferenceId: conference.id,
+                            search: `%${debouncedSearch}%`,
+                        }
+                    )
+                    .toPromise();
+                setSearchResult(result.data ?? null);
+            })();
+        }
+    }, [debouncedSearch, client, conference.id]);
 
     const resultCountStr = `Showing ${
-        debouncedSearch.length > 0 ? searchResult.data?.schedule_Event.length ?? 0 : "upcoming"
+        debouncedSearch.length > 0 ? searchResult?.schedule_Event.length ?? 0 : "upcoming"
     } events`;
     const [ariaSearchResultStr, setAriaSearchResultStr] = useState<string>(resultCountStr);
     useEffect(() => {
@@ -185,27 +202,21 @@ export function MainMenuProgram(): JSX.Element {
                 <FormHelperText>Search by title, author, affiliation, etc.</FormHelperText>
             </FormControl>
             {debouncedSearch.length > 0 ? (
-                <>
-                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={searchResult}>
-                        {(events: readonly MenuSchedule_EventFragment[]) =>
-                            events.length > 0 ? (
-                                <MainMenuProgramInner
-                                    linkToRoom={false}
-                                    events={events}
-                                    fromMillis={0}
-                                    toMillis={Number.MAX_SAFE_INTEGER}
-                                    title="Search results"
-                                    showTime={true}
-                                />
-                            ) : (
-                                <Text mb={2}>No results</Text>
-                            )
-                        }
-                    </ApolloQueryWrapper>
-                </>
+                searchResult?.schedule_Event.length ? (
+                    <MainMenuProgramInner
+                        linkToRoom={false}
+                        events={searchResult.schedule_Event}
+                        fromMillis={0}
+                        toMillis={Number.MAX_SAFE_INTEGER}
+                        title="Search results"
+                        showTime={true}
+                    />
+                ) : (
+                    <Text mb={2}>No results</Text>
+                )
             ) : (
                 <>
-                    <ApolloQueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
+                    <QueryWrapper getter={(data) => data.schedule_Event} queryResult={scheduleResult}>
                         {(events: readonly MenuSchedule_EventFragment[]) => (
                             <>
                                 <MainMenuProgramInner
@@ -231,13 +242,13 @@ export function MainMenuProgram(): JSX.Element {
                                 />
                             </>
                         )}
-                    </ApolloQueryWrapper>
+                    </QueryWrapper>
                 </>
             )}
             <LinkButton
                 linkProps={{ w: "100%", mt: 2 }}
                 size="sm"
-                to={`${conferenceUrl}/schedule`}
+                to={`${conferencePath}/schedule`}
                 width="100%"
                 colorScheme="pink"
             >
@@ -271,6 +282,7 @@ export function MainMenuProgramInner({
             }),
         [events, fromMillis, toMillis]
     );
+    const { conferencePath } = useAuthParameters();
 
     return filteredEvents.length > 0 ? (
         <Box width="100%">
@@ -295,10 +307,10 @@ export function MainMenuProgramInner({
                             <LinkButton
                                 to={
                                     linkToRoom
-                                        ? `${conferenceUrl}/room/${event.room.id}`
+                                        ? `${conferencePath}/room/${event.room.id}`
                                         : event.item
-                                        ? `${conferenceUrl}/item/${event.item.id}`
-                                        : `${conferenceUrl}/room/${event.room.id}`
+                                        ? `${conferencePath}/item/${event.item.id}`
+                                        : `${conferencePath}/room/${event.room.id}`
                                 }
                                 width="100%"
                                 linkProps={{ width: "100%" }}

@@ -3,17 +3,18 @@ import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
 import { Link as ReactLink, useHistory, useLocation } from "react-router-dom";
-import { Permissions_Permission_Enum, useCountSwagBagsQuery } from "../../../generated/graphql";
+import { useCountSwagBagsQuery } from "../../../generated/graphql";
 import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
 import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
 import { ProgramModalTab, useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredEventsModal";
-import RequireAtLeastOnePermissionWrapper from "../../Conference/RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../Conference/RequireRole";
 import { useConference } from "../../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import { useRestorableState } from "../../Generic/useRestorableState";
+import { useAuthParameters } from "../../GQL/AuthParameters";
 import FAIcon from "../../Icons/FAIcon";
 import { useLiveEvents } from "../../LiveEvents/LiveEvents";
 import useRoomParticipants from "../../Room/useRoomParticipants";
@@ -33,17 +34,17 @@ gql`
 
 export default function LeftMenu(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const maybeUser = useMaybeCurrentUser()?.user;
     const maybeRegistrant = useMaybeCurrentRegistrant();
     const history = useHistory();
     const colorScheme = "LeftMenuButton";
 
-    const swagBagsResponse = useCountSwagBagsQuery({
+    const [swagBagsResponse] = useCountSwagBagsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-first",
-        skip: !maybeUser,
+        pause: !maybeUser,
     });
 
     const { liveEventsByRoom } = useLiveEvents();
@@ -129,7 +130,9 @@ export default function LeftMenu(): JSX.Element {
                     colorScheme={colorScheme}
                     side="left"
                     onClick={() => {
-                        history.push(conferenceUrl);
+                        if (conferencePath) {
+                            history.push(conferencePath);
+                        }
                     }}
                     mb={1}
                     showLabel={isExpanded}
@@ -229,16 +232,16 @@ export default function LeftMenu(): JSX.Element {
                                 <FAIcon iconStyle="s" icon="star" mr={2} aria-hidden={true} w="1.2em" />
                                 My events
                             </MenuItem>
-                            <MenuItem as={ReactLink} to={`${conferenceUrl}/profile`}>
+                            <MenuItem as={ReactLink} to={`${conferencePath}/profile`}>
                                 <FAIcon iconStyle="s" icon="user" mr={2} aria-hidden={true} w="1.2em" />
                                 My profile
                             </MenuItem>
-                            <MenuItem as={ReactLink} to={`${conferenceUrl}/recordings`}>
+                            <MenuItem as={ReactLink} to={`${conferencePath}/recordings`}>
                                 <FAIcon iconStyle="s" icon="play" mr={2} aria-hidden={true} w="1.2em" />
                                 My recordings
                             </MenuItem>
                             {swagBagsResponse.data?.content_Item_aggregate.aggregate?.count ? (
-                                <MenuItem as={ReactLink} to={`${conferenceUrl}/swag`}>
+                                <MenuItem as={ReactLink} to={`${conferencePath}/swag`}>
                                     <FAIcon iconStyle="s" icon="gift" mr={2} aria-hidden={true} w="1.2em" />
                                     My conference swag
                                 </MenuItem>
@@ -254,18 +257,7 @@ export default function LeftMenu(): JSX.Element {
                         </MoreOptionsMenuButton>
                     </>
                 ) : undefined}
-                <RequireAtLeastOnePermissionWrapper
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageAttendees,
-                        Permissions_Permission_Enum.ConferenceManageContent,
-                        Permissions_Permission_Enum.ConferenceManageGroups,
-                        Permissions_Permission_Enum.ConferenceManageName,
-                        Permissions_Permission_Enum.ConferenceManageRoles,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                        Permissions_Permission_Enum.ConferenceManageShuffle,
-                        Permissions_Permission_Enum.ConferenceModerateAttendees,
-                    ]}
-                >
+                <RequireRole organizerRole moderatorRole>
                     <MoreOptionsMenuButton
                         label="Manage"
                         iconStyle="s"
@@ -276,37 +268,37 @@ export default function LeftMenu(): JSX.Element {
                         mb={1}
                         showLabel={isExpanded}
                     >
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/checklist`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/checklist`}>
                             <FAIcon iconStyle="s" icon="check" mr={2} aria-hidden={true} w="1.2em" />
                             Checklist
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage`}>
                             <FAIcon iconStyle="s" icon="cog" mr={2} aria-hidden={true} w="1.2em" />
                             Dashboard
                         </MenuItem>
                         <MenuDivider />
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/content`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/content`}>
                             <FAIcon iconStyle="s" icon="align-left" mr={2} aria-hidden={true} w="1.2em" />
                             Content
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/schedule`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/schedule`}>
                             <FAIcon iconStyle="s" icon="calendar" mr={2} aria-hidden={true} w="1.2em" />
                             Schedule
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/rooms`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/rooms`}>
                             <FAIcon iconStyle="s" icon="coffee" mr={2} aria-hidden={true} w="1.2em" />
                             Rooms
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/people`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/people`}>
                             <FAIcon iconStyle="s" icon="people-arrows" mr={2} aria-hidden={true} w="1.2em" />
                             Program People
                         </MenuItem>
-                        <MenuItem as={ReactLink} to={`${conferenceUrl}/manage/registrants`}>
+                        <MenuItem as={ReactLink} to={`${conferencePath}/manage/registrants`}>
                             <FAIcon iconStyle="s" icon="users" mr={2} aria-hidden={true} w="1.2em" />
                             Registrants
                         </MenuItem>
                     </MoreOptionsMenuButton>
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
                 {maybeUser ? (
                     <MoreOptionsMenuButton
                         label="Conferences"

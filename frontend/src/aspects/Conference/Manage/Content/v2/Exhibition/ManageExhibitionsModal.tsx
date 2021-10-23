@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import {
     Box,
     Button,
@@ -36,7 +35,6 @@ import type {
     ManageContent_ExhibitionFragment,
 } from "../../../../../../generated/graphql";
 import {
-    ManageContent_ExhibitionFragmentDoc,
     useManageContent_DeleteExhibitionsMutation,
     useManageContent_InsertExhibitionMutation,
     useManageContent_SelectAllExhibitionsQuery,
@@ -107,7 +105,7 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useManageContent_SelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -370,7 +368,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
         [data, onSecondaryPanelClose, onSecondaryPanelOpen]
     );
 
-    const [insertExhibition, insertExhibitionResponse] = useManageContent_InsertExhibitionMutation();
+    const [insertExhibitionResponse, insertExhibition] = useManageContent_InsertExhibitionMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_ExhibitionFragment>;
@@ -382,7 +380,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertExhibitionResponse.loading,
+            ongoing: insertExhibitionResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -395,43 +393,21 @@ function ManageExhibitionsModalBody(): JSX.Element {
             makeWhole: (d) => d as ManageContent_ExhibitionFragment,
             start: (record) => {
                 insertExhibition({
-                    variables: {
-                        exhibition: {
-                            conferenceId: record.conferenceId,
-                            id: record.id,
-                            name: record.name,
-                            colour: record.colour,
-                            priority: record.priority,
-                            isHidden: record.isHidden,
-                        },
-                    },
-                    update: (cache, response) => {
-                        if (response.data?.insert_collection_Exhibition_one) {
-                            const data = response.data?.insert_collection_Exhibition_one;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
+                    exhibition: {
+                        conferenceId: record.conferenceId,
+                        id: record.id,
+                        name: record.name,
+                        colour: record.colour,
+                        priority: record.priority,
+                        isHidden: record.isHidden,
                     },
                 });
             },
         }),
-        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.loading]
+        [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching]
     );
 
-    const [updateExhibition, updateExhibitionResponse] = useManageContent_UpdateExhibitionMutation();
+    const [updateExhibitionResponse, updateExhibition] = useManageContent_UpdateExhibitionMutation();
     const update:
         | {
               start: (record: ManageContent_ExhibitionFragment) => void;
@@ -439,7 +415,7 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateExhibitionResponse.loading,
+            ongoing: updateExhibitionResponse.fetching,
             start: (record) => {
                 const exhibitionUpdateInput: Collection_Exhibition_Set_Input = {
                     name: record.name,
@@ -448,40 +424,15 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     isHidden: record.isHidden,
                 };
                 updateExhibition({
-                    variables: {
-                        id: record.id,
-                        update: exhibitionUpdateInput,
-                    },
-                    optimisticResponse: {
-                        update_collection_Exhibition_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_collection_Exhibition_by_pk) {
-                            const data = _data.update_collection_Exhibition_by_pk;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    id: record.id,
+                    update: exhibitionUpdateInput,
                 });
             },
         }),
-        [updateExhibition, updateExhibitionResponse.loading]
+        [updateExhibition, updateExhibitionResponse.fetching]
     );
 
-    const [deleteExhibitions, deleteExhibitionsResponse] = useManageContent_DeleteExhibitionsMutation();
+    const [deleteExhibitionsResponse, deleteExhibitions] = useManageContent_DeleteExhibitionsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -489,62 +440,23 @@ function ManageExhibitionsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteExhibitionsResponse.loading,
+            ongoing: deleteExhibitionsResponse.fetching,
             start: (keys) => {
                 deleteExhibitions({
-                    variables: {
-                        ids: keys,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_Exhibition) {
-                            const data = _data.delete_collection_Exhibition;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            deletedIds.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "ManageContent_Exhibition",
-                                    broadcast: true,
-                                });
-                            });
-                        }
-                    },
+                    ids: keys,
                 });
             },
         }),
-        [deleteExhibitions, deleteExhibitionsResponse.loading]
+        [deleteExhibitions, deleteExhibitionsResponse.fetching]
     );
 
     const updateDescriptiveItemId = useCallback(
         (itemId: string | null) => {
             if (editingId) {
                 updateExhibition({
-                    variables: {
-                        id: editingId,
-                        update: {
-                            descriptiveItemId: itemId,
-                        },
-                    },
-                    update: (cache, { data: _data }) => {
-                        setEditingDescriptiveItemId(itemId);
-
-                        if (_data?.update_collection_Exhibition_by_pk) {
-                            const data = _data.update_collection_Exhibition_by_pk;
-                            cache.modify({
-                                fields: {
-                                    collection_Exhibition(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_ExhibitionFragmentDoc,
-                                            fragmentName: "ManageContent_Exhibition",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
+                    id: editingId,
+                    update: {
+                        descriptiveItemId: itemId,
                     },
                 });
             }
@@ -554,13 +466,13 @@ function ManageExhibitionsModalBody(): JSX.Element {
 
     return (
         <>
-            {exhibitionsResponse.loading && !exhibitionsResponse.data ? (
+            {exhibitionsResponse.fetching && !exhibitionsResponse.data ? (
                 <Spinner label="Loading exhibitions" />
             ) : undefined}
             <CRUDTable<ManageContent_ExhibitionFragment>
                 columns={columns}
                 row={row}
-                data={!exhibitionsResponse.loading && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
+                data={!exhibitionsResponse.fetching && (exhibitionsResponse.data?.collection_Exhibition ? data : null)}
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
                     insertExhibitionResponse.error || updateExhibitionResponse.error || deleteExhibitionsResponse.error

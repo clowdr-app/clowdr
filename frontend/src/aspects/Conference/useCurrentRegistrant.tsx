@@ -1,7 +1,7 @@
 import assert from "assert";
-import type { ReactNode, ReactNodeArray} from "react";
+import type { ReactNode, ReactNodeArray } from "react";
 import React, { useMemo } from "react";
-import type { Maybe } from "../../generated/graphql";
+import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
 import type { BadgeData } from "../Badges/ProfileBadge";
 import { useConference } from "./useConference";
 
@@ -28,6 +28,7 @@ export type Registrant = {
     readonly userId?: Maybe<string>;
     readonly displayName: string;
     readonly profile: Profile;
+    readonly conferenceRole: Registrant_RegistrantRole_Enum;
 };
 
 export type RegistrantContextT = Registrant;

@@ -8,9 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { ExhibitionDescriptor, ItemDescriptor } from "../../Content/Types";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import type {
-    ChangeSummary,
-    IdMap} from "../Merge";
+import type { ChangeSummary, IdMap } from "../Merge";
 import {
     convertOriginatingData,
     findExistingOriginatingData,
@@ -80,23 +78,12 @@ function convertEvent(context: Context, item: IntermediaryEventDescriptor | Even
         startTime: typeof item.startTime === "number" ? new Date(item.startTime).toISOString() : item.startTime,
         durationSeconds: item.durationSeconds,
         people: [],
-        tagIds: new Set(),
         exhibitionId: "exhibitionId" in item && item.exhibitionId ? item.exhibitionId : undefined,
     } as EventDescriptor;
 
     const origDataIdx = findExistingOriginatingData(context, context.originatingDatas, item);
     if (origDataIdx !== undefined) {
         result.originatingDataId = context.originatingDatas[origDataIdx].id;
-    }
-
-    if ("tagIds" in item && item.tagIds) {
-        item.tagIds.forEach((id) => result.tagIds.add(id));
-    }
-
-    if ("tagNames" in item && item.tagNames) {
-        for (const x of item.tagNames) {
-            result.tagIds.add(convertTagName(context, x));
-        }
     }
 
     if ("exhibitionName" in item && item.exhibitionName) {
@@ -165,22 +152,6 @@ function mergeEvent(
     mergeFieldInPlace(context, changes, result, "startTime", item1, item2);
     mergeFieldInPlace(context, changes, result, "durationSeconds", item1, item2);
     mergeFieldInPlace(context, changes, result, "exhibitionId", item1, item2);
-    mergeFieldInPlace(context, changes, result, "tagIds", item1, item2, true, (_ctx, items1, items2, _prefer) => {
-        const tagIdsMerged = new Set(items1);
-        items2.forEach((id) => tagIdsMerged.add(id));
-        return {
-            result: tagIdsMerged,
-            changes: [
-                {
-                    location: "Event.tagIds",
-                    description: "Merged tags ids into single set",
-                    importData: [items1, items2],
-                    newData: tagIdsMerged,
-                    type: "MERGE",
-                },
-            ],
-        };
-    });
 
     changes.push({
         location: "Event",

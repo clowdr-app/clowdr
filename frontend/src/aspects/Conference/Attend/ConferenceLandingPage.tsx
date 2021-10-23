@@ -3,16 +3,12 @@ import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import {
-    Content_ElementType_Enum,
-    Permissions_Permission_Enum,
-    useConferenceLandingPageItemQuery,
-} from "../../../generated/graphql";
+import { Content_ElementType_Enum, useConferenceLandingPageItemQuery } from "../../../generated/graphql";
 import PageFailedToLoad from "../../Errors/PageFailedToLoad";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import { useTitle } from "../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 import ElementsGridLayout from "./Content/Element/ElementsGridLayout";
 
@@ -103,14 +99,8 @@ function ConferenceLandingPageInner(): JSX.Element {
 
 export default function ConferenceLandingPage(): JSX.Element {
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceView,
-                Permissions_Permission_Enum.ConferenceManageContent,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole attendeeRole componentIfDenied={<PageNotFound />}>
             <ConferenceLandingPageInner />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

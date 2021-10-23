@@ -16,7 +16,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
@@ -116,7 +116,7 @@ function ModalInner({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const [elementsResponse] = useCombineVideosModal_GetElementsQuery({
@@ -124,7 +124,7 @@ function ModalInner({
             itemIds,
             elementIds: elementIds_Flat,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const alreadyBeingCombined = useMemo(() => {
@@ -181,7 +181,7 @@ function ModalInner({
     const user = useCurrentUser().user;
     const toast = useToast();
 
-    const [mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
+    const [, mutate] = useCombineVideosModal_CreateCombineVideosJobMutation();
 
     const onCombine = useCallback(async () => {
         if (returnedElementsByItem) {
@@ -195,12 +195,10 @@ function ModalInner({
                         inputElements: parts,
                     };
                     const result = await mutate({
-                        variables: {
-                            conferenceId: conference.id,
-                            createdByRegistrantId: user.registrants[0].id,
-                            outputName: "Combined video",
-                            data,
-                        },
+                        conferenceId: conference.id,
+                        createdByRegistrantId: user.registrants[0].id,
+                        outputName: "Combined video",
+                        data,
                     });
 
                     if (!result.data?.insert_job_queues_CombineVideosJob_one) {

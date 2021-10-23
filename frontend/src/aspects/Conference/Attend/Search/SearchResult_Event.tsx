@@ -4,14 +4,14 @@ import * as R from "ramda";
 import React from "react";
 import type { SearchPanel_EventFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { PlainAuthorsList } from "../Content/AuthorList";
 // import ExhibitionNameList from "../Content/ExhibitionNameList";
 import TagList from "../Content/TagList";
 import { EventModeIcon } from "../Rooms/V2/EventHighlight";
 
 export default function SearchResult_Event({ event }: { event: SearchPanel_EventFragment }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const shadow = useColorModeValue("md", "light-md");
 
     return (
@@ -24,10 +24,10 @@ export default function SearchResult_Event({ event }: { event: SearchPanel_Event
             h="auto"
             to={
                 event.item
-                    ? `${conferenceUrl}/item/${event.item.id}`
+                    ? `${conferencePath}/item/${event.item.id}`
                     : event.exhibition
-                    ? `${conferenceUrl}/exhibition/${event.exhibition.id}`
-                    : `${conferenceUrl}/room/${event.roomId}`
+                    ? `${conferencePath}/exhibition/${event.exhibition.id}`
+                    : `${conferencePath}/room/${event.roomId}`
             }
             shadow={shadow}
             size="md"

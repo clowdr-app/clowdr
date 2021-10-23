@@ -7,12 +7,12 @@ import type {
     ItemEventFragment,
     ItemPage_ItemRoomsFragment,
 } from "../../../../generated/graphql";
-import { Content_ItemType_Enum, Permissions_Permission_Enum, useGetItemQuery } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, useGetItemQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
+import RequireRole from "../../RequireRole";
 import { ItemElements } from "./ItemElements";
 import { ItemEvents } from "./ItemEvents";
 import { ItemLive } from "./ItemLive";
@@ -57,21 +57,18 @@ gql`
 `;
 
 export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
-    const result = useGetItemQuery({
+    const [result] = useGetItemQuery({
         variables: {
             itemId,
         },
     });
     const stackColumns = useBreakpointValue({ base: true, lg: false });
     const title = useTitle(result.data?.content_Item_by_pk?.title ?? "Unknown content item");
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            componentIfDenied={<PageNotFound />}
-            permissions={[Permissions_Permission_Enum.ConferenceView]}
-        >
-            <ApolloQueryWrapper
+        <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
+            <QueryWrapper
                 queryResult={result}
                 getter={(data) =>
                     ({
@@ -92,16 +89,16 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
 
                     if (itemData.descriptionOfExhibitions.length === 1) {
                         return (
-                            <Redirect to={`${conferenceUrl}/exhibition/${itemData.descriptionOfExhibitions[0].id}`} />
+                            <Redirect to={`${conferencePath}/exhibition/${itemData.descriptionOfExhibitions[0].id}`} />
                         );
                     }
 
                     if (itemData.typeName === Content_ItemType_Enum.Sponsor && itemData.rooms.length > 0) {
-                        return <Redirect to={`${conferenceUrl}/room/${itemData.rooms[0].id}`} />;
+                        return <Redirect to={`${conferencePath}/room/${itemData.rooms[0].id}`} />;
                     }
 
                     if (itemData.typeName === Content_ItemType_Enum.LandingPage) {
-                        return <Redirect to={conferenceUrl} />;
+                        return <Redirect to={conferencePath} />;
                     }
 
                     return (
@@ -128,11 +125,9 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                                         </Box>
                                         <Box maxW="100%">
                                             <ItemElements itemData={itemData}>
-                                                <RequireAtLeastOnePermissionWrapper
-                                                    permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}
-                                                >
+                                                <RequireRole attendeeRole>
                                                     <ItemLive itemData={itemData} />
-                                                </RequireAtLeastOnePermissionWrapper>
+                                                </RequireRole>
                                             </ItemElements>
                                             <ItemEvents events={itemData.events} itemId={itemId} />
                                         </Box>
@@ -142,7 +137,7 @@ export default function ItemPage({ itemId }: { itemId: string }): JSX.Element {
                         </HStack>
                     );
                 }}
-            </ApolloQueryWrapper>
-        </RequireAtLeastOnePermissionWrapper>
+            </QueryWrapper>
+        </RequireRole>
     );
 }

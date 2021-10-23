@@ -65,13 +65,13 @@ function ModalInner({
     items: readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
+    const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
     });
-    const [doUpdate, updateResponse] = useUpdateExhibitionDescriptiveItemMutation();
+    const [updateResponse, doUpdate] = useUpdateExhibitionDescriptiveItemMutation();
     const [updatedCount, setUpdatedCount] = useState<number>(0);
 
     const exhibitionMatches = useMemo(() => {
@@ -102,10 +102,8 @@ function ModalInner({
 
             for (const match of exhibitionMatches) {
                 await doUpdate({
-                    variables: {
-                        id: match.id,
-                        descriptiveItemId: match.itemId,
-                    },
+                    id: match.id,
+                    descriptiveItemId: match.itemId,
                 });
 
                 setUpdatedCount((count) => count + 1);
@@ -124,7 +122,7 @@ function ModalInner({
                     This will set the descriptive item of any exhibition that currently lacks a descriptive item and
                     where a corresponding content exists with a title matching the exhibition name.
                 </Text>
-                {exhibitionsResponse.loading ? <CenteredSpinner /> : undefined}
+                {exhibitionsResponse.fetching ? <CenteredSpinner /> : undefined}
                 <Text mt={4}>{exhibitionMatches.length} new matches found.</Text>
                 {updatedCount > 0 ? <Text mt={4}>{updatedCount} updated.</Text> : undefined}
             </ModalBody>
@@ -134,7 +132,7 @@ function ModalInner({
                     <Button
                         colorScheme="purple"
                         isDisabled={exhibitionMatches.length === 0}
-                        isLoading={updateResponse.loading}
+                        isLoading={updateResponse.fetching}
                         onClick={update}
                     >
                         Update

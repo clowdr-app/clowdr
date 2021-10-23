@@ -19,7 +19,6 @@ import { gql } from "urql";
 import { useVideoPlayer_GetElementQuery } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
 import { VideoElement } from "../../Content/Element/VideoElement";
 
 export function VideoPlayer({
@@ -82,9 +81,8 @@ export function VideoPlayer({
         return latestVersion;
     }, [data?.content_Element_by_pk]);
 
-    const conference = useConference();
     const itemPath = data?.content_Element_by_pk?.item
-        ? `${conferenceUrl}/item/${data.content_Element_by_pk.item.id}`
+        ? `${conferencePath}/item/${data.content_Element_by_pk.item.id}`
         : undefined;
 
     const popoverRef = useRef<HTMLDivElement>(null);

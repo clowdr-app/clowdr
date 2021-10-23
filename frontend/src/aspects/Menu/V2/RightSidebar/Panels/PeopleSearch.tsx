@@ -9,9 +9,12 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useSearchRegistrantsLazyQuery } from "../../../../../generated/graphql";
+import type { CombinedError } from "urql";
+import { useClient } from "urql";
+import type { SearchRegistrantsQuery, SearchRegistrantsQueryVariables } from "../../../../../generated/graphql";
+import { SearchRegistrantsDocument } from "../../../../../generated/graphql";
 import { useConference } from "../../../../Conference/useConference";
-import type { Registrant} from "../../../../Conference/useCurrentRegistrant";
+import type { Registrant } from "../../../../Conference/useCurrentRegistrant";
 import { useMaybeCurrentRegistrant } from "../../../../Conference/useCurrentRegistrant";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
 import FAIcon from "../../../../Icons/FAIcon";
@@ -23,10 +26,8 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
     const conference = useConference();
     const registrant = useMaybeCurrentRegistrant();
 
-    const [
-        searchQuery,
-        { loading: loadingSearch, error: errorSearch, data: dataSearch },
-    ] = useSearchRegistrantsLazyQuery();
+    const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
+    const [errorSearch, setErrorSearch] = useState<CombinedError | null>(null);
     useQueryErrorToast(errorSearch, false, "RightSidebarConferenceSections.tsx -- search registrants");
 
     const [loadedCount, setLoadedCount] = useState<number>(30);
@@ -38,35 +39,34 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
         setSearched(allSearched?.slice(0, loadedCount) ?? null);
     }, [allSearched, loadedCount]);
 
-    useEffect(() => {
-        function doSearch() {
-            if ((loadingSearch && !dataSearch) || errorSearch) {
-                return undefined;
-            }
-
-            if (!dataSearch) {
-                return undefined;
-            }
-
-            return dataSearch?.registrant_Registrant.filter((x) => !!x.profile && !!x.userId) as Registrant[];
-        }
-
-        setLoadedCount(30);
-        setAllSearched((oldSearched) => doSearch() ?? oldSearched ?? null);
-        // We need `search` in the sensitivity list because Apollo cache may not
-        // change the data/error/loading state if the result comes straight from
-        // the cache of the last run of the search query
-    }, [dataSearch, errorSearch, loadingSearch, search]);
+    const client = useClient();
 
     useEffect(() => {
-        const tId = setTimeout(() => {
+        const tId = setTimeout(async () => {
             if (search.length >= 3) {
-                searchQuery({
-                    variables: {
-                        conferenceId: conference.id,
-                        search: `%${search}%`,
-                    },
-                });
+                const doSearch = async () => {
+                    setLoadingSearch(true);
+                    const response = await client
+                        .query<SearchRegistrantsQuery, SearchRegistrantsQueryVariables>(SearchRegistrantsDocument, {
+                            conferenceId: conference.id,
+                            search: `%${search}%`,
+                        })
+                        .toPromise();
+                    setLoadingSearch(false);
+
+                    if (!response.data || response.error) {
+                        setErrorSearch(response.error ?? null);
+                        return undefined;
+                    }
+
+                    return response.data?.registrant_Registrant.filter(
+                        (x) => !!x.profile && !!x.userId
+                    ) as Registrant[];
+                };
+
+                setLoadedCount(30);
+                const result = await doSearch();
+                setAllSearched((oldSearched) => result ?? oldSearched ?? null);
             } else {
                 setAllSearched(null);
             }
@@ -74,7 +74,7 @@ export function PeopleSearch({ createDM }: { createDM: (registrantId: string) =>
         return () => {
             clearTimeout(tId);
         };
-    }, [conference.id, search, searchQuery]);
+    }, [client, conference.id, search]);
 
     return (
         <>

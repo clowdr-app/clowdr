@@ -28,7 +28,7 @@ export function AddContentMenu({
     const toast = useToast();
     const conference = useConference();
 
-    const [createElement] = useAddContentMenu_CreateElementMutation();
+    const [, createElement] = useAddContentMenu_CreateElementMutation();
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(
         () =>
@@ -83,9 +83,7 @@ export function AddContentMenu({
                                     } as LayoutDataBlob,
                                 };
                                 const result = await createElement({
-                                    variables: {
-                                        object: obj,
-                                    },
+                                    object: obj,
                                 });
                                 if (result.data?.insert_content_Element_one?.id) {
                                     onCreate(result.data?.insert_content_Element_one?.id);

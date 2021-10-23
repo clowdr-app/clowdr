@@ -13,12 +13,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { gql } from "urql";
-import { Permissions_Permission_Enum, useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
+import { useUpsertConferenceThemeMutation } from "../../../../generated/graphql";
 import { useConferenceTheme } from "../../../Chakra/ChakraCustomProvider";
 import defaultTheme from "../../../Chakra/Colors/ComponentMap";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -79,10 +79,7 @@ export default function ManageShuffle(): JSX.Element {
     const [saveThemeResponse, saveTheme] = useUpsertConferenceThemeMutation();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -166,6 +163,6 @@ export default function ManageShuffle(): JSX.Element {
                     Save
                 </Button>
             </ButtonGroup>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

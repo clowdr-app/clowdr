@@ -15,11 +15,11 @@ import type {
     Schedule_SelectSummariesQuery,
     Schedule_TagFragment,
 } from "../../../../../generated/graphql";
-import { Permissions_Permission_Enum, useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import { useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import type { TimelineEvent } from "./DayList";
 import DayList from "./DayList";
@@ -674,14 +674,13 @@ export function ScheduleInner({
 
 export function ScheduleFetchWrapper(): JSX.Element {
     const conference = useConference();
-    const roomsResult = useSchedule_SelectSummariesQuery({
+    const [roomsResult] = useSchedule_SelectSummariesQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-first",
     });
     return (
-        <ApolloQueryWrapper<
+        <QueryWrapper<
             Schedule_SelectSummariesQuery,
             unknown,
             {
@@ -702,7 +701,7 @@ export function ScheduleFetchWrapper(): JSX.Element {
             })}
         >
             {(data) => <ScheduleInner {...data} />}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -711,14 +710,9 @@ export default function Schedule(): JSX.Element {
     const title = useTitle(`Schedule of ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceView,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-        >
+        <RequireRole attendeeRole>
             {title}
             <ScheduleFetchWrapper />
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

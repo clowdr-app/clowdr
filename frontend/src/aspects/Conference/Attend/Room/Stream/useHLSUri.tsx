@@ -12,7 +12,7 @@ export function useHLSUri(roomId: string, broadcastEventStartsAt: number): strin
         variables: {
             roomId,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
         pollInterval: refetchChannelStackInterval,
         skip: skipGetChannelStack,
     });

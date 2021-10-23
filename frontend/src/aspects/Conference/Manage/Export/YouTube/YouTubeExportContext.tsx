@@ -1,4 +1,4 @@
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useManageExport_GetRegistrantGoogleAccountsQuery } from "../../../../../generated/graphql";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -21,11 +21,11 @@ function useValue() {
     useEffect(() => {
         if (
             selectedGoogleAccountId &&
-            !googleAccounts.data?.registrant_GoogleAccount.some((account) => account.id === selectedGoogleAccountId)
+            !googleAccounts[0].data?.registrant_GoogleAccount.some((account) => account.id === selectedGoogleAccountId)
         ) {
             setSelectedGoogleAccountId(null);
         }
-    }, [googleAccounts.data?.registrant_GoogleAccount, selectedGoogleAccountId]);
+    }, [googleAccounts, selectedGoogleAccountId]);
 
     return {
         selectedGoogleAccountId,

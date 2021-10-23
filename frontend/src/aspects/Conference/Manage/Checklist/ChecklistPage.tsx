@@ -34,13 +34,14 @@ import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";
 import React, { Fragment, useMemo } from "react";
-import { Permissions_Permission_Enum, Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
+import { Room_Mode_Enum, usePreshowChecklistQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest } from "../../../Generic/MathUtils";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -427,7 +428,7 @@ export default function ChecklistPage(): JSX.Element {
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
     const now = useMemo(() => new Date().toISOString(), []);
-    const checklistResponse = usePreshowChecklistQuery({
+    const [checklistResponse] = usePreshowChecklistQuery({
         variables: {
             now,
             conferenceId: conference.id,
@@ -1227,10 +1228,7 @@ export default function ChecklistPage(): JSX.Element {
     });
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -1363,7 +1361,7 @@ export default function ChecklistPage(): JSX.Element {
                     </Grid>
                 </Accordion>
             ) : undefined}
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
@@ -1476,7 +1474,7 @@ function ChecklistItem({
         url: string;
     };
 }>): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     return (
         <AccordionItem flex="1">
@@ -1500,7 +1498,7 @@ function ChecklistItem({
                     <AccordionPanel>
                         <VStack spacing={3} alignItems="flex-start">
                             <Text>{description}</Text>
-                            <LinkButton isExternal size="md" to={`${conferenceUrl}/manage/${actionURL}`}>
+                            <LinkButton isExternal size="md" to={`${conferencePath}/manage/${actionURL}`}>
                                 <FAIcon iconStyle="s" icon="link" mr={2} />
                                 <chakra.span>{actionTitle}</chakra.span>
                                 <ExternalLinkIcon ml={2} />

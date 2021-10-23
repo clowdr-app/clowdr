@@ -2,10 +2,8 @@ import { Box, Flex, useBreakpointValue, useColorModeValue, VStack } from "@chakr
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import Routing from "../../AppRouting";
-import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { GlobalChatStateContext } from "../Chat/GlobalChatStateProvider";
 import { useMaybeConference } from "../Conference/useConference";
-import { useConferenceCurrentUserActivePermissions } from "../Conference/useConferenceCurrentUserActivePermissions";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import MainMenu from "../Menu/V1/MainMenu/MainMenu";
@@ -17,8 +15,7 @@ export default function AppPageV2(): JSX.Element {
     const user = useMaybeCurrentUser();
     const conference = useMaybeConference();
     const attendee = useMaybeCurrentRegistrant();
-    const permissions = useConferenceCurrentUserActivePermissions();
-    const isPermittedAccess = !!attendee && permissions.has(Permissions_Permission_Enum.ConferenceViewAttendees);
+    const isPermittedAccess = !!attendee;
 
     const rightSidebarWidthPc = 20;
 

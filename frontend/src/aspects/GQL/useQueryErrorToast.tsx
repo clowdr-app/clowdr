@@ -8,7 +8,7 @@ import { useUrqlContext } from "./UrqlProvider";
 let errorToastId: string | number | undefined = undefined;
 
 export default function useQueryErrorToast(
-    error: string | false | CombinedError | undefined,
+    error: string | false | CombinedError | undefined | null,
     reconnectOnError: boolean,
     queryName?: string
 ): void {

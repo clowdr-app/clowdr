@@ -86,10 +86,8 @@ function ModalInner({
                 layoutData.priority = parseInt(priority, 10);
             }
             await doUpdate({
-                variables: {
-                    elementIds: elementsByItem.flatMap((x) => x.elementIds),
-                    layoutData,
-                },
+                elementIds: elementsByItem.flatMap((x) => x.elementIds),
+                layoutData,
             });
 
             onClose();

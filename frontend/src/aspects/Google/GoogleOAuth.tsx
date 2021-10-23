@@ -46,7 +46,7 @@ export function GoogleOAuthRedirect(): JSX.Element {
 export function GoogleOAuth(): JSX.Element {
     const location = useLocation();
 
-    const [submitResponse, submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
+    const [_submitResponse, submit] = useGoogleOAuth_SubmitGoogleOAuthCodeMutation();
     const [message, setMessage] = useState<string | null>(null);
     const [, , follow] = useGoogleOAuthRedirectPath();
 

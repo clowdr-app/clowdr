@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import {
     Box,
     Button,
@@ -31,7 +30,6 @@ import Color from "tinycolor2";
 import { v4 as uuidv4 } from "uuid";
 import type { Collection_Tag_Set_Input, ManageContent_TagFragment } from "../../../../../generated/graphql";
 import {
-    ManageContent_TagFragmentDoc,
     useManageContent_DeleteTagsMutation,
     useManageContent_InsertTagMutation,
     useManageContent_SelectAllTagsQuery,
@@ -97,7 +95,7 @@ export default function ManageTagsModal({ onClose: onCloseCb }: { onClose?: () =
 
 function ManageTagsModalBody(): JSX.Element {
     const conference = useConference();
-    const tagsResponse = useManageContent_SelectAllTagsQuery({
+    const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -276,7 +274,7 @@ function ManageTagsModalBody(): JSX.Element {
 
     const data = useMemo(() => [...(tagsResponse.data?.collection_Tag ?? [])], [tagsResponse.data?.collection_Tag]);
 
-    const [insertTag, insertTagResponse] = useManageContent_InsertTagMutation();
+    const [insertTagResponse, insertTag] = useManageContent_InsertTagMutation();
     const insert:
         | {
               generateDefaults: () => Partial<ManageContent_TagFragment>;
@@ -286,7 +284,7 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: insertTagResponse.loading,
+            ongoing: insertTagResponse.fetching,
             generateDefaults: () =>
                 ({
                     id: uuidv4(),
@@ -298,42 +296,20 @@ function ManageTagsModalBody(): JSX.Element {
             makeWhole: (d) => d as ManageContent_TagFragment,
             start: (record) => {
                 insertTag({
-                    variables: {
-                        tag: {
-                            conferenceId: record.conferenceId,
-                            id: record.id,
-                            name: record.name,
-                            colour: record.colour,
-                            priority: record.priority,
-                        },
-                    },
-                    update: (cache, response) => {
-                        if (response.data?.insert_collection_Tag_one) {
-                            const data = response.data?.insert_collection_Tag_one;
-                            cache.modify({
-                                fields: {
-                                    collection_Tag(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_TagFragmentDoc,
-                                            fragmentName: "ManageContent_Tag",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
+                    tag: {
+                        conferenceId: record.conferenceId,
+                        id: record.id,
+                        name: record.name,
+                        colour: record.colour,
+                        priority: record.priority,
                     },
                 });
             },
         }),
-        [conference.id, data?.length, insertTag, insertTagResponse.loading]
+        [conference.id, data?.length, insertTag, insertTagResponse.fetching]
     );
 
-    const [updateTag, updateTagResponse] = useManageContent_UpdateTagMutation();
+    const [updateTagResponse, updateTag] = useManageContent_UpdateTagMutation();
     const update:
         | {
               start: (record: ManageContent_TagFragment) => void;
@@ -341,7 +317,7 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: updateTagResponse.loading,
+            ongoing: updateTagResponse.fetching,
             start: (record) => {
                 const tagUpdateInput: Collection_Tag_Set_Input = {
                     name: record.name,
@@ -349,40 +325,15 @@ function ManageTagsModalBody(): JSX.Element {
                     priority: record.priority,
                 };
                 updateTag({
-                    variables: {
-                        id: record.id,
-                        update: tagUpdateInput,
-                    },
-                    optimisticResponse: {
-                        update_collection_Tag_by_pk: record,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.update_collection_Tag_by_pk) {
-                            const data = _data.update_collection_Tag_by_pk;
-                            cache.modify({
-                                fields: {
-                                    collection_Tag(existingRefs: Reference[] = [], { readField }) {
-                                        const newRef = cache.writeFragment({
-                                            data,
-                                            fragment: ManageContent_TagFragmentDoc,
-                                            fragmentName: "ManageContent_Tag",
-                                        });
-                                        if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                            return existingRefs;
-                                        }
-                                        return [...existingRefs, newRef];
-                                    },
-                                },
-                            });
-                        }
-                    },
+                    id: record.id,
+                    update: tagUpdateInput,
                 });
             },
         }),
-        [updateTag, updateTagResponse.loading]
+        [updateTag, updateTagResponse.fetching]
     );
 
-    const [deleteTags, deleteTagsResponse] = useManageContent_DeleteTagsMutation();
+    const [deleteTagsResponse, deleteTags] = useManageContent_DeleteTagsMutation();
     const deleteProps:
         | {
               start: (keys: string[]) => void;
@@ -390,38 +341,23 @@ function ManageTagsModalBody(): JSX.Element {
           }
         | undefined = useMemo(
         () => ({
-            ongoing: deleteTagsResponse.loading,
+            ongoing: deleteTagsResponse.fetching,
             start: (keys) => {
                 deleteTags({
-                    variables: {
-                        ids: keys,
-                    },
-                    update: (cache, { data: _data }) => {
-                        if (_data?.delete_collection_Tag) {
-                            const data = _data.delete_collection_Tag;
-                            const deletedIds = data.returning.map((x) => x.id);
-                            deletedIds.forEach((x) => {
-                                cache.evict({
-                                    id: x.id,
-                                    fieldName: "ManageContent_Tag",
-                                    broadcast: true,
-                                });
-                            });
-                        }
-                    },
+                    ids: keys,
                 });
             },
         }),
-        [deleteTags, deleteTagsResponse.loading]
+        [deleteTags, deleteTagsResponse.fetching]
     );
 
     return (
         <>
-            {tagsResponse.loading && !tagsResponse.data ? <Spinner label="Loading tags" /> : undefined}
+            {tagsResponse.fetching && !tagsResponse.data ? <Spinner label="Loading tags" /> : undefined}
             <CRUDTable<ManageContent_TagFragment>
                 columns={columns}
                 row={row}
-                data={!tagsResponse.loading && (tagsResponse.data?.collection_Tag ? data : null)}
+                data={!tagsResponse.fetching && (tagsResponse.data?.collection_Tag ? data : null)}
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={
                     insertTagResponse.error || updateTagResponse.error || deleteTagsResponse.error

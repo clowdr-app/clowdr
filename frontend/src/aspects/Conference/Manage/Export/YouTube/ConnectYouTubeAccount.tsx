@@ -10,7 +10,7 @@ import {
     useManageExport_GetGoogleOAuthUrlMutation,
 } from "../../../../../generated/graphql";
 import { useGoogleOAuthRedirectPath } from "../../../../Google/useGoogleOAuthRedirectUrl";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { YouTubeExportContext } from "./YouTubeExportContext";
@@ -43,14 +43,14 @@ gql`
 export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const toast = useToast();
 
-    const [mutation] = useManageExport_GetGoogleOAuthUrlMutation();
+    const [, mutation] = useManageExport_GetGoogleOAuthUrlMutation();
 
     const registrant = useCurrentRegistrant();
 
     const { googleAccounts, selectedGoogleAccountId, setSelectedGoogleAccountId, finished } =
         useContext(YouTubeExportContext);
 
-    const [deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
+    const [, deleteAccount] = useManageExport_DeleteRegistrantGoogleAccountMutation();
     const [deleting, setDeleting] = useState<{ [key: string]: boolean }>({});
 
     const history = useHistory();
@@ -59,7 +59,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const optionIdSuffix = useId();
     const optionIds = useIds(
         optionIdSuffix,
-        ...(googleAccounts.data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
+        ...(googleAccounts[0].data?.registrant_GoogleAccount?.map((x) => x.id) ?? [])
     );
 
     const disconnectAccount = useCallback(
@@ -67,9 +67,9 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
             setDeleting((x) => R.set(R.lensProp(accountId), true, x));
             try {
                 await deleteAccount({
-                    variables: { registrantGoogleAccountId: accountId },
+                    registrantGoogleAccountId: accountId,
                 });
-                await googleAccounts.refetch();
+                await googleAccounts[1]();
                 toast({
                     status: "success",
                     title: "Unlinked YouTube account.",
@@ -89,14 +89,12 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
     const addAccount = useCallback(async () => {
         try {
             const urlResult = await mutation({
-                variables: {
-                    registrantId: registrant.id,
-                    scopes: [
-                        "https://www.googleapis.com/auth/youtube.upload",
-                        "https://www.googleapis.com/auth/youtube.readonly",
-                        "https://www.googleapis.com/auth/youtube.force-ssl",
-                    ],
-                },
+                registrantId: registrant.id,
+                scopes: [
+                    "https://www.googleapis.com/auth/youtube.upload",
+                    "https://www.googleapis.com/auth/youtube.readonly",
+                    "https://www.googleapis.com/auth/youtube.force-ssl",
+                ],
             });
 
             if (!urlResult.data?.getGoogleOAuthUrl) {
@@ -134,7 +132,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                     Add a YouTube account
                 </Button>
             </HStack>
-            <ApolloQueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts}>
+            <QueryWrapper getter={(data) => data.registrant_GoogleAccount} queryResult={googleAccounts[0]}>
                 {(accounts: readonly ManageExport_RegistrantGoogleAccountFragment[]) => (
                     <List
                         role="listbox"
@@ -175,7 +173,7 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
                         ))}
                     </List>
                 )}
-            </ApolloQueryWrapper>
+            </QueryWrapper>
             {selectedGoogleAccountId && (
                 <Button
                     display="block"

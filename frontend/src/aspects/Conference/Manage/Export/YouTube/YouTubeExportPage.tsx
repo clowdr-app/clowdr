@@ -1,11 +1,11 @@
 import { Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import { DashboardPage } from "../../DashboardPage";
 import { ConnectYouTubeAccount } from "./ConnectYouTubeAccount";
@@ -16,14 +16,12 @@ import { YouTubeExportProvider } from "./YouTubeExportContext";
 
 export function YouTubeExportPage(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const { path } = useRouteMatch();
     const title = useTitle(`Export to YouTube from ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             <Switch>
                 <Route path={`${path}/uploads`}>
                     <UploadedPage />
@@ -39,7 +37,7 @@ export function YouTubeExportPage(): JSX.Element {
                             .
                         </Text>
                         <LinkButton
-                            to={`${conferenceUrl}/manage/export/youtube/uploads`}
+                            to={`${conferencePath}/manage/export/youtube/uploads`}
                             colorScheme="PrimaryActionButton"
                             mt={4}
                             size="md"
@@ -54,6 +52,6 @@ export function YouTubeExportPage(): JSX.Element {
                     </DashboardPage>
                 </Route>
             </Switch>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

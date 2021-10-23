@@ -85,11 +85,11 @@ export default function SubmitElementPage({
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");
 
     const uploadableElement = useMemo(() => {
-        if (!data?.content_ElementByPersonAccessToken || data.content_ElementByPersonAccessToken.length !== 1) {
+        if (!data?.content_Element || data.content_Element.length !== 1) {
             return null;
         }
 
-        return data.content_ElementByPersonAccessToken[0];
+        return data.content_Element[0];
     }, [data]);
 
     const title = useTitle("Content Submission");
@@ -122,7 +122,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.Text:
                 return (
                     <UploadTextForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
                         existingText={existingData}
@@ -134,7 +134,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.PosterFile:
                 return (
                     <UploadFileForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         elementId={uploadableElement.id}
                         allowedFileTypes={[".pdf", ".png", ".jpg"]}
                         uploadAgreementText={uploadAgreementText}
@@ -151,7 +151,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.AudioLink:
                 return (
                     <UploadLinkForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
@@ -166,7 +166,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.Zoom:
                 return (
                     <UploadUrlForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         uploadAgreementText={uploadAgreementText}
                         uploadAgreementUrl={uploadAgreementUrl}
                         handleFormSubmitted={formSubmitted}
@@ -182,7 +182,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.VideoTitles:
                 return (
                     <UploadFileForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         elementId={uploadableElement.id}
                         allowedFileTypes={[".mp4", ".mkv", ".webm"]}
                         uploadAgreementText={uploadAgreementText}
@@ -195,7 +195,7 @@ export default function SubmitElementPage({
             case Content_ElementType_Enum.AudioFile:
                 return (
                     <UploadFileForm
-                        magicToken={uploadableElement.accessToken ?? ""}
+                        magicToken={magicToken}
                         elementId={uploadableElement.id}
                         allowedFileTypes={[".mp3", ".wav", ".ogg", ".flac"]}
                         uploadAgreementText={uploadAgreementText}
@@ -208,11 +208,9 @@ export default function SubmitElementPage({
             default:
                 return <>Unrecognised upload type.</>;
         }
-    }, [uploadableElement, formSubmitted, uploadAgreementText, uploadAgreementUrl]);
+    }, [uploadableElement, magicToken, uploadAgreementText, uploadAgreementUrl, formSubmitted]);
 
-    const person = data?.collection_ProgramPersonByAccessToken.length
-        ? data?.collection_ProgramPersonByAccessToken[0]
-        : undefined;
+    const person = data?.collection_ProgramPerson.length ? data?.collection_ProgramPerson[0] : undefined;
 
     return (
         <Center pt={6}>
@@ -333,7 +331,7 @@ export default function SubmitElementPage({
                                 Previously submitted
                             </Heading>
                             <UploadedElement
-                                magicToken={uploadableElement.accessToken ?? ""}
+                                magicToken={magicToken}
                                 data={data}
                                 error={!!error}
                                 loading={loading}

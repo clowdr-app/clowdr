@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
 import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
@@ -46,7 +45,6 @@ gql`
 `;
 
 export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?: string }): JSX.Element {
-    const conference = useConference();
     const [response] = useRoomTile_GetRoomQuery({
         variables: {
             roomId,
@@ -73,7 +71,7 @@ export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?
             py={0}
             overflow="hidden"
             onClick={() => {
-                history.push(`${conferenceUrl}/room/${roomId}`);
+                history.push(`${conferencePath}/room/${roomId}`);
             }}
             pos="relative"
         >

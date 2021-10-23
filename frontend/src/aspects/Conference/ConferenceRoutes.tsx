@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
@@ -40,7 +39,7 @@ import ManageRegistrants from "./Manage/Registrants/ManageRegistrants";
 import ManageSchedule from "./Manage/Schedule/ManageSchedule";
 import ManageShuffle from "./Manage/Shuffle/ManageShuffle";
 import ManageTheme from "./Manage/Theme/ManageTheme";
-import RequireAtLeastOnePermissionWrapper from "./RequireAtLeastOnePermissionWrapper";
+import RequireRole from "./RequireRole";
 import { useConference } from "./useConference";
 import { useMaybeCurrentRegistrant } from "./useCurrentRegistrant";
 
@@ -81,21 +80,9 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
 
             <Route exact path={`${path}/manage`}>
-                <RequireAtLeastOnePermissionWrapper
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceManageAttendees,
-                        Permissions_Permission_Enum.ConferenceManageContent,
-                        Permissions_Permission_Enum.ConferenceManageGroups,
-                        Permissions_Permission_Enum.ConferenceManageName,
-                        Permissions_Permission_Enum.ConferenceManageRoles,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                        Permissions_Permission_Enum.ConferenceManageShuffle,
-                        Permissions_Permission_Enum.ConferenceModerateAttendees,
-                    ]}
-                    componentIfDenied={<PageNotFound />}
-                >
+                <RequireRole organizerRole moderatorRole componentIfDenied={<PageNotFound />}>
                     <ManagerLanding />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
             <Route path={`${path}/manage/details`}>
                 <ManageDetails />
@@ -176,29 +163,15 @@ export default function ConferenceRoutes(): JSX.Element {
             </Route>
 
             <Route path={`${path}/registrants`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={path} />}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceViewAttendees,
-                        Permissions_Permission_Enum.ConferenceManageAttendees,
-                        Permissions_Permission_Enum.ConferenceManageGroups,
-                        Permissions_Permission_Enum.ConferenceManageRoles,
-                    ]}
-                >
+                <RequireRole componentIfDenied={<Redirect to={path} />} organizerRole>
                     <RegistrantListPage />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route path={`${path}/swag`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={path} />}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceViewAttendees,
-                        Permissions_Permission_Enum.ConferenceView,
-                    ]}
-                >
+                <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
                     <SwagBags />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route
@@ -212,27 +185,15 @@ export default function ConferenceRoutes(): JSX.Element {
             />
 
             <Route path={`${path}/schedule/v2`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={path} />}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceView,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                >
+                <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
                     <ScheduleV2 />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route path={`${path}/schedule`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={path} />}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceView,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                >
+                <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
                     <Schedule />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route exact path={`${path}/profile/edit/:registrantId`}>
@@ -277,26 +238,15 @@ export default function ConferenceRoutes(): JSX.Element {
                 }
             </Route>
             <Route path={`${path}/shuffle`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<Redirect to={path} />}
-                    permissions={[
-                        Permissions_Permission_Enum.ConferenceViewAttendees,
-                        Permissions_Permission_Enum.ConferenceManageAttendees,
-                        Permissions_Permission_Enum.ConferenceModerateAttendees,
-                        Permissions_Permission_Enum.ConferenceManageSchedule,
-                    ]}
-                >
+                <RequireRole componentIfDenied={<Redirect to={path} />} attendeeRole>
                     <WaitingPage />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route path={`${path}/recordings`}>
-                <RequireAtLeastOnePermissionWrapper
-                    componentIfDenied={<PageNotFound />}
-                    permissions={[Permissions_Permission_Enum.ConferenceView]}
-                >
+                <RequireRole componentIfDenied={<PageNotFound />} attendeeRole>
                     <MyRecordingsPage />
-                </RequireAtLeastOnePermissionWrapper>
+                </RequireRole>
             </Route>
 
             <Route path={path}>

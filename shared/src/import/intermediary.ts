@@ -246,7 +246,6 @@ export interface IntermediaryEventDescriptor {
     startTime?: number;
     durationSeconds?: number;
     people?: IntermediaryEventPersonDescriptor[];
-    tagNames?: Array<string>;
     exhibitionName?: string | null;
     enableRecording?: boolean | null;
 }

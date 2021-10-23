@@ -64,7 +64,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
         [nowSlow]
     );
 
-    const response = useGetEventsInNextHourQuery({
+    const [response] = useGetEventsInNextHourQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,

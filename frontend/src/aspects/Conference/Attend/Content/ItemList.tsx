@@ -27,7 +27,7 @@ import type {
     ItemList_ItemTagDataFragment,
     ItemList_TagInfoFragment,
 } from "../../../../generated/graphql";
-import { useContentOfTagQuery, useTagsQuery } from "../../../../generated/graphql";
+import { useContentOfTagQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
@@ -179,11 +179,10 @@ export function TagButton({
 }
 
 function ItemButton({ group }: { group: ItemList_ItemDataFragment }): JSX.Element {
-    const conference = useConference();
     const shadow = useColorModeValue("md", "light-md");
     return (
         <LinkButton
-            to={`${conferenceUrl}/item/${group.id}`}
+            to={`${conferencePath}/item/${group.id}`}
             p={[2, 4]}
             alignItems="flex-start"
             justifyContent="flex-start"
@@ -210,8 +209,8 @@ function Panel({ tag, isExpanded }: { tag: ItemList_TagInfoFragment; isExpanded:
         (x) => x
     );
 
-    const contentOfTag = useContentOfTagQuery({
-        skip: true,
+    const [contentOfTag] = useContentOfTagQuery({
+        pause: true,
     });
     const [content, setContent] = useState<ItemList_ItemTagDataFragment[] | null>(null);
     useEffect(() => {
@@ -330,7 +329,7 @@ export default function ItemList(
 ): JSX.Element {
     const { overrideSelectedTag, setOverrideSelectedTag, ...remainingProps } = props;
     const conference = useConference();
-    const { loading, data, error } = useTagsQuery({
+    const [{ loading, data, error }] = usesQuery({
         variables: {
             conferenceId: conference.id,
         },

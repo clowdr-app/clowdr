@@ -8,10 +8,11 @@ import type {
     UploadYouTubeVideos_YouTubeUploadFragment,
 } from "../../../../../generated/graphql";
 import {
+    Job_Queues_JobStatus_Enum,
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
-    Video_JobStatus_Enum,
 } from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import usePolling from "../../../../Generic/usePolling";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import { useConference } from "../../../useConference";
@@ -53,30 +54,31 @@ gql`
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
-    const existingJobsResult = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
+    const [existingJobsResult, refetchExistingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: 20000,
+        requestPolicy: "network-only",
     });
+    usePolling(refetchExistingJobsResult, 20000);
 
-    const jobStatus = useCallback((jobStatusName: Video_JobStatus_Enum) => {
+    const jobStatus = useCallback((jobStatusName: Job_Queues_JobStatus_Enum) => {
         switch (jobStatusName) {
-            case Video_JobStatus_Enum.Completed:
+            case Job_Queues_JobStatus_Enum.Completed:
                 return (
                     <Tooltip label="Upload completed">
                         <FAIcon icon="check-circle" iconStyle="s" aria-label="completed" color="green.500" />
                     </Tooltip>
                 );
-            case Video_JobStatus_Enum.Expired:
-            case Video_JobStatus_Enum.Failed:
+            case Job_Queues_JobStatus_Enum.Expired:
+            case Job_Queues_JobStatus_Enum.Failed:
                 return (
                     <Tooltip label="Upload failed">
                         <FAIcon icon="exclamation-circle" iconStyle="s" aria-label="error" color="red.500" />
                     </Tooltip>
                 );
-            case Video_JobStatus_Enum.InProgress:
-            case Video_JobStatus_Enum.New:
+            case Job_Queues_JobStatus_Enum.InProgress:
+            case Job_Queues_JobStatus_Enum.New:
                 return <Spinner size="sm" aria-label="in progress" />;
         }
     }, []);
@@ -85,7 +87,7 @@ export function UploadedPage(): JSX.Element {
         <DashboardPage title="Uploads">
             {title}
             <VStack alignItems="stretch" w="100%">
-                <ApolloQueryWrapper
+                <QueryWrapper
                     queryResult={existingJobsResult}
                     getter={(result) =>
                         result.job_queues_UploadYouTubeVideoJob.flatMap((job) =>
@@ -153,7 +155,7 @@ export function UploadedPage(): JSX.Element {
                             </Tbody>
                         </Table>
                     )}
-                </ApolloQueryWrapper>
+                </QueryWrapper>
             </VStack>
         </DashboardPage>
     );

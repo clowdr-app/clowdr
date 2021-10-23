@@ -38,13 +38,12 @@ gql`
 export default function InactiveSocialRooms(): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
-    const result = useGetSocialRoomsQuery({
+    const [result] = useGetSocialRoomsQuery({
         variables: {
             conferenceId: conference.id,
             registrantId: registrant.id,
         },
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
     });
     const roomParticipants = useRoomParticipants();
 

@@ -2,7 +2,8 @@ import { Text } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import assert from "assert";
 import React, { useEffect, useMemo } from "react";
-import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import type { RouteComponentProps } from "react-router-dom";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import EmailVerificationRequiredPage from "./aspects/Auth/EmailVerificationRequiredPage";
 import LoggedOutPage from "./aspects/Auth/LoggedOutPage";
 import PasswordResetResultPage from "./aspects/Auth/PasswordResetResultPage";
@@ -89,7 +90,7 @@ function CheckSlug(): JSX.Element {
 
 function CheckSlugInner(): JSX.Element {
     const origin = useMemo(() => window.location.origin, []);
-    const response = useGetSlugForUrlQuery({
+    const [response] = useGetSlugForUrlQuery({
         variables: {
             url: origin,
         },
@@ -107,7 +108,7 @@ function CheckSlugInner(): JSX.Element {
             window.localStorage.setItem("SLUG_CACHE", JSON.stringify(cache));
         }
     }, [origin, response.data?.getSlug?.slug]);
-    if (!response.loading && response.data) {
+    if (!response.fetching && response.data) {
         if (!response.data.getSlug?.slug) {
             return <Routing />;
         } else {
@@ -120,7 +121,7 @@ function CheckSlugInner(): JSX.Element {
 
 function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
     const { path } = useRouteMatch();
-    const { setConferenceSlug, setConferenceUrl } = useAuthParameters();
+    const { setConferenceSlug, setConferencePath } = useAuthParameters();
     const { setTheme } = useConferenceTheme();
     useEffect(() => {
         if (!confSlug) {
@@ -128,8 +129,8 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
         }
 
         setConferenceSlug(confSlug ?? null);
-        setConferenceUrl(confSlug ? path : null);
-    }, [confSlug, setTheme, setConferenceSlug, setConferenceUrl, path]);
+        setConferencePath(confSlug ? path : null);
+    }, [confSlug, setTheme, setConferenceSlug, setConferencePath, path]);
 
     return (
         <Switch>

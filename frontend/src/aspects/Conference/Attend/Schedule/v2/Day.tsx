@@ -1,4 +1,3 @@
-import type { QueryHookOptions } from "@apollo/client";
 import { Box, Skeleton, Td, Th, Tr, useColorModeValue } from "@chakra-ui/react";
 import IntersectionObserver from "@researchgate/react-intersection-observer";
 import { gql } from "@urql/core";
@@ -96,7 +95,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
         }),
         [conference.id, eventFilter, startOfDayTime, isVisible]
     );
-    const lwEventsResponse = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
+    const [lwEventsResponse] = useScheduleV2_DayLightweightEventsQuery(lwDayEventsQueryObj);
 
     const fullDayEventsQueryObj: QueryHookOptions<ScheduleV2_DayEventsQuery, ScheduleV2_DayEventsQueryVariables> =
         useMemo(
@@ -108,7 +107,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
             }),
             [lwEventsResponse.data, isRendered]
         );
-    const fullEventsResponse = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
+    const [fullEventsResponse] = useScheduleV2_DayEventsQuery(fullDayEventsQueryObj);
 
     const parsedEvents: ParsedEvent[] = useMemo(
         () =>
@@ -119,17 +118,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
             })) ?? [],
         [lwEventsResponse.data?.schedule_Event]
     );
-    const {
-        sortedEventsByRoom,
-        earliestDT,
-        latestDT,
-        earliestHourDT,
-        earliestDayDT,
-        latestHourDT,
-        latestDayDT,
-        timeMarkers,
-        eventCellDescriptors,
-    } = useMemo<{
+    const { timeMarkers, eventCellDescriptors } = useMemo<{
         sortedEventsByRoom: Record<string, ParsedEvent[]>;
         earliestDT: luxon.DateTime;
         latestDT: luxon.DateTime;

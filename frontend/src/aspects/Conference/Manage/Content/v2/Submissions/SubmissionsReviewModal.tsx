@@ -79,11 +79,11 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const itemsResponse = useSubmissionsReviewModalDataQuery({
+    const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {
             itemIds,
         },
-        fetchPolicy: "no-cache",
+        requestPolicy: "network-only",
     });
     const sortedItems = useMemo(
         () => (itemsResponse.data?.content_Item ? R.sortBy((x) => x.title, itemsResponse.data.content_Item) : []),
@@ -201,7 +201,7 @@ function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JS
             <ModalHeader>Review submissions</ModalHeader>
             <ModalCloseButton />
             <ModalBody mb={4}>
-                {itemsResponse.loading ? <Spinner /> : undefined}
+                {itemsResponse.fetching ? <Spinner /> : undefined}
                 <Accordion allowMultiple={false} allowToggle reduceMotion>
                     <AccordionItem>
                         <AccordionButton>

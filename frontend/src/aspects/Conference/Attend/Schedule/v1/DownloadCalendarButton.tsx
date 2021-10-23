@@ -29,8 +29,8 @@ export default function DownloadCalendarButton({
                     return {
                         uid: event.id + "@" + window.location.hostname,
                         title: event.item ? `${event.item.title} (${event.name})` : event.name,
-                        url: `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
-                        location: `${window.location.origin}${conferenceUrl}/room/${event.roomId}`,
+                        url: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
+                        location: `${window.location.origin}${conferencePath}/room/${event.roomId}`,
                         start: [
                             startTime.getUTCFullYear(),
                             startTime.getUTCMonth() + 1,

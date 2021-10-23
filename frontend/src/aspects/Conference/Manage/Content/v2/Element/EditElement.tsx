@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import {
     AccordionButton,
     AccordionIcon,
@@ -24,15 +23,13 @@ import {
 } from "@chakra-ui/react";
 import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
 import { gql } from "@urql/core";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
 import {
-    ManageContent_ElementFragmentDoc,
     useManageContent_DeleteElementMutation,
     useManageContent_UpdateElementMutation,
 } from "../../../../../../generated/graphql";
 import { FAIcon } from "../../../../../Icons/FAIcon";
-import { EditElementsPermissionGrantsModal } from "../Security/EditElementsPermissionGrantsModal";
 import { EditElementInner } from "./EditElementInner";
 
 gql`
@@ -66,47 +63,8 @@ export function EditElement({
     defaultOpenSecurity: boolean;
     openSendSubmissionRequests: (personIds: string[]) => void;
 }): JSX.Element {
-    const [updateElement, updateElementResponse] = useManageContent_UpdateElementMutation({
-        update: (cache, response) => {
-            if (response.data?.update_content_Element_by_pk) {
-                const data = response.data.update_content_Element_by_pk;
-                cache.modify({
-                    fields: {
-                        content_Element(existingRefs: Reference[] = [], { readField }) {
-                            const newRef = cache.writeFragment({
-                                data,
-                                fragment: ManageContent_ElementFragmentDoc,
-                                fragmentName: "ManageContent_Element",
-                            });
-                            if (existingRefs.some((ref) => readField("id", ref) === data.id)) {
-                                return existingRefs;
-                            }
-                            return [...existingRefs, newRef];
-                        },
-                    },
-                });
-            }
-        },
-    });
-    const [deleteElement, deleteElementResponse] = useManageContent_DeleteElementMutation({
-        update: (cache, { data: _data }) => {
-            if (_data?.delete_content_Element_by_pk) {
-                const data = _data.delete_content_Element_by_pk;
-                cache.modify({
-                    fields: {
-                        content_Element(existingRefs: Reference[] = [], { readField }) {
-                            cache.evict({
-                                id: data.id,
-                                fieldName: "ManageContent_ElementFragment",
-                                broadcast: true,
-                            });
-                            return existingRefs.filter((ref) => data.id !== readField("id", ref));
-                        },
-                    },
-                });
-            }
-        },
-    });
+    const [updateElementResponse, updateElement] = useManageContent_UpdateElementMutation();
+    const [deleteElementResponse, deleteElement] = useManageContent_DeleteElementMutation();
 
     const toast = useToast();
 
@@ -119,18 +77,6 @@ export function EditElement({
         onClose: confirmDelete_OnClose,
     } = useDisclosure();
     const cancelRef = useRef<HTMLButtonElement>(null);
-
-    const {
-        isOpen: editPGs_IsOpen,
-        onOpen: editPGs_OnOpen,
-        onClose: editPGs_OnClose,
-    } = useDisclosure({
-        defaultIsOpen: defaultOpenSecurity,
-    });
-    const editPGs_OnCloseFull = useCallback(() => {
-        refetchElements();
-        editPGs_OnClose();
-    }, [editPGs_OnClose, refetchElements]);
 
     const bgColor = useColorModeValue("gray.100", "gray.800");
     return (
@@ -167,11 +113,9 @@ export function EditElement({
                                                         priority: idx - 1,
                                                     };
                                                     updateElement({
-                                                        variables: {
-                                                            elementId: element.id,
-                                                            element: {
-                                                                layoutData: layoutDataA,
-                                                            },
+                                                        elementId: element.id,
+                                                        element: {
+                                                            layoutData: layoutDataA,
                                                         },
                                                     });
 
@@ -183,11 +127,9 @@ export function EditElement({
                                                         priority: idx,
                                                     };
                                                     updateElement({
-                                                        variables: {
-                                                            elementId: previousElement.id,
-                                                            element: {
-                                                                layoutData: layoutDataB,
-                                                            },
+                                                        elementId: previousElement.id,
+                                                        element: {
+                                                            layoutData: layoutDataB,
                                                         },
                                                     });
                                                 }
@@ -196,7 +138,7 @@ export function EditElement({
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item up"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
                                         </Button>
@@ -217,11 +159,9 @@ export function EditElement({
                                                         priority: idx + 1,
                                                     };
                                                     updateElement({
-                                                        variables: {
-                                                            elementId: element.id,
-                                                            element: {
-                                                                layoutData: layoutDataA,
-                                                            },
+                                                        elementId: element.id,
+                                                        element: {
+                                                            layoutData: layoutDataA,
                                                         },
                                                     });
 
@@ -233,11 +173,9 @@ export function EditElement({
                                                         priority: idx,
                                                     };
                                                     updateElement({
-                                                        variables: {
-                                                            elementId: nextElement.id,
-                                                            element: {
-                                                                layoutData: layoutDataB,
-                                                            },
+                                                        elementId: nextElement.id,
+                                                        element: {
+                                                            layoutData: layoutDataB,
                                                         },
                                                     });
                                                 }
@@ -246,7 +184,7 @@ export function EditElement({
                                                 ev.stopPropagation();
                                             }}
                                             aria-label="Move item down"
-                                            isLoading={updateElementResponse.loading}
+                                            isLoading={updateElementResponse.fetching}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
                                         </Button>
@@ -268,23 +206,14 @@ export function EditElement({
                                     }
                                     mr={4}
                                     size="xs"
-                                    isLoading={updateElementResponse.loading}
+                                    isLoading={updateElementResponse.fetching}
                                     onClick={(ev) => {
                                         ev.stopPropagation();
 
                                         const isHidden = !element.isHidden;
                                         updateElement({
-                                            variables: {
-                                                elementId: element.id,
-                                                element: { isHidden },
-                                            },
-                                            optimisticResponse: {
-                                                update_content_Element_by_pk: {
-                                                    ...element,
-                                                    isHidden,
-                                                    __typename: "content_Element",
-                                                },
-                                            },
+                                            elementId: element.id,
+                                            element: { isHidden },
                                         });
                                     }}
                                     onKeyUp={(ev) => {
@@ -323,17 +252,15 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Save element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
 
                                                     updateElement({
-                                                        variables: {
-                                                            elementId: element.id,
-                                                            element: {
-                                                                name: newName,
-                                                            },
+                                                        elementId: element.id,
+                                                        element: {
+                                                            name: newName,
                                                         },
                                                     });
                                                 }}
@@ -350,7 +277,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Discard name changes"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
@@ -380,7 +307,7 @@ export function EditElement({
                                                 size="xs"
                                                 aria-label="Edit element name"
                                                 mx={2}
-                                                isLoading={updateElementResponse.loading}
+                                                isLoading={updateElementResponse.fetching}
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(true);
@@ -395,6 +322,7 @@ export function EditElement({
                                     </>
                                 )}
                             </HStack>
+                            {/* TODO: Do we want to re-introduce per-element visibility controls?
                             <Tooltip label="Manage element security">
                                 <IconButton
                                     ml="auto"
@@ -410,7 +338,7 @@ export function EditElement({
                                         ev.stopPropagation();
                                     }}
                                 />
-                            </Tooltip>
+                            </Tooltip> */}
                             <Tooltip label="Delete element">
                                 <IconButton
                                     ref={cancelRef}
@@ -425,7 +353,7 @@ export function EditElement({
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
                                     }}
-                                    isLoading={deleteElementResponse.loading}
+                                    isLoading={deleteElementResponse.fetching}
                                     ml={2}
                                 />
                             </Tooltip>
@@ -465,9 +393,7 @@ export function EditElement({
                                 onClick={async () => {
                                     try {
                                         await deleteElement({
-                                            variables: {
-                                                elementId: element.id,
-                                            },
+                                            elementId: element.id,
                                         });
                                         confirmDelete_OnClose();
                                     } catch (e) {
@@ -485,11 +411,6 @@ export function EditElement({
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
-            <EditElementsPermissionGrantsModal
-                isOpen={editPGs_IsOpen}
-                onClose={editPGs_OnCloseFull}
-                elementIds={[element.id]}
-            />
         </>
     );
 }

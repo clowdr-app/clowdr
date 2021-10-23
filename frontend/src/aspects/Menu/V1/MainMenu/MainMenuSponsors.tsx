@@ -11,7 +11,8 @@ import { useMainMenuSponsors_GetSponsorsQuery } from "../../../../generated/grap
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { Participants } from "../../../Conference/Attend/Rooms/V1/RoomParticipants";
 import { useConference } from "../../../Conference/useConference";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import FAIcon from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
 import { maybeCompare } from "../../../Utils/maybeSort";
@@ -55,8 +56,9 @@ gql`
 
 export function MainMenuSponsors(): JSX.Element {
     const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
-    const sponsorsResult = useMainMenuSponsors_GetSponsorsQuery({
+    const [sponsorsResult] = useMainMenuSponsors_GetSponsorsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -96,7 +98,7 @@ export function MainMenuSponsors(): JSX.Element {
     const borderColour = useToken("colors", ["gray.300"]);
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.content_Item} queryResult={sponsorsResult}>
+        <QueryWrapper getter={(data) => data.content_Item} queryResult={sponsorsResult}>
             {(sponsorItems: readonly MainMenuSponsors_ItemDataFragment[]) => (
                 <List>
                     {R.sortWith(
@@ -119,8 +121,8 @@ export function MainMenuSponsors(): JSX.Element {
                         sponsorItems
                     ).map((sponsorItem) => {
                         const url = sponsorItem.rooms.length
-                            ? `${conferenceUrl}/room/${sponsorItem.rooms[0].id}`
-                            : `${conferenceUrl}/item/${sponsorItem.id}`;
+                            ? `${conferencePath}/room/${sponsorItem.rooms[0].id}`
+                            : `${conferencePath}/item/${sponsorItem.id}`;
                         return (
                             <ListItem key={sponsorItem.id} mb={2} h="auto" width="100%">
                                 <LinkButton
@@ -186,6 +188,6 @@ export function MainMenuSponsors(): JSX.Element {
                     })}
                 </List>
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }

@@ -1,9 +1,8 @@
 import { Container, Heading, VStack } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { ConfigureEmailTemplates } from "./ConfigureEmailTemplates";
 
@@ -12,10 +11,7 @@ export default function ManageEmail(): JSX.Element {
     const title = useTitle(`Manage email templates for ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Container maxW="container.lg">
                 <VStack spacing={4} alignItems="flex-start" mt={6}>
@@ -28,6 +24,6 @@ export default function ManageEmail(): JSX.Element {
                     <ConfigureEmailTemplates />
                 </VStack>
             </Container>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

@@ -4,17 +4,13 @@ import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";
 import type { Content_ItemType_Enum, ItemElements_ItemDataFragment } from "../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    Permissions_Permission_Enum,
-    useItemElements_GetItemQuery,
-} from "../../../../generated/graphql";
+import { Content_ElementType_Enum, useItemElements_GetItemQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
+import QueryWrapper from "../../../GQL/QueryWrapper";
 import useTrackView from "../../../Realtime/Analytics/useTrackView";
 import { maybeCompare } from "../../../Utils/maybeSort";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
-import { useConference } from "../../useConference";
+import RequireRole from "../../RequireRole";
 import { AuthorList } from "./AuthorList";
 import { Element } from "./Element/Element";
 import ElementsGridLayout from "./Element/ElementsGridLayout";
@@ -107,16 +103,16 @@ gql`
 `;
 
 export function ItemElementsWrapper({ itemId, linkToItem }: { itemId: string; linkToItem?: boolean }): JSX.Element {
-    const result = useItemElements_GetItemQuery({
+    const [result] = useItemElements_GetItemQuery({
         variables: {
             itemId,
         },
     });
 
     return (
-        <ApolloQueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
+        <QueryWrapper getter={(data) => data.content_Item_by_pk} queryResult={result}>
             {(item: ItemElements_ItemDataFragment) => <ItemElements itemData={item} linkToItem={linkToItem} />}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 
@@ -137,9 +133,8 @@ export function ItemElements({
     dontFilterOutVideos?: boolean;
     noHeading?: boolean;
 }): JSX.Element {
+    const { conferencePath } = useAuthParameters();
     useTrackView(true, itemData.id, "Item", 3000);
-
-    const conference = useConference();
 
     const zoomDetailsEls = useMemo(() => {
         return itemData.elements
@@ -204,7 +199,7 @@ export function ItemElements({
                 <TagList my={3} tags={itemData.itemTags} />
             ) : linkToItem ? (
                 <LinkButton
-                    to={`${conferenceUrl}/item/${itemData.id}`}
+                    to={`${conferencePath}/item/${itemData.id}`}
                     width="auto"
                     height="auto"
                     p={3}
@@ -248,9 +243,7 @@ export function ItemElements({
                 mt={zoomDetailsEls.length || stackableEls.length ? 5 : 0}
                 spacing={2}
             >
-                <RequireAtLeastOnePermissionWrapper permissions={[Permissions_Permission_Enum.ConferenceViewAttendees]}>
-                    {zoomDetailsEls}
-                </RequireAtLeastOnePermissionWrapper>
+                <RequireRole attendeeRole>{zoomDetailsEls}</RequireRole>
                 {stackableEls}
             </VStack>
             <ElementsGridLayout elements={filteredElements} />

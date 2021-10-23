@@ -22,7 +22,6 @@ import { gql } from "urql";
 import { useMyRecordingsQuery } from "../../../../generated/graphql";
 import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useTitle } from "../../../Utils/useTitle";
-import { useConference } from "../../useConference";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 
 gql`
@@ -49,13 +48,12 @@ gql`
 export default function MyRecordingsPage(): JSX.Element {
     const title = useTitle("Recordings");
 
-    const conference = useConference();
     const registrant = useCurrentRegistrant();
     const [response] = useMyRecordingsQuery({
         variables: {
             registrantId: registrant.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const bgColor = useColorModeValue(
@@ -167,7 +165,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                     ) : save.recording.room ? (
                                                         <LinkButton
                                                             linkProps={{ m: "3px" }}
-                                                            to={`${conferenceUrl}/room/${save.recording.room.id}`}
+                                                            to={`${conferencePath}/room/${save.recording.room.id}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >
                                                             Go to room

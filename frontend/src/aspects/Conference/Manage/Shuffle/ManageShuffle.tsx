@@ -11,11 +11,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import { Permissions_Permission_Enum, useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
+import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
+import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import CreateQueueModal from "./CreateQueueModal";
 import ShuffleQueueTile from "./ShuffleQueueTile";
@@ -65,14 +66,13 @@ export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
-    const [shufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
+    const [shufflePeriodsQ, refetchShufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {
             conferenceId: conference.id,
         },
-        pollInterval: 60000,
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
     });
+    usePolling(refetchShufflePeriodsQ, 60000);
 
     const now = useRealTime(60000);
     const pastQueues = useMemo(
@@ -92,10 +92,7 @@ export default function ManageShuffle(): JSX.Element {
     );
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageShuffle]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -159,6 +156,6 @@ export default function ManageShuffle(): JSX.Element {
                     </>
                 )
             ) : undefined}
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

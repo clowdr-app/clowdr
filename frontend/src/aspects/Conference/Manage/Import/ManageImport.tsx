@@ -1,10 +1,9 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import RestrictedDashboardButton from "../RestrictedDashboardButton";
 import ImportContentPage from "./Content/ImportContentPage";
@@ -36,13 +35,7 @@ function InnerManageImport(): JSX.Element {
     const title = useTitle(`Import to ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[
-                Permissions_Permission_Enum.ConferenceManageContent,
-                Permissions_Permission_Enum.ConferenceManageSchedule,
-            ]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -62,7 +55,7 @@ function InnerManageImport(): JSX.Element {
                     name="Content"
                     icon="align-left"
                     description="Import content such as papers, posters and authors."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
+                    organizerRole
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton
@@ -70,7 +63,7 @@ function InnerManageImport(): JSX.Element {
                     name="Schedule"
                     icon="calendar"
                     description="Import your schedule including rooms and events."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageSchedule]}
+                    organizerRole
                     colorScheme="purple"
                 />
                 <RestrictedDashboardButton
@@ -78,10 +71,10 @@ function InnerManageImport(): JSX.Element {
                     name="Registrants"
                     icon="users"
                     description="Import your registrants, organisers and other users."
-                    permissions={[Permissions_Permission_Enum.ConferenceManageAttendees]}
+                    organizerRole
                     colorScheme="pink"
                 />
             </Flex>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

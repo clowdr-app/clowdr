@@ -10,6 +10,7 @@ import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Client as UrqlClient } from "urql";
 import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
+import type { GraphCacheConfig } from "../../generated/graphql";
 import schema from "../../generated/graphql.schema.json";
 import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
@@ -123,7 +124,7 @@ function UrqlProviderInner({
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
                             }),
-                            offlineExchange({
+                            offlineExchange<GraphCacheConfig>({
                                 keys: {
                                     analytics_ElementTotalViews: (data) => data.elementId as string,
                                     analytics_ItemTotalViews: (data) => data.itemId as string,

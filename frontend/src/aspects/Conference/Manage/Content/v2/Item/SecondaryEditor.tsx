@@ -26,9 +26,9 @@ import type {
 } from "../../../../../../generated/graphql";
 import { Content_ItemType_Enum, useManageContent_SelectItemQuery } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../../Icons/FAIcon";
-import { useConference } from "../../../../useConference";
 import { EditElements } from "../Element/EditElements";
 import { AddContentMenu } from "./AddContentMenu";
 import { CreateRoomButton } from "./CreateRoomButton";
@@ -106,12 +106,11 @@ function SecondaryEditorInner({
     itemType: Content_ItemType_Enum;
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
-    const conference = useConference();
-    const [itemResponse] = useManageContent_SelectItemQuery({
+    const { conferencePath } = useAuthParameters();
+    const [itemResponse, refetchItem] = useManageContent_SelectItemQuery({
         variables: {
             itemId,
         },
-        fetchPolicy: "network-only",
     });
     const [defaultOpenSecurityForId, setDefaultOpenSecurityForId] = useState<string | null>(null);
 
@@ -120,7 +119,7 @@ function SecondaryEditorInner({
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
-                    to={`${conferenceUrl}/item/${itemId}`}
+                    to={`${conferencePath}/item/${itemId}`}
                     isExternal
                     aria-label="View item"
                     title="View item"
@@ -134,7 +133,7 @@ function SecondaryEditorInner({
                         {itemResponse.data.content_Item_by_pk.rooms.length === 1 ? (
                             <LinkButton
                                 size="sm"
-                                to={`${conferenceUrl}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
+                                to={`${conferencePath}/room/${itemResponse.data.content_Item_by_pk.rooms[0].id}`}
                                 isExternal
                                 aria-label={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
@@ -164,7 +163,7 @@ function SecondaryEditorInner({
                                         <MenuItem key={room.id}>
                                             <Link
                                                 size="sm"
-                                                href={`${conferenceUrl}/room/${room.id}`}
+                                                href={`${conferencePath}/room/${room.id}`}
                                                 isExternal
                                                 aria-label="View discussion room"
                                                 title="View discussion room"
@@ -182,7 +181,7 @@ function SecondaryEditorInner({
                             <CreateRoomButton
                                 size="sm"
                                 itemId={itemId}
-                                refetch={() => itemResponse.refetch()}
+                                refetch={() => refetchItem()}
                                 buttonText={
                                     itemResponse.data.content_Item_by_pk.typeName === Content_ItemType_Enum.Sponsor
                                         ? "Create booth"
@@ -209,7 +208,7 @@ function SecondaryEditorInner({
                     <EditElements
                         itemId={itemId}
                         refetchElements={() => {
-                            itemResponse.refetch();
+                            refetchItem();
                         }}
                         defaultOpenSecurityForId={defaultOpenSecurityForId ?? undefined}
                         itemType={itemType}
@@ -224,7 +223,7 @@ function SecondaryEditorInner({
                         itemId={itemId}
                         onCreate={(newId) => {
                             setDefaultOpenSecurityForId(newId);
-                            itemResponse.refetch();
+                            refetchItem();
                         }}
                     />
                 </ButtonGroup>

@@ -25,9 +25,9 @@ import { Link as ReactLink } from "react-router-dom";
 import type { Schedule_ItemFragment, Schedule_TagFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 import { Markdown } from "../../../../Text/Markdown";
-import { useConference } from "../../../useConference";
 import { AuthorList } from "../../Content/AuthorList";
 import TagList from "../../Content/TagList";
 import { EventModeIcon } from "../../Rooms/V2/EventHighlight";
@@ -56,7 +56,7 @@ export default function EventBoxModal({
     finalFocusRef: React.MutableRefObject<FocusableElement | null>;
     tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const event0 = events[0];
     const eventTitle = content ? content.title : event0.name;
     const eventIds = useMemo(() => events.map((x) => x.id), [events]);
@@ -74,8 +74,8 @@ export default function EventBoxModal({
             abstractText = innerAbstractData.data.text;
         }
     }
-    const roomUrl = `${conferenceUrl}/room/${event0.roomId}`;
-    const itemUrl = content ? `${conferenceUrl}/item/${content.id}` : roomUrl;
+    const roomUrl = `${conferencePath}/room/${event0.roomId}`;
+    const itemUrl = content ? `${conferencePath}/item/${content.id}` : roomUrl;
     const exhibitionId = useMemo(() => {
         for (const event of events) {
             if (event.exhibitionId) {
@@ -84,7 +84,7 @@ export default function EventBoxModal({
         }
         return null;
     }, [events]);
-    const exhibitionUrl = exhibitionId ? `${conferenceUrl}/exhibition/${exhibitionId}` : null;
+    const exhibitionUrl = exhibitionId ? `${conferencePath}/exhibition/${exhibitionId}` : null;
 
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {

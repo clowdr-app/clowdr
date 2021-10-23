@@ -36,6 +36,7 @@ import {
 } from "../../../../generated/graphql";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import FAIcon from "../../../Icons/FAIcon";
 import { usePresenceState } from "../../../Realtime/PresenceStateProvider";
 import { HlsPlayer } from "../../Attend/Room/Video/HlsPlayer";
@@ -149,7 +150,7 @@ export default function LivestreamMonitoring(): JSX.Element {
     const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
     const nowStr = useMemo(() => new Date(nowRoundedDown + 3000).toISOString(), [nowRoundedDown]);
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
-    const response = useMonitorLivestreamsQuery({
+    const [response] = useMonitorLivestreamsQuery({
         variables: {
             conferenceId: conference.id,
             now: nowStr,
@@ -323,7 +324,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                                             <Text fontSize="sm" mr="auto">
                                                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                                                 &nbsp;
-                                                <Link as={ReactLink} to={`${conferenceUrl}/room/${room.id}`}>
+                                                <Link as={ReactLink} to={`${conferencePath}/room/${room.id}`}>
                                                     {room.name}
                                                 </Link>
                                             </Text>
@@ -456,7 +457,7 @@ export default function LivestreamMonitoring(): JSX.Element {
                 </List>
             </>
         );
-    }, [bgColor, conference.slug, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
+    }, [bgColor, liveEvents, nowRoundedDown, nowRoundedUp, shadow]);
 
     const secondsToNextRefresh = Math.round((nowRoundedUp - now) / 1000);
 
@@ -537,8 +538,8 @@ export default function LivestreamMonitoring(): JSX.Element {
 }
 
 function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
-    const conference = useConference();
-    const roomChannelStackResponse = useRoomPage_GetRoomChannelStackQuery({
+    const { conferencePath } = useAuthParameters();
+    const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId: id,
         },
@@ -558,7 +559,7 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
             <Text p={1} fontSize="sm">
                 <FAIcon iconStyle="s" icon="link" mb={1} fontSize="80%" />
                 &nbsp;
-                <Link as={ReactLink} to={`${conferenceUrl}/room/${id}`}>
+                <Link as={ReactLink} to={`${conferencePath}/room/${id}`}>
                     {name}
                 </Link>
             </Text>
@@ -585,7 +586,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
     const [presences, setPresences] = useState<Set<string>>(new Set());
     useEffect(() => {
         const unobserve = presence.observePage(
-            `${conferenceUrl}/room/${event.room.id}`,
+            `${conferencePath}/room/${event.room.id}`,
             conference.slug,
             (newPresences) => {
                 setPresences(new Set(newPresences));
@@ -627,7 +628,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                             minute: "2-digit",
                         })}{" "}
                         in{" "}
-                        <Link as={ReactLink} to={`${conferenceUrl}/room/${event.room.id}`}>
+                        <Link as={ReactLink} to={`${conferencePath}/room/${event.room.id}`}>
                             {event.room.name}
                         </Link>
                     </Text>
@@ -645,7 +646,7 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
                         {event.item ? (
                             <>
                                 {": "}
-                                <Link as={ReactLink} to={`${conferenceUrl}/item/${event.item.id}`}>
+                                <Link as={ReactLink} to={`${conferencePath}/item/${event.item.id}`}>
                                     {event.item.title}
                                 </Link>
                             </>
@@ -829,7 +830,6 @@ function BackstageTile({ event }: { event: MonitorLivestreams_EventFragment }): 
             event.eventPeople,
             startDate,
             endDate,
-            conference.slug,
             onCopy,
             hasCopied,
             presences,

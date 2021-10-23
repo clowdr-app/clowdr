@@ -15,11 +15,11 @@ import {
 import React, { useCallback, useState } from "react";
 import { gql } from "urql";
 import {
+    Job_Queues_JobStatus_Enum,
     useDeleteRoomRtmpOutputMutation,
     useGetRoomRtmpOutputQuery,
     useInsertRoomRtmpOutputMutation,
     useUpdateRoomRtmpOutputMutation,
-    Video_JobStatus_Enum,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 
@@ -85,11 +85,11 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
-    const [rtmpOutputResponse] = useGetRoomRtmpOutputQuery({
+    const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
             roomId,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
     const [insertResponse, doInsert] = useInsertRoomRtmpOutputMutation();
     const [updateResponse, doUpdate] = useUpdateRoomRtmpOutputMutation();
@@ -107,8 +107,8 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
     const channelStatus = channelStack?.mediaLiveChannelStatus;
     const updateJobs = channelStack?.updateJobs[0];
     const isUpdating =
-        updateJobs?.jobStatusName === Video_JobStatus_Enum.New ||
-        updateJobs?.jobStatusName === Video_JobStatus_Enum.InProgress;
+        updateJobs?.jobStatusName === Job_Queues_JobStatus_Enum.New ||
+        updateJobs?.jobStatusName === Job_Queues_JobStatus_Enum.InProgress;
 
     const doSave = useCallback(
         async (url: string, key: string) => {
@@ -122,30 +122,24 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                         if (rtmpOutput) {
                             if (url === "" || key === "") {
                                 await doDelete({
-                                    variables: {
-                                        id: rtmpOutput.id,
-                                    },
+                                    id: rtmpOutput.id,
                                 });
                             } else {
                                 await doUpdate({
-                                    variables: {
-                                        id: rtmpOutput.id,
-                                        url,
-                                        key,
-                                    },
+                                    id: rtmpOutput.id,
+                                    url,
+                                    key,
                                 });
                             }
                         } else if (url !== "" && key !== "") {
                             await doInsert({
-                                variables: {
-                                    roomId,
-                                    url,
-                                    key,
-                                },
+                                roomId,
+                                url,
+                                key,
                             });
                         }
 
-                        await rtmpOutputResponse.refetch();
+                        await refetchRtmpOutputResponse();
                     }
                 }
 
@@ -166,7 +160,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
             channelStack,
             channelStatus?.state,
             rtmpOutput,
-            rtmpOutputResponse,
+            refetchRtmpOutputResponse,
             doDelete,
             doUpdate,
             doInsert,

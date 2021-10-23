@@ -46,12 +46,11 @@ gql`
 
 export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (value: boolean) => void }): JSX.Element {
     const conference = useConference();
-    const result = useGetSponsorBoothsQuery({
+    const [result] = useGetSponsorBoothsQuery({
         variables: {
             conferenceId: conference.id,
         },
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+        requestPolicy: "cache-and-network",
     });
 
     useEffect(() => {

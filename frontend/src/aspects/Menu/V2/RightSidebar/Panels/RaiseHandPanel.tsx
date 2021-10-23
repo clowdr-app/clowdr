@@ -19,7 +19,7 @@ export function RaiseHandPanel(): JSX.Element {
         userRole: Schedule_EventProgramPersonRole_Enum;
     } | null>(null);
     const [isBackstage, setIsBackstage] = useState<boolean>(false);
-    const [startTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
+    const [_startTimeOfNextBackstage, setStartTimeOfNextBackstage] = useState<number | null>(null);
     const [raisedHandUserIds, setRaisedHandUserIds] = useState<string[] | null>(null);
     const toast = useToast();
 

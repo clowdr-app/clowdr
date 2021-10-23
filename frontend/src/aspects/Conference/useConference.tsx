@@ -149,7 +149,7 @@ function ConferenceProvider_WithoutUser({
     children: string | JSX.Element | JSX.Element[];
     conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceById_WithoutUserQuery({
+    const [{ fetching: loading, error, data }] = useConferenceById_WithoutUserQuery({
         variables: {
             id: conferenceId,
         },
@@ -187,7 +187,7 @@ function ConferenceProvider_WithUser({
     userId: string;
     conferenceId: string;
 }): JSX.Element {
-    const { loading, error, data } = useConferenceById_WithUserQuery({
+    const [{ fetching: loading, error, data }] = useConferenceById_WithUserQuery({
         variables: {
             id: conferenceId,
             userId,

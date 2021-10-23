@@ -13,11 +13,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Permissions_Permission_Enum, useCreateConferencePrepareJobMutation } from "../../../../generated/graphql";
+import { useCreateConferencePrepareJobMutation } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 import { BroadcastRooms } from "./BroadcastRooms";
 import { Configuration as ConferenceConfiguration } from "./ConferenceConfiguration";
@@ -34,10 +34,7 @@ export default function ManageBroadcast(): JSX.Element {
     const toast = useToast();
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceManageContent]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
             {title}
             <Heading mt={4} as="h1" fontSize="2.3rem" lineHeight="3rem">
                 Manage {conference.shortName}
@@ -98,6 +95,6 @@ export default function ManageBroadcast(): JSX.Element {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }

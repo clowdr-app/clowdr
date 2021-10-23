@@ -26,17 +26,7 @@ import {
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useCallback, useState } from "react";
-import type {
-    ManageShufflePeriods_SelectAllQuery,
-    ManageShufflePeriods_SelectAllQueryVariables,
-    ManageShufflePeriods_ShufflePeriodFragment,
-} from "../../../../generated/graphql";
-import {
-    ManageShufflePeriods_SelectAllDocument,
-    ManageShufflePeriods_ShufflePeriodFragmentDoc,
-    Room_ShuffleAlgorithm_Enum,
-    useInsertShufflePeriodMutation,
-} from "../../../../generated/graphql";
+import { Room_ShuffleAlgorithm_Enum, useInsertShufflePeriodMutation } from "../../../../generated/graphql";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { roundUpToNearest } from "../../../Generic/MathUtils";
 import { useConference } from "../../useConference";
@@ -67,63 +57,7 @@ export default function CreateQueueModal(): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
-    const [insert, insertResponse] = useInsertShufflePeriodMutation({
-        update: (cache, result) => {
-            if (result.data?.insert_room_ShufflePeriod_one) {
-                const data = result.data.insert_room_ShufflePeriod_one;
-                const newData: ManageShufflePeriods_ShufflePeriodFragment = {
-                    ...data,
-                    __typename: "room_ShufflePeriod",
-                    completedEntries: {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                    ongoingEntries: {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                    waitingEntries: {
-                        aggregate: {
-                            count: 0,
-                        },
-                    },
-                };
-                cache.writeFragment<ManageShufflePeriods_ShufflePeriodFragment>({
-                    data: newData,
-                    fragment: ManageShufflePeriods_ShufflePeriodFragmentDoc,
-                    broadcast: true,
-                    fragmentName: "ManageShufflePeriods_ShufflePeriod",
-                });
-
-                const q = cache.readQuery<
-                    ManageShufflePeriods_SelectAllQuery,
-                    ManageShufflePeriods_SelectAllQueryVariables
-                >({
-                    query: ManageShufflePeriods_SelectAllDocument,
-                    variables: {
-                        conferenceId: conference.id,
-                    },
-                });
-
-                if (q) {
-                    cache.writeQuery<ManageShufflePeriods_SelectAllQuery, ManageShufflePeriods_SelectAllQueryVariables>(
-                        {
-                            query: ManageShufflePeriods_SelectAllDocument,
-                            data: {
-                                ...q,
-                                room_ShufflePeriod: [...q.room_ShufflePeriod, newData],
-                            },
-                            variables: {
-                                conferenceId: conference.id,
-                            },
-                        }
-                    );
-                }
-            }
-        },
-    });
+    const [insertResponse, insert] = useInsertShufflePeriodMutation();
 
     const [name, setName] = useState<string>("");
     const [algorithm, setAlgorithm] = useState<Room_ShuffleAlgorithm_Enum>(Room_ShuffleAlgorithm_Enum.Fcfs);
@@ -203,19 +137,17 @@ export default function CreateQueueModal(): JSX.Element {
     const onCreate = useCallback(async () => {
         try {
             await insert({
-                variables: {
-                    object: {
-                        name,
-                        algorithm,
-                        conferenceId: conference.id,
-                        endAt: endAt.toISOString(),
-                        maxRegistrantsPerRoom: maxRegistrants,
-                        roomDurationMinutes,
-                        startAt: startAt.toISOString(),
-                        targetRegistrantsPerRoom: targetRegistrants,
-                        waitRoomMaxDurationSeconds: maxWait,
-                        organiserId: registrant.id,
-                    },
+                object: {
+                    name,
+                    algorithm,
+                    conferenceId: conference.id,
+                    endAt: endAt.toISOString(),
+                    maxRegistrantsPerRoom: maxRegistrants,
+                    roomDurationMinutes,
+                    startAt: startAt.toISOString(),
+                    targetRegistrantsPerRoom: targetRegistrants,
+                    waitRoomMaxDurationSeconds: maxWait,
+                    organiserId: registrant.id,
                 },
             });
 
@@ -263,7 +195,7 @@ export default function CreateQueueModal(): JSX.Element {
                             <FormControl>
                                 <FormLabel>Name</FormLabel>
                                 <Input
-                                    isDisabled={insertResponse.loading}
+                                    isDisabled={insertResponse.fetching}
                                     min={1}
                                     value={name}
                                     onChange={(ev) => setName(ev.target.value)}
@@ -275,7 +207,7 @@ export default function CreateQueueModal(): JSX.Element {
                             <FormControl>
                                 <FormLabel>Automation</FormLabel>
                                 <Select
-                                    isDisabled={insertResponse.loading}
+                                    isDisabled={insertResponse.fetching}
                                     value={algorithm}
                                     onChange={(ev) =>
                                         setAlgorithm(ev.target.selectedOptions[0].value as Room_ShuffleAlgorithm_Enum)
@@ -298,7 +230,7 @@ export default function CreateQueueModal(): JSX.Element {
                             <FormControl>
                                 <FormLabel>Start at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={insertResponse.loading}
+                                    isDisabled={insertResponse.fetching}
                                     value={startAt}
                                     onChange={onStartAtChange}
                                 />
@@ -310,7 +242,7 @@ export default function CreateQueueModal(): JSX.Element {
                             <FormControl>
                                 <FormLabel>End at</FormLabel>
                                 <DateTimePicker
-                                    isDisabled={insertResponse.loading}
+                                    isDisabled={insertResponse.fetching}
                                     value={endAt}
                                     onChange={onEndAtChange}
                                 />
@@ -322,7 +254,7 @@ export default function CreateQueueModal(): JSX.Element {
                             <FormControl>
                                 <FormLabel>Room duration in minutes</FormLabel>
                                 <NumberInput
-                                    isDisabled={insertResponse.loading}
+                                    isDisabled={insertResponse.fetching}
                                     min={2}
                                     max={2 * 60}
                                     value={roomDurationMinutes}
@@ -346,7 +278,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     <FormControl>
                                         <FormLabel>Target registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={insertResponse.loading}
+                                            isDisabled={insertResponse.fetching}
                                             min={2}
                                             value={targetRegistrants}
                                             onChange={onTargetRegistrantsChange}
@@ -364,7 +296,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     <FormControl>
                                         <FormLabel>Maximum registrants per room</FormLabel>
                                         <NumberInput
-                                            isDisabled={insertResponse.loading}
+                                            isDisabled={insertResponse.fetching}
                                             min={2}
                                             value={maxRegistrants}
                                             onChange={onMaxRegistrantsChange}
@@ -382,7 +314,7 @@ export default function CreateQueueModal(): JSX.Element {
                                     <FormControl>
                                         <FormLabel>Maximum wait time in seconds</FormLabel>
                                         <NumberInput
-                                            isDisabled={insertResponse.loading}
+                                            isDisabled={insertResponse.fetching}
                                             min={60}
                                             max={300}
                                             value={maxWait}
@@ -407,14 +339,14 @@ export default function CreateQueueModal(): JSX.Element {
                     </ModalBody>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button isDisabled={insertResponse.loading} onClick={onClose}>
+                            <Button isDisabled={insertResponse.fetching} onClick={onClose}>
                                 Cancel
                             </Button>
                             <Tooltip label={name.length === 0 ? "Name is required" : undefined}>
                                 <Box>
                                     <Button
-                                        isLoading={insertResponse.loading}
-                                        isDisabled={insertResponse.loading || name.length === 0}
+                                        isLoading={insertResponse.fetching}
+                                        isDisabled={insertResponse.fetching || name.length === 0}
                                         onClick={onCreate}
                                         colorScheme="purple"
                                     >

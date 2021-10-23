@@ -22,7 +22,6 @@ import * as R from "ramda";
 import React, { Fragment, useMemo, useState } from "react";
 import type { ManageModeration_ChatFlagFragment } from "../../../../../generated/graphql";
 import {
-    Permissions_Permission_Enum,
     useManageModeration_SelectFlagsQuery,
     useManageModeration_UpdateFlagMutation,
 } from "../../../../../generated/graphql";
@@ -38,7 +37,7 @@ import PageNotFound from "../../../../Errors/PageNotFound";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
 import { Markdown } from "../../../../Text/Markdown";
 import { useTitle } from "../../../../Utils/useTitle";
-import RequireAtLeastOnePermissionWrapper from "../../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 
@@ -68,10 +67,7 @@ export default function ManageModeration(): JSX.Element {
     const title = useTitle(`Moderate chats for ${conference.shortName}`);
 
     return (
-        <RequireAtLeastOnePermissionWrapper
-            permissions={[Permissions_Permission_Enum.ConferenceModerateAttendees]}
-            componentIfDenied={<PageNotFound />}
-        >
+        <RequireRole moderatorRole componentIfDenied={<PageNotFound />}>
             <Box w="100%">
                 {title}
                 <Heading mt={4} as="h1" size="xl">
@@ -82,13 +78,13 @@ export default function ManageModeration(): JSX.Element {
                 </Heading>
                 <ModerationList />
             </Box>
-        </RequireAtLeastOnePermissionWrapper>
+        </RequireRole>
     );
 }
 
 function ModerationList(): JSX.Element {
     const conference = useConference();
-    const flagsResponse = useManageModeration_SelectFlagsQuery({
+    const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {
             conferenceId: conference.id,
         },

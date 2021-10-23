@@ -49,8 +49,8 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
         },
     });
 
-    const person = itemsResponse.data?.collection_ProgramPersonByAccessToken.length
-        ? itemsResponse.data.collection_ProgramPersonByAccessToken[0]
+    const person = itemsResponse.data?.collection_ProgramPerson.length
+        ? itemsResponse.data.collection_ProgramPerson[0]
         : undefined;
     return (
         <Center pt={6}>

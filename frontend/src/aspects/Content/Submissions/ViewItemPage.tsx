@@ -61,12 +61,10 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
         },
     });
 
-    const person = itemResponse.data?.collection_ProgramPersonByAccessToken.length
-        ? itemResponse.data.collection_ProgramPersonByAccessToken[0]
+    const person = itemResponse.data?.collection_ProgramPerson.length
+        ? itemResponse.data.collection_ProgramPerson[0]
         : undefined;
-    const item = itemResponse.data?.content_ItemByPersonAccessToken.length
-        ? itemResponse.data.content_ItemByPersonAccessToken[0]
-        : undefined;
+    const item = itemResponse.data?.content_Item.length ? itemResponse.data.content_Item[0] : undefined;
     const elements = item
         ? R.sortWith(
               [

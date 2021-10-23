@@ -18,6 +18,7 @@ import type { FocusableElement } from "@chakra-ui/utils";
 import React, { useCallback, useContext, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 import { EnableRoomParticipantsPollingContext } from "../../../../Room/EnableRoomParticipantsPollingContext";
 import { ShuffleWaiting } from "../../../../ShuffleRooms/WaitingPage";
@@ -121,7 +122,7 @@ export default function SocialiseModal({
     setSelectedTab: (tab: SocialiseModalTab) => void;
 }): JSX.Element {
     const { isOpen: createRoom_IsOpen, onClose: createRoom_OnClose, onOpen: createRoom_OnOpen } = useDisclosure();
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const history = useHistory();
     const refetch = useCallback(
@@ -129,10 +130,10 @@ export default function SocialiseModal({
             // Wait, because Vonage session creation is not instantaneous
             setTimeout(() => {
                 cb();
-                history.push(`${conferenceUrl}/room/${id}`);
+                history.push(`${conferencePath}/room/${id}`);
             }, 2000);
         },
-        [conference.slug, history]
+        [conferencePath, history]
     );
 
     const closeRef = useRef<HTMLButtonElement | null>(null);

@@ -6,6 +6,8 @@ import { useGetConferenceLandingPageItemIdQuery, useGetItemChatIdQuery } from ".
 import { Chat } from "../../../../Chat/Chat";
 import type { ChatState } from "../../../../Chat/ChatGlobalState";
 import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
+import { useConference } from "../../../../Conference/useConference";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import FAIcon from "../../../../Icons/FAIcon";
 
 gql`
@@ -24,11 +26,8 @@ gql`
         }
     }
 
-    query GetConferenceLandingPageItemId($conferenceSlug: String!) {
-        content_Item(
-            where: { typeName: { _eq: LANDING_PAGE }, conference: { slug: { _eq: $conferenceSlug } } }
-            limit: 1
-        ) {
+    query GetConferenceLandingPageItemId($conferenceId: uuid!) {
+        content_Item(where: { typeName: { _eq: LANDING_PAGE }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
             id
         }
     }
@@ -39,7 +38,6 @@ export function ItemChatPanel({
     ...props
 }: {
     itemOrExhibitionId: string;
-    confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
     setPageChatAvailable: (isAvailable: boolean) => void;
@@ -53,19 +51,18 @@ export function ItemChatPanel({
 }
 
 function LandingPageChatPanel({
-    confSlug,
     setPageChatAvailable,
     ...props
 }: {
-    confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
     setPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }) {
+    const conference = useConference();
     const [response] = useGetConferenceLandingPageItemIdQuery({
         variables: {
-            conferenceSlug: confSlug,
+            conferenceId: conference.id,
         },
     });
 
@@ -79,7 +76,6 @@ function LandingPageChatPanel({
         return (
             <ItemChatPanelInner
                 itemOrExhibitionId={response.data.content_Item[0].id}
-                confSlug={confSlug}
                 setPageChatAvailable={setPageChatAvailable}
                 {...props}
             />
@@ -91,14 +87,12 @@ function LandingPageChatPanel({
 
 function ItemChatPanelInner({
     itemOrExhibitionId,
-    confSlug,
     onChatIdLoaded,
     setUnread,
     setPageChatAvailable,
     isVisible,
 }: {
     itemOrExhibitionId: string;
-    confSlug: string;
     onChatIdLoaded: (chatId: string) => void;
     setUnread: (v: string) => void;
     setPageChatAvailable: (isAvailable: boolean) => void;
@@ -156,6 +150,7 @@ function ItemChatPanelInner({
     }, [chat, isVisible]);
 
     const history = useHistory();
+    const { conferencePath } = useAuthParameters();
 
     useEffect(() => {
         setPageChatAvailable(!error && chat !== null);
@@ -210,7 +205,7 @@ function ItemChatPanelInner({
                         <Button
                             size="xs"
                             colorScheme="PrimaryActionButton"
-                            onClick={() => history.push(`/conference/${confSlug}/room/${chat.RoomId}`)}
+                            onClick={() => history.push(`${conferencePath}/room/${chat.RoomId}`)}
                             aria-label="Go to video room for this chat"
                         >
                             <FAIcon iconStyle="s" icon="video" />

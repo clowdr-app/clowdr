@@ -3,7 +3,6 @@ import { Redirect } from "react-router-dom";
 import { gql } from "urql";
 import { useGetChatPathQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import { useConference } from "../Conference/useConference";
 import { useAuthParameters } from "../GQL/AuthParameters";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
 
@@ -29,8 +28,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
     });
     useQueryErrorToast(error, false, "Get chat path");
 
-    const { conferenceUrl } = useAuthParameters();
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     if (loading || (!data?.chat_Chat_by_pk?.rooms && !data?.chat_Chat_by_pk?.items)) {
         return <CenteredSpinner />;
@@ -42,7 +40,7 @@ export default function ChatRedirectPage({ chatId }: { chatId: string }): JSX.El
 
     return (
         <Redirect
-            to={`${conferenceUrl}${
+            to={`${conferencePath}${
                 data?.chat_Chat_by_pk?.rooms
                     ? `/room/${data?.chat_Chat_by_pk?.rooms[0]?.id}`
                     : `/item/${data?.chat_Chat_by_pk?.items[0]?.id}`

@@ -2,9 +2,7 @@ import { Center, HStack, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type { Schedule_RoomSummaryFragment } from "../../../../../generated/graphql";
-import { Permissions_Permission_Enum } from "../../../../../generated/graphql";
-import { useConference } from "../../../useConference";
-import { useConferenceCurrentUserActivePermissions } from "../../../useConferenceCurrentUserActivePermissions";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 
 export default function RoomNameBox({
     room,
@@ -21,7 +19,7 @@ export default function RoomNameBox({
     backgroundColor?: string;
     marginLeft?: string;
 }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const activePermissions = useConferenceCurrentUserActivePermissions();
     // let roomIcon: JSX.Element | undefined;
     // if (typeof room !== "string") {
@@ -72,7 +70,7 @@ export default function RoomNameBox({
             ) : shouldLink ? (
                 <Link
                     as={ReactLink}
-                    to={`${conferenceUrl}/room/${room.id}`}
+                    to={`${conferencePath}/room/${room.id}`}
                     textDecoration="none"
                     aria-label={`${room.name} room`}
                 >

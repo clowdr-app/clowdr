@@ -8,8 +8,8 @@ import { useHistory } from "react-router-dom";
 import type { SponsorBoothsList_ItemFragment } from "../../../../../generated/graphql";
 import { Content_ElementType_Enum } from "../../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../../Chakra/Outline";
+import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { FAIcon } from "../../../../Icons/FAIcon";
-import { useConference } from "../../../useConference";
 import RoomPresenceGrid from "./RoomPresenceGrid";
 
 function getLogoUrlFromData(data: any): string | null {
@@ -33,7 +33,7 @@ function getLogoUrlFromData(data: any): string | null {
 }
 
 export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_ItemFragment }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
 
     const shadow = useColorModeValue("md", "light-md");
     const history = useHistory();
@@ -57,17 +57,17 @@ export default function SponsorTile({ sponsor }: { sponsor: SponsorBoothsList_It
             overflow="hidden"
             onClick={() => {
                 if (sponsor.rooms.length > 0) {
-                    history.push(`${conferenceUrl}/room/${sponsor.rooms[0].id}`);
+                    history.push(`${conferencePath}/room/${sponsor.rooms[0].id}`);
                 } else {
-                    history.push(`${conferenceUrl}/item/${sponsor.id}`);
+                    history.push(`${conferencePath}/item/${sponsor.id}`);
                 }
             }}
             onKeyUp={(ev) => {
                 if (ev.key === "Enter") {
                     if (sponsor.rooms.length > 0) {
-                        history.push(`${conferenceUrl}/room/${sponsor.rooms[0].id}`);
+                        history.push(`${conferencePath}/room/${sponsor.rooms[0].id}`);
                     } else {
-                        history.push(`${conferenceUrl}/item/${sponsor.id}`);
+                        history.push(`${conferencePath}/item/${sponsor.id}`);
                     }
                 }
             }}

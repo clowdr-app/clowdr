@@ -20,14 +20,13 @@ import type {
     RtmpPushImmediateSwitchData,
     VideoImmediateSwitchData,
 } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { gql } from "urql";
 import { validate } from "uuid";
-import type {
-    RoomEventDetailsFragment} from "../../../../../../generated/graphql";
+import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
 import {
     useImmediateSwitch_CreateMutation,
     useImmediateSwitch_GetElementsQuery,
@@ -91,7 +90,7 @@ export function ImmediateSwitch({ event }: { event: RoomEventDetailsFragment }):
 
     const [createImmediateSwitch] = useImmediateSwitch_CreateMutation();
     const [liveIndicatorLatest] = useLiveIndicator_GetLatestQuery({
-        skip: true,
+        pause: true,
     });
 
     const [lastSwitched, setLastSwitched] = useState<number>(0);

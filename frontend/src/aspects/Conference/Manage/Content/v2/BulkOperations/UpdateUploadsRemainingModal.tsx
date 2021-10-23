@@ -75,10 +75,8 @@ function ModalInner({
     const update = useCallback(async () => {
         try {
             await doUpdate({
-                variables: {
-                    elementIds,
-                    count: newValue,
-                },
+                elementIds,
+                count: newValue,
             });
 
             onClose();

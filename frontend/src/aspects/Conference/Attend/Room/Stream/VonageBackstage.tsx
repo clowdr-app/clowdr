@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
 import type { RoomEventDetailsFragment } from "../../../../../generated/graphql";
 import { useGetEventDetailsQuery, useGetEventVonageTokenMutation } from "../../../../../generated/graphql";
-import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
+import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import { BackstageControls } from "./Controls/BackstageControls";
 
@@ -45,15 +45,15 @@ export function VonageBackstage({
     onLeave?: () => void;
     hlsUri: string | undefined;
 }): JSX.Element {
-    const result = useGetEventDetailsQuery({
+    const [result] = useGetEventDetailsQuery({
         variables: {
             eventId,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     return (
-        <ApolloQueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
+        <QueryWrapper queryResult={result} getter={(data) => data.schedule_Event_by_pk}>
             {(event: RoomEventDetailsFragment) => (
                 <EventVonageRoomInner
                     event={event}
@@ -64,7 +64,7 @@ export function VonageBackstage({
                     hlsUri={hlsUri}
                 />
             )}
-        </ApolloQueryWrapper>
+        </QueryWrapper>
     );
 }
 

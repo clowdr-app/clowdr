@@ -2,11 +2,11 @@ import { Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import type { SearchPanel_ItemFragment } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { useConference } from "../../useConference";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import TagList from "../Content/TagList";
 
 export default function SearchResult_Item({ item }: { item: SearchPanel_ItemFragment }): JSX.Element {
-    const conference = useConference();
+    const { conferencePath } = useAuthParameters();
     const shadow = useColorModeValue("md", "light-md");
 
     return (
@@ -17,7 +17,7 @@ export default function SearchResult_Item({ item }: { item: SearchPanel_ItemFrag
             }}
             py={2}
             h="auto"
-            to={`${conferenceUrl}/item/${item.id}`}
+            to={`${conferencePath}/item/${item.id}`}
             shadow={shadow}
             size="md"
         >

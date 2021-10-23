@@ -419,14 +419,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : (
                     <ButtonGroup variant="outline">
-                        <LinkButton to={conferenceUrl} colorScheme="PrimaryActionButton">
+                        <LinkButton to={conferencePath} colorScheme="PrimaryActionButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `${conferenceUrl}/profile/view`
-                                    : `${conferenceUrl}/profile/view/${registrant.id}`
+                                    ? `${conferencePath}/profile/view`
+                                    : `${conferencePath}/profile/view/${registrant.id}`
                             }
                             colorScheme="PrimaryActionButton"
                         >
@@ -507,14 +507,14 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                 {githubField}
                 {registrant.profile.hasBeenEdited ? (
                     <ButtonGroup variant="solid">
-                        <LinkButton to={conferenceUrl} colorScheme="EditProfilePage-ContinueButton">
+                        <LinkButton to={conferencePath} colorScheme="EditProfilePage-ContinueButton">
                             Continue to {conference.shortName}
                         </LinkButton>
                         <LinkButton
                             to={
                                 registrant.userId === currentUser.user.id
-                                    ? `${conferenceUrl}/profile/view`
-                                    : `${conferenceUrl}/profile/view/${registrant.id}`
+                                    ? `${conferencePath}/profile/view`
+                                    : `${conferencePath}/profile/view/${registrant.id}`
                             }
                             colorScheme="SecondaryActionButton"
                         >

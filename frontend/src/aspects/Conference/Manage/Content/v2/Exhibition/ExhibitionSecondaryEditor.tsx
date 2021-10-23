@@ -1,4 +1,3 @@
-import type { Reference } from "@apollo/client";
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
     Button,
@@ -38,7 +37,6 @@ import type {
     ManageContent_ItemFragment,
 } from "../../../../../../generated/graphql";
 import {
-    ManageContent_ItemExhibitionFragmentDoc,
     useManageContent_DeleteItemExhibitionMutation,
     useManageContent_InsertItemExhibitionMutation,
     useManageContent_SelectAllItemsQuery,
@@ -46,6 +44,7 @@ import {
     useManageContent_UpdateItemExhibitionMutation,
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
+import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
@@ -131,7 +130,8 @@ function SecondaryEditorInner({
     setDescriptiveItemId: (id: string | null) => void;
 }): JSX.Element {
     const conference = useConference();
-    const itemExhibitionsResponse = useManageContent_SelectItemExhibitionsQuery({
+    const { conferencePath } = useAuthParameters();
+    const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {
             exhibitionId,
         },
@@ -139,7 +139,7 @@ function SecondaryEditorInner({
     const itemExhibitions = itemExhibitionsResponse.data?.content_ItemExhibition;
     const itemExhibitionsIds = useMemo(() => itemExhibitions?.map((x) => x.item.id), [itemExhibitions]);
 
-    const itemsResponse = useManageContent_SelectAllItemsQuery({
+    const [itemsResponse] = useManageContent_SelectAllItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -164,7 +164,7 @@ function SecondaryEditorInner({
             <HStack flexWrap="wrap" justifyContent="flex-start" w="100%" gridRowGap={2}>
                 <LinkButton
                     size="sm"
-                    to={`${conferenceUrl}/exhibition/${exhibitionId}`}
+                    to={`${conferencePath}/exhibition/${exhibitionId}`}
                     isExternal
                     aria-label="View item"
                     title="View item"
@@ -173,7 +173,7 @@ function SecondaryEditorInner({
                     <ExternalLinkIcon />
                 </LinkButton>
             </HStack>
-            {itemsResponse.loading && !sortedItems ? <Spinner label="Loading items" /> : undefined}
+            {itemsResponse.fetching && !sortedItems ? <Spinner label="Loading items" /> : undefined}
             {sortedItems ? (
                 <FormControl>
                     <FormLabel>Descriptive Item</FormLabel>
@@ -202,7 +202,7 @@ function SecondaryEditorInner({
                         sortedItems={filteredItems}
                     />
                 ) : undefined}
-                {itemExhibitionsResponse.loading && !itemExhibitions ? <Spinner label="Loading people" /> : undefined}
+                {itemExhibitionsResponse.fetching && !itemExhibitions ? <Spinner label="Loading people" /> : undefined}
                 {itemExhibitions ? <ItemExhibitionsList exhibitionItems={itemExhibitions} /> : undefined}
             </VStack>
         </VStack>
@@ -220,9 +220,8 @@ function AddItemExhibitionBody({
     onClose: () => void;
     sortedItems: undefined | readonly ManageContent_ItemFragment[];
 }): JSX.Element {
-    const conference = useConference();
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-    const [insertItemExhibition, insertItemExhibitionResponse] = useManageContent_InsertItemExhibitionMutation();
+    const [insertItemExhibitionResponse, insertItemExhibition] = useManageContent_InsertItemExhibitionMutation();
 
     const toast = useToast();
     return (
@@ -250,33 +249,13 @@ function AddItemExhibitionBody({
                 <Button
                     colorScheme="purple"
                     isDisabled={!selectedItemId}
-                    isLoading={insertItemExhibitionResponse.loading}
+                    isLoading={insertItemExhibitionResponse.fetching}
                     onClick={async () => {
                         try {
                             await insertItemExhibition({
-                                variables: {
-                                    conferenceId: conference.id,
-                                    exhibitionId,
-                                    itemId: selectedItemId,
-                                    priority: existingItemIds.length,
-                                },
-                                update: (cache, response) => {
-                                    if (response.data) {
-                                        const data = response.data.insert_content_ItemExhibition_one;
-                                        cache.modify({
-                                            fields: {
-                                                content_ItemExhibition(existingRefs: Reference[] = []) {
-                                                    const newRef = cache.writeFragment({
-                                                        data,
-                                                        fragment: ManageContent_ItemExhibitionFragmentDoc,
-                                                        fragmentName: "ManageContent_ItemExhibition",
-                                                    });
-                                                    return [...existingRefs, newRef];
-                                                },
-                                            },
-                                        });
-                                    }
-                                },
+                                exhibitionId,
+                                itemId: selectedItemId,
+                                priority: existingItemIds.length,
                             });
 
                             onClose();
@@ -341,8 +320,8 @@ function ItemExhibitionsList({
         [exhibitionItems]
     );
     const toast = useToast();
-    const [updateItemExhibition, updateItemExhibitionResponse] = useManageContent_UpdateItemExhibitionMutation();
-    const [deleteItemExhibition, deleteItemExhibitionResponse] = useManageContent_DeleteItemExhibitionMutation();
+    const [updateItemExhibitionResponse, updateItemExhibition] = useManageContent_UpdateItemExhibitionMutation();
+    const [deleteItemExhibitionResponse, deleteItemExhibition] = useManageContent_DeleteItemExhibitionMutation();
 
     return sortedItems.length > 0 ? (
         <>
@@ -354,76 +333,18 @@ function ItemExhibitionsList({
                             <Button
                                 size="xs"
                                 isDisabled={idx === 0}
-                                isLoading={updateItemExhibitionResponse.loading}
+                                isLoading={updateItemExhibitionResponse.fetching}
                                 onClick={() => {
                                     const previousItemExhibition = sortedItems[idx - 1];
 
                                     updateItemExhibition({
-                                        variables: {
-                                            itemExhibitionId: itemExhibition.id,
-                                            priority: idx - 1,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.update_content_ItemExhibition_by_pk) {
-                                                const data = _data.update_content_ItemExhibition_by_pk;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemExhibition(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            const newRef = cache.writeFragment({
-                                                                data,
-                                                                fragment: ManageContent_ItemExhibitionFragmentDoc,
-                                                                fragmentName: "ManageContent_ItemExhibition",
-                                                            });
-                                                            if (
-                                                                existingRefs.some(
-                                                                    (ref) => readField("id", ref) === data.id
-                                                                )
-                                                            ) {
-                                                                return existingRefs;
-                                                            }
-                                                            return [...existingRefs, newRef];
-                                                        },
-                                                    },
-                                                });
-                                            }
-                                        },
+                                        itemExhibitionId: itemExhibition.id,
+                                        priority: idx - 1,
                                     });
 
                                     updateItemExhibition({
-                                        variables: {
-                                            itemExhibitionId: previousItemExhibition.id,
-                                            priority: idx,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.update_content_ItemExhibition_by_pk) {
-                                                const data = _data.update_content_ItemExhibition_by_pk;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemExhibition(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            const newRef = cache.writeFragment({
-                                                                data,
-                                                                fragment: ManageContent_ItemExhibitionFragmentDoc,
-                                                                fragmentName: "ManageContent_ItemExhibition",
-                                                            });
-                                                            if (
-                                                                existingRefs.some(
-                                                                    (ref) => readField("id", ref) === data.id
-                                                                )
-                                                            ) {
-                                                                return existingRefs;
-                                                            }
-                                                            return [...existingRefs, newRef];
-                                                        },
-                                                    },
-                                                });
-                                            }
-                                        },
+                                        itemExhibitionId: previousItemExhibition.id,
+                                        priority: idx,
                                     });
                                 }}
                             >
@@ -432,76 +353,18 @@ function ItemExhibitionsList({
                             <Button
                                 size="xs"
                                 isDisabled={idx === sortedItems.length - 1}
-                                isLoading={updateItemExhibitionResponse.loading}
+                                isLoading={updateItemExhibitionResponse.fetching}
                                 onClick={() => {
                                     const nextItemExhibition = sortedItems[idx + 1];
 
                                     updateItemExhibition({
-                                        variables: {
-                                            itemExhibitionId: itemExhibition.id,
-                                            priority: idx + 1,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.update_content_ItemExhibition_by_pk) {
-                                                const data = _data.update_content_ItemExhibition_by_pk;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemExhibition(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            const newRef = cache.writeFragment({
-                                                                data,
-                                                                fragment: ManageContent_ItemExhibitionFragmentDoc,
-                                                                fragmentName: "ManageContent_ItemExhibition",
-                                                            });
-                                                            if (
-                                                                existingRefs.some(
-                                                                    (ref) => readField("id", ref) === data.id
-                                                                )
-                                                            ) {
-                                                                return existingRefs;
-                                                            }
-                                                            return [...existingRefs, newRef];
-                                                        },
-                                                    },
-                                                });
-                                            }
-                                        },
+                                        itemExhibitionId: itemExhibition.id,
+                                        priority: idx + 1,
                                     });
 
                                     updateItemExhibition({
-                                        variables: {
-                                            itemExhibitionId: nextItemExhibition.id,
-                                            priority: idx,
-                                        },
-                                        update: (cache, { data: _data }) => {
-                                            if (_data?.update_content_ItemExhibition_by_pk) {
-                                                const data = _data.update_content_ItemExhibition_by_pk;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemExhibition(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            const newRef = cache.writeFragment({
-                                                                data,
-                                                                fragment: ManageContent_ItemExhibitionFragmentDoc,
-                                                                fragmentName: "ManageContent_ItemExhibition",
-                                                            });
-                                                            if (
-                                                                existingRefs.some(
-                                                                    (ref) => readField("id", ref) === data.id
-                                                                )
-                                                            ) {
-                                                                return existingRefs;
-                                                            }
-                                                            return [...existingRefs, newRef];
-                                                        },
-                                                    },
-                                                });
-                                            }
-                                        },
+                                        itemExhibitionId: nextItemExhibition.id,
+                                        priority: idx,
                                     });
                                 }}
                             >
@@ -514,35 +377,11 @@ function ItemExhibitionsList({
                             aria-label="Delete"
                             colorScheme="red"
                             size="xs"
-                            isDisabled={deleteItemExhibitionResponse.loading}
+                            isDisabled={deleteItemExhibitionResponse.fetching}
                             onClick={async () => {
                                 try {
                                     deleteItemExhibition({
-                                        variables: {
-                                            itemExhibitionId: itemExhibition.id,
-                                        },
-                                        update: (cache, response) => {
-                                            if (response.data?.delete_content_ItemExhibition_by_pk) {
-                                                const deletedId = response.data.delete_content_ItemExhibition_by_pk.id;
-                                                cache.modify({
-                                                    fields: {
-                                                        content_ItemExhibition(
-                                                            existingRefs: Reference[] = [],
-                                                            { readField }
-                                                        ) {
-                                                            cache.evict({
-                                                                id: deletedId,
-                                                                fieldName: "ManageContent_ItemExhibition",
-                                                                broadcast: true,
-                                                            });
-                                                            return existingRefs.filter(
-                                                                (ref) => readField("id", ref) !== deletedId
-                                                            );
-                                                        },
-                                                    },
-                                                });
-                                            }
-                                        },
+                                        itemExhibitionId: itemExhibition.id,
                                     });
                                 } catch (e) {
                                     toast({

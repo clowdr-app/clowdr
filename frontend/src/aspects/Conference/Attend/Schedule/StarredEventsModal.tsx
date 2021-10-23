@@ -120,7 +120,7 @@ export function StarredEventsModal({
 
 function StarredEvents(): JSX.Element {
     const registrant = useCurrentRegistrant();
-    const eventIdsResponse = useStarredEvents_SelectEventIdsQuery({
+    const [eventIdsResponse] = useStarredEvents_SelectEventIdsQuery({
         variables: {
             registrantId: registrant.id,
         },
@@ -149,7 +149,7 @@ function StarredEvents(): JSX.Element {
 
 function StarredEventsInner({ eventIds }: { eventIds: string[] }): JSX.Element {
     const conference = useConference();
-    const roomsResult = useStarredEvents_SelectEventsQuery({
+    const [roomsResult] = useStarredEvents_SelectEventsQuery({
         variables: {
             eventIds,
             conferenceId: conference.id,

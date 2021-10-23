@@ -51,7 +51,6 @@ gql`
 `;
 
 function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment }): JSX.Element {
-    const conference = useConference();
     const borderColour = useColorModeValue("Exhibition.tileBorderColor-light", "Exhibition.tileBorderColor-dark");
 
     const { colorMode } = useColorMode();
@@ -95,7 +94,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
     return (
         <GridItem>
             <LinkButton
-                to={`${conferenceUrl}/exhibition/${exhibition.id}`}
+                to={`${conferencePath}/exhibition/${exhibition.id}`}
                 w="100%"
                 h="auto"
                 minH="100%"
@@ -146,7 +145,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
                     <Text whiteSpace="normal" mr="auto" fontWeight="bold">
                         {exhibition.name}
                     </Text>
-                    <PageCountText path={`${conferenceUrl}/exhibition/${exhibition.id}`} />
+                    <PageCountText path={`${conferencePath}/exhibition/${exhibition.id}`} />
                 </HStack>
                 <PlainAuthorsList people={allAuthors} fontSize="sm" sortByNameOnly />
             </LinkButton>
@@ -156,7 +155,7 @@ function ExhibitionTile({ exhibition }: { exhibition: ExhibitionSummaryFragment 
 
 export function ExhibitionsGrid(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
@@ -196,7 +195,7 @@ export function ExhibitionsGrid(): JSX.Element {
 
 export default function ExhibitionsPage(): JSX.Element {
     const conference = useConference();
-    const exhibitionsResponse = useSelectAllExhibitionsQuery({
+    const [exhibitionsResponse] = useSelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },

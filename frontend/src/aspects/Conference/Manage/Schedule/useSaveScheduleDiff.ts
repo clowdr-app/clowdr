@@ -1,4 +1,4 @@
-import type { ApolloError } from "@apollo/client";
+import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
 import assert from "assert";
 import { useEffect, useState } from "react";
@@ -203,7 +203,7 @@ export type WholeScheduleStateT =
 export function useSaveScheduleDiff():
     | {
           loadingContent: true;
-          errorContent: ApolloError | undefined;
+          errorContent: CombinedError | undefined;
           originalEvents: undefined;
           originalTags: undefined;
           originalExhibitions: undefined;
@@ -214,7 +214,7 @@ export function useSaveScheduleDiff():
       }
     | {
           loadingContent: false;
-          errorContent: ApolloError;
+          errorContent: CombinedError;
           originalEvents: undefined;
           originalTags: undefined;
           originalExhibitions: undefined;
@@ -264,25 +264,21 @@ export function useSaveScheduleDiff():
       } {
     const conference = useConference();
 
-    const [insertRoomsMutation] = useInsertRoomsMutation();
-    const [deleteRoomsMutation] = useDeleteRoomsMutation();
-    const [updateRoomMutation] = useUpdateRoomMutation();
-    const [insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
-    const [deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
-    const [insertTagsMutation] = useInsertTagsMutation();
-    const [deleteTagsMutation] = useDeleteTagsMutation();
-    const [updateTagMutation] = useUpdateTagMutation();
+    const [, insertRoomsMutation] = useInsertRoomsMutation();
+    const [, deleteRoomsMutation] = useDeleteRoomsMutation();
+    const [, updateRoomMutation] = useUpdateRoomMutation();
+    const [, insertOriginatingDatasMutation] = useInsertOriginatingDatasMutation();
+    const [, deleteOriginatingDatasMutation] = useDeleteOriginatingDatasMutation();
+    const [, insertTagsMutation] = useInsertTagsMutation();
+    const [, deleteTagsMutation] = useDeleteTagsMutation();
+    const [, updateTagMutation] = useUpdateTagMutation();
 
-    const [deleteEventsMutation] = useDeleteEventsMutation();
-    const [insertEventMutation] = useInsertEventMutation();
-    const [updateEventMutation] = useUpdateEventMutation();
+    const [, deleteEventsMutation] = useDeleteEventsMutation();
+    const [, insertEventMutation] = useInsertEventMutation();
+    const [, updateEventMutation] = useUpdateEventMutation();
 
-    const {
-        loading: loadingContent,
-        error: errorContent,
-        data: wholeSchedule,
-    } = useSelectWholeScheduleQuery({
-        fetchPolicy: "network-only",
+    const [{ fetching: loadingContent, error: errorContent, data: wholeSchedule }] = useSelectWholeScheduleQuery({
+        requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
@@ -437,17 +433,15 @@ export function useSaveScheduleDiff():
                 try {
                     if (newTags.size > 0) {
                         await insertTagsMutation({
-                            variables: {
-                                newTags: Array.from(newTags.values()).map(
-                                    (tag): Collection_Tag_Insert_Input => ({
-                                        id: tag.id,
-                                        name: tag.name,
-                                        colour: tag.colour,
-                                        conferenceId: conference.id,
-                                        originatingDataId: tag.originatingDataId,
-                                    })
-                                ),
-                            },
+                            newTags: Array.from(newTags.values()).map(
+                                (tag): Collection_Tag_Insert_Input => ({
+                                    id: tag.id,
+                                    name: tag.name,
+                                    colour: tag.colour,
+                                    conferenceId: conference.id,
+                                    originatingDataId: tag.originatingDataId,
+                                })
+                            ),
                         });
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
@@ -459,12 +453,10 @@ export function useSaveScheduleDiff():
                             let ok = false;
                             try {
                                 await updateTagMutation({
-                                    variables: {
-                                        id: tag.id,
-                                        colour: tag.colour,
-                                        name: tag.name,
-                                        originatingDataId: tag.originatingDataId,
-                                    },
+                                    id: tag.id,
+                                    colour: tag.colour,
+                                    name: tag.name,
+                                    originatingDataId: tag.originatingDataId,
                                 });
                                 ok = true;
                             } catch (_e) {
@@ -479,16 +471,14 @@ export function useSaveScheduleDiff():
 
                     if (newOriginatingDatas.size > 0) {
                         await insertOriginatingDatasMutation({
-                            variables: {
-                                newDatas: Array.from(newOriginatingDatas.values()).map(
-                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
-                                        id: originatingData.id,
-                                        conferenceId: conference.id,
-                                        data: originatingData.data,
-                                        sourceId: originatingData.sourceId,
-                                    })
-                                ),
-                            },
+                            newDatas: Array.from(newOriginatingDatas.values()).map(
+                                (originatingData): Conference_OriginatingData_Insert_Input => ({
+                                    id: originatingData.id,
+                                    conferenceId: conference.id,
+                                    data: originatingData.data,
+                                    sourceId: originatingData.sourceId,
+                                })
+                            ),
                         });
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
@@ -497,19 +487,17 @@ export function useSaveScheduleDiff():
 
                     if (newRooms.size > 0) {
                         await insertRoomsMutation({
-                            variables: {
-                                newRooms: Array.from(newRooms.values()).map(
-                                    (room): Room_Room_Insert_Input => ({
-                                        id: room.id,
-                                        conferenceId: conference.id,
-                                        name: room.name,
-                                        originatingDataId: room.originatingDataId,
-                                        capacity: room.capacity,
-                                        priority: room.priority,
-                                        currentModeName: Room_Mode_Enum.VideoChat,
-                                    })
-                                ),
-                            },
+                            newRooms: Array.from(newRooms.values()).map(
+                                (room): Room_Room_Insert_Input => ({
+                                    id: room.id,
+                                    conferenceId: conference.id,
+                                    name: room.name,
+                                    originatingDataId: room.originatingDataId,
+                                    capacity: room.capacity,
+                                    priority: room.priority,
+                                    currentModeName: Room_Mode_Enum.VideoChat,
+                                })
+                            ),
                         });
                         for (const key of newRooms.keys()) {
                             roomResults.set(key, true);
@@ -521,13 +509,11 @@ export function useSaveScheduleDiff():
                             let ok = false;
                             try {
                                 await updateRoomMutation({
-                                    variables: {
-                                        id: room.id,
-                                        name: room.name,
-                                        capacity: room.capacity,
-                                        originatingDataId: room.originatingDataId,
-                                        priority: room.priority,
-                                    },
+                                    id: room.id,
+                                    name: room.name,
+                                    capacity: room.capacity,
+                                    originatingDataId: room.originatingDataId,
+                                    priority: room.priority,
                                 });
                                 ok = true;
                             } catch (_e) {
@@ -542,35 +528,31 @@ export function useSaveScheduleDiff():
 
                     if (deletedEventKeys.size > 0 || newEvents.size > 0) {
                         await deleteEventsMutation({
-                            variables: {
-                                deleteEventIds: Array.from(deletedEventKeys.values()),
-                            },
+                            deleteEventIds: Array.from(deletedEventKeys.values()),
                         });
                         await Promise.all(
                             Array.from(newEvents.values()).map((event) =>
                                 insertEventMutation({
-                                    variables: {
-                                        newEvent: {
-                                            id: event.id,
-                                            conferenceId: conference.id,
-                                            roomId: event.roomId,
-                                            intendedRoomModeName: event.intendedRoomModeName,
-                                            itemId: event.itemId,
-                                            exhibitionId: event.exhibitionId,
-                                            name: event.name,
-                                            startTime: new Date(event.startTime).toISOString(),
-                                            durationSeconds: event.durationSeconds,
-                                            originatingDataId: event.originatingDataId,
-                                            enableRecording: event.enableRecording,
-                                        },
-                                        newEventId: event.id,
-                                        insertContinuation:
-                                            (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                                                event.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
-                                            event.itemId
-                                                ? true
-                                                : false,
+                                    newEvent: {
+                                        id: event.id,
+                                        conferenceId: conference.id,
+                                        roomId: event.roomId,
+                                        intendedRoomModeName: event.intendedRoomModeName,
+                                        itemId: event.itemId,
+                                        exhibitionId: event.exhibitionId,
+                                        name: event.name,
+                                        startTime: new Date(event.startTime).toISOString(),
+                                        durationSeconds: event.durationSeconds,
+                                        originatingDataId: event.originatingDataId,
+                                        enableRecording: event.enableRecording,
                                     },
+                                    newEventId: event.id,
+                                    insertContinuation:
+                                        (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                                            event.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                                        event.itemId
+                                            ? true
+                                            : false,
                                 })
                             )
                         );
@@ -599,17 +581,15 @@ export function useSaveScheduleDiff():
                             assert(existingEvent);
 
                             await updateEventMutation({
-                                variables: {
-                                    eventId: event.id,
-                                    originatingDataId: event.originatingDataId,
-                                    roomId: event.roomId,
-                                    intendedRoomModeName: event.intendedRoomModeName,
-                                    itemId: event.itemId,
-                                    exhibitionId: event.exhibitionId,
-                                    name: event.name,
-                                    startTime: new Date(event.startTime).toISOString(),
-                                    durationSeconds: event.durationSeconds,
-                                },
+                                eventId: event.id,
+                                originatingDataId: event.originatingDataId,
+                                roomId: event.roomId,
+                                intendedRoomModeName: event.intendedRoomModeName,
+                                itemId: event.itemId,
+                                exhibitionId: event.exhibitionId,
+                                name: event.name,
+                                startTime: new Date(event.startTime).toISOString(),
+                                durationSeconds: event.durationSeconds,
                             });
 
                             ok = true;
@@ -626,9 +606,7 @@ export function useSaveScheduleDiff():
                 try {
                     if (deletedTagKeys.size > 0) {
                         await deleteTagsMutation({
-                            variables: {
-                                deleteTagIds: Array.from(deletedTagKeys.values()),
-                            },
+                            deleteTagIds: Array.from(deletedTagKeys.values()),
                         });
                         for (const key of deletedTagKeys.keys()) {
                             tagResults.set(key, true);
@@ -643,9 +621,7 @@ export function useSaveScheduleDiff():
                 try {
                     if (deletedRoomKeys.size > 0) {
                         await deleteRoomsMutation({
-                            variables: {
-                                deleteRoomIds: Array.from(deletedRoomKeys.values()),
-                            },
+                            deleteRoomIds: Array.from(deletedRoomKeys.values()),
                         });
                         for (const key of deletedRoomKeys.keys()) {
                             roomResults.set(key, true);
@@ -660,9 +636,7 @@ export function useSaveScheduleDiff():
                 try {
                     if (deletedOriginatingDataKeys.size > 0) {
                         await deleteOriginatingDatasMutation({
-                            variables: {
-                                deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
-                            },
+                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
                         });
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);

@@ -1,4 +1,3 @@
-import { gql, useApolloClient } from "@apollo/client";
 import {
     AspectRatio,
     Box,
@@ -12,11 +11,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     Room_EventSummaryFragmentDoc,
@@ -113,7 +111,7 @@ export default function RoomOuter({ roomDetails }: { roomDetails: RoomPage_RoomD
         refetch: refetchDefaultVideoRoomBackend,
         loading: defaultvideoRoomBackendLoading,
     } = useRoom_GetDefaultVideoRoomBackendQuery({
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     useEffect(() => {
@@ -156,9 +154,8 @@ function Room({
         [now]
     );
 
-    const { loading: loadingEvents, data } = useRoom_GetEventsQuery({
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy: "cache-first",
+    const [{ loading: loadingEvents, data }] = useRoom_GetEventsQuery({
+        requestPolicy: "cache-and-network",
         variables: {
             roomId: roomDetails.id,
             now: nowStr,

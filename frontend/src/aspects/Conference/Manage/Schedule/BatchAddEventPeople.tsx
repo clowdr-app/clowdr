@@ -1,4 +1,3 @@
-import type { MutationTuple, QueryResult, Reference } from "@apollo/client";
 import {
     Accordion,
     AccordionButton,
@@ -31,41 +30,42 @@ import { gql } from "@urql/core";
 import assert from "assert";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { OperationResult, UseMutationResponse, UseQueryState } from "urql";
+import { useClient } from "urql";
 import type {
     AddEventPeople_InsertEventPeopleMutation,
     AddEventPeople_InsertEventPeopleMutationVariables,
     AddEventPeople_InsertProgramPeopleMutation,
     AddEventPeople_InsertProgramPeopleMutationVariables,
     AddEventPeople_ItemPersonFragment,
+    AddEventPeople_SelectItemPeopleQuery,
+    AddEventPeople_SelectItemPeopleQueryVariables,
     AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
     AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables,
     AddEventPeople_SelectRegistrantsQuery,
-    AddEventPeople_SelectRegistrantsQueryVariables,
+    // AddEventPeople_SelectRegistrants_ByGroupQuery,
+    // AddEventPeople_SelectRegistrants_ByGroupQueryVariables,
     Collection_ProgramPerson_Insert_Input,
     EventInfoFragment,
+    Exact,
     RoomInfoFragment,
     Schedule_EventProgramPerson_Insert_Input,
 } from "../../../../generated/graphql";
 import {
-    EventInfoFragmentDoc,
-    EventProgramPersonInfoFragmentDoc,
-    Permissions_Permission_Enum,
-    ProgramPersonInfoFragmentDoc,
+    AddEventPeople_SelectItemPeopleDocument,
+    AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
+    // AddEventPeople_SelectRegistrants_ByGroupDocument,
     Schedule_EventProgramPersonRole_Enum,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
-    useAddEventPeople_SelectGroupsQuery,
-    useAddEventPeople_SelectItemPeopleQuery,
     useAddEventPeople_SelectProgramPeopleQuery,
-    useAddEventPeople_SelectProgramPeople_ByRegistrantQuery,
     useAddEventPeople_SelectRegistrantsQuery,
-    useAddEventPeople_SelectRegistrants_ByGroupQuery,
 } from "../../../../generated/graphql";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
-import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
+import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
 
 gql`
@@ -191,9 +191,7 @@ function AddEventPeople_FromContentPanel({
     isExpanded: boolean;
     onClose: () => void;
 }) {
-    const selectItemPeopleQuery = useAddEventPeople_SelectItemPeopleQuery({
-        skip: true,
-    });
+    const client = useClient();
     const insert = useAddEventPeople_InsertEventPeopleMutation();
     const toast = useToast();
 
@@ -211,10 +209,18 @@ function AddEventPeople_FromContentPanel({
                 const eventsWithExhibition = includeExhibitions ? events.filter((x) => !!x.exhibitionId) : [];
                 const exhibitionIds: string[] = eventsWithExhibition.map((x) => x.exhibitionId);
 
-                const itemPeopleQ = await selectItemPeopleQuery.refetch({
-                    itemIds,
-                    exhibitionIds,
-                });
+                const itemPeopleQ = await client
+                    .query<AddEventPeople_SelectItemPeopleQuery, AddEventPeople_SelectItemPeopleQueryVariables>(
+                        AddEventPeople_SelectItemPeopleDocument,
+                        {
+                            itemIds,
+                            exhibitionIds,
+                        }
+                    )
+                    .toPromise();
+                if (!itemPeopleQ.data) {
+                    throw new Error("No data available.");
+                }
                 const itemPeople = itemPeopleQ.data.content_ItemProgramPerson;
                 const itemExhibitions = itemPeopleQ.data.content_ItemExhibition;
                 const itemPeopleByItem = new Map<string, AddEventPeople_ItemPersonFragment[]>(
@@ -298,7 +304,7 @@ function AddEventPeople_FromContentPanel({
                 setCopying(false);
             }
         },
-        [events, insert, onClose, selectItemPeopleQuery, toast]
+        [events, insert, onClose, client, toast]
     );
 
     return (
@@ -350,8 +356,8 @@ function AddEventPeople_SingleProgramPersonPanel({
         }
     }, [isExpanded]);
 
-    const selectProgramPeopleQuery = useAddEventPeople_SelectProgramPeopleQuery({
-        skip: !hasBeenExpanded,
+    const [selectProgramPeopleQuery] = useAddEventPeople_SelectProgramPeopleQuery({
+        pause: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
         },
@@ -487,173 +493,181 @@ function AddEventPeople_SingleProgramPersonPanel({
     );
 }
 
-function AddEventPeople_FromGroupPanel({
-    events,
-    isExpanded,
-    onClose,
-}: {
-    events: EventInfoFragment[];
-    isExpanded: boolean;
-    onClose: () => void;
-}) {
-    const conference = useConference();
-    const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
-    useEffect(() => {
-        if (isExpanded) {
-            setHasBeenExpanded(true);
-        }
-    }, [isExpanded]);
+// TODO
+// function AddEventPeople_FromGroupPanel({
+//     events,
+//     isExpanded,
+//     onClose,
+// }: {
+//     events: EventInfoFragment[];
+//     isExpanded: boolean;
+//     onClose: () => void;
+// }) {
+//     const conference = useConference();
+//     const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
+//     useEffect(() => {
+//         if (isExpanded) {
+//             setHasBeenExpanded(true);
+//         }
+//     }, [isExpanded]);
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
-        skip: !hasBeenExpanded,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-    const selectGroupsQuery = useAddEventPeople_SelectGroupsQuery({
-        skip: !hasBeenExpanded,
-        variables: {
-            conferenceId: conference.id,
-        },
-    });
-    const selectRegistrants_ByGroupQuery = useAddEventPeople_SelectRegistrants_ByGroupQuery({
-        skip: true,
-    });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
-        skip: true,
-    });
-    const registrantOptions = useMemo(
-        () =>
-            selectGroupsQuery.data
-                ? [...selectGroupsQuery.data.permissions_Group]
-                      .sort((x, y) => x.name.localeCompare(y.name))
-                      .map((x) => (
-                          <option key={x.id} value={x.id}>
-                              {x.name}
-                          </option>
-                      ))
-                : [],
-        [selectGroupsQuery.data]
-    );
+//     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
+//         pause: !hasBeenExpanded,
+//         variables: {
+//             conferenceId: conference.id,
+//         },
+//     });
+//     const [selectGroupsQuery] = useAddEventPeople_SelectGroupsQuery({
+//         pause: !hasBeenExpanded,
+//         variables: {
+//             conferenceId: conference.id,
+//         },
+//     });
+//     const registrantOptions = useMemo(
+//         () =>
+//             selectGroupsQuery.data
+//                 ? [...selectGroupsQuery.data.permissions_Group]
+//                       .sort((x, y) => x.name.localeCompare(y.name))
+//                       .map((x) => (
+//                           <option key={x.id} value={x.id}>
+//                               {x.name}
+//                           </option>
+//                       ))
+//                 : [],
+//         [selectGroupsQuery.data]
+//     );
 
-    const roleOptions = useMemo(
-        () =>
-            Object.keys(Schedule_EventProgramPersonRole_Enum)
-                .filter((x) => x !== "Participant")
-                .sort((x, y) => x.localeCompare(y))
-                .map((x) => {
-                    const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
-                    return (
-                        <option key={v} value={v}>
-                            {formatEnumValue(v)}
-                        </option>
-                    );
-                }),
-        []
-    );
+//     const roleOptions = useMemo(
+//         () =>
+//             Object.keys(Schedule_EventProgramPersonRole_Enum)
+//                 .filter((x) => x !== "Participant")
+//                 .sort((x, y) => x.localeCompare(y))
+//                 .map((x) => {
+//                     const v = (Schedule_EventProgramPersonRole_Enum as any)[x];
+//                     return (
+//                         <option key={v} value={v}>
+//                             {formatEnumValue(v)}
+//                         </option>
+//                     );
+//                 }),
+//         []
+//     );
 
-    const [selectedGroupId, setSelectedGroupId] = useState<string>("");
-    const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
-        Schedule_EventProgramPersonRole_Enum.Presenter
-    );
+//     const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+//     const [selectedRole, setSelectedRole] = useState<Schedule_EventProgramPersonRole_Enum>(
+//         Schedule_EventProgramPersonRole_Enum.Presenter
+//     );
 
-    const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
-    const insertEventPeopleQ = useAddEventPeople_InsertEventPeopleMutation();
-    const toast = useToast();
+//     const insertProgramPeople = useAddEventPeople_InsertProgramPeopleMutation();
+//     const insertEventPeopleQ = useAddEventPeople_InsertEventPeopleMutation();
+//     const toast = useToast();
 
-    const [adding, setAdding] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+//     const [adding, setAdding] = useState<boolean>(false);
+//     const [error, setError] = useState<string | null>(null);
 
-    const add = useCallback(async () => {
-        setAdding(true);
-        setError(null);
+//     const client = useClient();
+//     const add = useCallback(async () => {
+//         setAdding(true);
+//         setError(null);
 
-        try {
-            const registrants = await selectRegistrants_ByGroupQuery.refetch({
-                groupId: selectedGroupId,
-            });
-            await addRegistrantsToEvent(
-                registrants.data.registrant_Registrant.map((x) => x.id),
-                selectRegistrantsQuery,
-                selectProgramPeople_ByRegistrantQuery,
-                insertProgramPeople,
-                conference.id,
-                events,
-                selectedRole,
-                insertEventPeopleQ
-            );
+//         try {
+//             const registrants = await client
+//                 .query<
+//                     AddEventPeople_SelectRegistrants_ByGroupQuery,
+//                     AddEventPeople_SelectRegistrants_ByGroupQueryVariables
+//                 >(AddEventPeople_SelectRegistrants_ByGroupDocument, {
+//                     groupId: selectedGroupId,
+//                 })
+//                 .toPromise();
+//             await addRegistrantsToEvent(
+//                 registrants.data.registrant_Registrant.map((x) => x.id),
+//                 selectRegistrantsQuery,
+//                 (registrantIds) =>
+//                     client
+//                         .query<
+//                             AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
+//                             AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables
+//                         >(AddEventPeople_SelectProgramPeople_ByRegistrantDocument, {
+//                             registrantIds,
+//                         })
+//                         .toPromise(),
+//                 insertProgramPeople,
+//                 conference.id,
+//                 events,
+//                 selectedRole,
+//                 insertEventPeopleQ
+//             );
 
-            setAdding(false);
-            onClose();
-            toast({
-                title: "Registration group added to events",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-                position: "bottom",
-            });
-        } catch (e) {
-            setError(e.message || e.toString());
-            setAdding(false);
-        }
-    }, [
-        conference,
-        events,
-        insertProgramPeople,
-        insertEventPeopleQ,
-        onClose,
-        selectRegistrantsQuery,
-        selectRegistrants_ByGroupQuery,
-        selectProgramPeople_ByRegistrantQuery,
-        selectedGroupId,
-        selectedRole,
-        toast,
-    ]);
+//             setAdding(false);
+//             onClose();
+//             toast({
+//                 title: "Registration group added to events",
+//                 status: "success",
+//                 duration: 3000,
+//                 isClosable: true,
+//                 position: "bottom",
+//             });
+//         } catch (e) {
+//             setError(e.message || e.toString());
+//             setAdding(false);
+//         }
+//     }, [
+//         selectedGroupId,
+//         selectRegistrantsQuery,
+//         insertProgramPeople,
+//         conference.id,
+//         events,
+//         selectedRole,
+//         insertEventPeopleQ,
+//         onClose,
+//         toast,
+//         client,
+//     ]);
 
-    return (
-        <>
-            <AccordionButton>
-                <Box flex="1" textAlign="left">
-                    Copy from a registration group
-                </Box>
-                <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel>
-                {error || selectGroupsQuery.error ? (
-                    <Alert status="error" variant="subtle" mb={4} justifyContent="flex-start" alignItems="flex-start">
-                        <AlertIcon />
-                        <VStack justifyContent="flex-start" alignItems="flex-start">
-                            <AlertTitle>
-                                {error ? "Error adding registration group to events" : "Error loading list of groups"}
-                            </AlertTitle>
-                            <AlertDescription>{error ?? selectGroupsQuery.error?.message}</AlertDescription>
-                        </VStack>
-                    </Alert>
-                ) : undefined}
-                <Select
-                    aria-label="Registration group to add"
-                    value={selectedGroupId}
-                    onChange={(ev) => setSelectedGroupId(ev.target.value)}
-                    mb={4}
-                >
-                    <option value="">Select a registration group</option>
-                    {registrantOptions}
-                </Select>
-                <Select
-                    aria-label="Role of registrant"
-                    value={selectedRole}
-                    onChange={(ev) => setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)}
-                    mb={4}
-                >
-                    {roleOptions}
-                </Select>
-                <Button colorScheme="purple" isDisabled={selectedGroupId === ""} isLoading={adding} onClick={add}>
-                    Add
-                </Button>
-            </AccordionPanel>
-        </>
-    );
-}
+//     return (
+//         <>
+//             <AccordionButton>
+//                 <Box flex="1" textAlign="left">
+//                     Copy from a registration group
+//                 </Box>
+//                 <AccordionIcon />
+//             </AccordionButton>
+//             <AccordionPanel>
+//                 {error || selectGroupsQuery.error ? (
+//                     <Alert status="error" variant="subtle" mb={4} justifyContent="flex-start" alignItems="flex-start">
+//                         <AlertIcon />
+//                         <VStack justifyContent="flex-start" alignItems="flex-start">
+//                             <AlertTitle>
+//                                 {error ? "Error adding registration group to events" : "Error loading list of groups"}
+//                             </AlertTitle>
+//                             <AlertDescription>{error ?? selectGroupsQuery.error?.message}</AlertDescription>
+//                         </VStack>
+//                     </Alert>
+//                 ) : undefined}
+//                 <Select
+//                     aria-label="Registration group to add"
+//                     value={selectedGroupId}
+//                     onChange={(ev) => setSelectedGroupId(ev.target.value)}
+//                     mb={4}
+//                 >
+//                     <option value="">Select a registration group</option>
+//                     {registrantOptions}
+//                 </Select>
+//                 <Select
+//                     aria-label="Role of registrant"
+//                     value={selectedRole}
+//                     onChange={(ev) => setSelectedRole(ev.target.value as Schedule_EventProgramPersonRole_Enum)}
+//                     mb={4}
+//                 >
+//                     {roleOptions}
+//                 </Select>
+//                 <Button colorScheme="purple" isDisabled={selectedGroupId === ""} isLoading={adding} onClick={add}>
+//                     Add
+//                 </Button>
+//             </AccordionPanel>
+//         </>
+//     );
+// }
 
 function AddEventPeople_SingleRegistrantPanel({
     events,
@@ -672,14 +686,11 @@ function AddEventPeople_SingleRegistrantPanel({
         }
     }, [isExpanded]);
 
-    const selectRegistrantsQuery = useAddEventPeople_SelectRegistrantsQuery({
-        skip: !hasBeenExpanded,
+    const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
+        pause: !hasBeenExpanded,
         variables: {
             conferenceId: conference.id,
         },
-    });
-    const selectProgramPeople_ByRegistrantQuery = useAddEventPeople_SelectProgramPeople_ByRegistrantQuery({
-        skip: true,
     });
     const registrantOptions = useMemo(
         () =>
@@ -725,6 +736,7 @@ function AddEventPeople_SingleRegistrantPanel({
     const [adding, setAdding] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    const client = useClient();
     const add = useCallback(async () => {
         setAdding(true);
         setError(null);
@@ -733,7 +745,15 @@ function AddEventPeople_SingleRegistrantPanel({
             const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = await addRegistrantsToEvent(
                 [selectedRegistrantId],
                 selectRegistrantsQuery,
-                selectProgramPeople_ByRegistrantQuery,
+                (registrantIds) =>
+                    client
+                        .query<
+                            AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
+                            AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables
+                        >(AddEventPeople_SelectProgramPeople_ByRegistrantDocument, {
+                            registrantIds,
+                        })
+                        .toPromise(),
                 insertProgramPeople,
                 conference.id,
                 events,
@@ -755,16 +775,16 @@ function AddEventPeople_SingleRegistrantPanel({
             setAdding(false);
         }
     }, [
-        conference,
-        events,
+        selectedRegistrantId,
+        selectRegistrantsQuery,
         insertProgramPeople,
+        conference.id,
+        events,
+        selectedRole,
         insertEventPeopleQ,
         onClose,
-        selectRegistrantsQuery,
-        selectProgramPeople_ByRegistrantQuery,
-        selectedRegistrantId,
-        selectedRole,
         toast,
+        client,
     ]);
 
     return (
@@ -815,77 +835,41 @@ function AddEventPeople_SingleRegistrantPanel({
 async function insertEventPeople(
     events: EventInfoFragment[],
     newEventPeople: Schedule_EventProgramPerson_Insert_Input[],
-    insert: MutationTuple<AddEventPeople_InsertEventPeopleMutation, AddEventPeople_InsertEventPeopleMutationVariables>
+    insert: UseMutationResponse<
+        AddEventPeople_InsertEventPeopleMutation,
+        AddEventPeople_InsertEventPeopleMutationVariables
+    >
 ): Promise<void> {
-    await insert[0]({
-        variables: {
-            objects: newEventPeople,
-        },
-        update: (cache, { data: _data }) => {
-            if (_data?.insert_schedule_EventProgramPerson) {
-                const data = _data.insert_schedule_EventProgramPerson;
-                data.returning.forEach((x) => {
-                    cache.writeFragment({
-                        data: x,
-                        fragment: EventProgramPersonInfoFragmentDoc,
-                        fragmentName: "EventProgramPersonInfo",
-                    });
-
-                    const frag = cache.readFragment<EventInfoFragment>({
-                        id: cache.identify({
-                            __typename: "schedule_Event",
-                            id: x.eventId,
-                        }),
-                        fragment: EventInfoFragmentDoc,
-                        fragmentName: "EventInfo",
-                    });
-                    if (frag) {
-                        cache.writeFragment<EventInfoFragment>({
-                            id: cache.identify(frag),
-                            data: {
-                                ...frag,
-                                eventPeople: [...frag.eventPeople, x],
-                            },
-                            fragment: EventInfoFragmentDoc,
-                            fragmentName: "EventInfo",
-                        });
-                    }
-                });
-            }
-        },
+    await insert[1]({
+        objects: newEventPeople,
     });
 }
 
 export async function addRegistrantsToEvent(
     registrantIds: string[],
-    selectRegistrantsQuery: QueryResult<
-        AddEventPeople_SelectRegistrantsQuery,
-        AddEventPeople_SelectRegistrantsQueryVariables
-    >,
-    selectProgramPeople_ByRegistrantQuery: QueryResult<
-        AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
-        AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables
-    >,
-    insertProgramPeople: MutationTuple<
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    selectRegistrantsQuery: UseQueryState<AddEventPeople_SelectRegistrantsQuery, object>,
+    selectProgramPeople_ByRegistrantQuery: (
+        registrantIds: string[]
+    ) => Promise<OperationResult<AddEventPeople_SelectProgramPeople_ByRegistrantQuery, Exact<{ registrantIds: any }>>>,
+    insertProgramPeople: UseMutationResponse<
         AddEventPeople_InsertProgramPeopleMutation,
         AddEventPeople_InsertProgramPeopleMutationVariables
     >,
     conferenceId: string,
     events: EventInfoFragment[],
     selectedRole: Schedule_EventProgramPersonRole_Enum,
-    insertEventPeopleQ: MutationTuple<
+    insertEventPeopleQ: UseMutationResponse<
         AddEventPeople_InsertEventPeopleMutation,
         AddEventPeople_InsertEventPeopleMutationVariables
     >
 ): Promise<Schedule_EventProgramPerson_Insert_Input[]> {
-    const programPeople = await selectProgramPeople_ByRegistrantQuery.refetch({
-        registrantIds,
-    });
+    const programPeople = await selectProgramPeople_ByRegistrantQuery(registrantIds);
 
     const personIds: string[] = [];
     const insertProgramPersons: Collection_ProgramPerson_Insert_Input[] = [];
     for (const registrantId of registrantIds) {
-        const personId = programPeople.data.collection_ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
+        const personId = programPeople.data?.collection_ProgramPerson.find((x) => x.registrantId === registrantId)?.id;
         if (personId) {
             personIds.push(personId);
         } else {
@@ -902,29 +886,8 @@ export async function addRegistrantsToEvent(
     }
 
     if (insertProgramPersons.length > 0) {
-        const newPeople = await insertProgramPeople[0]({
-            variables: {
-                objects: insertProgramPersons,
-            },
-            update: (cache, result) => {
-                if (result.data?.insert_collection_ProgramPerson) {
-                    const data = result.data.insert_collection_ProgramPerson;
-                    cache.modify({
-                        fields: {
-                            collection_ProgramPerson(existingRefs: Reference[] = []) {
-                                const newRefs = data.returning.map((x) =>
-                                    cache.writeFragment({
-                                        data: x,
-                                        fragment: ProgramPersonInfoFragmentDoc,
-                                        fragmentName: "ProgramPersonInfo",
-                                    })
-                                );
-                                return [...existingRefs, ...newRefs];
-                            },
-                        },
-                    });
-                }
-            },
+        const newPeople = await insertProgramPeople[1]({
+            objects: insertProgramPersons,
         });
         assert(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
         personIds.push(...newPeople.data.insert_collection_ProgramPerson.returning.map((x) => x.id));
@@ -1113,12 +1076,8 @@ export default function BatchAddEventPeople({
                                     />
                                 )}
                             </AccordionItem>
-                            <RequireAtLeastOnePermissionWrapper
-                                permissions={[
-                                    Permissions_Permission_Enum.ConferenceManageGroups,
-                                    Permissions_Permission_Enum.ConferenceManageRoles,
-                                ]}
-                            >
+                            {/* TODO:
+                            <RequireRole organizerRole>
                                 <AccordionItem>
                                     {({ isExpanded }) => (
                                         <AddEventPeople_FromGroupPanel
@@ -1128,14 +1087,8 @@ export default function BatchAddEventPeople({
                                         />
                                     )}
                                 </AccordionItem>
-                            </RequireAtLeastOnePermissionWrapper>
-                            <RequireAtLeastOnePermissionWrapper
-                                permissions={[
-                                    Permissions_Permission_Enum.ConferenceManageAttendees,
-                                    Permissions_Permission_Enum.ConferenceManageGroups,
-                                    Permissions_Permission_Enum.ConferenceManageRoles,
-                                ]}
-                            >
+                            </RequireRole> */}
+                            <RequireRole organizerRole>
                                 <AccordionItem>
                                     {({ isExpanded }) => (
                                         <AddEventPeople_SingleRegistrantPanel
@@ -1145,7 +1098,7 @@ export default function BatchAddEventPeople({
                                         />
                                     )}
                                 </AccordionItem>
-                            </RequireAtLeastOnePermissionWrapper>
+                            </RequireRole>
                         </Accordion>
                     </VStack>
                 </ModalBody>

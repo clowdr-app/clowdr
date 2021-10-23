@@ -2,7 +2,8 @@ import { TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useGlobalChatState } from "../../../Chat/GlobalChatStateProvider";
-import useMaybeCurrentUser from "../../../Users/CurrentUser/useMaybeCurrentUser";
+import { useMaybeCurrentRegistrant } from "../../../Conference/useCurrentRegistrant";
+import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { ChatsPanel } from "./Panels/ChatsPanel";
 import { ItemChatPanel } from "./Panels/ItemChatPanel";
 import { PresencePanel } from "./Panels/PresencePanel";
@@ -11,13 +12,11 @@ import { RoomChatPanel } from "./Panels/RoomChatPanel";
 import { RightSidebarTabs, useRightSidebarCurrentTab } from "./RightSidebarCurrentTab";
 
 function RightSidebarSections_Inner({
-    confSlug,
     externalSetPageChatUnreadCount,
     externalSetChatsUnreadCount,
     externalSetPageChatAvailable,
     isVisible,
 }: {
-    confSlug: string;
     externalSetPageChatUnreadCount: (count: string) => void;
     externalSetChatsUnreadCount: (count: string) => void;
     externalSetPageChatAvailable: (isAvailable: boolean) => void;
@@ -26,9 +25,10 @@ function RightSidebarSections_Inner({
     const { path } = useRouteMatch();
     const roomMatch = useRouteMatch<{ roomId: string }>(`${path}/room/:roomId`);
     const itemMatch = useRouteMatch<{ itemId: string }>(`${path}/item/:itemId`);
+    const { conferencePath } = useAuthParameters();
     const conferenceLandingPageMatch = useRouteMatch({
         exact: true,
-        path: `/conference/${confSlug}`,
+        path: conferencePath ?? "",
     });
     const exhibitionMatch = useRouteMatch<{ exhibitionId: string }>(`${path}/exhibition/:exhibitionId`);
     const roomId = roomMatch?.params?.roomId;
@@ -92,20 +92,12 @@ function RightSidebarSections_Inner({
                 <ItemChatPanel
                     itemOrExhibitionId={itemOrExhibitionId}
                     onChatIdLoaded={setPageChatId}
-                    confSlug={confSlug}
                     setUnread={externalSetPageChatUnreadCount}
                     isVisible={isVisible && !!itemOrExhibitionId && currentTab === RightSidebarTabs.PageChat}
                     setPageChatAvailable={externalSetPageChatAvailable}
                 />
             ),
-        [
-            confSlug,
-            currentTab,
-            itemOrExhibitionId,
-            externalSetPageChatUnreadCount,
-            isVisible,
-            externalSetPageChatAvailable,
-        ]
+        [currentTab, itemOrExhibitionId, externalSetPageChatUnreadCount, isVisible, externalSetPageChatAvailable]
     );
     const switchToPageChat = useCallback(() => {
         setCurrentTab(RightSidebarTabs.PageChat);
@@ -114,7 +106,6 @@ function RightSidebarSections_Inner({
     const chatsPanel = useMemo(
         () => (
             <ChatsPanel
-                confSlug={confSlug}
                 pageChatId={pageChatId}
                 switchToPageChat={switchToPageChat}
                 openChat={openChatCb}
@@ -123,7 +114,7 @@ function RightSidebarSections_Inner({
                 isVisible={isVisible && currentTab === RightSidebarTabs.Chats}
             />
         ),
-        [confSlug, currentTab, pageChatId, switchToPageChat, isVisible, externalSetChatsUnreadCount]
+        [currentTab, pageChatId, switchToPageChat, isVisible, externalSetChatsUnreadCount]
     );
     const presencePanel = useMemo(
         () => <PresencePanel roomId={roomId} isOpen={currentTab === RightSidebarTabs.Presence} />,
@@ -183,33 +174,27 @@ function RightSidebarSections_Inner({
 }
 
 export default function RightSidebarSections({
-    confSlug,
     externalSetPageChatUnreadCount,
     externalSetChatsUnreadCount,
     externalSetPageChatAvailable,
     isVisible,
 }: {
-    confSlug: string;
     onClose: () => void;
     externalSetPageChatUnreadCount: (count: string) => void;
     externalSetChatsUnreadCount: (count: string) => void;
     externalSetPageChatAvailable: (isAvailable: boolean) => void;
     isVisible: boolean;
 }): JSX.Element {
-    const user = useMaybeCurrentUser();
-    if (user.user && user.user.registrants.length > 0) {
-        const registrant = user.user.registrants.find((x) => x.conference.slug === confSlug);
-        if (registrant) {
-            return (
-                <RightSidebarSections_Inner
-                    confSlug={confSlug}
-                    externalSetPageChatUnreadCount={externalSetPageChatUnreadCount}
-                    externalSetChatsUnreadCount={externalSetChatsUnreadCount}
-                    externalSetPageChatAvailable={externalSetPageChatAvailable}
-                    isVisible={isVisible}
-                />
-            );
-        }
+    const registrant = useMaybeCurrentRegistrant();
+    if (registrant) {
+        return (
+            <RightSidebarSections_Inner
+                externalSetPageChatUnreadCount={externalSetPageChatUnreadCount}
+                externalSetChatsUnreadCount={externalSetChatsUnreadCount}
+                externalSetPageChatAvailable={externalSetPageChatAvailable}
+                isVisible={isVisible}
+            />
+        );
     }
     return <></>;
 }

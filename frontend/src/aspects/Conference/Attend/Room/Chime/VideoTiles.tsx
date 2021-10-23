@@ -1,31 +1,12 @@
 import { Flex, useBreakpointValue } from "@chakra-ui/react";
-import {
-    useContentShareState,
-    useFeaturedTileState,
-    useLocalVideo,
-    useRemoteVideoTileState,
-} from "amazon-chime-sdk-component-library-react";
+import { useContentShareState, useRemoteVideoTileState } from "amazon-chime-sdk-component-library-react";
 import React from "react";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { LocalVideo } from "./LocalVideo";
 import { RemoteVideos } from "./RemoteVideos";
 
-export function VideoTiles({
-    layout = "featured",
-    noRemoteVideoView,
-}: {
-    layout?: string;
-    noRemoteVideoView?: boolean;
-}): JSX.Element {
-    const { tileId: featureTileId } = useFeaturedTileState();
+export function VideoTiles(_props: { layout?: string; noRemoteVideoView?: boolean }): JSX.Element {
     const { tiles } = useRemoteVideoTileState();
     const { tileId: contentTileId } = useContentShareState();
-    const { isVideoEnabled } = useLocalVideo();
-    const featured = (layout === "featured" && !!featureTileId) || !!contentTileId;
-    const remoteSize = tiles.length + (contentTileId ? 1 : 0);
-    const gridSize = remoteSize > 1 && isVideoEnabled ? remoteSize + 1 : remoteSize;
-
-    const registrant = useCurrentRegistrant();
 
     const resolutionBP = useBreakpointValue<"low" | "normal" | "high">({
         base: "low",

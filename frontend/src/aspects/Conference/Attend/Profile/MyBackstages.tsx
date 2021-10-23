@@ -76,11 +76,11 @@ function MyBackstages(): JSX.Element {
     const conference = useConference();
     const registrant = useCurrentRegistrant();
 
-    const myBackstagesResponse = useRegistrantEventsWithBackstagesQuery({
+    const [myBackstagesResponse] = useRegistrantEventsWithBackstagesQuery({
         variables: {
             registrantId: registrant.id,
         },
-        fetchPolicy: "network-only",
+        requestPolicy: "network-only",
     });
 
     const now = useRealTime(30000);
@@ -213,7 +213,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="10em">
                                                                         {isLive || isNow ? (
                                                                             <LinkButton
-                                                                                to={`${conferenceUrl}/room/${x.room.id}`}
+                                                                                to={`${conferencePath}/room/${x.room.id}`}
                                                                                 overflowWrap="normal"
                                                                                 maxW="100%"
                                                                                 height="auto"
@@ -271,7 +271,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="15em">
                                                                         {x.room ? (
                                                                             <Link
-                                                                                href={`${conferenceUrl}/room/${x.room.id}`}
+                                                                                href={`${conferencePath}/room/${x.room.id}`}
                                                                             >
                                                                                 <FAIcon
                                                                                     icon="link"

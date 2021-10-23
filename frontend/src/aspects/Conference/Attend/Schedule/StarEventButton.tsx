@@ -111,7 +111,7 @@ function StarEventButtonInner({
     registrant: Registrant;
 }): JSX.Element {
     const eventIds = useMemo(() => (typeof _eventIds === "string" ? [_eventIds] : _eventIds), [_eventIds]);
-    const starsResponse = useStarEventButton_GetStarsQuery({
+    const [starsResponse] = useStarEventButton_GetStarsQuery({
         variables: {
             eventIds,
             registrantId: registrant.id,

@@ -1,11 +1,8 @@
 import { VStack } from "@chakra-ui/react";
 import React from "react";
 import Sections from "./LeftSidebarConferenceSections";
-import { useMainMenu } from "./MainMenu/MainMenuState";
 
 export default function LeftSidebar(): JSX.Element {
-    const { onLeftBarClose } = useMainMenu();
-
     return (
         <VStack
             id="left-bar"
@@ -18,7 +15,7 @@ export default function LeftSidebar(): JSX.Element {
             role="navigation"
             aria-label="Main navigation"
         >
-            <Sections onClose={onLeftBarClose} />
+            <Sections />
         </VStack>
     );
 }

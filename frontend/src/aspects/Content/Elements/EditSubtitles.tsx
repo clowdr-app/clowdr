@@ -66,7 +66,7 @@ export default function EditSubtitles({
     elementId: string;
     magicToken: string;
 }): JSX.Element {
-    const [updateSubtitles] = useUpdateSubtitlesMutation();
+    const [_updateSubtitlesResponse, updateSubtitles] = useUpdateSubtitlesMutation();
     const toast = useToast();
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
     const history = useHistory();
@@ -76,7 +76,7 @@ export default function EditSubtitles({
     assert(videoKey);
     const videoUrl = `https://${videoBucket}.s3-eu-west-1.amazonaws.com/${videoKey}`;
     const subtitlesUrl = `https://${_srtBucket}.s3.eu-west-1.amazonaws.com/${_srtKey}`;
-    const { loading, error, data: subtitlesData = "", response } = useFetch(subtitlesUrl, {}, []);
+    const { loading, error, data: subtitlesData = "" } = useFetch(subtitlesUrl, {}, []);
 
     const validator: Validator = {
         validateBeforeParsing: async (_config, _plainFiles) => {
@@ -112,11 +112,9 @@ export default function EditSubtitles({
         async (srtTranscript: string) => {
             try {
                 const result = await updateSubtitles({
-                    variables: {
-                        elementId,
-                        magicToken,
-                        subtitleText: srtTranscript,
-                    },
+                    elementId,
+                    magicToken,
+                    subtitleText: srtTranscript,
                 });
                 if (result.data?.updateSubtitles?.success) {
                     toast({

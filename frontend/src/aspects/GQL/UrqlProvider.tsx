@@ -3,7 +3,7 @@ import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
-import { offlineExchange } from "@urql/exchange-graphcache";
+import { cacheExchange } from "@urql/exchange-graphcache";
 import { makeDefaultStorage } from "@urql/exchange-graphcache/default-storage";
 import { requestPolicyExchange } from "@urql/exchange-request-policy";
 import { retryExchange } from "@urql/exchange-retry";
@@ -35,6 +35,11 @@ export function useUrqlContext(): UrqlContext {
     }
     return ctx;
 }
+
+const storage = makeDefaultStorage({
+    idbName: "graphcache-v3", // The name of the IndexedDB database
+    maxAge: 7, // The maximum age of the persisted data in days
+});
 
 function UrqlProviderInner({
     children,
@@ -120,36 +125,32 @@ function UrqlProviderInner({
                         retryIf: (err: CombinedError, _operation: Operation) => !!err && !!err.networkError,
                     };
 
-                    const storage = makeDefaultStorage({
-                        idbName: "graphcache-v3", // The name of the IndexedDB database
-                        maxAge: 7, // The maximum age of the persisted data in days
-                    });
-
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
                             dedupExchange,
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
+                                shouldUpgrade: () => true,
                             }),
-                            offlineExchange<GraphCacheConfig>({
+                            cacheExchange<GraphCacheConfig>({
                                 keys: {
                                     analytics_ElementTotalViews: (data) => data.elementId as string,
                                     analytics_ItemTotalViews: (data) => data.itemId as string,
-                                    chat_Pin: (data) => data.chatId + ":" + data.registrantId,
+                                    chat_Pin: (data) => data.chatId + "-" + data.registrantId,
                                     chat_Reaction: (data) => data.sId as string,
-                                    chat_ReadUpToIndex: (data) => data.chatId + ":" + data.registrantId,
-                                    chat_Subscription: (data) => data.chatId + ":" + data.registrantId,
-                                    conference_Configuration: (data) => data.key + ":" + data.conferenceId,
-                                    PushNotificationSubscription: (data) => data.userId + ":" + data.endpoint,
+                                    chat_ReadUpToIndex: (data) => data.chatId + "-" + data.registrantId,
+                                    chat_Subscription: (data) => data.chatId + "-" + data.registrantId,
+                                    conference_Configuration: (data) => data.key + "-" + data.conferenceId,
+                                    PushNotificationSubscription: (data) => data.userId + "-" + data.endpoint,
                                     registrant_Profile: (data) => data.registrantId as string,
-                                    registrant_ProfileBadges: (data) => data.registrantId + ":" + data.name,
+                                    registrant_ProfileBadges: (data) => data.registrantId + "-" + data.name,
                                     room_LivestreamDurations: (data) => data.roomId as string,
-                                    schedule_OverlappingEvents: (data) => data.xId + ":" + data.yId,
+                                    schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
                                     system_Configuration: (data) => data.key as string,
                                 },
                                 schema: schema as any,
-                                storage,
+                                // storage,
                                 // TODO: resolvers (for queries) -- not sure if these are needed since we supply the schema
                                 // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
                             }),

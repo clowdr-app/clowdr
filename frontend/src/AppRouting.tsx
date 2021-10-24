@@ -22,9 +22,11 @@ import GenericErrorPage from "./aspects/Errors/GenericErrorPage";
 import PageNotFound from "./aspects/Errors/PageNotFound";
 import { GoogleOAuth, GoogleOAuthRedirect } from "./aspects/Google/GoogleOAuth";
 import { useAuthParameters } from "./aspects/GQL/AuthParameters";
+import { useShieldedHeaders } from "./aspects/GQL/useShieldedHeaders";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import PushNotificationSettings from "./aspects/PushNotifications/PushNotificationSettings";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
+import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
 import NewUserLandingPage from "./aspects/Users/NewUser/LandingPage";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
@@ -91,10 +93,15 @@ function CheckSlug(): JSX.Element {
 
 function CheckSlugInner(): JSX.Element {
     const origin = useMemo(() => window.location.origin, []);
+    const mUser = useMaybeCurrentUser();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": mUser ? "user" : "unauthenticated",
+    });
     const [response] = useGetSlugForUrlQuery({
         variables: {
             url: origin,
         },
+        context,
     });
     useEffect(() => {
         if (response.data?.getSlug?.slug) {

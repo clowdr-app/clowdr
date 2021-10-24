@@ -21,6 +21,7 @@ import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql
 import { useRoomPage_IsAdminQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
@@ -115,23 +116,16 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
         [conferencePath, sortedRegistrants]
     );
 
-    const requestContext = useMemo(
-        () => ({
-            fetchOptions: {
-                headers: {
-                    "X-Auth-Role": "room-member",
-                    "X-Auth-Room-Id": roomDetails.id,
-                },
-            },
-        }),
-        [roomDetails.id]
-    );
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "room-member",
+        "X-Auth-Room-Id": roomDetails.id,
+    });
     const [selfIsAdminResponse] = useRoomPage_IsAdminQuery({
         variables: {
             roomId: roomDetails.id,
             registrantId: registrant.id,
         },
-        context: requestContext,
+        context,
     });
 
     return (

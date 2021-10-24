@@ -21,6 +21,7 @@ import { gql } from "urql";
 import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
 import LoginButton from "../Auth/Buttons/LoginButton";
 import SignupButton from "../Auth/Buttons/SignUpButton";
+import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
 import FAIcon from "../Icons/FAIcon";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { setCachedInviteCode } from "../Users/NewUser/InviteCodeLocalStorage";
@@ -143,13 +144,11 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const title = useTitle("Accept invitation");
     const { user, loading } = useMaybeCurrentUser();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Invite-Code": inviteCode ?? "",
+    });
     const [{ fetching: inviteLoading, data: inviteData }] = useSelectInvitationForAcceptQuery({
-        context: {
-            headers: {
-                "SEND-WITHOUT-AUTH": true,
-                "x-hasura-invite-code": inviteCode,
-            },
-        },
+        context,
         variables: {
             inviteCode,
         },

@@ -6,6 +6,7 @@ import { gql } from "urql";
 import { Content_ElementType_Enum, useGetElementQuery, useGetUploadAgreementQuery } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
 import FAIcon from "../Icons/FAIcon";
 import { useTitle } from "../Utils/useTitle";
 import UploadedElement from "./Elements/UploadedElement";
@@ -56,30 +57,28 @@ export default function SubmitElementPage({
     itemId: string;
     elementId: string;
 }): JSX.Element {
+    const context1 = useShieldedHeaders({
+        "X-Hasura-Role": "unauthenticated",
+    });
     const [{ fetching: uploadAgreementLoading, error: uploadAgreementError, data: uploadAgreementData }] =
         useGetUploadAgreementQuery({
             requestPolicy: "network-only",
             variables: {
                 magicToken,
             },
-            context: {
-                headers: {
-                    "SEND-WITHOUT-AUTH": true,
-                },
-            },
+            context: context1,
         });
     useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
+    const context2 = useShieldedHeaders({
+        "X-Auth-Magic-Token": magicToken,
+    });
     const [{ fetching: loading, error, data }, refetch] = useGetElementQuery({
         variables: {
             accessToken: magicToken,
             elementId,
         },
-        context: {
-            headers: {
-                "x-hasura-magic-token": magicToken,
-            },
-        },
+        context: context2,
         requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");

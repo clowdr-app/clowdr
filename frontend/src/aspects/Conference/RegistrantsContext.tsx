@@ -8,12 +8,7 @@ import type {
     RegistrantsByUserIdQuery,
     RegistrantsByUserIdQueryVariables,
 } from "../../generated/graphql";
-import {
-    RegistrantsByIdDocument,
-    RegistrantsByUserIdDocument,
-    useRegistrantsByIdQuery,
-    useRegistrantsByUserIdQuery,
-} from "../../generated/graphql";
+import { RegistrantsByIdDocument, RegistrantsByUserIdDocument } from "../../generated/graphql";
 import usePolling from "../Generic/usePolling";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import { useConference } from "./useConference";
@@ -157,14 +152,7 @@ export default function RegistrantsContextProvider({
     const [checkInterval, setCheckInterval] = useState<number>(1000);
     const conference = useConference();
     const currentUser = useMaybeCurrentUser();
-    const [registrantsByIdQ] = useRegistrantsByIdQuery({
-        pause: true,
-    });
     const client = useClient();
-    const [registrantsByUserIdQ] = useRegistrantsByUserIdQuery({
-        pause: true,
-    });
-
     const registrants = React.useRef<Map<string, RegistrantCacheEntry>>(new Map());
     const usersToRegistrantIds = React.useRef<Map<string, string>>(new Map());
     const subscriptions = React.useRef<Map<number, Subscription>>(new Map());
@@ -277,6 +265,13 @@ export default function RegistrantsContextProvider({
                                 {
                                     userIds: filteredIds,
                                     conferenceId: conference.id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "attendee",
+                                        },
+                                    },
                                 }
                             )
                             .toPromise();
@@ -337,15 +332,7 @@ export default function RegistrantsContextProvider({
         return () => {
             clearInterval(tId);
         };
-    }, [
-        client,
-        registrantsByIdQ,
-        registrantsByUserIdQ,
-        checkInterval,
-        conference.id,
-        fullRefetchInterval,
-        currentUser,
-    ]);
+    }, [client, checkInterval, conference.id, fullRefetchInterval, currentUser]);
 
     const ctx = useMemo(
         () => ({

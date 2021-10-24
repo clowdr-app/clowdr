@@ -19,6 +19,7 @@ import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../..
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { contentSortOrder } from "../../Conference/Attend/Content/Element/ElementsGridLayout";
+import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import FAIcon from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
@@ -49,16 +50,15 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const title = useTitle("Submission");
 
     const accessToken = magicToken;
+    const context = useShieldedHeaders({
+        "X-Auth-Magic-Token": magicToken,
+    });
     const [itemResponse] = useItemByPersonAccessTokenQuery({
         variables: {
             itemId,
             accessToken,
         },
-        context: {
-            headers: {
-                "X-Hasura-Magic-Token": magicToken,
-            },
-        },
+        context,
     });
 
     const person = itemResponse.data?.collection_ProgramPerson.length

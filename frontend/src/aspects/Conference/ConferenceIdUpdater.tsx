@@ -17,7 +17,6 @@ export default function useConferenceIdUpdater(): void {
         variables: {
             slug: conferenceSlug ?? "",
         },
-        requestPolicy: "network-only",
     });
 
     useEffect(() => {

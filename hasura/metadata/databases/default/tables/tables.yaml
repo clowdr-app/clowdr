@@ -48,6 +48,8 @@
 - "!include job_queues_PublishVideoJob.yaml"
 - "!include job_queues_SubmissionRequestEmailJob.yaml"
 - "!include job_queues_UploadYouTubeVideoJob.yaml"
+- "!include permissions_Group.yaml"
+- "!include permissions_GroupRegistrant.yaml"
 - "!include public_Email.yaml"
 - "!include public_PushNotificationSubscription.yaml"
 - "!include public_User.yaml"

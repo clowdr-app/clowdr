@@ -1,0 +1,15 @@
+table:
+  name: GroupRegistrant
+  schema: permissions
+configuration:
+  custom_column_names:
+    created_at: createdAt
+    updated_at: updatedAt
+  custom_root_fields: {}
+object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: groupId
+- name: registrant
+  using:
+    foreign_key_constraint_on: registrantId

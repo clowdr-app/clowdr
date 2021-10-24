@@ -1,1 +1,0 @@
-drop schema "permissions" cascade;

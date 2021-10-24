@@ -1,6 +1,6 @@
 table:
   name: Group
-  schema: permissions
+  schema: registrant
 configuration:
   custom_column_names:
     created_at: createdAt
@@ -17,4 +17,4 @@ array_relationships:
       column: groupId
       table:
         name: GroupRegistrant
-        schema: permissions
+        schema: registrant

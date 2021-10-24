@@ -1,6 +1,6 @@
 table:
   name: GroupRegistrant
-  schema: permissions
+  schema: registrant
 configuration:
   custom_column_names:
     created_at: createdAt

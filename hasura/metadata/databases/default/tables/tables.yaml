@@ -69,6 +69,7 @@
 - "!include room_Participant.yaml"
 - "!include room_PersonRole.yaml"
 - "!include room_Room.yaml"
+- "!include room_RoomGroupMembership.yaml"
 - "!include room_RoomMembership.yaml"
 - "!include room_ShuffleAlgorithm.yaml"
 - "!include room_ShufflePeriod.yaml"

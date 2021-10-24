@@ -39,6 +39,7 @@ import { useConference } from "../../useConference";
 gql`
     query ConferenceStats($id: uuid!) {
         conference_Conference_by_pk(id: $id) {
+            id
             completedRegistrationsStat {
                 count
             }

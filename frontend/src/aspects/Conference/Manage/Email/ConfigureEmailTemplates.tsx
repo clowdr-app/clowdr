@@ -115,11 +115,20 @@ export function ConfigureEmailTemplatesInner({
 
     const update = useCallback(
         (key: Conference_ConfigurationKey_Enum) => (newValue: EmailTemplate_BaseConfig) => {
-            updateConferenceConfiguration({
-                conferenceId: conference.id,
-                key,
-                value: newValue,
-            });
+            updateConferenceConfiguration(
+                {
+                    conferenceId: conference.id,
+                    key,
+                    value: newValue,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "main-conference-organizer",
+                        },
+                    },
+                }
+            );
         },
         [conference.id, updateConferenceConfiguration]
     );

@@ -315,11 +315,7 @@ export default function LeftMenu(): JSX.Element {
                                 registrant.conferenceId === conference.id ? (
                                     <Fragment key={registrant.conferenceId} />
                                 ) : (
-                                    <MenuItem
-                                        key={registrant.conferenceId}
-                                        as={ReactLink}
-                                        to={`/conference/${registrant.conference.slug}`}
-                                    >
+                                    <MenuItem key={registrant.conferenceId} as={ReactLink} to={conferencePath ?? ""}>
                                         <FAIcon iconStyle="s" icon="link" />
                                         &nbsp;&nbsp;
                                         {registrant.conference.shortName}

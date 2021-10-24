@@ -194,7 +194,7 @@ function ConferenceProvider_WithUser({
     const context = useShieldedHeaders({
         "X-Auth-Role": "attendee",
     });
-    const [{ fetching: loading, error, data }, refetch] = useConferenceById_WithUserQuery({
+    const [{ fetching: loading, error, data }] = useConferenceById_WithUserQuery({
         variables: {
             id: conferenceId,
             userId,

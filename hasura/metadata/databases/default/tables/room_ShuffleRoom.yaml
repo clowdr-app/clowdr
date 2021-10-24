@@ -51,3 +51,28 @@ select_permissions:
             - subconferenceId:
                 _in: X-Hasura-Subconference-Ids
   role: attendee
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - shufflePeriodId
+    - roomId
+    - durationMinutes
+    - startedAt
+    - reshuffleUponEnd
+    - isEnded
+    filter:
+      shufflePeriod:
+        _and:
+        - conferenceId:
+            _in: X-Hasura-Conference-Ids
+        - _or:
+          - subconferenceId:
+              _is_null: true
+          - _and:
+            - subconferenceId:
+                _is_null: false
+            - subconferenceId:
+                _in: X-Hasura-Subconference-Ids
+  role: organizer

@@ -13,3 +13,106 @@ object_relationships:
 - name: registrant
   using:
     foreign_key_constraint_on: registrantId
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      group:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+    columns:
+    - groupId
+    - id
+    - registrantId
+  role: main-conference-organizer
+- permission:
+    backend_only: false
+    check:
+      group:
+        _or:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+    columns:
+    - groupId
+    - id
+    - registrantId
+  role: organizer
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - groupId
+    - registrantId
+    filter:
+      group:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - groupId
+    - registrantId
+    filter:
+      group:
+        _or:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: organizer
+update_permissions:
+- permission:
+    check: null
+    columns: []
+    filter:
+      group:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+delete_permissions:
+- permission:
+    filter:
+      group:
+        conferenceId:
+          _in: X-Hasura-Conference-Ids
+  role: main-conference-organizer
+- permission:
+    filter:
+      group:
+        _or:
+        - _and:
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _is_null: true
+        - _and:
+          - subconferenceId:
+              _is_null: false
+          - conferenceId:
+              _in: X-Hasura-Conference-Ids
+          - subconferenceId:
+              _in: X-Hasura-Subconference-Ids
+  role: organizer

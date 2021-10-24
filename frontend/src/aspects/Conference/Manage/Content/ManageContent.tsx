@@ -1229,7 +1229,6 @@ export default function ManageContentV2(): JSX.Element {
                 />
                 <ManageExhibitionsModal
                     onClose={async () => {
-                        await Promise.all([refetchAllItems(), refetchAllTags()]);
                         forceReloadRef.current();
                     }}
                 />

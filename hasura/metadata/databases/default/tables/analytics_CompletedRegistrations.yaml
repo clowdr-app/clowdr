@@ -18,5 +18,5 @@ select_permissions:
     - count
     filter:
       id:
-        _in: X-Hasura-X-Hasura-Conference-Ids
+        _in: X-Hasura-Conference-Ids
   role: organizer

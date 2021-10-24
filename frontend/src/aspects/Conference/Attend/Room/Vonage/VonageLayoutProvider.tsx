@@ -71,6 +71,7 @@ export function VonageLayoutProvider({
         variables: {
             vonageSessionId,
         },
+        pause: !vonageSessionId.length,
     });
     const [initialLayoutData, setInitialLayoutData] = useState<{
         layout: VonageSessionLayoutData;

@@ -41,6 +41,13 @@ array_relationships:
       remote_table:
         name: ProfileBadges
         schema: registrant
+- name: groupRegistrants
+  using:
+    foreign_key_constraint_on:
+      column: registrantId
+      table:
+        name: GroupRegistrant
+        schema: registrant
 - name: programPeople
   using:
     foreign_key_constraint_on:
@@ -126,12 +133,8 @@ select_permissions:
     computed_fields:
     - inviteSent
     filter:
-      _and:
-      - conferenceId:
-          _in: X-Hasura-Conference-Ids
-      - subconferenceMemberships:
-          subconferenceId:
-            _in: X-Hasura-Subconference-Ids
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
   role: organizer
 - permission:
     columns:

@@ -21,9 +21,12 @@ export default function RequireRole({
         registrant &&
         ((organizerRole && registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer) ||
             ((moderatorRole || organizerRole) &&
-                registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator) ||
+                (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
+                    registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer)) ||
             ((attendeeRole || moderatorRole || organizerRole) &&
-                registrant.conferenceRole === Registrant_RegistrantRole_Enum.Attendee))
+                (registrant.conferenceRole === Registrant_RegistrantRole_Enum.Attendee ||
+                    registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator ||
+                    registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer)))
     ) {
         return <>{children}</>;
     }

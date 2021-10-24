@@ -154,6 +154,22 @@ select_permissions:
   role: main-conference-organizer
 - permission:
     columns:
+    - id
+    - name
+    - shortName
+    - slug
+    - createdBy
+    - demoCodeId
+    - created_at
+    - updated_at
+    - conferenceVisibilityLevel
+    - defaultProgramVisibilityLevel
+    filter:
+      id:
+        _in: X-Hasura-Conference-Ids
+  role: organizer
+- permission:
+    columns:
     - conferenceVisibilityLevel
     - created_at
     - defaultProgramVisibilityLevel

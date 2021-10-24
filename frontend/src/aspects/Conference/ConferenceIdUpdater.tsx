@@ -17,6 +17,7 @@ export default function useConferenceIdUpdater(): void {
         variables: {
             slug: conferenceSlug ?? "",
         },
+        pause: true,
     });
 
     useEffect(() => {

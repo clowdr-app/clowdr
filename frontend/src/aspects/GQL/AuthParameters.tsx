@@ -5,10 +5,12 @@ export interface AuthParameters {
     conferenceSlug: string | null;
     conferenceId: string | null;
     subconferenceId: string | null;
+    isOnManagementPage: boolean;
     setConferencePath: (value: string | null) => void;
     setConferenceSlug: (value: string | null) => void;
     setConferenceId: (value: string | null) => void;
     setSubconferenceId: (value: string | null) => void;
+    setIsOnManagementPage: (value: boolean) => void;
 }
 
 const AuthParameters = React.createContext<AuthParameters | null>(null);
@@ -26,6 +28,7 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
     const [conferenceSlug, setConferenceSlug] = useState<string | null>(null);
     const [conferenceId, setConferenceId] = useState<string | null>(null);
     const [subconferenceId, setSubconferenceId] = useState<string | null>(null);
+    const [isOnManagementPage, setIsOnManagementPage] = useState<boolean>(false);
     const ctx = useMemo(
         () => ({
             conferencePath,
@@ -36,8 +39,10 @@ export function AuthParametersProvider({ children }: React.PropsWithChildren<Rec
             setConferenceId,
             subconferenceId,
             setSubconferenceId,
+            isOnManagementPage,
+            setIsOnManagementPage,
         }),
-        [conferencePath, conferenceSlug, conferenceId, subconferenceId]
+        [conferencePath, conferenceSlug, conferenceId, subconferenceId, isOnManagementPage]
     );
 
     return <AuthParameters.Provider value={ctx}>{children}</AuthParameters.Provider>;

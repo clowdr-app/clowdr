@@ -126,10 +126,19 @@ export default function ManageShuffle(): JSX.Element {
                     isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(theme ?? defaultTheme, null, 4));
-                        saveTheme({
-                            conferenceId: conference.id,
-                            value: theme ?? defaultTheme,
-                        });
+                        saveTheme(
+                            {
+                                conferenceId: conference.id,
+                                value: theme ?? defaultTheme,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "main-conference-organizer",
+                                    },
+                                },
+                            }
+                        );
                     }}
                 >
                     Reset to original
@@ -139,10 +148,19 @@ export default function ManageShuffle(): JSX.Element {
                     isDisabled={saveThemeResponse.fetching}
                     onClick={() => {
                         setValue(JSON.stringify(defaultTheme, null, 4));
-                        saveTheme({
-                            conferenceId: conference.id,
-                            value: defaultTheme,
-                        });
+                        saveTheme(
+                            {
+                                conferenceId: conference.id,
+                                value: defaultTheme,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "main-conference-organizer",
+                                    },
+                                },
+                            }
+                        );
                     }}
                 >
                     Reset to default
@@ -153,10 +171,19 @@ export default function ManageShuffle(): JSX.Element {
                     onClick={() => {
                         const value = applyTheme();
                         if (value) {
-                            saveTheme({
-                                conferenceId: conference.id,
-                                value,
-                            });
+                            saveTheme(
+                                {
+                                    conferenceId: conference.id,
+                                    value,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "main-conference-organizer",
+                                        },
+                                    },
+                                }
+                            );
                         }
                     }}
                 >

@@ -400,7 +400,10 @@ update_permissions:
     - managementModeName
     - name
     - originatingDataId
+    - originatingEventId
+    - originatingItemId
     - priority
+    - subconferenceId
     filter:
       _or:
       - _and:

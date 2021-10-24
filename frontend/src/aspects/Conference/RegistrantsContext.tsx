@@ -225,10 +225,20 @@ export default function RegistrantsContextProvider({
                     );
                     if (filteredIds.length > 0) {
                         const datas = await client
-                            .query<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>(RegistrantsByIdDocument, {
-                                registrantIds: filteredIds,
-                                conferenceId: conference.id,
-                            })
+                            .query<RegistrantsByIdQuery, RegistrantsByIdQueryVariables>(
+                                RegistrantsByIdDocument,
+                                {
+                                    registrantIds: filteredIds,
+                                    conferenceId: conference.id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "attendee",
+                                        },
+                                    },
+                                }
+                            )
                             .toPromise();
 
                         if (datas.data) {

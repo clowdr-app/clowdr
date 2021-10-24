@@ -22,21 +22,6 @@ gql`
         key
         value
     }
-
-    mutation conference_Configuration_UpdateConferenceConfigurations(
-        $conferenceId: uuid!
-        $key: conference_ConfigurationKey_enum!
-        $value: jsonb!
-    ) {
-        update_conference_Configuration_by_pk(
-            pk_columns: { conferenceId: $conferenceId, key: $key }
-            _set: { value: $value }
-        ) {
-            conferenceId
-            key
-            value
-        }
-    }
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {

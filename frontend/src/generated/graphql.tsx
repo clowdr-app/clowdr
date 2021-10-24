@@ -13947,6 +13947,14 @@ export type Mutation_Root = {
   readonly delete_registrant_GoogleAccount?: Maybe<Registrant_GoogleAccount_Mutation_Response>;
   /** delete single row from the table: "registrant.GoogleAccount" */
   readonly delete_registrant_GoogleAccount_by_pk?: Maybe<Registrant_GoogleAccount>;
+  /** delete data from the table: "registrant.Group" */
+  readonly delete_registrant_Group?: Maybe<Registrant_Group_Mutation_Response>;
+  /** delete data from the table: "registrant.GroupRegistrant" */
+  readonly delete_registrant_GroupRegistrant?: Maybe<Registrant_GroupRegistrant_Mutation_Response>;
+  /** delete single row from the table: "registrant.GroupRegistrant" */
+  readonly delete_registrant_GroupRegistrant_by_pk?: Maybe<Registrant_GroupRegistrant>;
+  /** delete single row from the table: "registrant.Group" */
+  readonly delete_registrant_Group_by_pk?: Maybe<Registrant_Group>;
   /** delete data from the table: "registrant.Invitation" */
   readonly delete_registrant_Invitation?: Maybe<Registrant_Invitation_Mutation_Response>;
   /** delete single row from the table: "registrant.Invitation" */
@@ -13997,6 +14005,10 @@ export type Mutation_Root = {
   readonly delete_room_PersonRole_by_pk?: Maybe<Room_PersonRole>;
   /** delete data from the table: "room.Room" */
   readonly delete_room_Room?: Maybe<Room_Room_Mutation_Response>;
+  /** delete data from the table: "room.RoomGroupMembership" */
+  readonly delete_room_RoomGroupMembership?: Maybe<Room_RoomGroupMembership_Mutation_Response>;
+  /** delete single row from the table: "room.RoomGroupMembership" */
+  readonly delete_room_RoomGroupMembership_by_pk?: Maybe<Room_RoomGroupMembership>;
   /** delete data from the table: "room.RoomMembership" */
   readonly delete_room_RoomMembership?: Maybe<Room_RoomMembership_Mutation_Response>;
   /** delete single row from the table: "room.RoomMembership" */
@@ -14288,6 +14300,14 @@ export type Mutation_Root = {
   readonly insert_registrant_GoogleAccount?: Maybe<Registrant_GoogleAccount_Mutation_Response>;
   /** insert a single row into the table: "registrant.GoogleAccount" */
   readonly insert_registrant_GoogleAccount_one?: Maybe<Registrant_GoogleAccount>;
+  /** insert data into the table: "registrant.Group" */
+  readonly insert_registrant_Group?: Maybe<Registrant_Group_Mutation_Response>;
+  /** insert data into the table: "registrant.GroupRegistrant" */
+  readonly insert_registrant_GroupRegistrant?: Maybe<Registrant_GroupRegistrant_Mutation_Response>;
+  /** insert a single row into the table: "registrant.GroupRegistrant" */
+  readonly insert_registrant_GroupRegistrant_one?: Maybe<Registrant_GroupRegistrant>;
+  /** insert a single row into the table: "registrant.Group" */
+  readonly insert_registrant_Group_one?: Maybe<Registrant_Group>;
   /** insert data into the table: "registrant.Invitation" */
   readonly insert_registrant_Invitation?: Maybe<Registrant_Invitation_Mutation_Response>;
   /** insert a single row into the table: "registrant.Invitation" */
@@ -14338,6 +14358,10 @@ export type Mutation_Root = {
   readonly insert_room_PersonRole_one?: Maybe<Room_PersonRole>;
   /** insert data into the table: "room.Room" */
   readonly insert_room_Room?: Maybe<Room_Room_Mutation_Response>;
+  /** insert data into the table: "room.RoomGroupMembership" */
+  readonly insert_room_RoomGroupMembership?: Maybe<Room_RoomGroupMembership_Mutation_Response>;
+  /** insert a single row into the table: "room.RoomGroupMembership" */
+  readonly insert_room_RoomGroupMembership_one?: Maybe<Room_RoomGroupMembership>;
   /** insert data into the table: "room.RoomMembership" */
   readonly insert_room_RoomMembership?: Maybe<Room_RoomMembership_Mutation_Response>;
   /** insert a single row into the table: "room.RoomMembership" */
@@ -14641,6 +14665,14 @@ export type Mutation_Root = {
   readonly update_registrant_GoogleAccount?: Maybe<Registrant_GoogleAccount_Mutation_Response>;
   /** update single row of the table: "registrant.GoogleAccount" */
   readonly update_registrant_GoogleAccount_by_pk?: Maybe<Registrant_GoogleAccount>;
+  /** update data of the table: "registrant.Group" */
+  readonly update_registrant_Group?: Maybe<Registrant_Group_Mutation_Response>;
+  /** update data of the table: "registrant.GroupRegistrant" */
+  readonly update_registrant_GroupRegistrant?: Maybe<Registrant_GroupRegistrant_Mutation_Response>;
+  /** update single row of the table: "registrant.GroupRegistrant" */
+  readonly update_registrant_GroupRegistrant_by_pk?: Maybe<Registrant_GroupRegistrant>;
+  /** update single row of the table: "registrant.Group" */
+  readonly update_registrant_Group_by_pk?: Maybe<Registrant_Group>;
   /** update data of the table: "registrant.Invitation" */
   readonly update_registrant_Invitation?: Maybe<Registrant_Invitation_Mutation_Response>;
   /** update single row of the table: "registrant.Invitation" */
@@ -14691,6 +14723,10 @@ export type Mutation_Root = {
   readonly update_room_PersonRole_by_pk?: Maybe<Room_PersonRole>;
   /** update data of the table: "room.Room" */
   readonly update_room_Room?: Maybe<Room_Room_Mutation_Response>;
+  /** update data of the table: "room.RoomGroupMembership" */
+  readonly update_room_RoomGroupMembership?: Maybe<Room_RoomGroupMembership_Mutation_Response>;
+  /** update single row of the table: "room.RoomGroupMembership" */
+  readonly update_room_RoomGroupMembership_by_pk?: Maybe<Room_RoomGroupMembership>;
   /** update data of the table: "room.RoomMembership" */
   readonly update_room_RoomMembership?: Maybe<Room_RoomMembership_Mutation_Response>;
   /** update single row of the table: "room.RoomMembership" */
@@ -15379,6 +15415,30 @@ export type Mutation_RootDelete_Registrant_GoogleAccount_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Registrant_GroupArgs = {
+  where: Registrant_Group_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_GroupRegistrantArgs = {
+  where: Registrant_GroupRegistrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_GroupRegistrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Registrant_Group_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Registrant_InvitationArgs = {
   where: Registrant_Invitation_Bool_Exp;
 };
@@ -15525,6 +15585,18 @@ export type Mutation_RootDelete_Room_PersonRole_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Room_RoomArgs = {
   where: Room_Room_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_RoomGroupMembershipArgs = {
+  where: Room_RoomGroupMembership_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Room_RoomGroupMembership_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -16500,6 +16572,34 @@ export type Mutation_RootInsert_Registrant_GoogleAccount_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Registrant_GroupArgs = {
+  objects: ReadonlyArray<Registrant_Group_Insert_Input>;
+  on_conflict?: Maybe<Registrant_Group_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_GroupRegistrantArgs = {
+  objects: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input>;
+  on_conflict?: Maybe<Registrant_GroupRegistrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_GroupRegistrant_OneArgs = {
+  object: Registrant_GroupRegistrant_Insert_Input;
+  on_conflict?: Maybe<Registrant_GroupRegistrant_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Registrant_Group_OneArgs = {
+  object: Registrant_Group_Insert_Input;
+  on_conflict?: Maybe<Registrant_Group_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Registrant_InvitationArgs = {
   objects: ReadonlyArray<Registrant_Invitation_Insert_Input>;
   on_conflict?: Maybe<Registrant_Invitation_On_Conflict>;
@@ -16671,6 +16771,20 @@ export type Mutation_RootInsert_Room_PersonRole_OneArgs = {
 export type Mutation_RootInsert_Room_RoomArgs = {
   objects: ReadonlyArray<Room_Room_Insert_Input>;
   on_conflict?: Maybe<Room_Room_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_RoomGroupMembershipArgs = {
+  objects: ReadonlyArray<Room_RoomGroupMembership_Insert_Input>;
+  on_conflict?: Maybe<Room_RoomGroupMembership_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Room_RoomGroupMembership_OneArgs = {
+  object: Room_RoomGroupMembership_Insert_Input;
+  on_conflict?: Maybe<Room_RoomGroupMembership_On_Conflict>;
 };
 
 
@@ -17917,6 +18031,34 @@ export type Mutation_RootUpdate_Registrant_GoogleAccount_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Registrant_GroupArgs = {
+  _set?: Maybe<Registrant_Group_Set_Input>;
+  where: Registrant_Group_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_GroupRegistrantArgs = {
+  _set?: Maybe<Registrant_GroupRegistrant_Set_Input>;
+  where: Registrant_GroupRegistrant_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_GroupRegistrant_By_PkArgs = {
+  _set?: Maybe<Registrant_GroupRegistrant_Set_Input>;
+  pk_columns: Registrant_GroupRegistrant_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Registrant_Group_By_PkArgs = {
+  _set?: Maybe<Registrant_Group_Set_Input>;
+  pk_columns: Registrant_Group_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Registrant_InvitationArgs = {
   _set?: Maybe<Registrant_Invitation_Set_Input>;
   where: Registrant_Invitation_Bool_Exp;
@@ -18111,6 +18253,20 @@ export type Mutation_RootUpdate_Room_RoomArgs = {
   _inc?: Maybe<Room_Room_Inc_Input>;
   _set?: Maybe<Room_Room_Set_Input>;
   where: Room_Room_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_RoomGroupMembershipArgs = {
+  _set?: Maybe<Room_RoomGroupMembership_Set_Input>;
+  where: Room_RoomGroupMembership_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Room_RoomGroupMembership_By_PkArgs = {
+  _set?: Maybe<Room_RoomGroupMembership_Set_Input>;
+  pk_columns: Room_RoomGroupMembership_Pk_Columns_Input;
 };
 
 
@@ -18888,6 +19044,18 @@ export type Query_Root = {
   readonly registrant_GoogleAccount_aggregate: Registrant_GoogleAccount_Aggregate;
   /** fetch data from the table: "registrant.GoogleAccount" using primary key columns */
   readonly registrant_GoogleAccount_by_pk?: Maybe<Registrant_GoogleAccount>;
+  /** fetch data from the table: "registrant.Group" */
+  readonly registrant_Group: ReadonlyArray<Registrant_Group>;
+  /** fetch data from the table: "registrant.GroupRegistrant" */
+  readonly registrant_GroupRegistrant: ReadonlyArray<Registrant_GroupRegistrant>;
+  /** fetch aggregated fields from the table: "registrant.GroupRegistrant" */
+  readonly registrant_GroupRegistrant_aggregate: Registrant_GroupRegistrant_Aggregate;
+  /** fetch data from the table: "registrant.GroupRegistrant" using primary key columns */
+  readonly registrant_GroupRegistrant_by_pk?: Maybe<Registrant_GroupRegistrant>;
+  /** fetch aggregated fields from the table: "registrant.Group" */
+  readonly registrant_Group_aggregate: Registrant_Group_Aggregate;
+  /** fetch data from the table: "registrant.Group" using primary key columns */
+  readonly registrant_Group_by_pk?: Maybe<Registrant_Group>;
   /** fetch data from the table: "registrant.Invitation" */
   readonly registrant_Invitation: ReadonlyArray<Registrant_Invitation>;
   /** fetch aggregated fields from the table: "registrant.Invitation" */
@@ -18970,6 +19138,12 @@ export type Query_Root = {
   readonly room_PersonRole_by_pk?: Maybe<Room_PersonRole>;
   /** fetch data from the table: "room.Room" */
   readonly room_Room: ReadonlyArray<Room_Room>;
+  /** fetch data from the table: "room.RoomGroupMembership" */
+  readonly room_RoomGroupMembership: ReadonlyArray<Room_RoomGroupMembership>;
+  /** fetch aggregated fields from the table: "room.RoomGroupMembership" */
+  readonly room_RoomGroupMembership_aggregate: Room_RoomGroupMembership_Aggregate;
+  /** fetch data from the table: "room.RoomGroupMembership" using primary key columns */
+  readonly room_RoomGroupMembership_by_pk?: Maybe<Room_RoomGroupMembership>;
   /** fetch data from the table: "room.RoomMembership" */
   readonly room_RoomMembership: ReadonlyArray<Room_RoomMembership>;
   /** fetch aggregated fields from the table: "room.RoomMembership" */
@@ -20397,6 +20571,52 @@ export type Query_RootRegistrant_GoogleAccount_By_PkArgs = {
 };
 
 
+export type Query_RootRegistrant_GroupArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_Group_Order_By>>;
+  where?: Maybe<Registrant_Group_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_GroupRegistrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_GroupRegistrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_GroupRegistrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootRegistrant_Group_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_Group_Order_By>>;
+  where?: Maybe<Registrant_Group_Bool_Exp>;
+};
+
+
+export type Query_RootRegistrant_Group_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootRegistrant_InvitationArgs = {
   distinct_on?: Maybe<ReadonlyArray<Registrant_Invitation_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -20715,6 +20935,29 @@ export type Query_RootRoom_RoomArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Room_Room_Order_By>>;
   where?: Maybe<Room_Room_Bool_Exp>;
+};
+
+
+export type Query_RootRoom_RoomGroupMembershipArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Order_By>>;
+  where?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+};
+
+
+export type Query_RootRoom_RoomGroupMembership_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Order_By>>;
+  where?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+};
+
+
+export type Query_RootRoom_RoomGroupMembership_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -21580,6 +21823,399 @@ export enum Registrant_GoogleAccount_Update_Column {
   YouTubeData = 'youTubeData'
 }
 
+/** columns and relationships of "registrant.Group" */
+export type Registrant_Group = {
+  readonly __typename?: 'registrant_Group';
+  /** An object relationship */
+  readonly conference: Conference_Conference;
+  readonly conferenceId: Scalars['uuid'];
+  readonly createdAt: Scalars['timestamptz'];
+  /** An array relationship */
+  readonly groupRegistrants: ReadonlyArray<Registrant_GroupRegistrant>;
+  /** An aggregate relationship */
+  readonly groupRegistrants_aggregate: Registrant_GroupRegistrant_Aggregate;
+  readonly id: Scalars['uuid'];
+  readonly name: Scalars['String'];
+  /** An object relationship */
+  readonly subconference?: Maybe<Conference_Subconference>;
+  readonly subconferenceId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+
+/** columns and relationships of "registrant.Group" */
+export type Registrant_GroupGroupRegistrantsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Group" */
+export type Registrant_GroupGroupRegistrants_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+/** columns and relationships of "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant = {
+  readonly __typename?: 'registrant_GroupRegistrant';
+  readonly createdAt: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly group: Registrant_Group;
+  readonly groupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly registrant: Registrant_Registrant;
+  readonly registrantId: Scalars['uuid'];
+  readonly updatedAt: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Aggregate = {
+  readonly __typename?: 'registrant_GroupRegistrant_aggregate';
+  readonly aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Registrant_GroupRegistrant>;
+};
+
+/** aggregate fields of "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Aggregate_Fields = {
+  readonly __typename?: 'registrant_GroupRegistrant_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Registrant_GroupRegistrant_Max_Fields>;
+  readonly min?: Maybe<Registrant_GroupRegistrant_Min_Fields>;
+};
+
+
+/** aggregate fields of "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Aggregate_Order_By = {
+  readonly count?: Maybe<Order_By>;
+  readonly max?: Maybe<Registrant_GroupRegistrant_Max_Order_By>;
+  readonly min?: Maybe<Registrant_GroupRegistrant_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Arr_Rel_Insert_Input = {
+  readonly data: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input>;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Registrant_GroupRegistrant_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "registrant.GroupRegistrant". All fields are combined with a logical 'AND'. */
+export type Registrant_GroupRegistrant_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Bool_Exp>>;
+  readonly _not?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Bool_Exp>>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly group?: Maybe<Registrant_Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
+  readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "registrant.GroupRegistrant" */
+export enum Registrant_GroupRegistrant_Constraint {
+  /** unique or primary key constraint */
+  GroupRegistrantGroupIdRegistrantIdKey = 'GroupRegistrant_groupId_registrantId_key',
+  /** unique or primary key constraint */
+  GroupRegistrantPkey = 'GroupRegistrant_pkey'
+}
+
+/** input type for inserting data into table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Insert_Input = {
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly group?: Maybe<Registrant_Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Registrant_GroupRegistrant_Max_Fields = {
+  readonly __typename?: 'registrant_GroupRegistrant_max_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Max_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Registrant_GroupRegistrant_Min_Fields = {
+  readonly __typename?: 'registrant_GroupRegistrant_min_fields';
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Min_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** response of any mutation on the table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Mutation_Response = {
+  readonly __typename?: 'registrant_GroupRegistrant_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Registrant_GroupRegistrant>;
+};
+
+/** on conflict condition type for table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_On_Conflict = {
+  readonly constraint: Registrant_GroupRegistrant_Constraint;
+  readonly update_columns?: ReadonlyArray<Registrant_GroupRegistrant_Update_Column>;
+  readonly where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "registrant.GroupRegistrant". */
+export type Registrant_GroupRegistrant_Order_By = {
+  readonly createdAt?: Maybe<Order_By>;
+  readonly group?: Maybe<Registrant_Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
+  readonly registrantId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: registrant_GroupRegistrant */
+export type Registrant_GroupRegistrant_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "registrant.GroupRegistrant" */
+export enum Registrant_GroupRegistrant_Select_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "registrant.GroupRegistrant" */
+export type Registrant_GroupRegistrant_Set_Input = {
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly registrantId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "registrant.GroupRegistrant" */
+export enum Registrant_GroupRegistrant_Update_Column {
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RegistrantId = 'registrantId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** aggregated selection of "registrant.Group" */
+export type Registrant_Group_Aggregate = {
+  readonly __typename?: 'registrant_Group_aggregate';
+  readonly aggregate?: Maybe<Registrant_Group_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Registrant_Group>;
+};
+
+/** aggregate fields of "registrant.Group" */
+export type Registrant_Group_Aggregate_Fields = {
+  readonly __typename?: 'registrant_Group_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Registrant_Group_Max_Fields>;
+  readonly min?: Maybe<Registrant_Group_Min_Fields>;
+};
+
+
+/** aggregate fields of "registrant.Group" */
+export type Registrant_Group_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Registrant_Group_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "registrant.Group". All fields are combined with a logical 'AND'. */
+export type Registrant_Group_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Registrant_Group_Bool_Exp>>;
+  readonly _not?: Maybe<Registrant_Group_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Registrant_Group_Bool_Exp>>;
+  readonly conference?: Maybe<Conference_Conference_Bool_Exp>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly groupRegistrants?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly name?: Maybe<String_Comparison_Exp>;
+  readonly subconference?: Maybe<Conference_Subconference_Bool_Exp>;
+  readonly subconferenceId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "registrant.Group" */
+export enum Registrant_Group_Constraint {
+  /** unique or primary key constraint */
+  GroupConferenceIdNameKey = 'Group_conferenceId_name_key',
+  /** unique or primary key constraint */
+  GroupPkey = 'Group_pkey'
+}
+
+/** input type for inserting data into table "registrant.Group" */
+export type Registrant_Group_Insert_Input = {
+  readonly conference?: Maybe<Conference_Conference_Obj_Rel_Insert_Input>;
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly groupRegistrants?: Maybe<Registrant_GroupRegistrant_Arr_Rel_Insert_Input>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly subconference?: Maybe<Conference_Subconference_Obj_Rel_Insert_Input>;
+  readonly subconferenceId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Registrant_Group_Max_Fields = {
+  readonly __typename?: 'registrant_Group_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly subconferenceId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Registrant_Group_Min_Fields = {
+  readonly __typename?: 'registrant_Group_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly subconferenceId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "registrant.Group" */
+export type Registrant_Group_Mutation_Response = {
+  readonly __typename?: 'registrant_Group_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Registrant_Group>;
+};
+
+/** input type for inserting object relation for remote table "registrant.Group" */
+export type Registrant_Group_Obj_Rel_Insert_Input = {
+  readonly data: Registrant_Group_Insert_Input;
+  /** on conflict condition */
+  readonly on_conflict?: Maybe<Registrant_Group_On_Conflict>;
+};
+
+/** on conflict condition type for table "registrant.Group" */
+export type Registrant_Group_On_Conflict = {
+  readonly constraint: Registrant_Group_Constraint;
+  readonly update_columns?: ReadonlyArray<Registrant_Group_Update_Column>;
+  readonly where?: Maybe<Registrant_Group_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "registrant.Group". */
+export type Registrant_Group_Order_By = {
+  readonly conference?: Maybe<Conference_Conference_Order_By>;
+  readonly conferenceId?: Maybe<Order_By>;
+  readonly createdAt?: Maybe<Order_By>;
+  readonly groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly name?: Maybe<Order_By>;
+  readonly subconference?: Maybe<Conference_Subconference_Order_By>;
+  readonly subconferenceId?: Maybe<Order_By>;
+  readonly updatedAt?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: registrant_Group */
+export type Registrant_Group_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "registrant.Group" */
+export enum Registrant_Group_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  SubconferenceId = 'subconferenceId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** input type for updating data in table "registrant.Group" */
+export type Registrant_Group_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
+  readonly createdAt?: Maybe<Scalars['timestamptz']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly subconferenceId?: Maybe<Scalars['uuid']>;
+  readonly updatedAt?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "registrant.Group" */
+export enum Registrant_Group_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  SubconferenceId = 'subconferenceId',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
 /** columns and relationships of "registrant.Invitation" */
 export type Registrant_Invitation = {
   readonly __typename?: 'registrant_Invitation';
@@ -22401,6 +23037,10 @@ export type Registrant_Registrant = {
   readonly conferenceRole: Registrant_RegistrantRole_Enum;
   readonly createdAt: Scalars['timestamptz'];
   readonly displayName: Scalars['String'];
+  /** An array relationship */
+  readonly groupRegistrants: ReadonlyArray<Registrant_GroupRegistrant>;
+  /** An aggregate relationship */
+  readonly groupRegistrants_aggregate: Registrant_GroupRegistrant_Aggregate;
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly invitation?: Maybe<Registrant_Invitation>;
@@ -22444,6 +23084,26 @@ export type Registrant_RegistrantBadges_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Registrant_ProfileBadges_Order_By>>;
   where?: Maybe<Registrant_ProfileBadges_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantGroupRegistrantsArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
 };
 
 
@@ -22681,6 +23341,7 @@ export type Registrant_Registrant_Bool_Exp = {
   readonly conferenceRole?: Maybe<Registrant_RegistrantRole_Enum_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly displayName?: Maybe<String_Comparison_Exp>;
+  readonly groupRegistrants?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
   readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
@@ -22709,6 +23370,7 @@ export type Registrant_Registrant_Insert_Input = {
   readonly conferenceRole?: Maybe<Registrant_RegistrantRole_Enum>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly displayName?: Maybe<Scalars['String']>;
+  readonly groupRegistrants?: Maybe<Registrant_GroupRegistrant_Arr_Rel_Insert_Input>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
   readonly profile?: Maybe<Registrant_Profile_Obj_Rel_Insert_Input>;
@@ -22793,6 +23455,7 @@ export type Registrant_Registrant_Order_By = {
   readonly conferenceRole?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly displayName?: Maybe<Order_By>;
+  readonly groupRegistrants_aggregate?: Maybe<Registrant_GroupRegistrant_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
   readonly inviteSent?: Maybe<Order_By>;
@@ -24760,6 +25423,164 @@ export type Room_RoomVonageRecordings_AggregateArgs = {
   order_by?: Maybe<ReadonlyArray<Video_VonageRoomRecording_Order_By>>;
   where?: Maybe<Video_VonageRoomRecording_Bool_Exp>;
 };
+
+/** columns and relationships of "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership = {
+  readonly __typename?: 'room_RoomGroupMembership';
+  readonly created_at: Scalars['timestamptz'];
+  /** An object relationship */
+  readonly group: Registrant_Group;
+  readonly groupId: Scalars['uuid'];
+  readonly id: Scalars['uuid'];
+  /** An object relationship */
+  readonly room: Room_Room;
+  readonly roomId: Scalars['uuid'];
+  readonly updated_at: Scalars['timestamptz'];
+};
+
+/** aggregated selection of "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Aggregate = {
+  readonly __typename?: 'room_RoomGroupMembership_aggregate';
+  readonly aggregate?: Maybe<Room_RoomGroupMembership_Aggregate_Fields>;
+  readonly nodes: ReadonlyArray<Room_RoomGroupMembership>;
+};
+
+/** aggregate fields of "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Aggregate_Fields = {
+  readonly __typename?: 'room_RoomGroupMembership_aggregate_fields';
+  readonly count: Scalars['Int'];
+  readonly max?: Maybe<Room_RoomGroupMembership_Max_Fields>;
+  readonly min?: Maybe<Room_RoomGroupMembership_Min_Fields>;
+};
+
+
+/** aggregate fields of "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Aggregate_FieldsCountArgs = {
+  columns?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Select_Column>>;
+  distinct?: Maybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "room.RoomGroupMembership". All fields are combined with a logical 'AND'. */
+export type Room_RoomGroupMembership_Bool_Exp = {
+  readonly _and?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Bool_Exp>>;
+  readonly _not?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+  readonly _or?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Bool_Exp>>;
+  readonly created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly group?: Maybe<Registrant_Group_Bool_Exp>;
+  readonly groupId?: Maybe<Uuid_Comparison_Exp>;
+  readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly room?: Maybe<Room_Room_Bool_Exp>;
+  readonly roomId?: Maybe<Uuid_Comparison_Exp>;
+  readonly updated_at?: Maybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "room.RoomGroupMembership" */
+export enum Room_RoomGroupMembership_Constraint {
+  /** unique or primary key constraint */
+  RoomGroupMembershipPkey = 'RoomGroupMembership_pkey',
+  /** unique or primary key constraint */
+  RoomGroupMembershipRoomIdGroupIdKey = 'RoomGroupMembership_roomId_groupId_key'
+}
+
+/** input type for inserting data into table "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Insert_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly group?: Maybe<Registrant_Group_Obj_Rel_Insert_Input>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly room?: Maybe<Room_Room_Obj_Rel_Insert_Input>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Room_RoomGroupMembership_Max_Fields = {
+  readonly __typename?: 'room_RoomGroupMembership_max_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Room_RoomGroupMembership_Min_Fields = {
+  readonly __typename?: 'room_RoomGroupMembership_min_fields';
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Mutation_Response = {
+  readonly __typename?: 'room_RoomGroupMembership_mutation_response';
+  /** number of rows affected by the mutation */
+  readonly affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  readonly returning: ReadonlyArray<Room_RoomGroupMembership>;
+};
+
+/** on conflict condition type for table "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_On_Conflict = {
+  readonly constraint: Room_RoomGroupMembership_Constraint;
+  readonly update_columns?: ReadonlyArray<Room_RoomGroupMembership_Update_Column>;
+  readonly where?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "room.RoomGroupMembership". */
+export type Room_RoomGroupMembership_Order_By = {
+  readonly created_at?: Maybe<Order_By>;
+  readonly group?: Maybe<Registrant_Group_Order_By>;
+  readonly groupId?: Maybe<Order_By>;
+  readonly id?: Maybe<Order_By>;
+  readonly room?: Maybe<Room_Room_Order_By>;
+  readonly roomId?: Maybe<Order_By>;
+  readonly updated_at?: Maybe<Order_By>;
+};
+
+/** primary key columns input for table: room_RoomGroupMembership */
+export type Room_RoomGroupMembership_Pk_Columns_Input = {
+  readonly id: Scalars['uuid'];
+};
+
+/** select columns of table "room.RoomGroupMembership" */
+export enum Room_RoomGroupMembership_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "room.RoomGroupMembership" */
+export type Room_RoomGroupMembership_Set_Input = {
+  readonly created_at?: Maybe<Scalars['timestamptz']>;
+  readonly groupId?: Maybe<Scalars['uuid']>;
+  readonly id?: Maybe<Scalars['uuid']>;
+  readonly roomId?: Maybe<Scalars['uuid']>;
+  readonly updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "room.RoomGroupMembership" */
+export enum Room_RoomGroupMembership_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  GroupId = 'groupId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RoomId = 'roomId',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
 
 /** columns and relationships of "room.RoomMembership" */
 export type Room_RoomMembership = {
@@ -28797,6 +29618,18 @@ export type Subscription_Root = {
   readonly registrant_GoogleAccount_aggregate: Registrant_GoogleAccount_Aggregate;
   /** fetch data from the table: "registrant.GoogleAccount" using primary key columns */
   readonly registrant_GoogleAccount_by_pk?: Maybe<Registrant_GoogleAccount>;
+  /** fetch data from the table: "registrant.Group" */
+  readonly registrant_Group: ReadonlyArray<Registrant_Group>;
+  /** fetch data from the table: "registrant.GroupRegistrant" */
+  readonly registrant_GroupRegistrant: ReadonlyArray<Registrant_GroupRegistrant>;
+  /** fetch aggregated fields from the table: "registrant.GroupRegistrant" */
+  readonly registrant_GroupRegistrant_aggregate: Registrant_GroupRegistrant_Aggregate;
+  /** fetch data from the table: "registrant.GroupRegistrant" using primary key columns */
+  readonly registrant_GroupRegistrant_by_pk?: Maybe<Registrant_GroupRegistrant>;
+  /** fetch aggregated fields from the table: "registrant.Group" */
+  readonly registrant_Group_aggregate: Registrant_Group_Aggregate;
+  /** fetch data from the table: "registrant.Group" using primary key columns */
+  readonly registrant_Group_by_pk?: Maybe<Registrant_Group>;
   /** fetch data from the table: "registrant.Invitation" */
   readonly registrant_Invitation: ReadonlyArray<Registrant_Invitation>;
   /** fetch aggregated fields from the table: "registrant.Invitation" */
@@ -28879,6 +29712,12 @@ export type Subscription_Root = {
   readonly room_PersonRole_by_pk?: Maybe<Room_PersonRole>;
   /** fetch data from the table: "room.Room" */
   readonly room_Room: ReadonlyArray<Room_Room>;
+  /** fetch data from the table: "room.RoomGroupMembership" */
+  readonly room_RoomGroupMembership: ReadonlyArray<Room_RoomGroupMembership>;
+  /** fetch aggregated fields from the table: "room.RoomGroupMembership" */
+  readonly room_RoomGroupMembership_aggregate: Room_RoomGroupMembership_Aggregate;
+  /** fetch data from the table: "room.RoomGroupMembership" using primary key columns */
+  readonly room_RoomGroupMembership_by_pk?: Maybe<Room_RoomGroupMembership>;
   /** fetch data from the table: "room.RoomMembership" */
   readonly room_RoomMembership: ReadonlyArray<Room_RoomMembership>;
   /** fetch aggregated fields from the table: "room.RoomMembership" */
@@ -30295,6 +31134,52 @@ export type Subscription_RootRegistrant_GoogleAccount_By_PkArgs = {
 };
 
 
+export type Subscription_RootRegistrant_GroupArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_Group_Order_By>>;
+  where?: Maybe<Registrant_Group_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_GroupRegistrantArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_GroupRegistrant_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_GroupRegistrant_Order_By>>;
+  where?: Maybe<Registrant_GroupRegistrant_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_GroupRegistrant_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootRegistrant_Group_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Registrant_Group_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Registrant_Group_Order_By>>;
+  where?: Maybe<Registrant_Group_Bool_Exp>;
+};
+
+
+export type Subscription_RootRegistrant_Group_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootRegistrant_InvitationArgs = {
   distinct_on?: Maybe<ReadonlyArray<Registrant_Invitation_Select_Column>>;
   limit?: Maybe<Scalars['Int']>;
@@ -30613,6 +31498,29 @@ export type Subscription_RootRoom_RoomArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Room_Room_Order_By>>;
   where?: Maybe<Room_Room_Bool_Exp>;
+};
+
+
+export type Subscription_RootRoom_RoomGroupMembershipArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Order_By>>;
+  where?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+};
+
+
+export type Subscription_RootRoom_RoomGroupMembership_AggregateArgs = {
+  distinct_on?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<ReadonlyArray<Room_RoomGroupMembership_Order_By>>;
+  where?: Maybe<Room_RoomGroupMembership_Bool_Exp>;
+};
+
+
+export type Subscription_RootRoom_RoomGroupMembership_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -35603,7 +36511,7 @@ export type ConferenceStatsQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentItemStats', readonly id: any, readonly itemId: any, readonly viewCount: number, readonly updated_at: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentElementStats', readonly id: any, readonly elementId: any, readonly viewCount: number, readonly updated_at: any }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> }> }> }> };
+export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentItemStats', readonly id: any, readonly itemId: any, readonly viewCount: number, readonly updated_at: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentElementStats', readonly id: any, readonly elementId: any, readonly viewCount: number, readonly updated_at: any }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> }> }> }> };
 
 export type GetChannelStacksQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -36357,6 +37265,31 @@ export type UpdateConferenceMutationVariables = Exact<{
 
 export type UpdateConferenceMutation = { readonly __typename?: 'mutation_root', readonly update_conference_Conference?: Maybe<{ readonly __typename?: 'conference_Conference_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly name: string, readonly shortName: string, readonly slug: string }> }> };
 
+export type ManageGroups_GroupFragment = { readonly __typename?: 'registrant_Group', readonly conferenceId: any, readonly id: any, readonly name: string };
+
+export type SelectAllGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type SelectAllGroupsQuery = { readonly __typename?: 'query_root', readonly registrant_Group: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly conferenceId: any, readonly id: any, readonly name: string }> };
+
+export type CreateDeleteGroupsMutationVariables = Exact<{
+  deleteGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
+  insertGroups: ReadonlyArray<Registrant_Group_Insert_Input> | Registrant_Group_Insert_Input;
+}>;
+
+
+export type CreateDeleteGroupsMutation = { readonly __typename?: 'mutation_root', readonly delete_registrant_Group?: Maybe<{ readonly __typename?: 'registrant_Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any }> }>, readonly insert_registrant_Group?: Maybe<{ readonly __typename?: 'registrant_Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly conferenceId: any, readonly name: string }> }> };
+
+export type UpdateGroupMutationVariables = Exact<{
+  groupId: Scalars['uuid'];
+  groupName: Scalars['String'];
+}>;
+
+
+export type UpdateGroupMutation = { readonly __typename?: 'mutation_root', readonly update_registrant_Group?: Maybe<{ readonly __typename?: 'registrant_Group_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string, readonly conferenceId: any }> }> };
+
 export type ManageProgramPeople_RegistrantFragment = { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }>, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly affiliation?: Maybe<string> }> };
 
 export type ManageProgramPeople_ProgramPersonWithAccessTokenFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any>, readonly accessToken: string };
@@ -36467,7 +37400,7 @@ export type GetIsExternalRtmpBroadcastEnabledQuery = { readonly __typename?: 'qu
 
 export type InvitationPartsFragment = { readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> };
 
-export type RegistrantPartsFragment = { readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
+export type RegistrantPartsFragment = { readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }> };
 
 export type ManageRegistrants_ProfileFragment = { readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
 
@@ -36476,7 +37409,7 @@ export type SelectAllRegistrantsQueryVariables = Exact<{
 }>;
 
 
-export type SelectAllRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
+export type SelectAllRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }> }> };
 
 export type ManageRegistrants_SelectProfilesQueryVariables = Exact<{
   registrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -36491,14 +37424,14 @@ export type InsertRegistrantMutationVariables = Exact<{
 }>;
 
 
-export type InsertRegistrantMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }>, readonly insert_registrant_Invitation_one?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
+export type InsertRegistrantMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }> }>, readonly insert_registrant_Invitation_one?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
 
 export type InsertRegistrantWithoutInviteMutationVariables = Exact<{
   registrant: Registrant_Registrant_Insert_Input;
 }>;
 
 
-export type InsertRegistrantWithoutInviteMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
+export type InsertRegistrantWithoutInviteMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }> }> };
 
 export type DeleteRegistrantsMutationVariables = Exact<{
   deleteRegistrantIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
@@ -36510,10 +37443,12 @@ export type DeleteRegistrantsMutation = { readonly __typename?: 'mutation_root',
 export type UpdateRegistrantMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   registrantName: Scalars['String'];
+  upsertGroups: ReadonlyArray<Registrant_GroupRegistrant_Insert_Input> | Registrant_GroupRegistrant_Insert_Input;
+  remainingGroupIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
 }>;
 
 
-export type UpdateRegistrantMutation = { readonly __typename?: 'mutation_root', readonly update_registrant_Registrant_by_pk?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
+export type UpdateRegistrantMutation = { readonly __typename?: 'mutation_root', readonly update_registrant_Registrant_by_pk?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }> }>, readonly insert_registrant_GroupRegistrant?: Maybe<{ readonly __typename?: 'registrant_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly id: any, readonly registrantId: any, readonly groupId: any }> }>, readonly delete_registrant_GroupRegistrant?: Maybe<{ readonly __typename?: 'registrant_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly id: any }> }> };
 
 export type InsertInvitationEmailJobsMutationVariables = Exact<{
   registrantIds: Scalars['jsonb'];
@@ -38535,6 +39470,13 @@ export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
   }
 }
     ${UploadYouTubeVideos_YouTubeUploadFragmentDoc}`;
+export const ManageGroups_GroupFragmentDoc = gql`
+    fragment ManageGroups_Group on registrant_Group {
+  conferenceId
+  id
+  name
+}
+    `;
 export const ManageProgramPeople_RegistrantFragmentDoc = gql`
     fragment ManageProgramPeople_Registrant on registrant_Registrant {
   id
@@ -38639,6 +39581,11 @@ export const RegistrantPartsFragmentDoc = gql`
   conferenceRole
   invitation {
     ...InvitationParts
+  }
+  groupRegistrants {
+    registrantId
+    id
+    groupId
   }
   userId
   updatedAt
@@ -40232,6 +41179,7 @@ export function useConferenceBySlugQuery(options: Omit<Urql.UseQueryArgs<Confere
 export const ConferenceStatsDocument = gql`
     query ConferenceStats($id: uuid!) {
   conference_Conference_by_pk(id: $id) {
+    id
     completedRegistrationsStat {
       count
     }
@@ -41873,6 +42821,52 @@ export const UpdateConferenceDocument = gql`
 export function useUpdateConferenceMutation() {
   return Urql.useMutation<UpdateConferenceMutation, UpdateConferenceMutationVariables>(UpdateConferenceDocument);
 };
+export const SelectAllGroupsDocument = gql`
+    query SelectAllGroups($conferenceId: uuid!) {
+  registrant_Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...ManageGroups_Group
+  }
+}
+    ${ManageGroups_GroupFragmentDoc}`;
+
+export function useSelectAllGroupsQuery(options: Omit<Urql.UseQueryArgs<SelectAllGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SelectAllGroupsQuery>({ query: SelectAllGroupsDocument, ...options });
+};
+export const CreateDeleteGroupsDocument = gql`
+    mutation CreateDeleteGroups($deleteGroupIds: [uuid!] = [], $insertGroups: [registrant_Group_insert_input!]!) {
+  delete_registrant_Group(where: {id: {_in: $deleteGroupIds}}) {
+    returning {
+      id
+    }
+  }
+  insert_registrant_Group(objects: $insertGroups) {
+    returning {
+      id
+      conferenceId
+      name
+    }
+  }
+}
+    `;
+
+export function useCreateDeleteGroupsMutation() {
+  return Urql.useMutation<CreateDeleteGroupsMutation, CreateDeleteGroupsMutationVariables>(CreateDeleteGroupsDocument);
+};
+export const UpdateGroupDocument = gql`
+    mutation UpdateGroup($groupId: uuid!, $groupName: String!) {
+  update_registrant_Group(where: {id: {_eq: $groupId}}, _set: {name: $groupName}) {
+    returning {
+      id
+      name
+      conferenceId
+    }
+  }
+}
+    `;
+
+export function useUpdateGroupMutation() {
+  return Urql.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument);
+};
 export const ManageProgramPeople_SelectAllPeopleDocument = gql`
     query ManageProgramPeople_SelectAllPeople($conferenceId: uuid!) {
   collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -42102,12 +43096,29 @@ export function useDeleteRegistrantsMutation() {
   return Urql.useMutation<DeleteRegistrantsMutation, DeleteRegistrantsMutationVariables>(DeleteRegistrantsDocument);
 };
 export const UpdateRegistrantDocument = gql`
-    mutation UpdateRegistrant($registrantId: uuid!, $registrantName: String!) {
+    mutation UpdateRegistrant($registrantId: uuid!, $registrantName: String!, $upsertGroups: [registrant_GroupRegistrant_insert_input!]!, $remainingGroupIds: [uuid!]) {
   update_registrant_Registrant_by_pk(
     pk_columns: {id: $registrantId}
     _set: {displayName: $registrantName}
   ) {
     ...RegistrantParts
+  }
+  insert_registrant_GroupRegistrant(
+    objects: $upsertGroups
+    on_conflict: {constraint: GroupRegistrant_groupId_registrantId_key, update_columns: []}
+  ) {
+    returning {
+      id
+      registrantId
+      groupId
+    }
+  }
+  delete_registrant_GroupRegistrant(
+    where: {registrantId: {_eq: $registrantId}, groupId: {_nin: $remainingGroupIds}}
+  ) {
+    returning {
+      id
+    }
   }
 }
     ${RegistrantPartsFragmentDoc}`;
@@ -43898,6 +44909,18 @@ export type GraphCacheKeysConfig = {
   registrant_GoogleAccount_max_fields?: (data: WithTypename<Registrant_GoogleAccount_Max_Fields>) => null | string,
   registrant_GoogleAccount_min_fields?: (data: WithTypename<Registrant_GoogleAccount_Min_Fields>) => null | string,
   registrant_GoogleAccount_mutation_response?: (data: WithTypename<Registrant_GoogleAccount_Mutation_Response>) => null | string,
+  registrant_Group?: (data: WithTypename<Registrant_Group>) => null | string,
+  registrant_GroupRegistrant?: (data: WithTypename<Registrant_GroupRegistrant>) => null | string,
+  registrant_GroupRegistrant_aggregate?: (data: WithTypename<Registrant_GroupRegistrant_Aggregate>) => null | string,
+  registrant_GroupRegistrant_aggregate_fields?: (data: WithTypename<Registrant_GroupRegistrant_Aggregate_Fields>) => null | string,
+  registrant_GroupRegistrant_max_fields?: (data: WithTypename<Registrant_GroupRegistrant_Max_Fields>) => null | string,
+  registrant_GroupRegistrant_min_fields?: (data: WithTypename<Registrant_GroupRegistrant_Min_Fields>) => null | string,
+  registrant_GroupRegistrant_mutation_response?: (data: WithTypename<Registrant_GroupRegistrant_Mutation_Response>) => null | string,
+  registrant_Group_aggregate?: (data: WithTypename<Registrant_Group_Aggregate>) => null | string,
+  registrant_Group_aggregate_fields?: (data: WithTypename<Registrant_Group_Aggregate_Fields>) => null | string,
+  registrant_Group_max_fields?: (data: WithTypename<Registrant_Group_Max_Fields>) => null | string,
+  registrant_Group_min_fields?: (data: WithTypename<Registrant_Group_Min_Fields>) => null | string,
+  registrant_Group_mutation_response?: (data: WithTypename<Registrant_Group_Mutation_Response>) => null | string,
   registrant_Invitation?: (data: WithTypename<Registrant_Invitation>) => null | string,
   registrant_Invitation_aggregate?: (data: WithTypename<Registrant_Invitation_Aggregate>) => null | string,
   registrant_Invitation_aggregate_fields?: (data: WithTypename<Registrant_Invitation_Aggregate_Fields>) => null | string,
@@ -43997,6 +45020,12 @@ export type GraphCacheKeysConfig = {
   room_PersonRole_min_fields?: (data: WithTypename<Room_PersonRole_Min_Fields>) => null | string,
   room_PersonRole_mutation_response?: (data: WithTypename<Room_PersonRole_Mutation_Response>) => null | string,
   room_Room?: (data: WithTypename<Room_Room>) => null | string,
+  room_RoomGroupMembership?: (data: WithTypename<Room_RoomGroupMembership>) => null | string,
+  room_RoomGroupMembership_aggregate?: (data: WithTypename<Room_RoomGroupMembership_Aggregate>) => null | string,
+  room_RoomGroupMembership_aggregate_fields?: (data: WithTypename<Room_RoomGroupMembership_Aggregate_Fields>) => null | string,
+  room_RoomGroupMembership_max_fields?: (data: WithTypename<Room_RoomGroupMembership_Max_Fields>) => null | string,
+  room_RoomGroupMembership_min_fields?: (data: WithTypename<Room_RoomGroupMembership_Min_Fields>) => null | string,
+  room_RoomGroupMembership_mutation_response?: (data: WithTypename<Room_RoomGroupMembership_Mutation_Response>) => null | string,
   room_RoomMembership?: (data: WithTypename<Room_RoomMembership>) => null | string,
   room_RoomMembership_aggregate?: (data: WithTypename<Room_RoomMembership_Aggregate>) => null | string,
   room_RoomMembership_aggregate_fields?: (data: WithTypename<Room_RoomMembership_Aggregate_Fields>) => null | string,
@@ -44387,6 +45416,12 @@ export type GraphCacheResolvers = {
     registrant_GoogleAccount?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GoogleAccountArgs, Array<WithTypename<Registrant_GoogleAccount> | string>>,
     registrant_GoogleAccount_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GoogleAccount_AggregateArgs, WithTypename<Registrant_GoogleAccount_Aggregate> | string>,
     registrant_GoogleAccount_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GoogleAccount_By_PkArgs, WithTypename<Registrant_GoogleAccount> | string>,
+    registrant_Group?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GroupArgs, Array<WithTypename<Registrant_Group> | string>>,
+    registrant_GroupRegistrant?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GroupRegistrantArgs, Array<WithTypename<Registrant_GroupRegistrant> | string>>,
+    registrant_GroupRegistrant_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GroupRegistrant_AggregateArgs, WithTypename<Registrant_GroupRegistrant_Aggregate> | string>,
+    registrant_GroupRegistrant_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_GroupRegistrant_By_PkArgs, WithTypename<Registrant_GroupRegistrant> | string>,
+    registrant_Group_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_Group_AggregateArgs, WithTypename<Registrant_Group_Aggregate> | string>,
+    registrant_Group_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_Group_By_PkArgs, WithTypename<Registrant_Group> | string>,
     registrant_Invitation?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_InvitationArgs, Array<WithTypename<Registrant_Invitation> | string>>,
     registrant_Invitation_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_Invitation_AggregateArgs, WithTypename<Registrant_Invitation_Aggregate> | string>,
     registrant_Invitation_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRegistrant_Invitation_By_PkArgs, WithTypename<Registrant_Invitation> | string>,
@@ -44428,6 +45463,9 @@ export type GraphCacheResolvers = {
     room_PersonRole_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_PersonRole_AggregateArgs, WithTypename<Room_PersonRole_Aggregate> | string>,
     room_PersonRole_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_PersonRole_By_PkArgs, WithTypename<Room_PersonRole> | string>,
     room_Room?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomArgs, Array<WithTypename<Room_Room> | string>>,
+    room_RoomGroupMembership?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomGroupMembershipArgs, Array<WithTypename<Room_RoomGroupMembership> | string>>,
+    room_RoomGroupMembership_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomGroupMembership_AggregateArgs, WithTypename<Room_RoomGroupMembership_Aggregate> | string>,
+    room_RoomGroupMembership_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomGroupMembership_By_PkArgs, WithTypename<Room_RoomGroupMembership> | string>,
     room_RoomMembership?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomMembershipArgs, Array<WithTypename<Room_RoomMembership> | string>>,
     room_RoomMembership_aggregate?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomMembership_AggregateArgs, WithTypename<Room_RoomMembership_Aggregate> | string>,
     room_RoomMembership_by_pk?: GraphCacheResolver<WithTypename<Query_Root>, Query_RootRoom_RoomMembership_By_PkArgs, WithTypename<Room_RoomMembership> | string>,
@@ -47336,6 +48374,83 @@ export type GraphCacheResolvers = {
     affected_rows?: GraphCacheResolver<WithTypename<Registrant_GoogleAccount_Mutation_Response>, Record<string, never>, Scalars['Int'] | string>,
     returning?: GraphCacheResolver<WithTypename<Registrant_GoogleAccount_Mutation_Response>, Record<string, never>, Array<WithTypename<Registrant_GoogleAccount> | string>>
   },
+  registrant_Group?: {
+    conference?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, WithTypename<Conference_Conference> | string>,
+    conferenceId?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['uuid'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['timestamptz'] | string>,
+    groupRegistrants?: GraphCacheResolver<WithTypename<Registrant_Group>, Registrant_GroupGroupRegistrantsArgs, Array<WithTypename<Registrant_GroupRegistrant> | string>>,
+    groupRegistrants_aggregate?: GraphCacheResolver<WithTypename<Registrant_Group>, Registrant_GroupGroupRegistrants_AggregateArgs, WithTypename<Registrant_GroupRegistrant_Aggregate> | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['uuid'] | string>,
+    name?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['String'] | string>,
+    subconference?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, WithTypename<Conference_Subconference> | string>,
+    subconferenceId?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_Group>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_GroupRegistrant?: {
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, Scalars['timestamptz'] | string>,
+    group?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, WithTypename<Registrant_Group> | string>,
+    groupId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, Scalars['uuid'] | string>,
+    registrant?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, WithTypename<Registrant_Registrant> | string>,
+    registrantId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_GroupRegistrant_aggregate?: {
+    aggregate?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Aggregate>, Record<string, never>, WithTypename<Registrant_GroupRegistrant_Aggregate_Fields> | string>,
+    nodes?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Aggregate>, Record<string, never>, Array<WithTypename<Registrant_GroupRegistrant> | string>>
+  },
+  registrant_GroupRegistrant_aggregate_fields?: {
+    count?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Aggregate_Fields>, Registrant_GroupRegistrant_Aggregate_FieldsCountArgs, Scalars['Int'] | string>,
+    max?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Aggregate_Fields>, Record<string, never>, WithTypename<Registrant_GroupRegistrant_Max_Fields> | string>,
+    min?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Aggregate_Fields>, Record<string, never>, WithTypename<Registrant_GroupRegistrant_Min_Fields> | string>
+  },
+  registrant_GroupRegistrant_max_fields?: {
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    groupId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    registrantId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_GroupRegistrant_min_fields?: {
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    groupId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    registrantId?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_GroupRegistrant_mutation_response?: {
+    affected_rows?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Mutation_Response>, Record<string, never>, Scalars['Int'] | string>,
+    returning?: GraphCacheResolver<WithTypename<Registrant_GroupRegistrant_Mutation_Response>, Record<string, never>, Array<WithTypename<Registrant_GroupRegistrant> | string>>
+  },
+  registrant_Group_aggregate?: {
+    aggregate?: GraphCacheResolver<WithTypename<Registrant_Group_Aggregate>, Record<string, never>, WithTypename<Registrant_Group_Aggregate_Fields> | string>,
+    nodes?: GraphCacheResolver<WithTypename<Registrant_Group_Aggregate>, Record<string, never>, Array<WithTypename<Registrant_Group> | string>>
+  },
+  registrant_Group_aggregate_fields?: {
+    count?: GraphCacheResolver<WithTypename<Registrant_Group_Aggregate_Fields>, Registrant_Group_Aggregate_FieldsCountArgs, Scalars['Int'] | string>,
+    max?: GraphCacheResolver<WithTypename<Registrant_Group_Aggregate_Fields>, Record<string, never>, WithTypename<Registrant_Group_Max_Fields> | string>,
+    min?: GraphCacheResolver<WithTypename<Registrant_Group_Aggregate_Fields>, Record<string, never>, WithTypename<Registrant_Group_Min_Fields> | string>
+  },
+  registrant_Group_max_fields?: {
+    conferenceId?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    name?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['String'] | string>,
+    subconferenceId?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_Group_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_Group_min_fields?: {
+    conferenceId?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    id?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    name?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['String'] | string>,
+    subconferenceId?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Registrant_Group_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  registrant_Group_mutation_response?: {
+    affected_rows?: GraphCacheResolver<WithTypename<Registrant_Group_Mutation_Response>, Record<string, never>, Scalars['Int'] | string>,
+    returning?: GraphCacheResolver<WithTypename<Registrant_Group_Mutation_Response>, Record<string, never>, Array<WithTypename<Registrant_Group> | string>>
+  },
   registrant_Invitation?: {
     conferenceId?: GraphCacheResolver<WithTypename<Registrant_Invitation>, Record<string, never>, Scalars['uuid'] | string>,
     confirmationCode?: GraphCacheResolver<WithTypename<Registrant_Invitation>, Record<string, never>, Scalars['uuid'] | string>,
@@ -47523,6 +48638,8 @@ export type GraphCacheResolvers = {
     conferenceRole?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, Registrant_RegistrantRole_Enum | string>,
     createdAt?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, Scalars['timestamptz'] | string>,
     displayName?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, Scalars['String'] | string>,
+    groupRegistrants?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Registrant_RegistrantGroupRegistrantsArgs, Array<WithTypename<Registrant_GroupRegistrant> | string>>,
+    groupRegistrants_aggregate?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Registrant_RegistrantGroupRegistrants_AggregateArgs, WithTypename<Registrant_GroupRegistrant_Aggregate> | string>,
     id?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, Scalars['uuid'] | string>,
     invitation?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, WithTypename<Registrant_Invitation> | string>,
     inviteSent?: GraphCacheResolver<WithTypename<Registrant_Registrant>, Record<string, never>, Scalars['Boolean'] | string>,
@@ -47971,6 +49088,42 @@ export type GraphCacheResolvers = {
     vonageRecordings?: GraphCacheResolver<WithTypename<Room_Room>, Room_RoomVonageRecordingsArgs, Array<WithTypename<Video_VonageRoomRecording> | string>>,
     vonageRecordings_aggregate?: GraphCacheResolver<WithTypename<Room_Room>, Room_RoomVonageRecordings_AggregateArgs, WithTypename<Video_VonageRoomRecording_Aggregate> | string>,
     vonageSessionLayout?: GraphCacheResolver<WithTypename<Room_Room>, Record<string, never>, WithTypename<Video_VonageSessionLayout> | string>
+  },
+  room_RoomGroupMembership?: {
+    created_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, Scalars['timestamptz'] | string>,
+    group?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, WithTypename<Registrant_Group> | string>,
+    groupId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, Scalars['uuid'] | string>,
+    room?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, WithTypename<Room_Room> | string>,
+    roomId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, Scalars['uuid'] | string>,
+    updated_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  room_RoomGroupMembership_aggregate?: {
+    aggregate?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Aggregate>, Record<string, never>, WithTypename<Room_RoomGroupMembership_Aggregate_Fields> | string>,
+    nodes?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Aggregate>, Record<string, never>, Array<WithTypename<Room_RoomGroupMembership> | string>>
+  },
+  room_RoomGroupMembership_aggregate_fields?: {
+    count?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Aggregate_Fields>, Room_RoomGroupMembership_Aggregate_FieldsCountArgs, Scalars['Int'] | string>,
+    max?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Aggregate_Fields>, Record<string, never>, WithTypename<Room_RoomGroupMembership_Max_Fields> | string>,
+    min?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Aggregate_Fields>, Record<string, never>, WithTypename<Room_RoomGroupMembership_Min_Fields> | string>
+  },
+  room_RoomGroupMembership_max_fields?: {
+    created_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    groupId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    roomId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Max_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updated_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Max_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  room_RoomGroupMembership_min_fields?: {
+    created_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>,
+    groupId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    id?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    roomId?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Min_Fields>, Record<string, never>, Scalars['uuid'] | string>,
+    updated_at?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Min_Fields>, Record<string, never>, Scalars['timestamptz'] | string>
+  },
+  room_RoomGroupMembership_mutation_response?: {
+    affected_rows?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Mutation_Response>, Record<string, never>, Scalars['Int'] | string>,
+    returning?: GraphCacheResolver<WithTypename<Room_RoomGroupMembership_Mutation_Response>, Record<string, never>, Array<WithTypename<Room_RoomGroupMembership> | string>>
   },
   room_RoomMembership?: {
     createdAt?: GraphCacheResolver<WithTypename<Room_RoomMembership>, Record<string, never>, Scalars['timestamptz'] | string>,
@@ -49574,6 +50727,10 @@ export type GraphCacheOptimisticUpdaters = {
   delete_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs, Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>>,
   delete_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_GoogleAccountArgs, Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>>,
   delete_registrant_GoogleAccount_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_GoogleAccount_By_PkArgs, Maybe<WithTypename<Registrant_GoogleAccount>>>,
+  delete_registrant_Group?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_GroupArgs, Maybe<WithTypename<Registrant_Group_Mutation_Response>>>,
+  delete_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_GroupRegistrantArgs, Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>>,
+  delete_registrant_GroupRegistrant_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_GroupRegistrant_By_PkArgs, Maybe<WithTypename<Registrant_GroupRegistrant>>>,
+  delete_registrant_Group_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_Group_By_PkArgs, Maybe<WithTypename<Registrant_Group>>>,
   delete_registrant_Invitation?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_InvitationArgs, Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>>,
   delete_registrant_Invitation_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_Invitation_By_PkArgs, Maybe<WithTypename<Registrant_Invitation>>>,
   delete_registrant_Profile?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Registrant_ProfileArgs, Maybe<WithTypename<Registrant_Profile_Mutation_Response>>>,
@@ -49599,6 +50756,8 @@ export type GraphCacheOptimisticUpdaters = {
   delete_room_PersonRole?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_PersonRoleArgs, Maybe<WithTypename<Room_PersonRole_Mutation_Response>>>,
   delete_room_PersonRole_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_PersonRole_By_PkArgs, Maybe<WithTypename<Room_PersonRole>>>,
   delete_room_Room?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_RoomArgs, Maybe<WithTypename<Room_Room_Mutation_Response>>>,
+  delete_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_RoomGroupMembershipArgs, Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>>,
+  delete_room_RoomGroupMembership_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_RoomGroupMembership_By_PkArgs, Maybe<WithTypename<Room_RoomGroupMembership>>>,
   delete_room_RoomMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_RoomMembershipArgs, Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>>,
   delete_room_RoomMembership_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_RoomMembership_By_PkArgs, Maybe<WithTypename<Room_RoomMembership>>>,
   delete_room_Room_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootDelete_Room_Room_By_PkArgs, Maybe<WithTypename<Room_Room>>>,
@@ -49745,6 +50904,10 @@ export type GraphCacheOptimisticUpdaters = {
   insert_job_queues_UploadYouTubeVideoJob_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs, Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>>,
   insert_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_GoogleAccountArgs, Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>>,
   insert_registrant_GoogleAccount_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_GoogleAccount_OneArgs, Maybe<WithTypename<Registrant_GoogleAccount>>>,
+  insert_registrant_Group?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_GroupArgs, Maybe<WithTypename<Registrant_Group_Mutation_Response>>>,
+  insert_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_GroupRegistrantArgs, Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>>,
+  insert_registrant_GroupRegistrant_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_GroupRegistrant_OneArgs, Maybe<WithTypename<Registrant_GroupRegistrant>>>,
+  insert_registrant_Group_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_Group_OneArgs, Maybe<WithTypename<Registrant_Group>>>,
   insert_registrant_Invitation?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_InvitationArgs, Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>>,
   insert_registrant_Invitation_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_Invitation_OneArgs, Maybe<WithTypename<Registrant_Invitation>>>,
   insert_registrant_Profile?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Registrant_ProfileArgs, Maybe<WithTypename<Registrant_Profile_Mutation_Response>>>,
@@ -49770,6 +50933,8 @@ export type GraphCacheOptimisticUpdaters = {
   insert_room_PersonRole?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_PersonRoleArgs, Maybe<WithTypename<Room_PersonRole_Mutation_Response>>>,
   insert_room_PersonRole_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_PersonRole_OneArgs, Maybe<WithTypename<Room_PersonRole>>>,
   insert_room_Room?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_RoomArgs, Maybe<WithTypename<Room_Room_Mutation_Response>>>,
+  insert_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_RoomGroupMembershipArgs, Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>>,
+  insert_room_RoomGroupMembership_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_RoomGroupMembership_OneArgs, Maybe<WithTypename<Room_RoomGroupMembership>>>,
   insert_room_RoomMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_RoomMembershipArgs, Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>>,
   insert_room_RoomMembership_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_RoomMembership_OneArgs, Maybe<WithTypename<Room_RoomMembership>>>,
   insert_room_Room_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_Room_Room_OneArgs, Maybe<WithTypename<Room_Room>>>,
@@ -49928,6 +51093,10 @@ export type GraphCacheOptimisticUpdaters = {
   update_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs, Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>>,
   update_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_GoogleAccountArgs, Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>>,
   update_registrant_GoogleAccount_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_GoogleAccount_By_PkArgs, Maybe<WithTypename<Registrant_GoogleAccount>>>,
+  update_registrant_Group?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_GroupArgs, Maybe<WithTypename<Registrant_Group_Mutation_Response>>>,
+  update_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_GroupRegistrantArgs, Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>>,
+  update_registrant_GroupRegistrant_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_GroupRegistrant_By_PkArgs, Maybe<WithTypename<Registrant_GroupRegistrant>>>,
+  update_registrant_Group_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_Group_By_PkArgs, Maybe<WithTypename<Registrant_Group>>>,
   update_registrant_Invitation?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_InvitationArgs, Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>>,
   update_registrant_Invitation_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_Invitation_By_PkArgs, Maybe<WithTypename<Registrant_Invitation>>>,
   update_registrant_Profile?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Registrant_ProfileArgs, Maybe<WithTypename<Registrant_Profile_Mutation_Response>>>,
@@ -49953,6 +51122,8 @@ export type GraphCacheOptimisticUpdaters = {
   update_room_PersonRole?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_PersonRoleArgs, Maybe<WithTypename<Room_PersonRole_Mutation_Response>>>,
   update_room_PersonRole_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_PersonRole_By_PkArgs, Maybe<WithTypename<Room_PersonRole>>>,
   update_room_Room?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_RoomArgs, Maybe<WithTypename<Room_Room_Mutation_Response>>>,
+  update_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_RoomGroupMembershipArgs, Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>>,
+  update_room_RoomGroupMembership_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_RoomGroupMembership_By_PkArgs, Maybe<WithTypename<Room_RoomGroupMembership>>>,
   update_room_RoomMembership?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_RoomMembershipArgs, Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>>,
   update_room_RoomMembership_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_RoomMembership_By_PkArgs, Maybe<WithTypename<Room_RoomMembership>>>,
   update_room_Room_by_pk?: GraphCacheOptimisticMutationResolver<Mutation_RootUpdate_Room_Room_By_PkArgs, Maybe<WithTypename<Room_Room>>>,
@@ -50104,6 +51275,10 @@ export type GraphCacheUpdaters = {
     delete_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheUpdateResolver<{ delete_job_queues_UploadYouTubeVideoJob_by_pk: Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>> }, Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs>,
     delete_registrant_GoogleAccount?: GraphCacheUpdateResolver<{ delete_registrant_GoogleAccount: Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>> }, Mutation_RootDelete_Registrant_GoogleAccountArgs>,
     delete_registrant_GoogleAccount_by_pk?: GraphCacheUpdateResolver<{ delete_registrant_GoogleAccount_by_pk: Maybe<WithTypename<Registrant_GoogleAccount>> }, Mutation_RootDelete_Registrant_GoogleAccount_By_PkArgs>,
+    delete_registrant_Group?: GraphCacheUpdateResolver<{ delete_registrant_Group: Maybe<WithTypename<Registrant_Group_Mutation_Response>> }, Mutation_RootDelete_Registrant_GroupArgs>,
+    delete_registrant_GroupRegistrant?: GraphCacheUpdateResolver<{ delete_registrant_GroupRegistrant: Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>> }, Mutation_RootDelete_Registrant_GroupRegistrantArgs>,
+    delete_registrant_GroupRegistrant_by_pk?: GraphCacheUpdateResolver<{ delete_registrant_GroupRegistrant_by_pk: Maybe<WithTypename<Registrant_GroupRegistrant>> }, Mutation_RootDelete_Registrant_GroupRegistrant_By_PkArgs>,
+    delete_registrant_Group_by_pk?: GraphCacheUpdateResolver<{ delete_registrant_Group_by_pk: Maybe<WithTypename<Registrant_Group>> }, Mutation_RootDelete_Registrant_Group_By_PkArgs>,
     delete_registrant_Invitation?: GraphCacheUpdateResolver<{ delete_registrant_Invitation: Maybe<WithTypename<Registrant_Invitation_Mutation_Response>> }, Mutation_RootDelete_Registrant_InvitationArgs>,
     delete_registrant_Invitation_by_pk?: GraphCacheUpdateResolver<{ delete_registrant_Invitation_by_pk: Maybe<WithTypename<Registrant_Invitation>> }, Mutation_RootDelete_Registrant_Invitation_By_PkArgs>,
     delete_registrant_Profile?: GraphCacheUpdateResolver<{ delete_registrant_Profile: Maybe<WithTypename<Registrant_Profile_Mutation_Response>> }, Mutation_RootDelete_Registrant_ProfileArgs>,
@@ -50129,6 +51304,8 @@ export type GraphCacheUpdaters = {
     delete_room_PersonRole?: GraphCacheUpdateResolver<{ delete_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> }, Mutation_RootDelete_Room_PersonRoleArgs>,
     delete_room_PersonRole_by_pk?: GraphCacheUpdateResolver<{ delete_room_PersonRole_by_pk: Maybe<WithTypename<Room_PersonRole>> }, Mutation_RootDelete_Room_PersonRole_By_PkArgs>,
     delete_room_Room?: GraphCacheUpdateResolver<{ delete_room_Room: Maybe<WithTypename<Room_Room_Mutation_Response>> }, Mutation_RootDelete_Room_RoomArgs>,
+    delete_room_RoomGroupMembership?: GraphCacheUpdateResolver<{ delete_room_RoomGroupMembership: Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>> }, Mutation_RootDelete_Room_RoomGroupMembershipArgs>,
+    delete_room_RoomGroupMembership_by_pk?: GraphCacheUpdateResolver<{ delete_room_RoomGroupMembership_by_pk: Maybe<WithTypename<Room_RoomGroupMembership>> }, Mutation_RootDelete_Room_RoomGroupMembership_By_PkArgs>,
     delete_room_RoomMembership?: GraphCacheUpdateResolver<{ delete_room_RoomMembership: Maybe<WithTypename<Room_RoomMembership_Mutation_Response>> }, Mutation_RootDelete_Room_RoomMembershipArgs>,
     delete_room_RoomMembership_by_pk?: GraphCacheUpdateResolver<{ delete_room_RoomMembership_by_pk: Maybe<WithTypename<Room_RoomMembership>> }, Mutation_RootDelete_Room_RoomMembership_By_PkArgs>,
     delete_room_Room_by_pk?: GraphCacheUpdateResolver<{ delete_room_Room_by_pk: Maybe<WithTypename<Room_Room>> }, Mutation_RootDelete_Room_Room_By_PkArgs>,
@@ -50275,6 +51452,10 @@ export type GraphCacheUpdaters = {
     insert_job_queues_UploadYouTubeVideoJob_one?: GraphCacheUpdateResolver<{ insert_job_queues_UploadYouTubeVideoJob_one: Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>> }, Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs>,
     insert_registrant_GoogleAccount?: GraphCacheUpdateResolver<{ insert_registrant_GoogleAccount: Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>> }, Mutation_RootInsert_Registrant_GoogleAccountArgs>,
     insert_registrant_GoogleAccount_one?: GraphCacheUpdateResolver<{ insert_registrant_GoogleAccount_one: Maybe<WithTypename<Registrant_GoogleAccount>> }, Mutation_RootInsert_Registrant_GoogleAccount_OneArgs>,
+    insert_registrant_Group?: GraphCacheUpdateResolver<{ insert_registrant_Group: Maybe<WithTypename<Registrant_Group_Mutation_Response>> }, Mutation_RootInsert_Registrant_GroupArgs>,
+    insert_registrant_GroupRegistrant?: GraphCacheUpdateResolver<{ insert_registrant_GroupRegistrant: Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>> }, Mutation_RootInsert_Registrant_GroupRegistrantArgs>,
+    insert_registrant_GroupRegistrant_one?: GraphCacheUpdateResolver<{ insert_registrant_GroupRegistrant_one: Maybe<WithTypename<Registrant_GroupRegistrant>> }, Mutation_RootInsert_Registrant_GroupRegistrant_OneArgs>,
+    insert_registrant_Group_one?: GraphCacheUpdateResolver<{ insert_registrant_Group_one: Maybe<WithTypename<Registrant_Group>> }, Mutation_RootInsert_Registrant_Group_OneArgs>,
     insert_registrant_Invitation?: GraphCacheUpdateResolver<{ insert_registrant_Invitation: Maybe<WithTypename<Registrant_Invitation_Mutation_Response>> }, Mutation_RootInsert_Registrant_InvitationArgs>,
     insert_registrant_Invitation_one?: GraphCacheUpdateResolver<{ insert_registrant_Invitation_one: Maybe<WithTypename<Registrant_Invitation>> }, Mutation_RootInsert_Registrant_Invitation_OneArgs>,
     insert_registrant_Profile?: GraphCacheUpdateResolver<{ insert_registrant_Profile: Maybe<WithTypename<Registrant_Profile_Mutation_Response>> }, Mutation_RootInsert_Registrant_ProfileArgs>,
@@ -50300,6 +51481,8 @@ export type GraphCacheUpdaters = {
     insert_room_PersonRole?: GraphCacheUpdateResolver<{ insert_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> }, Mutation_RootInsert_Room_PersonRoleArgs>,
     insert_room_PersonRole_one?: GraphCacheUpdateResolver<{ insert_room_PersonRole_one: Maybe<WithTypename<Room_PersonRole>> }, Mutation_RootInsert_Room_PersonRole_OneArgs>,
     insert_room_Room?: GraphCacheUpdateResolver<{ insert_room_Room: Maybe<WithTypename<Room_Room_Mutation_Response>> }, Mutation_RootInsert_Room_RoomArgs>,
+    insert_room_RoomGroupMembership?: GraphCacheUpdateResolver<{ insert_room_RoomGroupMembership: Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>> }, Mutation_RootInsert_Room_RoomGroupMembershipArgs>,
+    insert_room_RoomGroupMembership_one?: GraphCacheUpdateResolver<{ insert_room_RoomGroupMembership_one: Maybe<WithTypename<Room_RoomGroupMembership>> }, Mutation_RootInsert_Room_RoomGroupMembership_OneArgs>,
     insert_room_RoomMembership?: GraphCacheUpdateResolver<{ insert_room_RoomMembership: Maybe<WithTypename<Room_RoomMembership_Mutation_Response>> }, Mutation_RootInsert_Room_RoomMembershipArgs>,
     insert_room_RoomMembership_one?: GraphCacheUpdateResolver<{ insert_room_RoomMembership_one: Maybe<WithTypename<Room_RoomMembership>> }, Mutation_RootInsert_Room_RoomMembership_OneArgs>,
     insert_room_Room_one?: GraphCacheUpdateResolver<{ insert_room_Room_one: Maybe<WithTypename<Room_Room>> }, Mutation_RootInsert_Room_Room_OneArgs>,
@@ -50458,6 +51641,10 @@ export type GraphCacheUpdaters = {
     update_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheUpdateResolver<{ update_job_queues_UploadYouTubeVideoJob_by_pk: Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>> }, Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs>,
     update_registrant_GoogleAccount?: GraphCacheUpdateResolver<{ update_registrant_GoogleAccount: Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>> }, Mutation_RootUpdate_Registrant_GoogleAccountArgs>,
     update_registrant_GoogleAccount_by_pk?: GraphCacheUpdateResolver<{ update_registrant_GoogleAccount_by_pk: Maybe<WithTypename<Registrant_GoogleAccount>> }, Mutation_RootUpdate_Registrant_GoogleAccount_By_PkArgs>,
+    update_registrant_Group?: GraphCacheUpdateResolver<{ update_registrant_Group: Maybe<WithTypename<Registrant_Group_Mutation_Response>> }, Mutation_RootUpdate_Registrant_GroupArgs>,
+    update_registrant_GroupRegistrant?: GraphCacheUpdateResolver<{ update_registrant_GroupRegistrant: Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>> }, Mutation_RootUpdate_Registrant_GroupRegistrantArgs>,
+    update_registrant_GroupRegistrant_by_pk?: GraphCacheUpdateResolver<{ update_registrant_GroupRegistrant_by_pk: Maybe<WithTypename<Registrant_GroupRegistrant>> }, Mutation_RootUpdate_Registrant_GroupRegistrant_By_PkArgs>,
+    update_registrant_Group_by_pk?: GraphCacheUpdateResolver<{ update_registrant_Group_by_pk: Maybe<WithTypename<Registrant_Group>> }, Mutation_RootUpdate_Registrant_Group_By_PkArgs>,
     update_registrant_Invitation?: GraphCacheUpdateResolver<{ update_registrant_Invitation: Maybe<WithTypename<Registrant_Invitation_Mutation_Response>> }, Mutation_RootUpdate_Registrant_InvitationArgs>,
     update_registrant_Invitation_by_pk?: GraphCacheUpdateResolver<{ update_registrant_Invitation_by_pk: Maybe<WithTypename<Registrant_Invitation>> }, Mutation_RootUpdate_Registrant_Invitation_By_PkArgs>,
     update_registrant_Profile?: GraphCacheUpdateResolver<{ update_registrant_Profile: Maybe<WithTypename<Registrant_Profile_Mutation_Response>> }, Mutation_RootUpdate_Registrant_ProfileArgs>,
@@ -50483,6 +51670,8 @@ export type GraphCacheUpdaters = {
     update_room_PersonRole?: GraphCacheUpdateResolver<{ update_room_PersonRole: Maybe<WithTypename<Room_PersonRole_Mutation_Response>> }, Mutation_RootUpdate_Room_PersonRoleArgs>,
     update_room_PersonRole_by_pk?: GraphCacheUpdateResolver<{ update_room_PersonRole_by_pk: Maybe<WithTypename<Room_PersonRole>> }, Mutation_RootUpdate_Room_PersonRole_By_PkArgs>,
     update_room_Room?: GraphCacheUpdateResolver<{ update_room_Room: Maybe<WithTypename<Room_Room_Mutation_Response>> }, Mutation_RootUpdate_Room_RoomArgs>,
+    update_room_RoomGroupMembership?: GraphCacheUpdateResolver<{ update_room_RoomGroupMembership: Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>> }, Mutation_RootUpdate_Room_RoomGroupMembershipArgs>,
+    update_room_RoomGroupMembership_by_pk?: GraphCacheUpdateResolver<{ update_room_RoomGroupMembership_by_pk: Maybe<WithTypename<Room_RoomGroupMembership>> }, Mutation_RootUpdate_Room_RoomGroupMembership_By_PkArgs>,
     update_room_RoomMembership?: GraphCacheUpdateResolver<{ update_room_RoomMembership: Maybe<WithTypename<Room_RoomMembership_Mutation_Response>> }, Mutation_RootUpdate_Room_RoomMembershipArgs>,
     update_room_RoomMembership_by_pk?: GraphCacheUpdateResolver<{ update_room_RoomMembership_by_pk: Maybe<WithTypename<Room_RoomMembership>> }, Mutation_RootUpdate_Room_RoomMembership_By_PkArgs>,
     update_room_Room_by_pk?: GraphCacheUpdateResolver<{ update_room_Room_by_pk: Maybe<WithTypename<Room_Room>> }, Mutation_RootUpdate_Room_Room_By_PkArgs>,
@@ -50695,6 +51884,12 @@ export type GraphCacheUpdaters = {
     registrant_GoogleAccount?: GraphCacheUpdateResolver<{ registrant_GoogleAccount: Array<WithTypename<Registrant_GoogleAccount>> }, Subscription_RootRegistrant_GoogleAccountArgs>,
     registrant_GoogleAccount_aggregate?: GraphCacheUpdateResolver<{ registrant_GoogleAccount_aggregate: WithTypename<Registrant_GoogleAccount_Aggregate> }, Subscription_RootRegistrant_GoogleAccount_AggregateArgs>,
     registrant_GoogleAccount_by_pk?: GraphCacheUpdateResolver<{ registrant_GoogleAccount_by_pk: Maybe<WithTypename<Registrant_GoogleAccount>> }, Subscription_RootRegistrant_GoogleAccount_By_PkArgs>,
+    registrant_Group?: GraphCacheUpdateResolver<{ registrant_Group: Array<WithTypename<Registrant_Group>> }, Subscription_RootRegistrant_GroupArgs>,
+    registrant_GroupRegistrant?: GraphCacheUpdateResolver<{ registrant_GroupRegistrant: Array<WithTypename<Registrant_GroupRegistrant>> }, Subscription_RootRegistrant_GroupRegistrantArgs>,
+    registrant_GroupRegistrant_aggregate?: GraphCacheUpdateResolver<{ registrant_GroupRegistrant_aggregate: WithTypename<Registrant_GroupRegistrant_Aggregate> }, Subscription_RootRegistrant_GroupRegistrant_AggregateArgs>,
+    registrant_GroupRegistrant_by_pk?: GraphCacheUpdateResolver<{ registrant_GroupRegistrant_by_pk: Maybe<WithTypename<Registrant_GroupRegistrant>> }, Subscription_RootRegistrant_GroupRegistrant_By_PkArgs>,
+    registrant_Group_aggregate?: GraphCacheUpdateResolver<{ registrant_Group_aggregate: WithTypename<Registrant_Group_Aggregate> }, Subscription_RootRegistrant_Group_AggregateArgs>,
+    registrant_Group_by_pk?: GraphCacheUpdateResolver<{ registrant_Group_by_pk: Maybe<WithTypename<Registrant_Group>> }, Subscription_RootRegistrant_Group_By_PkArgs>,
     registrant_Invitation?: GraphCacheUpdateResolver<{ registrant_Invitation: Array<WithTypename<Registrant_Invitation>> }, Subscription_RootRegistrant_InvitationArgs>,
     registrant_Invitation_aggregate?: GraphCacheUpdateResolver<{ registrant_Invitation_aggregate: WithTypename<Registrant_Invitation_Aggregate> }, Subscription_RootRegistrant_Invitation_AggregateArgs>,
     registrant_Invitation_by_pk?: GraphCacheUpdateResolver<{ registrant_Invitation_by_pk: Maybe<WithTypename<Registrant_Invitation>> }, Subscription_RootRegistrant_Invitation_By_PkArgs>,
@@ -50736,6 +51931,9 @@ export type GraphCacheUpdaters = {
     room_PersonRole_aggregate?: GraphCacheUpdateResolver<{ room_PersonRole_aggregate: WithTypename<Room_PersonRole_Aggregate> }, Subscription_RootRoom_PersonRole_AggregateArgs>,
     room_PersonRole_by_pk?: GraphCacheUpdateResolver<{ room_PersonRole_by_pk: Maybe<WithTypename<Room_PersonRole>> }, Subscription_RootRoom_PersonRole_By_PkArgs>,
     room_Room?: GraphCacheUpdateResolver<{ room_Room: Array<WithTypename<Room_Room>> }, Subscription_RootRoom_RoomArgs>,
+    room_RoomGroupMembership?: GraphCacheUpdateResolver<{ room_RoomGroupMembership: Array<WithTypename<Room_RoomGroupMembership>> }, Subscription_RootRoom_RoomGroupMembershipArgs>,
+    room_RoomGroupMembership_aggregate?: GraphCacheUpdateResolver<{ room_RoomGroupMembership_aggregate: WithTypename<Room_RoomGroupMembership_Aggregate> }, Subscription_RootRoom_RoomGroupMembership_AggregateArgs>,
+    room_RoomGroupMembership_by_pk?: GraphCacheUpdateResolver<{ room_RoomGroupMembership_by_pk: Maybe<WithTypename<Room_RoomGroupMembership>> }, Subscription_RootRoom_RoomGroupMembership_By_PkArgs>,
     room_RoomMembership?: GraphCacheUpdateResolver<{ room_RoomMembership: Array<WithTypename<Room_RoomMembership>> }, Subscription_RootRoom_RoomMembershipArgs>,
     room_RoomMembership_aggregate?: GraphCacheUpdateResolver<{ room_RoomMembership_aggregate: WithTypename<Room_RoomMembership_Aggregate> }, Subscription_RootRoom_RoomMembership_AggregateArgs>,
     room_RoomMembership_by_pk?: GraphCacheUpdateResolver<{ room_RoomMembership_by_pk: Maybe<WithTypename<Room_RoomMembership>> }, Subscription_RootRoom_RoomMembership_By_PkArgs>,
@@ -50821,7 +52019,7 @@ export type GraphCacheUpdaters = {
 };
 
 export type GraphCacheConfig = {
-    schema?: CacheExchangeOpts["schema"],
+  schema?: CacheExchangeOpts["schema"],
   updates?: GraphCacheUpdaters,
   keys?: GraphCacheKeysConfig,
   optimistic?: GraphCacheOptimisticUpdaters,

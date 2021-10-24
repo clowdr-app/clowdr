@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
 import PageNotImplemented from "../Errors/PageNotImplemented";
+import { useAuthParameters } from "../GQL/AuthParameters";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
@@ -30,6 +32,7 @@ import ManageEmail from "./Manage/Email/ManageEmail";
 import ManageExport from "./Manage/Export/ManageExport";
 import ManageImport from "./Manage/Import/ManageImport";
 import ManageDetails from "./Manage/ManageDetails";
+import ManageGroups from "./Manage/ManageGroups";
 import ManageProgramPeople from "./Manage/ManageProgramPeople";
 import ManagerLanding from "./Manage/ManagerLanding";
 import ManageRooms from "./Manage/ManageRooms";
@@ -73,61 +76,10 @@ export default function ConferenceRoutes(): JSX.Element {
 
             {mRegistrant && <Route exact path={`${path}/profile/backstages`} component={MyBackstages} />}
 
-            <Route exact path={`${path}/manage`}>
+            <Route path={`${path}/manage`}>
                 <RequireRole organizerRole moderatorRole componentIfDenied={<PageNotFound />}>
-                    <ManagerLanding />
+                    <ManageConferenceRoutes />
                 </RequireRole>
-            </Route>
-            <Route path={`${path}/manage/details`}>
-                <ManageDetails />
-            </Route>
-            <Route path={`${path}/manage/registrants`}>
-                <ManageRegistrants />
-            </Route>
-            <Route path={`${path}/manage/people`}>
-                <ManageProgramPeople />
-            </Route>
-            <Route path={`${path}/manage/content`}>
-                <ManageContent />
-            </Route>
-            <Route path={`${path}/manage/import`}>
-                <ManageImport />
-            </Route>
-            <Route path={`${path}/manage/rooms`}>
-                <ManageRooms />
-            </Route>
-            <Route path={`${path}/manage/shuffle`}>
-                <ManageShuffle />
-            </Route>
-            <Route path={`${path}/manage/broadcasts`}>
-                <ManageBroadcast />
-            </Route>
-            <Route path={`${path}/manage/export`}>
-                <ManageExport />
-            </Route>
-            <Route path={`${path}/manage/schedule`}>
-                <ManageSchedule />
-            </Route>
-            <Route path={`${path}/manage/chats/moderation`}>
-                <ManageModeration />
-            </Route>
-            <Route path={`${path}/manage/chats`}>
-                <PageNotImplemented />
-            </Route>
-            <Route path={`${path}/manage/email`}>
-                <ManageEmail />
-            </Route>
-            <Route path={`${path}/manage/checklist`}>
-                <ChecklistPage />
-            </Route>
-            <Route path={`${path}/manage/analytics`}>
-                <AnalyticsDashboard />
-            </Route>
-            <Route path={`${path}/manage/support`}>
-                <PageNotImplemented />
-            </Route>
-            <Route path={`${path}/manage/theme`}>
-                <ManageTheme />
             </Route>
 
             <Route
@@ -245,5 +197,85 @@ export default function ConferenceRoutes(): JSX.Element {
                 <PageNotFound />
             </Route>
         </Switch>
+    );
+}
+
+function ManageConferenceRoutes(): JSX.Element {
+    const { path } = useRouteMatch();
+    const { isOnManagementPage, setIsOnManagementPage } = useAuthParameters();
+
+    useEffect(() => {
+        setIsOnManagementPage(true);
+        return () => {
+            setIsOnManagementPage(false);
+        };
+    }, [setIsOnManagementPage]);
+
+    return isOnManagementPage ? (
+        <Switch>
+            <Route exact path={path}>
+                <ManagerLanding />
+            </Route>
+            <Route path={`${path}/details`}>
+                <ManageDetails />
+            </Route>
+            <Route path={`${path}/groups`}>
+                <ManageGroups />
+            </Route>
+            <Route path={`${path}/registrants`}>
+                <ManageRegistrants />
+            </Route>
+            <Route path={`${path}/people`}>
+                <ManageProgramPeople />
+            </Route>
+            <Route path={`${path}/content`}>
+                <ManageContent />
+            </Route>
+            <Route path={`${path}/import`}>
+                <ManageImport />
+            </Route>
+            <Route path={`${path}/rooms`}>
+                <ManageRooms />
+            </Route>
+            <Route path={`${path}/shuffle`}>
+                <ManageShuffle />
+            </Route>
+            <Route path={`${path}/broadcasts`}>
+                <ManageBroadcast />
+            </Route>
+            <Route path={`${path}/export`}>
+                <ManageExport />
+            </Route>
+            <Route path={`${path}/schedule`}>
+                <ManageSchedule />
+            </Route>
+            <Route path={`${path}/chats/moderation`}>
+                <ManageModeration />
+            </Route>
+            <Route path={`${path}/chats`}>
+                <PageNotImplemented />
+            </Route>
+            <Route path={`${path}/email`}>
+                <ManageEmail />
+            </Route>
+            <Route path={`${path}/checklist`}>
+                <ChecklistPage />
+            </Route>
+            <Route path={`${path}/analytics`}>
+                <AnalyticsDashboard />
+            </Route>
+            <Route path={`${path}/support`}>
+                <PageNotImplemented />
+            </Route>
+            <Route path={`${path}/theme`}>
+                <ManageTheme />
+            </Route>
+
+            <Route path="/">
+                <PageNotFound />
+            </Route>
+        </Switch>
+    ) : (
+        <CenteredSpinner />
     );
 }

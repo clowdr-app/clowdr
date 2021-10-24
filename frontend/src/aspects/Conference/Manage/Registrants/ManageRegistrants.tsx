@@ -9,6 +9,7 @@ import {
     Input,
     Menu,
     MenuButton,
+    MenuGroup,
     MenuItem,
     MenuItemOption,
     MenuList,
@@ -37,12 +38,14 @@ import {
     useInsertRegistrantMutation,
     useInsertRegistrantWithoutInviteMutation,
     useManagePeople_InsertCustomEmailJobMutation,
+    useSelectAllGroupsQuery,
     useSelectAllRegistrantsQuery,
     useUpdateRegistrantMutation,
 } from "../../../../generated/graphql";
 import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
-import { CheckBoxColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
+import MultiSelect from "../../../Chakra/MultiSelect";
+import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
 import type {
     CellProps,
     ColumnHeaderProps,
@@ -58,6 +61,7 @@ import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -82,6 +86,11 @@ gql`
         conferenceRole
         invitation {
             ...InvitationParts
+        }
+        groupRegistrants {
+            registrantId
+            id
+            groupId
         }
         userId
         updatedAt
@@ -145,9 +154,31 @@ gql`
         }
     }
 
-    mutation UpdateRegistrant($registrantId: uuid!, $registrantName: String!) {
+    mutation UpdateRegistrant(
+        $registrantId: uuid!
+        $registrantName: String!
+        $upsertGroups: [registrant_GroupRegistrant_insert_input!]!
+        $remainingGroupIds: [uuid!]
+    ) {
         update_registrant_Registrant_by_pk(pk_columns: { id: $registrantId }, _set: { displayName: $registrantName }) {
             ...RegistrantParts
+        }
+        insert_registrant_GroupRegistrant(
+            objects: $upsertGroups
+            on_conflict: { constraint: GroupRegistrant_groupId_registrantId_key, update_columns: [] }
+        ) {
+            returning {
+                id
+                registrantId
+                groupId
+            }
+        }
+        delete_registrant_GroupRegistrant(
+            where: { registrantId: { _eq: $registrantId }, groupId: { _nin: $remainingGroupIds } }
+        ) {
+            returning {
+                id
+            }
         }
     }
 
@@ -182,12 +213,11 @@ gql`
 
 type RegistrantDescriptor = RegistrantPartsFragment & {
     id?: string;
-    // TODO: Subconferences
-    // groupRegistrants?: ReadonlyArray<
-    //     RegistrantPartsFragment["groupRegistrants"][0] & {
-    //         id?: string;
-    //     }
-    // >;
+    groupRegistrants?: ReadonlyArray<
+        RegistrantPartsFragment["groupRegistrants"][0] & {
+            id?: string;
+        }
+    >;
 };
 
 export default function ManageRegistrants(): JSX.Element {
@@ -195,19 +225,17 @@ export default function ManageRegistrants(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    // TODO: By subconference
-    // const {
-    //     loading: loadingAllGroups,
-    //     error: errorAllGroups,
-    //     data: allGroups,
-    // } = useSelectAllGroupsQuery({
-    //     requestPolicy: "network-only",
-    //     variables: {
-    //         conferenceId: conference.id,
-    //     },
-    // });
-    // useQueryErrorToast(errorAllGroups, false);
+    const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
+        requestPolicy: "network-only",
+        variables: {
+            conferenceId: conference.id,
+        },
+    });
+    useQueryErrorToast(errorAllGroups, false);
 
+    const selectAllRegistrantsContext = useShieldedHeaders({
+        "X-Auth-Role": "main-conference-organizer",
+    });
     const [
         { fetching: loadingAllRegistrants, error: errorAllRegistrants, data: allRegistrants },
         refetchAllRegistrants,
@@ -216,6 +244,7 @@ export default function ManageRegistrants(): JSX.Element {
         variables: {
             conferenceId: conference.id,
         },
+        context: selectAllRegistrantsContext,
     });
     useQueryErrorToast(errorAllRegistrants, false);
     const data = useMemo(
@@ -247,339 +276,307 @@ export default function ManageRegistrants(): JSX.Element {
         []
     );
 
-    const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(
-        () => {
-            // TODO: By subconference
-            // const groupOptions: { value: string; label: string }[] =
-            //     allGroups?.permissions_Group.map((group) => ({
-            //         value: group.id,
-            //         label: group.name,
-            //     })) ?? [];
+    const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
+        const groupOptions: { value: string; label: string }[] =
+            allGroups?.registrant_Group.map((group) => ({
+                value: group.id,
+                label: group.name,
+            })) ?? [];
 
-            const result: ColumnSpecification<RegistrantDescriptor>[] = [
-                {
-                    id: "name",
-                    defaultSortDirection: SortDirection.Asc,
-                    header: function NameHeader({
-                        isInCreate,
-                        onClick,
-                        sortDir,
-                    }: ColumnHeaderProps<RegistrantDescriptor>) {
-                        return isInCreate ? (
-                            <FormLabel>Name</FormLabel>
-                        ) : (
+        const result: ColumnSpecification<RegistrantDescriptor>[] = [
+            {
+                id: "name",
+                defaultSortDirection: SortDirection.Asc,
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Name</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Name{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.displayName,
+                set: (record, value: string) => {
+                    record.displayName = value;
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.displayName ?? "") === "");
+                    } else {
+                        return rows.filter((row) => row.displayName.toLowerCase().includes(filterValue.toLowerCase()));
+                    }
+                },
+                filterEl: TextColumnFilter,
+                cell: function NameCell({ value, onChange, onBlur, ref }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    return (
+                        <Flex alignItems="center">
+                            <Input
+                                type="text"
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={ref as LegacyRef<HTMLInputElement>}
+                                mr={2}
+                            />
+                            <Button onClick={onCopy} size="xs" ml="auto">
+                                <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                            </Button>
+                        </Flex>
+                    );
+                },
+            },
+            {
+                id: "inviteSent",
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
                             <Button size="xs" onClick={onClick}>
-                                Name{sortDir !== null ? ` ${sortDir}` : undefined}
+                                Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
                             </Button>
                         );
-                    },
-                    get: (data) => data.displayName,
-                    set: (record, value: string) => {
-                        record.displayName = value;
-                    },
-                    sort: (x: string, y: string) => x.localeCompare(y),
-                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                        if (filterValue === "") {
-                            return rows.filter((row) => (row.displayName ?? "") === "");
-                        } else {
-                            return rows.filter((row) =>
-                                row.displayName.toLowerCase().includes(filterValue.toLowerCase())
-                            );
-                        }
-                    },
-                    filterEl: TextColumnFilter,
-                    cell: function NameCell({
-                        value,
-                        onChange,
-                        onBlur,
-                        ref,
-                    }: CellProps<Partial<RegistrantDescriptor>>) {
-                        const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    }
+                },
+                get: (data) => data.inviteSent,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
+                    return rows.filter((row) => row.inviteSent === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
+                id: "inviteAccepted",
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Button size="xs" onClick={onClick}>
+                                Invite accepted?{sortDir !== null ? ` ${sortDir}` : undefined}
+                            </Button>
+                        );
+                    }
+                },
+                get: (data) => !!data.userId,
+                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
+                    return rows.filter((row) => !!row.userId === filterValue);
+                },
+                filterEl: CheckBoxColumnFilter,
+                cell: function InviteSentCell({
+                    isInCreate,
+                    value,
+                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Center>
+                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                            </Center>
+                        );
+                    }
+                },
+            },
+            {
+                id: "invitedEmailAddress",
+                header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Invitation address</FormLabel>
+                    ) : (
+                        <Button size="xs" onClick={onClick}>
+                            Invitation address{sortDir !== null ? ` ${sortDir}` : undefined}
+                        </Button>
+                    );
+                },
+                get: (data) => data.invitation?.invitedEmailAddress ?? "",
+                set: (record, value: string) => {
+                    if (!record.invitation) {
+                        assert(record.id);
+                        record.invitation = {
+                            registrantId: record.id as DeepWriteable<any>,
+                            createdAt: new Date().toISOString() as any as DeepWriteable<any>,
+                            updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
+                            invitedEmailAddress: value,
+                            inviteCode: "" as any as DeepWriteable<any>,
+                            id: "" as any as DeepWriteable<any>,
+                        };
+                    } else {
+                        record.invitation.invitedEmailAddress = value;
+                    }
+                },
+                sort: (x: string, y: string) => x.localeCompare(y),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.invitation?.invitedEmailAddress ?? "") === "");
+                    } else {
+                        return rows.filter((row) =>
+                            row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
+                },
+                filterEl: TextColumnFilter,
+                cell: function InvitedEmailAddressCell({
+                    isInCreate,
+                    value,
+                    onChange,
+                    onBlur,
+                    ref,
+                }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    if (isInCreate) {
+                        return (
+                            <Input
+                                type="email"
+                                value={value ?? ""}
+                                onChange={(ev) => onChange?.(ev.target.value)}
+                                onBlur={onBlur}
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.16)"
+                                ref={ref as LegacyRef<HTMLInputElement>}
+                            />
+                        );
+                    } else {
                         return (
                             <Flex alignItems="center">
-                                <Input
-                                    type="text"
-                                    value={value ?? ""}
-                                    onChange={(ev) => onChange?.(ev.target.value)}
-                                    onBlur={onBlur}
-                                    border="1px solid"
-                                    borderColor="rgba(255, 255, 255, 0.16)"
-                                    ref={ref as LegacyRef<HTMLInputElement>}
-                                    mr={2}
-                                />
-                                <Button onClick={onCopy} size="xs" ml="auto">
-                                    <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                                </Button>
+                                <Text px={2}>{value}</Text>
+                                {value ? (
+                                    <Button onClick={onCopy} size="xs" ml="auto">
+                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                    </Button>
+                                ) : undefined}
                             </Flex>
                         );
-                    },
+                    }
                 },
-                {
-                    id: "inviteSent",
-                    header: function NameHeader({
-                        isInCreate,
-                        onClick,
-                        sortDir,
-                    }: ColumnHeaderProps<RegistrantDescriptor>) {
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Button size="xs" onClick={onClick}>
-                                    Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
-                                </Button>
-                            );
-                        }
-                    },
-                    get: (data) => data.inviteSent,
-                    sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
-                        return rows.filter((row) => row.inviteSent === filterValue);
-                    },
-                    filterEl: CheckBoxColumnFilter,
-                    cell: function InviteSentCell({
-                        isInCreate,
-                        value,
-                    }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Center>
-                                    <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
-                                </Center>
-                            );
-                        }
-                    },
-                },
-                {
-                    id: "inviteAccepted",
-                    header: function NameHeader({
-                        isInCreate,
-                        onClick,
-                        sortDir,
-                    }: ColumnHeaderProps<RegistrantDescriptor>) {
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Button size="xs" onClick={onClick}>
-                                    Invite accepted?{sortDir !== null ? ` ${sortDir}` : undefined}
-                                </Button>
-                            );
-                        }
-                    },
-                    get: (data) => !!data.userId,
-                    sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
-                        return rows.filter((row) => !!row.userId === filterValue);
-                    },
-                    filterEl: CheckBoxColumnFilter,
-                    cell: function InviteSentCell({
-                        isInCreate,
-                        value,
-                    }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Center>
-                                    <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
-                                </Center>
-                            );
-                        }
-                    },
-                },
-                {
-                    id: "invitedEmailAddress",
-                    header: function NameHeader({
-                        isInCreate,
-                        onClick,
-                        sortDir,
-                    }: ColumnHeaderProps<RegistrantDescriptor>) {
-                        return isInCreate ? (
-                            <FormLabel>Invitation address</FormLabel>
-                        ) : (
-                            <Button size="xs" onClick={onClick}>
-                                Invitation address{sortDir !== null ? ` ${sortDir}` : undefined}
-                            </Button>
+            },
+            {
+                id: "inviteCode",
+                header: function NameHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                                Invite code
+                            </Text>
                         );
-                    },
-                    get: (data) => data.invitation?.invitedEmailAddress ?? "",
-                    set: (record, value: string) => {
-                        if (!record.invitation) {
-                            assert(record.id);
-                            record.invitation = {
-                                registrantId: record.id as DeepWriteable<any>,
-                                createdAt: new Date().toISOString() as any as DeepWriteable<any>,
-                                updatedAt: new Date().toISOString() as any as DeepWriteable<any>,
-                                invitedEmailAddress: value,
-                                inviteCode: "" as any as DeepWriteable<any>,
-                                id: "" as any as DeepWriteable<any>,
-                            };
-                        } else {
-                            record.invitation.invitedEmailAddress = value;
-                        }
-                    },
-                    sort: (x: string, y: string) => x.localeCompare(y),
-                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                        if (filterValue === "") {
-                            return rows.filter((row) => (row.invitation?.invitedEmailAddress ?? "") === "");
-                        } else {
-                            return rows.filter((row) =>
-                                row.invitation?.invitedEmailAddress?.toLowerCase().includes(filterValue.toLowerCase())
-                            );
-                        }
-                    },
-                    filterEl: TextColumnFilter,
-                    cell: function InvitedEmailAddressCell({
-                        isInCreate,
-                        value,
-                        onChange,
-                        onBlur,
-                        ref,
-                    }: CellProps<Partial<RegistrantDescriptor>>) {
-                        const { onCopy, hasCopied } = useClipboard(value ?? "");
-                        if (isInCreate) {
-                            return (
-                                <Input
-                                    type="email"
-                                    value={value ?? ""}
-                                    onChange={(ev) => onChange?.(ev.target.value)}
-                                    onBlur={onBlur}
-                                    border="1px solid"
-                                    borderColor="rgba(255, 255, 255, 0.16)"
-                                    ref={ref as LegacyRef<HTMLInputElement>}
-                                />
-                            );
-                        } else {
-                            return (
-                                <Flex alignItems="center">
-                                    <Text px={2}>{value}</Text>
-                                    {value ? (
-                                        <Button onClick={onCopy} size="xs" ml="auto">
-                                            <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                                        </Button>
-                                    ) : undefined}
-                                </Flex>
-                            );
-                        }
-                    },
+                    }
                 },
-                {
-                    id: "inviteCode",
-                    header: function NameHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
-                                    Invite code
+                get: (data) => data.invitation?.inviteCode ?? "",
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                    if (filterValue === "") {
+                        return rows.filter((row) => (row.invitation?.inviteCode ?? "") === "");
+                    } else {
+                        return rows.filter(
+                            (row) =>
+                                !!row.invitation?.inviteCode &&
+                                row.invitation?.inviteCode.toLowerCase().includes(filterValue.toLowerCase())
+                        );
+                    }
+                },
+                filterEl: TextColumnFilter,
+                cell: function InviteCodeCell({ isInCreate, value }: CellProps<Partial<RegistrantDescriptor>>) {
+                    const { onCopy, hasCopied } = useClipboard(value ?? "");
+                    if (isInCreate) {
+                        return undefined;
+                    } else {
+                        return (
+                            <Flex alignItems="center">
+                                <Text fontFamily="monospace" px={2}>
+                                    {value}
                                 </Text>
-                            );
-                        }
-                    },
-                    get: (data) => data.invitation?.inviteCode ?? "",
-                    filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
-                        if (filterValue === "") {
-                            return rows.filter((row) => (row.invitation?.inviteCode ?? "") === "");
-                        } else {
-                            return rows.filter(
-                                (row) =>
-                                    !!row.invitation?.inviteCode &&
-                                    row.invitation?.inviteCode.toLowerCase().includes(filterValue.toLowerCase())
-                            );
-                        }
-                    },
-                    filterEl: TextColumnFilter,
-                    cell: function InviteCodeCell({ isInCreate, value }: CellProps<Partial<RegistrantDescriptor>>) {
-                        const { onCopy, hasCopied } = useClipboard(value ?? "");
-                        if (isInCreate) {
-                            return undefined;
-                        } else {
-                            return (
-                                <Flex alignItems="center">
-                                    <Text fontFamily="monospace" px={2}>
-                                        {value}
-                                    </Text>
-                                    {value ? (
-                                        <Button onClick={onCopy} size="xs" ml="auto">
-                                            <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
-                                        </Button>
-                                    ) : undefined}
-                                </Flex>
-                            );
-                        }
-                    },
+                                {value ? (
+                                    <Button onClick={onCopy} size="xs" ml="auto">
+                                        <FAIcon iconStyle="s" icon={hasCopied ? "check-circle" : "clipboard"} />
+                                    </Button>
+                                ) : undefined}
+                            </Flex>
+                        );
+                    }
                 },
-                // TODO: Subconferences
-                // {
-                //     id: "groups",
-                //     header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
-                //         return isInCreate ? (
-                //             <FormLabel>Groups</FormLabel>
-                //         ) : (
-                //             <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
-                //                 Groups
-                //             </Text>
-                //         );
-                //     },
-                //     get: (data) =>
-                //         data.groupRegistrants?.map(
-                //             (ga) =>
-                //                 groupOptions.find((group) => group.value === ga.groupId) ?? {
-                //                     label: "<Unknown>",
-                //                     value: ga.groupId,
-                //                 }
-                //         ) ?? [],
-                //     set: (record, value: { label: string; value: string }[]) => {
-                //         record.groupRegistrants = value.map((x) => ({
-                //             registrantId: record.id as any as DeepWriteable<any>,
-                //             groupId: x.value as any as DeepWriteable<any>,
-                //             id: undefined as any as DeepWriteable<any>,
-                //         }));
-                //     },
-                //     filterFn: (
-                //         rows: Array<RegistrantDescriptor>,
-                //         filterValue: ReadonlyArray<{ label: string; value: string }>
-                //     ) => {
-                //         return filterValue.length === 0
-                //             ? rows
-                //             : rows.filter((row) => {
-                //                   return row.groupRegistrants.some((x) =>
-                //                       filterValue.some((y) => y.value === x.groupId)
-                //                   );
-                //               });
-                //     },
-                //     filterEl: MultiSelectColumnFilter(groupOptions),
-                //     cell: function ContentCell({
-                //         value,
-                //         onChange,
-                //         onBlur,
-                //     }: CellProps<
-                //         Partial<RegistrantDescriptor>,
-                //         ReadonlyArray<{ label: string; value: string }> | undefined
-                //     >) {
-                //         return (
-                //             <MultiSelect
-                //                 name="groups"
-                //                 options={groupOptions}
-                //                 value={value ?? []}
-                //                 placeholder="Select one or more groups"
-                //                 onChange={(ev) => onChange?.(ev)}
-                //                 onBlur={onBlur}
-                //                 styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
-                //             />
-                //         );
-                //     },
-                // },
-            ];
-            return result;
-        },
-        [
-            /* allGroups?.permissions_Group */
-        ]
-    );
+            },
+            {
+                id: "groups",
+                header: function ContentHeader({ isInCreate }: ColumnHeaderProps<RegistrantDescriptor>) {
+                    return isInCreate ? (
+                        <FormLabel>Groups</FormLabel>
+                    ) : (
+                        <Text size="xs" p={1} textAlign="center" textTransform="none" fontWeight="normal">
+                            Groups
+                        </Text>
+                    );
+                },
+                get: (data) =>
+                    data.groupRegistrants?.map(
+                        (ga) =>
+                            groupOptions.find((group) => group.value === ga.groupId) ?? {
+                                label: "<Unknown>",
+                                value: ga.groupId,
+                            }
+                    ) ?? [],
+                set: (record, value: { label: string; value: string }[]) => {
+                    record.groupRegistrants = value.map((x) => ({
+                        registrantId: record.id as any as DeepWriteable<any>,
+                        groupId: x.value as any as DeepWriteable<any>,
+                        id: undefined as any as DeepWriteable<any>,
+                    }));
+                },
+                filterFn: (
+                    rows: Array<RegistrantDescriptor>,
+                    filterValue: ReadonlyArray<{ label: string; value: string }>
+                ) => {
+                    return filterValue.length === 0
+                        ? rows
+                        : rows.filter((row) => {
+                              return row.groupRegistrants.some((x) => filterValue.some((y) => y.value === x.groupId));
+                          });
+                },
+                filterEl: MultiSelectColumnFilter(groupOptions),
+                cell: function ContentCell({
+                    value,
+                    onChange,
+                    onBlur,
+                }: CellProps<
+                    Partial<RegistrantDescriptor>,
+                    ReadonlyArray<{ label: string; value: string }> | undefined
+                >) {
+                    return (
+                        <MultiSelect
+                            name="groups"
+                            options={groupOptions}
+                            value={value ?? []}
+                            placeholder="Select one or more groups"
+                            onChange={(ev) => onChange?.(ev)}
+                            onBlur={onBlur}
+                            styles={{ container: (base) => ({ ...base, maxWidth: 450 }) }}
+                        />
+                    );
+                },
+            },
+        ];
+        return result;
+    }, [allGroups?.registrant_Group]);
 
     const [{ fetching: insertInvitationEmailJobsLoading }, insertInvitationEmailJobsMutation] =
         useInsertInvitationEmailJobsMutation();
@@ -603,33 +600,49 @@ export default function ManageRegistrants(): JSX.Element {
             makeWhole: (d) => (d.displayName?.length ? (d as RegistrantDescriptor) : undefined),
             start: (record) => {
                 if (record.invitation?.invitedEmailAddress) {
-                    insertRegistrant({
-                        registrant: {
-                            id: record.id,
-                            conferenceId: conference.id,
-                            displayName: record.displayName,
-                            // TODO: Subconferences
-                            // groupRegistrants: {
-                            //     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
-                            // },
+                    insertRegistrant(
+                        {
+                            registrant: {
+                                id: record.id,
+                                conferenceId: conference.id,
+                                displayName: record.displayName,
+                                groupRegistrants: {
+                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                                },
+                            },
+                            invitation: {
+                                registrantId: record.id,
+                                invitedEmailAddress: record.invitation?.invitedEmailAddress,
+                            },
                         },
-                        invitation: {
-                            registrantId: record.id,
-                            invitedEmailAddress: record.invitation?.invitedEmailAddress,
-                        },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        }
+                    );
                 } else {
-                    insertRegistrantWithoutInvite({
-                        registrant: {
-                            id: record.id,
-                            conferenceId: conference.id,
-                            displayName: record.displayName,
-                            // TODO: Subconferences
-                            // groupRegistrants: {
-                            //     data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
-                            // },
+                    insertRegistrantWithoutInvite(
+                        {
+                            registrant: {
+                                id: record.id,
+                                conferenceId: conference.id,
+                                displayName: record.displayName,
+                                groupRegistrants: {
+                                    data: record.groupRegistrants.map((x) => ({ groupId: x.groupId })),
+                                },
+                            },
                         },
-                    });
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        }
+                    );
                 }
             },
         }),
@@ -640,16 +653,24 @@ export default function ManageRegistrants(): JSX.Element {
         () => ({
             ongoing: updateRegistrantResponse.fetching,
             start: (record) => {
-                updateRegistrant({
-                    registrantId: record.id,
-                    registrantName: record.displayName,
-                    // TODO: Subconferences
-                    // upsertGroups: record.groupRegistrants.map((x) => ({
-                    //     groupId: x.groupId,
-                    //     registrantId: x.registrantId,
-                    // })),
-                    // remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
-                });
+                updateRegistrant(
+                    {
+                        registrantId: record.id,
+                        registrantName: record.displayName,
+                        upsertGroups: record.groupRegistrants.map((x) => ({
+                            groupId: x.groupId,
+                            registrantId: x.registrantId,
+                        })),
+                        remainingGroupIds: record.groupRegistrants.map((x) => x.groupId),
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "main-conference-organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [updateRegistrant, updateRegistrantResponse.fetching]
@@ -659,23 +680,22 @@ export default function ManageRegistrants(): JSX.Element {
         () => ({
             ongoing: deleteRegistrantsResponse.fetching,
             start: (keys) => {
-                deleteRegistrants({
-                    deleteRegistrantIds: keys,
-                });
+                deleteRegistrants(
+                    {
+                        deleteRegistrantIds: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "main-conference-organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteRegistrants, deleteRegistrantsResponse.fetching]
     );
-
-    // TODO: By subconference
-    // const enabledGroups = useMemo(
-    //     () => allGroups?.permissions_Group.filter((x) => x.enabled),
-    //     [allGroups?.permissions_Group]
-    // );
-    // const disabledGroups = useMemo(
-    //     () => allGroups?.permissions_Group.filter((x) => !x.enabled),
-    //     [allGroups?.permissions_Group]
-    // );
 
     const [exportWithProfileData, setExportWithProfileData] = useState<boolean>(false);
     const client = useClient();
@@ -717,13 +737,12 @@ export default function ManageRegistrants(): JSX.Element {
                                     "Invite code": registrant.invitation?.inviteCode ?? "",
                                     "Invite sent": registrant.inviteSent ? "Yes" : "No",
                                     "Invite accepted": registrant.userId ? "Yes" : "No",
-                                    // TODO: Subconferences and roles
-                                    // "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
-                                    // "Group Names": registrant.groupRegistrants.map(
-                                    //     (x) =>
-                                    //         allGroups?.permissions_Group.find((g) => g.id === x.groupId)?.name ??
-                                    //         "<Hidden>"
-                                    // ),
+                                    "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
+                                    "Group Names": registrant.groupRegistrants.map(
+                                        (x) =>
+                                            allGroups?.registrant_Group.find((g) => g.id === x.groupId)?.name ??
+                                            "<Hidden>"
+                                    ),
                                     "Created At": registrant.createdAt,
                                     "Updated At": registrant.updatedAt,
                                 };
@@ -830,10 +849,9 @@ export default function ManageRegistrants(): JSX.Element {
                                     >
                                         All
                                     </MenuItem>
-                                    {/* TODO: Subconference
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={() => {
@@ -849,28 +867,8 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : (
-                                        <Text px={2}>No groups enabled.</Text>
+                                        <Text px={2}>No groups.</Text>
                                     )}
-                                    {disabledGroups?.length ? (
-                                        <MenuGroup title="Disabled groups">
-                                            {disabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={() => {
-                                                        doExport(
-                                                            data.filter((a) =>
-                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
-                                                            )
-                                                        );
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <></>
-                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -893,21 +891,20 @@ export default function ManageRegistrants(): JSX.Element {
             },
             {
                 render: function SendInitialInvitesButton({ selectedData }: { selectedData: RegistrantDescriptor[] }) {
-                    const tooltip = (filler: string, filler2: string) =>
-                        `Sends invitations to ${filler} who have not already been sent an invite${filler2}.`;
+                    const tooltip = (filler: string) =>
+                        `Sends invitations to ${filler} who have not already been sent an invite.`;
                     if (selectedData.length === 0) {
                         return (
                             <Menu>
-                                <Tooltip label={tooltip("all registrants (from a group)", "")}>
+                                <Tooltip label={tooltip("all registrants (from a group)")}>
                                     <MenuButton as={Button} colorScheme="purple" rightIcon={<ChevronDownIcon />}>
                                         Send initial invitations
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
-                                    {/* TODO: Subconference
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups?.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
@@ -937,7 +934,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                             });
                                                         }
 
-                                                        await refetchAllRegistrants();
+                                                        refetchAllRegistrants();
                                                     }}
                                                 >
                                                     {group.name}
@@ -945,19 +942,14 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )} */}
+                                        <Text px={2}>No groups.</Text>
+                                    )}
                                 </MenuList>
                             </Menu>
                         );
                     } else {
                         return (
-                            <Tooltip
-                                label={tooltip(
-                                    "selected registrants",
-                                    " and are members of at least one enabled group"
-                                )}
-                            >
+                            <Tooltip label={tooltip("selected registrants")}>
                                 <Box>
                                     <Button
                                         colorScheme="purple"
@@ -984,7 +976,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllRegistrants();
+                                            refetchAllRegistrants();
                                         }}
                                     >
                                         Send initial invitations
@@ -1007,10 +999,9 @@ export default function ManageRegistrants(): JSX.Element {
                                     </MenuButton>
                                 </Tooltip>
                                 <MenuList>
-                                    {/* TODO: Subconference
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
@@ -1040,7 +1031,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                             });
                                                         }
 
-                                                        await refetchAllRegistrants();
+                                                        refetchAllRegistrants();
                                                     }}
                                                 >
                                                     {group.name}
@@ -1048,16 +1039,14 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : (
-                                        <Text px={2}>No groups enabled.</Text>
-                                    )} */}
+                                        <Text px={2}>No groups.</Text>
+                                    )}
                                 </MenuList>
                             </Menu>
                         );
                     } else {
                         return (
-                            <Tooltip
-                                label={tooltip("selected registrants who are members of at least one enabled group")}
-                            >
+                            <Tooltip label={tooltip("selected registrants")}>
                                 <Box>
                                     <Button
                                         colorScheme="purple"
@@ -1084,7 +1073,7 @@ export default function ManageRegistrants(): JSX.Element {
                                                 });
                                             }
 
-                                            await refetchAllRegistrants();
+                                            refetchAllRegistrants();
                                         }}
                                     >
                                         Send repeat invitations
@@ -1107,10 +1096,9 @@ export default function ManageRegistrants(): JSX.Element {
                                 </MenuButton>
                                 {/*</Tooltip>*/}
                                 <MenuList>
-                                    {/* TODO: By subconference:
-                                    {enabledGroups?.length ? (
-                                        <MenuGroup title="Enabled groups">
-                                            {enabledGroups.map((group) => (
+                                    {allGroups?.registrant_Group.length ? (
+                                        <MenuGroup title="Groups">
+                                            {allGroups.registrant_Group.map((group) => (
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={() => {
@@ -1127,29 +1115,8 @@ export default function ManageRegistrants(): JSX.Element {
                                             ))}
                                         </MenuGroup>
                                     ) : (
-                                        <Text px={2}>No groups enabled.</Text>
+                                        <Text px={2}>No groups.</Text>
                                     )}
-                                    {disabledGroups?.length ? (
-                                        <MenuGroup title="Disabled groups">
-                                            {disabledGroups.map((group) => (
-                                                <MenuItem
-                                                    key={group.id}
-                                                    onClick={async () => {
-                                                        setSendCustomEmailRegistrants(
-                                                            data.filter((a) =>
-                                                                a.groupRegistrants.some((ga) => ga.groupId === group.id)
-                                                            )
-                                                        );
-                                                        sendCustomEmailModal.onOpen();
-                                                    }}
-                                                >
-                                                    {group.name}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuGroup>
-                                    ) : (
-                                        <></>
-                                    )} */}
                                 </MenuList>
                             </Menu>
                         );
@@ -1176,15 +1143,16 @@ export default function ManageRegistrants(): JSX.Element {
         ],
         [
             conferencePath,
-            client,
-            conference.id,
-            data,
             exportWithProfileData,
-            insertInvitationEmailJobsLoading,
+            client,
+            allGroups?.registrant_Group,
+            data,
             insertInvitationEmailJobsMutation,
+            conference.id,
             refetchAllRegistrants,
-            sendCustomEmailModal,
             toast,
+            insertInvitationEmailJobsLoading,
+            sendCustomEmailModal,
         ]
     );
 
@@ -1197,21 +1165,20 @@ export default function ManageRegistrants(): JSX.Element {
             <Heading id="page-heading" as="h2" fontSize="1.7rem" lineHeight="2.4rem" fontStyle="italic">
                 Registrants
             </Heading>
-            {/* TODO: Subconference
             {(loadingAllGroups && !allGroups) || (loadingAllRegistrants && !allRegistrants?.registrant_Registrant) ? (
                 <></>
             ) : errorAllRegistrants || errorAllGroups ? (
                 <>An error occurred loading in data - please see further information in notifications.</>
             ) : (
                 <></>
-            )} */}
+            )}
             <CRUDTable<RegistrantDescriptor>
                 columns={columns}
                 row={row}
                 data={
-                    /* TODO: Subconference: !loadingAllGroups && */
-                    !loadingAllRegistrants /* TODO: Subconference: allGroups?.permissions_Group && */ &&
-                    (allRegistrants?.registrant_Registrant ? data : null)
+                    !loadingAllGroups &&
+                    !loadingAllRegistrants &&
+                    (allGroups?.registrant_Group && allRegistrants?.registrant_Registrant ? data : null)
                 }
                 tableUniqueName="ManageConferenceRegistrants"
                 alert={

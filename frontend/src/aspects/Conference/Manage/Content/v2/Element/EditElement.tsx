@@ -350,7 +350,7 @@ export function EditElement({
                                         ev.stopPropagation();
                                     }}
                                     isLoading={deleteElementResponse.fetching}
-                                    ml={2}
+                                    ml="auto"
                                 />
                             </Tooltip>
                             <AccordionIcon ml={2} />

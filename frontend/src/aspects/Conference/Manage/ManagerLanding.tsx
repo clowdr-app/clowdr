@@ -88,14 +88,6 @@ export default function ManagerLandingPage(): JSX.Element {
                         bgGradient: `linear(${greenFocus} 20%, ${redFocus} 80%)`,
                     }}
                 />
-                {/* <RestrictedDashboardButton
-                    to="roles"
-                    name="Permissions"
-                    icon="lock"
-                    description="Manage sets of permissions that can be assigned to groups."
-                    organizerRole
-                    colorScheme="pink"
-                /> */}
                 <RestrictedDashboardButton
                     to="content"
                     name={conference.sponsorsLabel?.[0]?.value ?? "Sponsors"}

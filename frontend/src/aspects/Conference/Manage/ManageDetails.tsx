@@ -99,7 +99,13 @@ export default function ManageName(): JSX.Element {
                             shortName: values.shortName,
                             slug: slugWarningAccepted ? values.slug : conference.slug,
                         };
-                        const result = await updateConferenceMutation(variables);
+                        const result = await updateConferenceMutation(variables, {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        });
 
                         if (result.error || !result.data) {
                             throw new Error(JSON.stringify(result.error));

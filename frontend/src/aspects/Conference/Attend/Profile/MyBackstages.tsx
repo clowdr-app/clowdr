@@ -215,7 +215,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="10em">
                                                                         {isLive || isNow ? (
                                                                             <LinkButton
-                                                                                to={`${conferencePath}/room/${x.room.id}`}
+                                                                                to={`${conferencePath}/room/${x.room?.id}`}
                                                                                 overflowWrap="normal"
                                                                                 maxW="100%"
                                                                                 height="auto"

@@ -7,11 +7,13 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
     queryResult,
     getter,
     children,
+    childrenNoData,
     noSpinner = false,
 }: {
     queryResult: UseQueryState<TData, TVariables>;
     getter: (data: TData) => TInnerData | undefined | null;
     children: (data: TInnerData) => React.ReactNode | React.ReactNodeArray;
+    childrenNoData?: () => React.ReactNode | React.ReactNodeArray;
     noSpinner?: boolean;
 }): JSX.Element {
     const innerData = useMemo(() => {
@@ -37,13 +39,17 @@ export default function QueryWrapper<TData, TVariables, TInnerData>({
             {queryResult.fetching && !innerData ? (
                 <></>
             ) : !innerData ? (
-                <>
-                    <Text>No data found</Text>
-                    <Text>
-                        (You might not have permission to access this. Please contact your conference organisers if you
-                        think this is a mistake.)
-                    </Text>
-                </>
+                childrenNoData ? (
+                    childrenNoData()
+                ) : (
+                    <>
+                        <Text>No data found</Text>
+                        <Text>
+                            (You might not have permission to access this. Please contact your conference organisers if
+                            you think this is a mistake.)
+                        </Text>
+                    </>
+                )
             ) : (
                 children(innerData)
             )}

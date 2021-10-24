@@ -100,13 +100,15 @@ export default function LiveProgramRoomsModal({
     useEffect(() => {
         if (shouldPreload && Date.now() - lastPreloadTime.current > 30 * 60 * 1000) {
             lastPreloadTime.current = Date.now();
-            preloadEvents.map((event) =>
-                client.query<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, {
-                    eventId: event.id,
-                    roomId: event.room.id,
-                    withEvent: true,
-                })
-            );
+            preloadEvents
+                .filter((event) => !!event.room)
+                .map((event) =>
+                    client.query<RoomTile_GetRoomQuery, RoomTile_GetRoomQueryVariables>(RoomTile_GetRoomDocument, {
+                        eventId: event.id,
+                        roomId: event.room.id,
+                        withEvent: true,
+                    })
+                );
         }
     }, [client, preloadEvents, shouldPreload]);
 

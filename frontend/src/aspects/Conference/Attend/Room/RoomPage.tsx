@@ -95,7 +95,11 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
             {title}
-            <QueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
+            <QueryWrapper
+                getter={(data) => data.room_Room_by_pk}
+                queryResult={roomDetailsResponse}
+                childrenNoData={() => <PageNotFound />}
+            >
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
             </QueryWrapper>
         </>

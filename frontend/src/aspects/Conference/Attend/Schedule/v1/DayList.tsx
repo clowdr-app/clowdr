@@ -21,7 +21,8 @@ export interface TimelineEvent extends Schedule_EventSummaryFragment {
     exhibitionPeople?: readonly ProgramPersonDataFragment[];
 }
 
-export interface TimelineRoom extends Schedule_RoomSummaryFragment {
+export interface TimelineRoom {
+    room?: Schedule_RoomSummaryFragment;
     events: TimelineEvent[];
 }
 

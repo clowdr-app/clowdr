@@ -19,7 +19,7 @@ function RoomTimelineContents({
     tags,
 }: {
     groupedEvents: Schedule_EventSummaryFragment[][];
-    room: Schedule_RoomSummaryFragment;
+    room?: Schedule_RoomSummaryFragment;
     scrollToEventCbs: Map<string, () => void>;
     tags: readonly Schedule_TagFragment[];
 }): JSX.Element {
@@ -27,14 +27,14 @@ function RoomTimelineContents({
         () =>
             groupedEvents.map((events) => (
                 <EventBox
-                    roomName={room.name}
+                    roomName={room?.name ?? "Private room"}
                     key={events[0].id}
                     sortedEvents={events}
                     scrollToEventCbs={scrollToEventCbs}
                     tags={tags}
                 />
             )),
-        [groupedEvents, room.name, scrollToEventCbs, tags]
+        [groupedEvents, room?.name, scrollToEventCbs, tags]
     );
     return <>{eventBoxes}</>;
 }
@@ -91,11 +91,11 @@ function RoomTimelineInner({
             w={width + "px"}
             backgroundColor={backgroundColor}
             role="region"
-            aria-label={`${room.name} room schedule.`}
+            aria-label={`${room.room?.name ?? "Private"} room schedule.`}
         >
             <RoomTimelineContents
                 groupedEvents={groupedEvents}
-                room={room}
+                room={room.room}
                 scrollToEventCbs={scrollToEventCbs}
                 tags={tags}
             />
@@ -104,6 +104,7 @@ function RoomTimelineInner({
 }
 
 function RoomTimelineWrapper({
+    roomId,
     room,
     width,
     backgroundColor,
@@ -113,7 +114,8 @@ function RoomTimelineWrapper({
     tags,
     people,
 }: {
-    room: Schedule_RoomSummaryFragment;
+    roomId: string;
+    room?: Schedule_RoomSummaryFragment;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;
     width?: number;
@@ -128,7 +130,7 @@ function RoomTimelineWrapper({
         const result: TimelineEvent[] = [];
 
         events.forEach((event) => {
-            if (event.roomId === room.id) {
+            if (event.roomId === roomId) {
                 const item = event.itemId ? items.find((x) => x.id === event.itemId) : undefined;
                 const exhibitionItemPeople = R.uniqBy(
                     (x) => x.personId,
@@ -171,12 +173,12 @@ function RoomTimelineWrapper({
         });
 
         return result;
-    }, [people, items, events, room.id]);
+    }, [people, items, events, roomId]);
 
-    return room ? (
+    return (
         <RoomTimelineInner
             room={{
-                ...room,
+                room,
                 events: roomEvents,
             }}
             width={width}
@@ -184,13 +186,12 @@ function RoomTimelineWrapper({
             scrollToEventCbs={scrollToEventCbs}
             tags={tags}
         />
-    ) : (
-        <></>
     );
 }
 
 type Props = {
-    room: Schedule_RoomSummaryFragment;
+    roomId: string;
+    room?: Schedule_RoomSummaryFragment;
     hideTimeShiftButtons?: boolean;
     hideTimeZoomButtons?: boolean;
     useScroller?: boolean;

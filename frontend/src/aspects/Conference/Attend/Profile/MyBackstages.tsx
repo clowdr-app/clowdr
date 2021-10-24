@@ -30,7 +30,7 @@ import {
 import type { FocusableElement } from "@chakra-ui/utils";
 import * as R from "ramda";
 import React, { useMemo, useRef } from "react";
-import type { MyBackstages_EventFragment} from "../../../../generated/graphql";
+import type { MyBackstages_EventFragment } from "../../../../generated/graphql";
 import { useRegistrantEventsWithBackstagesQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
@@ -213,7 +213,7 @@ function MyBackstages(): JSX.Element {
                                                                     <Td maxW="10em">
                                                                         {isLive || isNow ? (
                                                                             <LinkButton
-                                                                                to={`/conference/${conference.slug}/room/${x.room.id}`}
+                                                                                to={`/conference/${conference.slug}/room/${x.room?.id}`}
                                                                                 overflowWrap="normal"
                                                                                 maxW="100%"
                                                                                 height="auto"

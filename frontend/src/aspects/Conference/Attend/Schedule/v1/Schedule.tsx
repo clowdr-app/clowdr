@@ -13,11 +13,9 @@ import type {
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
-    Schedule_TagFragment} from "../../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useSchedule_SelectSummariesQuery,
+    Schedule_TagFragment,
 } from "../../../../../generated/graphql";
+import { Permissions_Permission_Enum, useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
 import ApolloQueryWrapper from "../../../../GQL/ApolloQueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -149,7 +147,8 @@ type GroupableByTime<T> = T & {
 type Schedule_EventSummaryExt = GroupableByTime<Schedule_EventSummaryFragment>;
 
 type Session = GroupableByTime<{
-    room: Schedule_RoomSummaryFragment;
+    roomId: string;
+    room?: Schedule_RoomSummaryFragment;
     events: Schedule_EventSummaryExt[];
 }>;
 
@@ -165,7 +164,7 @@ function recombineSessions(
     }>[]
 ): Frame[] {
     return frames.map<Frame>((frame) => {
-        const groups = R.groupBy((x) => x.room.id, frame.items);
+        const groups = R.groupBy((x) => x.roomId, frame.items);
         const roomIds = R.keys(groups);
         return {
             startTimeMs: frame.startTimeMs,
@@ -187,6 +186,7 @@ function recombineSessions(
                         startTimeMs,
                         endTimeMs,
                         durationMs: endTimeMs - startTimeMs,
+                        roomId,
                         room: group[0].room,
                         events: R.sortBy(
                             (x) => x.startTimeMs,
@@ -265,7 +265,7 @@ function groupByTime<S, T extends GroupableByTime<S>>(
 function assignColumns(frames: Frame[]): Frame[] {
     if (frames.length > 0) {
         const frame0 = frames[0];
-        frame0.items = R.sortBy((x) => x.session.room.priority, frame0.items);
+        frame0.items = R.sortBy((x) => x.session.room?.priority ?? Number.POSITIVE_INFINITY, frame0.items);
         for (let idx = 0; idx < frame0.items.length; idx++) {
             frame0.items[idx].column = idx;
         }
@@ -288,7 +288,7 @@ function assignColumns(frames: Frame[]): Frame[] {
             );
             // Assign remaining columns in priority order
             const currentFrameUnassignedItems = R.sortBy(
-                (x) => x.session.room.priority,
+                (x) => x.session.room?.priority ?? Number.POSITIVE_INFINITY,
                 currentFrame.items.filter((x) => x.column === -1)
             );
             assert(currentFrameUnassignedItems.length <= availableColumns.length, "Hmm, something weird happened!");
@@ -333,10 +333,19 @@ function ScheduleFrame({
             frame.items.map((item, idx) => {
                 const room = item.session.room;
 
-                return (
+                return room ? (
                     <RoomNameBox
                         key={room.id}
                         room={room}
+                        width={roomColWidth}
+                        showBottomBorder={true}
+                        borderColour={borderColour}
+                        backgroundColor={idx % 2 === 0 ? alternateBgColor : undefined}
+                    />
+                ) : (
+                    <RoomNameBox
+                        key={idx}
+                        room={"[Private room]"}
                         width={roomColWidth}
                         showBottomBorder={true}
                         borderColour={borderColour}
@@ -360,8 +369,9 @@ function ScheduleFrame({
                 const room = item.session.room;
 
                 return (
-                    <Box key={room.id} h="100%" w={roomColWidth + "px"}>
+                    <Box key={item.session.roomId} h="100%" w={roomColWidth + "px"}>
                         <RoomTimeline
+                            roomId={item.session.roomId}
                             room={room}
                             hideTimeShiftButtons={true}
                             hideTimeZoomButtons={true}
@@ -498,6 +508,7 @@ export function ScheduleInner({
                 );
                 sessions.push(
                     ...groupedEvents.map((group) => ({
+                        roomId,
                         room,
                         events: group.items,
                         startTimeMs: group.startTimeMs,
@@ -506,8 +517,18 @@ export function ScheduleInner({
                     }))
                 );
             } else {
-                console.warn(
-                    `Schedule may be rendered with some events missing as data for room ${roomId} was not found.`
+                const groupedEvents = groupByTime<Schedule_EventSummaryFragment, Schedule_EventSummaryExt>(
+                    eventsByRoom[roomId],
+                    5 * 60 * 1000
+                );
+                sessions.push(
+                    ...groupedEvents.map((group) => ({
+                        roomId,
+                        events: group.items,
+                        startTimeMs: group.startTimeMs,
+                        endTimeMs: group.endTimeMs,
+                        durationMs: group.durationMs,
+                    }))
                 );
             }
         }

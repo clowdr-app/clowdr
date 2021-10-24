@@ -1,11 +1,7 @@
 import { gql } from "@apollo/client";
 import React from "react";
-import type {
-    RoomPage_RoomDetailsFragment} from "../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useRoomPage_GetRoomDetailsQuery,
-} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import ApolloQueryWrapper from "../../../GQL/ApolloQueryWrapper";
 import { useTitle } from "../../../Utils/useTitle";
@@ -96,7 +92,11 @@ function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
     return (
         <>
             {title}
-            <ApolloQueryWrapper getter={(data) => data.room_Room_by_pk} queryResult={roomDetailsResponse}>
+            <ApolloQueryWrapper
+                getter={(data) => data.room_Room_by_pk}
+                queryResult={roomDetailsResponse}
+                childrenNoData={() => <PageNotFound />}
+            >
                 {(room: RoomPage_RoomDetailsFragment) => <Room roomDetails={room} />}
             </ApolloQueryWrapper>
         </>

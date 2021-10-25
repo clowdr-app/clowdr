@@ -24,7 +24,7 @@ import { gql } from "@urql/core";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import * as R from "ramda";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import type { RoomEventDetailsFragment } from "../../../../../../generated/graphql";
 import { useLiveIndicator_GetElementQuery, useLiveIndicator_GetLatestQuery } from "../../../../../../generated/graphql";
 import usePolling from "../../../../../Generic/usePolling";
@@ -78,8 +78,17 @@ export function LiveIndicator({
         variables: {
             eventId: event.id,
         },
+        pause: !isConnected,
     });
-    usePolling(refetchLiveIndicator, 10000);
+    const { start: startPolling, stop: stopPolling } = usePolling(refetchLiveIndicator, 30000, isConnected);
+    useEffect(() => {
+        if (isConnected) {
+            startPolling();
+        } else {
+            stopPolling();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isConnected]);
 
     const latestSwitchData = useMemo(() => {
         if (!latestImmediateSwitchData?.video_ImmediateSwitch?.length) {

@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
 import { gql } from "@urql/core";
+import * as R from "ramda";
 import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
@@ -39,15 +40,6 @@ import WholeSchedule from "./v2/WholeSchedule";
 
 gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
-        room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
-                events: { startTime: { _lte: $startBefore }, endTime: { _gte: $endAfter } }
-            }
-        ) {
-            ...Schedule_RoomSummary
-        }
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -58,6 +50,9 @@ gql`
             ...Schedule_EventSummary
             item {
                 ...Schedule_ItemFields
+            }
+            room {
+                ...Schedule_RoomSummary
             }
         }
         collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -202,12 +197,15 @@ export function ScheduleModal({
         () => new Date(roundUpToNearest(now + 2 * 60 * 60 * 1000, 15 * 60 * 1000)).toISOString(),
         [now]
     );
+    const loadedAt = useMemo(() => Date.now(), []);
+    const now60s = useRealTime(60000);
     const [roomsResult] = useSchedule_HappeningSoonQuery({
         variables: {
             conferenceId: conference.id,
             endAfter,
             startBefore,
         },
+        pause: !isOpen && now60s - loadedAt < 60000,
     });
     useEffect(() => {
         setAnyHappeningSoon(!!roomsResult.data && roomsResult.data.schedule_Event.length > 0);
@@ -227,7 +225,10 @@ export function ScheduleModal({
             >
                 queryResult={roomsResult}
                 getter={(x) => ({
-                    rooms: x.room_Room,
+                    rooms: R.uniqBy(
+                        (r) => r.id,
+                        x.schedule_Event.flatMap((e) => e.room)
+                    ),
                     events: x.schedule_Event,
                     items: x.schedule_Event.filter((x) => !!x.item).map((x) => x.item) as Schedule_ItemFieldsFragment[],
                     tags: x.collection_Tag,

@@ -197,12 +197,15 @@ export function ScheduleModal({
         () => new Date(roundUpToNearest(now + 2 * 60 * 60 * 1000, 15 * 60 * 1000)).toISOString(),
         [now]
     );
+    const loadedAt = useMemo(() => Date.now(), []);
+    const now60s = useRealTime(60000);
     const roomsResult = useSchedule_HappeningSoonQuery({
         variables: {
             conferenceId: conference.id,
             endAfter,
             startBefore,
         },
+        skip: !isOpen && now60s - loadedAt < 60000,
     });
     useEffect(() => {
         setAnyHappeningSoon(!!roomsResult.data && roomsResult.data.schedule_Event.length > 0);

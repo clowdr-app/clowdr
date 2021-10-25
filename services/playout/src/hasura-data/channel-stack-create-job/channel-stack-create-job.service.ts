@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { sub } from "date-fns";
@@ -10,7 +10,7 @@ import {
     FindChannelStackCreateJobByLogicalResourceIdDocument,
     FindPotentiallyStuckChannelStackCreateJobsDocument,
     GetChannelStackCreateJobDocument,
-    Video_JobStatus_Enum,
+    Job_Queues_JobStatus_Enum,
 } from "../../generated/graphql";
 import type { GraphQlService } from "../graphql/graphql.service";
 
@@ -84,7 +84,7 @@ export class ChannelStackCreateJobService {
             },
         });
 
-        if (result.data.job_queues_ChannelStackCreateJob_by_pk?.jobStatusName !== Video_JobStatus_Enum.Failed) {
+        if (result.data.job_queues_ChannelStackCreateJob_by_pk?.jobStatusName !== Job_Queues_JobStatus_Enum.Failed) {
             await this.graphQlService.apolloClient.mutate({
                 mutation: FailChannelStackCreateJobDocument,
                 variables: {

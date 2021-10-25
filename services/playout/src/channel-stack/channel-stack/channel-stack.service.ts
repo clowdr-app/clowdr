@@ -1,9 +1,9 @@
 import { App } from "@aws-cdk/core";
-import type { DescribeStacksCommandOutput} from "@aws-sdk/client-cloudformation";
+import type { DescribeStacksCommandOutput } from "@aws-sdk/client-cloudformation";
 import { StackStatus } from "@aws-sdk/client-cloudformation";
 import type { DescribeChannelResponse } from "@aws-sdk/client-medialive";
 import { ChannelState } from "@aws-sdk/client-medialive";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import type { ConfigService } from "@nestjs/config";
@@ -14,7 +14,7 @@ import pThrottle from "p-throttle";
 import type { AwsService } from "../../aws/aws.service";
 import type { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
 import type { MediaLiveService } from "../../aws/medialive/medialive.service";
-import { Video_JobStatus_Enum } from "../../generated/graphql";
+import { Job_Queues_JobStatus_Enum } from "../../generated/graphql";
 import type { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
 import type { ChannelStackDeleteJobService } from "../../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
 import type { ChannelStackUpdateJobService } from "../../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
@@ -292,7 +292,7 @@ export class ChannelStackService {
                 );
                 await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
                     cloudFormationStackArn,
-                    Video_JobStatus_Enum.Completed,
+                    Job_Queues_JobStatus_Enum.Completed,
                     "Stack has been deleted. This update is obsolete."
                 );
                 return false;
@@ -317,7 +317,7 @@ export class ChannelStackService {
             );
             await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
                 cloudFormationStackArn,
-                Video_JobStatus_Enum.Completed,
+                Job_Queues_JobStatus_Enum.Completed,
                 "Stack is being deleted. This update is obsolete."
             );
             return false;
@@ -485,7 +485,7 @@ export class ChannelStackService {
                 this.logger.info({ stackName, err }, "Channel stack does not exist - it has already been deleted.");
                 await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
                     cloudFormationStackArn,
-                    Video_JobStatus_Enum.Completed,
+                    Job_Queues_JobStatus_Enum.Completed,
                     null
                 );
                 return false;
@@ -537,7 +537,7 @@ export class ChannelStackService {
                 if (inProgress) {
                     await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
                         job.cloudFormationStackArn,
-                        Video_JobStatus_Enum.InProgress,
+                        Job_Queues_JobStatus_Enum.InProgress,
                         null
                     );
                 }
@@ -553,7 +553,7 @@ export class ChannelStackService {
                 this.logger.error({ job }, "Channel stack update job seems to be stuck, marking it as failed");
                 await this.channelStackUpdateJobService.setStatusChannelStackUpdateJob(
                     job.cloudFormationStackArn,
-                    Video_JobStatus_Enum.Failed,
+                    Job_Queues_JobStatus_Enum.Failed,
                     "Job got stuck"
                 );
             } catch (err) {
@@ -571,7 +571,7 @@ export class ChannelStackService {
                 if (inProgress) {
                     await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
                         job.cloudFormationStackArn,
-                        Video_JobStatus_Enum.InProgress,
+                        Job_Queues_JobStatus_Enum.InProgress,
                         null
                     );
                 }
@@ -587,7 +587,7 @@ export class ChannelStackService {
                 this.logger.error({ job }, "Channel stack delete job seems to be stuck, marking it as failed");
                 await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
                     job.cloudFormationStackArn,
-                    Video_JobStatus_Enum.Failed,
+                    Job_Queues_JobStatus_Enum.Failed,
                     "Job got stuck"
                 );
             } catch (err) {

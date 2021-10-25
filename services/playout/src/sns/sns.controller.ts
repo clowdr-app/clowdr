@@ -8,7 +8,7 @@ import { validateSync } from "class-validator";
 import type { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
 import { MediaLiveNotification } from "../aws/medialive/medialive-notification.dto";
 import type { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
-import { Video_JobStatus_Enum } from "../generated/graphql";
+import { Job_Queues_JobStatus_Enum } from "../generated/graphql";
 import type { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
 import type { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
 import type { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
@@ -89,7 +89,7 @@ export class SnsController {
                                     );
                                     await this.channelStackUpdateJobService.setStatusChannelStackUpdateJobByMediaLiveChannelId(
                                         mediaLiveChannelId,
-                                        Video_JobStatus_Enum.Completed,
+                                        Job_Queues_JobStatus_Enum.Completed,
                                         null
                                     );
                                 }
@@ -198,7 +198,7 @@ export class SnsController {
                         if (parsedMessage["StackId"]) {
                             await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
                                 parsedMessage["StackId"],
-                                Video_JobStatus_Enum.Completed,
+                                Job_Queues_JobStatus_Enum.Completed,
                                 null
                             );
                         }
@@ -218,7 +218,7 @@ export class SnsController {
                         if (parsedMessage["StackId"]) {
                             await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(
                                 parsedMessage["StackId"],
-                                Video_JobStatus_Enum.Failed,
+                                Job_Queues_JobStatus_Enum.Failed,
                                 parsedMessage["ResourceStatusReason"] ?? "Unknown reason"
                             );
                         }

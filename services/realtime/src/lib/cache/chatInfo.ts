@@ -23,7 +23,7 @@ gql`
                 id
                 name
                 managementModeName
-                roomPeople {
+                roomMemberships {
                     id
                     registrant {
                         id

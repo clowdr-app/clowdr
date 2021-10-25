@@ -1,18 +1,21 @@
 import { gql } from "@apollo/client/core";
-import type { Permissions_Permission_Enum} from "../../generated/graphql";
+import type { Permissions_Permission_Enum } from "../../generated/graphql";
 import { UserPermissionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
 import { Cache } from "./cache";
 
 gql`
-    query UserPermissions($userId: String!) {
-        FlatUserPermission(where: { user_id: { _eq: $userId } }) {
-            slug
-            permission_name
-            user_id
+    query UserRoles($userId: String!) {
+        registrant_Registrant(where: { userId: { _eq: $userId } }) {
+            id
+            conferenceId
+            userId
+            conferenceRole
         }
     }
 `;
+
+// TODO: Restructure this around conference id
 
 export type UserPermission = {
     slug: string;

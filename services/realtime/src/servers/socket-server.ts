@@ -67,21 +67,9 @@ socketServer.use(
 );
 
 gql`
-    query GetUserConferenceSlugs($userId: String!) {
-        conference_Conference(
-            where: {
-                groups: {
-                    enabled: { _eq: true }
-                    groupRoles: { role: { rolePermissions: { permissionName: { _eq: CONFERENCE_VIEW } } } }
-                    _or: [
-                        { includeUnauthenticated: { _eq: true } }
-                        { groupRegistrants: { registrant: { userId: { _eq: $userId } } } }
-                    ]
-                }
-            }
-        ) {
+    query GetUserConferenceIds($userId: String!) {
+        conference_Conference(where: { registrants: { userId: { _eq: $userId } } }) {
             id
-            slug
         }
     }
 `;

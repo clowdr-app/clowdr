@@ -69,20 +69,7 @@ gql`
             chat {
                 conference {
                     slug
-                    registrants(
-                        where: {
-                            groupRegistrants: {
-                                group: {
-                                    enabled: { _eq: true }
-                                    groupRoles: {
-                                        role: {
-                                            rolePermissions: { permissionName: { _eq: CONFERENCE_MODERATE_ATTENDEES } }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    ) {
+                    registrants(where: { conferenceRole: { _eq: MODERATOR } }) {
                         id
                         userId
                     }

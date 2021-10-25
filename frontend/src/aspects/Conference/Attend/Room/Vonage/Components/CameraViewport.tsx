@@ -214,23 +214,44 @@ export function CameraViewport({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stream]);
 
+    const [cameraType, setCameraType] = useState<"screen" | "camera" | null>(stream?.videoType ?? null);
     useEffect(() => {
         if (vonage.state.type === StateType.Connected) {
             const streamPropertyChangedHandler = (event: any) => {
+                console.log("streampropertychanged", event);
                 if (event.changedProperty === "hasAudio" && event.stream.streamId === stream?.streamId) {
                     setStreamHasAudio(event.newValue);
                 }
                 if (event.changedProperty === "hasVideo" && event.stream.streamId === stream?.streamId) {
                     setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
+                    setCameraType(event.stream.videoType ?? null);
                 }
             };
 
-            setStreamHasAudio(stream?.hasAudio);
             vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
+
+            const streamCreatedHandler = (event: any) => {
+                console.log("streamcreated", event);
+                if (event.stream.streamId === stream?.streamId) {
+                    setCameraType(event.stream.videoType ?? null);
+                }
+            };
+            vonage.state.session.on("streamCreated", streamCreatedHandler);
+            vonage.state.screen?.on("streamCreated", streamCreatedHandler);
+
+            setStreamHasAudio(stream?.hasAudio);
+
+            if (stream?.streamId && vonage.state.screen?.stream?.streamId === stream?.streamId) {
+                setCameraType("screen");
+            } else if (stream?.streamId && vonage.state.camera?.publisher?.stream?.streamId === stream?.streamId) {
+                setCameraType("camera");
+            }
 
             return () => {
                 if (vonage.state.type === StateType.Connected) {
                     vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
+                    vonage.state.session.off("streamCreated", streamCreatedHandler);
+                    vonage.state?.screen?.off("streamCreated", streamCreatedHandler);
                 }
             };
         }
@@ -249,6 +270,7 @@ export function CameraViewport({
             streamId={stream?.streamId}
             connectionId={connection?.connectionId}
             subscriber={subscriber}
+            cameraType={cameraType ?? "camera"}
         >
             <>
                 {children ?? cameraContainer}
@@ -284,6 +306,7 @@ interface Props {
     streamId?: string;
     connectionId?: string;
     subscriber?: OT.Subscriber | null;
+    cameraType: "screen" | "camera";
     children: JSX.Element;
 }
 
@@ -297,6 +320,7 @@ function CameraViewportInner({
     streamId,
     connectionId,
     subscriber,
+    cameraType,
     children,
 }: Props): JSX.Element {
     const [isTalking, setIsTalking] = useState<boolean>(false);
@@ -354,6 +378,7 @@ function CameraViewportInner({
                 cameraHidden={cameraHidden}
                 videoStatus={videoStatus}
                 audioBlocked={audioBlocked}
+                cameraType={cameraType}
             />
             <ActivityOverlay talking={isTalking} />
             {connectionId ? <MuteRemoveControlBar streamId={streamId} connectionId={connectionId} /> : undefined}

@@ -11,6 +11,7 @@ export default function CameraOverlay({
     cameraHidden,
     videoStatus,
     audioBlocked,
+    cameraType,
 }: {
     registrant: RegistrantDataFragment | null;
     microphoneEnabled?: boolean;
@@ -20,6 +21,7 @@ export default function CameraOverlay({
         warning?: "quality";
         error?: "codec-not-supported" | "quality" | "exceeds-max-streams";
     };
+    cameraType: "screen" | "camera";
     audioBlocked?: boolean;
 }): JSX.Element {
     const profileModal = useChatProfileModal();
@@ -95,9 +97,19 @@ export default function CameraOverlay({
                         {registrant?.displayName ?? "<Loading name>"}
                     </Text>
                     {microphoneEnabled ? (
-                        <FAIcon ml={1} iconStyle="s" icon="microphone" color="white" />
+                        <FAIcon
+                            ml={1}
+                            iconStyle="s"
+                            icon={cameraType === "screen" ? "volume-up" : "microphone"}
+                            color="white"
+                        />
                     ) : (
-                        <FAIcon ml={1} iconStyle="s" icon="microphone-slash" color="red.600" />
+                        <FAIcon
+                            ml={1}
+                            iconStyle="s"
+                            icon={cameraType === "screen" ? "volume-mute" : "microphone-slash"}
+                            color="red.600"
+                        />
                     )}
                 </HStack>
             </Button>

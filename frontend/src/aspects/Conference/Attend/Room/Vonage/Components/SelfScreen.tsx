@@ -50,7 +50,7 @@ export default function SelfScreenComponent({
     }, [connected, state.screenShareIntendedEnabled, screen, toast, vonage, onPermissionsProblem]);
 
     return (
-        <CameraViewport registrantId={registrantId} enableVideo={true}>
+        <CameraViewport registrantId={registrantId} enableVideo={true} stream={vonage.screen?.stream}>
             <CameraContainer ref={screenPublishContainerRef} />
         </CameraViewport>
     );

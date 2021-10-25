@@ -388,7 +388,9 @@ function CameraViewportInner({
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden" pos="absolute" top={0} left={0}>
             {children}
-            {!videoStatus?.streamHasVideo ? <CameraPlaceholderImage registrant={registrant} /> : undefined}
+            {!videoStatus?.streamHasVideo || cameraHidden ? (
+                <CameraPlaceholderImage registrant={registrant} />
+            ) : undefined}
             <CameraOverlay
                 registrant={registrant}
                 microphoneEnabled={streamHasAudio}

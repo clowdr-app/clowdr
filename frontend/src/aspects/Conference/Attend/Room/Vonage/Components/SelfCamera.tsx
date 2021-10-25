@@ -54,7 +54,7 @@ export default function SelfCameraComponent({
     ]);
 
     return (
-        <CameraViewport registrantId={registrantId} enableVideo={true}>
+        <CameraViewport registrantId={registrantId} enableVideo={true} stream={vonage.camera?.stream}>
             <CameraContainer ref={cameraPublishContainerRef} />
         </CameraViewport>
     );

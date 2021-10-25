@@ -192,18 +192,7 @@ export function CameraViewport({
                 setAudioBlocked(false);
             });
 
-            const streamPropertyChangedHandler = (event: any) => {
-                if (event.changedProperty === "hasAudio" && event.stream.streamId === stream.streamId) {
-                    setStreamHasAudio(event.newValue);
-                }
-                if (event.changedProperty === "hasVideo" && event.stream.streamId === stream.streamId) {
-                    setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
-                }
-            };
-
-            setStreamHasAudio(stream.hasAudio);
             setVideoStatus((status) => ({ ...status, streamHasVideo: stream.hasVideo }));
-            vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
 
             return () => {
                 try {
@@ -213,7 +202,6 @@ export function CameraViewport({
                     if (vonage.state.session.connection) {
                         vonage.state.session.unsubscribe(subscriber);
                     }
-                    vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
                 } catch (e) {
                     console.log("Could not unsubscribe from stream");
                 } finally {
@@ -224,7 +212,68 @@ export function CameraViewport({
             console.error("Error during subscriber creation", e);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [stream]);
+
+    const [cameraType, setCameraType] = useState<"screen" | "camera" | null>(stream?.videoType ?? null);
+    useEffect(() => {
+        if (vonage.state.type === StateType.Connected) {
+            const streamPropertyChangedHandler = (event: any) => {
+                if (event.changedProperty === "hasAudio" && event.stream.streamId === stream?.streamId) {
+                    setStreamHasAudio(event.newValue);
+                }
+                if (event.changedProperty === "hasVideo" && event.stream.streamId === stream?.streamId) {
+                    setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
+                    setCameraType(event.stream.videoType ?? null);
+                }
+            };
+
+            vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
+
+            setStreamHasAudio(stream?.hasAudio);
+
+            const streamDestroyedHandler = () => {
+                setVideoStatus((status) => ({ ...status, streamHasVideo: false }));
+            };
+
+            let subscribedToScreen = false;
+            let subscribedToCamera = false;
+
+            if (stream?.streamId) {
+                if (vonage.state.screen?.stream?.streamId === stream?.streamId) {
+                    setCameraType("screen");
+                    setVideoStatus((status) =>
+                        vonage.state.type === StateType.Connected
+                            ? { ...status, streamHasVideo: vonage.state.screen?.stream?.hasVideo ?? false }
+                            : status
+                    );
+                    vonage.state.screen?.on("streamDestroyed", streamDestroyedHandler);
+                    subscribedToScreen = true;
+                } else if (vonage.state.camera?.publisher?.stream?.streamId === stream?.streamId) {
+                    setCameraType("camera");
+                    setVideoStatus((status) =>
+                        vonage.state.type === StateType.Connected
+                            ? { ...status, streamHasVideo: vonage.state.camera?.publisher?.stream?.hasVideo ?? false }
+                            : status
+                    );
+                    vonage.state.camera?.publisher?.on("streamDestroyed", streamDestroyedHandler);
+                    subscribedToCamera = true;
+                }
+            }
+
+            return () => {
+                if (vonage.state.type === StateType.Connected) {
+                    vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
+                    if (subscribedToScreen) {
+                        vonage.state.screen?.off("streamDestroyed", streamDestroyedHandler);
+                    }
+                    if (subscribedToCamera) {
+                        vonage.state.camera?.publisher?.off("streamDestroyed", streamDestroyedHandler);
+                    }
+                }
+            };
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vonage.state.type, stream]);
 
     const cameraContainer = useMemo(() => <CameraContainer ref={fullScreen.node} />, [fullScreen.node]);
     return (
@@ -238,6 +287,7 @@ export function CameraViewport({
             streamId={stream?.streamId}
             connectionId={connection?.connectionId}
             subscriber={subscriber}
+            cameraType={cameraType ?? "camera"}
         >
             <>
                 {children ?? cameraContainer}
@@ -273,6 +323,7 @@ interface Props {
     streamId?: string;
     connectionId?: string;
     subscriber?: OT.Subscriber | null;
+    cameraType: "screen" | "camera";
     children: JSX.Element;
 }
 
@@ -286,6 +337,7 @@ function CameraViewportInner({
     streamId,
     connectionId,
     subscriber,
+    cameraType,
     children,
 }: Props): JSX.Element {
     const [isTalking, setIsTalking] = useState<boolean>(false);
@@ -335,14 +387,17 @@ function CameraViewportInner({
         (!videoStatus.error || videoStatus.error === "exceeds-max-streams");
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden" pos="absolute" top={0} left={0}>
-            <CameraPlaceholderImage registrant={registrant} />
             {children}
+            {!videoStatus?.streamHasVideo || cameraHidden ? (
+                <CameraPlaceholderImage registrant={registrant} />
+            ) : undefined}
             <CameraOverlay
                 registrant={registrant}
                 microphoneEnabled={streamHasAudio}
                 cameraHidden={cameraHidden}
                 videoStatus={videoStatus}
                 audioBlocked={audioBlocked}
+                cameraType={cameraType}
             />
             <ActivityOverlay talking={isTalking} />
             {connectionId ? <MuteRemoveControlBar streamId={streamId} connectionId={connectionId} /> : undefined}

@@ -391,7 +391,7 @@ Please contact our tech support to investigate the issue shown below.`,
                             >
                                 <FormLabel htmlFor="new_conf_demo_code">Access code</FormLabel>
                                 <InputGroup>
-                                    <Input {...field} id="new_conf_demo_code" placeholder="Demo code" />
+                                    <Input {...field} id="new_conf_demo_code" placeholder="Code" />
                                     <InputRightAddon>
                                         <Tooltip label="To create a conference, please contact us at to receive your access code.">
                                             {"What's this?"}

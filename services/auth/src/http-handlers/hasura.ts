@@ -36,6 +36,7 @@ enum HasuraRoleNames {
     Submitter = "submitter",
     RoomAdmin = "room-admin",
     RoomMember = "room-member",
+    Superuser = "superuser",
 }
 
 function formatArrayForHasuraHeader(values: string | string[]): string {
@@ -64,6 +65,20 @@ export async function handleAuthWebhook(
     // TODO: Do we want to cache the outcome of this logic?
     //          And if so, what is the invalidation strategy?
     //          Particularly given the constraints of redis deleting keys
+
+    if (unverifiedParams.role === HasuraRoleNames.Superuser) {
+        if (verifiedParams.userId) {
+            // We rely on Hasura permissions to figure this out since it is so
+            // infrequent that we don't want to waste space caching these
+            // permissions.
+            return {
+                [HasuraHeaders.UserId]: verifiedParams.userId,
+                [HasuraHeaders.Role]: HasuraRoleNames.Superuser,
+            };
+        } else {
+            return false;
+        }
+    }
 
     if (unverifiedParams.magicToken) {
         return {

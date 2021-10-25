@@ -1,7 +1,41 @@
 table:
   name: Configuration
   schema: system
+object_relationships:
+- name: configurationKey
+  using:
+    foreign_key_constraint_on: key
+insert_permissions:
+- role: superuser
+  permission:
+    check:
+      configurationKey:
+        grantedPermissions:
+          _and:
+          - permissionName:
+              _eq: SET_SYSTEM_CONFIGURATION
+          - userId:
+              _eq: X-Hasura-User-Id
+    columns:
+    - key
+    - value
+    backend_only: false
 select_permissions:
+- role: superuser
+  permission:
+    columns:
+    - value
+    - key
+    - created_at
+    - updated_at
+    filter:
+      configurationKey:
+        grantedPermissions:
+          _and:
+          - permissionName:
+              _eq: VIEW_SYSTEM_CONFIGURATION
+          - userId:
+              _eq: X-Hasura-User-Id
 - permission:
     columns:
     - key
@@ -70,3 +104,29 @@ select_permissions:
         - COOKIE_POLICY_URL
         - DEFAULT_VIDEO_ROOM_BACKEND
   role: user
+update_permissions:
+- role: superuser
+  permission:
+    columns:
+    - key
+    - value
+    filter:
+      configurationKey:
+        grantedPermissions:
+          _and:
+          - permissionName:
+              _eq: SET_SYSTEM_CONFIGURATION
+          - userId:
+              _eq: X-Hasura-User-Id
+    check: null
+delete_permissions:
+- role: superuser
+  permission:
+    filter:
+      configurationKey:
+        grantedPermissions:
+          _and:
+          - permissionName:
+              _eq: SET_SYSTEM_CONFIGURATION
+          - userId:
+              _eq: X-Hasura-User-Id

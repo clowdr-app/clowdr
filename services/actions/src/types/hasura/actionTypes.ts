@@ -327,3 +327,8 @@ type ToggleVonageRecordingStateOutput = {
     allowed: boolean;
     recordingState: boolean;
 };
+
+type InitialiseSuperUserOutput = {
+    success: boolean;
+    error?: Maybe<string>;
+};

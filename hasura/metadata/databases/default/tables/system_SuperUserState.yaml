@@ -1,0 +1,10 @@
+table:
+  name: SuperUserState
+  schema: system
+select_permissions:
+- role: superuser
+  permission:
+    columns:
+    - canBeDirectlyInitialised
+    - isInitialised
+    filter: {}

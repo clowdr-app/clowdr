@@ -6,14 +6,15 @@ import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Color from "tinycolor2";
-import {
+import type {
     ProgramPersonDataFragment,
     Schedule_EventSummaryFragment,
     Schedule_ItemFieldsFragment,
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
-    Schedule_TagFragment,
+    Schedule_TagFragment} from "../../../../../generated/graphql";
+import {
     useSchedule_SelectSummariesQuery,
 } from "../../../../../generated/graphql";
 import QueryWrapper from "../../../../GQL/QueryWrapper";

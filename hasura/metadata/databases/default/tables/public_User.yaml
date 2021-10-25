@@ -49,6 +49,15 @@ array_relationships:
       table:
         name: Registrant
         schema: registrant
+- name: superUserPermissionGrants
+  using:
+    manual_configuration:
+      remote_table:
+        schema: system
+        name: SuperUserPermissionGrant
+      insertion_order: null
+      column_mapping:
+        id: userId
 select_permissions:
 - permission:
     columns:
@@ -62,6 +71,44 @@ select_permissions:
       id:
         _eq: X-Hasura-User-Id
   role: user
+- role: superuser
+  permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - email
+    - acceptedTermsAt
+    - acceptedPrivacyPolicyAt
+    filter:
+      _or:
+      - superUserPermissionGrants:
+          grantedPermission:
+            superUserGrantTargets:
+              _and:
+              - grantedPermissionName:
+                  _eq: VIEW_SU_PERMISSION_GRANT
+              - userId:
+                  _eq: X-Hasura-User-Id
+      - _exists:
+          _where:
+            _and:
+            - grantedPermissionName:
+                _in:
+                - VIEW_USERS
+                - DELETE_USERS
+                - EDIT_USER_REGISTRANTS
+                - INSERT_SU_PERMISSION
+            - targetPermissionName:
+                _is_null: true
+            - userId:
+                _eq: X-Hasura-User-Id
+          _table:
+            schema: system
+            name: SuperUserPermissionGrant
+      - superUserPermissionGrants:
+          userId:
+            _eq: X-Hasura-User-Id
 update_permissions:
 - permission:
     check: null
@@ -72,3 +119,20 @@ update_permissions:
       id:
         _eq: X-Hasura-User-Id
   role: user
+delete_permissions:
+- role: superuser
+  permission:
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _in:
+              - DELETE_USERS
+          - targetPermissionName:
+              _is_null: true
+          - userId:
+              _eq: X-Hasura-User-Id
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant

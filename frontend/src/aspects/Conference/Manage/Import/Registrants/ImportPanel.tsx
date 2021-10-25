@@ -17,22 +17,34 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
+import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";
-import { useImportRegistrantsMutation, useSelectAllRegistrantsQuery } from "../../../../../generated/graphql";
-import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { v4 as uuidv4 } from "uuid";
+import type { Registrant_GroupRegistrant_Insert_Input } from "../../../../../generated/graphql";
+import {
+    useImportRegistrantsMutation,
+    useSelectAllGroupsQuery,
+    useSelectAllRegistrantsQuery,
+} from "../../../../../generated/graphql";
+import { LinkButton } from "../../../../Chakra/LinkButton";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { useConference } from "../../../useConference";
 
 gql`
     mutation ImportRegistrants(
         $insertRegistrants: [registrant_Registrant_insert_input!]!
         $insertInvitations: [registrant_Invitation_insert_input!]!
+        $insertGroupRegistrants: [registrant_GroupRegistrant_insert_input!]!
     ) {
         insert_registrant_Registrant(objects: $insertRegistrants) {
             affected_rows
         }
         insert_registrant_Invitation(objects: $insertInvitations) {
+            affected_rows
+        }
+        insert_registrant_GroupRegistrant(objects: $insertGroupRegistrants) {
             affected_rows
         }
     }
@@ -42,11 +54,10 @@ interface RegistrantFinalData {
     id: string;
     name: string;
     email: string;
-    // TODO: Subconferences
-    // groups: {
-    //     id: string;
-    //     name: string;
-    // }[];
+    groups: {
+        id: string;
+        name: string;
+    }[];
     missingGroups?: string[];
     isNew: boolean;
 }
@@ -57,16 +68,18 @@ export default function ImportPanel({
     data: Record<string, IntermediaryRegistrantData[]>;
 }): JSX.Element {
     const conference = useConference();
-    const { conferencePath } = useAuthParameters();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    // TODO: Subconferences
-    // const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
-    //     variables: {
-    //         conferenceId: conference.id,
-    //     },
-    // });
-    // useQueryErrorToast(groupsError, false);
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "main-conference-organizer",
+    });
+    const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        context,
+    });
+    useQueryErrorToast(groupsError, false);
 
     const [{ fetching: registrantsLoading, data: registrantsData, error: registrantsError }, refetchRegistrants] =
         useSelectAllRegistrantsQuery({
@@ -74,6 +87,7 @@ export default function ImportPanel({
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(registrantsError, false);
 
@@ -98,68 +112,67 @@ export default function ImportPanel({
         return Object.values(inputData).reduce((acc, input) => {
             for (const row of input) {
                 const email = row.email.trim().toLowerCase();
-                // TODO: Subconferences
-                // const group = groupsData?.permissions_Group.find(
-                //     (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
-                // );
-                //
-                // const existingFinal = acc.find((x) => x.email === email);
-                // if (existingFinal) {
-                //     if (group) {
-                //         const existingOriginal =
-                //             !existingFinal.isNew &&
-                //             registrantsData?.registrant_Registrant &&
-                //             registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
-                //         if (
-                //             !existingFinal.groups.some((x) => x.id === group.id) &&
-                //             (!existingOriginal ||
-                //                 !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id))
-                //         ) {
-                //             existingFinal.groups.push(group);
-                //         }
-                //     } else {
-                //         if (!existingFinal.missingGroups) {
-                //             existingFinal.missingGroups = [row.group.trim()];
-                //         } else if (
-                //             !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
-                //         ) {
-                //             existingFinal.missingGroups.push(row.group.trim());
-                //         }
-                //     }
-                // } else {
-                //     const existingOriginal =
-                //         registrantsData?.registrant_Registrant &&
-                //         registrantsData.registrant_Registrant.find((x) => {
-                //             return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
-                //         });
-                //     if (existingOriginal) {
-                //         if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
-                //             acc.push({
-                //                 id: existingOriginal.id,
-                //                 isNew: false,
-                //                 email,
-                //                 name: existingOriginal.displayName,
-                //                 groups: group ? [group] : [],
-                //                 missingGroups: !group ? [row.group.trim()] : undefined,
-                //             });
-                //         }
-                //     } else {
-                //         const name = row.name.trim();
-                //         acc.push({
-                //             id: uuidv4(),
-                //             isNew: true,
-                //             email,
-                //             name,
-                //             groups: group ? [group] : [],
-                //             missingGroups: !group ? [row.group.trim()] : undefined,
-                //         });
-                //     }
-                // }
+                const group = groupsData?.registrant_Group.find(
+                    (g) => g.name.trim().toLowerCase() === row.group.trim().toLowerCase()
+                );
+
+                const existingFinal = acc.find((x) => x.email === email);
+                if (existingFinal) {
+                    if (group) {
+                        const existingOriginal =
+                            !existingFinal.isNew &&
+                            registrantsData?.registrant_Registrant &&
+                            registrantsData.registrant_Registrant.find((x) => x.id === existingFinal.id);
+                        if (
+                            !existingFinal.groups.some((x) => x.id === group.id) &&
+                            (!existingOriginal ||
+                                !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id))
+                        ) {
+                            existingFinal.groups.push(group);
+                        }
+                    } else {
+                        if (!existingFinal.missingGroups) {
+                            existingFinal.missingGroups = [row.group.trim()];
+                        } else if (
+                            !existingFinal.missingGroups.some((x) => x.toLowerCase() === row.group.trim().toLowerCase())
+                        ) {
+                            existingFinal.missingGroups.push(row.group.trim());
+                        }
+                    }
+                } else {
+                    const existingOriginal =
+                        registrantsData?.registrant_Registrant &&
+                        registrantsData.registrant_Registrant.find((x) => {
+                            return x.invitation && x.invitation.invitedEmailAddress.trim().toLowerCase() === email;
+                        });
+                    if (existingOriginal) {
+                        if (!group || !existingOriginal.groupRegistrants.some((x) => x.groupId === group.id)) {
+                            acc.push({
+                                id: existingOriginal.id,
+                                isNew: false,
+                                email,
+                                name: existingOriginal.displayName,
+                                groups: group ? [group] : [],
+                                missingGroups: !group ? [row.group.trim()] : undefined,
+                            });
+                        }
+                    } else {
+                        const name = row.name.trim();
+                        acc.push({
+                            id: uuidv4(),
+                            isNew: true,
+                            email,
+                            name,
+                            groups: group ? [group] : [],
+                            missingGroups: !group ? [row.group.trim()] : undefined,
+                        });
+                    }
+                }
             }
 
             return acc;
         }, [] as RegistrantFinalData[]);
-    }, [inputData]);
+    }, [registrantsData?.registrant_Registrant, groupsData?.registrant_Group, inputData]);
 
     const missingGroups = useMemo<string[]>(
         () => [
@@ -175,20 +188,19 @@ export default function ImportPanel({
     const noEmail = finalData.some((x) => x.email.length === 0);
     const noName = finalData.some((x) => x.name.length === 0);
 
-    // TODO: Subconferences
-    // const totalInputLength = useMemo(
-    //     () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
-    //     [inputData]
-    // );
-    // const totalOutputLength = useMemo(() => finalData?.reduce((acc, x) => acc + x.groups.length, 0) ?? 0, [finalData]);
-    // const newRegistrantsCount = useMemo(
-    //     () => finalData?.reduce((acc, x) => acc + (x.isNew ? 1 : 0), 0) ?? 0,
-    //     [finalData]
-    // );
-    // const existingRegistrantsCount = useMemo(
-    //     () => finalData?.reduce((acc, x) => acc + (!x.isNew ? 1 : 0), 0) ?? 0,
-    //     [finalData]
-    // );
+    const totalInputLength = useMemo(
+        () => Object.values(inputData).reduce((acc, rows) => acc + rows.length, 0),
+        [inputData]
+    );
+    const totalOutputLength = useMemo(() => finalData?.reduce((acc, x) => acc + x.groups.length, 0) ?? 0, [finalData]);
+    const newRegistrantsCount = useMemo(
+        () => finalData?.reduce((acc, x) => acc + (x.isNew ? 1 : 0), 0) ?? 0,
+        [finalData]
+    );
+    const existingRegistrantsCount = useMemo(
+        () => finalData?.reduce((acc, x) => acc + (!x.isNew ? 1 : 0), 0) ?? 0,
+        [finalData]
+    );
 
     return (
         <VStack alignItems="flex-start" spacing={8}>
@@ -215,56 +227,59 @@ export default function ImportPanel({
             <HStack>
                 <Button
                     colorScheme="purple"
-                    isDisabled={
-                        /* !!groupsError || */ !!registrantsError || noName || noEmail /* || !!missingGroups.length */
-                    }
-                    isLoading={/* groupsLoading || */ importLoading || registrantsLoading}
+                    isDisabled={!!groupsError || !!registrantsError || noName || noEmail || !!missingGroups.length}
+                    isLoading={groupsLoading || importLoading || registrantsLoading}
                     onClick={() => {
                         const newRegistrants = finalData.filter((x) => x.isNew);
-                        // TODO: Subconferences
-                        // const newGroupRegistrants: Permissions_GroupRegistrant_Insert_Input[] = finalData
-                        //     .filter((x) => !x.isNew)
-                        //     .flatMap((x) =>
-                        //         x.groups.map((y) => ({
-                        //             registrantId: x.id,
-                        //             groupId: y.id,
-                        //         }))
-                        //     );
+                        const newGroupRegistrants: Registrant_GroupRegistrant_Insert_Input[] = finalData
+                            .filter((x) => !x.isNew)
+                            .flatMap((x) =>
+                                x.groups.map((y) => ({
+                                    registrantId: x.id,
+                                    groupId: y.id,
+                                }))
+                            );
 
-                        importMutation({
-                            insertRegistrants: newRegistrants.map((x) => {
-                                return {
-                                    id: x.id,
-                                    conferenceId: conference.id,
-                                    displayName: x.name,
-                                    // TODO: Subconferences
-                                    // groupRegistrants: {
-                                    //     data: x.groups.map((y) => ({
-                                    //         groupId: y.id,
-                                    //     })),
-                                    // },
-                                };
-                            }),
-                            insertInvitations: newRegistrants.map((x) => ({
-                                registrantId: x.id,
-                                invitedEmailAddress: x.email,
-                            })),
-                            // TODO: Subconferences
-                            // insertGroupRegistrants: newGroupRegistrants,
-                        });
+                        importMutation(
+                            {
+                                insertRegistrants: newRegistrants.map((x) => {
+                                    return {
+                                        id: x.id,
+                                        conferenceId: conference.id,
+                                        displayName: x.name,
+                                        groupRegistrants: {
+                                            data: x.groups.map((y) => ({
+                                                groupId: y.id,
+                                            })),
+                                        },
+                                    };
+                                }),
+                                insertInvitations: newRegistrants.map((x) => ({
+                                    registrantId: x.id,
+                                    invitedEmailAddress: x.email,
+                                })),
+                                insertGroupRegistrants: newGroupRegistrants,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "main-conference-organizer",
+                                    },
+                                },
+                            }
+                        );
                         setHasImported(true);
                     }}
                 >
                     Import
                 </Button>
-                {/* // TODO: Subconferences
                 <LinkButton
-                    to={`${conferencePath}/manage/registrants`}
+                    to={`/conference/${conference.slug}/manage/registrants`}
                     colorScheme="red"
                     isDisabled={!!totalOutputLength && (!hasImported || importLoading)}
                 >
                     Go to Manage Registrants
-                </LinkButton> */}
+                </LinkButton>
             </HStack>
             {noName ? (
                 <Alert
@@ -290,7 +305,6 @@ export default function ImportPanel({
                     <AlertTitle>Error: One or more rows has no &lsquot;email&rsquot; value</AlertTitle>
                 </Alert>
             ) : undefined}
-            {/* TODO: Subconferences
             {missingGroups.length && !groupsLoading ? (
                 <Alert
                     status="error"
@@ -318,21 +332,20 @@ export default function ImportPanel({
                                 {groupsData
                                     ? `Currently available groups are: ${R.sortBy(
                                           (x) => x.name,
-                                          groupsData.permissions_Group
+                                          groupsData.registrant_Group
                                       )
                                           .reduce<string>((acc, x) => `${acc}, ${x.name}`, "")
                                           .substring(2)}`
                                     : "Unable to load the list of groups - please refresh to try again."}
                             </Text>
-                            <LinkButton to={`${conferencePath}/manage/groups`} colorScheme="red" mt={2}>
+                            <LinkButton to={`/conference/${conference.slug}/manage/groups`} colorScheme="red" mt={2}>
                                 Go to Manage Groups
                             </LinkButton>
                         </VStack>
                     </AlertDescription>
                 </Alert>
-            ) : undefined} */}
-            {/* TODO: Subconferences
-                {!noName && !noEmail && !missingGroups.length && !groupsLoading && totalOutputLength < totalInputLength ? (
+            ) : undefined}
+            {!noName && !noEmail && !missingGroups.length && !groupsLoading && totalOutputLength < totalInputLength ? (
                 <Alert>
                     <AlertIcon />
                     <AlertTitle>
@@ -354,7 +367,7 @@ export default function ImportPanel({
                         </AlertDescription>
                     ) : undefined}
                 </Alert>
-            ) : undefined} */}
+            ) : undefined}
             <Box overflowX="auto" maxW="100%" w="100%">
                 <Table colorScheme="pink" variant="striped">
                     <Thead>
@@ -369,18 +382,16 @@ export default function ImportPanel({
                                 <Tr key={x.id}>
                                     <Td>{x.name}</Td>
                                     <Td>{x.email}</Td>
-                                    {/* TODO: Subconferences
-                                    <Td>{x.groups.map((y) => y.name).join(", ")}</Td> */}
+                                    <Td>{x.groups.map((y) => y.name).join(", ")}</Td>
                                 </Tr>
                             ))}
-                        {/* // TODO: Subconferences
                         {totalOutputLength === 0 ? (
                             <Tr>
                                 <Td>No new data to import</Td>
                                 <Td></Td>
                                 <Td></Td>
                             </Tr>
-                        ) : undefined} */}
+                        ) : undefined}
                     </Tbody>
                 </Table>
             </Box>

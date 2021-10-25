@@ -25,6 +25,7 @@ import { useAuthParameters } from "./aspects/GQL/AuthParameters";
 import { useShieldedHeaders } from "./aspects/GQL/useShieldedHeaders";
 import AcceptInvitationPage from "./aspects/Invitation/AcceptInvitationPage";
 import PushNotificationSettings from "./aspects/PushNotifications/PushNotificationSettings";
+import SuperUserLandingPage from "./aspects/SuperUser/LandingPage";
 import CurrentUserPage from "./aspects/Users/CurrentUser/CurrentUserPage";
 import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
 import ExistingUserLandingPage from "./aspects/Users/ExistingUser/LandingPage";
@@ -145,6 +146,7 @@ function Routing({ confSlug }: { confSlug?: string }): JSX.Element {
     return (
         <Switch>
             <ProtectedRoute component={PushNotificationSettings} exact path="/user/pushNotifications" />
+            <ProtectedRoute component={SuperUserLandingPage} exact path="/su" />
 
             <Route exact path="/auth0/email-verification/result">
                 {(props) => {

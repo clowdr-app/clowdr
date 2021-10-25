@@ -48,7 +48,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
 
     const nowSlow = useRealTime(refetchEventsInterval);
     // Load events from the nearest N-minute boundary onwards
-    // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+    // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
     //       so re-renders don't cause multiple (very slightly offset) queries to the database in
     //       quick succession.
     // Note: Rounding _down_ is necessary so that any currently ongoing event doesn't accidentally get
@@ -56,7 +56,7 @@ export function LiveEventsProvider({ children }: React.PropsWithChildren<any>): 
     const nowStr = useMemo(() => new Date(roundDownToNearest(nowSlow, refetchEventsInterval)).toISOString(), [nowSlow]);
     const nowCutoffStr = useMemo(
         // Load events up to 1 hour in the future
-        // Note: Rounding is necessary to ensure a consistent time string is sent to the Apollo Query hook
+        // Note: Rounding is necessary to ensure a consistent time string is sent to the Query hook
         //       so re-renders don't cause spam to the database.
         // Note: Rounding up makes sense as it's the dual of the round down above, but it's not strictly
         //       necessary - any rounding would do.

@@ -55,6 +55,15 @@ actions:
   - role: attendee
   - role: unauthenticated
   - role: user
+- name: initialiseSuperUser
+  definition:
+    kind: synchronous
+    handler: '{{ACTION_BASE_URL}}/su/initialise'
+    headers:
+    - name: x-hasura-event-secret
+      value_from_env: EVENT_SECRET
+  permissions:
+  - role: superuser
 - name: invitationConfirmCurrent
   definition:
     kind: synchronous
@@ -276,4 +285,5 @@ custom_types:
   - name: GetSlugOutput
   - name: MatchingPersonOutput
   - name: ToggleVonageRecordingStateOutput
+  - name: InitialiseSuperUserOutput
   scalars: []

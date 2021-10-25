@@ -90,6 +90,30 @@ insert_permissions:
     - userId
   role: main-conference-organizer
 select_permissions:
+- role: superuser
+  permission:
+    columns:
+    - id
+    - conferenceId
+    - userId
+    - displayName
+    - created_at
+    - updated_at
+    computed_fields:
+    - inviteSent
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: EDIT_USER_REGISTRANTS
+          - targetPermissionName:
+              _is_null: true
+          - userId:
+              _eq: X-Hasura-User-Id
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant
 - permission:
     columns:
     - conferenceRole
@@ -152,6 +176,25 @@ select_permissions:
         _eq: X-Hasura-User-Id
   role: user
 update_permissions:
+- role: superuser
+  permission:
+    columns:
+    - displayName
+    - userId
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: EDIT_USER_REGISTRANTS
+          - targetPermissionName:
+              _is_null: true
+          - userId:
+              _eq: X-Hasura-User-Id
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant
+    check: null
 - permission:
     check: null
     columns:

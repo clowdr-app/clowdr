@@ -19,6 +19,27 @@ object_relationships:
 - name: usedBy
   using:
     foreign_key_constraint_on: usedById
+insert_permissions:
+- role: superuser
+  permission:
+    check:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant
+    columns:
+    - id
+    - note
+    - usedById
+    backend_only: false
 select_permissions:
 - permission:
     columns:
@@ -31,6 +52,27 @@ select_permissions:
       usedById:
         _eq: X-Hasura-User-Id
   role: main-conference-organizer
+- role: superuser
+  permission:
+    columns:
+    - note
+    - usedById
+    - created_at
+    - updated_at
+    - id
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: LIST_CONFERENCE_DEMO_CODES
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant
 update_permissions:
 - permission:
     check: null
@@ -40,3 +82,39 @@ update_permissions:
       usedById:
         _is_null: true
   role: main-conference-organizer
+- role: superuser
+  permission:
+    columns:
+    - id
+    - note
+    - usedById
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant
+    check: null
+delete_permissions:
+- role: superuser
+  permission:
+    filter:
+      _exists:
+        _where:
+          _and:
+          - grantedPermissionName:
+              _eq: CREATE_CONFERENCE_DEMO_CODE
+          - userId:
+              _eq: X-Hasura-User-Id
+          - targetPermissionName:
+              _is_null: true
+        _table:
+          schema: system
+          name: SuperUserPermissionGrant

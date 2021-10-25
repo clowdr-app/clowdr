@@ -32,6 +32,10 @@ type Query {
 }
 
 type Mutation {
+  initialiseSuperUser: InitialiseSuperUserOutput
+}
+
+type Mutation {
   invitationConfirmCurrent(
     inviteCode: uuid!
   ): ConfirmInvitationOutput
@@ -303,5 +307,10 @@ type MatchingPersonOutput {
 type ToggleVonageRecordingStateOutput {
   allowed: Boolean!
   recordingState: Boolean!
+}
+
+type InitialiseSuperUserOutput {
+  success: Boolean!
+  error: String
 }
 

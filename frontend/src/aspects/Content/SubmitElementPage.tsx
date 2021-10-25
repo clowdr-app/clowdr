@@ -58,7 +58,7 @@ export default function SubmitElementPage({
     elementId: string;
 }): JSX.Element {
     const context1 = useShieldedHeaders({
-        "X-Hasura-Role": "unauthenticated",
+        "X-Auth-Role": "unauthenticated",
     });
     const [{ fetching: uploadAgreementLoading, error: uploadAgreementError, data: uploadAgreementData }] =
         useGetUploadAgreementQuery({

@@ -108,7 +108,7 @@ export default function CameraOverlay({
                             ml={1}
                             iconStyle="s"
                             icon={cameraType === "screen" ? "volume-mute" : "microphone-slash"}
-                            color="red.600"
+                            color="red.400"
                         />
                     )}
                 </HStack>

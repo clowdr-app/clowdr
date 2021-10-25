@@ -218,7 +218,6 @@ export function CameraViewport({
     useEffect(() => {
         if (vonage.state.type === StateType.Connected) {
             const streamPropertyChangedHandler = (event: any) => {
-                console.log("streampropertychanged", event);
                 if (event.changedProperty === "hasAudio" && event.stream.streamId === stream?.streamId) {
                     setStreamHasAudio(event.newValue);
                 }
@@ -230,28 +229,46 @@ export function CameraViewport({
 
             vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
 
-            const streamCreatedHandler = (event: any) => {
-                console.log("streamcreated", event);
-                if (event.stream.streamId === stream?.streamId) {
-                    setCameraType(event.stream.videoType ?? null);
-                }
-            };
-            vonage.state.session.on("streamCreated", streamCreatedHandler);
-            vonage.state.screen?.on("streamCreated", streamCreatedHandler);
-
             setStreamHasAudio(stream?.hasAudio);
 
-            if (stream?.streamId && vonage.state.screen?.stream?.streamId === stream?.streamId) {
-                setCameraType("screen");
-            } else if (stream?.streamId && vonage.state.camera?.publisher?.stream?.streamId === stream?.streamId) {
-                setCameraType("camera");
+            const streamDestroyedHandler = () => {
+                setVideoStatus((status) => ({ ...status, streamHasVideo: false }));
+            };
+
+            let subscribedToScreen = false;
+            let subscribedToCamera = false;
+
+            if (stream?.streamId) {
+                if (vonage.state.screen?.stream?.streamId === stream?.streamId) {
+                    setCameraType("screen");
+                    setVideoStatus((status) =>
+                        vonage.state.type === StateType.Connected
+                            ? { ...status, streamHasVideo: vonage.state.screen?.stream?.hasVideo ?? false }
+                            : status
+                    );
+                    vonage.state.screen?.on("streamDestroyed", streamDestroyedHandler);
+                    subscribedToScreen = true;
+                } else if (vonage.state.camera?.publisher?.stream?.streamId === stream?.streamId) {
+                    setCameraType("camera");
+                    setVideoStatus((status) =>
+                        vonage.state.type === StateType.Connected
+                            ? { ...status, streamHasVideo: vonage.state.camera?.publisher?.stream?.hasVideo ?? false }
+                            : status
+                    );
+                    vonage.state.camera?.publisher?.on("streamDestroyed", streamDestroyedHandler);
+                    subscribedToCamera = true;
+                }
             }
 
             return () => {
                 if (vonage.state.type === StateType.Connected) {
                     vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
-                    vonage.state.session.off("streamCreated", streamCreatedHandler);
-                    vonage.state?.screen?.off("streamCreated", streamCreatedHandler);
+                    if (subscribedToScreen) {
+                        vonage.state.screen?.off("streamDestroyed", streamDestroyedHandler);
+                    }
+                    if (subscribedToCamera) {
+                        vonage.state.camera?.publisher?.off("streamDestroyed", streamDestroyedHandler);
+                    }
                 }
             };
         }
@@ -370,8 +387,8 @@ function CameraViewportInner({
         (!videoStatus.error || videoStatus.error === "exceeds-max-streams");
     return (
         <Box position="relative" height="100%" width="100%" overflow="hidden" pos="absolute" top={0} left={0}>
-            <CameraPlaceholderImage registrant={registrant} />
             {children}
+            {!videoStatus?.streamHasVideo ? <CameraPlaceholderImage registrant={registrant} /> : undefined}
             <CameraOverlay
                 registrant={registrant}
                 microphoneEnabled={streamHasAudio}

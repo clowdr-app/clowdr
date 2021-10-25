@@ -192,18 +192,7 @@ export function CameraViewport({
                 setAudioBlocked(false);
             });
 
-            const streamPropertyChangedHandler = (event: any) => {
-                if (event.changedProperty === "hasAudio" && event.stream.streamId === stream.streamId) {
-                    setStreamHasAudio(event.newValue);
-                }
-                if (event.changedProperty === "hasVideo" && event.stream.streamId === stream.streamId) {
-                    setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
-                }
-            };
-
-            setStreamHasAudio(stream.hasAudio);
             setVideoStatus((status) => ({ ...status, streamHasVideo: stream.hasVideo }));
-            vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
 
             return () => {
                 try {
@@ -213,7 +202,6 @@ export function CameraViewport({
                     if (vonage.state.session.connection) {
                         vonage.state.session.unsubscribe(subscriber);
                     }
-                    vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
                 } catch (e) {
                     console.log("Could not unsubscribe from stream");
                 } finally {
@@ -224,7 +212,30 @@ export function CameraViewport({
             console.error("Error during subscriber creation", e);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [stream]);
+
+    useEffect(() => {
+        if (vonage.state.type === StateType.Connected) {
+            const streamPropertyChangedHandler = (event: any) => {
+                if (event.changedProperty === "hasAudio" && event.stream.streamId === stream?.streamId) {
+                    setStreamHasAudio(event.newValue);
+                }
+                if (event.changedProperty === "hasVideo" && event.stream.streamId === stream?.streamId) {
+                    setVideoStatus((status) => ({ ...status, streamHasVideo: event.newValue }));
+                }
+            };
+
+            setStreamHasAudio(stream?.hasAudio);
+            vonage.state.session.on("streamPropertyChanged", streamPropertyChangedHandler);
+
+            return () => {
+                if (vonage.state.type === StateType.Connected) {
+                    vonage.state.session.off("streamPropertyChanged", streamPropertyChangedHandler);
+                }
+            };
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vonage.state.type, stream]);
 
     const cameraContainer = useMemo(() => <CameraContainer ref={fullScreen.node} />, [fullScreen.node]);
     return (

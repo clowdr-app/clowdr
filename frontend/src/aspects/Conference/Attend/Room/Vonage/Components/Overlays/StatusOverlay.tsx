@@ -94,13 +94,11 @@ export default function CameraOverlay({
                     <Text display="block" color={"gray.100"} noOfLines={1}>
                         {registrant?.displayName ?? "<Loading name>"}
                     </Text>
-                    {microphoneEnabled !== undefined ? (
-                        microphoneEnabled ? (
-                            <FAIcon ml={1} iconStyle="s" icon="microphone" color="white" />
-                        ) : (
-                            <FAIcon ml={1} iconStyle="s" icon="microphone-slash" color="red.600" />
-                        )
-                    ) : undefined}
+                    {microphoneEnabled ? (
+                        <FAIcon ml={1} iconStyle="s" icon="microphone" color="white" />
+                    ) : (
+                        <FAIcon ml={1} iconStyle="s" icon="microphone-slash" color="red.600" />
+                    )}
                 </HStack>
             </Button>
             <HStack>

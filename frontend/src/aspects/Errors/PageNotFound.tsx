@@ -90,7 +90,7 @@ export default function PageNotFound(): JSX.Element {
                 ) : (
                     <>
                         <Text fontSize="xl" lineHeight="revert" fontWeight="light" fontStyle="italic" maxW={600}>
-                            Please log in or register to continue
+                            Please log in{maybeConference?.registrationURL.length ? " or register " : ""}to continue
                         </Text>
                     </>
                 )}

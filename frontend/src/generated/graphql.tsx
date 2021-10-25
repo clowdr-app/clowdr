@@ -39834,7 +39834,7 @@ export type Schedule_HappeningSoonQueryVariables = Exact<{
 }>;
 
 
-export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum } }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
 
 export type StarredEventFragment = { readonly __typename?: 'schedule_StarredEvent', readonly id: any, readonly eventId: any, readonly registrantId: any };
 
@@ -40658,6 +40658,13 @@ export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariabl
 
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_conference_Configuration_one?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
 
+export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum }> }> };
+
 export type ChooseElementByTagModal_GetTagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -40686,13 +40693,6 @@ export type ChooseElementModal_GetVideoElementsQueryVariables = Exact<{
 
 
 export type ChooseElementModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> };
-
-export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
-  conferenceId: Scalars['uuid'];
-}>;
-
-
-export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum }> }> };
 
 export type ManageExport_GetGoogleOAuthUrlMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -46053,17 +46053,15 @@ export type GetSponsorBoothsLazyQueryHookResult = ReturnType<typeof useGetSponso
 export type GetSponsorBoothsQueryResult = Apollo.QueryResult<GetSponsorBoothsQuery, GetSponsorBoothsQueryVariables>;
 export const Schedule_HappeningSoonDocument = gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
-  room_Room(
-    where: {conferenceId: {_eq: $conferenceId}, managementModeName: {_in: [PUBLIC, PRIVATE]}, events: {startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}}
-  ) {
-    ...Schedule_RoomSummary
-  }
   schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}, startTime: {_lte: $startBefore}, endTime: {_gte: $endAfter}}
   ) {
     ...Schedule_EventSummary
     item {
       ...Schedule_ItemFields
+    }
+    room {
+      ...Schedule_RoomSummary
     }
   }
   collection_ProgramPerson(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -46073,9 +46071,9 @@ export const Schedule_HappeningSoonDocument = gql`
     ...Schedule_Tag
   }
 }
-    ${Schedule_RoomSummaryFragmentDoc}
-${Schedule_EventSummaryFragmentDoc}
+    ${Schedule_EventSummaryFragmentDoc}
 ${Schedule_ItemFieldsFragmentDoc}
+${Schedule_RoomSummaryFragmentDoc}
 ${Schedule_ProgramPersonFragmentDoc}
 ${Schedule_TagFragmentDoc}`;
 
@@ -49901,6 +49899,51 @@ export function useConfigureEmailTemplates_UpdateConferenceConfigurationMutation
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationHookResult = ReturnType<typeof useConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationResult = Apollo.MutationResult<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation>;
 export type ConfigureEmailTemplates_UpdateConferenceConfigurationMutationOptions = Apollo.BaseMutationOptions<ConfigureEmailTemplates_UpdateConferenceConfigurationMutation, ConfigureEmailTemplates_UpdateConferenceConfigurationMutationVariables>;
+export const DownloadVideos_GetAllVideosDocument = gql`
+    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
+  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    elements(
+      where: {typeName: {_in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
+    ) {
+      name
+      id
+      data
+      typeName
+    }
+    typeName
+    title
+  }
+}
+    `;
+
+/**
+ * __useDownloadVideos_GetAllVideosQuery__
+ *
+ * To run a query within a React component, call `useDownloadVideos_GetAllVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDownloadVideos_GetAllVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDownloadVideos_GetAllVideosQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *   },
+ * });
+ */
+export function useDownloadVideos_GetAllVideosQuery(baseOptions: Apollo.QueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+      }
+export function useDownloadVideos_GetAllVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
+        }
+export type DownloadVideos_GetAllVideosQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosQuery>;
+export type DownloadVideos_GetAllVideosLazyQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosLazyQuery>;
+export type DownloadVideos_GetAllVideosQueryResult = Apollo.QueryResult<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>;
 export const ChooseElementByTagModal_GetTagsDocument = gql`
     query ChooseElementByTagModal_GetTags($conferenceId: uuid!) {
   collection_Tag(
@@ -50062,51 +50105,6 @@ export function useChooseElementModal_GetVideoElementsLazyQuery(baseOptions?: Ap
 export type ChooseElementModal_GetVideoElementsQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsQuery>;
 export type ChooseElementModal_GetVideoElementsLazyQueryHookResult = ReturnType<typeof useChooseElementModal_GetVideoElementsLazyQuery>;
 export type ChooseElementModal_GetVideoElementsQueryResult = Apollo.QueryResult<ChooseElementModal_GetVideoElementsQuery, ChooseElementModal_GetVideoElementsQueryVariables>;
-export const DownloadVideos_GetAllVideosDocument = gql`
-    query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
-  content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
-    id
-    elements(
-      where: {typeName: {_in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
-    ) {
-      name
-      id
-      data
-      typeName
-    }
-    typeName
-    title
-  }
-}
-    `;
-
-/**
- * __useDownloadVideos_GetAllVideosQuery__
- *
- * To run a query within a React component, call `useDownloadVideos_GetAllVideosQuery` and pass it any options that fit your needs.
- * When your component renders, `useDownloadVideos_GetAllVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDownloadVideos_GetAllVideosQuery({
- *   variables: {
- *      conferenceId: // value for 'conferenceId'
- *   },
- * });
- */
-export function useDownloadVideos_GetAllVideosQuery(baseOptions: Apollo.QueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
-      }
-export function useDownloadVideos_GetAllVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>(DownloadVideos_GetAllVideosDocument, options);
-        }
-export type DownloadVideos_GetAllVideosQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosQuery>;
-export type DownloadVideos_GetAllVideosLazyQueryHookResult = ReturnType<typeof useDownloadVideos_GetAllVideosLazyQuery>;
-export type DownloadVideos_GetAllVideosQueryResult = Apollo.QueryResult<DownloadVideos_GetAllVideosQuery, DownloadVideos_GetAllVideosQueryVariables>;
 export const ManageExport_GetGoogleOAuthUrlDocument = gql`
     mutation ManageExport_GetGoogleOAuthUrl($registrantId: uuid!, $scopes: [String!]!) {
   getGoogleOAuthUrl(registrantId: $registrantId, scopes: $scopes) {

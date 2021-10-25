@@ -13,7 +13,8 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import type { MutableRefObject} from "react";
+import * as R from "ramda";
+import type { MutableRefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
     Schedule_EventSummaryFragment,
@@ -21,11 +22,9 @@ import type {
     Schedule_ItemFieldsFragment,
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
-    Schedule_TagFragment} from "../../../../generated/graphql";
-import {
-    useGetSponsorBoothsQuery,
-    useSchedule_HappeningSoonQuery,
+    Schedule_TagFragment,
 } from "../../../../generated/graphql";
+import { useGetSponsorBoothsQuery, useSchedule_HappeningSoonQuery } from "../../../../generated/graphql";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useRestorableState } from "../../../Generic/useRestorableState";
@@ -41,15 +40,6 @@ import WholeSchedule from "./v2/WholeSchedule";
 
 gql`
     query Schedule_HappeningSoon($conferenceId: uuid!, $startBefore: timestamptz!, $endAfter: timestamptz!) {
-        room_Room(
-            where: {
-                conferenceId: { _eq: $conferenceId }
-                managementModeName: { _in: [PUBLIC, PRIVATE] }
-                events: { startTime: { _lte: $startBefore }, endTime: { _gte: $endAfter } }
-            }
-        ) {
-            ...Schedule_RoomSummary
-        }
         schedule_Event(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -60,6 +50,9 @@ gql`
             ...Schedule_EventSummary
             item {
                 ...Schedule_ItemFields
+            }
+            room {
+                ...Schedule_RoomSummary
             }
         }
         collection_ProgramPerson(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -229,7 +222,10 @@ export function ScheduleModal({
             >
                 queryResult={roomsResult}
                 getter={(x) => ({
-                    rooms: x.room_Room,
+                    rooms: R.uniqBy(
+                        (r) => r.id,
+                        x.schedule_Event.flatMap((e) => e.room)
+                    ),
                     events: x.schedule_Event,
                     items: x.schedule_Event.filter((x) => !!x.item).map((x) => x.item) as Schedule_ItemFieldsFragment[],
                     tags: x.collection_Tag,

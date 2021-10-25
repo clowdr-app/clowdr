@@ -3,7 +3,6 @@ import { ButtonGroup, Link, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Link as ReactLink, Route, Switch, useLocation } from "react-router-dom";
 import LoginButton from "../Auth/Buttons/LoginButton";
-import SignupButton from "../Auth/Buttons/SignUpButton";
 import { ExternalLinkButton, LinkButton } from "../Chakra/LinkButton";
 import { useMaybeConference } from "../Conference/useConference";
 import { useMaybeCurrentRegistrant } from "../Conference/useCurrentRegistrant";
@@ -105,8 +104,6 @@ export default function PageNotFound(): JSX.Element {
                             Go to registration
                             <ExternalLinkIcon ml={1} />
                         </ExternalLinkButton>
-                    ) : !loggedIn ? (
-                        <SignupButton size="md" />
                     ) : undefined}
                     {!loggedIn ? <LoginButton size="md" /> : undefined}
                     <LinkButton

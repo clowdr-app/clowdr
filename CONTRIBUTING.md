@@ -14,3 +14,4 @@
 - When making a commit that changes the AWS stacks and requires a redeploy, prepend your commit message with the 'cloud' emoji (☁).
 - When making a commit that changes environment variables required, prepend your commit message with the 'deciduous tree' emoji (🌳).
 - When making a commit that changes the authentication/authorization system(s), prepend your commit message the 'locked with key' emoji (🔐)
+- When making a commit that has some other breaking change requiring developer action before or after applying it that does not fall into one of the above categories, prepend your commit message with the 'Heavy Exclamation Mark' emoji (❗)

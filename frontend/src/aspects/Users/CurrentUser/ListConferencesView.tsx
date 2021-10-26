@@ -1,10 +1,10 @@
-import { ViewIcon } from "@chakra-ui/icons";
-import type {
-    ComponentWithAs,
-    IconProps} from "@chakra-ui/react";
+import { LinkIcon } from "@chakra-ui/icons";
 import {
+    chakra,
+    ComponentWithAs,
     Heading,
     Icon,
+    IconProps,
     List,
     ListItem,
     Text,
@@ -21,8 +21,7 @@ export default function ListConferencesView(): JSX.Element {
     const title = useTitle("My Conferences");
 
     const { user } = useCurrentUser();
-
-    const buttonTextColour = useColorModeValue("black", "white");
+    const boxBg = useColorModeValue("gray.200", "gray.700");
 
     const renderConferenceList = (
         icon: ComponentWithAs<"svg", IconProps>,
@@ -49,16 +48,14 @@ export default function ListConferencesView(): JSX.Element {
                                 <ListItem key={registrant.id} display="list-item">
                                     <LinkButton
                                         leftIcon={
-                                            <Icon as={icon} color="purple.500" fontSize="50%" verticalAlign="middle" />
+                                            <Icon as={icon} color="purple.500" fontSize="100%" verticalAlign="middle" />
                                         }
                                         to={`/conference/${registrant.conference.slug}/${subPath}`}
-                                        background="none"
-                                        color={buttonTextColour}
-                                        border="1px solid"
-                                        borderColor="gray.500"
+                                        colorScheme="PrimaryActionButton"
                                         linkProps={{ w: "100%" }}
                                         w="100%"
                                         justifyContent="flex-start"
+                                        variant="outline"
                                     >
                                         <Text as="span" verticalAlign="middle">
                                             {registrant.conference.shortName}
@@ -87,13 +84,24 @@ export default function ListConferencesView(): JSX.Element {
                 <Heading as="h1" id="page-heading">
                     My conferences
                 </Heading>
-                <Text maxW="300px" fontSize="sm">
-                    Choose a conference or use an invite code to join a new one.
+                <VStack alignItems="flex-start" p={4} bgColor={boxBg} spacing={4}>
+                    <Heading as="h3" fontSize="md" textAlign="left">
+                        Login email address
+                    </Heading>
+                    <Text>
+                        Your login email address is: <br />
+                        <chakra.span fontFamily="monospace" fontSize="md" fontWeight="bold">
+                            {user.email ?? "unknown"}
+                        </chakra.span>
+                    </Text>
+                </VStack>
+                <Text maxW="300px" fontSize="md">
+                    <b>Choose a conference</b> or use an invite code to join a new one.
                 </Text>
                 {renderConferenceList(
-                    ViewIcon,
+                    LinkIcon,
                     user.registrants,
-                    <LinkButton to="/join" colorScheme="pink" marginRight={0}>
+                    <LinkButton to="/join" colorScheme="pink" marginRight={0} mt={5}>
                         Use invite code
                     </LinkButton>,
                     ""

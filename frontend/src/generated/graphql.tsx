@@ -39502,6 +39502,13 @@ export type RegistrantByIdQueryVariables = Exact<{
 
 export type RegistrantByIdQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }> };
 
+export type RegistrantInvitedEmailAddressQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type RegistrantInvitedEmailAddressQuery = { readonly __typename?: 'query_root', readonly registrant_Invitation: ReadonlyArray<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
+
 export type UpdateProfileMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   profile?: Maybe<Registrant_Profile_Set_Input>;
@@ -44524,6 +44531,42 @@ export function useRegistrantByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type RegistrantByIdQueryHookResult = ReturnType<typeof useRegistrantByIdQuery>;
 export type RegistrantByIdLazyQueryHookResult = ReturnType<typeof useRegistrantByIdLazyQuery>;
 export type RegistrantByIdQueryResult = Apollo.QueryResult<RegistrantByIdQuery, RegistrantByIdQueryVariables>;
+export const RegistrantInvitedEmailAddressDocument = gql`
+    query RegistrantInvitedEmailAddress($registrantId: uuid!) {
+  registrant_Invitation(where: {registrantId: {_eq: $registrantId}}) {
+    id
+    invitedEmailAddress
+  }
+}
+    `;
+
+/**
+ * __useRegistrantInvitedEmailAddressQuery__
+ *
+ * To run a query within a React component, call `useRegistrantInvitedEmailAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRegistrantInvitedEmailAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRegistrantInvitedEmailAddressQuery({
+ *   variables: {
+ *      registrantId: // value for 'registrantId'
+ *   },
+ * });
+ */
+export function useRegistrantInvitedEmailAddressQuery(baseOptions: Apollo.QueryHookOptions<RegistrantInvitedEmailAddressQuery, RegistrantInvitedEmailAddressQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RegistrantInvitedEmailAddressQuery, RegistrantInvitedEmailAddressQueryVariables>(RegistrantInvitedEmailAddressDocument, options);
+      }
+export function useRegistrantInvitedEmailAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RegistrantInvitedEmailAddressQuery, RegistrantInvitedEmailAddressQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RegistrantInvitedEmailAddressQuery, RegistrantInvitedEmailAddressQueryVariables>(RegistrantInvitedEmailAddressDocument, options);
+        }
+export type RegistrantInvitedEmailAddressQueryHookResult = ReturnType<typeof useRegistrantInvitedEmailAddressQuery>;
+export type RegistrantInvitedEmailAddressLazyQueryHookResult = ReturnType<typeof useRegistrantInvitedEmailAddressLazyQuery>;
+export type RegistrantInvitedEmailAddressQueryResult = Apollo.QueryResult<RegistrantInvitedEmailAddressQuery, RegistrantInvitedEmailAddressQueryVariables>;
 export const UpdateProfileDocument = gql`
     mutation UpdateProfile($registrantId: uuid!, $profile: registrant_Profile_set_input = {}) {
   update_registrant_Profile_by_pk(
@@ -47434,7 +47477,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   liveEventsWithoutContent: schedule_Event(
-    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}, enableRecording: {_eq: true}}
   ) {
     id
     name

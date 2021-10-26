@@ -332,6 +332,7 @@ gql`
                 conferenceId: { _eq: $conferenceId }
                 intendedRoomModeName: { _in: [PRESENTATION, Q_AND_A] }
                 itemId: { _is_null: true }
+                enableRecording: { _eq: true }
             }
         ) {
             id

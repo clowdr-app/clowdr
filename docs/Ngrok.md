@@ -7,7 +7,7 @@ If you use the free version, you will have to perform some reconfiguration
 each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
 integration) will not work properly, since it requires a verified domain.
 
-We have found that ngrok can be quite flaky.
+We have found that ngrok can be quite flaky, and recommend a [different service](tunnels-setup.md)
 
 ## Ngrok Setup (paid)
 

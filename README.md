@@ -46,7 +46,7 @@ marked **Production** as well.
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
 1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
 1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Clowdr uses Docker Compose, now included in the Docker CLI.
-1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/)
+1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/) and [awsvault](https://github.com/99designs/aws-vault)
 1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Clowdr publicly.
 
 ## Generate Hasura Admin Secret
@@ -62,9 +62,11 @@ Several other setup steps require an arbitrarily selected secret value shared be
 
 Clowdr relies on various cloud services, which will need to be configured for local development as well.
 
-1. **Full setup but not Production**: PacketRiot for enabling callbacks to services running locally
-1. [Auth0](docs/auth0-setup.md) for user authentication
-1. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites) - Not the entire Actions Service setup just yet, only the Prerequisites.
+1. **Full Setup but not Production:** [Set up tunnels for enabling callbacks to services running locally](docs/tunnels-setup.md)
+1. [Set up user authentication](docs/auth-setup.md)
+1. **Full Setup:** [Set up AWS account and Deploy AWS CloudFormation Stacks](aws/README.md)
+1. [Set up video chat service](docs/video-service-setup.md)
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and an API key for it.
 
 ## Setting Up Local Working Copy
 
@@ -80,28 +82,10 @@ Clowdr relies on various cloud services, which will need to be configured for lo
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.
    1. You will not need to do this again (hopefully)
-1. Install npm packages:
+1. Install top-level and shared npm packages:
    ```
    npm i
-   cd frontend
-     npm i
-     cd ..
-   cd services/actions
-     npm i
-     cd ../..
-   cd services/playout
-     npm i
-     cd ../..
-   cd services/realtime
-     npm i
-     cd ../..
    cd shared
-     npm i
-     cd ..
-   ```
-   **Full Setup**: Also this one:
-   ```
-   cd aws
      npm i
      cd ..
    ```
@@ -114,126 +98,6 @@ Clowdr relies on various cloud services, which will need to be configured for lo
    ReadMe](services/realtime/README.md#Setting-up)
 1. Follow the Frontend setup: [Clowdr Frontend
    ReadMe](frontend/README.md#Setting-up)
-1. If running this software in a production environment, you will need to insert
-   rows into the `system.Configuration` table (via Hasura, select the `system`
-   schema to find the `Configuration` table).
-   - Fill out values for all available keys.
-   - Refer to the `description` field of each key (in `system.ConfigurationKey`)
-     for expected values.
-
-### Expose local services at a public URL
-
-When you run Clowdr locally, many parts of the system rely on exposing local
-services at a public URL. For example:
-
-- The actions service needs to receive SNS notifications from AWS and
-  webhooks from Vonage.
-- The Hasura service needs to receive GraphQL queries from Auth0.
-- The frontend much prefers to be served over HTTPS.
-
-Whenever your public URLs change, you will need to do the following:
-
-1. Copy the auth URL (`http://<hasura-domain>/v1/graphql`) into the
-   `HASURA_URL` Auth0 _Rule Configuration_ as shown in step 5.
-1. You will also need to set the actions URL
-   (`http://<actions-domain>/vonage/sessionMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-   into the Vonage Session Monitoring URL. You can find this in the _Project
-   Settings_ for your Vonage Video API project.
-1. You will also need to set the actions URL
-   (`http://<actions-domain>/vonage/archiveMonitoring/<VONAGE_WEBHOOK_SECRET>`)
-   into the Vonage Archive Monitoring URL. You can find this in the _Project
-   Settings_ for your Vonage Video API project.
-
-   When configuring this, you should also input your S3 access key/secret so
-   that Vonage can store the recording in S3. Without this recordings will only
-   be stored temporarily in Vonage and won't be accessible from the app.
-
-   You can use the `VonageUserAccessKeyId` and `VonageUserSecretAccessKey` outputs
-   from the AWS deployment to configure the S3 connection. For extra security, you
-   can set the `VONAGE_API_KEY` env var and redeploy the AWS stack.
-
-1. Reconfigure any local environment variables that point at the URL or
-   domain of the frontend, actions service or Hasura service.
-
-There are a couple of services that make it easy to do this: Packetriot and
-Ngrok. You only need one of them. We recommend Packetriot unless you have
-a particular reason to use ngrok.
-
-##### [Packetriot](https://packetriot.com)
-
-Packetriot costs \$5 per month. This gets you five tunnels that support five
-ports each - i.e. five users. You can configure a custom domain, so Google
-OAuth will work.
-
-###### Packetriot Setup (administrator)
-
-1. Create a Packetriot account
-1. [Download the client](https://docs.packetriot.com/quickstart/) and ensure
-   it is on your `PATH`.
-1. Follow the Packetriot instructions to verify your domain and set up an
-   appropriate A/CNAME record.
-1. In the root of the repository, run `pktriot --config pktriot.json configure --url`. Follow the instructions to authenticate and create a
-   new tunnel. This will create a `pktriot.json` file with the credentials
-   for a tunnel.
-1. Add the following property to the JSON object, substituting your desired
-   credentials.
-   ```json
-   "https": [
-         {
-               "domain": "<custom-frontend-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3000,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-hasura-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 8080,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-actions-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3001,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         },
-         {
-               "domain": "<custom-playout-subdomain>.<custom-domain>",
-               "secure": true,
-               "destination": "127.0.0.1",
-               "port": 3003,
-               "useLetsEnc": true,
-               "redirect": true,
-               "upstreamURL": ""
-         }
-      ]
-   ```
-1. Run `pktriot start --config pktriot.json` to start the tunnel.
-1. Configure Auth0 and Vonage using your custom domain
-
-To create a (persistent) tunnel for one of your team members, repeat the
-penultimate two steps (with a different filename) and send the generated
-JSON config to the team member.
-
-###### Packetriot Setup (team member)
-
-1. Download the [pktriot client](https://docs.packetriot.com/quickstart/)
-   and ensure it is on your `PATH`.
-1. Request configuration file from your Packetriot administrator.
-1. Put it in a file called `pktriot.json` in the root of the repository.
-1. Launch by running the _Packetriot_ task or running
-   `pktriot start --config pktriot.json`
-
-Note: it may take a little while for Packetriot to acquire certificates initially.
 
 ## Local Development
 

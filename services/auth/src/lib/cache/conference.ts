@@ -13,6 +13,7 @@ gql`
         conference_Conference_by_pk(id: $id) {
             id
             conferenceVisibilityLevel
+            createdBy
             subconferences {
                 id
             }
@@ -22,6 +23,7 @@ gql`
 
 export type Conference = {
     id: string;
+    createdBy: string;
     conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
     subconferenceIds: string[];
 };
@@ -40,6 +42,7 @@ const ConferenceCache = new Cache<Conference>(
             // Remapping is necessary to remove __typename
             return {
                 id: data.id,
+                createdBy: data.createdBy,
                 conferenceVisibilityLevel: data.conferenceVisibilityLevel,
                 subconferenceIds: data.subconferences.map((x) => x.id),
             };

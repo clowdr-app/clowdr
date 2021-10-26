@@ -8,26 +8,26 @@ array_relationships:
     foreign_key_constraint_on:
       column: targetPermissionName
       table:
-        schema: system
         name: SuperUserPermissionGrant
+        schema: system
 - name: superUserGrants
   using:
     foreign_key_constraint_on:
       column: grantedPermissionName
       table:
-        schema: system
         name: SuperUserPermissionGrant
+        schema: system
 - name: systemConfigurationGrants
   using:
     foreign_key_constraint_on:
       column: permissionName
       table:
-        schema: system
         name: ConfigurationPermissionGrant
+        schema: system
 select_permissions:
-- role: user
-  permission:
+- permission:
     columns:
     - description
     - name
     filter: {}
+  role: user

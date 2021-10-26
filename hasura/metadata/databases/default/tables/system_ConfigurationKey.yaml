@@ -8,5 +8,5 @@ array_relationships:
     foreign_key_constraint_on:
       column: configurationKey
       table:
-        schema: system
         name: ConfigurationPermissionGrant
+        schema: system

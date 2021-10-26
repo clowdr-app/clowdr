@@ -40,7 +40,7 @@ gql`
         }
     }
 
-    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!, $userId: String!) {
         insert_conference_Conference(
             objects: [{ name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode }]
         ) {
@@ -50,7 +50,10 @@ gql`
             }
         }
 
-        update_conference_DemoCode(where: { id: { _eq: $demoCode } }, _set: { note: "Code has been used." }) {
+        update_conference_DemoCode(
+            where: { id: { _eq: $demoCode } }
+            _set: { note: "Code has been used.", usedById: $userId }
+        ) {
             affected_rows
         }
     }
@@ -198,6 +201,7 @@ export default function NewConferenceForm(): JSX.Element {
                     shortName: normaliseName(_values.new_conf_short_name),
                     slug: generateSlug(normaliseName(_values.new_conf_short_name)),
                     demoCode: _values.new_conf_demo_code,
+                    userId: user.id,
                 };
 
                 let failed: false | string = false;
@@ -224,7 +228,13 @@ export default function NewConferenceForm(): JSX.Element {
                     }
 
                     if (ok === true) {
-                        const result = await createConferenceMutation(values);
+                        const result = await createConferenceMutation(values, {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "user",
+                                },
+                            },
+                        });
                         if (
                             result.error ||
                             !result.data ||
@@ -243,43 +253,53 @@ export default function NewConferenceForm(): JSX.Element {
                             const conferenceId = result.data.insert_conference_Conference.returning[0].id;
                             const now = Date.now();
 
-                            await createNewConferenceMetaStructureMutation({
-                                conferenceId,
-                                registrantDisplayName: "Conference Creator",
-                                userId: user.id,
-                                abstractData: [
-                                    {
-                                        createdAt: now,
-                                        createdBy: "system",
-                                        data: {
-                                            type: "ABSTRACT",
-                                            baseType: "text",
-                                            text: "Welcome to this conference!",
+                            await createNewConferenceMetaStructureMutation(
+                                {
+                                    conferenceId,
+                                    registrantDisplayName: "Conference Creator",
+                                    userId: user.id,
+                                    abstractData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: {
+                                                type: "ABSTRACT",
+                                                baseType: "text",
+                                                text: "Welcome to this conference!",
+                                            },
+                                        },
+                                    ],
+                                    exploreProgramData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "EXPLORE_PROGRAM_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    exploreScheduleData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "EXPLORE_SCHEDULE_BUTTON", baseType: "component" },
+                                        },
+                                    ],
+                                    registerButtonData: [
+                                        {
+                                            createdAt: now,
+                                            createdBy: "system",
+                                            data: { type: "LINK_BUTTON", baseType: "link", text: "Register", url: "" },
+                                        },
+                                    ],
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "main-conference-organizer",
+                                            "X-Auth-Conference-Id": conferenceId,
                                         },
                                     },
-                                ],
-                                exploreProgramData: [
-                                    {
-                                        createdAt: now,
-                                        createdBy: "system",
-                                        data: { type: "EXPLORE_PROGRAM_BUTTON", baseType: "component" },
-                                    },
-                                ],
-                                exploreScheduleData: [
-                                    {
-                                        createdAt: now,
-                                        createdBy: "system",
-                                        data: { type: "EXPLORE_SCHEDULE_BUTTON", baseType: "component" },
-                                    },
-                                ],
-                                registerButtonData: [
-                                    {
-                                        createdAt: now,
-                                        createdBy: "system",
-                                        data: { type: "LINK_BUTTON", baseType: "link", text: "Register", url: "" },
-                                    },
-                                ],
-                            });
+                                }
+                            );
 
                             toast({
                                 title: "Conference created",

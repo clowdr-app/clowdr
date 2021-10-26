@@ -38973,6 +38973,7 @@ export type CreateConferenceMutationVariables = Exact<{
   shortName: Scalars['String'];
   slug: Scalars['String'];
   demoCode: Scalars['uuid'];
+  userId: Scalars['String'];
 }>;
 
 
@@ -45076,7 +45077,7 @@ export function useConferenceTakenQuery(options: Omit<Urql.UseQueryArgs<Conferen
   return Urql.useQuery<ConferenceTakenQuery>({ query: ConferenceTakenDocument, ...options });
 };
 export const CreateConferenceDocument = gql`
-    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!) {
+    mutation CreateConference($name: String!, $shortName: String!, $slug: String!, $demoCode: uuid!, $userId: String!) {
   insert_conference_Conference(
     objects: [{name: $name, shortName: $shortName, slug: $slug, demoCodeId: $demoCode}]
   ) {
@@ -45087,7 +45088,7 @@ export const CreateConferenceDocument = gql`
   }
   update_conference_DemoCode(
     where: {id: {_eq: $demoCode}}
-    _set: {note: "Code has been used."}
+    _set: {note: "Code has been used.", usedById: $userId}
   ) {
     affected_rows
   }

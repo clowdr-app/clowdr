@@ -260,20 +260,6 @@
             },
             "args": ["prettier", "--write", "."]
         },
-        // Ngrok
-        {
-            "label": "Ngrok",
-            "type": "shell",
-            "command": "ngrok",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["start", "-config", "./ngrok.yml", "--all"]
-        },
         // Packetriot
         {
             "label": "Packetriot",

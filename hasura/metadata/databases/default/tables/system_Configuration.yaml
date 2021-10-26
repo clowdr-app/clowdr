@@ -6,8 +6,8 @@ object_relationships:
   using:
     foreign_key_constraint_on: key
 insert_permissions:
-- role: superuser
-  permission:
+- permission:
+    backend_only: false
     check:
       configurationKey:
         grantedPermissions:
@@ -19,23 +19,8 @@ insert_permissions:
     columns:
     - key
     - value
-    backend_only: false
+  role: superuser
 select_permissions:
-- role: superuser
-  permission:
-    columns:
-    - value
-    - key
-    - created_at
-    - updated_at
-    filter:
-      configurationKey:
-        grantedPermissions:
-          _and:
-          - permissionName:
-              _eq: VIEW_SYSTEM_CONFIGURATION
-          - userId:
-              _eq: X-Hasura-User-Id
 - permission:
     columns:
     - key
@@ -72,6 +57,21 @@ select_permissions:
   role: organizer
 - permission:
     columns:
+    - value
+    - key
+    - created_at
+    - updated_at
+    filter:
+      configurationKey:
+        grantedPermissions:
+          _and:
+          - permissionName:
+              _eq: VIEW_SYSTEM_CONFIGURATION
+          - userId:
+              _eq: X-Hasura-User-Id
+  role: superuser
+- permission:
+    columns:
     - key
     - updated_at
     - value
@@ -105,8 +105,8 @@ select_permissions:
         - DEFAULT_VIDEO_ROOM_BACKEND
   role: user
 update_permissions:
-- role: superuser
-  permission:
+- permission:
+    check: null
     columns:
     - key
     - value
@@ -118,10 +118,9 @@ update_permissions:
               _eq: SET_SYSTEM_CONFIGURATION
           - userId:
               _eq: X-Hasura-User-Id
-    check: null
+  role: superuser
 delete_permissions:
-- role: superuser
-  permission:
+- permission:
     filter:
       configurationKey:
         grantedPermissions:
@@ -130,3 +129,4 @@ delete_permissions:
               _eq: SET_SYSTEM_CONFIGURATION
           - userId:
               _eq: X-Hasura-User-Id
+  role: superuser

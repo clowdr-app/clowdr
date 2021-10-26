@@ -106,6 +106,25 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+    columns:
+    - chatId
+    - conferenceId
+    - id
+    - originatingDataId
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - visibilityLevel
+  role: main-conference-organizer
+- permission:
+    backend_only: false
+    check:
       _or:
       - _and:
         - conferenceId:
@@ -166,6 +185,28 @@ select_permissions:
                 _in:
                 - LANDING_PAGE
   role: attendee
+- permission:
+    columns:
+    - shortTitle
+    - title
+    - typeName
+    - visibilityLevel
+    - created_at
+    - updated_at
+    - chatId
+    - conferenceId
+    - id
+    - originatingDataId
+    - subconferenceId
+    computed_fields:
+    - hasUnsubmittedElements
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: main-conference-organizer
 - permission:
     columns:
     - shortTitle
@@ -255,6 +296,23 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - chatId
+    - originatingDataId
+    - shortTitle
+    - subconferenceId
+    - title
+    - typeName
+    - visibilityLevel
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: main-conference-organizer
+- permission:
+    check: null
+    columns:
     - originatingDataId
     - shortTitle
     - subconferenceId
@@ -277,6 +335,14 @@ update_permissions:
             _in: X-Hasura-Subconference-Ids
   role: organizer
 delete_permissions:
+- permission:
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - subconferenceId:
+          _is_null: true
+  role: main-conference-organizer
 - permission:
     filter:
       _or:

@@ -20,10 +20,13 @@ object_relationships:
   using:
     foreign_key_constraint_on: usedById
 insert_permissions:
-- role: superuser
-  permission:
+- permission:
+    backend_only: false
     check:
       _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
         _where:
           _and:
           - grantedPermissionName:
@@ -32,14 +35,11 @@ insert_permissions:
               _eq: X-Hasura-User-Id
           - targetPermissionName:
               _is_null: true
-        _table:
-          schema: system
-          name: SuperUserPermissionGrant
     columns:
     - id
     - note
     - usedById
-    backend_only: false
+  role: superuser
 select_permissions:
 - permission:
     columns:
@@ -52,8 +52,7 @@ select_permissions:
       usedById:
         _eq: X-Hasura-User-Id
   role: main-conference-organizer
-- role: superuser
-  permission:
+- permission:
     columns:
     - note
     - usedById
@@ -62,6 +61,9 @@ select_permissions:
     - id
     filter:
       _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
         _where:
           _and:
           - grantedPermissionName:
@@ -70,9 +72,15 @@ select_permissions:
               _eq: X-Hasura-User-Id
           - targetPermissionName:
               _is_null: true
-        _table:
-          schema: system
-          name: SuperUserPermissionGrant
+  role: superuser
+- permission:
+    columns:
+    - id
+    - usedById
+    filter:
+      usedById:
+        _is_null: true
+  role: user
 update_permissions:
 - permission:
     check: null
@@ -82,14 +90,17 @@ update_permissions:
       usedById:
         _is_null: true
   role: main-conference-organizer
-- role: superuser
-  permission:
+- permission:
+    check: null
     columns:
     - id
     - note
     - usedById
     filter:
       _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
         _where:
           _and:
           - grantedPermissionName:
@@ -98,15 +109,23 @@ update_permissions:
               _eq: X-Hasura-User-Id
           - targetPermissionName:
               _is_null: true
-        _table:
-          schema: system
-          name: SuperUserPermissionGrant
+  role: superuser
+- permission:
     check: null
+    columns:
+    - note
+    - usedById
+    filter:
+      usedById:
+        _is_null: true
+  role: user
 delete_permissions:
-- role: superuser
-  permission:
+- permission:
     filter:
       _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
         _where:
           _and:
           - grantedPermissionName:
@@ -115,6 +134,4 @@ delete_permissions:
               _eq: X-Hasura-User-Id
           - targetPermissionName:
               _is_null: true
-        _table:
-          schema: system
-          name: SuperUserPermissionGrant
+  role: superuser

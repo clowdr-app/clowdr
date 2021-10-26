@@ -2,9 +2,9 @@ table:
   name: SuperUserState
   schema: system
 select_permissions:
-- role: superuser
-  permission:
+- permission:
     columns:
     - canBeDirectlyInitialised
     - isInitialised
     filter: {}
+  role: superuser

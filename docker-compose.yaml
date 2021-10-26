@@ -12,7 +12,7 @@ services:
       - "postgres"
     restart: "no"
     volumes:
-      # - ./hasura/migrations:/hasura-migrations
+      - ./hasura/migrations:/hasura-migrations
       - ./hasura/metadata:/hasura-metadata
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres

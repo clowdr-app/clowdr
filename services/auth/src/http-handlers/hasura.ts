@@ -67,7 +67,7 @@ export async function handleAuthWebhook(
     //          Particularly given the constraints of redis deleting keys
 
     if (unverifiedParams.role === HasuraRoleNames.Superuser) {
-        if (verifiedParams.userId) {
+        if (verifiedParams.userId?.length) {
             // We rely on Hasura permissions to figure this out since it is so
             // infrequent that we don't want to waste space caching these
             // permissions.
@@ -94,7 +94,7 @@ export async function handleAuthWebhook(
         };
     }
 
-    if (!verifiedParams.userId) {
+    if (!verifiedParams.userId?.length) {
         const result: Partial<Record<HasuraHeaders, string>> = {
             [HasuraHeaders.Role]: HasuraRoleNames.Unauthenticated,
             [HasuraHeaders.ConferenceIds]: formatArrayForHasuraHeader([]),
@@ -130,7 +130,7 @@ export async function handleAuthWebhook(
         }
 
         return result;
-    } else {
+    } else if (verifiedParams.userId?.length) {
         const result: Partial<Record<HasuraHeaders, string>> = {};
         const allowedRoles: HasuraRoleNames[] = [];
         const requestedRole = (unverifiedParams.role ?? HasuraRoleNames.User) as HasuraRoleNames;
@@ -405,7 +405,14 @@ export async function handleAuthWebhook(
                         return false;
                     }
                 } else {
-                    return false;
+                    const conference = await getConference(unverifiedParams.conferenceId);
+                    if (conference?.createdBy === user.id) {
+                        allowedRoles.push(HasuraRoleNames.Organizer);
+                        allowedRoles.push(HasuraRoleNames.MainConferenceOrganizer);
+                        result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
+                    } else {
+                        return false;
+                    }
                 }
             } else {
                 result[HasuraHeaders.RegistrantIds] = formatArrayForHasuraHeader(user.registrantIds.map((x) => x.id));
@@ -423,4 +430,6 @@ export async function handleAuthWebhook(
 
         return result;
     }
+
+    return false;
 }

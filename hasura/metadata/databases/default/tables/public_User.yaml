@@ -52,27 +52,14 @@ array_relationships:
 - name: superUserPermissionGrants
   using:
     manual_configuration:
-      remote_table:
-        schema: system
-        name: SuperUserPermissionGrant
-      insertion_order: null
       column_mapping:
         id: userId
+      insertion_order: null
+      remote_table:
+        name: SuperUserPermissionGrant
+        schema: system
 select_permissions:
 - permission:
-    columns:
-    - id
-    - created_at
-    - updated_at
-    - email
-    - acceptedTermsAt
-    - acceptedPrivacyPolicyAt
-    filter:
-      id:
-        _eq: X-Hasura-User-Id
-  role: user
-- role: superuser
-  permission:
     columns:
     - id
     - created_at
@@ -91,6 +78,9 @@ select_permissions:
               - userId:
                   _eq: X-Hasura-User-Id
       - _exists:
+          _table:
+            name: SuperUserPermissionGrant
+            schema: system
           _where:
             _and:
             - grantedPermissionName:
@@ -103,12 +93,22 @@ select_permissions:
                 _is_null: true
             - userId:
                 _eq: X-Hasura-User-Id
-          _table:
-            schema: system
-            name: SuperUserPermissionGrant
       - superUserPermissionGrants:
           userId:
             _eq: X-Hasura-User-Id
+  role: superuser
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - email
+    - acceptedTermsAt
+    - acceptedPrivacyPolicyAt
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user
 update_permissions:
 - permission:
     check: null
@@ -120,10 +120,12 @@ update_permissions:
         _eq: X-Hasura-User-Id
   role: user
 delete_permissions:
-- role: superuser
-  permission:
+- permission:
     filter:
       _exists:
+        _table:
+          name: SuperUserPermissionGrant
+          schema: system
         _where:
           _and:
           - grantedPermissionName:
@@ -133,6 +135,4 @@ delete_permissions:
               _is_null: true
           - userId:
               _eq: X-Hasura-User-Id
-        _table:
-          schema: system
-          name: SuperUserPermissionGrant
+  role: superuser

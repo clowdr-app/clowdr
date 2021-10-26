@@ -1,6 +1,6 @@
 # Realtime service
 
-This service is based on Heroku, Websockets using Sockets.io, and Redis. It provides presence information, chat and other realtime communication services for Clowdr.
+This service is based on Heroku, Websockets using Sockets.io, and Redis. It provides presence information, chat and other realtime communication services for Midspace.
 
 ## Prerequisites
 
@@ -30,6 +30,6 @@ This service is based on Heroku, Websockets using Sockets.io, and Redis. It prov
 | Name                | Purpose                                                       | Example                  |
 | ------------------- | ------------------------------------------------------------- | ------------------------ |
 | REDIS_URL           | The URI to your redis server. Heroku sets this automatically. | `redis://localhost:6379` |
-| AUTH0_API_DOMAIN    | As per other parts of Clowdr.                                 |                          |
+| AUTH0_API_DOMAIN    | As per other parts of Midspace.                               |                          |
 | SECRET_FOR_SUMMARY  | same as PRESENCE_SUMMARY_SECRET in hasura/.env                |                          |
 | SECRET_FOR_FLUSHING | same as PRESENCE_FLUSH_SECRET in hasura/.env                  |                          |

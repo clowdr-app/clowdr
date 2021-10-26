@@ -1,6 +1,6 @@
-# Clowdr: Frontend
+# Midspace: Frontend
 
-React web app that forms the main Clowdr frontend.
+React web app that forms the main Midspace frontend.
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
@@ -22,7 +22,7 @@ React web app that forms the main Clowdr frontend.
    - Once you have set up Hasura Cloud, create a Netlify account and
      follow the steps below.
    - in Netlify, create a new site from Git.
-     - If you're not part of the core Clowdr team, create and use a fork of this
+     - If you're not part of the core Midspace team, create and use a fork of this
        (`clowdr-app/clowdr`) repository.
      - See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
    - go back to Auth0 and add the Netlify app url(s) to the

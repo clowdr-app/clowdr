@@ -100,7 +100,7 @@ If you just want to get up and running as quickly as possible, and you do not ca
 
 ## Deploying the main AWS CloudFormation stacks
 
-**Info:** The stack `<prefix>-main` contains the main infrastructure for the Clowdr app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
+**Info:** The stack `<prefix>-main` contains the main infrastructure for the Midspace app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
 
 1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
 1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab.

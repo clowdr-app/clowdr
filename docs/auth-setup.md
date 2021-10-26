@@ -1,6 +1,6 @@
 # Auth0 Setup
 
-Clowdr uses Auth0 for authentication/authorization of users. Auth0 can be
+Midspace uses Auth0 for authentication/authorization of users. Auth0 can be
 bypassed during offline (local) testing.
 
 **_You will need an Auth0 account to follow these instructions._**
@@ -75,7 +75,7 @@ considered for merging._**
 
    - In the left sidebar under `Applications`, click `APIs`
    - Click `Create API`
-   - `Name` it anything you like -- e.g., `Clowdr Test API`
+   - `Name` it anything you like -- e.g., `Midspace Test API`
    - Set the `Identifier` to `hasura`
    - For `Signing Algorithm` choose `RS256`
 
@@ -84,7 +84,7 @@ considered for merging._**
 
 ## 4. Create Rules
 
-Clowdr uses Auth0 rules to handle user registration and interface with Hasura. Order of the rules matters.
+Midspace uses Auth0 rules to handle user registration and interface with Hasura. Order of the rules matters.
 
 1. Create a new _Rule_
    - In the left sidebar under `Auth Pipeline`, click `Rules`, then `Create Rule`
@@ -134,7 +134,7 @@ Clowdr uses Auth0 rules to handle user registration and interface with Hasura. O
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
      This rule upgrades the access token to give it relevant roles which are then
-     recognised by Clowdr's Hasura instance.
+     recognised by Midspace's Hasura instance.
 
    ```js
    function (user, context, callback) {
@@ -157,7 +157,7 @@ Clowdr uses Auth0 rules to handle user registration and interface with Hasura. O
    - `Name` it something like `Hasura User Sync`
    - Replace the `Script` with the code below
    - Don't forget to `Save changes`
-     This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
+     This rule creates users in Midspace's DB via Hasura using the Admin Secret to
      directly access the `user` table.
 
    ```js
@@ -285,5 +285,5 @@ In the left sidebar under _Branding_, click _Universal Login_ and set the _defau
 ## 8. (Optional) Customising the login page
 
 To customise what the Auth0 login page looks like, go to _Branding_ -> _Universal Login_ and
-have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
+have fun. (Note: Always use the _**New**_ 'look and feel' for Midspace to work
 properly.)

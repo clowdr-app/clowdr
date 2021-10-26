@@ -1,4 +1,4 @@
-# Clowdr: Actions Service
+# Midspace: Actions Service
 
 Express server designed to run on Heroku and serve action calls from Hasura.
 Eventually this may be split into multiple microservices.

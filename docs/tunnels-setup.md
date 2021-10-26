@@ -1,6 +1,6 @@
 # Expose local services at a public URL
 
-When you run Clowdr locally, many parts of the system rely on exposing local
+When you run Midspace locally, many parts of the system rely on exposing local
 services at a public URL. For example:
 
 - The actions service needs to receive SNS notifications from AWS and

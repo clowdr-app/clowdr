@@ -1,9 +1,9 @@
-# Clowdr virtual conference platform
+# Midspace virtual conference platform
 
-This is version 3 of Clowdr - more functional, more robust, more scalable,
+This is version 3 of Midspace - more functional, more robust, more scalable,
 and 100% open source!
 
-If you want to contribute to Clowdr, please read our [contribution guidelines](CONTRIBUTING).
+If you want to contribute to Midspace, please read our [contribution guidelines](CONTRIBUTING).
 
 ## Structure
 
@@ -45,13 +45,13 @@ marked **Production** as well.
      1. Open or restart VSCode, and open a terminal with menu Terminal -> New Terminal
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
 1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
-1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Clowdr uses Docker Compose, now included in the Docker CLI.
+1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Midspace uses Docker Compose, now included in the Docker CLI.
 1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/) and [awsvault](https://github.com/99designs/aws-vault)
-1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Clowdr publicly.
+1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Midspace publicly.
 
 ## Generate Hasura Admin Secret
 
-The Hasura GraphQL engine will be configured with an arbitrary admin secret value, and this value is needed for configuring several other services that make up Clowdr, so generate a secure secret value now and make note of it. A suggested method is a hex string representing a 128-bit value, which can be generated using one of the methods below depending on which tools are available on your system.
+The Hasura GraphQL engine will be configured with an arbitrary admin secret value, and this value is needed for configuring several other services that make up Midspace, so generate a secure secret value now and make note of it. A suggested method is a hex string representing a 128-bit value, which can be generated using one of the methods below depending on which tools are available on your system.
 
 - `openssl rand -hex 16`
 - `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
@@ -60,7 +60,7 @@ Several other setup steps require an arbitrarily selected secret value shared be
 
 ## Cloud Services
 
-Clowdr relies on various cloud services, which will need to be configured for local development as well.
+Midspace relies on various cloud services, which will need to be configured for local development as well.
 
 1. **Full Setup but not Production:** [Set up tunnels for enabling callbacks to services running locally](docs/tunnels-setup.md)
 1. [Set up user authentication](docs/auth-setup.md)
@@ -89,14 +89,14 @@ Clowdr relies on various cloud services, which will need to be configured for lo
      npm i
      cd ..
    ```
-1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
-1. Follow the Actions Service setup: [Clowdr Actions Service
+1. Follow the Hasura setup: [Midspace Hasura ReadMe](hasura/README.md#Setting-up)
+1. Follow the Actions Service setup: [Midspace Actions Service
    ReadMe](services/actions/README.md#Setting-up)
-1. Follow the Playout Service setup: [Clowdr Playout Service
+1. Follow the Playout Service setup: [Midspace Playout Service
    ReadMe](services/playout/README.md#Setting-up)
-1. Follow the Realtime Service setup: [Clowdr Realtime Service
+1. Follow the Realtime Service setup: [Midspace Realtime Service
    ReadMe](services/realtime/README.md#Setting-up)
-1. Follow the Frontend setup: [Clowdr Frontend
+1. Follow the Frontend setup: [Midspace Frontend
    ReadMe](frontend/README.md#Setting-up)
 
 ## Local Development
@@ -107,17 +107,17 @@ If you alter environment config, Docker Compose config, etc., then all tasks mus
 
 ## Create a conference
 
-When you log into Clowdr for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Clowdr UI. To create a demo code:
+When you log into Midspace for the first time, there will be no conferences listed. You will need a demo code to create a conference, and this cannot yet be done through the Midspace UI. To create a demo code:
 
 1. Go to the _Data_ tab in the Hasura console.
 2. Open the _conference > DemoCode_ table.
 3. Open the _Insert Row_ tab. Ensure that `id` is set to _Default_ and click _Save_. There is no need to enter any values manually.
 4. A demo code has now been created. Open the _Browse Rows_ tab and find the new row in the table.
-5. Copy the `id` column of the new row. This is your demo code - you can use it to create a conference in the Clowdr UI.
+5. Copy the `id` column of the new row. This is your demo code - you can use it to create a conference in the Midspace UI.
 
 ### Modifying the default security settings
 
-By default, only the creator of a conference has permission to view its elements. You can give permissions to other groups of users by opening the _Content_ admin panel in Clowdr. Click the yellow button with a lock icon to open the (conference-)global element security settings.
+By default, only the creator of a conference has permission to view its elements. You can give permissions to other groups of users by opening the _Content_ admin panel in Midspace. Click the yellow button with a lock icon to open the (conference-)global element security settings.
 
 You probably want to at least add an entry for 'Organiser' permissions with the 'Organisers' group.
 

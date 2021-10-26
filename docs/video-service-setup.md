@@ -1,6 +1,6 @@
 # Vonage Setup
 
-Clowdr uses the Vonage Video API (formerly TokBox OpenTok) for video chat.
+Midspace uses the Vonage Video API (formerly TokBox OpenTok) for video chat.
 
 1. Create a free
    [Vonage Video API](https://www.vonage.co.uk/communications-apis/video/)

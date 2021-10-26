@@ -1,6 +1,6 @@
-# Clowdr: Playout Service
+# Midspace: Playout Service
 
-The playout service controls the video broadcast pipelines for Clowdr. Currently, it can deploy and tear down the AWS infrastructure at the correct times. In future, it will be extended to handle schedule sync.
+The playout service controls the video broadcast pipelines for Midspace. Currently, it can deploy and tear down the AWS infrastructure at the correct times. In future, it will be extended to handle schedule sync.
 
 It is built with Nest.js and the AWS CDK.
 

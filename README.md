@@ -17,11 +17,12 @@ If you want to contribute to Clowdr, please read our [contribution guidelines](C
 | services/realtime | A service that handles realtime interactions like chat and presence. | [Realtime service readme](services/realtime/README.md) |
 | services/playout  | A service that controls video broadcast pipelines.                   | [Playout service readme](services/playout/README.md)   |
 
-## Quick vs. Full Setup
+## Quick Setup vs. Full Setup vs. Production
 
 For contributors that _only_ want to play with the user interface, the
 "Quick" version of the following instructions should get you a minimal
-working setup. Just skip over the steps marked "Full Setup".
+working setup. Just skip over the steps marked **Full Setup** or
+**Production** and follow the steps marked **Quick Setup**.
 
 **Warning**: The Quick Setup instructions are still being debugged and may
 or may not work yet!!
@@ -29,10 +30,12 @@ or may not work yet!!
 **Caveat**: The word "Quick" should be taken with a grain of salt. Even
 this streamlined path is likely to take you a day or two.
 
-To run your own conference on Clowdr and/or test changes that affect other
-parts of the platform, follow all the steps below.
+To test changes that affect other parts of the platform, skip the steps
+marked **Quick Setup** and follow steps marked **Full Setup**. To deploy
+Clowder publicly or run your own conference on Clowder, follow the steps
+marked **Production** as well.
 
-## Pre-requisites
+## Local Software Installation
 
 1. [VSCode](https://code.visualstudio.com/)
    - We also recommend you install the "recommended extensions" listed in the
@@ -41,29 +44,43 @@ parts of the platform, follow all the steps below.
      1. Install [Git command line](https://git-scm.com/download/win) if you haven't already.
      1. Open or restart VSCode, and open a terminal with menu Terminal -> New Terminal
      1. Next to the big + sign in the right side of the terminal header, there's a dropdown with tooltip "Launch Profile...". Click it and select Git Bash.
-2. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
-3. [Hasura pre-requisites](hasura/README.md#Pre-requisites)
-4. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites)
-5. [Playout service pre-requisites](services/playout/README.md#Pre-requisites)
-6. [Frontend pre-requsities](frontend/README.md#Pre-requisites)
+1. [Node.js 16](https://nodejs.org/en/) (and NPM 7.8 or later)
+1. [Docker Desktop](https://docs.docker.com/compose/cli-command/#installing-compose-v2) - Clowdr uses Docker Compose, now included in the Docker CLI.
+1. **Full Setup:** [AWS CLI](https://aws.amazon.com/cli/)
+1. **Production:** [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) if you will be deploying Clowdr publicly.
 
-## Setting Up
+## Generate Hasura Admin Secret
+
+The Hasura GraphQL engine will be configured with an arbitrary admin secret value, and this value is needed for configuring several other services that make up Clowdr, so generate a secure secret value now and make note of it. A suggested method is a hex string representing a 128-bit value, which can be generated using one of the methods below depending on which tools are available on your system.
+
+- `openssl rand -hex 16`
+- `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+
+Several other setup steps require an arbitrarily selected secret value shared between services, and this method may be used for generating those values as well.
+
+## Cloud Services
+
+Clowdr relies on various cloud services, which will need to be configured for local development as well.
+
+1. **Full setup but not Production**: PacketRiot for enabling callbacks to services running locally
+1. [Auth0](docs/auth0-setup.md) for user authentication
+1. [Actions Service pre-requsities](services/actions/README.md#Pre-requisites) - Not the entire Actions Service setup just yet, only the Prerequisites.
+
+## Setting Up Local Working Copy
 
 1. Clone this repository
-2. Initialise and update submodules:
-
+1. Initialise and update submodules:
    ```
          git submodule init
          git submodule update
    ```
-
-3. Build `slate-transcript-editor` as follows:
+1. Build `slate-transcript-editor` as follows:
    1. `cd slate-transcript-editor`
    1. Run `npm install`
    1. Run `npm run build:component`
    1. You should see the `dist` folder created.
    1. You will not need to do this again (hopefully)
-4. Install npm packages:
+1. Install npm packages:
    ```
    npm i
    cd frontend
@@ -88,29 +105,21 @@ parts of the platform, follow all the steps below.
      npm i
      cd ..
    ```
-5. **Full setup**: Follow the [Clowdr AWS ReadMe](aws/README.md#Setting-up)
-6. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
-7. Follow the Actions Service setup: [Clowdr Actions Service
+1. Follow the Hasura setup: [Clowdr Hasura ReadMe](hasura/README.md#Setting-up)
+1. Follow the Actions Service setup: [Clowdr Actions Service
    ReadMe](services/actions/README.md#Setting-up)
-8. Follow the Playout Service setup: [Clowdr Playout Service
+1. Follow the Playout Service setup: [Clowdr Playout Service
    ReadMe](services/playout/README.md#Setting-up)
-9. Follow the Realtime Service setup: [Clowdr Realtime Service
+1. Follow the Realtime Service setup: [Clowdr Realtime Service
    ReadMe](services/realtime/README.md#Setting-up)
-10. Follow the Frontend setup: [Clowdr Frontend
-    ReadMe](frontend/README.md#Setting-up)
-11. If running this software in a production environment, you will need to insert
-    rows into the `system.Configuration` table (via Hasura, select the `system`
-    schema to find the `Configuration` table).
-    - Fill out values for all available keys.
-    - Refer to the `description` field of each key (in `system.ConfigurationKey`)
-      for expected values.
-12. Follow the instructions below for Auth0 setup.
-
-### Generating shared secrets
-
-Several setup steps require an arbitrarily selected secret value shared between services. Here are two different commands for generating 128-bit random values that you can use depending on what tools you have available:
-- `openssl rand -hex 16`
-- `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+1. Follow the Frontend setup: [Clowdr Frontend
+   ReadMe](frontend/README.md#Setting-up)
+1. If running this software in a production environment, you will need to insert
+   rows into the `system.Configuration` table (via Hasura, select the `system`
+   schema to find the `Configuration` table).
+   - Fill out values for all available keys.
+   - Refer to the `description` field of each key (in `system.ConfigurationKey`)
+     for expected values.
 
 ### Expose local services at a public URL
 
@@ -196,6 +205,15 @@ OAuth will work.
                "useLetsEnc": true,
                "redirect": true,
                "upstreamURL": ""
+         },
+         {
+               "domain": "<custom-playout-subdomain>.<custom-domain>",
+               "secure": true,
+               "destination": "127.0.0.1",
+               "port": 3003,
+               "useLetsEnc": true,
+               "redirect": true,
+               "upstreamURL": ""
          }
       ]
    ```
@@ -216,330 +234,6 @@ JSON config to the team member.
    `pktriot start --config pktriot.json`
 
 Note: it may take a little while for Packetriot to acquire certificates initially.
-
-##### [ngrok](https://ngrok.com)
-
-The second alternative is ngrok. Ngrok is either free (with random, ephemeral subdomains) or \$8.25 per user
-per month (with custom domains).
-
-If you use the free version, you will have to perform some reconfiguration
-each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
-integration) will not work properly, since it requires a verified domain.
-
-We have found that ngrok can be quite flaky.
-
-###### Ngrok Setup (paid)
-
-TODO
-
-###### Ngrok Setup (free)
-
-1. Create an ngrok account and note your auth token.
-1. Copy `ngrok.example.yml` to `ngrok.yml`.
-1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
-1. Remove the `hostname` line from each tunnel configuration - you will let
-   ngrok pick random subdomains instead.
-1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
-
-**_Every time_** you start up for online (local) development, you will need
-to reconfigure Auth0 and Vonage as specified earlier. The domain format is
-`<ngrok-subdomain>.ngrok.io`.
-
-Additionally, ensure that the following env vars are set to use
-localhost-based, rather than public, URLs:
-
-- frontend
-  - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
-  - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
-- services/realtime
-  - `CORS_ORIGIN`
-
-When using free ngrok, access the frontend via its localhost URL
-(`http://localhost:3000`) rather than launching an ngrok tunnel for it. You
-could also launch the frontend tunnel, but you would need to update all the
-above environment variable each time the tunnel was restarted.
-
-### Auth0 Setup
-
-Clowdr uses Auth0 for authentication/authorization of users. Auth0 can be
-bypassed during offline (local) testing.
-
-**_You will need an Auth0 account to follow these instructions._**
-
-**_You will need to do online testing with Auth0 for non-minor PRs to be
-considered for merging._**
-
-#### 0. Create account
-
-1. Visit [auth0.com](https://auth0.com)
-1. Click `Sign up`.
-1. You may either create an Auth0 account or use an existing account with one of the other authentication providers offered.
-1. Fill in company name if appropriate and click `Next`
-
-#### 1. Configure application
-
-1. In the left sidebar under `Applications`, click `Applications`.
-1. There should be a single application named `Default Application`. If not, create a new application of type Single Page Application. Click on the application name to go to its settings page.
-1. Rename the Default Application if you'd like, and make a note of the following configuration parameters:
-   - Domain
-   - Client ID
-1. In the `Application Properties` section, for `Application Type` select `Single Page Application`.
-1. Configure `Allowed Callback URLs` (comma-separated)
-   (The format/suffix of these urls should not be altered. They should
-   include `localhost`.)
-   ```
-   http://localhost:3000/auth0/,
-   http://localhost:3000/auth0/logged-in,
-   http://localhost:3000/auth0/email-verification/result,
-   ```
-   (Note that, for production, the first URL _must_ be the `auth0` address; see [the auth0 documentation on Email Templates / RedirectURLs](https://auth0.com/docs/auth0-email-services/customize-email-templates#configuring-the-redirect-to-url)).
-   **Full Setup**: If you have set up Netlify, you can optionally include your Netlify app url(s) in the Allowed Callback URLs (at the end). Netlify is a platform for hosting static websites. It takes our latest React site from git, builds it and deploys it to a CDN automatically. It's not required for most users - you could host the static part of the app wherever you want. For the local development case, you're just using a server on your local machine and maybe exposing it through a tunnel.
-    ```
-    https://<netlify-subdomain>.netlify.app/auth0/,
-    https://<netlify-subdomain>.netlify.app/auth0/logged-in,
-    https://<netlify-subdomain>.netlify.app/auth0/email-verification/result
-    ```
-1. Configure `Allowed Logout URLs` (comma-separated)
-   (The format/suffix of these urls should not be altered.)
-   E.g.
-   ```
-   http://localhost:3000/auth0/logged-out,
-   http://localhost:3000/auth0/email-verification/required/no-redirect,
-   ```
-   **Full Setup**: If using netlify, add these:
-   ```
-   https://<netlify-subdomain>.netlify.app/auth0/logged-out,
-   https://<netlify-subdomain>.netlify.app/auth0/email-verification/required/no-redirect
-   ```
-1. Configure `Allowed Web Origins` (comma-separated)
-   E.g.
-   ```
-   http://localhost:3000,
-   ```
-   **Full Setup**: If using netlify, add this:
-   ```
-   https://<netlify-subdomain>.netlify.app
-   ```
-1. **Don't forget to `Save changes`**
-
-#### 3. Create API
-
-1. Create an Auth0 _API_
-
-   - In the left sidebar under `Applications`, click `APIs`
-   - Click `Create API`
-   - `Name` it anything you like -- e.g., `Clowdr Test API`
-   - Set the `Identifier` to `hasura`
-   - For `Signing Algorithm` choose `RS256`
-
-   This may also have created another Machine-to-Machine _Application_ - this is
-   okay, don't delete it.
-
-#### 4. Create Rules
-
-Order of the rules matters.
-
-1. Create a new _Rule_
-   - In the left sidebar under `Auth Pipeline`, click `Rules`, then `Create Rule`
-   - Select `Empty rule`
-   - `Name` it `Setup isNew app metadata` (or anything else, if you prefer)
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-   (This rule sets up the tracking of new user accounts so we only insert them into the db once.)
-   ```js
-   function (user, context, callback) {
-     user.app_metadata = user.app_metadata || {};
-     if (!("isNew" in user.app_metadata)) {
-       user.app_metadata.isNew = true;
-       auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
-           .then(function(){
-             callback(null, user, context);
-           })
-           .catch(function(err){
-             callback(err);
-           });
-     }
-     else {
-       callback(null, user, context);
-     }
-   }
-   ```
-   (If you see a warning like `Heads up! If you are trying to access a service behind a firewall...` you can ignore it.)
-1. Create another new _Rule_
-   - Select `Empty rule`
-   - `Name` it something like `Force Verified Email Before Login`
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-   This rule prevents users from logging in before they have verified their account.
-   ```js
-   function emailVerified(user, context, callback) {
-     if (!user.email_verified) {
-       return callback(new UnauthorizedError("Please verify your email before logging in."));
-     } else {
-       return callback(null, user, context);
-     }
-   }
-   ```
-1. Create another new _Rule_
-   - Select `Empty rule`
-   - `Name` it something like `Hasura JWT`
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-   This rule upgrades the access token to give it relevant roles which are then
-   recognised by Clowdr's Hasura instance.
-   ```js
-   function (user, context, callback) {
-        const namespace = configuration.HASURA_NAMESPACE;
-        console.log(`Upgrading access token for ${user.user_id}`);
-        context.accessToken[namespace] =
-        {
-            'x-hasura-default-role': 'user',
-            'x-hasura-allowed-roles': ['user', 'unauthenticated'],
-            'x-hasura-user-id': user.user_id,
-        };
-
-        callback(null, user, context);
-   }
-   ```
-1. Create another new _Rule_
-   - Select `Empty rule`
-   - `Name` it something like `Hasura User Sync`
-   - Replace the `Script` with the code below
-   - Don't forget to `Save changes`
-   This rule creates users in Clowdr's DB via Hasura using the Admin Secret to
-   directly access the `user` table.
-   ```js
-   function (user, context, callback) {
-       if (user.app_metadata.isNew) {
-           console.log("Inserting new user");
-           const userId = user.user_id;
-           const email = user.email;
-           const upsertUserQuery = `mutation Auth0_CreateUser($userId: String!, $email: String!) {
-           insert_User(objects: {id: $userId, email: $email}, on_conflict: {constraint: user_pkey, update_columns: []}) {
-               affected_rows
-           }
-           }`;
-           const graphqlReq = { "query": upsertUserQuery, "variables": { "userId": userId, "email": email } };
-
-           // console.log("graphqlReq", JSON.stringify(graphqlReq, null, 2));
-
-           const sendRequest = (url, adminSecret, user, context, cb) => {
-               // console.log("url", url);
-               request.post({
-                   headers: {'content-type' : 'application/json', 'x-hasura-admin-secret': adminSecret},
-                   url:   url,
-                   body:  JSON.stringify(graphqlReq)
-               }, function(error, response, body){
-                   // console.log("error", error);
-                   // console.log("body", body);
-                   body = JSON.parse(body);
-                   if (!error &&
-                       body.data &&
-                       body.data.insert_User &&
-                       typeof body.data.insert_User.affected_rows === "number"
-                   ) {
-                       console.log("Successfully saved to db. Marking as not new.");
-                       user.app_metadata.isNew = false;
-                   }
-                   else {
-                       console.log("body.data",
-                           body.data);
-                       console.log("body.data.insert_User",
-                           body.data && body.data.insert_User);
-                       console.log("body.data.insert_User.affected_rows",
-                           body.data &&
-                           body.data.insert_User &&
-                           body.data.insert_User.affected_rows
-                       );
-                   }
-                   cb(null, user, context);
-               });
-           };
-
-           sendRequest(
-               configuration.HASURA_URL, configuration.HASURA_ADMIN_SECRET,
-               user, context,
-               (_err, _user, _ctx) => {
-                   if (configuration.HASURA_URL_LOCAL && configuration.HASURA_ADMIN_SECRET_LOCAL) {
-                       sendRequest(
-                           configuration.HASURA_URL_LOCAL, configuration.HASURA_ADMIN_SECRET_LOCAL,
-                           _user, _ctx,
-                           (_err2, _user2, _ctx2) => {
-                               auth0.users.updateAppMetadata(_user2.user_id, _user2.app_metadata)
-                                   .then(function(){
-                                       if (_err) {
-                                           callback(_err);
-                                       }
-                                       else if (_err2) {
-                                           callback(_err2);
-                                       }
-                                       else {
-                                           callback(null, _user2, _ctx2);
-                                       }
-                                   })
-                                   .catch(function(_err3){
-                                       callback(_err3);
-                                   });
-                           }
-                       );
-                   }
-                   else {
-                       auth0.users.updateAppMetadata(_user.user_id, _user.app_metadata)
-                            .then(function(){
-                                if (_err) {
-                                    callback(_err);
-                                }
-                                else {
-                                    callback(null, _user, _ctx);
-                                }
-                            })
-                            .catch(function(_err2){
-                                callback(_err2);
-                            });
-                   }
-               }
-           );
-       }
-       else {
-           console.log("Ignoring existing user");
-           callback(null, user, context);
-       }
-   }
-   ```
-
-#### 5. Configure Rules
-
-Under _Settings_ on the `Rules` page, add the following key-value pairs:
-
-| Key                 | Value                                                                                    | Notes                                                                                                                                                     |
-| ------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HASURA_NAMESPACE    | `https://hasura.io/jwt/claims`                                                           | For Hasura, this value must always be this URL.                                                                                                           |
-| HASURA_ADMIN_SECRET | The Hasura Admin Secret                                                                  | This must match the HASURA_ADMIN_SECRET specified in the actions service and Hasura env.                                                                  |
-| HASURA_URL          | The full URL to the Hasura GraphQL API. E.g. `http://<public URL for Hasura>/v1/graphql` | Use Ngrok to make a `localhost` server accessible by Auth0: command `ngrok http 8080`. Hint: The Hasura Service _not_ the Hasura Console URL/port number! |
-
-You may want to have a production and a test environment running off the same Auth0 tenant. In this case, you can optionally specify `HASURA_ADMIN_SECRET_LOCAL` and `HASURA_URL_LOCAL` in
-addition to the `HASURA_ADMIN_SECRET` and `HASURA_URL` to have user records pushed to both places simultaneously.
-
-#### 6. Turn on live logging
-
-This is useful for debugging. Go to _Extensions_ and install `Real-time Webtask Logs`. After installing, click it and authenticate it when asked. To
-see some useful logs, uncomment `console.log` statements in the _Rules_ we
-created above.
-
-#### 7. Configure "new UI experience"
-
-In the left sidebar under _Branding_, click _Universal Login_ and set the _default look and feel_ to _**New**_.
-
-#### 8. (Optional) Customising the login page
-
-To customise what the Auth0 login page looks like, go to _Branding_ -> _Universal Login_ and
-have fun. (Note: Always use the _**New**_ 'look and feel' for Clowdr to work
-properly.)
-
-#### 9. Configure your environment
-
-You can now resume the frontend setup by configuring your [Frontend environment
-variables](/frontend/README.md#frontend-configuration).
 
 ## Local Development
 

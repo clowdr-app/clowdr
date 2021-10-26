@@ -5,23 +5,24 @@ Eventually this may be split into multiple microservices.
 
 ## Pre-requisities
 
-1. [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-2. **Full Setup**: Follow the AWS setup instructions in
+1. **Full Setup**: Follow the AWS setup instructions in
    [aws/README.md](../../aws/README.md)
-   **Quick Setup**: Copy `services/actions/.env.example` to
-   `services/actions/.env`, edit the latter and set all variables starting
-   with `AWS` to `XXX`.
-   BCP: This will not actually work right now, but let's give it a try this way and see how much further we can get.
-3. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and
+   - **Quick Setup**: Copy `services/actions/.env.example` to
+     `services/actions/.env`, edit the latter and set all variables starting
+     with `AWS` to `XXX`.
+     BCP: This will not actually work right now, but let's give it a try this way
+     and see how much further we can get.
+1. **Full Setup**: Create a [SendGrid](https://www.sendgrid.com) account and
    an API key for it.
-4. Create a free [Vonage Video
+1. Create a free [Vonage Video
    API](https://www.vonage.co.uk/communications-apis/video/) account; then
    go to `Projects > Create New Project`, choose "Custom", and make a note
    of the API key that is generated.
-5. **Full Setup**: Deploy the AWS Image
+1. **Full Setup**: Deploy the AWS Image
    Handler as described [below](#deploying-the-image-handler).
-6. **Full Setup**: Create a Google Cloud project as described
+1. **Full Setup**: Create a Google Cloud project as described
    [below](#creating-a-google-cloud-project).
+1. **Production**: [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 
 ## Deploying the image handler
 
@@ -71,7 +72,7 @@ We use a Google Cloud project to provide access to the YouTube Data API with OAu
      deployment. **Quick setup**: Set all the environment variables related
      to AWS to `XXXX`.
    - `ChimeActionsUserAccessKeyId`, `ChimeActionsUserSecretAccessKey`, and `ChimeNotificationsTopic` are found in the `Outputs` tab for the `<prefix>-chime` stack that was deployed in `us-east-1 (N. Virginia)`, and most of the rest of the `AWS_...` environment variable values come from the `Outputs` for the `<prefix>-main` stack deployed to the default region.
-1. Use the Hasura Console to add your Sendgrid API credentials to the system configuration. Open the `system.Configuration` table and insert the following rows:
+1. Use the [Hasura Console](http://localhost:9695/console/) to add your Sendgrid API credentials and other required rows to the system configuration. Open the `system.Configuration` table (click the DATA tab at top, expand the `system` schema on the left, and click the `Configuration` table) and insert the rows listed below. **Production**: If running Clowdr in a production environment, you will need to insert rows into the `system.Configuration` table for all available keys. Refer to the `description` field of each key (in `system.ConfigurationKey`) for expected values for the remaining keys.
    | Key | Value |
    | ------- | ---------- |
    | `SENDGRID_API_KEY` | your SendGrid API key, as a JSON string (i.e. wrapped in double quotes) |

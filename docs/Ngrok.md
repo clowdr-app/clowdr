@@ -1,4 +1,44 @@
-# Notes about Ngrok
+# [ngrok](https://ngrok.com)
+
+The second alternative is ngrok. Ngrok is either free (with random, ephemeral subdomains) or \$8.25 per user
+per month (with custom domains).
+
+If you use the free version, you will have to perform some reconfiguration
+each time you relaunch ngrok. Additionally, Google OAuth (for YouTube
+integration) will not work properly, since it requires a verified domain.
+
+We have found that ngrok can be quite flaky.
+
+## Ngrok Setup (paid)
+
+TODO
+
+## Ngrok Setup (free)
+
+1. Create an ngrok account and note your auth token.
+1. Copy `ngrok.example.yml` to `ngrok.yml`.
+1. Set the `authtoken` and `region` (`us`, `eu`, `ap`, `au`, `sa`, `jp`, `in`)
+1. Remove the `hostname` line from each tunnel configuration - you will let
+   ngrok pick random subdomains instead.
+1. Start ngrok (`ngrok start -config=./ngrok.yaml auth actions`)
+
+**_Every time_** you start up for online (local) development, you will need
+to reconfigure Auth0 and Vonage as specified earlier. The domain format is
+`<ngrok-subdomain>.ngrok.io`.
+
+Additionally, ensure that the following env vars are set to use
+localhost-based, rather than public, URLs:
+
+- frontend
+  - `SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN`
+  - `SNOWPACK_PUBLIC_COMPANION_BASE_URL`
+- services/realtime
+  - `CORS_ORIGIN`
+
+When using free ngrok, access the frontend via its localhost URL
+(`http://localhost:3000`) rather than launching an ngrok tunnel for it. You
+could also launch the frontend tunnel, but you would need to update all the
+above environment variable each time the tunnel was restarted.
 
 ## Configuring an HTTPS (SSl/TLS) Ngrok Wildcard white label domain for use as the target of an Auth0 custom rule
 

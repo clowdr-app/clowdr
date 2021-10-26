@@ -11,7 +11,7 @@
         "run-services-auth": "npx foreman start --procfile ./Auth.Procfile -p 3004",
         "lint-staged": "lint-staged",
         "prepare": "node ./prepare.js",
-        "hasura:console-when-ready": "cd hasura && wait-on http-get://localhost:8080/v1/version && hasura console --console-port 9695",
+        "hasura:console-when-ready": "cd hasura && wait-on http-get://localhost:8080/v1/version && hasura console --console-port 9695 --envfile .env.local",
         "hasura:migrate": "cd hasura && hasura migrate apply --envfile=.env.local",
         "hasura:metadata": "cd hasura && hasura metadata apply --envfile=.env.local",
         "hasura:reload-metadata": "cd hasura && hasura metadata reload --envfile=.env.local"

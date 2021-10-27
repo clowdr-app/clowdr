@@ -1,4 +1,4 @@
-import { Box, Flex, Link, MenuDivider, MenuItem } from "@chakra-ui/react";
+import { Box, Flex, Link, MenuDivider, MenuItem, Text } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { Fragment, useEffect } from "react";
@@ -225,6 +225,14 @@ export default function LeftMenu(): JSX.Element {
                             showLabel={isExpanded}
                             imageSrc={maybeRegistrant.profile?.photoURL_50x50 ?? undefined}
                         >
+                            <Text px={2} fontSize="sm" fontWeight="bold">
+                                {maybeRegistrant.displayName}
+                            </Text>
+                            {maybeUser ? (
+                                <Text py={1} px={2} fontSize="sm" fontFamily="monospace">
+                                    {maybeUser?.email}
+                                </Text>
+                            ) : undefined}
                             <MenuItem
                                 ref={myStarredEventsButtonRef as React.RefObject<HTMLButtonElement>}
                                 onClick={myStarredEvents_OnOpen}

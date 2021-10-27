@@ -37131,6 +37131,13 @@ export type RegistrantByIdQueryVariables = Exact<{
 
 export type RegistrantByIdQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string>, readonly conferenceId: any, readonly displayName: string, readonly conferenceRole: Registrant_RegistrantRole_Enum, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean }> }> };
 
+export type RegistrantInvitedEmailAddressQueryVariables = Exact<{
+  registrantId: Scalars['uuid'];
+}>;
+
+
+export type RegistrantInvitedEmailAddressQuery = { readonly __typename?: 'query_root', readonly registrant_Invitation: ReadonlyArray<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
+
 export type UpdateProfileMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
   profile?: Maybe<Registrant_Profile_Set_Input>;
@@ -41538,6 +41545,18 @@ export const RegistrantByIdDocument = gql`
 export function useRegistrantByIdQuery(options: Omit<Urql.UseQueryArgs<RegistrantByIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<RegistrantByIdQuery>({ query: RegistrantByIdDocument, ...options });
 };
+export const RegistrantInvitedEmailAddressDocument = gql`
+    query RegistrantInvitedEmailAddress($registrantId: uuid!) {
+  registrant_Invitation(where: {registrantId: {_eq: $registrantId}}) {
+    id
+    invitedEmailAddress
+  }
+}
+    `;
+
+export function useRegistrantInvitedEmailAddressQuery(options: Omit<Urql.UseQueryArgs<RegistrantInvitedEmailAddressQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<RegistrantInvitedEmailAddressQuery>({ query: RegistrantInvitedEmailAddressDocument, ...options });
+};
 export const UpdateProfileDocument = gql`
     mutation UpdateProfile($registrantId: uuid!, $profile: registrant_Profile_set_input = {}) {
   update_registrant_Profile_by_pk(
@@ -42859,7 +42878,7 @@ export const PreshowChecklistDocument = gql`
     }
   }
   liveEventsWithoutContent: schedule_Event(
-    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}}
+    where: {endTime: {_gte: $now}, conferenceId: {_eq: $conferenceId}, intendedRoomModeName: {_in: [PRESENTATION, Q_AND_A]}, itemId: {_is_null: true}, enableRecording: {_eq: true}}
   ) {
     id
     name

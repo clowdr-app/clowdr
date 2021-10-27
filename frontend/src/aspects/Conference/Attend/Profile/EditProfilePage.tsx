@@ -30,6 +30,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { gql } from "urql";
 import {
     useRegistrantByIdQuery,
+    useRegistrantInvitedEmailAddressQuery,
     useUpdateProfileMutation,
     useUpdateRegistrantDisplayNameMutation,
 } from "../../../../generated/graphql";
@@ -95,6 +96,13 @@ gql`
     query RegistrantById($conferenceId: uuid!, $registrantId: uuid!) {
         registrant_Registrant(where: { id: { _eq: $registrantId }, conferenceId: { _eq: $conferenceId } }) {
             ...RegistrantData
+        }
+    }
+
+    query RegistrantInvitedEmailAddress($registrantId: uuid!) {
+        registrant_Invitation(where: { registrantId: { _eq: $registrantId } }) {
+            id
+            invitedEmailAddress
         }
     }
 
@@ -401,6 +409,12 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
         currentUser.user.id === registrant.userId ? "Edit your profile" : `Edit ${registrant.displayName}`
     );
 
+    const [invitation] = useRegistrantInvitedEmailAddressQuery({
+        variables: {
+            registrantId: registrant.id,
+        },
+    });
+
     return (
         <>
             {title}
@@ -477,6 +491,29 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     </Alert>
                 ) : undefined}
                 <EditProfilePitureForm registrant={registrant} />
+                <FormControl>
+                    <FormLabel fontWeight="bold" fontSize="1.2rem">
+                        Account login email address
+                    </FormLabel>
+                    <Input type="text" value={currentUser.user.email ?? ""} isDisabled />
+                    <FormHelperText>The email address you use to log in to your account.</FormHelperText>
+                </FormControl>
+                {invitation.data?.registrant_Invitation.length ? (
+                    <FormControl>
+                        <FormLabel fontWeight="bold" fontSize="1.2rem">
+                            Invitation email address
+                        </FormLabel>
+                        <Input
+                            type="text"
+                            value={invitation.data.registrant_Invitation[0].invitedEmailAddress}
+                            isDisabled
+                        />
+                        <FormHelperText>
+                            Your invitation for this conference was originally sent to this address. It is okay if this
+                            is different from your login address.
+                        </FormHelperText>
+                    </FormControl>
+                ) : undefined}
                 {bioField}
                 <BadgeInput
                     badges={editingRegistrant.profile.badges ?? []}

@@ -139,6 +139,7 @@ function CurrentUserProvider_IsAuthenticated({
 }) {
     const context = useShieldedHeaders({
         "X-Auth-Role": "user",
+        NoConferenceId: "true",
     });
     const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
         variables: {

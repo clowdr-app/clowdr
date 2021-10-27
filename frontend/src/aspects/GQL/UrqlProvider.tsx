@@ -88,7 +88,7 @@ function UrqlProviderInner({
                                 return operation;
                             }
 
-                            const fetchOptions =
+                            const fetchOptions: any =
                                 typeof operation.context.fetchOptions === "function"
                                     ? operation.context.fetchOptions()
                                     : operation.context.fetchOptions || {};
@@ -96,18 +96,24 @@ function UrqlProviderInner({
                             const headers: Record<string, string> = {
                                 "x-auth-role": authCtxRef.current.conferenceId
                                     ? "attendee"
-                                    : (fetchOptions as any)?.headers?.["x-auth-magic-token"]
+                                    : fetchOptions?.headers?.["x-auth-magic-token"]
                                     ? "unauthenticated"
                                     : "user",
-                                ...(authCtxRef.current.conferenceId && {
-                                    "x-auth-conference-id": authCtxRef.current.conferenceId,
-                                }),
-                                ...(authCtxRef.current.subconferenceId && {
-                                    "x-auth-subconference-id": authCtxRef.current.subconferenceId,
-                                }),
                             };
-                            for (const key in fetchOptions.headers) {
-                                headers[key.toLowerCase()] = (fetchOptions.headers as any)[key];
+                            if (!fetchOptions?.headers?.NoConferenceId) {
+                                if (authCtxRef.current.conferenceId) {
+                                    headers["x-auth-conference-id"] = authCtxRef.current.conferenceId;
+                                }
+                                if (authCtxRef.current.subconferenceId) {
+                                    headers["x-auth-subconference-id"] = authCtxRef.current.subconferenceId;
+                                }
+                            } else {
+                                delete fetchOptions.headers.NoConferenceId;
+                            }
+                            if (fetchOptions?.headers) {
+                                for (const key in fetchOptions.headers) {
+                                    headers[key.toLowerCase()] = fetchOptions.headers[key];
+                                }
                             }
                             headers.authorization = "Bearer " + authState.token;
 

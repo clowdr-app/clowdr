@@ -50,7 +50,6 @@ export default function SponsorBooths({ setAnySponsors }: { setAnySponsors?: (va
         variables: {
             conferenceId: conference.id,
         },
-        requestPolicy: "cache-and-network",
     });
 
     useEffect(() => {

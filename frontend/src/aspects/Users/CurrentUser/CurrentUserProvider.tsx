@@ -22,6 +22,7 @@ import useUserId from "../../Auth/useUserId";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import FAIcon from "../../Icons/FAIcon";
 import type { UserInfo } from "./useMaybeCurrentUser";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
@@ -136,10 +137,14 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "user",
+    });
     const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
+        context,
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 

@@ -246,7 +246,6 @@ export function ScheduleModal({
         variables: {
             conferenceId: conference.id,
         },
-        requestPolicy: "cache-and-network",
     });
     useEffect(() => {
         setAnySponsors?.(!!result.data && result.data.content_Item.length > 0);

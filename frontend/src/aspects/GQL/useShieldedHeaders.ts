@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { OperationContext } from "urql";
 
 export function useShieldedHeaders(headers: Record<string, string>): Partial<OperationContext> | undefined {
-    const [outHeaders, setOutHeaders] = useState<Record<string, string>>({});
+    const [outHeaders, setOutHeaders] = useState<Record<string, string>>(headers);
 
     useEffect(() => {
         const inKeys = Object.keys(headers);

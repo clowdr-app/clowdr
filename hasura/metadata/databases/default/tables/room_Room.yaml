@@ -193,6 +193,7 @@ insert_permissions:
     - colour
     - conferenceId
     - currentModeName
+    - id
     - managementModeName
     - name
     - originatingDataId

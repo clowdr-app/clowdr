@@ -94,22 +94,22 @@ function UrqlProviderInner({
                                     : operation.context.fetchOptions || {};
 
                             const headers: Record<string, string> = {
-                                "X-Auth-Role": authCtxRef.current.conferenceId
-                                    ? authCtxRef.current.isOnManagementPage
-                                        ? "organizer"
-                                        : "attendee"
-                                    : (fetchOptions as any)?.headers?.["X-Auth-Magic-Token"]
+                                "x-auth-role": authCtxRef.current.conferenceId
+                                    ? "attendee"
+                                    : (fetchOptions as any)?.headers?.["x-auth-magic-token"]
                                     ? "unauthenticated"
                                     : "user",
                                 ...(authCtxRef.current.conferenceId && {
-                                    "X-Auth-Conference-Id": authCtxRef.current.conferenceId,
+                                    "x-auth-conference-id": authCtxRef.current.conferenceId,
                                 }),
                                 ...(authCtxRef.current.subconferenceId && {
-                                    "X-Auth-Subconference-Id": authCtxRef.current.subconferenceId,
+                                    "x-auth-subconference-id": authCtxRef.current.subconferenceId,
                                 }),
-                                ...(fetchOptions.headers as Record<string, string>),
-                                Authorization: "Bearer " + authState.token,
                             };
+                            for (const key in fetchOptions.headers) {
+                                headers[key.toLowerCase()] = fetchOptions.headers[key];
+                            }
+                            headers.authorization = "Bearer " + authState.token;
 
                             return makeOperation(operation.kind, operation, {
                                 ...operation.context,

@@ -32,28 +32,30 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { OperationResult, UseMutationResponse, UseQueryState } from "urql";
 import { useClient } from "urql";
-import {
+import type {
     AddEventPeople_InsertEventPeopleMutation,
     AddEventPeople_InsertEventPeopleMutationVariables,
     AddEventPeople_InsertProgramPeopleMutation,
     AddEventPeople_InsertProgramPeopleMutationVariables,
     AddEventPeople_ItemPersonFragment,
-    AddEventPeople_SelectItemPeopleDocument,
     AddEventPeople_SelectItemPeopleQuery,
     AddEventPeople_SelectItemPeopleQueryVariables,
-    AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
     AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
     AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables,
     AddEventPeople_SelectRegistrantsQuery,
-    AddEventPeople_SelectRegistrants_ByGroupDocument,
     AddEventPeople_SelectRegistrants_ByGroupQuery,
     AddEventPeople_SelectRegistrants_ByGroupQueryVariables,
     Collection_ProgramPerson_Insert_Input,
     EventInfoFragment,
     Exact,
     RoomInfoFragment,
-    Schedule_EventProgramPersonRole_Enum,
     Schedule_EventProgramPerson_Insert_Input,
+} from "../../../../generated/graphql";
+import {
+    AddEventPeople_SelectItemPeopleDocument,
+    AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
+    AddEventPeople_SelectRegistrants_ByGroupDocument,
+    Schedule_EventProgramPersonRole_Enum,
     useAddEventPeople_InsertEventPeopleMutation,
     useAddEventPeople_InsertProgramPeopleMutation,
     useAddEventPeople_SelectGroupsQuery,

@@ -1,16 +1,6 @@
 import { LinkIcon } from "@chakra-ui/icons";
-import {
-    chakra,
-    ComponentWithAs,
-    Heading,
-    Icon,
-    IconProps,
-    List,
-    ListItem,
-    Text,
-    useColorModeValue,
-    VStack,
-} from "@chakra-ui/react";
+import type { ComponentWithAs, IconProps } from "@chakra-ui/react";
+import { chakra, Heading, Icon, List, ListItem, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 import type { RegistrantFieldsFragment } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";

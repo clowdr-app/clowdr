@@ -66,3 +66,43 @@ export async function getConference(conferenceId: string, refetchNow = false): P
 export async function invalidateCachedConference(conferenceId: string): Promise<void> {
     await ConferenceCache.delete(conferenceId);
 }
+
+export async function updateCachedConference(
+    conferenceId: string,
+    conferenceVisibilityLevel: Conference_VisibilityLevel_Enum,
+    createdBy: string
+): Promise<void> {
+    await ConferenceCache.update(
+        conferenceId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    conferenceVisibilityLevel,
+                    createdBy,
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}
+
+export async function updateCachedConferenceSubconferenceIds(
+    conferenceId: string,
+    updateSubconferenceIds: (subconferenceIds: string[]) => string[]
+): Promise<void> {
+    await ConferenceCache.update(
+        conferenceId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    subconferenceIds: updateSubconferenceIds(existing.subconferenceIds),
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}

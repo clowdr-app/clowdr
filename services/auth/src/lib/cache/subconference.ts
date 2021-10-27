@@ -61,3 +61,22 @@ export async function getSubconference(
 export async function invalidateCachedSubconference(subconferenceId: string): Promise<void> {
     await SubconferenceCache.delete(subconferenceId);
 }
+
+export async function updateCachedSubconference(
+    subconferenceId: string,
+    conferenceVisibilityLevel: Conference_VisibilityLevel_Enum
+): Promise<void> {
+    await SubconferenceCache.update(
+        subconferenceId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    conferenceVisibilityLevel,
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}

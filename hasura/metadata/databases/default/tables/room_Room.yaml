@@ -485,6 +485,25 @@ delete_permissions:
   role: room-admin
 event_triggers:
 - definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - subconferenceId
+      - managementModeName
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: AuthCache_Room
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{AUTH_BASE_URL}}/cache/update/room"
+- definition:
     enable_manual: true
     insert:
       columns: "*"

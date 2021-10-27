@@ -60,3 +60,24 @@ export async function getRoom(roomId: string, refetchNow = false): Promise<Room 
 export async function invalidateCachedRoom(roomId: string): Promise<void> {
     await RoomCache.delete(roomId);
 }
+
+export async function updateCachedRoom(
+    roomId: string,
+    managementModeName: Room_ManagementMode_Enum,
+    subconferenceId: string | null | undefined
+): Promise<void> {
+    await RoomCache.update(
+        roomId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    managementModeName,
+                    subconferenceId,
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}

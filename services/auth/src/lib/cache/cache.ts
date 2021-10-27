@@ -14,7 +14,7 @@ export class Cache<T> {
         return `${this.redisRootKey}:${itemKey}`;
     }
 
-    async get(itemKey: string, refetchNow = false, acquireLock = true): Promise<T | undefined> {
+    async get(itemKey: string, refetchNow = false, acquireLock = true, fetchIfNotFound = true): Promise<T | undefined> {
         const cacheKey = this.generateCacheKey(itemKey);
         const redisClient = await redisClientPool.acquire("lib/cache/cache/get");
         let redisClientReleased = false;
@@ -31,10 +31,14 @@ export class Cache<T> {
                 if (existingVal.value === "undefined" || refetchNow) {
                     if (Date.now() - fetchedAt < this.rateLimitPeriodMs) {
                         return existingVal.value === "undefined" ? undefined : this.parse(existingVal.value);
+                    } else if (!fetchIfNotFound) {
+                        return undefined;
                     }
                 } else {
                     return this.parse(existingVal.value);
                 }
+            } else if (!fetchIfNotFound) {
+                return undefined;
             }
 
             const lease = acquireLock ? await redlock.acquire(`locks:${cacheKey}`, 5000) : undefined;
@@ -89,11 +93,18 @@ export class Cache<T> {
         }
     }
 
-    async update(itemKey: string, value: (existing: T | undefined) => T | undefined): Promise<void> {
+    async update(
+        itemKey: string,
+        value: (existing: T | undefined) => T | undefined,
+        fetchIfNotFound: boolean
+    ): Promise<void> {
         const cacheKey = this.generateCacheKey(itemKey);
         const lease = await redlock.acquire(`locks:${cacheKey}`, 5000);
         try {
-            const existingValue = await this.get(itemKey, false, false);
+            const existingValue = await this.get(itemKey, false, false, fetchIfNotFound);
+            if (!fetchIfNotFound && existingValue === undefined) {
+                return;
+            }
             const newValue = value(existingValue);
             // console.info("New value", newValue);
             await this.set(itemKey, newValue, false);

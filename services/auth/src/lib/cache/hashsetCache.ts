@@ -80,8 +80,10 @@ export class HashsetCache {
                 if (value) {
                     // Clear existing fields else ones not present in the new value would persist
                     await redisClientP.del(redisClient)(cacheKey);
-                    await redisClientP.hmset(redisClient)(cacheKey, value);
-                    await redisClientP.expire(redisClient)(cacheKey, this.refetchAfterMs / 1000);
+                    if (Object.keys(value).length > 0) {
+                        await redisClientP.hmset(redisClient)(cacheKey, value);
+                        await redisClientP.expire(redisClient)(cacheKey, this.refetchAfterMs / 1000);
+                    }
                 } else {
                     await redisClientP.del(redisClient)(cacheKey);
                 }

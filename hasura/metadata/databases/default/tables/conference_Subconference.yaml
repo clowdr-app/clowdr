@@ -133,3 +133,22 @@ delete_permissions:
       conferenceId:
         _in: X-Hasura-Conference-Ids
   role: main-conference-organizer
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - conferenceVisibilityLevel
+  headers:
+  - name: X-Hasura-Event-Secret
+    value_from_env: EVENT_SECRET
+  name: AuthCache_Subconference
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{AUTH_BASE_URL}}/cache/update/subconference"

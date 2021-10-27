@@ -4,7 +4,8 @@ import {
     Room_ManagementMode_Enum,
     Room_PersonRole_Enum,
 } from "../generated/graphql";
-import { Conference, getConference } from "../lib/cache/conference";
+import type { Conference } from "../lib/cache/conference";
+import { getConference } from "../lib/cache/conference";
 import { ConferenceRoomCache } from "../lib/cache/conferenceRoom";
 import { getRegistrant } from "../lib/cache/registrant";
 import { getRoom } from "../lib/cache/room";

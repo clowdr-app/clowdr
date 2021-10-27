@@ -63,3 +63,30 @@ export async function getUser(userId: string, refetchNow = false): Promise<User 
 export async function invalidateCachedUser(userId: string): Promise<void> {
     await UserCache.delete(userId);
 }
+
+export async function updateCachedUserRegistrantIds(
+    userId: string,
+    updateRegistrantIds: (
+        registrantIds: {
+            id: string;
+            conferenceId: string;
+        }[]
+    ) => {
+        id: string;
+        conferenceId: string;
+    }[]
+): Promise<void> {
+    await UserCache.update(
+        userId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    registrantIds: updateRegistrantIds(existing.registrantIds),
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}

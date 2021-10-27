@@ -22,10 +22,12 @@ gql`
     }
 `;
 
+export type SubconferenceMembership = { id: string; subconferenceId: string; role: Registrant_RegistrantRole_Enum };
+
 export type Registrant = {
     id: string;
     conferenceRole: Registrant_RegistrantRole_Enum;
-    subconferenceMemberships: { id: string; subconferenceId: string; role: Registrant_RegistrantRole_Enum }[];
+    subconferenceMemberships: SubconferenceMembership[];
 };
 
 const RegistrantCache = new Cache<Registrant>(
@@ -68,4 +70,42 @@ export async function getRegistrant(registrantId: string, refetchNow = false): P
 
 export async function invalidateCachedRegistrant(registrantId: string): Promise<void> {
     await RegistrantCache.delete(registrantId);
+}
+
+export async function updateCachedRegistrant(
+    registrantId: string,
+    conferenceRole: Registrant_RegistrantRole_Enum
+): Promise<void> {
+    await RegistrantCache.update(
+        registrantId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    conferenceRole,
+                };
+            }
+            return existing;
+        },
+        false
+    );
+}
+
+export async function updateCachedRegistrantSubconferenceMemberships(
+    registrantId: string,
+    updateSubconferenceMemberships: (subconferenceMemberships: SubconferenceMembership[]) => SubconferenceMembership[]
+): Promise<void> {
+    await RegistrantCache.update(
+        registrantId,
+        (existing) => {
+            if (existing) {
+                return {
+                    ...existing,
+                    subconferenceMemberships: updateSubconferenceMemberships(existing.subconferenceMemberships),
+                };
+            }
+            return existing;
+        },
+        false
+    );
 }

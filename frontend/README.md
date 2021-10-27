@@ -1,33 +1,32 @@
-# Clowdr: Frontend
+# Midspace: Frontend
 
-React web app that forms the main Clowdr frontend.
+React web app that forms the main Midspace frontend.
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
 ## Pre-requisites
 
-1. `serve` tool (for testing production builds): `npm i -g serve`
+1. All other setup steps! Set up the frontend last.
 
 ## Setting up
 
-1. Follow the root README instructions for configuring Auth0. Then come back here.
-   BCP: Why not just swap steps 8 and 9 in the top-level setup?
-2. Copy the `frontend/.env.example` to a new `frontend/.env` file.
-3. Configure your `.env` file according to the [Frontend
+1. `cd frontend`
+1. Install npm packages: `npm i`
+1. `cp .env.example .env`
+1. Configure your `.env` file according to the [Frontend
    Configuration](#frontend-configuration) section below.
-4. Build and test the system locally (see [Local Development](#local-development)
+1. Run the VSCode task `Frontend -- GraphQL Codegen`.
+1. Build and test the system locally (see [Local Development](#local-development)
    below).
-5. **Full Setup**: If using Netlify, then:
-
+1. **Production**: If using Netlify, then:
    - Once you have set up Hasura Cloud, create a Netlify account and
      follow the steps below.
    - in Netlify, create a new site from Git.
-     - If you're not part of the core Clowdr team, create and use a fork of this
+     - If you're not part of the core Midspace team, create and use a fork of this
        (`clowdr-app/clowdr`) repository.
      - See _[Deployment to Netlify](#deployment-to-netlify)_ for instructions.
-
-6. If using Netlify, go back to Auth0 and add the Netlify app url(s) to the
-   application configuration (see instructions in root README).
+   - go back to Auth0 and add the Netlify app url(s) to the
+     application configuration (see instructions in root README).
 
 ## UI Components, Theming, and Icons
 
@@ -85,6 +84,7 @@ libraries that we use for writing better tests:
 
 ## Production builds
 
+- Install `serve` tool system-wide for testing production builds: `npm i -g serve`
 - Use the VSCode (build) task: `Frontend -- Production Build`
 - Use the VSCode task: `Frontend -- Serve Production Build`
 

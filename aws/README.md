@@ -9,28 +9,10 @@ You must set up AWS even when running a local development environment, as Midspa
 1. An [AWS](https://aws.amazon.com/) account.
    - Are you administrating the AWS account? Read [AWS Setup](../docs/aws-setup.md) first.
    - If you are using an AWS account administered by someone else, they should read the above article and provide you with credentials.
-1. The [AWS CLI](https://aws.amazon.com/cli/) and an appropriate system for managing your credentials securely.
-   - We strongly recommended to follow [the secure setup](#setting-up-aws) outlined below.
+1. The [AWS CLI](https://aws.amazon.com/cli/) and an appropriate system for managing your credentials securely, like [`aws-vault`](https://github.com/99designs/aws-vault).
+   - We strongly recommended to follow the secure setup outlined below.
 
-## Setting up
-
-1. `cd` into the `aws` folder
-1. Install npm modules: `npm i`
-1. Configure an env file for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
-   - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
-   - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
-1. Bootstrap your AWS account by running the `AWS -- Bootstrap account` VSCode task.
-
-### Deploying the main AWS stacks
-
-The stack `<prefix>-main` deploys the main infrastructure for the Clowdr app (e.g. S3 buckets, permissions for transcode/transcribe etc.)
-
-The stack `<prefix>-chime` deploys AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
-
-1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
-1. Make a note of the various output values. These are required as environment variables when setting up the actions service.
-
-## AWS CLI Setup
+## AWS CLI Setup and Authentication
 
 We strongly recommended to use `aws-vault` to securely manage AWS credentials on your development machine.
 
@@ -47,7 +29,7 @@ To configure a single profile/instance, follow these steps:
 
 1. Install [`aws-vault`](https://github.com/99designs/aws-vault).
    - On macOS, you can use `brew install aws-vault`.
-   - On Windows, you can use `choco install aws-vault`.
+   - On Windows, you can use `choco install aws-vault` or download the executable and place it in a folder that is listed in the `PATH` environment variable.
 1. Request (or generate, if you are an administrator) the SSO credentials to gain access to the AWS account where you want to deploy Midspace.
 
    - If you are deploying to a sub-account of a larger organisation, your administrator should do this for you.
@@ -85,7 +67,8 @@ To configure a single profile/instance, follow these steps:
    - `aws s3 ls --profile sandbox`: Uses the AWS CLI directly. AWS CLI calls out to the `credential_process` (in our case, `aws-vault`) to retrieve the needed credentials.
    - `aws-vault exec sandbox-internal -- aws s3 ls`: Uses `aws-vault` to retrieve the credentials and pass them into the AWS CLI.
 
-### An insecure method
+<details>
+<summary>An insecure method</summary>
 
 If you just want to get up and running as quickly as possible, and you do not care about security at all, you don't need to use the SSO setup outlined above. Note that the method outlined below will store long-term credentials on your local disk.
 
@@ -102,6 +85,54 @@ If you just want to get up and running as quickly as possible, and you do not ca
 
 1. Configure your `~/.aws/config` file to specify the region you want to
    deploy to by default.
+
+</details>
+
+## Setting up local env files
+
+1. `cd` into the `aws` folder
+1. Install npm modules: `npm i`
+1. `cp env.sandbox.example env.sandbox` and fill in environment variable values following the instructions in comments `env.sandbox`. It is recommended to generate a secure random `VONAGE_API_KEY`.
+1. Optional Configure additional env files for each instance of Midspace you want to deploy (e.g. personal sandbox, staging, production).
+   - The env file must be named `.env.<profile>`, where `<profile>` is the name of an AWS profile that you configured.
+   - You can deploy multiple Midspace instances to the same AWS account by setting a different `STACK_PREFIX` in the corresponding env file. This is, however, not recommended.
+1. Bootstrap your AWS account by running the `AWS -- Bootstrap account` VSCode task.
+
+## Deploying the main AWS CloudFormation stacks
+
+**Info:** The stack `<prefix>-main` contains the main infrastructure for the Midspace app (e.g. S3 buckets, permissions for transcode/transcribe etc.). The stack `<prefix>-chime` contains AWS infrastructure needed in `us-east-1` to communicate with the Chime control plane.
+
+1. Run the `AWS -- Deploy stacks` VSCode task to deploy the Midspace infrastructure to your account. You will be asked for the name of the AWS profile you want to deploy to.
+1. Make a note of the various output values. These are required as environment variables when setting up the actions service and other services. They can be viewed later by logging in to AWS CloudFormation, clicking the stack in question, and then clicking the Outputs tab.
+
+## Deploying the image handler
+
+We use the AWS `serverless-image-handler` template for processing uploaded profile images. These are the steps to deploy it:
+
+1. Create a new secret in AWS Secrets Manager: - you can use any secret name and secret key you like.
+   1. Select `Other type of secrets` and `Secret key/value`
+   1. You can use any key you like, perhaps `<prefix>-image-handler`.
+   1. Choose a secure random string for the value and make a note of it.
+   1. Click `Next` and choose any secret name you like that will associate it with this stack and the image handler.
+   1. Click `Next` again, leave automatic rotation disabled, and click `Next` again, and finally `Store`.
+1. In AWS CloudFormation, create a stack:
+   1. Click `Create Stack` -> `With New Resources`
+   1. Select `Template is ready` and `Template Source`: `Amazon S3 URL`. Use this template:
+   1. `https://solutions-reference.s3.amazonaws.com/serverless-image-handler/latest/serverless-image-handler.template`
+1. Choose the Stack name to be something unique, preferably using your `STACK_PREFIX` from i.e. `aws/.env.sandbox` or the relevant environment file.
+1. Set the parameters as follows:
+   - `CorsEnabled`: Yes
+   - `CorsOrigin`: `http://localhost` if running locally, or an appropriate origin.
+   - `SourceBuckets`: the name of your content bucket (i.e. `AWS_CONTENT_BUCKET_ID`. This is visible in the `Outputs` tab for your `<prefix>-main` stack in the CloudFormation console.)
+   - `DeployDemoUI`: No
+   - `LogRetentionPeriod`: 1
+   - `EnableSignature`: Yes
+   - `SecretsManagerSecret`: the name of the secret you created earlier
+   - `SecretsManagerKey`: the key of the secret you created earlier
+   - `EnableDefaultFallbackImage`: No
+   - `AutoWebP`: Yes
+1. Deploy the stack and wait for creation to complete.
+1. Make a note of the `ApiEndpoint` output.
 
 ## Useful commands
 

@@ -30,7 +30,7 @@ services:
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
       HASURA_GRAPHQL_AUTH_HOOK: ${HASURA_GRAPHQL_AUTH_HOOK}
-      HASURA_GRAPHQL_AUTH_HOOK_MODE: "POST"
+      HASURA_GRAPHQL_AUTH_HOOK_MODE: GET
   rabbitmq:
     image: rabbitmq:3.8.14-management
     hostname: rabbitmq-1

@@ -48,7 +48,6 @@ function formatArrayForHasuraHeader(values: string | string[]): string {
 }
 
 export async function handleAuthWebhook(
-    _rawPayload: AuthPayload,
     verifiedParams: Partial<{ userId: string }>,
     unverifiedParams: Partial<{
         conferenceId: string;
@@ -60,7 +59,7 @@ export async function handleAuthWebhook(
         includeRoomIds: boolean;
     }>
 ): Promise<false | Partial<Record<HasuraHeaders, string>>> {
-    console.log("Auth webhook inputs", { _rawPayload, verifiedParams, unverifiedParams });
+    console.log("Auth webhook inputs", { verifiedParams, unverifiedParams });
 
     // TODO: Do we want to cache the outcome of this logic?
     //          And if so, what is the invalidation strategy?

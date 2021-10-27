@@ -4,7 +4,6 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 import fetch from "node-fetch";
-import { assertType } from "typescript-is";
 import { handleAuthWebhook } from "../http-handlers/hasura";
 
 export const router = express.Router();
@@ -40,44 +39,27 @@ async function getOpenIdConfig(): Promise<{
     };
 }
 
-// Note: The "Import Content/Schedule" pages caused body parser to regularly hit
-// the default 100kb limit. 5mb should be enough but for a very large conference
-// it may still fail. This manifests as an `"Invalid response from authorization hook"`
-// error response from Hasura to the browser.
-router.post("/auth", json({ limit: "20mb" }) as any, async (req: Request, res: Response) => {
-    // console.log("Auth request started");
-
-    try {
-        assertType<AuthPayload>(req.body);
-    } catch (e) {
-        console.error(`${req.originalUrl}: received incorrect payload`, e);
-        res.status(500).json("Unexpected payload");
-        return;
-    }
-
-    const payload: AuthPayload = req.body;
-    // console.log("Auth payload", JSON.stringify(payload));
-
+router.get("/auth", json() as any, async (req: Request, res: Response) => {
     try {
         const { openIdConfig, jwksClient } = await getOpenIdConfig();
 
         const getHeader = (normalcaseHeaderName: string): string | undefined => {
-            if (payload.headers[normalcaseHeaderName]) {
-                const header = payload.headers[normalcaseHeaderName];
+            if (req.headers[normalcaseHeaderName]) {
+                const header = req.headers[normalcaseHeaderName];
                 if (typeof header === "string" && header.length) {
                     return header;
                 }
             }
             const lowercaseHeaderName = normalcaseHeaderName.toLowerCase();
-            if (payload.headers[lowercaseHeaderName]) {
-                const header = payload.headers[lowercaseHeaderName];
+            if (req.headers[lowercaseHeaderName]) {
+                const header = req.headers[lowercaseHeaderName];
                 if (typeof header === "string" && header.length) {
                     return header;
                 }
             }
             const uppercaseHeaderName = normalcaseHeaderName.toUpperCase();
-            if (payload.headers[uppercaseHeaderName]) {
-                const header = payload.headers[uppercaseHeaderName];
+            if (req.headers[uppercaseHeaderName]) {
+                const header = req.headers[uppercaseHeaderName];
                 if (typeof header === "string" && header.length) {
                     return header;
                 }
@@ -115,7 +97,6 @@ router.post("/auth", json({ limit: "20mb" }) as any, async (req: Request, res: R
         const includeRoomIds = getHeader("X-Auth-Include-Room-Ids");
 
         const result = await handleAuthWebhook(
-            payload,
             { userId },
             {
                 conferenceId,

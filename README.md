@@ -32,7 +32,7 @@ this streamlined path is likely to take you a day or two.
 
 To test changes that affect other parts of the platform, skip the steps
 marked **Quick Setup** and follow steps marked **Full Setup**. To deploy
-Clowder publicly or run your own conference on Clowder, follow the steps
+Midspace publicly or run your own conference on Midspace, follow the steps
 marked **Production** as well.
 
 ## Local Software Installation

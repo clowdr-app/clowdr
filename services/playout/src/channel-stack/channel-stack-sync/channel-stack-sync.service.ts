@@ -148,8 +148,8 @@ export class ChannelStackSyncService {
             }
         `;
 
-        // Look for rooms that have no events ending since at least 24 hours ago
-        const past = sub(new Date(), { hours: 24 });
+        // Look for rooms that have no events ending since at least 6 hours ago
+        const past = sub(new Date(), { hours: 6 });
 
         const result = await this.graphQlService.apolloClient.query({
             query: GetObsoleteChannelStacksDocument,

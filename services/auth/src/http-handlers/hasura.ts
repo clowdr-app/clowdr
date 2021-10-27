@@ -4,7 +4,7 @@ import {
     Room_ManagementMode_Enum,
     Room_PersonRole_Enum,
 } from "../generated/graphql";
-import { getConference } from "../lib/cache/conference";
+import { Conference, getConference } from "../lib/cache/conference";
 import { ConferenceRoomCache } from "../lib/cache/conferenceRoom";
 import { getRegistrant } from "../lib/cache/registrant";
 import { getRoom } from "../lib/cache/room";
@@ -93,7 +93,7 @@ export async function handleAuthWebhook(
         };
     }
 
-    if (!verifiedParams.userId?.length) {
+    if (!verifiedParams.userId?.length || unverifiedParams.role === HasuraRoleNames.Unauthenticated) {
         const result: Partial<Record<HasuraHeaders, string>> = {
             [HasuraHeaders.Role]: HasuraRoleNames.Unauthenticated,
             [HasuraHeaders.ConferenceIds]: formatArrayForHasuraHeader([]),
@@ -104,27 +104,7 @@ export async function handleAuthWebhook(
             const conference = await getConference(unverifiedParams.conferenceId);
 
             if (conference) {
-                if (conference.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
-                    result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
-
-                    if (unverifiedParams.subconferenceId) {
-                        const subconference = await getSubconference(unverifiedParams.subconferenceId);
-
-                        if (subconference?.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
-                            result[HasuraHeaders.SubconferenceIds] = formatArrayForHasuraHeader(subconference.id);
-                        }
-                    } else {
-                        // All public subconferences
-                        const publicSubconferenceIds: string[] = [];
-                        for (const subconferenceId of conference.subconferenceIds) {
-                            const subconference = await getSubconference(subconferenceId);
-                            if (subconference?.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
-                                publicSubconferenceIds.push(subconference.id);
-                            }
-                        }
-                        result[HasuraHeaders.SubconferenceIds] = formatArrayForHasuraHeader(publicSubconferenceIds);
-                    }
-                }
+                await evaluateUnauthenticatedConference(conference, result, unverifiedParams);
             }
         }
 
@@ -132,7 +112,7 @@ export async function handleAuthWebhook(
     } else if (verifiedParams.userId?.length) {
         const result: Partial<Record<HasuraHeaders, string>> = {};
         const allowedRoles: HasuraRoleNames[] = [];
-        const requestedRole = (unverifiedParams.role ?? HasuraRoleNames.User) as HasuraRoleNames;
+        let requestedRole = (unverifiedParams.role ?? HasuraRoleNames.User) as HasuraRoleNames;
 
         const user = await getUser(verifiedParams.userId);
         if (user) {
@@ -405,10 +385,21 @@ export async function handleAuthWebhook(
                     }
                 } else {
                     const conference = await getConference(unverifiedParams.conferenceId);
-                    if (conference?.createdBy === user.id) {
-                        allowedRoles.push(HasuraRoleNames.Organizer);
-                        allowedRoles.push(HasuraRoleNames.MainConferenceOrganizer);
-                        result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
+                    if (conference) {
+                        if (conference.createdBy === user.id) {
+                            allowedRoles.push(HasuraRoleNames.Organizer);
+                            allowedRoles.push(HasuraRoleNames.MainConferenceOrganizer);
+                            result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
+                        } else {
+                            result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader([]);
+                            result[HasuraHeaders.SubconferenceIds] = formatArrayForHasuraHeader([]);
+                            if (await evaluateUnauthenticatedConference(conference, result, unverifiedParams)) {
+                                allowedRoles.push(HasuraRoleNames.Unauthenticated);
+                                requestedRole = HasuraRoleNames.Unauthenticated;
+                            } else {
+                                return false;
+                            }
+                        }
                     } else {
                         return false;
                     }
@@ -430,5 +421,43 @@ export async function handleAuthWebhook(
         return result;
     }
 
+    return false;
+}
+async function evaluateUnauthenticatedConference(
+    conference: Conference,
+    result: Partial<Record<HasuraHeaders, string>>,
+    unverifiedParams: Partial<{
+        conferenceId: string;
+        subconferenceId: string;
+        roomId: string;
+        magicToken: string;
+        inviteCode: string;
+        role: string;
+        includeRoomIds: boolean;
+    }>
+): Promise<boolean> {
+    if (conference.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
+        result[HasuraHeaders.ConferenceIds] = formatArrayForHasuraHeader(conference.id);
+
+        if (unverifiedParams.subconferenceId) {
+            const subconference = await getSubconference(unverifiedParams.subconferenceId);
+
+            if (subconference?.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
+                result[HasuraHeaders.SubconferenceIds] = formatArrayForHasuraHeader(subconference.id);
+                return true;
+            }
+        } else {
+            // All public subconferences
+            const publicSubconferenceIds: string[] = [];
+            for (const subconferenceId of conference.subconferenceIds) {
+                const subconference = await getSubconference(subconferenceId);
+                if (subconference?.conferenceVisibilityLevel === Conference_VisibilityLevel_Enum.Public) {
+                    publicSubconferenceIds.push(subconference.id);
+                }
+            }
+            result[HasuraHeaders.SubconferenceIds] = formatArrayForHasuraHeader(publicSubconferenceIds);
+            return true;
+        }
+    }
     return false;
 }

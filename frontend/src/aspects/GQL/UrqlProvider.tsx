@@ -63,6 +63,8 @@ function UrqlProviderInner({
     // used imperatively within the operation formation function.
     authCtxRef.current = authParams;
 
+    const loadedAt = useMemo(() => Date.now(), []);
+
     const connect = useCallback(
         async (cb?: () => void) => {
             if (!isReconnecting.current) {
@@ -133,7 +135,7 @@ function UrqlProviderInner({
                             dedupExchange,
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
-                                shouldUpgrade: () => true,
+                                shouldUpgrade: () => Date.now() - loadedAt > 30 * 1000,
                             }),
                             cacheExchange<GraphCacheConfig>({
                                 keys: {
@@ -179,7 +181,7 @@ function UrqlProviderInner({
                 }
             }
         },
-        [getAccessTokenSilently, isAuthenticated]
+        [getAccessTokenSilently, isAuthenticated, loadedAt]
     );
 
     useEffect(() => {

@@ -32,6 +32,7 @@ import { gql } from "urql";
 import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
@@ -135,10 +136,14 @@ function JSDateToExcelDate(inDate: Date) {
 
 export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [statsResponse] = useConferenceStatsQuery({
         variables: {
             id: conference.id,
         },
+        context,
     });
 
     const title = useTitle(`Analytics for ${conference.shortName}`);

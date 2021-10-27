@@ -129,19 +129,28 @@ export default function ConfigureQueueModal({
     const toast = useToast();
     const onUpdate = useCallback(async () => {
         try {
-            await update({
-                id: initialQueue.id,
-                object: {
-                    name,
-                    algorithm,
-                    endAt: endAt.toISOString(),
-                    maxRegistrantsPerRoom: maxRegistrants,
-                    roomDurationMinutes,
-                    startAt: startAt.toISOString(),
-                    targetRegistrantsPerRoom: targetRegistrants,
-                    waitRoomMaxDurationSeconds: maxWait,
+            await update(
+                {
+                    id: initialQueue.id,
+                    object: {
+                        name,
+                        algorithm,
+                        endAt: endAt.toISOString(),
+                        maxRegistrantsPerRoom: maxRegistrants,
+                        roomDurationMinutes,
+                        startAt: startAt.toISOString(),
+                        targetRegistrantsPerRoom: targetRegistrants,
+                        waitRoomMaxDurationSeconds: maxWait,
+                    },
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             onClose();
         } catch (e) {

@@ -9,6 +9,7 @@ import {
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
 import QueryWrapper from "../../../GQL/QueryWrapper";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 
 gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -25,10 +26,14 @@ gql`
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId,
         },
+        context,
     });
 
     return (

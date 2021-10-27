@@ -55,6 +55,7 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { addRegistrantsToEvent } from "./BatchAddEventPeople";
@@ -113,10 +114,14 @@ export function AddEventProgramPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
             conferenceId: event.conferenceId,
         },
+        context,
     });
     const registrantOptions = useMemo(
         () =>
@@ -175,9 +180,19 @@ export function AddEventProgramPerson_RegistrantModal({
                         .query<
                             AddEventPeople_SelectProgramPeople_ByRegistrantQuery,
                             AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables
-                        >(AddEventPeople_SelectProgramPeople_ByRegistrantDocument, {
-                            registrantIds,
-                        })
+                        >(
+                            AddEventPeople_SelectProgramPeople_ByRegistrantDocument,
+                            {
+                                registrantIds,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        )
                         .toPromise(),
                 insertProgramPeople,
                 event.conferenceId,
@@ -509,27 +524,54 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                             personId: record.personId,
                                             roleName: record.roleName,
                                         };
-                                        await insertEventProgramPerson({
-                                            newEventProgramPerson,
-                                        });
+                                        await insertEventProgramPerson(
+                                            {
+                                                newEventProgramPerson,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 update={{
                                     ongoing: updateEventProgramPersonResponse.fetching,
                                     start: (record) => {
-                                        updateEventProgramPerson({
-                                            id: record.id,
-                                            roleName: record.roleName,
-                                            personId: record.personId,
-                                        });
+                                        updateEventProgramPerson(
+                                            {
+                                                id: record.id,
+                                                roleName: record.roleName,
+                                                personId: record.personId,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 delete={{
                                     ongoing: deleteEventProgramPersonsResponse.fetching,
                                     start: (keys) => {
-                                        deleteEventProgramPersons({
-                                            deleteEventPeopleIds: keys,
-                                        });
+                                        deleteEventProgramPersons(
+                                            {
+                                                deleteEventPeopleIds: keys,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     },
                                 }}
                                 alert={

@@ -13,6 +13,7 @@ import {
 } from "../../../../../generated/graphql";
 import usePolling from "../../../../Generic/usePolling";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import { useConference } from "../../../useConference";
@@ -54,11 +55,15 @@ gql`
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [existingJobsResult, refetchExistingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "network-only",
+        context,
     });
     usePolling(refetchExistingJobsResult, 20000);
 

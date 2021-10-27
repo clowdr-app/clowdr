@@ -34,6 +34,7 @@ import {
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import CreateContinuationModal from "./CreateContinuationModal";
 
@@ -98,10 +99,14 @@ export default function ContinuationsEditor({
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {
             fromId: eventId ?? shufflePeriodId,
         },
+        context,
     });
 
     const [showExplanation, setShowExplanation] = useRestorableState<boolean>(
@@ -205,19 +210,37 @@ export default function ContinuationsEditor({
                                         isChecked={isActiveChoice}
                                         onChange={(ev) => {
                                             if (ev.target.checked) {
-                                                updateMany({
-                                                    ids: continuations.map((x) => x.id),
-                                                    object: {
-                                                        isActiveChoice: true,
+                                                updateMany(
+                                                    {
+                                                        ids: continuations.map((x) => x.id),
+                                                        object: {
+                                                            isActiveChoice: true,
+                                                        },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             } else {
-                                                updateMany({
-                                                    ids: continuations.map((x) => x.id),
-                                                    object: {
-                                                        isActiveChoice: false,
+                                                updateMany(
+                                                    {
+                                                        ids: continuations.map((x) => x.id),
+                                                        object: {
+                                                            isActiveChoice: false,
+                                                        },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }
                                         }}
                                     />
@@ -269,19 +292,37 @@ function ContinuationOption({
                         size="xs"
                         isDisabled={!previousOption}
                         onClick={() => {
-                            update({
-                                id: option.id,
-                                object: {
-                                    priority: idx - 1,
+                            update(
+                                {
+                                    id: option.id,
+                                    object: {
+                                        priority: idx - 1,
+                                    },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
 
-                            update({
-                                id: previousOption?.id,
-                                object: {
-                                    priority: idx,
+                            update(
+                                {
+                                    id: previousOption?.id,
+                                    object: {
+                                        priority: idx,
+                                    },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
                         }}
                     >
                         <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -290,19 +331,37 @@ function ContinuationOption({
                         size="xs"
                         isDisabled={!nextOption}
                         onClick={() => {
-                            update({
-                                id: option.id,
-                                object: {
-                                    priority: idx + 1,
+                            update(
+                                {
+                                    id: option.id,
+                                    object: {
+                                        priority: idx + 1,
+                                    },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
 
-                            update({
-                                id: nextOption?.id,
-                                object: {
-                                    priority: idx,
+                            update(
+                                {
+                                    id: nextOption?.id,
+                                    object: {
+                                        priority: idx,
+                                    },
                                 },
-                            });
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
                         }}
                     >
                         <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
@@ -343,12 +402,21 @@ function ContinuationOption({
                                 onChangeComplete={(c) => {
                                     const cStr = `rgba(${c.rgb.r},${c.rgb.g},${c.rgb.b},1)`;
                                     setLocalColour(cStr);
-                                    update({
-                                        id: option.id,
-                                        object: {
-                                            colour: cStr,
+                                    update(
+                                        {
+                                            id: option.id,
+                                            object: {
+                                                colour: cStr,
+                                            },
                                         },
-                                    });
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             />
                         </Box>
@@ -362,9 +430,18 @@ function ContinuationOption({
                     isDisabled={deleteResponse.fetching}
                     onClick={async () => {
                         try {
-                            deleteOp({
-                                ids: [option.id],
-                            });
+                            deleteOp(
+                                {
+                                    ids: [option.id],
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
                         } catch (e) {
                             toast({
                                 title: "Error deleting continuation",

@@ -56,6 +56,7 @@ import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -299,12 +300,16 @@ export default function ManageContentV2(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags }, refetchAllTags] =
         useManageContent_SelectAllTagsQuery({
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(errorAllTags, false);
 
@@ -314,6 +319,7 @@ export default function ManageContentV2(): JSX.Element {
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(errorAllExhibitions, false);
 
@@ -323,6 +329,7 @@ export default function ManageContentV2(): JSX.Element {
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(errorAllItems, false);
     const data = useMemo(() => [...(allItems?.content_Item ?? [])], [allItems?.content_Item]);
@@ -657,16 +664,25 @@ export default function ManageContentV2(): JSX.Element {
                 } as ManageContent_ItemFragment),
             makeWhole: (d) => d as ManageContent_ItemFragment,
             start: (record) => {
-                insertItem({
-                    item: {
-                        conferenceId: record.conferenceId,
-                        id: record.id,
-                        title: record.title,
-                        shortTitle: record.shortTitle,
-                        typeName: record.typeName,
+                insertItem(
+                    {
+                        item: {
+                            conferenceId: record.conferenceId,
+                            id: record.id,
+                            title: record.title,
+                            shortTitle: record.shortTitle,
+                            typeName: record.typeName,
+                        },
+                        itemTags: record.itemTags,
                     },
-                    itemTags: record.itemTags,
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [conference.id, insertItem, insertItemResponse.fetching]
@@ -687,15 +703,24 @@ export default function ManageContentV2(): JSX.Element {
                     shortTitle: record.shortTitle,
                     typeName: record.typeName,
                 };
-                updateItem({
-                    id: record.id,
-                    item: itemUpdateInput,
-                    tags: record.itemTags.map((x) => ({
-                        itemId: x.itemId,
-                        tagId: x.tagId,
-                    })),
-                    tagIds: record.itemTags.map((x) => x.tagId),
-                });
+                updateItem(
+                    {
+                        id: record.id,
+                        item: itemUpdateInput,
+                        tags: record.itemTags.map((x) => ({
+                            itemId: x.itemId,
+                            tagId: x.tagId,
+                        })),
+                        tagIds: record.itemTags.map((x) => x.tagId),
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [updateItem, updateItemResponse.fetching]
@@ -711,9 +736,18 @@ export default function ManageContentV2(): JSX.Element {
         () => ({
             ongoing: deleteItemsResponse.fetching,
             start: (keys) => {
-                deleteItems({
-                    ids: keys,
-                });
+                deleteItems(
+                    {
+                        ids: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteItems, deleteItemsResponse.fetching]
@@ -834,9 +868,19 @@ export default function ManageContentV2(): JSX.Element {
                             .query<
                                 ManageContent_SelectItemsForExportQuery,
                                 ManageContent_SelectItemsForExportQueryVariables
-                            >(ManageContent_SelectItemsForExportDocument, {
-                                itemIds: dataToExport.map((x) => x.id),
-                            })
+                            >(
+                                ManageContent_SelectItemsForExportDocument,
+                                {
+                                    itemIds: dataToExport.map((x) => x.id),
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            )
                             .toPromise();
 
                         if (contentForExport.data) {

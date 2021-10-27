@@ -26,6 +26,7 @@ import {
     useCombineVideosModal_GetCombineVideosJobQuery,
     useCombineVideosModal_GetElementsQuery,
 } from "../../../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import useCurrentUser from "../../../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../../../useConference";
 
@@ -112,11 +113,15 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "network-only",
+        context,
     });
 
     const [elementsResponse] = useCombineVideosModal_GetElementsQuery({
@@ -125,6 +130,7 @@ function ModalInner({
             elementIds: elementIds_Flat,
         },
         requestPolicy: "network-only",
+        context,
     });
 
     const alreadyBeingCombined = useMemo(() => {
@@ -194,12 +200,21 @@ function ModalInner({
                     const data: CombineVideosJobDataBlob = {
                         inputElements: parts,
                     };
-                    const result = await mutate({
-                        conferenceId: conference.id,
-                        createdByRegistrantId: user.registrants[0].id,
-                        outputName: "Combined video",
-                        data,
-                    });
+                    const result = await mutate(
+                        {
+                            conferenceId: conference.id,
+                            createdByRegistrantId: user.registrants[0].id,
+                            outputName: "Combined video",
+                            data,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "organizer",
+                                },
+                            },
+                        }
+                    );
 
                     if (!result.data?.insert_job_queues_CombineVideosJob_one) {
                         throw new Error("Failed to create CombineVideosJob");

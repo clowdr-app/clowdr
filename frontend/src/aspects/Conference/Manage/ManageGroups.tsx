@@ -12,6 +12,7 @@ import type { CRUDTableProps, PrimaryField, UpdateResult } from "../../CRUDTable
 import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireRole from "../RequireRole";
@@ -68,12 +69,16 @@ export default function ManageGroups(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }, refetchAllGroups] =
         useSelectAllGroupsQuery({
             requestPolicy: "network-only",
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(errorAllGroups, false);
 
@@ -243,17 +248,26 @@ export default function ManageGroups(): JSX.Element {
 
                             let createDeleteGroupsResult;
                             try {
-                                createDeleteGroupsResult = await createDeleteGroupsMutation({
-                                    deleteGroupIds: Array.from(deletedKeys.values()),
-                                    insertGroups: Array.from(newKeys.values()).map((key) => {
-                                        const item = allGroupsMap.get(key);
-                                        assert(item);
-                                        return {
-                                            conferenceId: conference.id,
-                                            name: item.name,
-                                        };
-                                    }),
-                                });
+                                createDeleteGroupsResult = await createDeleteGroupsMutation(
+                                    {
+                                        deleteGroupIds: Array.from(deletedKeys.values()),
+                                        insertGroups: Array.from(newKeys.values()).map((key) => {
+                                            const item = allGroupsMap.get(key);
+                                            assert(item);
+                                            return {
+                                                conferenceId: conference.id,
+                                                name: item.name,
+                                            };
+                                        }),
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                             } catch (e) {
                                 createDeleteGroupsResult = {
                                     error: [e],
@@ -286,10 +300,19 @@ export default function ManageGroups(): JSX.Element {
                                         assert(item);
                                         let result: any;
                                         try {
-                                            result = await updateGroupMutation({
-                                                groupId: item.id,
-                                                groupName: item.name,
-                                            });
+                                            result = await updateGroupMutation(
+                                                {
+                                                    groupId: item.id,
+                                                    groupName: item.name,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            "X-Auth-Role": "organizer",
+                                                        },
+                                                    },
+                                                }
+                                            );
                                         } catch (e) {
                                             result = {
                                                 error: [e],

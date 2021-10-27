@@ -7,6 +7,7 @@ import {
     useEventVonageControls_GetEventsQuery,
     useEventVonageControls_StopEventBroadcastMutation,
 } from "../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 
 gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
@@ -29,10 +30,14 @@ gql`
 `;
 
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ data }] = useEventVonageControls_GetEventsQuery({
         variables: {
             conferenceId,
         },
+        context,
     });
 
     const [, stopEventBroadcastMutation] = useEventVonageControls_StopEventBroadcastMutation();
@@ -58,9 +63,18 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                     if (!values.eventId) {
                         throw new Error("No event selected");
                     }
-                    const result = await stopEventBroadcastMutation({
-                        eventId: values.eventId,
-                    });
+                    const result = await stopEventBroadcastMutation(
+                        {
+                            eventId: values.eventId,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "main-conference-organizer",
+                                },
+                            },
+                        }
+                    );
 
                     if (result.data?.stopEventBroadcast) {
                         toast({

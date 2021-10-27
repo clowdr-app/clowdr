@@ -37,16 +37,21 @@ import {
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
     const { conferencePath } = useAuthParameters();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
             itemId,
         },
+        context,
     });
     const itemPeople = itemPeopleResponse.data?.content_ItemProgramPerson;
     const itemPeopleIds = useMemo(() => itemPeople?.map((x) => x.id), [itemPeople]);
@@ -125,10 +130,14 @@ function AddItemPersonBody({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<string>("AUTHOR");
@@ -191,12 +200,21 @@ function AddItemPersonBody({
                         isLoading={insertItemPersonResponse.fetching}
                         onClick={async () => {
                             try {
-                                await insertItemPerson({
-                                    itemId,
-                                    personId: selectedPersonId,
-                                    roleName: selectedRole,
-                                    priority: existingPeopleIds.length,
-                                });
+                                await insertItemPerson(
+                                    {
+                                        itemId,
+                                        personId: selectedPersonId,
+                                        roleName: selectedRole,
+                                        priority: existingPeopleIds.length,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
 
                                 onClose();
                             } catch (e) {
@@ -299,17 +317,35 @@ function ItemPersonsList({
                                             onClick={() => {
                                                 const previousItemProgramPerson = sortedReps[idx - 1];
 
-                                                updateItemProgramPerson({
-                                                    itemPersonId: itemProgramPerson.id,
-                                                    priority: idx - 1,
-                                                    roleName: itemProgramPerson.roleName,
-                                                });
+                                                updateItemProgramPerson(
+                                                    {
+                                                        itemPersonId: itemProgramPerson.id,
+                                                        priority: idx - 1,
+                                                        roleName: itemProgramPerson.roleName,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
-                                                updateItemProgramPerson({
-                                                    itemPersonId: previousItemProgramPerson.id,
-                                                    priority: idx,
-                                                    roleName: previousItemProgramPerson.roleName,
-                                                });
+                                                updateItemProgramPerson(
+                                                    {
+                                                        itemPersonId: previousItemProgramPerson.id,
+                                                        priority: idx,
+                                                        roleName: previousItemProgramPerson.roleName,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -324,17 +360,35 @@ function ItemPersonsList({
                                             onClick={() => {
                                                 const previousItemProgramPerson = sortedReps[idx + 1];
 
-                                                updateItemProgramPerson({
-                                                    itemPersonId: itemProgramPerson.id,
-                                                    priority: idx + 1,
-                                                    roleName: itemProgramPerson.roleName,
-                                                });
+                                                updateItemProgramPerson(
+                                                    {
+                                                        itemPersonId: itemProgramPerson.id,
+                                                        priority: idx + 1,
+                                                        roleName: itemProgramPerson.roleName,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
-                                                updateItemProgramPerson({
-                                                    itemPersonId: previousItemProgramPerson.id,
-                                                    priority: idx,
-                                                    roleName: previousItemProgramPerson.roleName,
-                                                });
+                                                updateItemProgramPerson(
+                                                    {
+                                                        itemPersonId: previousItemProgramPerson.id,
+                                                        priority: idx,
+                                                        roleName: previousItemProgramPerson.roleName,
+                                                    },
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
                                             }}
                                         >
                                             <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
@@ -378,11 +432,20 @@ function ItemPersonsList({
                                     w="auto"
                                     isDisabled={updateItemProgramPersonResponse.fetching}
                                     onChange={(ev) => {
-                                        updateItemProgramPerson({
-                                            itemPersonId: itemProgramPerson.id,
-                                            priority: itemProgramPerson.priority ?? idx,
-                                            roleName: ev.target.value,
-                                        });
+                                        updateItemProgramPerson(
+                                            {
+                                                itemPersonId: itemProgramPerson.id,
+                                                priority: itemProgramPerson.priority ?? idx,
+                                                roleName: ev.target.value,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     }}
                                     minW={"5em"}
                                 >
@@ -401,9 +464,18 @@ function ItemPersonsList({
                                     isDisabled={deleteItemPersonResponse.fetching}
                                     onClick={async () => {
                                         try {
-                                            deleteItemPerson({
-                                                itemPersonId: itemProgramPerson.id,
-                                            });
+                                            deleteItemPerson(
+                                                {
+                                                    itemPersonId: itemProgramPerson.id,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            "X-Auth-Role": "organizer",
+                                                        },
+                                                    },
+                                                }
+                                            );
                                         } catch (e) {
                                             toast({
                                                 title: "Error unlinking person",

@@ -18,6 +18,7 @@ import {
     useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery,
 } from "../../../../../../generated/graphql";
 import CenteredSpinner from "../../../../../Chakra/CenteredSpinner";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { useConference } from "../../../../useConference";
 
 gql`
@@ -65,11 +66,15 @@ function ModalInner({
     items: readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "network-only",
+        context,
     });
     const [updateResponse, doUpdate] = useUpdateExhibitionDescriptiveItemMutation();
     const [updatedCount, setUpdatedCount] = useState<number>(0);
@@ -101,10 +106,19 @@ function ModalInner({
             setUpdatedCount(0);
 
             for (const match of exhibitionMatches) {
-                await doUpdate({
-                    id: match.id,
-                    descriptiveItemId: match.itemId,
-                });
+                await doUpdate(
+                    {
+                        id: match.id,
+                        descriptiveItemId: match.itemId,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
 
                 setUpdatedCount((count) => count + 1);
             }

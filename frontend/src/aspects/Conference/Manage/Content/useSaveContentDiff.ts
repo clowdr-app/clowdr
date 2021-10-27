@@ -33,6 +33,7 @@ import {
     useUpdateTagMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertContentToDescriptors } from "./Functions";
@@ -484,11 +485,15 @@ export function useSaveContentDiff():
     const [, updateGroupPersonMutation] = useUpdateGroupPersonMutation();
     const [, updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ fetching: loadingContent, error: errorContent, data: allContent }] = useSelectAllContentQuery({
         requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     useQueryErrorToast(errorContent, false);
 
@@ -653,18 +658,27 @@ export function useSaveContentDiff():
 
                 try {
                     if (newTags.size > 0) {
-                        await insertTagsMutation({
-                            newTags: Array.from(newTags.values()).map(
-                                (tag): Collection_Tag_Insert_Input => ({
-                                    id: tag.id,
-                                    name: tag.name,
-                                    colour: tag.colour,
-                                    priority: tag.priority,
-                                    conferenceId: conference.id,
-                                    originatingDataId: tag.originatingDataId,
-                                })
-                            ),
-                        });
+                        await insertTagsMutation(
+                            {
+                                newTags: Array.from(newTags.values()).map(
+                                    (tag): Collection_Tag_Insert_Input => ({
+                                        id: tag.id,
+                                        name: tag.name,
+                                        colour: tag.colour,
+                                        priority: tag.priority,
+                                        conferenceId: conference.id,
+                                        originatingDataId: tag.originatingDataId,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
                         }
@@ -674,13 +688,22 @@ export function useSaveContentDiff():
                         Array.from(updatedTags.values()).map(async (tag): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                await updateTagMutation({
-                                    id: tag.id,
-                                    colour: tag.colour,
-                                    name: tag.name,
-                                    originatingDataId: tag.originatingDataId,
-                                    priority: tag.priority,
-                                });
+                                await updateTagMutation(
+                                    {
+                                        id: tag.id,
+                                        colour: tag.colour,
+                                        name: tag.name,
+                                        originatingDataId: tag.originatingDataId,
+                                        priority: tag.priority,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 ok = true;
                             } catch (e) {
                                 console.error("Error updating tag", e);
@@ -694,35 +717,53 @@ export function useSaveContentDiff():
                     }
 
                     if (newOriginatingDatas.size > 0) {
-                        await insertOriginatingDatasMutation({
-                            newDatas: Array.from(newOriginatingDatas.values()).map(
-                                (originatingData): Conference_OriginatingData_Insert_Input => ({
-                                    id: originatingData.id,
-                                    conferenceId: conference.id,
-                                    data: originatingData.data,
-                                    sourceId: originatingData.sourceId,
-                                })
-                            ),
-                        });
+                        await insertOriginatingDatasMutation(
+                            {
+                                newDatas: Array.from(newOriginatingDatas.values()).map(
+                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
+                                        id: originatingData.id,
+                                        conferenceId: conference.id,
+                                        data: originatingData.data,
+                                        sourceId: originatingData.sourceId,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
                         }
                     }
 
                     if (newPeople.size > 0) {
-                        await insertProgramPeopleMutation({
-                            newPeople: Array.from(newPeople.values()).map(
-                                (person): Collection_ProgramPerson_Insert_Input => ({
-                                    id: person.id,
-                                    conferenceId: conference.id,
-                                    affiliation: person.affiliation,
-                                    email: person.email,
-                                    name: person.name,
-                                    originatingDataId: person.originatingDataId,
-                                    registrantId: person.registrantId,
-                                })
-                            ),
-                        });
+                        await insertProgramPeopleMutation(
+                            {
+                                newPeople: Array.from(newPeople.values()).map(
+                                    (person): Collection_ProgramPerson_Insert_Input => ({
+                                        id: person.id,
+                                        conferenceId: conference.id,
+                                        affiliation: person.affiliation,
+                                        email: person.email,
+                                        name: person.name,
+                                        originatingDataId: person.originatingDataId,
+                                        registrantId: person.registrantId,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newPeople.keys()) {
                             peopleResults.set(key, true);
                         }
@@ -732,14 +773,23 @@ export function useSaveContentDiff():
                         Array.from(updatedPeople.values()).map(async (person): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                await updatePersonMutation({
-                                    id: person.id,
-                                    affiliation: person.affiliation,
-                                    email: person.email,
-                                    name: person.name,
-                                    originatingDataId: person.originatingDataId,
-                                    registrantId: person.registrantId,
-                                });
+                                await updatePersonMutation(
+                                    {
+                                        id: person.id,
+                                        affiliation: person.affiliation,
+                                        email: person.email,
+                                        name: person.name,
+                                        originatingDataId: person.originatingDataId,
+                                        registrantId: person.registrantId,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 ok = true;
                             } catch (e) {
                                 console.error("Error updating content person", e);
@@ -753,18 +803,27 @@ export function useSaveContentDiff():
                     }
 
                     if (newExhibitions.size > 0) {
-                        await insertExhibitionsMutation({
-                            newExhibitions: Array.from(newExhibitions.values()).map(
-                                (exhibition): Collection_Exhibition_Insert_Input => ({
-                                    id: exhibition.id,
-                                    conferenceId: conference.id,
-                                    name: exhibition.name,
-                                    colour: exhibition.colour,
-                                    priority: exhibition.priority,
-                                    isHidden: exhibition.isHidden,
-                                })
-                            ),
-                        });
+                        await insertExhibitionsMutation(
+                            {
+                                newExhibitions: Array.from(newExhibitions.values()).map(
+                                    (exhibition): Collection_Exhibition_Insert_Input => ({
+                                        id: exhibition.id,
+                                        conferenceId: conference.id,
+                                        name: exhibition.name,
+                                        colour: exhibition.colour,
+                                        priority: exhibition.priority,
+                                        isHidden: exhibition.isHidden,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newExhibitions.keys()) {
                             exhibitionResults.set(key, true);
                         }
@@ -774,13 +833,22 @@ export function useSaveContentDiff():
                         Array.from(updatedExhibitions.values()).map(async (exhibition): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                await updateExhibitionMutation({
-                                    id: exhibition.id,
-                                    name: exhibition.name,
-                                    colour: exhibition.colour,
-                                    priority: exhibition.priority,
-                                    isHidden: exhibition.isHidden,
-                                });
+                                await updateExhibitionMutation(
+                                    {
+                                        id: exhibition.id,
+                                        name: exhibition.name,
+                                        colour: exhibition.colour,
+                                        priority: exhibition.priority,
+                                        isHidden: exhibition.isHidden,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 ok = true;
                             } catch (e) {
                                 console.error("Error updating exhibition", e);
@@ -796,79 +864,97 @@ export function useSaveContentDiff():
                     if (deletedGroupKeys.size > 0 || newGroups.size > 0) {
                         const elementsToPostInsert: Content_Element_Insert_Input[] = [];
 
-                        await insertDeleteItemsMutation({
-                            deleteGroupIds: Array.from(deletedGroupKeys.values()),
-                            newGroups: Array.from(newGroups.values()).map((group) => {
-                                const groupResult: Content_Item_Insert_Input = {
-                                    id: group.id,
-                                    conferenceId: conference.id,
-                                    itemTags: {
-                                        data: Array.from(group.tagIds.values()).map((tagId) => ({
-                                            tagId,
-                                        })),
+                        await insertDeleteItemsMutation(
+                            {
+                                deleteGroupIds: Array.from(deletedGroupKeys.values()),
+                                newGroups: Array.from(newGroups.values()).map((group) => {
+                                    const groupResult: Content_Item_Insert_Input = {
+                                        id: group.id,
+                                        conferenceId: conference.id,
+                                        itemTags: {
+                                            data: Array.from(group.tagIds.values()).map((tagId) => ({
+                                                tagId,
+                                            })),
+                                        },
+                                        typeName: group.typeName,
+                                        elements: {
+                                            data: group.elements.map((item) => {
+                                                const itemResult: Content_Element_Insert_Input = {
+                                                    id: item.id,
+                                                    conferenceId: conference.id,
+                                                    typeName: item.typeName,
+                                                    data: item.data,
+                                                    layoutData: item.layoutData,
+                                                    name: item.name,
+                                                    isHidden: item.isHidden,
+                                                    originatingDataId: item.originatingDataId,
+                                                    uploadsRemaining: item.uploadsRemaining,
+                                                };
+                                                return itemResult;
+                                            }),
+                                        },
+                                        itemPeople: {
+                                            data: group.people.map((personGroup) => {
+                                                const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
+                                                    id: personGroup.id,
+                                                    priority: personGroup.priority,
+                                                    roleName: personGroup.roleName,
+                                                    personId: personGroup.personId,
+                                                };
+                                                return personGroupResult;
+                                            }),
+                                        },
+                                        itemExhibitions: {
+                                            data: group.exhibitions.map((exhibitionGroup) => {
+                                                const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
+                                                    id: exhibitionGroup.id,
+                                                    priority: exhibitionGroup.priority,
+                                                    layout: exhibitionGroup.layout,
+                                                    exhibitionId: exhibitionGroup.exhibitionId,
+                                                };
+                                                return exhibitionGroupResult;
+                                            }),
+                                        },
+                                        originatingDataId: group.originatingDataId,
+                                        shortTitle: group.shortTitle,
+                                        title: group.title,
+                                    };
+                                    return groupResult;
+                                }),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
                                     },
-                                    typeName: group.typeName,
-                                    elements: {
-                                        data: group.elements.map((item) => {
-                                            const itemResult: Content_Element_Insert_Input = {
-                                                id: item.id,
-                                                conferenceId: conference.id,
-                                                typeName: item.typeName,
-                                                data: item.data,
-                                                layoutData: item.layoutData,
-                                                name: item.name,
-                                                isHidden: item.isHidden,
-                                                originatingDataId: item.originatingDataId,
-                                                uploadsRemaining: item.uploadsRemaining,
-                                            };
-                                            return itemResult;
-                                        }),
-                                    },
-                                    itemPeople: {
-                                        data: group.people.map((personGroup) => {
-                                            const personGroupResult: Content_ItemProgramPerson_Insert_Input = {
-                                                id: personGroup.id,
-                                                priority: personGroup.priority,
-                                                roleName: personGroup.roleName,
-                                                personId: personGroup.personId,
-                                            };
-                                            return personGroupResult;
-                                        }),
-                                    },
-                                    itemExhibitions: {
-                                        data: group.exhibitions.map((exhibitionGroup) => {
-                                            const exhibitionGroupResult: Content_ItemExhibition_Insert_Input = {
-                                                id: exhibitionGroup.id,
-                                                priority: exhibitionGroup.priority,
-                                                layout: exhibitionGroup.layout,
-                                                exhibitionId: exhibitionGroup.exhibitionId,
-                                            };
-                                            return exhibitionGroupResult;
-                                        }),
-                                    },
-                                    originatingDataId: group.originatingDataId,
-                                    shortTitle: group.shortTitle,
-                                    title: group.title,
-                                };
-                                return groupResult;
-                            }),
-                        });
+                                },
+                            }
+                        );
 
                         if (elementsToPostInsert.length > 0) {
-                            await insertElementsMutation({
-                                newElements: elementsToPostInsert.map((item) => ({
-                                    id: item.id,
-                                    conferenceId: conference.id,
-                                    typeName: item.typeName,
-                                    data: item.data,
-                                    layoutData: item.layoutData,
-                                    name: item.name,
-                                    isHidden: item.isHidden,
-                                    originatingDataId: item.originatingDataId,
-                                    itemId: item.itemId,
-                                    uploadsRemaining: item.uploadsRemaining,
-                                })),
-                            });
+                            await insertElementsMutation(
+                                {
+                                    newElements: elementsToPostInsert.map((item) => ({
+                                        id: item.id,
+                                        conferenceId: conference.id,
+                                        typeName: item.typeName,
+                                        data: item.data,
+                                        layoutData: item.layoutData,
+                                        name: item.name,
+                                        isHidden: item.isHidden,
+                                        originatingDataId: item.originatingDataId,
+                                        itemId: item.itemId,
+                                        uploadsRemaining: item.uploadsRemaining,
+                                    })),
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
                         }
 
                         for (const key of newGroups.keys()) {
@@ -964,16 +1050,25 @@ export function useSaveContentDiff():
                             if (updatedItems.size > 0) {
                                 await Promise.all(
                                     Array.from(updatedItems.values()).map(async (item) => {
-                                        await updateElementMutation({
-                                            typeName: item.typeName,
-                                            data: item.data,
-                                            id: item.id,
-                                            layoutData: item.layoutData,
-                                            name: item.name,
-                                            isHidden: item.isHidden,
-                                            originatingDataId: item.originatingDataId,
-                                            uploadsRemaining: item.uploadsRemaining,
-                                        });
+                                        await updateElementMutation(
+                                            {
+                                                typeName: item.typeName,
+                                                data: item.data,
+                                                id: item.id,
+                                                layoutData: item.layoutData,
+                                                name: item.name,
+                                                isHidden: item.isHidden,
+                                                originatingDataId: item.originatingDataId,
+                                                uploadsRemaining: item.uploadsRemaining,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     })
                                 );
                             }
@@ -981,11 +1076,20 @@ export function useSaveContentDiff():
                             if (updatedGroupPersons.size > 0) {
                                 await Promise.all(
                                     Array.from(updatedGroupPersons.values()).map(async (groupPerson) => {
-                                        await updateGroupPersonMutation({
-                                            id: groupPerson.id,
-                                            priority: groupPerson.priority,
-                                            roleName: groupPerson.roleName,
-                                        });
+                                        await updateGroupPersonMutation(
+                                            {
+                                                id: groupPerson.id,
+                                                priority: groupPerson.priority,
+                                                roleName: groupPerson.roleName,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     })
                                 );
                             }
@@ -993,60 +1097,78 @@ export function useSaveContentDiff():
                             if (updatedGroupExhibitions.size > 0) {
                                 await Promise.all(
                                     Array.from(updatedGroupExhibitions.values()).map(async (groupExhibition) => {
-                                        await updateGroupExhibitionMutation({
-                                            id: groupExhibition.id,
-                                            priority: groupExhibition.priority,
-                                            layout: groupExhibition.layout,
-                                        });
+                                        await updateGroupExhibitionMutation(
+                                            {
+                                                id: groupExhibition.id,
+                                                priority: groupExhibition.priority,
+                                                layout: groupExhibition.layout,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     })
                                 );
                             }
 
-                            await updateItemMutation({
-                                typeName: group.typeName,
-                                deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
-                                deleteItemIds: Array.from(deleteItemKeys.values()),
-                                deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
-                                deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
-                                groupId: group.id,
-                                newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
-                                    itemId: group.id,
-                                    tagId,
-                                })),
-                                newItems: Array.from(newItems.values()).map((item) => ({
-                                    conferenceId: conference.id,
-                                    itemId: group.id,
-                                    typeName: item.typeName,
-                                    data: item.data,
-                                    id: item.id,
-                                    layoutData: item.layoutData,
-                                    isHidden: item.isHidden,
-                                    name: item.name,
-                                    originatingDataId: item.originatingDataId,
-                                    uploadsRemaining: item.uploadsRemaining,
-                                })),
-                                newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
-                                    conferenceId: conference.id,
-                                    id: groupPerson.id,
-                                    personId: groupPerson.personId,
-                                    priority: groupPerson.priority,
-                                    roleName: groupPerson.roleName,
-                                    itemId: group.id,
-                                })),
-                                newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
-                                    (groupExhibition) => ({
-                                        conferenceId: conference.id,
-                                        id: groupExhibition.id,
-                                        exhibitionId: groupExhibition.exhibitionId,
-                                        priority: groupExhibition.priority,
-                                        layout: groupExhibition.layout,
+                            await updateItemMutation(
+                                {
+                                    typeName: group.typeName,
+                                    deleteGroupTagIds: Array.from(deleteGroupTagKeys.values()),
+                                    deleteItemIds: Array.from(deleteItemKeys.values()),
+                                    deleteGroupPeopleIds: Array.from(deleteGroupPersonKeys.values()),
+                                    deleteGroupExhibitionIds: Array.from(deleteGroupExhibitionKeys.values()),
+                                    groupId: group.id,
+                                    newGroupTags: Array.from(newGroupTags.values()).map((tagId) => ({
                                         itemId: group.id,
-                                    })
-                                ),
-                                originatingDataId: group.originatingDataId,
-                                shortTitle: group.shortTitle,
-                                title: group.title,
-                            });
+                                        tagId,
+                                    })),
+                                    newItems: Array.from(newItems.values()).map((item) => ({
+                                        conferenceId: conference.id,
+                                        itemId: group.id,
+                                        typeName: item.typeName,
+                                        data: item.data,
+                                        id: item.id,
+                                        layoutData: item.layoutData,
+                                        isHidden: item.isHidden,
+                                        name: item.name,
+                                        originatingDataId: item.originatingDataId,
+                                        uploadsRemaining: item.uploadsRemaining,
+                                    })),
+                                    newGroupPeople: Array.from(newGroupPersons.values()).map((groupPerson) => ({
+                                        conferenceId: conference.id,
+                                        id: groupPerson.id,
+                                        personId: groupPerson.personId,
+                                        priority: groupPerson.priority,
+                                        roleName: groupPerson.roleName,
+                                        itemId: group.id,
+                                    })),
+                                    newGroupExhibitions: Array.from(newGroupExhibitions.values()).map(
+                                        (groupExhibition) => ({
+                                            conferenceId: conference.id,
+                                            id: groupExhibition.id,
+                                            exhibitionId: groupExhibition.exhibitionId,
+                                            priority: groupExhibition.priority,
+                                            layout: groupExhibition.layout,
+                                            itemId: group.id,
+                                        })
+                                    ),
+                                    originatingDataId: group.originatingDataId,
+                                    shortTitle: group.shortTitle,
+                                    title: group.title,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
 
                             ok = true;
                         } catch (e) {
@@ -1062,9 +1184,18 @@ export function useSaveContentDiff():
 
                 try {
                     if (deletedTagKeys.size > 0) {
-                        await deleteTagsMutation({
-                            deleteTagIds: Array.from(deletedTagKeys.values()),
-                        });
+                        await deleteTagsMutation(
+                            {
+                                deleteTagIds: Array.from(deletedTagKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedTagKeys.keys()) {
                             tagResults.set(key, true);
                         }
@@ -1078,9 +1209,18 @@ export function useSaveContentDiff():
 
                 try {
                     if (deletedExhibitionKeys.size > 0) {
-                        await deleteExhibitionsMutation({
-                            deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
-                        });
+                        await deleteExhibitionsMutation(
+                            {
+                                deleteExhibitionIds: Array.from(deletedExhibitionKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedExhibitionKeys.keys()) {
                             exhibitionResults.set(key, true);
                         }
@@ -1094,9 +1234,18 @@ export function useSaveContentDiff():
 
                 try {
                     if (deletedPersonKeys.size > 0) {
-                        await deleteProgramPeopleMutation({
-                            deletePersonIds: Array.from(deletedPersonKeys.values()),
-                        });
+                        await deleteProgramPeopleMutation(
+                            {
+                                deletePersonIds: Array.from(deletedPersonKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedPersonKeys.keys()) {
                             peopleResults.set(key, true);
                         }
@@ -1110,9 +1259,18 @@ export function useSaveContentDiff():
 
                 try {
                     if (deletedOriginatingDataKeys.size > 0) {
-                        await deleteOriginatingDatasMutation({
-                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
-                        });
+                        await deleteOriginatingDatasMutation(
+                            {
+                                deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);
                         }

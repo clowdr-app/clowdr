@@ -36,10 +36,19 @@ export function EditElementInner(props: {
                         typeName: updated.typeName,
                         uploadsRemaining: updated.uploadsRemaining,
                     };
-                    updateElement({
-                        elementId: updated.id,
-                        element: updatedItem,
-                    });
+                    updateElement(
+                        {
+                            elementId: updated.id,
+                            element: updatedItem,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "organizer",
+                                },
+                            },
+                        }
+                    );
                 }}
             />
         ) : (
@@ -82,13 +91,22 @@ export function EditElementInner(props: {
                             ...props.element,
                             layoutData,
                         };
-                        updateElement({
-                            elementId: newState.id,
-                            element: {
-                                data: newState.data,
-                                layoutData: newState.layoutData,
+                        updateElement(
+                            {
+                                elementId: newState.id,
+                                element: {
+                                    data: newState.data,
+                                    layoutData: newState.layoutData,
+                                },
                             },
-                        });
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                     }
                 }}
             />

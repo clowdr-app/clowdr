@@ -107,7 +107,7 @@ function UrqlProviderInner({
                                 }),
                             };
                             for (const key in fetchOptions.headers) {
-                                headers[key.toLowerCase()] = fetchOptions.headers[key];
+                                headers[key.toLowerCase()] = (fetchOptions.headers as any)[key];
                             }
                             headers.authorization = "Bearer " + authState.token;
 
@@ -135,7 +135,8 @@ function UrqlProviderInner({
                             dedupExchange,
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
-                                shouldUpgrade: () => Date.now() - loadedAt > 30 * 1000,
+                                shouldUpgrade: () =>
+                                    authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
                             }),
                             cacheExchange<GraphCacheConfig>({
                                 keys: {

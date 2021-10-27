@@ -83,6 +83,7 @@ import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -244,11 +245,15 @@ function EditableScheduleTable(): JSX.Element {
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,
         },
         requestPolicy: "cache-and-network",
+        context,
     });
     const data = useMemo(() => [...(wholeSchedule.data?.schedule_Event ?? [])], [wholeSchedule.data?.schedule_Event]);
 
@@ -258,6 +263,7 @@ function EditableScheduleTable(): JSX.Element {
             conferenceId: conference.id,
             now: shufflePeriodsNow,
         },
+        context,
     });
     const shufflePeriodOptions = useMemo(
         () =>
@@ -1161,15 +1167,24 @@ function EditableScheduleTable(): JSX.Element {
                       }),
                       makeWhole: (d) => d as EventInfoFragment,
                       start: (record) => {
-                          insertEvent({
-                              ...record,
-                              insertContinuation:
-                                  (record.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                                      record.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
-                                  record.itemId
-                                      ? true
-                                      : false,
-                          });
+                          insertEvent(
+                              {
+                                  ...record,
+                                  insertContinuation:
+                                      (record.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                                          record.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                                      record.itemId
+                                          ? true
+                                          : false,
+                              },
+                              {
+                                  fetchOptions: {
+                                      headers: {
+                                          "X-Auth-Role": "organizer",
+                                      },
+                                  },
+                              }
+                          );
                       },
                   }
                 : undefined,
@@ -1194,7 +1209,13 @@ function EditableScheduleTable(): JSX.Element {
                 delete variables.eventPeople;
                 delete variables.conferenceId;
                 delete variables.__typename;
-                updateEvent(variables);
+                updateEvent(variables, {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                });
             },
         }),
         [updateEvent, updateEventResponse.fetching]
@@ -1209,9 +1230,18 @@ function EditableScheduleTable(): JSX.Element {
         () => ({
             ongoing: deleteEventsResponse.fetching,
             start: (keys) => {
-                deleteEvents({
-                    eventIds: keys,
-                });
+                deleteEvents(
+                    {
+                        eventIds: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteEvents, deleteEventsResponse.fetching]

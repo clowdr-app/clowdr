@@ -32,6 +32,7 @@ import type {
 } from "../../../../../../generated/graphql";
 import { Content_ElementType_Enum, useSEoUm_InfosQuery } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 
 gql`
     fragment SelectElements_Item on content_Item {
@@ -106,11 +107,15 @@ function ModalInner({
     restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [infos] = useSEoUm_InfosQuery({
         variables: {
             itemIds,
         },
         requestPolicy: "network-only",
+        context,
     });
 
     const contentTypeOptions: { label: string; value: Content_ElementType_Enum }[] = useMemo(

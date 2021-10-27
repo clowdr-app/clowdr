@@ -23,6 +23,7 @@ import {
     useUpdateTagMutation,
 } from "../../../../generated/graphql";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
@@ -277,11 +278,15 @@ export function useSaveScheduleDiff():
     const [, insertEventMutation] = useInsertEventMutation();
     const [, updateEventMutation] = useUpdateEventMutation();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ fetching: loadingContent, error: errorContent, data: wholeSchedule }] = useSelectWholeScheduleQuery({
         requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     useQueryErrorToast(errorContent, false);
 
@@ -432,17 +437,26 @@ export function useSaveScheduleDiff():
 
                 try {
                     if (newTags.size > 0) {
-                        await insertTagsMutation({
-                            newTags: Array.from(newTags.values()).map(
-                                (tag): Collection_Tag_Insert_Input => ({
-                                    id: tag.id,
-                                    name: tag.name,
-                                    colour: tag.colour,
-                                    conferenceId: conference.id,
-                                    originatingDataId: tag.originatingDataId,
-                                })
-                            ),
-                        });
+                        await insertTagsMutation(
+                            {
+                                newTags: Array.from(newTags.values()).map(
+                                    (tag): Collection_Tag_Insert_Input => ({
+                                        id: tag.id,
+                                        name: tag.name,
+                                        colour: tag.colour,
+                                        conferenceId: conference.id,
+                                        originatingDataId: tag.originatingDataId,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newTags.keys()) {
                             tagResults.set(key, true);
                         }
@@ -452,12 +466,21 @@ export function useSaveScheduleDiff():
                         Array.from(updatedTags.values()).map(async (tag): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                await updateTagMutation({
-                                    id: tag.id,
-                                    colour: tag.colour,
-                                    name: tag.name,
-                                    originatingDataId: tag.originatingDataId,
-                                });
+                                await updateTagMutation(
+                                    {
+                                        id: tag.id,
+                                        colour: tag.colour,
+                                        name: tag.name,
+                                        originatingDataId: tag.originatingDataId,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 ok = true;
                             } catch (_e) {
                                 ok = false;
@@ -470,35 +493,53 @@ export function useSaveScheduleDiff():
                     }
 
                     if (newOriginatingDatas.size > 0) {
-                        await insertOriginatingDatasMutation({
-                            newDatas: Array.from(newOriginatingDatas.values()).map(
-                                (originatingData): Conference_OriginatingData_Insert_Input => ({
-                                    id: originatingData.id,
-                                    conferenceId: conference.id,
-                                    data: originatingData.data,
-                                    sourceId: originatingData.sourceId,
-                                })
-                            ),
-                        });
+                        await insertOriginatingDatasMutation(
+                            {
+                                newDatas: Array.from(newOriginatingDatas.values()).map(
+                                    (originatingData): Conference_OriginatingData_Insert_Input => ({
+                                        id: originatingData.id,
+                                        conferenceId: conference.id,
+                                        data: originatingData.data,
+                                        sourceId: originatingData.sourceId,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newOriginatingDatas.keys()) {
                             originatingDataResults.set(key, true);
                         }
                     }
 
                     if (newRooms.size > 0) {
-                        await insertRoomsMutation({
-                            newRooms: Array.from(newRooms.values()).map(
-                                (room): Room_Room_Insert_Input => ({
-                                    id: room.id,
-                                    conferenceId: conference.id,
-                                    name: room.name,
-                                    originatingDataId: room.originatingDataId,
-                                    capacity: room.capacity,
-                                    priority: room.priority,
-                                    currentModeName: Room_Mode_Enum.VideoChat,
-                                })
-                            ),
-                        });
+                        await insertRoomsMutation(
+                            {
+                                newRooms: Array.from(newRooms.values()).map(
+                                    (room): Room_Room_Insert_Input => ({
+                                        id: room.id,
+                                        conferenceId: conference.id,
+                                        name: room.name,
+                                        originatingDataId: room.originatingDataId,
+                                        capacity: room.capacity,
+                                        priority: room.priority,
+                                        currentModeName: Room_Mode_Enum.VideoChat,
+                                    })
+                                ),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of newRooms.keys()) {
                             roomResults.set(key, true);
                         }
@@ -508,13 +549,22 @@ export function useSaveScheduleDiff():
                         Array.from(updatedRooms.values()).map(async (room): Promise<[string, boolean]> => {
                             let ok = false;
                             try {
-                                await updateRoomMutation({
-                                    id: room.id,
-                                    name: room.name,
-                                    capacity: room.capacity,
-                                    originatingDataId: room.originatingDataId,
-                                    priority: room.priority,
-                                });
+                                await updateRoomMutation(
+                                    {
+                                        id: room.id,
+                                        name: room.name,
+                                        capacity: room.capacity,
+                                        originatingDataId: room.originatingDataId,
+                                        priority: room.priority,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 ok = true;
                             } catch (_e) {
                                 ok = false;
@@ -532,28 +582,37 @@ export function useSaveScheduleDiff():
                         });
                         await Promise.all(
                             Array.from(newEvents.values()).map((event) =>
-                                insertEventMutation({
-                                    newEvent: {
-                                        id: event.id,
-                                        conferenceId: conference.id,
-                                        roomId: event.roomId,
-                                        intendedRoomModeName: event.intendedRoomModeName,
-                                        itemId: event.itemId,
-                                        exhibitionId: event.exhibitionId,
-                                        name: event.name,
-                                        startTime: new Date(event.startTime).toISOString(),
-                                        durationSeconds: event.durationSeconds,
-                                        originatingDataId: event.originatingDataId,
-                                        enableRecording: event.enableRecording,
+                                insertEventMutation(
+                                    {
+                                        newEvent: {
+                                            id: event.id,
+                                            conferenceId: conference.id,
+                                            roomId: event.roomId,
+                                            intendedRoomModeName: event.intendedRoomModeName,
+                                            itemId: event.itemId,
+                                            exhibitionId: event.exhibitionId,
+                                            name: event.name,
+                                            startTime: new Date(event.startTime).toISOString(),
+                                            durationSeconds: event.durationSeconds,
+                                            originatingDataId: event.originatingDataId,
+                                            enableRecording: event.enableRecording,
+                                        },
+                                        newEventId: event.id,
+                                        insertContinuation:
+                                            (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
+                                                event.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
+                                            event.itemId
+                                                ? true
+                                                : false,
                                     },
-                                    newEventId: event.id,
-                                    insertContinuation:
-                                        (event.intendedRoomModeName === Room_Mode_Enum.Presentation ||
-                                            event.intendedRoomModeName === Room_Mode_Enum.QAndA) &&
-                                        event.itemId
-                                            ? true
-                                            : false,
-                                })
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                )
                             )
                         );
 
@@ -580,17 +639,26 @@ export function useSaveScheduleDiff():
                             const existingEvent = original.events.get(event.id);
                             assert(existingEvent);
 
-                            await updateEventMutation({
-                                eventId: event.id,
-                                originatingDataId: event.originatingDataId,
-                                roomId: event.roomId,
-                                intendedRoomModeName: event.intendedRoomModeName,
-                                itemId: event.itemId,
-                                exhibitionId: event.exhibitionId,
-                                name: event.name,
-                                startTime: new Date(event.startTime).toISOString(),
-                                durationSeconds: event.durationSeconds,
-                            });
+                            await updateEventMutation(
+                                {
+                                    eventId: event.id,
+                                    originatingDataId: event.originatingDataId,
+                                    roomId: event.roomId,
+                                    intendedRoomModeName: event.intendedRoomModeName,
+                                    itemId: event.itemId,
+                                    exhibitionId: event.exhibitionId,
+                                    name: event.name,
+                                    startTime: new Date(event.startTime).toISOString(),
+                                    durationSeconds: event.durationSeconds,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
 
                             ok = true;
                         } catch (e) {
@@ -620,9 +688,18 @@ export function useSaveScheduleDiff():
 
                 try {
                     if (deletedRoomKeys.size > 0) {
-                        await deleteRoomsMutation({
-                            deleteRoomIds: Array.from(deletedRoomKeys.values()),
-                        });
+                        await deleteRoomsMutation(
+                            {
+                                deleteRoomIds: Array.from(deletedRoomKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedRoomKeys.keys()) {
                             roomResults.set(key, true);
                         }
@@ -635,9 +712,18 @@ export function useSaveScheduleDiff():
 
                 try {
                     if (deletedOriginatingDataKeys.size > 0) {
-                        await deleteOriginatingDatasMutation({
-                            deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
-                        });
+                        await deleteOriginatingDatasMutation(
+                            {
+                                deleteDataIds: Array.from(deletedOriginatingDataKeys.values()),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                         for (const key of deletedOriginatingDataKeys.keys()) {
                             originatingDataResults.set(key, true);
                         }

@@ -43,6 +43,7 @@ import type {
     RowSpecification,
 } from "../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";
 
@@ -95,10 +96,14 @@ export default function ManageTagsModal({ onClose: onCloseCb }: { onClose?: () =
 
 function ManageTagsModalBody(): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const row: RowSpecification<ManageContent_TagFragment> = useMemo(
@@ -295,15 +300,24 @@ function ManageTagsModalBody(): JSX.Element {
                 } as ManageContent_TagFragment),
             makeWhole: (d) => d as ManageContent_TagFragment,
             start: (record) => {
-                insertTag({
-                    tag: {
-                        conferenceId: record.conferenceId,
-                        id: record.id,
-                        name: record.name,
-                        colour: record.colour,
-                        priority: record.priority,
+                insertTag(
+                    {
+                        tag: {
+                            conferenceId: record.conferenceId,
+                            id: record.id,
+                            name: record.name,
+                            colour: record.colour,
+                            priority: record.priority,
+                        },
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [conference.id, data?.length, insertTag, insertTagResponse.fetching]
@@ -324,10 +338,19 @@ function ManageTagsModalBody(): JSX.Element {
                     colour: record.colour,
                     priority: record.priority,
                 };
-                updateTag({
-                    id: record.id,
-                    update: tagUpdateInput,
-                });
+                updateTag(
+                    {
+                        id: record.id,
+                        update: tagUpdateInput,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [updateTag, updateTagResponse.fetching]
@@ -343,9 +366,18 @@ function ManageTagsModalBody(): JSX.Element {
         () => ({
             ongoing: deleteTagsResponse.fetching,
             start: (keys) => {
-                deleteTags({
-                    ids: keys,
-                });
+                deleteTags(
+                    {
+                        ids: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteTags, deleteTagsResponse.fetching]

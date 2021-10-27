@@ -52,6 +52,7 @@ import type {
     RowSpecification,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../../CRUDTable2/CRUDTable2";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
 import { SecondaryEditor } from "./ExhibitionSecondaryEditor";
@@ -105,10 +106,14 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const row: RowSpecification<ManageContent_ExhibitionFragment> = useMemo(
@@ -392,16 +397,25 @@ function ManageExhibitionsModalBody(): JSX.Element {
                 } as ManageContent_ExhibitionFragment),
             makeWhole: (d) => d as ManageContent_ExhibitionFragment,
             start: (record) => {
-                insertExhibition({
-                    exhibition: {
-                        conferenceId: record.conferenceId,
-                        id: record.id,
-                        name: record.name,
-                        colour: record.colour,
-                        priority: record.priority,
-                        isHidden: record.isHidden,
+                insertExhibition(
+                    {
+                        exhibition: {
+                            conferenceId: record.conferenceId,
+                            id: record.id,
+                            name: record.name,
+                            colour: record.colour,
+                            priority: record.priority,
+                            isHidden: record.isHidden,
+                        },
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [conference.id, data?.length, insertExhibition, insertExhibitionResponse.fetching]
@@ -423,10 +437,19 @@ function ManageExhibitionsModalBody(): JSX.Element {
                     priority: record.priority,
                     isHidden: record.isHidden,
                 };
-                updateExhibition({
-                    id: record.id,
-                    update: exhibitionUpdateInput,
-                });
+                updateExhibition(
+                    {
+                        id: record.id,
+                        update: exhibitionUpdateInput,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [updateExhibition, updateExhibitionResponse.fetching]
@@ -442,9 +465,18 @@ function ManageExhibitionsModalBody(): JSX.Element {
         () => ({
             ongoing: deleteExhibitionsResponse.fetching,
             start: (keys) => {
-                deleteExhibitions({
-                    ids: keys,
-                });
+                deleteExhibitions(
+                    {
+                        ids: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteExhibitions, deleteExhibitionsResponse.fetching]

@@ -108,12 +108,21 @@ export function EditElement({
                                                         ...element.layoutData,
                                                         priority: idx - 1,
                                                     };
-                                                    updateElement({
-                                                        elementId: element.id,
-                                                        element: {
-                                                            layoutData: layoutDataA,
+                                                    updateElement(
+                                                        {
+                                                            elementId: element.id,
+                                                            element: {
+                                                                layoutData: layoutDataA,
+                                                            },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    "X-Auth-Role": "organizer",
+                                                                },
+                                                            },
+                                                        }
+                                                    );
 
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: previousElement.typeName,
@@ -122,12 +131,21 @@ export function EditElement({
                                                         ...previousElement.layoutData,
                                                         priority: idx,
                                                     };
-                                                    updateElement({
-                                                        elementId: previousElement.id,
-                                                        element: {
-                                                            layoutData: layoutDataB,
+                                                    updateElement(
+                                                        {
+                                                            elementId: previousElement.id,
+                                                            element: {
+                                                                layoutData: layoutDataB,
+                                                            },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    "X-Auth-Role": "organizer",
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }
                                             }}
                                             onKeyUp={(ev) => {
@@ -154,12 +172,21 @@ export function EditElement({
                                                         ...element.layoutData,
                                                         priority: idx + 1,
                                                     };
-                                                    updateElement({
-                                                        elementId: element.id,
-                                                        element: {
-                                                            layoutData: layoutDataA,
+                                                    updateElement(
+                                                        {
+                                                            elementId: element.id,
+                                                            element: {
+                                                                layoutData: layoutDataA,
+                                                            },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    "X-Auth-Role": "organizer",
+                                                                },
+                                                            },
+                                                        }
+                                                    );
 
                                                     const layoutDataB: LayoutDataBlob = {
                                                         contentType: nextElement.typeName,
@@ -168,12 +195,21 @@ export function EditElement({
                                                         ...nextElement.layoutData,
                                                         priority: idx,
                                                     };
-                                                    updateElement({
-                                                        elementId: nextElement.id,
-                                                        element: {
-                                                            layoutData: layoutDataB,
+                                                    updateElement(
+                                                        {
+                                                            elementId: nextElement.id,
+                                                            element: {
+                                                                layoutData: layoutDataB,
+                                                            },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    "X-Auth-Role": "organizer",
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }
                                             }}
                                             onKeyUp={(ev) => {
@@ -207,10 +243,19 @@ export function EditElement({
                                         ev.stopPropagation();
 
                                         const isHidden = !element.isHidden;
-                                        updateElement({
-                                            elementId: element.id,
-                                            element: { isHidden },
-                                        });
+                                        updateElement(
+                                            {
+                                                elementId: element.id,
+                                                element: { isHidden },
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                     }}
                                     onKeyUp={(ev) => {
                                         ev.stopPropagation();
@@ -253,12 +298,21 @@ export function EditElement({
                                                     ev.stopPropagation();
                                                     setIsEditingTitle(false);
 
-                                                    updateElement({
-                                                        elementId: element.id,
-                                                        element: {
-                                                            name: newName,
+                                                    updateElement(
+                                                        {
+                                                            elementId: element.id,
+                                                            element: {
+                                                                name: newName,
+                                                            },
                                                         },
-                                                    });
+                                                        {
+                                                            fetchOptions: {
+                                                                headers: {
+                                                                    "X-Auth-Role": "organizer",
+                                                                },
+                                                            },
+                                                        }
+                                                    );
                                                 }}
                                                 onKeyUp={(ev) => {
                                                     ev.stopPropagation();
@@ -388,9 +442,18 @@ export function EditElement({
                                 colorScheme="red"
                                 onClick={async () => {
                                     try {
-                                        await deleteElement({
-                                            elementId: element.id,
-                                        });
+                                        await deleteElement(
+                                            {
+                                                elementId: element.id,
+                                            },
+                                            {
+                                                fetchOptions: {
+                                                    headers: {
+                                                        "X-Auth-Role": "organizer",
+                                                    },
+                                                },
+                                            }
+                                        );
                                         confirmDelete_OnClose();
                                     } catch (e) {
                                         toast({

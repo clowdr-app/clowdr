@@ -82,9 +82,18 @@ export function AddContentMenu({
                                         hidden: false,
                                     } as LayoutDataBlob,
                                 };
-                                const result = await createElement({
-                                    object: obj,
-                                });
+                                const result = await createElement(
+                                    {
+                                        object: obj,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                                 if (result.data?.insert_content_Element_one?.id) {
                                     onCreate(result.data?.insert_content_Element_one?.id);
                                 }

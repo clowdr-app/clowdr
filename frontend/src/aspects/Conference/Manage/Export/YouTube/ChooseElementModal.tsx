@@ -12,7 +12,7 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import { gql } from "urql";
@@ -20,6 +20,7 @@ import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -51,10 +52,14 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const [itemId, setItemId] = useState<string | null>(null);
@@ -71,6 +76,7 @@ export function ChooseElementModal({
         variables: {
             itemId,
         },
+        context,
     });
 
     const elementOptions = useMemo(() => {

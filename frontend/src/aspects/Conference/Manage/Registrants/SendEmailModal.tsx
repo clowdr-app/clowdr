@@ -36,16 +36,6 @@ import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import { Markdown } from "../../../Text/Markdown";
 import { useConference } from "../../useConference";
 
-// gql`
-//     # query SendEmail_GetAllGroups($conferenceId: uuid!) {
-//     #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-//     #         id
-//     #         enabled
-//     #         name
-//     #     }
-//     # }
-// `;
-
 type Inputs = { subject: string; markdownBody: string };
 
 export function SendEmailModal({

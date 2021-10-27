@@ -62,9 +62,18 @@ export default function ManageBroadcast(): JSX.Element {
                                 mt={5}
                                 aria-label="Prepare broadcasts"
                                 onClick={async () => {
-                                    await create({
-                                        conferenceId: conference.id,
-                                    });
+                                    await create(
+                                        {
+                                            conferenceId: conference.id,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "main-conference-organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                     toast({
                                         status: "success",
                                         description: "Started preparing broadcasts.",

@@ -45,6 +45,7 @@ import {
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
@@ -131,10 +132,14 @@ function SecondaryEditorInner({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {
             exhibitionId,
         },
+        context,
     });
     const itemExhibitions = itemExhibitionsResponse.data?.content_ItemExhibition;
     const itemExhibitionsIds = useMemo(() => itemExhibitions?.map((x) => x.item.id), [itemExhibitions]);
@@ -143,6 +148,7 @@ function SecondaryEditorInner({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const sortedItems = useMemo(
         () =>
@@ -252,11 +258,20 @@ function AddItemExhibitionBody({
                     isLoading={insertItemExhibitionResponse.fetching}
                     onClick={async () => {
                         try {
-                            await insertItemExhibition({
-                                exhibitionId,
-                                itemId: selectedItemId,
-                                priority: existingItemIds.length,
-                            });
+                            await insertItemExhibition(
+                                {
+                                    exhibitionId,
+                                    itemId: selectedItemId,
+                                    priority: existingItemIds.length,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
 
                             onClose();
                         } catch (e) {
@@ -337,15 +352,33 @@ function ItemExhibitionsList({
                                 onClick={() => {
                                     const previousItemExhibition = sortedItems[idx - 1];
 
-                                    updateItemExhibition({
-                                        itemExhibitionId: itemExhibition.id,
-                                        priority: idx - 1,
-                                    });
+                                    updateItemExhibition(
+                                        {
+                                            itemExhibitionId: itemExhibition.id,
+                                            priority: idx - 1,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
 
-                                    updateItemExhibition({
-                                        itemExhibitionId: previousItemExhibition.id,
-                                        priority: idx,
-                                    });
+                                    updateItemExhibition(
+                                        {
+                                            itemExhibitionId: previousItemExhibition.id,
+                                            priority: idx,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="arrow-alt-circle-up" />
@@ -357,15 +390,33 @@ function ItemExhibitionsList({
                                 onClick={() => {
                                     const nextItemExhibition = sortedItems[idx + 1];
 
-                                    updateItemExhibition({
-                                        itemExhibitionId: itemExhibition.id,
-                                        priority: idx + 1,
-                                    });
+                                    updateItemExhibition(
+                                        {
+                                            itemExhibitionId: itemExhibition.id,
+                                            priority: idx + 1,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
 
-                                    updateItemExhibition({
-                                        itemExhibitionId: nextItemExhibition.id,
-                                        priority: idx,
-                                    });
+                                    updateItemExhibition(
+                                        {
+                                            itemExhibitionId: nextItemExhibition.id,
+                                            priority: idx,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="arrow-alt-circle-down" />
@@ -380,9 +431,18 @@ function ItemExhibitionsList({
                             isDisabled={deleteItemExhibitionResponse.fetching}
                             onClick={async () => {
                                 try {
-                                    deleteItemExhibition({
-                                        itemExhibitionId: itemExhibition.id,
-                                    });
+                                    deleteItemExhibition(
+                                        {
+                                            itemExhibitionId: itemExhibition.id,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                 } catch (e) {
                                     toast({
                                         title: "Error unlinking item",

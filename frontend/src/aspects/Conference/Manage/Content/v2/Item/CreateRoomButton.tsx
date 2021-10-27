@@ -35,10 +35,19 @@ export function CreateRoomButton({
 
         try {
             setCreatingVideoChat(true);
-            const { data } = await createVideoChatMutation({
-                conferenceId: conference.id,
-                itemId: groupId,
-            });
+            const { data } = await createVideoChatMutation(
+                {
+                    conferenceId: conference.id,
+                    itemId: groupId,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             if (!data?.createItemRoom || !data.createItemRoom.roomId) {
                 throw new Error(`No data returned: ${data?.createItemRoom?.message}`);

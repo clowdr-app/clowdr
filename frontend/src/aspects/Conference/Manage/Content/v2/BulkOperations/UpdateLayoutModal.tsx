@@ -85,10 +85,19 @@ function ModalInner({
             if (priority !== null && priority.trim() !== "") {
                 layoutData.priority = parseInt(priority, 10);
             }
-            await doUpdate({
-                elementIds: elementsByItem.flatMap((x) => x.elementIds),
-                layoutData,
-            });
+            await doUpdate(
+                {
+                    elementIds: elementsByItem.flatMap((x) => x.elementIds),
+                    layoutData,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             onClose();
         } catch (e) {

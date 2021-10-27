@@ -136,20 +136,29 @@ export default function CreateQueueModal(): JSX.Element {
     const toast = useToast();
     const onCreate = useCallback(async () => {
         try {
-            await insert({
-                object: {
-                    name,
-                    algorithm,
-                    conferenceId: conference.id,
-                    endAt: endAt.toISOString(),
-                    maxRegistrantsPerRoom: maxRegistrants,
-                    roomDurationMinutes,
-                    startAt: startAt.toISOString(),
-                    targetRegistrantsPerRoom: targetRegistrants,
-                    waitRoomMaxDurationSeconds: maxWait,
-                    organiserId: registrant.id,
+            await insert(
+                {
+                    object: {
+                        name,
+                        algorithm,
+                        conferenceId: conference.id,
+                        endAt: endAt.toISOString(),
+                        maxRegistrantsPerRoom: maxRegistrants,
+                        roomDurationMinutes,
+                        startAt: startAt.toISOString(),
+                        targetRegistrantsPerRoom: targetRegistrants,
+                        waitRoomMaxDurationSeconds: maxWait,
+                        organiserId: registrant.id,
+                    },
                 },
-            });
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             reset();
             onClose();

@@ -21,6 +21,7 @@ import {
     useSelectEventStreamTextEventIdQuery,
     useUpdateEventStreamTextEventIdMutation,
 } from "../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 
 gql`
     query SelectEventStreamTextEventId($eventId: uuid!) {
@@ -39,11 +40,15 @@ gql`
 `;
 
 export default function EditStreamTextIntegration({ eventId }: { eventId: string }): JSX.Element {
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [response] = useSelectEventStreamTextEventIdQuery({
         variables: {
             eventId,
         },
         requestPolicy: "network-only",
+        context,
     });
     return response.fetching && !response.data ? (
         <Spinner />
@@ -72,10 +77,19 @@ function EditStreamTextIntegrationInner({
             setInitialValue(newValue);
 
             if (newValue !== initialValue) {
-                updateMutation({
-                    eventId,
-                    streamTextEventId: newValue?.trim() === "" ? null : newValue,
-                });
+                updateMutation(
+                    {
+                        eventId,
+                        streamTextEventId: newValue?.trim() === "" ? null : newValue,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             }
         },
         [eventId, initialValue, updateMutation]

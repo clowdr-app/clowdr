@@ -46,6 +46,7 @@ import {
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../../generated/graphql";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -172,10 +173,19 @@ export function UploadYouTubeVideos(): JSX.Element {
     useEffect(() => {
         async function fn() {
             if (selectedGoogleAccountId) {
-                const result = await refreshYouTubeData({
-                    registrantId: registrant.id,
-                    registrantGoogleAccountId: selectedGoogleAccountId,
-                });
+                const result = await refreshYouTubeData(
+                    {
+                        registrantId: registrant.id,
+                        registrantGoogleAccountId: selectedGoogleAccountId,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
                 if (!result.data?.refreshYouTubeData?.success) {
                     throw new Error(result.data?.refreshYouTubeData?.message ?? "Unknown reason");
                 }
@@ -304,10 +314,14 @@ export function UploadYouTubeVideos(): JSX.Element {
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
             elementIds,
         },
+        context,
     });
 
     const elements = useMemo(() => {
@@ -330,7 +344,14 @@ export function UploadYouTubeVideos(): JSX.Element {
             const result = await client
                 .query<UploadYouTubeVideos_GetTemplateDataQuery, UploadYouTubeVideos_GetTemplateDataQueryVariables>(
                     UploadYouTubeVideos_GetTemplateDataDocument,
-                    { elementIds }
+                    { elementIds },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
                 )
                 .toPromise();
 
@@ -524,19 +545,28 @@ export function UploadYouTubeVideos(): JSX.Element {
                     return;
                 }
 
-                await createJobs({
-                    objects: data.elementIds.map(
-                        (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
-                            elementId: id,
-                            registrantGoogleAccountId: selectedGoogleAccountId,
-                            conferenceId: conference.id,
-                            videoTitle: updatedPairs[id]?.title ?? id,
-                            videoDescription: updatedPairs[id]?.description ?? "",
-                            videoPrivacyStatus: data.videoPrivacyStatus,
-                            playlistId: data.playlistId,
-                        })
-                    ),
-                });
+                await createJobs(
+                    {
+                        objects: data.elementIds.map(
+                            (id): Job_Queues_UploadYouTubeVideoJob_Insert_Input => ({
+                                elementId: id,
+                                registrantGoogleAccountId: selectedGoogleAccountId,
+                                conferenceId: conference.id,
+                                videoTitle: updatedPairs[id]?.title ?? id,
+                                videoDescription: updatedPairs[id]?.description ?? "",
+                                videoPrivacyStatus: data.videoPrivacyStatus,
+                                playlistId: data.playlistId,
+                            })
+                        ),
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
                 toast({
                     status: "success",
                     title: "Starting upload to YouTube",

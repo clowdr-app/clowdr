@@ -45,6 +45,7 @@ import {
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
@@ -124,12 +125,16 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
             conferenceId: conference.id,
             itemIds,
         },
         requestPolicy: "network-only",
+        context,
     });
     return (
         <QueryWrapper queryResult={result} getter={(result) => result}>
@@ -291,15 +296,24 @@ export function SendSubmissionRequestsModalInner({
                 }}
                 onSubmit={async (values, actions) => {
                     try {
-                        const result = await sendSubmissionRequests({
-                            objs: personIds.map((id) => ({
-                                personId: id,
-                                emailTemplate: {
-                                    htmlBodyTemplate: values.htmlBodyTemplate,
-                                    subjectTemplate: values.subjectTemplate,
+                        const result = await sendSubmissionRequests(
+                            {
+                                objs: personIds.map((id) => ({
+                                    personId: id,
+                                    emailTemplate: {
+                                        htmlBodyTemplate: values.htmlBodyTemplate,
+                                        subjectTemplate: values.subjectTemplate,
+                                    },
+                                })),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
                                 },
-                            })),
-                        });
+                            }
+                        );
                         if (result?.error) {
                             console.error("Failed to insert SubmissionRequestEmailJob", result.error);
                             throw new Error("Error submitting query");

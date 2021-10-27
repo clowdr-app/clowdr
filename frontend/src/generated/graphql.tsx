@@ -38473,12 +38473,26 @@ export type SelectAllRoomsWithParticipantsQueryVariables = Exact<{
 
 export type SelectAllRoomsWithParticipantsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }> };
 
+export type ManageRooms_SelectGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type ManageRooms_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly registrant_Group: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string }> };
+
 export type ManageRooms_SelectItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
 export type ManageRooms_SelectItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+
+export type ManageRooms_SelectGroupRegistrantsQueryVariables = Exact<{
+  groupId: Scalars['uuid'];
+}>;
+
+
+export type ManageRooms_SelectGroupRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_GroupRegistrant: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly id: any, readonly groupId: any, readonly registrantId: any }> };
 
 export type RoomPersonInfoFragment = { readonly __typename?: 'room_RoomMembership', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } };
 
@@ -38636,6 +38650,8 @@ export type AddEventPeople_ProgramPersonFragment = { readonly __typename?: 'coll
 
 export type AddEventPeople_RegistrantFragment = { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly affiliation?: Maybe<string> }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
 
+export type AddEventPeople_GroupFragment = { readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string };
+
 export type AddEventPeople_SelectItemPeopleQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
   exhibitionIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -38664,6 +38680,20 @@ export type AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables = Exac
 
 
 export type AddEventPeople_SelectProgramPeople_ByRegistrantQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> }> };
+
+export type AddEventPeople_SelectGroupsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly registrant_Group: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string }> };
+
+export type AddEventPeople_SelectRegistrants_ByGroupQueryVariables = Exact<{
+  groupId: Scalars['uuid'];
+}>;
+
+
+export type AddEventPeople_SelectRegistrants_ByGroupQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string, readonly profile?: Maybe<{ readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly affiliation?: Maybe<string> }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }> }> };
 
 export type AddEventPeople_InsertProgramPeopleMutationVariables = Exact<{
   objects: ReadonlyArray<Collection_ProgramPerson_Insert_Input> | Collection_ProgramPerson_Insert_Input;
@@ -40879,6 +40909,12 @@ export const AddEventPeople_RegistrantFragmentDoc = gql`
     id
     invitedEmailAddress
   }
+}
+    `;
+export const AddEventPeople_GroupFragmentDoc = gql`
+    fragment AddEventPeople_Group on registrant_Group {
+  id
+  name
 }
     `;
 export const ContinuationsEditor_ContinuationFragmentDoc = gql`
@@ -44205,6 +44241,18 @@ export const SelectAllRoomsWithParticipantsDocument = gql`
 export function useSelectAllRoomsWithParticipantsQuery(options: Omit<Urql.UseQueryArgs<SelectAllRoomsWithParticipantsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SelectAllRoomsWithParticipantsQuery>({ query: SelectAllRoomsWithParticipantsDocument, ...options });
 };
+export const ManageRooms_SelectGroupsDocument = gql`
+    query ManageRooms_SelectGroups($conferenceId: uuid!) {
+  registrant_Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    id
+    name
+  }
+}
+    `;
+
+export function useManageRooms_SelectGroupsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectGroupsQuery>({ query: ManageRooms_SelectGroupsDocument, ...options });
+};
 export const ManageRooms_SelectItemsDocument = gql`
     query ManageRooms_SelectItems($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
@@ -44216,6 +44264,19 @@ export const ManageRooms_SelectItemsDocument = gql`
 
 export function useManageRooms_SelectItemsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectItemsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ManageRooms_SelectItemsQuery>({ query: ManageRooms_SelectItemsDocument, ...options });
+};
+export const ManageRooms_SelectGroupRegistrantsDocument = gql`
+    query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
+  registrant_GroupRegistrant(where: {groupId: {_eq: $groupId}}) {
+    id
+    groupId
+    registrantId
+  }
+}
+    `;
+
+export function useManageRooms_SelectGroupRegistrantsQuery(options: Omit<Urql.UseQueryArgs<ManageRooms_SelectGroupRegistrantsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ManageRooms_SelectGroupRegistrantsQuery>({ query: ManageRooms_SelectGroupRegistrantsDocument, ...options });
 };
 export const ManageRooms_SelectRoomPeopleDocument = gql`
     query ManageRooms_SelectRoomPeople($roomId: uuid!) {
@@ -44556,6 +44617,28 @@ export const AddEventPeople_SelectProgramPeople_ByRegistrantDocument = gql`
 
 export function useAddEventPeople_SelectProgramPeople_ByRegistrantQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectProgramPeople_ByRegistrantQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AddEventPeople_SelectProgramPeople_ByRegistrantQuery>({ query: AddEventPeople_SelectProgramPeople_ByRegistrantDocument, ...options });
+};
+export const AddEventPeople_SelectGroupsDocument = gql`
+    query AddEventPeople_SelectGroups($conferenceId: uuid!) {
+  registrant_Group(where: {conferenceId: {_eq: $conferenceId}}) {
+    ...AddEventPeople_Group
+  }
+}
+    ${AddEventPeople_GroupFragmentDoc}`;
+
+export function useAddEventPeople_SelectGroupsQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectGroupsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectGroupsQuery>({ query: AddEventPeople_SelectGroupsDocument, ...options });
+};
+export const AddEventPeople_SelectRegistrants_ByGroupDocument = gql`
+    query AddEventPeople_SelectRegistrants_ByGroup($groupId: uuid!) {
+  registrant_Registrant(where: {groupRegistrants: {groupId: {_eq: $groupId}}}) {
+    ...AddEventPeople_Registrant
+  }
+}
+    ${AddEventPeople_RegistrantFragmentDoc}`;
+
+export function useAddEventPeople_SelectRegistrants_ByGroupQuery(options: Omit<Urql.UseQueryArgs<AddEventPeople_SelectRegistrants_ByGroupQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AddEventPeople_SelectRegistrants_ByGroupQuery>({ query: AddEventPeople_SelectRegistrants_ByGroupDocument, ...options });
 };
 export const AddEventPeople_InsertProgramPeopleDocument = gql`
     mutation AddEventPeople_InsertProgramPeople($objects: [collection_ProgramPerson_insert_input!]!) {
@@ -53681,7 +53764,7 @@ export type GraphCacheUpdaters = {
 };
 
 export type GraphCacheConfig = {
-  schema?: CacheExchangeOpts["schema"],
+    schema?: CacheExchangeOpts["schema"],
   updates?: GraphCacheUpdaters,
   keys?: GraphCacheKeysConfig,
   optimistic?: GraphCacheOptimisticUpdaters,

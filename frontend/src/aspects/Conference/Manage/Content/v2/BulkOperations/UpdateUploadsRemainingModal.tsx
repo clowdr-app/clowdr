@@ -74,10 +74,19 @@ function ModalInner({
 
     const update = useCallback(async () => {
         try {
-            await doUpdate({
-                elementIds,
-                count: newValue,
-            });
+            await doUpdate(
+                {
+                    elementIds,
+                    count: newValue,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             onClose();
         } catch (e) {

@@ -48,6 +48,7 @@ import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
@@ -131,10 +132,14 @@ export default function ManageProgramPeople(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const registrants = useMemo(
@@ -492,6 +497,7 @@ export default function ManageProgramPeople(): JSX.Element {
             variables: {
                 conferenceId: conference.id,
             },
+            context,
         });
     useQueryErrorToast(errorAllProgramPersons, false);
     const data = useMemo(
@@ -516,16 +522,25 @@ export default function ManageProgramPeople(): JSX.Element {
             makeWhole: (d) =>
                 d.name?.length ? (d as ManageProgramPeople_ProgramPersonWithAccessTokenFragment) : undefined,
             start: (record) => {
-                insertProgramPerson({
-                    person: {
-                        id: record.id,
-                        conferenceId: conference.id,
-                        affiliation: record.affiliation,
-                        registrantId: record.registrantId,
-                        email: record.email,
-                        name: record.name,
+                insertProgramPerson(
+                    {
+                        person: {
+                            id: record.id,
+                            conferenceId: conference.id,
+                            affiliation: record.affiliation,
+                            registrantId: record.registrantId,
+                            email: record.email,
+                            name: record.name,
+                        },
                     },
-                });
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [conference.id, insertProgramPerson, insertProgramPersonResponse.fetching]
@@ -533,13 +548,22 @@ export default function ManageProgramPeople(): JSX.Element {
 
     const startUpdate = useCallback(
         async (record: ManageProgramPeople_ProgramPersonWithAccessTokenFragment) => {
-            return updateProgramPerson({
-                id: record.id,
-                name: record.name as string,
-                affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
-                registrantId: record.registrantId ?? null,
-                email: record.email !== "" ? record.email ?? null : null,
-            });
+            return updateProgramPerson(
+                {
+                    id: record.id,
+                    name: record.name as string,
+                    affiliation: record.affiliation !== "" ? record.affiliation ?? null : null,
+                    registrantId: record.registrantId ?? null,
+                    email: record.email !== "" ? record.email ?? null : null,
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
         },
         [updateProgramPerson]
     );
@@ -556,9 +580,18 @@ export default function ManageProgramPeople(): JSX.Element {
         () => ({
             ongoing: deleteProgramPersonsResponse.fetching,
             start: (keys) => {
-                deleteProgramPersons({
-                    ids: keys,
-                });
+                deleteProgramPersons(
+                    {
+                        ids: keys,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
             },
         }),
         [deleteProgramPersons, deleteProgramPersonsResponse.fetching]

@@ -66,9 +66,18 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
         async (accountId: string) => {
             setDeleting((x) => R.set(R.lensProp(accountId), true, x));
             try {
-                await deleteAccount({
-                    registrantGoogleAccountId: accountId,
-                });
+                await deleteAccount(
+                    {
+                        registrantGoogleAccountId: accountId,
+                    },
+                    {
+                        fetchOptions: {
+                            headers: {
+                                "X-Auth-Role": "organizer",
+                            },
+                        },
+                    }
+                );
                 await googleAccounts[1]();
                 toast({
                     status: "success",
@@ -88,14 +97,23 @@ export function ConnectYouTubeAccount(props: BoxProps): JSX.Element {
 
     const addAccount = useCallback(async () => {
         try {
-            const urlResult = await mutation({
-                registrantId: registrant.id,
-                scopes: [
-                    "https://www.googleapis.com/auth/youtube.upload",
-                    "https://www.googleapis.com/auth/youtube.readonly",
-                    "https://www.googleapis.com/auth/youtube.force-ssl",
-                ],
-            });
+            const urlResult = await mutation(
+                {
+                    registrantId: registrant.id,
+                    scopes: [
+                        "https://www.googleapis.com/auth/youtube.upload",
+                        "https://www.googleapis.com/auth/youtube.readonly",
+                        "https://www.googleapis.com/auth/youtube.force-ssl",
+                    ],
+                },
+                {
+                    fetchOptions: {
+                        headers: {
+                            "X-Auth-Role": "organizer",
+                        },
+                    },
+                }
+            );
 
             if (!urlResult.data?.getGoogleOAuthUrl) {
                 throw new Error("Could not retrieve Google OAuth URL");

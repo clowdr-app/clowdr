@@ -41,15 +41,24 @@ import {
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import type { RoomWithParticipantInfoFragment } from "../../../generated/graphql";
+import type {
+    ManageRooms_SelectGroupRegistrantsQuery,
+    ManageRooms_SelectGroupRegistrantsQueryVariables,
+    RoomWithParticipantInfoFragment,
+} from "../../../generated/graphql";
 import {
+    ManageRooms_SelectGroupRegistrantsDocument,
     Room_ManagementMode_Enum,
     Room_Mode_Enum,
+    Room_PersonRole_Enum,
     useCreateRoomMutation,
     useDeleteRoomsMutation,
     useGetIsExternalRtmpBroadcastEnabledQuery,
+    useInsertRoomPeopleMutation,
+    useManageRooms_SelectGroupsQuery,
     useManageRooms_SelectItemsQuery,
     useManageRooms_SelectRoomPeopleQuery,
     useSelectAllRoomsWithParticipantsQuery,
@@ -73,6 +82,8 @@ import type {
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import useQueryErrorToast from "../../GQL/useQueryErrorToast";
+import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireRole from "../RequireRole";
@@ -125,12 +136,12 @@ gql`
         }
     }
 
-    # query ManageRooms_SelectGroups($conferenceId: uuid!) {
-    #     permissions_Group(where: { conferenceId: { _eq: $conferenceId } }) {
-    #         id
-    #         name
-    #     }
-    # }
+    query ManageRooms_SelectGroups($conferenceId: uuid!) {
+        registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
+            id
+            name
+        }
+    }
 
     query ManageRooms_SelectItems($conferenceId: uuid!) {
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
@@ -139,13 +150,13 @@ gql`
         }
     }
 
-    # query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
-    #     permissions_GroupRegistrant(where: { groupId: { _eq: $groupId } }) {
-    #         id
-    #         groupId
-    #         registrantId
-    #     }
-    # }
+    query ManageRooms_SelectGroupRegistrants($groupId: uuid!) {
+        registrant_GroupRegistrant(where: { groupId: { _eq: $groupId } }) {
+            id
+            groupId
+            registrantId
+        }
+    }
 
     fragment RoomPersonInfo on room_RoomMembership {
         id
@@ -243,52 +254,79 @@ function RoomSecondaryEditor({
     onSecondaryPanelClose: () => void;
     externalRtmpBroadcastEnabled: boolean;
 }): JSX.Element {
-    // const conference = useConference();
+    const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    // TODO
-    // const [groups] = useManageRooms_SelectGroupsQuery({
-    //     variables: {
-    //         conferenceId: conference.id,
-    //     },
-    // });
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
+    const [groups] = useManageRooms_SelectGroupsQuery({
+        variables: {
+            conferenceId: conference.id,
+        },
+        context,
+    });
     const [people] = useManageRooms_SelectRoomPeopleQuery({
         variables: {
             roomId: room?.id,
         },
         pause: !room,
+        context,
     });
-    // const [groupRegistrantsQ] = useManageRooms_SelectGroupRegistrantsQuery({
-    //     pause: true,
-    // });
-    // const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
-    // useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
-    // useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+    const [insertRoomPeopleResponse, insertRoomPeople] = useInsertRoomPeopleMutation();
+    useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+    const [groupRegistrantsQFetching, setGroupRegistrantsQFetching] = useState<boolean>(false);
 
-    // const addUsersFromGroup = useCallback(
-    //     async (groupId: string) => {
-    //         if (room) {
-    //             try {
-    //                 const result = await groupRegistrantsQ.refetch({
-    //                     groupId,
-    //                 });
-    //                 if (!result.error && result.data) {
-    //                     insertRoomPeople({
-    //                         variables: {
-    //                             people: result.data.permissions_GroupRegistrant.map((x) => ({
-    //                                 registrantId: x.registrantId,
-    //                                 roomId: room.id,
-    //                                 personRoleName: Room_PersonRole_Enum.Participant,
-    //                             })),
-    //                         },
-    //                     });
-    //                 }
-    //             } catch (e) {
-    //                 console.error("Error inserting room people", e);
-    //             }
-    //         }
-    //     },
-    //     [groupRegistrantsQ, insertRoomPeople, room]
-    // );
+    const client = useClient();
+    const addUsersFromGroup = useCallback(
+        async (groupId: string) => {
+            if (room) {
+                try {
+                    setGroupRegistrantsQFetching(true);
+                    const result = await client
+                        .query<
+                            ManageRooms_SelectGroupRegistrantsQuery,
+                            ManageRooms_SelectGroupRegistrantsQueryVariables
+                        >(
+                            ManageRooms_SelectGroupRegistrantsDocument,
+                            {
+                                groupId,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        )
+                        .toPromise();
+                    setGroupRegistrantsQFetching(false);
+                    if (!result.error && result.data) {
+                        insertRoomPeople(
+                            {
+                                people: result.data.registrant_GroupRegistrant.map((x) => ({
+                                    registrantId: x.registrantId,
+                                    roomId: room.id,
+                                    personRoleName: Room_PersonRole_Enum.Participant,
+                                })),
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
+                    }
+                } catch (e) {
+                    setGroupRegistrantsQFetching(false);
+                    console.error("Error inserting room people", e);
+                }
+            }
+        },
+        [client, insertRoomPeople, room]
+    );
 
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
     const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
@@ -350,20 +388,20 @@ function RoomSecondaryEditor({
                                     </LinkButton>
                                     {/* TODO: Add individuals
                                         TODO: Add by role?
-                                        TODO: Add by subconference?
+                                    TODO: Add by subconference? */}
                                     {room.managementModeName === Room_ManagementMode_Enum.Private ? (
                                         <Menu>
                                             <MenuButton
                                                 as={Button}
                                                 isLoading={
-                                                    groupRegistrantsQ.fetching || insertRoomPeopleResponse.fetching
+                                                    groupRegistrantsQFetching || insertRoomPeopleResponse.fetching
                                                 }
                                             >
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
                                                 Add people from group
                                             </MenuButton>
                                             <MenuList>
-                                                {groups.data?.permissions_Group.map((group) => (
+                                                {groups.data?.registrant_Group.map((group) => (
                                                     <MenuItem
                                                         key={group.id}
                                                         onClick={() => addUsersFromGroup(group.id)}
@@ -373,7 +411,7 @@ function RoomSecondaryEditor({
                                                 ))}
                                             </MenuList>
                                         </Menu>
-                                    ) : undefined} */}
+                                    ) : undefined}
                                 </ButtonGroup>
                                 <Accordion>
                                     <AccordionItem>
@@ -505,10 +543,14 @@ function EditableRoomsCRUDTable() {
     const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
     const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const externalRtmpBroadcastEnabled =
         externalRtmpBroadcastEnabledResponse.data?.conference_Configuration_by_pk?.value === true;
@@ -517,12 +559,14 @@ function EditableRoomsCRUDTable() {
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const [selectAllRoomsResult] = useSelectAllRoomsWithParticipantsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const data = useMemo(
         () =>
@@ -1358,44 +1402,71 @@ function EditableRoomsCRUDTable() {
                     }),
                     makeWhole: (d) => d as RoomWithParticipantInfoFragment,
                     start: (record) => {
-                        insertRoom({
-                            room: {
-                                id: record.id,
-                                conferenceId: record.conferenceId,
-                                capacity: record.capacity,
-                                priority: record.priority,
-                                currentModeName: record.currentModeName,
-                                name: record.name,
-                                managementModeName: record.managementModeName,
-                                originatingItemId: record.originatingItemId,
+                        insertRoom(
+                            {
+                                room: {
+                                    id: record.id,
+                                    conferenceId: record.conferenceId,
+                                    capacity: record.capacity,
+                                    priority: record.priority,
+                                    currentModeName: record.currentModeName,
+                                    name: record.name,
+                                    managementModeName: record.managementModeName,
+                                    originatingItemId: record.originatingItemId,
+                                },
                             },
-                        });
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                     },
                 }}
                 update={{
                     ongoing: updateRoomResponse.fetching,
                     start: (record) => {
-                        updateRoom({
-                            id: record.id,
-                            name: record.name,
-                            priority: record.priority,
-                            capacity: record.capacity,
-                            managementModeName: record.managementModeName,
-                            originatingItemId: record.originatingItemId,
-                            chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
-                            enableMandatoryPin: !!record.chat?.enableMandatoryPin,
-                            enableAutoPin: !!record.chat?.enableAutoPin,
-                            enableMandatorySubscribe: !!record.chat?.enableMandatorySubscribe,
-                            enableAutoSubscribe: !!record.chat?.enableAutoSubscribe,
-                        });
+                        updateRoom(
+                            {
+                                id: record.id,
+                                name: record.name,
+                                priority: record.priority,
+                                capacity: record.capacity,
+                                managementModeName: record.managementModeName,
+                                originatingItemId: record.originatingItemId,
+                                chatId: record.chat?.id ?? "00000000-00000000-00000000-00000000",
+                                enableMandatoryPin: !!record.chat?.enableMandatoryPin,
+                                enableAutoPin: !!record.chat?.enableAutoPin,
+                                enableMandatorySubscribe: !!record.chat?.enableMandatorySubscribe,
+                                enableAutoSubscribe: !!record.chat?.enableAutoSubscribe,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                     },
                 }}
                 delete={{
                     ongoing: deleteRoomsResponse.fetching,
                     start: (keys) => {
-                        deleteRooms({
-                            deleteRoomIds: keys,
-                        });
+                        deleteRooms(
+                            {
+                                deleteRoomIds: keys,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        );
                     },
                 }}
                 alert={

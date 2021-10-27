@@ -225,11 +225,15 @@ export default function ManageRegistrants(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "main-conference-organizer",
+    });
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
         requestPolicy: "network-only",
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     useQueryErrorToast(errorAllGroups, false);
 
@@ -719,9 +723,19 @@ export default function ManageRegistrants(): JSX.Element {
                                       .query<
                                           ManageRegistrants_SelectProfilesQuery,
                                           ManageRegistrants_SelectProfilesQueryVariables
-                                      >(ManageRegistrants_SelectProfilesDocument, {
-                                          registrantIds: dataToExport.map((x) => x.id),
-                                      })
+                                      >(
+                                          ManageRegistrants_SelectProfilesDocument,
+                                          {
+                                              registrantIds: dataToExport.map((x) => x.id),
+                                          },
+                                          {
+                                              fetchOptions: {
+                                                  headers: {
+                                                      "X-Auth-Role": "main-conference-organizer",
+                                                  },
+                                              },
+                                          }
+                                      )
                                       .toPromise()
                               ).data?.registrant_Profile ?? []
                             : [];
@@ -908,17 +922,26 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation({
-                                                            registrantIds: data
-                                                                .filter((a) =>
-                                                                    a.groupRegistrants.some(
-                                                                        (ga) => ga.groupId === group.id
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupRegistrants.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
                                                                     )
-                                                                )
-                                                                .map((a) => a.id),
-                                                            conferenceId: conference.id,
-                                                            sendRepeat: false,
-                                                        });
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: false,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        "X-Auth-Role": "organizer",
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
                                                         if (result.error) {
                                                             toast({
                                                                 title: "Failed to send invitation emails",
@@ -956,11 +979,20 @@ export default function ManageRegistrants(): JSX.Element {
                                         isDisabled={selectedData.length === 0}
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation({
-                                                registrantIds: selectedData.map((x) => x.id),
-                                                conferenceId: conference.id,
-                                                sendRepeat: false,
-                                            });
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: false,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            "X-Auth-Role": "organizer",
+                                                        },
+                                                    },
+                                                }
+                                            );
                                             if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
@@ -1005,17 +1037,26 @@ export default function ManageRegistrants(): JSX.Element {
                                                 <MenuItem
                                                     key={group.id}
                                                     onClick={async () => {
-                                                        const result = await insertInvitationEmailJobsMutation({
-                                                            registrantIds: data
-                                                                .filter((a) =>
-                                                                    a.groupRegistrants.some(
-                                                                        (ga) => ga.groupId === group.id
+                                                        const result = await insertInvitationEmailJobsMutation(
+                                                            {
+                                                                registrantIds: data
+                                                                    .filter((a) =>
+                                                                        a.groupRegistrants.some(
+                                                                            (ga) => ga.groupId === group.id
+                                                                        )
                                                                     )
-                                                                )
-                                                                .map((a) => a.id),
-                                                            conferenceId: conference.id,
-                                                            sendRepeat: true,
-                                                        });
+                                                                    .map((a) => a.id),
+                                                                conferenceId: conference.id,
+                                                                sendRepeat: true,
+                                                            },
+                                                            {
+                                                                fetchOptions: {
+                                                                    headers: {
+                                                                        "X-Auth-Role": "organizer",
+                                                                    },
+                                                                },
+                                                            }
+                                                        );
                                                         if (result.error) {
                                                             toast({
                                                                 title: "Failed to send invitation emails",
@@ -1053,11 +1094,20 @@ export default function ManageRegistrants(): JSX.Element {
                                         isDisabled={selectedData.length === 0}
                                         isLoading={insertInvitationEmailJobsLoading}
                                         onClick={async () => {
-                                            const result = await insertInvitationEmailJobsMutation({
-                                                registrantIds: selectedData.map((x) => x.id),
-                                                conferenceId: conference.id,
-                                                sendRepeat: true,
-                                            });
+                                            const result = await insertInvitationEmailJobsMutation(
+                                                {
+                                                    registrantIds: selectedData.map((x) => x.id),
+                                                    conferenceId: conference.id,
+                                                    sendRepeat: true,
+                                                },
+                                                {
+                                                    fetchOptions: {
+                                                        headers: {
+                                                            "X-Auth-Role": "organizer",
+                                                        },
+                                                    },
+                                                }
+                                            );
                                             if (result.error) {
                                                 toast({
                                                     title: "Failed to send invitation emails",
@@ -1208,12 +1258,21 @@ export default function ManageRegistrants(): JSX.Element {
                 onClose={sendCustomEmailModal.onClose}
                 registrants={sendCustomEmailRegistrants}
                 send={async (registrantIds: string[], markdownBody: string, subject: string) => {
-                    const result = await insertCustomEmailJobMutation({
-                        registrantIds,
-                        conferenceId: conference.id,
-                        markdownBody,
-                        subject,
-                    });
+                    const result = await insertCustomEmailJobMutation(
+                        {
+                            registrantIds,
+                            conferenceId: conference.id,
+                            markdownBody,
+                            subject,
+                        },
+                        {
+                            fetchOptions: {
+                                headers: {
+                                    "X-Auth-Role": "organizer",
+                                },
+                            },
+                        }
+                    );
                     if (result?.error) {
                         console.error("Failed to insert CustomEmailJob", result.error);
                         throw new Error("Error submitting query");

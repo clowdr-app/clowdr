@@ -136,9 +136,18 @@ export default function ShuffleQueueTile({
                                 aria-label="Delete"
                                 colorScheme="red"
                                 onClick={() => {
-                                    deletePeriod({
-                                        id: queue.id,
-                                    });
+                                    deletePeriod(
+                                        {
+                                            id: queue.id,
+                                        },
+                                        {
+                                            fetchOptions: {
+                                                headers: {
+                                                    "X-Auth-Role": "organizer",
+                                                },
+                                            },
+                                        }
+                                    );
                                 }}
                             >
                                 <FAIcon iconStyle="s" icon="trash-alt" />

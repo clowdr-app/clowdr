@@ -27,6 +27,7 @@ import { Content_ItemType_Enum, useManageContent_SelectItemQuery } from "../../.
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
+import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { EditElements } from "../Element/EditElements";
 import { AddContentMenu } from "./AddContentMenu";
@@ -106,10 +107,14 @@ function SecondaryEditorInner({
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [itemResponse, refetchItem] = useManageContent_SelectItemQuery({
         variables: {
             itemId,
         },
+        context,
     });
 
     return (

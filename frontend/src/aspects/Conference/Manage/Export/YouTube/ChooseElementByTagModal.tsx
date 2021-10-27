@@ -21,7 +21,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import { gql } from "urql";
@@ -29,6 +29,7 @@ import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 
@@ -69,10 +70,14 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     const [tagId, setTagId] = useState<string | null>(null);
@@ -92,6 +97,7 @@ export function ChooseElementByTagModal({
             tagId,
             name: searchString ?? "%%",
         },
+        context,
     });
 
     const elements = useMemo(() => {

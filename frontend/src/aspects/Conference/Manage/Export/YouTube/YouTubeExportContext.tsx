@@ -1,14 +1,19 @@
 import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useManageExport_GetRegistrantGoogleAccountsQuery } from "../../../../../generated/graphql";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 function useValue() {
     const registrant = useCurrentRegistrant();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const googleAccounts = useManageExport_GetRegistrantGoogleAccountsQuery({
         variables: {
             registrantId: registrant?.id,
         },
+        context,
     });
     const [selectedGoogleAccountId, setSelectedGoogleAccountId] = useState<string | null>(null);
     const [finished, setFinished] = useState<boolean>(false);

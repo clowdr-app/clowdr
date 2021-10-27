@@ -521,6 +521,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_RoomsDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -554,6 +561,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_EventsDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -594,6 +608,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_ItemsDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -626,6 +647,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_ItemsDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -662,9 +690,19 @@ export default function CreateContinuationModal({
                         .query<
                             CreateContinuationModal_ExhibitionsQuery,
                             CreateContinuationModal_ExhibitionsQueryVariables
-                        >(CreateContinuationModal_ExhibitionsDocument, {
-                            conferenceId: conference.id,
-                        })
+                        >(
+                            CreateContinuationModal_ExhibitionsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        )
                         .toPromise();
                     return (
                         data.data?.collection_Exhibition.map((x) => ({
@@ -695,9 +733,19 @@ export default function CreateContinuationModal({
                         .query<
                             CreateContinuationModal_ShufflePeriodsQuery,
                             CreateContinuationModal_ShufflePeriodsQueryVariables
-                        >(CreateContinuationModal_ShufflePeriodsDocument, {
-                            conferenceId: conference.id,
-                        })
+                        >(
+                            CreateContinuationModal_ShufflePeriodsDocument,
+                            {
+                                conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
+                            }
+                        )
                         .toPromise();
                     return (
                         data.data?.room_ShufflePeriod.map((x) => ({
@@ -728,6 +776,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_ProfileDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -761,6 +816,13 @@ export default function CreateContinuationModal({
                             CreateContinuationModal_TagsDocument,
                             {
                                 conferenceId: conference.id,
+                            },
+                            {
+                                fetchOptions: {
+                                    headers: {
+                                        "X-Auth-Role": "organizer",
+                                    },
+                                },
                             }
                         )
                         .toPromise();
@@ -1042,21 +1104,30 @@ export default function CreateContinuationModal({
                                         colorScheme="green"
                                         onClick={async () => {
                                             try {
-                                                await insert({
-                                                    object: {
-                                                        colour,
-                                                        defaultFor,
-                                                        description,
-                                                        fromEvent: "eventId" in from ? from.eventId : undefined,
-                                                        fromShuffleQueue:
-                                                            "shufflePeriodId" in from
-                                                                ? from.shufflePeriodId
-                                                                : undefined,
-                                                        isActiveChoice,
-                                                        priority: defaultPriority,
-                                                        to,
+                                                await insert(
+                                                    {
+                                                        object: {
+                                                            colour,
+                                                            defaultFor,
+                                                            description,
+                                                            fromEvent: "eventId" in from ? from.eventId : undefined,
+                                                            fromShuffleQueue:
+                                                                "shufflePeriodId" in from
+                                                                    ? from.shufflePeriodId
+                                                                    : undefined,
+                                                            isActiveChoice,
+                                                            priority: defaultPriority,
+                                                            to,
+                                                        },
                                                     },
-                                                });
+                                                    {
+                                                        fetchOptions: {
+                                                            headers: {
+                                                                "X-Auth-Role": "organizer",
+                                                            },
+                                                        },
+                                                    }
+                                                );
 
                                                 setDefaultFor(ContinuationDefaultFor.None);
                                                 setDescription("");

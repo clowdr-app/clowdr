@@ -237,9 +237,18 @@ function ModalInner({
                                     };
                                 });
 
-                                insert({
-                                    objects,
-                                });
+                                insert(
+                                    {
+                                        objects,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                             }
                         }}
                         colorScheme="purple"

@@ -39,6 +39,7 @@ import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest } from "../../../Generic/MathUtils";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -429,11 +430,15 @@ export default function ChecklistPage(): JSX.Element {
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
     const now = useMemo(() => new Date().toISOString(), []);
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [checklistResponse] = usePreshowChecklistQuery({
         variables: {
             now,
             conferenceId: conference.id,
         },
+        context,
     });
 
     const emptyTags = useMemo(() => {

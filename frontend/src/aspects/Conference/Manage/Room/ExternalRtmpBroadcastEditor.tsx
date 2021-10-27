@@ -22,6 +22,7 @@ import {
     useUpdateRoomRtmpOutputMutation,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 
 gql`
     query GetRoomRtmpOutput($roomId: uuid!) {
@@ -85,11 +86,15 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
             roomId,
         },
         requestPolicy: "network-only",
+        context,
     });
     const [insertResponse, doInsert] = useInsertRoomRtmpOutputMutation();
     const [updateResponse, doUpdate] = useUpdateRoomRtmpOutputMutation();
@@ -121,22 +126,49 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
                     if (url !== null && key !== null) {
                         if (rtmpOutput) {
                             if (url === "" || key === "") {
-                                await doDelete({
-                                    id: rtmpOutput.id,
-                                });
+                                await doDelete(
+                                    {
+                                        id: rtmpOutput.id,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                             } else {
-                                await doUpdate({
-                                    id: rtmpOutput.id,
-                                    url,
-                                    key,
-                                });
+                                await doUpdate(
+                                    {
+                                        id: rtmpOutput.id,
+                                        url,
+                                        key,
+                                    },
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "organizer",
+                                            },
+                                        },
+                                    }
+                                );
                             }
                         } else if (url !== "" && key !== "") {
-                            await doInsert({
-                                roomId,
-                                url,
-                                key,
-                            });
+                            await doInsert(
+                                {
+                                    roomId,
+                                    url,
+                                    key,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "organizer",
+                                        },
+                                    },
+                                }
+                            );
                         }
 
                         await refetchRtmpOutputResponse();

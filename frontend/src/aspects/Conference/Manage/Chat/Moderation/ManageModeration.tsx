@@ -35,6 +35,7 @@ import { useGlobalChatState } from "../../../../Chat/GlobalChatStateProvider";
 import MessageBox from "../../../../Chat/Messages/MessageBox";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { Markdown } from "../../../../Text/Markdown";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireRole from "../../../RequireRole";
@@ -84,10 +85,14 @@ export default function ManageModeration(): JSX.Element {
 
 function ModerationList(): JSX.Element {
     const conference = useConference();
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [flagsResponse] = useManageModeration_SelectFlagsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
     const sortedFlags = useMemo(
         () =>
@@ -346,18 +351,27 @@ function ModerationFlag({ flag }: { flag: ManageModeration_ChatFlagFragment }): 
                             isDisabled={newNote.trim().length === 0}
                             isLoading={updateResponse.fetching}
                             onClick={() => {
-                                update({
-                                    flagId: flag.id,
-                                    update: {
-                                        notes:
-                                            (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
-                                            registrant.displayName +
-                                            ", " +
-                                            new Date().toUTCString() +
-                                            "\n\n" +
-                                            newNote.trim(),
+                                update(
+                                    {
+                                        flagId: flag.id,
+                                        update: {
+                                            notes:
+                                                (flag.notes?.length ? flag.notes + "\n\n----\n\n" : "") +
+                                                registrant.displayName +
+                                                ", " +
+                                                new Date().toUTCString() +
+                                                "\n\n" +
+                                                newNote.trim(),
+                                        },
                                     },
-                                });
+                                    {
+                                        fetchOptions: {
+                                            headers: {
+                                                "X-Auth-Role": "moderator",
+                                            },
+                                        },
+                                    }
+                                );
                             }}
                         >
                             Add note

@@ -32,6 +32,7 @@ import {
     useConfigureEmailTemplates_UpdateConferenceConfigurationMutation,
 } from "../../../../generated/graphql";
 import QueryWrapper from "../../../GQL/QueryWrapper";
+import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 
 gql`
@@ -66,10 +67,14 @@ gql`
 export function ConfigureEmailTemplates(): JSX.Element {
     const conference = useConference();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "organizer",
+    });
     const [conferenceConfigurationResult] = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
     });
 
     return (

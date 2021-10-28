@@ -134,3 +134,4 @@ hasura/config.yaml
 restore/
 services/auth/build
 
+**/build

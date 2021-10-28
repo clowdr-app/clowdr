@@ -245,10 +245,9 @@ function AddEventPeople_FromContentPanel({
                     }
                 }
                 const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
-                for (const event of eventsWithContent) {
-                    const existingEventPeople = event.eventPeople;
-
-                    if (event.itemId && includeContent) {
+                if (includeContent) {
+                    for (const event of eventsWithContent) {
+                        const existingEventPeople = event.eventPeople;
                         const itemPeopleItm = itemPeopleByItem.get(event.itemId);
                         if (itemPeopleItm) {
                             for (const itemPerson of itemPeopleItm) {
@@ -271,8 +270,11 @@ function AddEventPeople_FromContentPanel({
                             }
                         }
                     }
+                }
 
-                    if (event.exhibitionId && includeExhibitions) {
+                if (includeExhibitions) {
+                    for (const event of eventsWithExhibition) {
+                        const existingEventPeople = event.eventPeople;
                         const itemPeopleExh = exhibitionsMap.get(event.exhibitionId);
                         if (itemPeopleExh) {
                             for (const itemPerson of itemPeopleExh) {
@@ -297,7 +299,9 @@ function AddEventPeople_FromContentPanel({
                     }
                 }
 
-                await insertEventPeople(eventsWithContent, newEventPeople, insert);
+                if (newEventPeople.length > 0) {
+                    await insertEventPeople(newEventPeople, insert);
+                }
 
                 setCopying(false);
                 onClose();
@@ -444,7 +448,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                 }
             }
 
-            await insertEventPeople(events, newEventPeople, insert);
+            await insertEventPeople(newEventPeople, insert);
 
             setAdding(false);
             onClose();
@@ -980,7 +984,7 @@ export async function addRegistrantsToEvent(
         }
     }
 
-    await insertEventPeople(events, newEventPeople, insertEventPeopleQ);
+    await insertEventPeople(newEventPeople, insertEventPeopleQ);
     return newEventPeople;
 }
 

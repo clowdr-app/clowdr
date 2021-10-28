@@ -1,4 +1,4 @@
-# Clowdr: Hasura
+# Midspace: Hasura
 
 We use the Hasura GraphQL engine to power the interface between the frontend
 and all of our backend services.
@@ -6,10 +6,13 @@ and all of our backend services.
 ## Pre-requisites
 
 1. [Docker Compose](https://docs.docker.com/compose/)
+1. **Full Setup**: A SendGrid account per instructions in the main README.
 
 ## Setting Up
 
 1. `cp hasura/.env.example hasura/.env.local`
+1. `cp hasura/config.yaml.example hasura/config.yaml`
+1. Set the value of the `...ADMIN_SECRET` in both `.env.local` and `config.yaml` to the Hasura Admin Secret value generated at the beginning of the setup process. Set the value of `EVENT_SECRET` to another secure random value that matches across the two files.
 1. If you are using an M1 Mac, note that Hasura's official Docker image does not yet support this platform. You will need to use a different image built by a third party. Swap `image: hasura/graphql-engine:v{version number}.cli-migrations-v2` for `image: fedormelexin/graphql-engine-arm64:v{version number}.cli-migrations-v2` in `docker-compose.yaml`, replacing the version number as appropriate.
 1. Run the `Hasura Console -- Local Development` task within VSCode:
    `Terminal > Run Task`.
@@ -19,7 +22,15 @@ and all of our backend services.
     - If you get an error message about `version check: failed to get
       version from server: failed making version api call...` try running
       the task again -- there is a race condition that can cause this.
-1. Your browser should have opened a tab to the Hasura console
+1. Your browser should have opened a tab to the [Hasura Console](http://localhost:9695/console/). Open the `system.Configuration` table (click the DATA tab at top, expand the `system` schema on the left, and click the `Configuration` table) and insert the rows listed below. **Production**: If running Midspace in a production environment, you will need to insert rows into the `system.Configuration` table for all available keys, not just those listed here. Refer to the `description` field of each key (in `system.ConfigurationKey`) for expected values for the remaining keys.
+   | Key | Value |
+   | ------- | ---------- |
+   | `SENDGRID_API_KEY` | your SendGrid API key, as a JSON string (i.e. wrapped in double quotes) |
+   | `SENDGRID_SENDER` | the 'from' email address you wish to use for emails sent by Midspace, as a JSON string |
+   | `SENDGRID_REPLYTO` | the 'reply-to' email address you wish to use for emails sent by Midspace, as a JSON string |
+   | `HOST_ORGANISATION_NAME` | Name of your organization to appear in email footers, as a JSON string |
+   | `STOP_EMAILS_CONTACT_EMAIL_ADDRESS` | Contact address for emails received in error, as a JSON string |
+   | `DEFAULT_FRONTEND_HOST` | Either `http://localhost:3000` or your public frontend URL, as a JSON string |
 
 Now return to the main README.
 

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { StackStatus } from "@aws-sdk/client-cloudformation";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
 import { add, sub } from "date-fns";
@@ -149,8 +149,8 @@ export class ChannelStackSyncService {
             }
         `;
 
-        // Look for rooms that have no events ending since at least 24 hours ago
-        const past = sub(new Date(), { hours: 24 });
+        // Look for rooms that have no events ending since at least 6 hours ago
+        const past = sub(new Date(), { hours: 6 });
 
         const result = await this.graphQlService.apolloClient.query({
             query: GetObsoleteChannelStacksDocument,

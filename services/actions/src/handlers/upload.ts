@@ -514,7 +514,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
 }
 
 gql`
-    mutation InsertSubmissionRequestEmails($uploaderIds: [uuid!]!, $personIds: [uuid!]!) {
+    mutation InsertSubmissionRequestEmails($personIds: [uuid!]!) {
         update_collection_ProgramPerson(where: { id: { _in: $personIds } }, _inc: { submissionRequestsSentCount: 1 }) {
             affected_rows
         }

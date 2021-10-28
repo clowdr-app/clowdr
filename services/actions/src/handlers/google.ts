@@ -8,8 +8,7 @@ import { google } from "googleapis";
 import jwt_decode from "jwt-decode";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
-import type {
-    UploadYouTubeVideoJobDataFragment} from "../generated/graphql";
+import type { UploadYouTubeVideoJobDataFragment } from "../generated/graphql";
 import {
     CompleteUploadYouTubeVideoJobDocument,
     CreateYouTubeUploadDocument,
@@ -18,7 +17,7 @@ import {
     Google_CreateRegistrantGoogleAccountDocument,
     MarkAndSelectNewUploadYouTubeVideoJobsDocument,
     SelectNewUploadYouTubeVideoJobsDocument,
-    UnmarkUploadYouTubeVideoJobsDocument
+    UnmarkUploadYouTubeVideoJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { registrantBelongsToUser } from "../lib/authorisation";
@@ -189,6 +188,7 @@ gql`
         $videoStatus: String!
         $uploadYouTubeVideoJobId: uuid!
         $conferenceId: uuid!
+        $subconferenceId: uuid!
         $videoPrivacyStatus: String!
     ) {
         insert_video_YouTubeUpload_one(
@@ -200,6 +200,7 @@ gql`
                 videoPrivacyStatus: $videoPrivacyStatus
                 uploadYouTubeVideoJobId: $uploadYouTubeVideoJobId
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
             }
         ) {
             id

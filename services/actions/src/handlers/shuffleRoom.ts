@@ -135,11 +135,12 @@ gql`
         }
     }
 
-    mutation InsertManagedRoom($conferenceId: uuid!, $capacity: Int!, $name: String!) {
+    mutation InsertManagedRoom($conferenceId: uuid!, $subconferenceId: uuid!, $capacity: Int!, $name: String!) {
         insert_room_Room_one(
             object: {
                 capacity: $capacity
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
                 currentModeName: VIDEO_CHAT
                 name: $name
                 managementModeName: MANAGED

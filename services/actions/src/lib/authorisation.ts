@@ -12,6 +12,14 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
+export class Authorisation {
+    constructor(private sessionVariables: { [key: string]?: string }) {}
+
+    get userId(): string {
+        return this.sessionVariables["x-hasura-user-id"];
+    }
+}
+
 export async function getRegistrant(userId: string, conferenceId: string): Promise<GetRegistrant_RegistrantFragment> {
     gql`
         query GetRegistrant($userId: String!, $conferenceId: uuid!) {

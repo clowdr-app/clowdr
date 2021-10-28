@@ -25,6 +25,7 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
                 id
                 chatId
                 conferenceId
+                subconferenceId
                 rooms(where: { originatingEventId: { _is_null: true } }, order_by: { created_at: asc }, limit: 1) {
                     id
                 }
@@ -54,6 +55,7 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
             $conferenceId: uuid!
             $name: String!
             $originatingItemId: uuid!
+            $subconferenceId: uuid = null
         ) {
             insert_room_Room_one(
                 object: {
@@ -64,6 +66,7 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
                     name: $name
                     originatingItemId: $originatingItemId
                     managementModeName: PUBLIC
+                    subconferenceId: $subconferenceId
                 }
             ) {
                 id
@@ -85,12 +88,15 @@ export async function createItemVideoChatRoom(itemId: string, conferenceId: stri
     return createResult.data?.insert_room_Room_one?.id;
 }
 
-export async function getRoomConferenceId(roomId: string): Promise<string> {
+export async function getRoomConferenceId(
+    roomId: string
+): Promise<{ conferenceId: string; subconferenceId: string | null }> {
     gql`
         query GetRoomConferenceId($roomId: uuid!) {
             room_Room_by_pk(id: $roomId) {
                 id
                 conferenceId
+                subconferenceId
             }
         }
     `;
@@ -106,7 +112,10 @@ export async function getRoomConferenceId(roomId: string): Promise<string> {
         throw new Error("Could not find room");
     }
 
-    return room.data.room_Room_by_pk.conferenceId;
+    return {
+        conferenceId: room.data.room_Room_by_pk.conferenceId,
+        subconferenceId: room.data.room_Room_by_pk.subconferenceId ?? null,
+    };
 }
 
 export async function canUserJoinRoom(registrantId: string, roomId: string, conferenceId: string): Promise<boolean> {

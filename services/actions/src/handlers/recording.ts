@@ -130,10 +130,11 @@ gql`
     mutation Recording_CompleteMediaPackageHarvestJob(
         $id: uuid!
         $message: String!
-        $data: jsonb = ""
-        $itemId: uuid = ""
-        $conferenceId: uuid = ""
-        $name: String = ""
+        $data: jsonb!
+        $itemId: uuid!
+        $conferenceId: uuid!
+        $subconferenceId: uuid!
+        $name: String!
     ) {
         update_job_queues_MediaPackageHarvestJob_by_pk(
             pk_columns: { id: $id }
@@ -142,7 +143,14 @@ gql`
             id
         }
         insert_content_Element_one(
-            object: { data: $data, itemId: $itemId, conferenceId: $conferenceId, typeName: VIDEO_FILE, name: $name }
+            object: {
+                data: $data
+                itemId: $itemId
+                conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
+                typeName: VIDEO_FILE
+                name: $name
+            }
         ) {
             id
         }

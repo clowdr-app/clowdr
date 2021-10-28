@@ -272,7 +272,13 @@ gql`
         }
     }
 
-    mutation CombineVideosJob_CreateElement($data: jsonb!, $name: String!, $itemId: uuid!, $conferenceId: uuid!) {
+    mutation CombineVideosJob_CreateElement(
+        $data: jsonb!
+        $name: String!
+        $itemId: uuid!
+        $conferenceId: uuid!
+        $subconferenceId: uuid!
+    ) {
         insert_content_Element_one(
             object: {
                 data: $data
@@ -281,6 +287,7 @@ gql`
                 typeName: VIDEO_FILE
                 itemId: $itemId
                 conferenceId: $conferenceId
+                subconferenceId: $subconferenceId
             }
         ) {
             id

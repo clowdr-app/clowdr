@@ -68,15 +68,10 @@ export async function addUserToRoomMemberships(
 ): Promise<void> {
     gql`
         query GetRegistrantsForRoomAndUser($roomId: uuid!, $userId: String!) {
-            room_Room_by_pk(id: $roomId) {
+            registrant_Registrant(
+                where: { conference: { rooms: { id: { _eq: $roomId } } }, userId: { _eq: $userId } }
+            ) {
                 id
-                conference {
-                    registrants(where: { userId: { _eq: $userId } }) {
-                        userId
-                        id
-                    }
-                    id
-                }
             }
         }
     `;
@@ -89,21 +84,12 @@ export async function addUserToRoomMemberships(
         },
     });
 
-    if (result.error || result.errors) {
-        console.error("Failed to get registrant to be added to the room people list", userId, roomId);
-        throw new Error("Failed to get registrant to be added to the room people list");
-    }
-
-    if (
-        !result.data.room_Room_by_pk?.conference.registrants ||
-        result.data.room_Room_by_pk.conference.registrants.length === 0 ||
-        !result.data.room_Room_by_pk.conference.registrants[0].userId
-    ) {
-        console.error("Could not find an registrant to be added to the room people list", userId, roomId);
+    if (!result.data.registrant_Registrant?.length) {
+        console.error("Could not find an registrant to be added to the room people list", { userId, roomId });
         throw new Error("Could not find an registrant to be added to the room people list");
     }
 
-    const registrantId = result.data.room_Room_by_pk.conference.registrants[0].id;
+    const registrantId = result.data.registrant_Registrant[0].id;
 
     gql`
         mutation AddRegistrantToRoomMemberships(
@@ -223,6 +209,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
                 object: {
                     capacity: $capacity
                     conferenceId: $conferenceId
+                    subconferenceId: null
                     currentModeName: VIDEO_CHAT
                     name: $name
                     managementModeName: DM

@@ -114,6 +114,7 @@ gql`
             name
             startTime
             conferenceId
+            subconferenceId
             item {
                 id
                 elements_aggregate {
@@ -271,6 +272,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                         variables: {
                             object: {
                                 conferenceId: event.conferenceId,
+                                subconferenceId: event.subconferenceId,
                                 data,
                                 isHidden: false,
                                 itemId: event.item.id,
@@ -450,7 +452,9 @@ export async function handleJoinRoom(
     payload: joinRoomVonageSessionArgs,
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
-    const roomConferenceId = await getRoomConferenceId(payload.roomId);
+    const { conferenceId: roomConferenceId, subconferenceId: roomSubconferenceId } = await getRoomConferenceId(
+        payload.roomId
+    );
     const registrant = await getRegistrantWithPermissions(userId, roomConferenceId);
     const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
 

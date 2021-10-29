@@ -36,7 +36,7 @@ type ConditionalClauses<FieldKeys extends string = any> = DiadicBooleanClauses &
             | null;
     };
 
-function satisfiesScalarConditions(where: FieldClauses, fieldValue: any, cache: Cache): boolean {
+function satisfiesScalarConditions(where: FieldClauses, fieldValue: any, _cache: Cache): boolean {
     // TODO
     console.log("Scalar condition", { where, fieldValue });
     return true;
@@ -122,25 +122,28 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
     return true;
 }
 
-function logEntity(entityKey: string, cache: Cache): any {
-    const fieldInfos = cache.inspectFields(entityKey);
-    const result: any = {};
-    for (const fieldInfo of fieldInfos) {
-        const fieldValue = cache.resolve(entityKey, fieldInfo.fieldKey);
-        if (fieldValue instanceof Array) {
-            result[fieldInfo.fieldName] = [];
-            for (const val of fieldValue) {
-                result[fieldInfo.fieldName].push(logEntity(val as string, cache));
-            }
-        } else {
-            result[fieldInfo.fieldName] = fieldValue;
-        }
-    }
-    console.log(`Entity: ${entityKey}`, result);
-    return result;
-}
+// function logEntity(entityKey: string, cache: Cache): any {
+//     const fieldInfos = cache.inspectFields(entityKey);
+//     const result: any = {};
+//     for (const fieldInfo of fieldInfos) {
+//         const fieldValue = cache.resolve(entityKey, fieldInfo.fieldKey);
+//         if (fieldValue instanceof Array) {
+//             result[fieldInfo.fieldName] = [];
+//             for (const val of fieldValue) {
+//                 result[fieldInfo.fieldName].push(logEntity(val as string, cache));
+//             }
+//         } else {
+//             result[fieldInfo.fieldName] = fieldValue;
+//         }
+//     }
+//     console.log(`Entity: ${entityKey}`, result);
+//     return result;
+// }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function genericConditionalLookup(parent: any, args: Variables, cache: Cache, info: ResolveInfo): any {
+    // TODO: Do the simple test first - see if the exact desired key is in the cache
+
     console.log(`--------------- BEGIN CACHE LOOKUP (${info.fieldName}) ---------------`);
     const allFields = cache.inspectFields(info.parentKey);
     const fieldInfos = allFields.filter((fieldInfo) => fieldInfo.fieldName === info.fieldName);
@@ -198,6 +201,9 @@ function genericConditionalLookup(parent: any, args: Variables, cache: Cache, in
 
     console.log("--------------- END CACHE LOOKUP (2) ---------------");
 
+    // TODO: This isn't good enough - we need to resolve links manually too
+    // TODO: However, we should also account for nested data in case a field necessary for filtering was missing
+    //       from the cached object but was known at the time the original query was made
     return [...result];
 }
 

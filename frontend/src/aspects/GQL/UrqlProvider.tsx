@@ -140,10 +140,12 @@ function UrqlProviderInner({
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
+                            // TODO: Disable this
                             devtoolsExchange,
                             dedupExchange,
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
+                                // TODO: Enable this
                                 shouldUpgrade: () => false,
                                 // authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
                             }),

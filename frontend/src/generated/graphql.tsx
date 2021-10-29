@@ -53767,7 +53767,7 @@ export type GraphCacheUpdaters = {
 };
 
 export type GraphCacheConfig = {
-  schema?: IntrospectionData,
+  schema?: CacheExchangeOpts["schema"],
   updates?: GraphCacheUpdaters,
   keys?: GraphCacheKeysConfig,
   optimistic?: GraphCacheOptimisticUpdaters,

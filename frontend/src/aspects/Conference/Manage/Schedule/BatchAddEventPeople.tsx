@@ -890,7 +890,6 @@ function AddEventPeople_SingleRegistrantPanel({
 }
 
 async function insertEventPeople(
-    _events: EventInfoFragment[],
     newEventPeople: Schedule_EventProgramPerson_Insert_Input[],
     insert: UseMutationResponse<
         AddEventPeople_InsertEventPeopleMutation,

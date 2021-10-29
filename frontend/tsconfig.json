@@ -1,12 +1,5 @@
 {
-    "include": [
-        "src/**/*.d.ts",
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "types",
-        "node_modules/@types",
-        "public/js/ServiceWorker.ts"
-    ],
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "public/js/ServiceWorker.ts"],
     "exclude": ["./build"],
     "compilerOptions": {
         /* Basic Options */
@@ -16,6 +9,7 @@
         "jsx": "preserve",
         "baseUrl": "./",
         "noEmit": true,
+        "typeRoots": ["types", "node_modules/@types"],
 
         /* Strict Type-Checking Options */
         "strict": true,
@@ -41,9 +35,7 @@
 
         /* Advanced Options */
         "skipLibCheck": true,
-        "emitDecoratorMetadata": true,
-
-        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
+        "emitDecoratorMetadata": true
     },
     "references": [
         { "path": "../packages/shared-types/tsconfig.esm.ref.json" },

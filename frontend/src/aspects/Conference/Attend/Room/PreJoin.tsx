@@ -66,9 +66,6 @@ export function PreJoin({ cameraPreviewRef }: { cameraPreviewRef: React.RefObjec
                                 shape={VmShape.VM_FLAT}
                                 stream={Optional.of(state.microphoneStream)}
                                 blocks={10}
-                                css={{
-                                    w: "100%",
-                                }}
                             />
                             <chakra.div w="2rem" h="2rem" bgColor="rgba(50,50,50,0.8)" borderRadius="50%">
                                 <FAIcon

@@ -1,6 +1,7 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React from "react";
+import "reflect-metadata";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";

@@ -7,7 +7,7 @@ export default defineConfig({
         rollupOptions: {
             plugins: [],
         },
-        minify: false,
+        minify: true,
         sourcemap: true,
     },
     resolve: {

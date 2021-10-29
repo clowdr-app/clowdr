@@ -19,6 +19,7 @@ gql`
         id
         name
         managementModeName
+        originatingItemId
         originatingItem {
             id
             title
@@ -30,14 +31,17 @@ gql`
 
     fragment RoomTile_Event on schedule_Event {
         id
+        roomId
         name
         intendedRoomModeName
         startTime
         endTime
+        exhibitionId
         exhibition {
             id
             name
         }
+        itemId
         item {
             id
             title

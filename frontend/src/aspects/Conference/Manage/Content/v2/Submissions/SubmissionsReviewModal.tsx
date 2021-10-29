@@ -43,6 +43,8 @@ gql`
         hasUnsubmittedElements
         itemPeople {
             id
+            itemId
+            personId
             person {
                 id
                 name
@@ -59,6 +61,7 @@ gql`
         typeName
         name
         data
+        itemId
     }
 `;
 

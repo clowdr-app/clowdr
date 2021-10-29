@@ -118,9 +118,11 @@ gql`
         participants {
             ...RoomParticipantWithRegistrantInfo
         }
+        originatingDataId
         originatingData {
             ...OriginatingDataInfo
         }
+        chatId
         chat {
             id
             enableMandatoryPin
@@ -140,6 +142,7 @@ gql`
         registrant_Group(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -147,6 +150,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             title
+            conferenceId
         }
     }
 
@@ -160,6 +164,7 @@ gql`
 
     fragment RoomPersonInfo on room_RoomMembership {
         id
+        roomId
         registrant {
             id
             displayName

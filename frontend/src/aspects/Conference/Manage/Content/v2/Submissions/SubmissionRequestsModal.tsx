@@ -87,6 +87,7 @@ gql`
         hasUnsubmittedElements
         itemPeople {
             id
+            itemId
             personId
             roleName
             hasSubmissionRequestBeenSent

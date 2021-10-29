@@ -111,6 +111,7 @@ gql`
         content_ItemExhibition(where: { exhibitionId: { _in: $exhibitionIds } }) {
             id
             exhibitionId
+            itemId
             item {
                 id
                 itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {

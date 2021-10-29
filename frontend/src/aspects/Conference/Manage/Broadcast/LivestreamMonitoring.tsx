@@ -71,7 +71,11 @@ gql`
 
     fragment MonitorLivestreams_PrerecEvent on schedule_Event {
         id
+        conferenceId
         startTime
+        endTime
+        intendedRoomModeName
+        roomId
         room {
             id
             name
@@ -82,10 +86,13 @@ gql`
     fragment MonitorLivestreams_Person on schedule_EventProgramPerson {
         id
         roleName
+        personId
+        eventId
         person {
             id
             name
             affiliation
+            registrantId
             registrant {
                 id
                 userId
@@ -95,14 +102,18 @@ gql`
 
     fragment MonitorLivestreams_Event on schedule_Event {
         id
+        conferenceId
+        intendedRoomModeName
         name
         startTime
         endTime
+        roomId
         room {
             id
             name
             priority
         }
+        itemId
         item {
             id
             title
@@ -113,10 +124,12 @@ gql`
         eventVonageSession {
             id
             sessionId
+            eventId
             participantStreams {
                 id
                 registrantId
                 vonageStreamType
+                vonageSessionId
             }
         }
     }

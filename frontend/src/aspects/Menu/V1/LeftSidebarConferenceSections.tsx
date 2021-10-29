@@ -15,7 +15,7 @@ import { useGetAllTodaysRoomsQuery } from "../../../generated/graphql";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { RoomList } from "../../Conference/Attend/Rooms/V1/RoomList";
 import { useConference } from "../../Conference/useConference";
-import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
+import { useMaybeCurrentRegistrant } from "../../Conference/useCurrentRegistrant";
 import usePolling from "../../Generic/usePolling";
 import { useRestorableState } from "../../Generic/useRestorableState";
 import { useAuthParameters } from "../../GQL/AuthParameters";
@@ -29,14 +29,12 @@ import { ToggleNavButton } from "./ToggleNavButton";
 function RoomsPanel(): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const registrant = useCurrentRegistrant();
 
     const [result, refetch] = useGetAllTodaysRoomsQuery({
         variables: {
             conferenceId: conference.id,
             todayStart: DateTime.local().startOf("day").minus({ minutes: 10 }).toISO(),
             todayEnd: DateTime.local().endOf("day").plus({ minutes: 10 }).toISO(),
-            registrantId: registrant.id,
         },
         requestPolicy: "network-only",
     });

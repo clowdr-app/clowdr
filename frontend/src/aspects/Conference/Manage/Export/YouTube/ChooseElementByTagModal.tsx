@@ -38,6 +38,7 @@ gql`
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }, order_by: { name: asc }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -52,6 +53,8 @@ gql`
         ) {
             id
             name
+            typeName
+            itemId
             item {
                 id
                 title

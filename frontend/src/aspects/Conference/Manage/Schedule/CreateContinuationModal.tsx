@@ -127,24 +127,29 @@ gql`
         room_Room(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
     query CreateContinuationModal_Events($conferenceId: uuid!) {
         schedule_Event(where: { conferenceId: { _eq: $conferenceId } }) {
             id
+            conferenceId
             name
             startTime
             endTime
             intendedRoomModeName
+            itemId
             item {
                 id
                 title
             }
+            exhibitionId
             exhibition {
                 id
                 name
             }
+            shufflePeriodId
             shufflePeriod {
                 id
                 name
@@ -156,6 +161,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             title
+            conferenceId
         }
     }
 
@@ -163,6 +169,7 @@ gql`
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -170,6 +177,7 @@ gql`
         room_ShufflePeriod(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -177,6 +185,7 @@ gql`
         collection_Tag(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             name
+            conferenceId
         }
     }
 
@@ -184,6 +193,7 @@ gql`
         registrant_Registrant(where: { conferenceId: { _eq: $conferenceId } }) {
             id
             displayName
+            conferenceId
         }
     }
 `;

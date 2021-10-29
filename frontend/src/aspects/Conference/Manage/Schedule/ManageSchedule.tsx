@@ -103,6 +103,8 @@ gql`
     fragment ShufflePeriodInfo on room_ShufflePeriod {
         id
         name
+        conferenceId
+        endAt
     }
 
     mutation InsertEventInfo(

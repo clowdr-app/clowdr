@@ -13,12 +13,11 @@ import FAIcon from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import RequireRole from "../../../RequireRole";
 import { useConference } from "../../../useConference";
-import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { CreateRoomModal } from "../../Room/CreateRoomModal";
 import { RoomList } from "./RoomList";
 
 gql`
-    query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
+    query GetAllRooms($conferenceId: uuid!) {
         socialRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -55,12 +54,7 @@ gql`
         }
     }
 
-    query GetAllTodaysRooms(
-        $conferenceId: uuid!
-        $todayStart: timestamptz!
-        $todayEnd: timestamptz!
-        $registrantId: uuid!
-    ) {
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
         socialOrDiscussionRooms: room_Room(
             where: {
                 conferenceId: { _eq: $conferenceId }
@@ -109,14 +103,12 @@ gql`
 export default function RoomListPage(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const conference = useConference();
-    const registrant = useCurrentRegistrant();
 
     const title = useTitle(`Rooms - ${conference.shortName}`);
 
     const [result, refetchAllRooms] = useGetAllRoomsQuery({
         variables: {
             conferenceId: conference.id,
-            registrantId: registrant.id,
         },
         requestPolicy: "cache-and-network",
     });

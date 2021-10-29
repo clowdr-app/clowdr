@@ -28,12 +28,17 @@ import TagList from "../Content/TagList";
 gql`
     fragment ExhibitionSummary on collection_Exhibition {
         id
+        conferenceId
+        isHidden
         name
         colour
         priority
         items {
             id
+            exhibitionId
+            itemId
             item {
+                id
                 itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
                     ...ProgramPersonData
                 }

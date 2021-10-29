@@ -30,6 +30,7 @@ gql`
 
     fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
         id
+        registrantId
         googleAccountEmail
         youTubeData
     }

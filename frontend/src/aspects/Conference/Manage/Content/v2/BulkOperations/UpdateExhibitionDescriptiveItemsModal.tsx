@@ -26,6 +26,8 @@ gql`
         collection_Exhibition(where: { conferenceId: { _eq: $conferenceId }, descriptiveItemId: { _is_null: true } }) {
             id
             name
+            conferenceId
+            descriptiveItemId
         }
     }
 

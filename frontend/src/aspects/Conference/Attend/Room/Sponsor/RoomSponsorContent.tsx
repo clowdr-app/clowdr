@@ -13,6 +13,7 @@ gql`
 
     fragment RoomSponsorContent_ItemData on content_Item {
         id
+        typeName
         elements {
             ...RoomSponsorContent_ElementData
         }
@@ -25,6 +26,7 @@ gql`
         typeName
         data
         layoutData
+        itemId
     }
 `;
 

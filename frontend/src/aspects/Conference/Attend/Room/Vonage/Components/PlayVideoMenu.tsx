@@ -11,12 +11,15 @@ gql`
     query GetEventVideos($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
+            itemId
             item {
                 id
                 title
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE] }, hasBeenSubmitted: { _eq: true } }) {
                     id
                     name
+                    itemId
+                    typeName
                 }
             }
             exhibition {
@@ -24,6 +27,8 @@ gql`
                 items {
                     id
                     priority
+                    exhibitionId
+                    itemId
                     item {
                         id
                         title
@@ -32,6 +37,8 @@ gql`
                         ) {
                             id
                             name
+                            itemId
+                            typeName
                         }
                     }
                 }

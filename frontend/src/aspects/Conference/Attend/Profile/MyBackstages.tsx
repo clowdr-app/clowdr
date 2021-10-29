@@ -46,6 +46,7 @@ gql`
     fragment MyBackstages_Event on schedule_Event {
         id
         conferenceId
+        itemId
         item {
             id
             title
@@ -53,6 +54,7 @@ gql`
         endTime
         intendedRoomModeName
         name
+        roomId
         room {
             id
             name

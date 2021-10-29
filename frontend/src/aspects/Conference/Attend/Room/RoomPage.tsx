@@ -23,6 +23,7 @@ gql`
         isProgramRoom
         publicVonageSessionId
         chatId
+        originatingItemId
         originatingItem {
             id
             typeName
@@ -33,6 +34,9 @@ gql`
             ) {
                 id
                 data
+                layoutData
+                typeName
+                updatedAt
             }
             title
         }
@@ -43,6 +47,7 @@ gql`
             durationMinutes
             reshuffleUponEnd
             shufflePeriodId
+            roomId
         }
         backendName
     }
@@ -52,6 +57,9 @@ gql`
             where: { personRoleName: { _eq: ADMIN }, registrantId: { _eq: $registrantId }, roomId: { _eq: $roomId } }
         ) {
             id
+            personRoleName
+            registrantId
+            roomId
         }
     }
 
@@ -64,6 +72,7 @@ gql`
     fragment RoomPage_RoomChannelStack on video_ChannelStack {
         cloudFrontDomain
         endpointUri
+        roomId
         id
     }
 `;
@@ -111,6 +120,7 @@ gql`
         schedule_Event_by_pk(id: $eventId) {
             eventVonageSession {
                 sessionId
+                eventId
                 id
             }
             id

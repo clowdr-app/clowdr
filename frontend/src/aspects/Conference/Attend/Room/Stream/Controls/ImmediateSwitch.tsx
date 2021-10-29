@@ -44,24 +44,31 @@ gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             id
+            itemId
             item {
                 id
                 title
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                     id
                     name
+                    itemId
+                    typeName
                 }
             }
+            exhibitionId
             exhibition {
                 id
                 items {
                     id
+                    itemId
                     item {
                         id
                         title
                         elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH] } }) {
                             id
                             name
+                            itemId
+                            typeName
                         }
                     }
                 }

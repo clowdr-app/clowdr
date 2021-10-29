@@ -81,6 +81,7 @@ gql`
             message
             jobStatusName
             data
+            conferenceId
         }
     }
 

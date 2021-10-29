@@ -29,6 +29,8 @@ gql`
     query GetConferenceLandingPageItemId($conferenceId: uuid!) {
         content_Item(where: { typeName: { _eq: LANDING_PAGE }, conferenceId: { _eq: $conferenceId } }, limit: 1) {
             id
+            typeName
+            conferenceId
         }
     }
 `;

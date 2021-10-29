@@ -28,6 +28,7 @@ gql`
         content_Item(where: { conferenceId: { _eq: $conferenceId } }, order_by: { title: asc }) {
             id
             title
+            conferenceId
         }
     }
 
@@ -38,6 +39,8 @@ gql`
         ) {
             id
             name
+            typeName
+            itemId
         }
     }
 `;

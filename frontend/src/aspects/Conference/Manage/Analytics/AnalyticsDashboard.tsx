@@ -43,10 +43,12 @@ gql`
             id
             completedRegistrationsStat {
                 count
+                id
             }
             items(where: { stats: {} }) {
                 id
                 title
+                conferenceId
                 stats(order_by: [{ updated_at: asc }]) {
                     id
                     itemId
@@ -56,6 +58,8 @@ gql`
                 elements(where: { typeName: { _in: [VIDEO_BROADCAST, VIDEO_PREPUBLISH, VIDEO_FILE] }, stats: {} }) {
                     id
                     name
+                    typeName
+                    itemId
                     stats(order_by: [{ updated_at: asc }]) {
                         id
                         elementId
@@ -67,6 +71,7 @@ gql`
             rooms(where: { _or: [{ managementModeName: { _eq: PUBLIC } }, { events: {} }] }) {
                 id
                 name
+                managementModeName
                 presenceCounts(order_by: [{ created_at: asc }]) {
                     created_at
                     count
@@ -74,14 +79,18 @@ gql`
                 stats(order_by: [{ created_at: asc }]) {
                     created_at
                     hlsViewCount
+                    roomId
                 }
                 events(order_by: [{ startTime: asc }, { endTime: asc }]) {
                     id
                     name
+                    roomId
+                    itemId
                     item {
                         id
                         title
                     }
+                    exhibitionId
                     exhibition {
                         id
                         name

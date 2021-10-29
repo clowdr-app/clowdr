@@ -16,6 +16,9 @@ gql`
         ) {
             id
             name
+            conferenceId
+            intendedRoomModeName
+            itemId
             item {
                 id
                 title

@@ -25,12 +25,15 @@ gql`
         name
         affiliation
         registrantId
+        conferenceId
     }
 
     fragment ScheduleV2_ItemPerson on content_ItemProgramPerson {
         id
         priority
         roleName
+        itemId
+        personId
         person {
             ...ScheduleV2_ProgramPerson
         }
@@ -62,6 +65,7 @@ gql`
         exhibitionId
         shufflePeriodId
 
+        itemId
         item {
             ...ScheduleV2_ItemElements
             abstractElements: elements(where: { typeName: { _eq: ABSTRACT }, isHidden: { _eq: false } }) {

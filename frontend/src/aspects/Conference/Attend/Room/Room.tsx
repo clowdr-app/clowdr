@@ -56,6 +56,7 @@ gql`
 
     fragment Room_EventSummary on schedule_Event {
         id
+        roomId
         conferenceId
         startTime
         name
@@ -77,6 +78,8 @@ gql`
             ) {
                 id
                 name
+                typeName
+                itemId
             }
             zoomItems: elements(where: { typeName: { _eq: ZOOM } }, limit: 1) {
                 id
@@ -87,6 +90,7 @@ gql`
         }
         eventPeople {
             id
+            personId
             person {
                 id
                 name

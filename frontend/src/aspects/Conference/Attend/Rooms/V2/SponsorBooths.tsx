@@ -21,9 +21,12 @@ gql`
     fragment SponsorBoothsList_Item on content_Item {
         id
         conferenceId
+        typeName
         rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
             id
             priority
+            created_at
+            conferenceId
         }
         logo: elements(
             where: { typeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
@@ -32,10 +35,15 @@ gql`
         ) {
             id
             data
+            layoutData
+            typeName
+            updatedAt
         }
         title
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             id
+            itemId
+            personId
             person {
                 id
                 registrantId

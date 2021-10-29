@@ -27,6 +27,10 @@ gql`
         id
         name
         priority
+        chatId
+        conferenceId
+        originatingItemId
+        originatingEventId
     }
 `;
 

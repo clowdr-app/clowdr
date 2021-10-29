@@ -102,6 +102,7 @@ gql`
     query RegistrantInvitedEmailAddress($registrantId: uuid!) {
         registrant_Invitation(where: { registrantId: { _eq: $registrantId } }) {
             id
+            registrantId
             invitedEmailAddress
         }
     }

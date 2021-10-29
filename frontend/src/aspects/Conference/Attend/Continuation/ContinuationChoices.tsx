@@ -28,6 +28,8 @@ gql`
         priority
         colour
         description
+        fromEvent
+        fromShuffleQueue
     }
 
     query ContinuationChoices_Continuations($fromId: uuid!, $nowStart: timestamptz, $nowEnd: timestamptz) {
@@ -51,6 +53,8 @@ gql`
         ) {
             id
             roomId
+            shufflePeriodId
+            startTime
             endTime
         }
     }
@@ -60,6 +64,8 @@ gql`
             id
             rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
                 id
+                originatingEventId
+                created_at
             }
         }
         schedule_Event(where: { id: { _in: $ids } }) {

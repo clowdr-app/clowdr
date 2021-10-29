@@ -43,6 +43,7 @@ gql`
     fragment SearchPanel_Item on content_Item {
         id
         title
+        conferenceId
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             ...ProgramPersonData
         }
@@ -61,17 +62,22 @@ gql`
         id
         startTime
         endTime
+        conferenceId
+        exhibitionId
         exhibition {
             id
             name
             items {
                 id
+                itemId
+                exhibitionId
                 item {
                     ...SearchPanel_Item
                 }
             }
         }
         intendedRoomModeName
+        itemId
         item {
             ...SearchPanel_Item
         }

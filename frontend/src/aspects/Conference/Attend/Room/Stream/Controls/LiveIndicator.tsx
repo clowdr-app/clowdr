@@ -43,6 +43,7 @@ gql`
             id
             data
             executedAt
+            eventId
         }
     }
 

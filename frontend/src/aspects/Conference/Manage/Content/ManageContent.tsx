@@ -79,6 +79,7 @@ gql`
 
     fragment ManageContent_ItemExhibition on content_ItemExhibition {
         id
+        itemId
         item {
             id
             title
@@ -109,6 +110,7 @@ gql`
     fragment ManageContent_Room on room_Room {
         id
         name
+        conferenceId
     }
 
     fragment ManageContent_Element on content_Element {
@@ -130,6 +132,7 @@ gql`
         affiliation
         email
         registrantId
+        conferenceId
     }
 
     fragment ManageContent_ItemProgramPerson on content_ItemProgramPerson {
@@ -137,6 +140,7 @@ gql`
         itemId
         priority
         roleName
+        personId
         person {
             ...ManageContent_ProgramPerson
         }
@@ -148,6 +152,7 @@ gql`
             ...ManageContent_Room
         }
         chatId
+        originatingDataId
         originatingData {
             ...ManageContent_OriginatingData
         }
@@ -163,14 +168,17 @@ gql`
         itemTags {
             id
             tagId
+            itemId
         }
         itemExhibitions {
             id
+            itemId
             exhibitionId
             priority
         }
         rooms {
             id
+            conferenceId
         }
         chatId
         itemPeople {

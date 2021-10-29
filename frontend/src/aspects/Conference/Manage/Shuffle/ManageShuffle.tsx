@@ -25,6 +25,7 @@ import ShuffleQueueTile from "./ShuffleQueueTile";
 gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
         id
+        conferenceId
         created_at
         updated_at
         conferenceId

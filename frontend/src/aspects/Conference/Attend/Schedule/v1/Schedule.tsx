@@ -38,6 +38,7 @@ gql`
         name
         layoutData
         data
+        itemId
     }
 
     fragment Schedule_ProgramPerson on collection_ProgramPerson {
@@ -45,10 +46,12 @@ gql`
         name
         affiliation
         registrantId
+        conferenceId
     }
 
     fragment Schedule_ItemPerson on content_ItemProgramPerson {
         id
+        itemId
         personId
         priority
         roleName
@@ -59,6 +62,7 @@ gql`
         title
         shortTitle
         typeName
+        conferenceId
         itemTags {
             id
             itemId
@@ -92,6 +96,7 @@ gql`
 
     fragment Schedule_EventSummary on schedule_Event {
         id
+        conferenceId
         roomId
         intendedRoomModeName
         name
@@ -108,6 +113,7 @@ gql`
         currentModeName
         priority
         managementModeName
+        conferenceId
     }
 
     fragment Schedule_Tag on collection_Tag {
@@ -115,6 +121,7 @@ gql`
         name
         colour
         priority
+        conferenceId
     }
 
     query Schedule_SelectSummaries($conferenceId: uuid!) {

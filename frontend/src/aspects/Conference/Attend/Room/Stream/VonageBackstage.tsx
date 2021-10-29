@@ -26,6 +26,7 @@ gql`
         eventVonageSession {
             id
             sessionId
+            eventId
         }
     }
 `;

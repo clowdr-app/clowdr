@@ -812,8 +812,8 @@ export type ToggleVonageRecordingStateOutput = {
 export type UpdateProfilePhotoResponse = {
   readonly __typename?: 'UpdateProfilePhotoResponse';
   readonly ok: Scalars['Boolean'];
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "User" */
@@ -22816,8 +22816,8 @@ export type Registrant_Profile = {
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   /** An object relationship */
   readonly registrant: Registrant_Registrant;
@@ -23009,8 +23009,8 @@ export type Registrant_Profile_Bool_Exp = {
   readonly photoS3BucketName?: Maybe<String_Comparison_Exp>;
   readonly photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
   readonly photoS3ObjectName?: Maybe<String_Comparison_Exp>;
-  readonly photoURL_350x350?: Maybe<String_Comparison_Exp>;
   readonly photoURL_50x50?: Maybe<String_Comparison_Exp>;
+  readonly photoURL_350x350?: Maybe<String_Comparison_Exp>;
   readonly pronouns?: Maybe<Jsonb_Comparison_Exp>;
   readonly registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   readonly registrantId?: Maybe<Uuid_Comparison_Exp>;
@@ -23064,8 +23064,8 @@ export type Registrant_Profile_Insert_Input = {
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   readonly registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
@@ -23087,8 +23087,8 @@ export type Registrant_Profile_Max_Fields = {
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
@@ -23108,8 +23108,8 @@ export type Registrant_Profile_Min_Fields = {
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
   readonly twitter?: Maybe<Scalars['String']>;
@@ -23153,8 +23153,8 @@ export type Registrant_Profile_Order_By = {
   readonly photoS3BucketName?: Maybe<Order_By>;
   readonly photoS3BucketRegion?: Maybe<Order_By>;
   readonly photoS3ObjectName?: Maybe<Order_By>;
-  readonly photoURL_350x350?: Maybe<Order_By>;
   readonly photoURL_50x50?: Maybe<Order_By>;
+  readonly photoURL_350x350?: Maybe<Order_By>;
   readonly pronouns?: Maybe<Order_By>;
   readonly registrant?: Maybe<Registrant_Registrant_Order_By>;
   readonly registrantId?: Maybe<Order_By>;
@@ -23200,9 +23200,9 @@ export enum Registrant_Profile_Select_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -23230,8 +23230,8 @@ export type Registrant_Profile_Set_Input = {
   readonly photoS3BucketName?: Maybe<Scalars['String']>;
   readonly photoS3BucketRegion?: Maybe<Scalars['String']>;
   readonly photoS3ObjectName?: Maybe<Scalars['String']>;
-  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly photoURL_50x50?: Maybe<Scalars['String']>;
+  readonly photoURL_350x350?: Maybe<Scalars['String']>;
   readonly pronouns?: Maybe<Scalars['jsonb']>;
   readonly registrantId?: Maybe<Scalars['uuid']>;
   readonly timezoneUTCOffset?: Maybe<Scalars['Float']>;
@@ -23289,9 +23289,9 @@ export enum Registrant_Profile_Update_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -37034,30 +37034,30 @@ export type ConferenceLandingPageItemQueryVariables = Exact<{
 }>;
 
 
-export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> }> };
+export type ConferenceLandingPageItemQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }> }> };
 
-export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
+export type ProgramPersonDataFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } };
 
 export type ItemElements_GetItemQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> }> };
+export type ItemElements_GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }> }> };
 
-export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
+export type ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum };
 
-export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }> };
+export type ItemElements_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }> };
 
-export type ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } };
+export type ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } };
 
-export type ItemExhibitionDataFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } };
+export type ItemExhibitionDataFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } };
 
 export type ItemRoomEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
-export type ItemList_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type ItemList_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> };
 
-export type ItemList_ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> } };
+export type ItemList_ItemTagDataFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> } };
 
 export type ItemList_TagInfoFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly colour: string, readonly name: string, readonly priority: number };
 
@@ -37066,7 +37066,7 @@ export type ContentOfTagQueryVariables = Exact<{
 }>;
 
 
-export type ContentOfTagQuery = { readonly __typename?: 'query_root', readonly content_ItemTag: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> } }> };
+export type ContentOfTagQuery = { readonly __typename?: 'query_root', readonly content_ItemTag: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> } }> };
 
 export type TagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37080,13 +37080,13 @@ export type GetItemQueryVariables = Exact<{
 }>;
 
 
-export type GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly descriptionOfExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
+export type GetItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly descriptionOfExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly descriptiveItemId?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
 
-export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
+export type ItemPage_ItemRoomsFragment = { readonly __typename?: 'content_Item', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> };
 
-export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } };
+export type ItemEventFragment = { readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } };
 
-export type ContinuationChoices_ContinuationFragment = { readonly __typename?: 'schedule_Continuation', readonly id: any, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string };
+export type ContinuationChoices_ContinuationFragment = { readonly __typename?: 'schedule_Continuation', readonly id: any, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string, readonly fromEvent?: Maybe<any>, readonly fromShuffleQueue?: Maybe<any> };
 
 export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
   fromId: Scalars['uuid'];
@@ -37095,34 +37095,34 @@ export type ContinuationChoices_ContinuationsQueryVariables = Exact<{
 }>;
 
 
-export type ContinuationChoices_ContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<{ readonly __typename?: 'schedule_Continuation', readonly id: any, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string }>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly endTime?: Maybe<any> }> };
+export type ContinuationChoices_ContinuationsQuery = { readonly __typename?: 'query_root', readonly schedule_Continuation: ReadonlyArray<{ readonly __typename?: 'schedule_Continuation', readonly id: any, readonly to: any, readonly defaultFor: string, readonly isActiveChoice: boolean, readonly priority: number, readonly colour: string, readonly description: string, readonly fromEvent?: Maybe<any>, readonly fromShuffleQueue?: Maybe<any> }>, readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly endAt: any, readonly roomDurationMinutes: number }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly shufflePeriodId?: Maybe<any>, readonly startTime: any, readonly endTime?: Maybe<any> }> };
 
 export type ContinuationChoices_RoomsQueryVariables = Exact<{
   ids: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type ContinuationChoices_RoomsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any }> };
+export type ContinuationChoices_RoomsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any }> };
 
-export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
+export type ExhibitionItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly itemId?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> };
 
-export type ExhibitionWithContentFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> };
+export type ExhibitionWithContentFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly itemId?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> } }> };
 
 export type SelectExhibitionQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> } }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
+export type SelectExhibitionQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition_by_pk?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any, readonly descriptiveItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibition: { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly priority: number, readonly colour: string, readonly conferenceId: any } }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly layout?: Maybe<any>, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly itemId?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }>, readonly discussionRoom: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> } }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly startTime: any, readonly roomId: any, readonly exhibitionId?: Maybe<any>, readonly id: any, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly name: string, readonly id: any } }> };
 
-export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> };
+export type ExhibitionSummaryFragment = { readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly isHidden: boolean, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> } }> };
 
 export type SelectAllExhibitionsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SelectAllExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }> };
+export type SelectAllExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly isHidden: boolean, readonly name: string, readonly colour: string, readonly priority: number, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> } }> }> };
 
 export type RegistrantByIdQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37137,7 +37137,7 @@ export type RegistrantInvitedEmailAddressQueryVariables = Exact<{
 }>;
 
 
-export type RegistrantInvitedEmailAddressQuery = { readonly __typename?: 'query_root', readonly registrant_Invitation: ReadonlyArray<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly invitedEmailAddress: string }> };
+export type RegistrantInvitedEmailAddressQuery = { readonly __typename?: 'query_root', readonly registrant_Invitation: ReadonlyArray<{ readonly __typename?: 'registrant_Invitation', readonly id: any, readonly registrantId: any, readonly invitedEmailAddress: string }> };
 
 export type UpdateProfileMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -37163,28 +37163,28 @@ export type SubmitProfilePhotoMutationVariables = Exact<{
 
 export type SubmitProfilePhotoMutation = { readonly __typename?: 'mutation_root', readonly updateProfilePhoto?: Maybe<{ readonly __typename?: 'UpdateProfilePhotoResponse', readonly ok: boolean, readonly photoURL_350x350?: Maybe<string>, readonly photoURL_50x50?: Maybe<string> }> };
 
-export type MyBackstages_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type MyBackstages_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly itemId?: Maybe<any>, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly startTime: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type RegistrantEventsWithBackstagesQueryVariables = Exact<{
   registrantId: Scalars['uuid'];
 }>;
 
 
-export type RegistrantEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
+export type RegistrantEventsWithBackstagesQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly itemId?: Maybe<any>, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly startTime: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
 
 export type ProfilePage_ItemsQueryVariables = Exact<{
   registrantId: Scalars['uuid'];
 }>;
 
 
-export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
+export type ProfilePage_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> }> };
 
 export type MyRecordingsQueryVariables = Exact<{
   registrantId: Scalars['uuid'];
 }>;
 
 
-export type MyRecordingsQuery = { readonly __typename?: 'query_root', readonly registrant_SavedVonageRoomRecording: ReadonlyArray<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly recording: { readonly __typename?: 'video_VonageRoomRecording', readonly id: any, readonly startedAt: any, readonly endedAt?: Maybe<any>, readonly s3Url?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> } }> };
+export type MyRecordingsQuery = { readonly __typename?: 'query_root', readonly registrant_SavedVonageRoomRecording: ReadonlyArray<{ readonly __typename?: 'registrant_SavedVonageRoomRecording', readonly id: any, readonly registrantId: any, readonly recording: { readonly __typename?: 'video_VonageRoomRecording', readonly id: any, readonly startedAt: any, readonly endedAt?: Maybe<any>, readonly s3Url?: Maybe<string>, readonly room?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> } }> };
 
 export type SelectRegistrantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37217,9 +37217,9 @@ export type Room_GetEventsQueryVariables = Exact<{
 }>;
 
 
-export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> }> };
+export type Room_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> }> };
 
-export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type Room_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly streamTextEventId?: Maybe<string>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly videoElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any }>, readonly zoomItems: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly name: string }> }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
 
 export type Room_GetDefaultVideoRoomBackendQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -37239,9 +37239,9 @@ export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
 }>;
 
 
-export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> }> };
+export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any, readonly roomId: any }> }> };
 
-export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
+export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any }> }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any, readonly roomId: any }> };
 
 export type RoomPage_IsAdminQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37249,34 +37249,34 @@ export type RoomPage_IsAdminQueryVariables = Exact<{
 }>;
 
 
-export type RoomPage_IsAdminQuery = { readonly __typename?: 'query_root', readonly room_RoomMembership: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any }> };
+export type RoomPage_IsAdminQuery = { readonly __typename?: 'query_root', readonly room_RoomMembership: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrantId: any, readonly roomId: any }> };
 
 export type RoomPage_GetRoomChannelStackQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type RoomPage_GetRoomChannelStackQuery = { readonly __typename?: 'query_root', readonly video_ChannelStack: ReadonlyArray<{ readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> };
+export type RoomPage_GetRoomChannelStackQuery = { readonly __typename?: 'query_root', readonly video_ChannelStack: ReadonlyArray<{ readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly roomId?: Maybe<any>, readonly id: any }> };
 
-export type RoomPage_RoomChannelStackFragment = { readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any };
+export type RoomPage_RoomChannelStackFragment = { readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly roomId?: Maybe<any>, readonly id: any };
 
 export type GetEventVonageDetailsQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly sessionId: string, readonly id: any }> }> };
+export type GetEventVonageDetailsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly sessionId: string, readonly eventId: any, readonly id: any }> }> };
 
 export type RoomSponsorContent_GetElementsQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type RoomSponsorContent_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any> }> }> };
+export type RoomSponsorContent_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly itemId: any }> }> };
 
-export type RoomSponsorContent_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any> }> };
+export type RoomSponsorContent_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly itemId: any }> };
 
-export type RoomSponsorContent_ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any> };
+export type RoomSponsorContent_ElementDataFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly isHidden: boolean, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly itemId: any };
 
 export type GetVonageParticipantStreamsSubscriptionVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -37292,7 +37292,7 @@ export type ImmediateSwitch_GetElementsQueryVariables = Exact<{
 }>;
 
 
-export type ImmediateSwitch_GetElementsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> } }> }> }> };
+export type ImmediateSwitch_GetElementsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly typeName: Content_ElementType_Enum }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly typeName: Content_ElementType_Enum }> } }> }> }> };
 
 export type ImmediateSwitch_CreateMutationVariables = Exact<{
   data: Scalars['jsonb'];
@@ -37308,7 +37308,7 @@ export type LiveIndicator_GetLatestQueryVariables = Exact<{
 }>;
 
 
-export type LiveIndicator_GetLatestQuery = { readonly __typename?: 'query_root', readonly video_ImmediateSwitch: ReadonlyArray<{ readonly __typename?: 'video_ImmediateSwitch', readonly id: any, readonly data: any, readonly executedAt?: Maybe<any> }> };
+export type LiveIndicator_GetLatestQuery = { readonly __typename?: 'query_root', readonly video_ImmediateSwitch: ReadonlyArray<{ readonly __typename?: 'video_ImmediateSwitch', readonly id: any, readonly data: any, readonly executedAt?: Maybe<any>, readonly eventId?: Maybe<any> }> };
 
 export type LiveIndicator_GetElementQueryVariables = Exact<{
   elementId: Scalars['uuid'];
@@ -37329,16 +37329,16 @@ export type GetEventDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetEventDetailsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }> }> };
+export type GetEventDetailsQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly eventId: any }> }> };
 
-export type RoomEventDetailsFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string }> };
+export type RoomEventDetailsFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly name: string, readonly durationSeconds: number, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly eventId: any }> };
 
 export type VideoPlayer_GetElementQueryVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
 
 
-export type VideoPlayer_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly isHidden: boolean, readonly data: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type VideoPlayer_GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element_by_pk?: Maybe<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly isHidden: boolean, readonly data: any, readonly name: string, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type GetRoomChimeDataMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37373,14 +37373,14 @@ export type GetEventVideosQueryVariables = Exact<{
 }>;
 
 
-export type GetEventVideosQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> } }> }> }> };
+export type GetEventVideosQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly itemId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly typeName: Content_ElementType_Enum }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly priority?: Maybe<number>, readonly exhibitionId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly typeName: Content_ElementType_Enum }> } }> }> }> };
 
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Exact<{
   vonageSessionId: Scalars['String'];
 }>;
 
 
-export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any>, readonly created_at: any }> };
+export type VonageLayoutProvider_GetLatestVonageSessionLayoutQuery = { readonly __typename?: 'query_root', readonly video_VonageSessionLayout: ReadonlyArray<{ readonly __typename?: 'video_VonageSessionLayout', readonly id: any, readonly layoutData?: Maybe<any>, readonly created_at: any, readonly vonageSessionId: string }> };
 
 export type InsertVonageSessionLayoutMutationVariables = Exact<{
   vonageSessionId: Scalars['String'];
@@ -37417,7 +37417,6 @@ export type ToggleVonageRecordingStateMutation = { readonly __typename?: 'mutati
 
 export type GetAllRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
-  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -37427,7 +37426,6 @@ export type GetAllTodaysRoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   todayStart: Scalars['timestamptz'];
   todayEnd: Scalars['timestamptz'];
-  registrantId: Scalars['uuid'];
 }>;
 
 
@@ -37440,9 +37438,9 @@ export type GetSocialRoomsQueryVariables = Exact<{
 }>;
 
 
-export type GetSocialRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }> };
+export type GetSocialRoomsQuery = { readonly __typename?: 'query_root', readonly socialRooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly chatId?: Maybe<any>, readonly conferenceId: any, readonly originatingItemId?: Maybe<any>, readonly originatingEventId?: Maybe<any> }> };
 
-export type SocialRoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
+export type SocialRoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly chatId?: Maybe<any>, readonly conferenceId: any, readonly originatingItemId?: Maybe<any>, readonly originatingEventId?: Maybe<any> };
 
 export type RoomTile_GetRoomQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37451,20 +37449,20 @@ export type RoomTile_GetRoomQueryVariables = Exact<{
 }>;
 
 
-export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
+export type RoomTile_GetRoomQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItemId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> }> };
 
-export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
+export type RoomTile_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly originatingItemId?: Maybe<any>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly events?: Maybe<ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>> };
 
-export type RoomTile_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+export type RoomTile_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
 export type GetSponsorBoothsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type GetSponsorBoothsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
+export type GetSponsorBoothsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number, readonly created_at: any, readonly conferenceId: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
 
-export type SponsorBoothsList_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
+export type SponsorBoothsList_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number, readonly created_at: any, readonly conferenceId: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type Schedule_HappeningSoonQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37473,7 +37471,7 @@ export type Schedule_HappeningSoonQueryVariables = Exact<{
 }>;
 
 
-export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum } }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type Schedule_HappeningSoonQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly conferenceId: any } }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any }> };
 
 export type StarredEventFragment = { readonly __typename?: 'schedule_StarredEvent', readonly id: any, readonly eventId: any, readonly registrantId: any };
 
@@ -37512,39 +37510,39 @@ export type StarredEvents_SelectEventsQueryVariables = Exact<{
 }>;
 
 
-export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type StarredEvents_SelectEventsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly conferenceId: any }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any }> };
 
-export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
+export type Schedule_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any, readonly itemId: any };
 
-export type Schedule_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
+export type Schedule_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any };
 
-export type Schedule_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string };
+export type Schedule_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string };
 
-export type Schedule_ItemFieldsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> };
+export type Schedule_ItemFieldsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> };
 
-export type Schedule_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }> };
+export type Schedule_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any, readonly itemId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }> };
 
 export type Schedule_SelectItemQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type Schedule_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }> }> };
+export type Schedule_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any, readonly itemId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }> }> };
 
-export type Schedule_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> };
+export type Schedule_EventSummaryFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> };
 
-export type Schedule_RoomSummaryFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum };
+export type Schedule_RoomSummaryFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly conferenceId: any };
 
-export type Schedule_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+export type Schedule_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any };
 
 export type Schedule_SelectSummariesQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type Schedule_SelectSummariesQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly priority: number, readonly managementModeName: Room_ManagementMode_Enum, readonly conferenceId: any }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any> }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any }> };
 
-export type ScheduleV2_LightweightEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any };
+export type ScheduleV2_LightweightEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly conferenceId: any };
 
 export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37554,51 +37552,51 @@ export type ScheduleV2_DayLightweightEventsQueryVariables = Exact<{
 }>;
 
 
-export type ScheduleV2_DayLightweightEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any }> };
+export type ScheduleV2_DayLightweightEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly conferenceId: any }> };
 
 export type ScheduleV2_DayEventsQueryVariables = Exact<{
   eventIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_DayEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }> }> }> };
+export type ScheduleV2_DayEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }> }> }> };
 
 export type ScheduleV2_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any };
 
-export type ScheduleV2_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> };
+export type ScheduleV2_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any };
 
-export type ScheduleV2_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } };
+export type ScheduleV2_ItemPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } };
 
-export type ScheduleV2_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type ScheduleV2_ItemElementsFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> };
 
-export type ScheduleV2_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }> }> };
+export type ScheduleV2_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly roomId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly layoutData?: Maybe<any>, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }> }> };
 
-export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number };
+export type ScheduleV2_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly conferenceId: any };
 
 export type ScheduleV2_RoomsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }> };
+export type ScheduleV2_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number, readonly conferenceId: any }> };
 
-export type ScheduleV2_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number };
+export type ScheduleV2_TagFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any };
 
 export type ScheduleV2_TagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number }> };
+export type ScheduleV2_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any }> };
 
 export type ScheduleV2_AllEvents_ParamsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ScheduleV2_AllEvents_ParamsQuery = { readonly __typename?: 'query_root', readonly earliestStartingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any }>, readonly latestEndingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any> }> };
+export type ScheduleV2_AllEvents_ParamsQuery = { readonly __typename?: 'query_root', readonly earliestStartingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly conferenceId: any }>, readonly latestEndingEvent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly endTime?: Maybe<any>, readonly conferenceId: any }> };
 
-export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> };
+export type SearchPanel_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> };
 
 export type SearchPanel_ItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37606,9 +37604,9 @@ export type SearchPanel_ItemsQueryVariables = Exact<{
 }>;
 
 
-export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', readonly content_searchItems: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }> };
+export type SearchPanel_ItemsQuery = { readonly __typename?: 'query_root', readonly content_searchItems: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> }> };
 
-export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type SearchPanel_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly conferenceId: any, readonly exhibitionId?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type SearchPanel_EventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37616,7 +37614,7 @@ export type SearchPanel_EventsQueryVariables = Exact<{
 }>;
 
 
-export type SearchPanel_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_searchEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
+export type SearchPanel_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_searchEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly conferenceId: any, readonly exhibitionId?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly name: string, readonly roomId: any, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> } }> }>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tag: { readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly colour: string, readonly priority: number, readonly conferenceId: any } }> }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
 
 export type SearchPanel_PersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
@@ -37628,35 +37626,35 @@ export type SearchPanel_PeopleQueryVariables = Exact<{
 
 export type SearchPanel_PeopleQuery = { readonly __typename?: 'query_root', readonly collection_searchProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
 
-export type SwagBagFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }> };
+export type SwagBagFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }> };
 
 export type SelectSwagBagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SelectSwagBagsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }> }> };
+export type SelectSwagBagsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly data: any, readonly layoutData?: Maybe<any>, readonly name: string, readonly typeName: Content_ElementType_Enum }> }> };
 
 export type ConferenceBySlugQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
 
 
-export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any }> };
+export type ConferenceBySlugQuery = { readonly __typename?: 'query_root', readonly conference_Conference: ReadonlyArray<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly slug: string }> };
 
 export type ConferenceStatsQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentItemStats', readonly id: any, readonly itemId: any, readonly viewCount: number, readonly updated_at: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentElementStats', readonly id: any, readonly elementId: any, readonly viewCount: number, readonly updated_at: any }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> }> }> }> };
+export type ConferenceStatsQuery = { readonly __typename?: 'query_root', readonly conference_Conference_by_pk?: Maybe<{ readonly __typename?: 'conference_Conference', readonly id: any, readonly completedRegistrationsStat?: Maybe<{ readonly __typename?: 'analytics_CompletedRegistrations', readonly count?: Maybe<any>, readonly id?: Maybe<any> }>, readonly items: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentItemStats', readonly id: any, readonly itemId: any, readonly viewCount: number, readonly updated_at: any }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_ContentElementStats', readonly id: any, readonly elementId: any, readonly viewCount: number, readonly updated_at: any }> }> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly managementModeName: Room_ManagementMode_Enum, readonly presenceCounts: ReadonlyArray<{ readonly __typename?: 'analytics_RoomPresence', readonly created_at?: Maybe<any>, readonly count?: Maybe<any> }>, readonly stats: ReadonlyArray<{ readonly __typename?: 'analytics_RoomStats', readonly created_at: any, readonly hlsViewCount: number, readonly roomId: any }>, readonly events: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly roomId: any, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> }> }> }> };
 
 export type GetChannelStacksQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type GetChannelStacksQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly name: string, readonly id: any, readonly channelStack?: Maybe<{ readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any }> }> };
+export type GetChannelStacksQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly name: string, readonly id: any, readonly conferenceId: any, readonly channelStack?: Maybe<{ readonly __typename?: 'video_ChannelStack', readonly cloudFrontDomain: string, readonly endpointUri: string, readonly id: any, readonly roomId?: Maybe<any> }> }> };
 
 export type ConferenceConfiguration_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37672,7 +37670,7 @@ export type EventVonageControls_GetEventsQueryVariables = Exact<{
 }>;
 
 
-export type EventVonageControls_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
+export type EventVonageControls_GetEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly conferenceId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
 export type EventVonageControls_StopEventBroadcastMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -37688,13 +37686,13 @@ export type MonitorLivestreamsQueryVariables = Exact<{
 }>;
 
 
-export type MonitorLivestreamsQuery = { readonly __typename?: 'query_root', readonly liveEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_VonageParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> }> }>, readonly prerecordedEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number } }> };
+export type MonitorLivestreamsQuery = { readonly __typename?: 'query_root', readonly liveEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any, readonly eventId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly eventId: any, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_VonageParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string, readonly vonageSessionId: string }> }> }>, readonly prerecordedEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly roomId: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number } }> };
 
-export type MonitorLivestreams_PrerecEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number } };
+export type MonitorLivestreams_PrerecEventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly roomId: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number } };
 
-export type MonitorLivestreams_PersonFragment = { readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } };
+export type MonitorLivestreams_PersonFragment = { readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any, readonly eventId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } };
 
-export type MonitorLivestreams_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_VonageParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string }> }> };
+export type MonitorLivestreams_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly priority: number }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any, readonly eventId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly registrant?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly userId?: Maybe<string> }> } }>, readonly eventVonageSession?: Maybe<{ readonly __typename?: 'video_EventVonageSession', readonly id: any, readonly sessionId: string, readonly eventId: any, readonly participantStreams: ReadonlyArray<{ readonly __typename?: 'video_VonageParticipantStream', readonly id: any, readonly registrantId: any, readonly vonageStreamType: string, readonly vonageSessionId: string }> }> };
 
 export type CreateConferencePrepareJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37737,23 +37735,23 @@ export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readon
 
 export type ManageContent_ItemTagFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any };
 
-export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
+export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
 
 export type ManageContent_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any }> };
 
 export type ManageContent_OriginatingDataFragment = { readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> };
 
-export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string };
+export type ManageContent_RoomFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly conferenceId: any };
 
 export type ManageContent_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any };
 
-export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> };
+export type ManageContent_ProgramPersonFragment = { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any };
 
-export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } };
+export type ManageContent_ItemProgramPersonFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } };
 
-export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> };
+export type ManageContent_ItemSecondaryFragment = { readonly __typename?: 'content_Item', readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly originatingDataId?: Maybe<any>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly conferenceId: any }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> };
 
-export type ManageContent_ItemForExportFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> };
+export type ManageContent_ItemForExportFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly conferenceId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> };
 
 export type ManageContent_SelectAllItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -37767,21 +37765,21 @@ export type ManageContent_SelectItemsForExportQueryVariables = Exact<{
 }>;
 
 
-export type ManageContent_SelectItemsForExportQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> }> };
+export type ManageContent_SelectItemsForExportQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly typeName: Content_ItemType_Enum, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number> }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly conferenceId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> }> };
 
 export type ManageContent_SelectItemQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> };
+export type ManageContent_SelectItemQuery = { readonly __typename?: 'query_root', readonly content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly typeName: Content_ItemType_Enum, readonly chatId?: Maybe<any>, readonly originatingDataId?: Maybe<any>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly conferenceId: any }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly layoutData?: Maybe<any>, readonly uploadsRemaining?: Maybe<number>, readonly isHidden: boolean, readonly updatedAt: any, readonly conferenceId: any }> };
 
 export type ManageContent_SelectItemPeopleQueryVariables = Exact<{
   itemId: Scalars['uuid'];
 }>;
 
 
-export type ManageContent_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type ManageContent_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> };
 
 export type ManageContent_InsertItemMutationVariables = Exact<{
   item: Content_Item_Insert_Input;
@@ -37838,7 +37836,7 @@ export type ItemExhibitionInfoFragment = { readonly __typename?: 'content_ItemEx
 
 export type ItemPersonInfoFragment = { readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string };
 
-export type ItemFullNestedInfoFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> };
+export type ItemFullNestedInfoFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> };
 
 export type TagInfoFragment = { readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number };
 
@@ -37849,7 +37847,7 @@ export type SelectAllContentQueryVariables = Exact<{
 }>;
 
 
-export type SelectAllContentQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }> };
+export type SelectAllContentQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }> };
 
 export type InsertDeleteItemsMutationVariables = Exact<{
   newGroups: ReadonlyArray<Content_Item_Insert_Input> | Content_Item_Insert_Input;
@@ -37857,7 +37855,7 @@ export type InsertDeleteItemsMutationVariables = Exact<{
 }>;
 
 
-export type InsertDeleteItemsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }> }>, readonly delete_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> }> };
+export type InsertDeleteItemsMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }> }>, readonly delete_content_Item?: Maybe<{ readonly __typename?: 'content_Item_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> }> };
 
 export type InsertElementsMutationVariables = Exact<{
   newElements: ReadonlyArray<Content_Element_Insert_Input> | Content_Element_Insert_Input;
@@ -37939,7 +37937,7 @@ export type UpdateItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }> }>, readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }> }>, readonly insert_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }> }>, readonly insert_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly update_content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly delete_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any }> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly delete_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> }>, readonly delete_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> }> };
+export type UpdateItemMutation = { readonly __typename?: 'mutation_root', readonly insert_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }> }>, readonly insert_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }> }>, readonly insert_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }> }>, readonly insert_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }> }>, readonly update_content_Item_by_pk?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly delete_content_Element?: Maybe<{ readonly __typename?: 'content_Element_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any }> }>, readonly delete_content_ItemTag?: Maybe<{ readonly __typename?: 'content_ItemTag_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any }> }>, readonly delete_content_ItemExhibition?: Maybe<{ readonly __typename?: 'content_ItemExhibition_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any }> }>, readonly delete_content_ItemProgramPerson?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any }> }> };
 
 export type UpdateElementMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -38029,7 +38027,7 @@ export type CombineVideosModal_GetCombineVideosJobQueryVariables = Exact<{
 }>;
 
 
-export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob: ReadonlyArray<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly data: any }> };
+export type CombineVideosModal_GetCombineVideosJobQuery = { readonly __typename?: 'query_root', readonly job_queues_CombineVideosJob: ReadonlyArray<{ readonly __typename?: 'job_queues_CombineVideosJob', readonly id: any, readonly message?: Maybe<string>, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly data: any, readonly conferenceId: any }> };
 
 export type CombineVideosModal_GetElementsQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -38055,7 +38053,7 @@ export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQueryVariables = E
 }>;
 
 
-export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> };
+export type UpdateExhibitionDescriptiveItems_SelectExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly conferenceId: any, readonly descriptiveItemId?: Maybe<any> }> };
 
 export type UpdateExhibitionDescriptiveItemMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -38101,7 +38099,7 @@ export type ManageContent_SelectItemExhibitionsQueryVariables = Exact<{
 }>;
 
 
-export type ManageContent_SelectItemExhibitionsQuery = { readonly __typename?: 'query_root', readonly content_ItemExhibition: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type ManageContent_SelectItemExhibitionsQuery = { readonly __typename?: 'query_root', readonly content_ItemExhibition: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type ManageContent_InsertItemExhibitionMutationVariables = Exact<{
   exhibitionId: Scalars['uuid'];
@@ -38110,7 +38108,7 @@ export type ManageContent_InsertItemExhibitionMutationVariables = Exact<{
 }>;
 
 
-export type ManageContent_InsertItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemExhibition_one?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type ManageContent_InsertItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemExhibition_one?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
   itemExhibitionId: Scalars['uuid'];
@@ -38118,7 +38116,7 @@ export type ManageContent_UpdateItemExhibitionMutationVariables = Exact<{
 }>;
 
 
-export type ManageContent_UpdateItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemExhibition_by_pk?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type ManageContent_UpdateItemExhibitionMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemExhibition_by_pk?: Maybe<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type ManageContent_DeleteItemExhibitionMutationVariables = Exact<{
   itemExhibitionId: Scalars['uuid'];
@@ -38169,7 +38167,7 @@ export type ManageContent_SelectProgramPeopleQueryVariables = Exact<{
 }>;
 
 
-export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> }> };
+export type ManageContent_SelectProgramPeopleQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any }> };
 
 export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
   personId: Scalars['uuid'];
@@ -38179,7 +38177,7 @@ export type ManageContent_InsertItemProgramPersonMutationVariables = Exact<{
 }>;
 
 
-export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type ManageContent_InsertItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly insert_content_ItemProgramPerson_one?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> };
 
 export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
   itemPersonId: Scalars['uuid'];
@@ -38188,7 +38186,7 @@ export type ManageContent_UpdateItemProgramPersonMutationVariables = Exact<{
 }>;
 
 
-export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any> } }> };
+export type ManageContent_UpdateItemProgramPersonMutation = { readonly __typename?: 'mutation_root', readonly update_content_ItemProgramPerson_by_pk?: Maybe<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly priority?: Maybe<number>, readonly roleName: string, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly registrantId?: Maybe<any>, readonly conferenceId: any } }> };
 
 export type ManageContent_DeleteItemProgramPersonMutationVariables = Exact<{
   itemPersonId: Scalars['uuid'];
@@ -38232,22 +38230,22 @@ export type SubmissionRequestsModalDataQueryVariables = Exact<{
 }>;
 
 
-export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly roleName: string, readonly hasSubmissionRequestBeenSent?: Maybe<boolean> }> }> };
+export type SubmissionRequestsModalDataQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly hasSubmissionRequestBeenSent?: Maybe<boolean> }> }> };
 
 export type SubmissionRequestsModal_ConferenceConfigurationFragment = { readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any };
 
-export type SubmissionRequestsModal_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly personId: any, readonly roleName: string, readonly hasSubmissionRequestBeenSent?: Maybe<boolean> }> };
+export type SubmissionRequestsModal_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly typeName: Content_ItemType_Enum, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly hasSubmissionRequestBeenSent?: Maybe<boolean> }> };
 
 export type SubmissionsReviewModalDataQueryVariables = Exact<{
   itemIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type SubmissionsReviewModalDataQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly submissionRequestsSentCount: number } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any }> }> };
+export type SubmissionsReviewModalDataQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly submissionRequestsSentCount: number } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly itemId: any }> }> };
 
-export type SubmissionsReviewModal_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly submissionRequestsSentCount: number } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any }> };
+export type SubmissionsReviewModal_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly hasUnsubmittedElements?: Maybe<boolean>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly submissionRequestsSentCount: number } }>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly itemId: any }> };
 
-export type SubmissionsReviewModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any };
+export type SubmissionsReviewModal_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly itemId: any };
 
 export type ConfigureEmailTemplates_GetConferenceConfigurationsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -38272,14 +38270,14 @@ export type DownloadVideos_GetAllVideosQueryVariables = Exact<{
 }>;
 
 
-export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum }> }> };
+export type DownloadVideos_GetAllVideosQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly name: string, readonly id: any, readonly data: any, readonly typeName: Content_ElementType_Enum, readonly itemId: any }> }> };
 
 export type ChooseElementByTagModal_GetTagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ChooseElementByTagModal_GetTagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }> };
+export type ChooseElementByTagModal_GetTagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type ChooseElementByTagModal_GetVideoElementsQueryVariables = Exact<{
   tagId: Scalars['uuid'];
@@ -38287,21 +38285,21 @@ export type ChooseElementByTagModal_GetVideoElementsQueryVariables = Exact<{
 }>;
 
 
-export type ChooseElementByTagModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type ChooseElementByTagModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type ChooseElementModal_GetItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ChooseElementModal_GetItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+export type ChooseElementModal_GetItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any }> };
 
 export type ChooseElementModal_GetVideoElementsQueryVariables = Exact<{
   itemId?: Maybe<Scalars['uuid']>;
 }>;
 
 
-export type ChooseElementModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> };
+export type ChooseElementModal_GetVideoElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly itemId: any }> };
 
 export type ManageExport_GetGoogleOAuthUrlMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -38316,9 +38314,9 @@ export type ManageExport_GetRegistrantGoogleAccountsQueryVariables = Exact<{
 }>;
 
 
-export type ManageExport_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
+export type ManageExport_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly registrantId: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
 
-export type ManageExport_RegistrantGoogleAccountFragment = { readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> };
+export type ManageExport_RegistrantGoogleAccountFragment = { readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly registrantId: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> };
 
 export type ManageExport_DeleteRegistrantGoogleAccountMutationVariables = Exact<{
   registrantGoogleAccountId: Scalars['uuid'];
@@ -38332,7 +38330,7 @@ export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQueryVariables = Exac
 }>;
 
 
-export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
+export type UploadYouTubeVideos_GetRegistrantGoogleAccountsQuery = { readonly __typename?: 'query_root', readonly registrant_GoogleAccount: ReadonlyArray<{ readonly __typename?: 'registrant_GoogleAccount', readonly id: any, readonly registrantId: any, readonly googleAccountEmail: string, readonly youTubeData?: Maybe<any> }> };
 
 export type UploadYouTubeVideos_CreateUploadYouTubeVideoJobsMutationVariables = Exact<{
   objects: ReadonlyArray<Job_Queues_UploadYouTubeVideoJob_Insert_Input> | Job_Queues_UploadYouTubeVideoJob_Insert_Input;
@@ -38346,16 +38344,16 @@ export type UploadYouTubeVideos_GetElementsQueryVariables = Exact<{
 }>;
 
 
-export type UploadYouTubeVideos_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
+export type UploadYouTubeVideos_GetElementsQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> };
 
 export type UploadYouTubeVideos_GetTemplateDataQueryVariables = Exact<{
   elementIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string }> }>, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly paperLinkElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly paperUrlElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly presenters: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
+export type UploadYouTubeVideos_GetTemplateDataQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly shortTitle?: Maybe<string>, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly itemId: any, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoTitle: string, readonly videoId: string, readonly elementId?: Maybe<any> }> }>, readonly abstractElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum }>, readonly paperLinkElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum }>, readonly paperUrlElements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum }>, readonly authors: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }>, readonly presenters: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly priority?: Maybe<number>, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly affiliation?: Maybe<string> } }> } }> };
 
-export type UploadYouTubeVideos_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any };
+export type UploadYouTubeVideos_ElementFragment = { readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum };
 
 export type UploadYouTubeVideos_RefreshYouTubeDataMutationVariables = Exact<{
   registrantId: Scalars['uuid'];
@@ -38370,11 +38368,11 @@ export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQueryVariables = Exact<
 }>;
 
 
-export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string }> }> };
+export type UploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery = { readonly __typename?: 'query_root', readonly job_queues_UploadYouTubeVideoJob: ReadonlyArray<{ readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly conferenceId: any, readonly createdAt: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly conferenceId: any, readonly createdAt: any }> }> };
 
-export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string };
+export type UploadYouTubeVideos_YouTubeUploadFragment = { readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly conferenceId: any, readonly createdAt: any };
 
-export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string }> };
+export type UploadYouTubeVideos_UploadYouTubeVideoJobFragment = { readonly __typename?: 'job_queues_UploadYouTubeVideoJob', readonly id: any, readonly conferenceId: any, readonly createdAt: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string>, readonly element: { readonly __typename?: 'content_Element', readonly id: any, readonly name: string }, readonly youTubeUploads: ReadonlyArray<{ readonly __typename?: 'video_YouTubeUpload', readonly id: any, readonly videoId: string, readonly videoPrivacyStatus: string, readonly videoStatus: string, readonly videoTitle: string, readonly conferenceId: any, readonly createdAt: any }> };
 
 export type ImportRegistrantsMutationVariables = Exact<{
   insertRegistrants: ReadonlyArray<Registrant_Registrant_Insert_Input> | Registrant_Registrant_Insert_Input;
@@ -38465,28 +38463,28 @@ export type ManageProgramPeople_UpdateProgramPersonMutation = { readonly __typen
 
 export type RoomParticipantWithRegistrantInfoFragment = { readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } };
 
-export type RoomWithParticipantInfoFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> };
+export type RoomWithParticipantInfoFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> };
 
 export type SelectAllRoomsWithParticipantsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type SelectAllRoomsWithParticipantsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }> };
+export type SelectAllRoomsWithParticipantsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }> };
 
 export type ManageRooms_SelectGroupsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ManageRooms_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly registrant_Group: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string }> };
+export type ManageRooms_SelectGroupsQuery = { readonly __typename?: 'query_root', readonly registrant_Group: ReadonlyArray<{ readonly __typename?: 'registrant_Group', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type ManageRooms_SelectItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ManageRooms_SelectItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+export type ManageRooms_SelectItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any }> };
 
 export type ManageRooms_SelectGroupRegistrantsQueryVariables = Exact<{
   groupId: Scalars['uuid'];
@@ -38495,21 +38493,21 @@ export type ManageRooms_SelectGroupRegistrantsQueryVariables = Exact<{
 
 export type ManageRooms_SelectGroupRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_GroupRegistrant: ReadonlyArray<{ readonly __typename?: 'registrant_GroupRegistrant', readonly id: any, readonly groupId: any, readonly registrantId: any }> };
 
-export type RoomPersonInfoFragment = { readonly __typename?: 'room_RoomMembership', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } };
+export type RoomPersonInfoFragment = { readonly __typename?: 'room_RoomMembership', readonly id: any, readonly roomId: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } };
 
 export type ManageRooms_SelectRoomPeopleQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type ManageRooms_SelectRoomPeopleQuery = { readonly __typename?: 'query_root', readonly room_RoomMembership: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> };
+export type ManageRooms_SelectRoomPeopleQuery = { readonly __typename?: 'query_root', readonly room_RoomMembership: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any, readonly roomId: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> };
 
 export type CreateRoomMutationVariables = Exact<{
   room: Room_Room_Insert_Input;
 }>;
 
 
-export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_room_Room_one?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }> };
+export type CreateRoomMutation = { readonly __typename?: 'mutation_root', readonly insert_room_Room_one?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }> };
 
 export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -38526,14 +38524,14 @@ export type UpdateRoomsWithParticipantsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutation_root', readonly update_room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }>, readonly update_chat_Chat?: Maybe<{ readonly __typename?: 'chat_Chat_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableAutoPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoSubscribe: boolean }> }> };
+export type UpdateRoomsWithParticipantsMutation = { readonly __typename?: 'mutation_root', readonly update_room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly created_at: any, readonly conferenceId: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly capacity?: Maybe<number>, readonly priority: number, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingDataId?: Maybe<any>, readonly chatId?: Maybe<any>, readonly participants: ReadonlyArray<{ readonly __typename?: 'room_Participant', readonly id: any, readonly conferenceId: any, readonly registrantId: any, readonly roomId: any, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly chat?: Maybe<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoPin: boolean, readonly enableAutoSubscribe: boolean }> }>, readonly update_chat_Chat?: Maybe<{ readonly __typename?: 'chat_Chat_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'chat_Chat', readonly id: any, readonly enableMandatoryPin: boolean, readonly enableAutoPin: boolean, readonly enableMandatorySubscribe: boolean, readonly enableAutoSubscribe: boolean }> }> };
 
 export type InsertRoomPeopleMutationVariables = Exact<{
   people: ReadonlyArray<Room_RoomMembership_Insert_Input> | Room_RoomMembership_Insert_Input;
 }>;
 
 
-export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_room_RoomMembership?: Maybe<{ readonly __typename?: 'room_RoomMembership_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> }> };
+export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_room_RoomMembership?: Maybe<{ readonly __typename?: 'room_RoomMembership_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'room_RoomMembership', readonly id: any, readonly roomId: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> }> };
 
 export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -38618,7 +38616,7 @@ export type GetRoomRtmpOutputQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomRtmpOutputQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly rtmpOutput?: Maybe<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly url: string, readonly streamKey: string }>, readonly channelStack?: Maybe<{ readonly __typename?: 'video_ChannelStack', readonly id: any, readonly rtmpOutputUri?: Maybe<string>, readonly rtmpOutputStreamKey?: Maybe<string>, readonly updateJobs: ReadonlyArray<{ readonly __typename?: 'job_queues_ChannelStackUpdateJob', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string> }>, readonly mediaLiveChannelStatus?: Maybe<{ readonly __typename?: 'video_MediaLiveChannelStatus', readonly id: any, readonly createdAt: any, readonly updatedAt: any, readonly state: string }> }> }> };
+export type GetRoomRtmpOutputQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly rtmpOutput?: Maybe<{ readonly __typename?: 'video_RoomRtmpOutput', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly url: string, readonly streamKey: string, readonly roomId: any }>, readonly channelStack?: Maybe<{ readonly __typename?: 'video_ChannelStack', readonly id: any, readonly roomId?: Maybe<any>, readonly rtmpOutputUri?: Maybe<string>, readonly rtmpOutputStreamKey?: Maybe<string>, readonly updateJobs: ReadonlyArray<{ readonly __typename?: 'job_queues_ChannelStackUpdateJob', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly jobStatusName: Job_Queues_JobStatus_Enum, readonly message?: Maybe<string>, readonly channelStackId?: Maybe<any> }>, readonly mediaLiveChannelStatus?: Maybe<{ readonly __typename?: 'video_MediaLiveChannelStatus', readonly id: any, readonly createdAt: any, readonly updatedAt: any, readonly state: string, readonly channelStackId: any }> }> }> };
 
 export type InsertRoomRtmpOutputMutationVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -38659,7 +38657,7 @@ export type AddEventPeople_SelectItemPeopleQueryVariables = Exact<{
 }>;
 
 
-export type AddEventPeople_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }>, readonly content_ItemExhibition: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }> } }> };
+export type AddEventPeople_SelectItemPeopleQuery = { readonly __typename?: 'query_root', readonly content_ItemProgramPerson: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }>, readonly content_ItemExhibition: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly exhibitionId: any, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string }> } }> };
 
 export type AddEventPeople_SelectProgramPeopleQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -38754,49 +38752,49 @@ export type CreateContinuationModal_RoomsQueryVariables = Exact<{
 }>;
 
 
-export type CreateContinuationModal_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string }> };
+export type CreateContinuationModal_RoomsQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type CreateContinuationModal_EventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> }> };
+export type CreateContinuationModal_EventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly intendedRoomModeName: Room_Mode_Enum, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly shufflePeriod?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> }> };
 
 export type CreateContinuationModal_ItemsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+export type CreateContinuationModal_ItemsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly conferenceId: any }> };
 
 export type CreateContinuationModal_ExhibitionsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_ExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }> };
+export type CreateContinuationModal_ExhibitionsQuery = { readonly __typename?: 'query_root', readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type CreateContinuationModal_ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> };
+export type CreateContinuationModal_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type CreateContinuationModal_TagsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }> };
+export type CreateContinuationModal_TagsQuery = { readonly __typename?: 'query_root', readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string, readonly conferenceId: any }> };
 
 export type CreateContinuationModal_ProfileQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type CreateContinuationModal_ProfileQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string }> };
+export type CreateContinuationModal_ProfileQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string, readonly conferenceId: any }> };
 
 export type SelectEventStreamTextEventIdQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -38842,9 +38840,9 @@ export type ManageSchedule_ShufflePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type ManageSchedule_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string }> };
+export type ManageSchedule_ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string, readonly conferenceId: any, readonly endAt: any }> };
 
-export type ShufflePeriodInfoFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string };
+export type ShufflePeriodInfoFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly name: string, readonly conferenceId: any, readonly endAt: any };
 
 export type InsertEventInfoMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -38900,7 +38898,7 @@ export type SelectWholeScheduleQueryVariables = Exact<{
 }>;
 
 
-export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
+export type SelectWholeScheduleQuery = { readonly __typename?: 'query_root', readonly room_Room: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly capacity?: Maybe<number>, readonly conferenceId: any, readonly currentModeName: Room_Mode_Enum, readonly id: any, readonly name: string, readonly priority: number, readonly originatingDataId?: Maybe<any>, readonly originatingEventId?: Maybe<any>, readonly originatingItemId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly originatingData?: Maybe<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }> }>, readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly conferenceId: any, readonly id: any, readonly durationSeconds: number, readonly intendedRoomModeName: Room_Mode_Enum, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly roomId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly itemId?: Maybe<any>, readonly exhibitionId?: Maybe<any>, readonly shufflePeriodId?: Maybe<any>, readonly enableRecording: boolean, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly eventId: any, readonly roleName: Schedule_EventProgramPersonRole_Enum, readonly personId: any }> }>, readonly conference_OriginatingData: ReadonlyArray<{ readonly __typename?: 'conference_OriginatingData', readonly id: any, readonly conferenceId: any, readonly sourceId: string, readonly data?: Maybe<any> }>, readonly collection_Tag: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly priority: number }>, readonly collection_Exhibition: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly conferenceId: any, readonly colour: string, readonly name: string, readonly priority: number, readonly isHidden: boolean }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly conferenceId: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly data: any, readonly id: any, readonly isHidden: boolean, readonly layoutData?: Maybe<any>, readonly name: string, readonly originatingDataId?: Maybe<any>, readonly uploadsRemaining?: Maybe<number> }>, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any, readonly itemId: any }>, readonly itemExhibitions: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly itemId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly priority?: Maybe<number>, readonly roleName: string }>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingEventId?: Maybe<any>, readonly created_at: any }> }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly conferenceId: any, readonly name: string, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string>, readonly originatingDataId?: Maybe<any>, readonly registrantId?: Maybe<any> }> };
 
 export type InsertRoomsMutationVariables = Exact<{
   newRooms: ReadonlyArray<Room_Room_Insert_Input> | Room_Room_Insert_Input;
@@ -38973,14 +38971,14 @@ export type InsertShufflePeriodMutationVariables = Exact<{
 
 export type InsertShufflePeriodMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShufflePeriod_one?: Maybe<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetRegistrantsPerRoom: number, readonly maxRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum }> };
 
-export type ManageShufflePeriods_ShufflePeriodFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetRegistrantsPerRoom: number, readonly maxRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> } };
+export type ManageShufflePeriods_ShufflePeriodFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly created_at: any, readonly updated_at: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetRegistrantsPerRoom: number, readonly maxRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> } };
 
 export type ManageShufflePeriods_SelectAllQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type ManageShufflePeriods_SelectAllQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly created_at: any, readonly updated_at: any, readonly conferenceId: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetRegistrantsPerRoom: number, readonly maxRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> } }> };
+export type ManageShufflePeriods_SelectAllQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly created_at: any, readonly updated_at: any, readonly startAt: any, readonly endAt: any, readonly roomDurationMinutes: number, readonly targetRegistrantsPerRoom: number, readonly maxRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly name: string, readonly organiserId: any, readonly algorithm: Room_ShuffleAlgorithm_Enum, readonly completedEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly ongoingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> }, readonly waitingEntries: { readonly __typename?: 'room_ShuffleQueueEntry_aggregate', readonly aggregate?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry_aggregate_fields', readonly count: number }> } }> };
 
 export type DeleteShufflePeriodMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -39084,14 +39082,14 @@ export type ItemByPersonAccessTokenQueryVariables = Exact<{
 }>;
 
 
-export type ItemByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly layoutData?: Maybe<any> }> }> };
+export type ItemByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string }>, readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly typeName: Content_ElementType_Enum, readonly name: string, readonly data: any, readonly uploadsRemaining?: Maybe<number>, readonly layoutData?: Maybe<any>, readonly itemId: any }> }> };
 
 export type ItemsByPersonAccessTokenQueryVariables = Exact<{
   accessToken: Scalars['String'];
 }>;
 
 
-export type ItemsByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
+export type ItemsByPersonAccessTokenQuery = { readonly __typename?: 'query_root', readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> };
 
 export type GetElementQueryVariables = Exact<{
   accessToken: Scalars['String'];
@@ -39099,7 +39097,7 @@ export type GetElementQueryVariables = Exact<{
 }>;
 
 
-export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly typeName: Content_ElementType_Enum, readonly data: any, readonly name: string, readonly id: any, readonly uploadsRemaining?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly title: string } }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string }> };
+export type GetElementQuery = { readonly __typename?: 'query_root', readonly content_Element: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly typeName: Content_ElementType_Enum, readonly data: any, readonly name: string, readonly id: any, readonly uploadsRemaining?: Maybe<number>, readonly itemId: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly collection_ProgramPerson: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly name: string }> };
 
 export type SubmitUploadableElementMutationVariables = Exact<{
   elementData: Scalars['jsonb'];
@@ -39152,9 +39150,9 @@ export type GetEventsInNextHourQueryVariables = Exact<{
 }>;
 
 
-export type GetEventsInNextHourQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
+export type GetEventsInNextHourQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }> };
 
-export type MinimalEventInfoFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
+export type MinimalEventInfoFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly startTime: any, readonly endTime?: Maybe<any>, readonly roomId: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } };
 
 export type MenuScheduleQueryVariables = Exact<{
   now: Scalars['timestamptz'];
@@ -39163,7 +39161,7 @@ export type MenuScheduleQueryVariables = Exact<{
 }>;
 
 
-export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
+export type MenuScheduleQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly name: string, readonly startTime: any, readonly roomId: any, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
 export type MenuSchedule_SearchEventsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39171,18 +39169,18 @@ export type MenuSchedule_SearchEventsQueryVariables = Exact<{
 }>;
 
 
-export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
+export type MenuSchedule_SearchEventsQuery = { readonly __typename?: 'query_root', readonly schedule_Event: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly name: string, readonly startTime: any, readonly roomId: any, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
-export type MenuSchedule_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
+export type MenuSchedule_EventFragment = { readonly __typename?: 'schedule_Event', readonly id: any, readonly conferenceId: any, readonly name: string, readonly startTime: any, readonly roomId: any, readonly itemId?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> };
 
 export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
 
 
-export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
+export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number, readonly created_at: any, readonly conferenceId: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any, readonly layoutData?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
 
-export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
+export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number, readonly created_at: any, readonly conferenceId: any }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any, readonly itemId: any, readonly typeName: Content_ElementType_Enum, readonly updatedAt: any, readonly layoutData?: Maybe<any> }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly itemId: any, readonly personId: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type CreateDmMutationVariables = Exact<{
   registrantIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
@@ -39225,7 +39223,7 @@ export type GetConferenceLandingPageItemIdQueryVariables = Exact<{
 }>;
 
 
-export type GetConferenceLandingPageItemIdQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any }> };
+export type GetConferenceLandingPageItemIdQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly conferenceId: any }> };
 
 export type GetVapidPublicKeyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -39264,18 +39262,18 @@ export type GetAllRoomParticipantsQuery = { readonly __typename?: 'query_root', 
 
 export type RoomParticipantDetailsFragment = { readonly __typename?: 'room_Participant', readonly conferenceId: any, readonly id: any, readonly roomId: any, readonly registrantId: any };
 
-export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> };
+export type ShufflePeriodDataFragment = { readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> };
 
-export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
+export type PrefetchShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> };
 
-export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
+export type SubdShuffleQueueEntryDataFragment = { readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> };
 
 export type MyShuffleQueueEntryQueryVariables = Exact<{
   id: Scalars['bigint'];
 }>;
 
 
-export type MyShuffleQueueEntryQuery = { readonly __typename?: 'query_root', readonly room_ShuffleQueueEntry_by_pk?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> }> };
+export type MyShuffleQueueEntryQuery = { readonly __typename?: 'query_root', readonly room_ShuffleQueueEntry_by_pk?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly roomId: any }> }> };
 
 export type ShufflePeriodsQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39283,7 +39281,7 @@ export type ShufflePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }> };
+export type ShufflePeriodsQuery = { readonly __typename?: 'query_root', readonly room_ShufflePeriod: ReadonlyArray<{ readonly __typename?: 'room_ShufflePeriod', readonly id: any, readonly conferenceId: any, readonly endAt: any, readonly maxRegistrantsPerRoom: number, readonly name: string, readonly roomDurationMinutes: number, readonly startAt: any, readonly targetRegistrantsPerRoom: number, readonly waitRoomMaxDurationSeconds: number, readonly queueEntries: ReadonlyArray<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> }> };
 
 export type JoinShuffleQueueMutationVariables = Exact<{
   shufflePeriodId: Scalars['uuid'];
@@ -39291,7 +39289,7 @@ export type JoinShuffleQueueMutationVariables = Exact<{
 }>;
 
 
-export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> };
+export type JoinShuffleQueueMutation = { readonly __typename?: 'mutation_root', readonly insert_room_ShuffleQueueEntry_one?: Maybe<{ readonly __typename?: 'room_ShuffleQueueEntry', readonly id: any, readonly registrantId: any, readonly created_at: any, readonly updated_at: any, readonly isExpired: boolean, readonly shufflePeriodId: any, readonly shuffleRoom?: Maybe<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly isEnded: boolean, readonly roomId: any }> }> };
 
 export type GetShuffleRoomsParticipantsCountQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39530,11 +39528,13 @@ export const ItemRoomEventFragmentDoc = gql`
 export const ProgramPersonDataFragmentDoc = gql`
     fragment ProgramPersonData on content_ItemProgramPerson {
   id
+  itemId
   person {
     id
     name
     affiliation
     registrantId
+    conferenceId
   }
   roleName
   priority
@@ -39551,6 +39551,9 @@ export const ItemList_ItemDataFragmentDoc = gql`
     ${ProgramPersonDataFragmentDoc}`;
 export const ItemList_ItemTagDataFragmentDoc = gql`
     fragment ItemList_ItemTagData on content_ItemTag {
+  id
+  tagId
+  itemId
   item {
     ...ItemList_ItemData
   }
@@ -39578,6 +39581,7 @@ export const ItemEventFragmentDoc = gql`
   endTime
   name
   intendedRoomModeName
+  itemId
 }
     `;
 export const ContinuationChoices_ContinuationFragmentDoc = gql`
@@ -39589,11 +39593,14 @@ export const ContinuationChoices_ContinuationFragmentDoc = gql`
   priority
   colour
   description
+  fromEvent
+  fromShuffleQueue
 }
     `;
 export const ElementDataFragmentDoc = gql`
     fragment ElementData on content_Element {
   id
+  itemId
   data
   layoutData
   name
@@ -39609,23 +39616,27 @@ export const ItemTagDataFragmentDoc = gql`
     name
     colour
     priority
+    conferenceId
   }
 }
     `;
 export const ItemExhibitionDataFragmentDoc = gql`
     fragment ItemExhibitionData on content_ItemExhibition {
   id
+  itemId
   exhibition {
     id
     name
     priority
     colour
+    conferenceId
   }
 }
     `;
 export const ItemElements_ItemDataFragmentDoc = gql`
     fragment ItemElements_ItemData on content_Item {
   id
+  conferenceId
   title
   typeName
   chatId
@@ -39662,6 +39673,8 @@ export const ItemPage_ItemRoomsFragmentDoc = gql`
     order_by: {created_at: asc}
   ) {
     id
+    originatingEventId
+    created_at
   }
 }
     `;
@@ -39680,6 +39693,7 @@ export const ExhibitionItemFragmentDoc = gql`
     startTime
     endTime
     roomId
+    itemId
   }
   itemPeople(where: {roleName: {_neq: "REVIEWER"}}, order_by: {priority: asc}) {
     ...ProgramPersonData
@@ -39693,6 +39707,8 @@ export const ExhibitionItemFragmentDoc = gql`
     order_by: {created_at: asc}
   ) {
     id
+    originatingEventId
+    created_at
   }
 }
     ${ElementDataFragmentDoc}
@@ -39727,12 +39743,17 @@ ${ExhibitionItemFragmentDoc}`;
 export const ExhibitionSummaryFragmentDoc = gql`
     fragment ExhibitionSummary on collection_Exhibition {
   id
+  conferenceId
+  isHidden
   name
   colour
   priority
   items {
     id
+    exhibitionId
+    itemId
     item {
+      id
       itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
         ...ProgramPersonData
       }
@@ -39748,6 +39769,7 @@ export const MyBackstages_EventFragmentDoc = gql`
     fragment MyBackstages_Event on schedule_Event {
   id
   conferenceId
+  itemId
   item {
     id
     title
@@ -39755,6 +39777,7 @@ export const MyBackstages_EventFragmentDoc = gql`
   endTime
   intendedRoomModeName
   name
+  roomId
   room {
     id
     name
@@ -39768,6 +39791,8 @@ export const PrefetchShuffleQueueEntryDataFragmentDoc = gql`
   registrantId
   created_at
   updated_at
+  isExpired
+  shufflePeriodId
   shuffleRoom {
     id
     startedAt
@@ -39799,6 +39824,7 @@ export const ShufflePeriodDataFragmentDoc = gql`
 export const Room_EventSummaryFragmentDoc = gql`
     fragment Room_EventSummary on schedule_Event {
   id
+  roomId
   conferenceId
   startTime
   name
@@ -39820,6 +39846,8 @@ export const Room_EventSummaryFragmentDoc = gql`
     ) {
       id
       name
+      typeName
+      itemId
     }
     zoomItems: elements(where: {typeName: {_eq: ZOOM}}, limit: 1) {
       id
@@ -39830,6 +39858,7 @@ export const Room_EventSummaryFragmentDoc = gql`
   }
   eventPeople {
     id
+    personId
     person {
       id
       name
@@ -39848,6 +39877,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
   isProgramRoom
   publicVonageSessionId
   chatId
+  originatingItemId
   originatingItem {
     id
     typeName
@@ -39858,6 +39888,9 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     ) {
       id
       data
+      layoutData
+      typeName
+      updatedAt
     }
     title
   }
@@ -39868,6 +39901,7 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     durationMinutes
     reshuffleUponEnd
     shufflePeriodId
+    roomId
   }
   backendName
 }
@@ -39876,6 +39910,7 @@ export const RoomPage_RoomChannelStackFragmentDoc = gql`
     fragment RoomPage_RoomChannelStack on video_ChannelStack {
   cloudFrontDomain
   endpointUri
+  roomId
   id
 }
     `;
@@ -39887,11 +39922,13 @@ export const RoomSponsorContent_ElementDataFragmentDoc = gql`
   typeName
   data
   layoutData
+  itemId
 }
     `;
 export const RoomSponsorContent_ItemDataFragmentDoc = gql`
     fragment RoomSponsorContent_ItemData on content_Item {
   id
+  typeName
   elements {
     ...RoomSponsorContent_ElementData
   }
@@ -39923,6 +39960,7 @@ export const RoomEventDetailsFragmentDoc = gql`
   eventVonageSession {
     id
     sessionId
+    eventId
   }
 }
     `;
@@ -39951,19 +39989,26 @@ export const SocialRoomFragmentDoc = gql`
   id
   name
   priority
+  chatId
+  conferenceId
+  originatingItemId
+  originatingEventId
 }
     `;
 export const RoomTile_EventFragmentDoc = gql`
     fragment RoomTile_Event on schedule_Event {
   id
+  roomId
   name
   intendedRoomModeName
   startTime
   endTime
+  exhibitionId
   exhibition {
     id
     name
   }
+  itemId
   item {
     id
     title
@@ -39975,6 +40020,7 @@ export const RoomTile_RoomFragmentDoc = gql`
   id
   name
   managementModeName
+  originatingItemId
   originatingItem {
     id
     title
@@ -39988,6 +40034,7 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
     fragment SponsorBoothsList_Item on content_Item {
   id
   conferenceId
+  typeName
   rooms(
     limit: 1
     order_by: {created_at: asc}
@@ -39995,6 +40042,8 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
   ) {
     id
     priority
+    created_at
+    conferenceId
   }
   logo: elements(
     where: {typeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
@@ -40003,10 +40052,15 @@ export const SponsorBoothsList_ItemFragmentDoc = gql`
   ) {
     id
     data
+    layoutData
+    typeName
+    updatedAt
   }
   title
   itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
+    itemId
+    personId
     person {
       id
       registrantId
@@ -40028,11 +40082,13 @@ export const Schedule_ProgramPersonFragmentDoc = gql`
   name
   affiliation
   registrantId
+  conferenceId
 }
     `;
 export const Schedule_ItemPersonFragmentDoc = gql`
     fragment Schedule_ItemPerson on content_ItemProgramPerson {
   id
+  itemId
   personId
   priority
   roleName
@@ -40044,6 +40100,7 @@ export const Schedule_ItemFieldsFragmentDoc = gql`
   title
   shortTitle
   typeName
+  conferenceId
   itemTags {
     id
     itemId
@@ -40066,6 +40123,7 @@ export const Schedule_ElementFragmentDoc = gql`
   name
   layoutData
   data
+  itemId
 }
     `;
 export const Schedule_ItemFragmentDoc = gql`
@@ -40086,6 +40144,7 @@ ${Schedule_ItemPersonFragmentDoc}`;
 export const Schedule_EventSummaryFragmentDoc = gql`
     fragment Schedule_EventSummary on schedule_Event {
   id
+  conferenceId
   roomId
   intendedRoomModeName
   name
@@ -40103,6 +40162,7 @@ export const Schedule_RoomSummaryFragmentDoc = gql`
   currentModeName
   priority
   managementModeName
+  conferenceId
 }
     `;
 export const Schedule_TagFragmentDoc = gql`
@@ -40111,6 +40171,7 @@ export const Schedule_TagFragmentDoc = gql`
   name
   colour
   priority
+  conferenceId
 }
     `;
 export const ScheduleV2_LightweightEventFragmentDoc = gql`
@@ -40119,6 +40180,7 @@ export const ScheduleV2_LightweightEventFragmentDoc = gql`
   startTime
   endTime
   roomId
+  conferenceId
 }
     `;
 export const ScheduleV2_ProgramPersonFragmentDoc = gql`
@@ -40127,6 +40189,7 @@ export const ScheduleV2_ProgramPersonFragmentDoc = gql`
   name
   affiliation
   registrantId
+  conferenceId
 }
     `;
 export const ScheduleV2_ItemPersonFragmentDoc = gql`
@@ -40134,6 +40197,8 @@ export const ScheduleV2_ItemPersonFragmentDoc = gql`
   id
   priority
   roleName
+  itemId
+  personId
   person {
     ...ScheduleV2_ProgramPerson
   }
@@ -40175,6 +40240,7 @@ export const ScheduleV2_EventFragmentDoc = gql`
   itemId
   exhibitionId
   shufflePeriodId
+  itemId
   item {
     ...ScheduleV2_ItemElements
     abstractElements: elements(
@@ -40195,6 +40261,7 @@ export const ScheduleV2_RoomFragmentDoc = gql`
   id
   name
   priority
+  conferenceId
 }
     `;
 export const ScheduleV2_TagFragmentDoc = gql`
@@ -40203,12 +40270,14 @@ export const ScheduleV2_TagFragmentDoc = gql`
   name
   colour
   priority
+  conferenceId
 }
     `;
 export const SearchPanel_ItemFragmentDoc = gql`
     fragment SearchPanel_Item on content_Item {
   id
   title
+  conferenceId
   itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     ...ProgramPersonData
   }
@@ -40223,17 +40292,22 @@ export const SearchPanel_EventFragmentDoc = gql`
   id
   startTime
   endTime
+  conferenceId
+  exhibitionId
   exhibition {
     id
     name
     items {
       id
+      itemId
+      exhibitionId
       item {
         ...SearchPanel_Item
       }
     }
   }
   intendedRoomModeName
+  itemId
   item {
     ...SearchPanel_Item
   }
@@ -40264,6 +40338,8 @@ export const SwagBagFragmentDoc = gql`
     fragment SwagBag on content_Item {
   id
   title
+  conferenceId
+  typeName
   elements(where: {isHidden: {_eq: false}}) {
     ...ElementData
   }
@@ -40279,7 +40355,11 @@ export const ConferenceConfiguration_ConferenceConfigurationsFragmentDoc = gql`
 export const MonitorLivestreams_PrerecEventFragmentDoc = gql`
     fragment MonitorLivestreams_PrerecEvent on schedule_Event {
   id
+  conferenceId
   startTime
+  endTime
+  intendedRoomModeName
+  roomId
   room {
     id
     name
@@ -40291,10 +40371,13 @@ export const MonitorLivestreams_PersonFragmentDoc = gql`
     fragment MonitorLivestreams_Person on schedule_EventProgramPerson {
   id
   roleName
+  personId
+  eventId
   person {
     id
     name
     affiliation
+    registrantId
     registrant {
       id
       userId
@@ -40305,14 +40388,18 @@ export const MonitorLivestreams_PersonFragmentDoc = gql`
 export const MonitorLivestreams_EventFragmentDoc = gql`
     fragment MonitorLivestreams_Event on schedule_Event {
   id
+  conferenceId
+  intendedRoomModeName
   name
   startTime
   endTime
+  roomId
   room {
     id
     name
     priority
   }
+  itemId
   item {
     id
     title
@@ -40323,10 +40410,12 @@ export const MonitorLivestreams_EventFragmentDoc = gql`
   eventVonageSession {
     id
     sessionId
+    eventId
     participantStreams {
       id
       registrantId
       vonageStreamType
+      vonageSessionId
     }
   }
 }
@@ -40387,6 +40476,7 @@ ${ChatMessageDataFragmentDoc}`;
 export const ManageContent_ItemExhibitionFragmentDoc = gql`
     fragment ManageContent_ItemExhibition on content_ItemExhibition {
   id
+  itemId
   item {
     id
     title
@@ -40419,6 +40509,7 @@ export const ManageContent_RoomFragmentDoc = gql`
     fragment ManageContent_Room on room_Room {
   id
   name
+  conferenceId
 }
     `;
 export const ManageContent_OriginatingDataFragmentDoc = gql`
@@ -40436,6 +40527,7 @@ export const ManageContent_ItemSecondaryFragmentDoc = gql`
     ...ManageContent_Room
   }
   chatId
+  originatingDataId
   originatingData {
     ...ManageContent_OriginatingData
   }
@@ -40449,6 +40541,7 @@ export const ManageContent_ProgramPersonFragmentDoc = gql`
   affiliation
   email
   registrantId
+  conferenceId
 }
     `;
 export const ManageContent_ItemProgramPersonFragmentDoc = gql`
@@ -40457,6 +40550,7 @@ export const ManageContent_ItemProgramPersonFragmentDoc = gql`
   itemId
   priority
   roleName
+  personId
   person {
     ...ManageContent_ProgramPerson
   }
@@ -40487,14 +40581,17 @@ export const ManageContent_ItemForExportFragmentDoc = gql`
   itemTags {
     id
     tagId
+    itemId
   }
   itemExhibitions {
     id
+    itemId
     exhibitionId
     priority
   }
   rooms {
     id
+    conferenceId
   }
   chatId
   itemPeople {
@@ -40606,6 +40703,8 @@ export const ItemFullNestedInfoFragmentDoc = gql`
     order_by: {created_at: asc}
   ) {
     id
+    originatingEventId
+    created_at
   }
 }
     ${ElementInfoFragmentDoc}
@@ -40665,6 +40764,7 @@ export const SubmissionRequestsModal_ItemFragmentDoc = gql`
   hasUnsubmittedElements
   itemPeople {
     id
+    itemId
     personId
     roleName
     hasSubmissionRequestBeenSent
@@ -40677,6 +40777,7 @@ export const SubmissionsReviewModal_ElementFragmentDoc = gql`
   typeName
   name
   data
+  itemId
 }
     `;
 export const SubmissionsReviewModal_ItemFragmentDoc = gql`
@@ -40686,6 +40787,8 @@ export const SubmissionsReviewModal_ItemFragmentDoc = gql`
   hasUnsubmittedElements
   itemPeople {
     id
+    itemId
+    personId
     person {
       id
       name
@@ -40707,6 +40810,7 @@ export const ConfigureEmailTemplates_ConferenceConfigurationFragmentDoc = gql`
 export const ManageExport_RegistrantGoogleAccountFragmentDoc = gql`
     fragment ManageExport_RegistrantGoogleAccount on registrant_GoogleAccount {
   id
+  registrantId
   googleAccountEmail
   youTubeData
 }
@@ -40715,6 +40819,8 @@ export const UploadYouTubeVideos_ElementFragmentDoc = gql`
     fragment UploadYouTubeVideos_Element on content_Element {
   id
   data
+  itemId
+  typeName
 }
     `;
 export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
@@ -40724,11 +40830,15 @@ export const UploadYouTubeVideos_YouTubeUploadFragmentDoc = gql`
   videoPrivacyStatus
   videoStatus
   videoTitle
+  conferenceId
+  createdAt
 }
     `;
 export const UploadYouTubeVideos_UploadYouTubeVideoJobFragmentDoc = gql`
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
   id
+  conferenceId
+  createdAt
   jobStatusName
   message
   element {
@@ -40809,9 +40919,11 @@ export const RoomWithParticipantInfoFragmentDoc = gql`
   participants {
     ...RoomParticipantWithRegistrantInfo
   }
+  originatingDataId
   originatingData {
     ...OriginatingDataInfo
   }
+  chatId
   chat {
     id
     enableMandatoryPin
@@ -40825,6 +40937,7 @@ ${OriginatingDataInfoFragmentDoc}`;
 export const RoomPersonInfoFragmentDoc = gql`
     fragment RoomPersonInfo on room_RoomMembership {
   id
+  roomId
   registrant {
     id
     displayName
@@ -40936,6 +41049,8 @@ export const ShufflePeriodInfoFragmentDoc = gql`
     fragment ShufflePeriodInfo on room_ShufflePeriod {
   id
   name
+  conferenceId
+  endAt
 }
     `;
 export const RoomInfoFragmentDoc = gql`
@@ -40988,6 +41103,7 @@ export const EventInfoFragmentDoc = gql`
 export const ManageShufflePeriods_ShufflePeriodFragmentDoc = gql`
     fragment ManageShufflePeriods_ShufflePeriod on room_ShufflePeriod {
   id
+  conferenceId
   created_at
   updated_at
   conferenceId
@@ -41136,8 +41252,10 @@ export const PublicConferenceInfoFragmentDoc = gql`
 export const MinimalEventInfoFragmentDoc = gql`
     fragment MinimalEventInfo on schedule_Event {
   id
+  conferenceId
   startTime
   endTime
+  roomId
   room {
     id
     name
@@ -41147,12 +41265,15 @@ export const MinimalEventInfoFragmentDoc = gql`
 export const MenuSchedule_EventFragmentDoc = gql`
     fragment MenuSchedule_Event on schedule_Event {
   id
+  conferenceId
   name
   startTime
+  roomId
   room {
     id
     name
   }
+  itemId
   item {
     id
     title
@@ -41163,6 +41284,7 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
     fragment MainMenuSponsors_ItemData on content_Item {
   id
   conferenceId
+  typeName
   rooms(
     limit: 1
     order_by: {created_at: asc}
@@ -41170,6 +41292,8 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
   ) {
     id
     priority
+    created_at
+    conferenceId
   }
   logo: elements(
     where: {typeName: {_in: [IMAGE_URL, IMAGE_FILE]}, layoutData: {_contains: {isLogo: true}}}
@@ -41178,11 +41302,17 @@ export const MainMenuSponsors_ItemDataFragmentDoc = gql`
   ) {
     id
     data
+    itemId
+    typeName
+    updatedAt
+    layoutData
   }
   title
   shortTitle
   itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
     id
+    itemId
+    personId
     person {
       id
       registrantId
@@ -41211,6 +41341,7 @@ export const SubdShuffleQueueEntryDataFragmentDoc = gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
   id
   isExpired
+  shufflePeriodId
   shuffleRoom {
     id
     roomId
@@ -41481,6 +41612,7 @@ export const GetItemDocument = gql`
     ...ItemPage_ItemRooms
     descriptionOfExhibitions {
       id
+      descriptiveItemId
     }
   }
   schedule_Event(
@@ -41513,6 +41645,8 @@ export const ContinuationChoices_ContinuationsDocument = gql`
   ) {
     id
     roomId
+    shufflePeriodId
+    startTime
     endTime
   }
 }
@@ -41531,6 +41665,8 @@ export const ContinuationChoices_RoomsDocument = gql`
       order_by: {created_at: asc}
     ) {
       id
+      originatingEventId
+      created_at
     }
   }
   schedule_Event(where: {id: {_in: $ids}}) {
@@ -41588,6 +41724,7 @@ export const RegistrantInvitedEmailAddressDocument = gql`
     query RegistrantInvitedEmailAddress($registrantId: uuid!) {
   registrant_Invitation(where: {registrantId: {_eq: $registrantId}}) {
     id
+    registrantId
     invitedEmailAddress
   }
 }
@@ -41670,6 +41807,7 @@ export const MyRecordingsDocument = gql`
     order_by: {recording: {endedAt: desc}}
   ) {
     id
+    registrantId
     recording {
       id
       room {
@@ -41782,6 +41920,9 @@ export const RoomPage_IsAdminDocument = gql`
     where: {personRoleName: {_eq: ADMIN}, registrantId: {_eq: $registrantId}, roomId: {_eq: $roomId}}
   ) {
     id
+    personRoleName
+    registrantId
+    roomId
   }
 }
     `;
@@ -41805,6 +41946,7 @@ export const GetEventVonageDetailsDocument = gql`
   schedule_Event_by_pk(id: $eventId) {
     eventVonageSession {
       sessionId
+      eventId
       id
     }
     id
@@ -41843,6 +41985,7 @@ export const ImmediateSwitch_GetElementsDocument = gql`
     query ImmediateSwitch_GetElements($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
     id
+    itemId
     item {
       id
       title
@@ -41851,12 +41994,16 @@ export const ImmediateSwitch_GetElementsDocument = gql`
       ) {
         id
         name
+        itemId
+        typeName
       }
     }
+    exhibitionId
     exhibition {
       id
       items {
         id
+        itemId
         item {
           id
           title
@@ -41865,6 +42012,8 @@ export const ImmediateSwitch_GetElementsDocument = gql`
           ) {
             id
             name
+            itemId
+            typeName
           }
         }
       }
@@ -41899,6 +42048,7 @@ export const LiveIndicator_GetLatestDocument = gql`
     id
     data
     executedAt
+    eventId
   }
 }
     `;
@@ -41953,6 +42103,7 @@ export const VideoPlayer_GetElementDocument = gql`
     isHidden
     data
     name
+    itemId
     item {
       id
       title
@@ -42018,6 +42169,7 @@ export const GetEventVideosDocument = gql`
     query GetEventVideos($eventId: uuid!) {
   schedule_Event_by_pk(id: $eventId) {
     id
+    itemId
     item {
       id
       title
@@ -42026,6 +42178,8 @@ export const GetEventVideosDocument = gql`
       ) {
         id
         name
+        itemId
+        typeName
       }
     }
     exhibition {
@@ -42033,6 +42187,8 @@ export const GetEventVideosDocument = gql`
       items {
         id
         priority
+        exhibitionId
+        itemId
         item {
           id
           title
@@ -42041,6 +42197,8 @@ export const GetEventVideosDocument = gql`
           ) {
             id
             name
+            itemId
+            typeName
           }
         }
       }
@@ -42062,6 +42220,7 @@ export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     id
     layoutData
     created_at
+    vonageSessionId
   }
 }
     `;
@@ -42130,7 +42289,7 @@ export function useToggleVonageRecordingStateMutation() {
   return Urql.useMutation<ToggleVonageRecordingStateMutation, ToggleVonageRecordingStateMutationVariables>(ToggleVonageRecordingStateDocument);
 };
 export const GetAllRoomsDocument = gql`
-    query GetAllRooms($conferenceId: uuid!, $registrantId: uuid!) {
+    query GetAllRooms($conferenceId: uuid!) {
   socialRooms: room_Room(
     where: {conferenceId: {_eq: $conferenceId}, _not: {_or: [{events: {}}, {chat: {enableMandatoryPin: {_eq: true}}}]}, originatingItemId: {_is_null: true}, originatingEventId: {_is_null: true}}
     order_by: {name: asc}
@@ -42150,7 +42309,7 @@ export function useGetAllRoomsQuery(options: Omit<Urql.UseQueryArgs<GetAllRoomsQ
   return Urql.useQuery<GetAllRoomsQuery>({ query: GetAllRoomsDocument, ...options });
 };
 export const GetAllTodaysRoomsDocument = gql`
-    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!, $registrantId: uuid!) {
+    query GetAllTodaysRooms($conferenceId: uuid!, $todayStart: timestamptz!, $todayEnd: timestamptz!) {
   socialOrDiscussionRooms: room_Room(
     where: {conferenceId: {_eq: $conferenceId}, _and: [{originatingItem: {typeName: {_neq: SPONSOR}}}, {_not: {_or: [{events: {}}, {chat: {enableMandatorySubscribe: {_eq: true}}}]}}]}
     order_by: {name: asc}
@@ -42414,6 +42573,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
   ) {
     id
     startTime
+    conferenceId
   }
   latestEndingEvent: schedule_Event(
     where: {conferenceId: {_eq: $conferenceId}}
@@ -42422,6 +42582,7 @@ export const ScheduleV2_AllEvents_ParamsDocument = gql`
   ) {
     id
     endTime
+    conferenceId
   }
 }
     `;
@@ -42484,6 +42645,7 @@ export const ConferenceBySlugDocument = gql`
     query ConferenceBySlug($slug: String!) {
   conference_Conference(where: {slug: {_eq: $slug}}) {
     id
+    slug
   }
 }
     `;
@@ -42497,10 +42659,12 @@ export const ConferenceStatsDocument = gql`
     id
     completedRegistrationsStat {
       count
+      id
     }
     items(where: {stats: {}}) {
       id
       title
+      conferenceId
       stats(order_by: [{updated_at: asc}]) {
         id
         itemId
@@ -42512,6 +42676,8 @@ export const ConferenceStatsDocument = gql`
       ) {
         id
         name
+        typeName
+        itemId
         stats(order_by: [{updated_at: asc}]) {
           id
           elementId
@@ -42523,6 +42689,7 @@ export const ConferenceStatsDocument = gql`
     rooms(where: {_or: [{managementModeName: {_eq: PUBLIC}}, {events: {}}]}) {
       id
       name
+      managementModeName
       presenceCounts(order_by: [{created_at: asc}]) {
         created_at
         count
@@ -42530,14 +42697,18 @@ export const ConferenceStatsDocument = gql`
       stats(order_by: [{created_at: asc}]) {
         created_at
         hlsViewCount
+        roomId
       }
       events(order_by: [{startTime: asc}, {endTime: asc}]) {
         id
         name
+        roomId
+        itemId
         item {
           id
           title
         }
+        exhibitionId
         exhibition {
           id
           name
@@ -42561,9 +42732,11 @@ export const GetChannelStacksDocument = gql`
       cloudFrontDomain
       endpointUri
       id
+      roomId
     }
     name
     id
+    conferenceId
   }
 }
     `;
@@ -42589,6 +42762,9 @@ export const EventVonageControls_GetEventsDocument = gql`
   ) {
     id
     name
+    conferenceId
+    intendedRoomModeName
+    itemId
     item {
       id
       title
@@ -43466,6 +43642,7 @@ export const CombineVideosModal_GetCombineVideosJobDocument = gql`
     message
     jobStatusName
     data
+    conferenceId
   }
 }
     `;
@@ -43510,6 +43687,8 @@ export const UpdateExhibitionDescriptiveItems_SelectExhibitionsDocument = gql`
   ) {
     id
     name
+    conferenceId
+    descriptiveItemId
   }
 }
     `;
@@ -43841,6 +44020,7 @@ export const DownloadVideos_GetAllVideosDocument = gql`
     query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
     id
+    conferenceId
     elements(
       where: {typeName: {_in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH]}}
     ) {
@@ -43848,6 +44028,7 @@ export const DownloadVideos_GetAllVideosDocument = gql`
       id
       data
       typeName
+      itemId
     }
     typeName
     title
@@ -43866,6 +44047,7 @@ export const ChooseElementByTagModal_GetTagsDocument = gql`
   ) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -43881,6 +44063,8 @@ export const ChooseElementByTagModal_GetVideoElementsDocument = gql`
   ) {
     id
     name
+    typeName
+    itemId
     item {
       id
       title
@@ -43900,6 +44084,7 @@ export const ChooseElementModal_GetItemsDocument = gql`
   ) {
     id
     title
+    conferenceId
   }
 }
     `;
@@ -43915,6 +44100,8 @@ export const ChooseElementModal_GetVideoElementsDocument = gql`
   ) {
     id
     name
+    typeName
+    itemId
   }
 }
     `;
@@ -43959,6 +44146,7 @@ export const UploadYouTubeVideos_GetRegistrantGoogleAccountsDocument = gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
   registrant_GoogleAccount(where: {registrantId: {_eq: $registrantId}}) {
     id
+    registrantId
     googleAccountEmail
     youTubeData
   }
@@ -43986,6 +44174,7 @@ export const UploadYouTubeVideos_GetElementsDocument = gql`
   content_Element(where: {id: {_in: $elementIds}}) {
     id
     name
+    itemId
     item {
       id
       title
@@ -44002,16 +44191,19 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
   content_Element(where: {id: {_in: $elementIds}}) {
     id
     name
+    itemId
     item {
       id
       shortTitle
       title
       elements {
         id
+        itemId
         youTubeUploads {
           id
           videoTitle
           videoId
+          elementId
         }
       }
       abstractElements: elements(
@@ -44032,6 +44224,10 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
         order_by: {priority: asc}
       ) {
         id
+        itemId
+        personId
+        roleName
+        priority
         person {
           id
           name
@@ -44043,6 +44239,10 @@ export const UploadYouTubeVideos_GetTemplateDataDocument = gql`
         order_by: {priority: asc}
       ) {
         id
+        itemId
+        personId
+        roleName
+        priority
         person {
           id
           name
@@ -44249,6 +44449,7 @@ export const ManageRooms_SelectGroupsDocument = gql`
   registrant_Group(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -44261,6 +44462,7 @@ export const ManageRooms_SelectItemsDocument = gql`
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     title
+    conferenceId
   }
 }
     `;
@@ -44489,9 +44691,11 @@ export const GetRoomRtmpOutputDocument = gql`
       updated_at
       url
       streamKey
+      roomId
     }
     channelStack {
       id
+      roomId
       rtmpOutputUri
       rtmpOutputStreamKey
       updateJobs: channelStackUpdateJobs(
@@ -44502,12 +44706,14 @@ export const GetRoomRtmpOutputDocument = gql`
         updated_at
         jobStatusName
         message
+        channelStackId
       }
       mediaLiveChannelStatus {
         id
         createdAt
         updatedAt
         state
+        channelStackId
       }
     }
   }
@@ -44575,6 +44781,7 @@ export const AddEventPeople_SelectItemPeopleDocument = gql`
   content_ItemExhibition(where: {exhibitionId: {_in: $exhibitionIds}}) {
     id
     exhibitionId
+    itemId
     item {
       id
       itemPeople(where: {roleName: {_neq: "REVIEWER"}}) {
@@ -44738,6 +44945,7 @@ export const CreateContinuationModal_RoomsDocument = gql`
   room_Room(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -44749,18 +44957,22 @@ export const CreateContinuationModal_EventsDocument = gql`
     query CreateContinuationModal_Events($conferenceId: uuid!) {
   schedule_Event(where: {conferenceId: {_eq: $conferenceId}}) {
     id
+    conferenceId
     name
     startTime
     endTime
     intendedRoomModeName
+    itemId
     item {
       id
       title
     }
+    exhibitionId
     exhibition {
       id
       name
     }
+    shufflePeriodId
     shufflePeriod {
       id
       name
@@ -44777,6 +44989,7 @@ export const CreateContinuationModal_ItemsDocument = gql`
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     title
+    conferenceId
   }
 }
     `;
@@ -44789,6 +45002,7 @@ export const CreateContinuationModal_ExhibitionsDocument = gql`
   collection_Exhibition(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -44801,6 +45015,7 @@ export const CreateContinuationModal_ShufflePeriodsDocument = gql`
   room_ShufflePeriod(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -44813,6 +45028,7 @@ export const CreateContinuationModal_TagsDocument = gql`
   collection_Tag(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     name
+    conferenceId
   }
 }
     `;
@@ -44825,6 +45041,7 @@ export const CreateContinuationModal_ProfileDocument = gql`
   registrant_Registrant(where: {conferenceId: {_eq: $conferenceId}}) {
     id
     displayName
+    conferenceId
   }
 }
     `;
@@ -45303,6 +45520,7 @@ export const ItemByPersonAccessTokenDocument = gql`
       data
       uploadsRemaining
       layoutData
+      itemId
     }
   }
 }
@@ -45318,6 +45536,8 @@ export const ItemsByPersonAccessTokenDocument = gql`
     name
     itemPeople(order_by: {item: {title: asc}}) {
       id
+      itemId
+      personId
       item {
         id
         title
@@ -45338,7 +45558,9 @@ export const GetElementDocument = gql`
     name
     id
     uploadsRemaining
+    itemId
     item {
+      id
       title
     }
   }
@@ -45559,6 +45781,8 @@ export const GetConferenceLandingPageItemIdDocument = gql`
     limit: 1
   ) {
     id
+    typeName
+    conferenceId
   }
 }
     `;
@@ -52896,7 +53120,7 @@ export type GraphCacheOptimisticUpdaters = {
 };
 
 export type GraphCacheUpdaters = {
-  Mutation?: {
+  Mutation_Root?: {
     createItemRoom?: GraphCacheUpdateResolver<{ createItemRoom: Maybe<WithTypename<CreateItemRoomOutput>> }, Mutation_RootCreateItemRoomArgs>,
     createRoomDm?: GraphCacheUpdateResolver<{ createRoomDm: Maybe<WithTypename<CreateRoomDmOutput>> }, Mutation_RootCreateRoomDmArgs>,
     delete_Email?: GraphCacheUpdateResolver<{ delete_Email: Maybe<WithTypename<Email_Mutation_Response>> }, Mutation_RootDelete_EmailArgs>,

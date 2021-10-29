@@ -26,6 +26,7 @@ gql`
         startTime
         endTime
         roomId
+        conferenceId
     }
 
     query ScheduleV2_DayLightweightEvents(

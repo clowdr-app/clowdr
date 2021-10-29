@@ -15,6 +15,7 @@ gql`
         ) {
             id
             startTime
+            conferenceId
         }
         latestEndingEvent: schedule_Event(
             where: { conferenceId: { _eq: $conferenceId } }
@@ -23,6 +24,7 @@ gql`
         ) {
             id
             endTime
+            conferenceId
         }
     }
 `;

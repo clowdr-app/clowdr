@@ -46,6 +46,7 @@ gql`
             startTime
             endTime
             roomId
+            itemId
         }
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }, order_by: { priority: asc }) {
             ...ProgramPersonData
@@ -59,6 +60,8 @@ gql`
             order_by: { created_at: asc }
         ) {
             id
+            originatingEventId
+            created_at
         }
     }
 

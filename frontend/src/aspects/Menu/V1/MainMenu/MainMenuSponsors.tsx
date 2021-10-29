@@ -30,9 +30,12 @@ gql`
     fragment MainMenuSponsors_ItemData on content_Item {
         id
         conferenceId
+        typeName
         rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
             id
             priority
+            created_at
+            conferenceId
         }
         logo: elements(
             where: { typeName: { _in: [IMAGE_URL, IMAGE_FILE] }, layoutData: { _contains: { isLogo: true } } }
@@ -41,11 +44,17 @@ gql`
         ) {
             id
             data
+            itemId
+            typeName
+            updatedAt
+            layoutData
         }
         title
         shortTitle
         itemPeople(where: { roleName: { _neq: "REVIEWER" } }) {
             id
+            itemId
+            personId
             person {
                 id
                 registrantId
@@ -76,9 +85,7 @@ export function MainMenuSponsors(): JSX.Element {
                 } else if (latestData?.type === Content_ElementType_Enum.ImageFile) {
                     try {
                         const { bucket, key } = new AmazonS3URI(latestData.s3Url);
-                        return `https://s3.${
-                            import.meta.env.VITE_AWS_REGION
-                        }.amazonaws.com/${bucket}/${key}`;
+                        return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                     } catch {
                         return null;
                     }

@@ -18,8 +18,10 @@ gql`
 
     fragment MinimalEventInfo on schedule_Event {
         id
+        conferenceId
         startTime
         endTime
+        roomId
         room {
             id
             name

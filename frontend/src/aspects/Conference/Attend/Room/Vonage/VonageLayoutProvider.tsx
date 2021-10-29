@@ -20,6 +20,7 @@ gql`
             id
             layoutData
             created_at
+            vonageSessionId
         }
     }
 

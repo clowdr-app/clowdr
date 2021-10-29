@@ -34,9 +34,11 @@ gql`
                 updated_at
                 url
                 streamKey
+                roomId
             }
             channelStack {
                 id
+                roomId
                 rtmpOutputUri
                 rtmpOutputStreamKey
                 updateJobs: channelStackUpdateJobs(where: { jobStatusName: { _in: [NEW, IN_PROGRESS] } }) {
@@ -45,12 +47,14 @@ gql`
                     updated_at
                     jobStatusName
                     message
+                    channelStackId
                 }
                 mediaLiveChannelStatus {
                     id
                     createdAt
                     updatedAt
                     state
+                    channelStackId
                 }
             }
         }

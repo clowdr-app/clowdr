@@ -23,7 +23,9 @@ gql`
             name
             id
             uploadsRemaining
+            itemId
             item {
+                id
                 title
             }
         }

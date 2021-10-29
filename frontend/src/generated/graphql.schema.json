@@ -1551,7 +1551,7 @@
             "args": []
           },
           {
-            "name": "photoURL_350x350",
+            "name": "photoURL_50x50",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -1559,7 +1559,7 @@
             "args": []
           },
           {
-            "name": "photoURL_50x50",
+            "name": "photoURL_350x350",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -60604,7 +60604,7 @@
             "args": []
           },
           {
-            "name": "photoURL_350x350",
+            "name": "photoURL_50x50",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -60612,7 +60612,7 @@
             "args": []
           },
           {
-            "name": "photoURL_50x50",
+            "name": "photoURL_350x350",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -61144,7 +61144,7 @@
             "args": []
           },
           {
-            "name": "photoURL_350x350",
+            "name": "photoURL_50x50",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -61152,7 +61152,7 @@
             "args": []
           },
           {
-            "name": "photoURL_50x50",
+            "name": "photoURL_350x350",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -61279,7 +61279,7 @@
             "args": []
           },
           {
-            "name": "photoURL_350x350",
+            "name": "photoURL_50x50",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -61287,7 +61287,7 @@
             "args": []
           },
           {
-            "name": "photoURL_50x50",
+            "name": "photoURL_350x350",
             "type": {
               "kind": "SCALAR",
               "name": "Any"

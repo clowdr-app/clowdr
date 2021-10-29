@@ -34,9 +34,11 @@ gql`
                 cloudFrontDomain
                 endpointUri
                 id
+                roomId
             }
             name
             id
+            conferenceId
         }
     }
 `;

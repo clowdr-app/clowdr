@@ -60,6 +60,7 @@ gql`
     query UploadYouTubeVideos_GetRegistrantGoogleAccounts($registrantId: uuid!) {
         registrant_GoogleAccount(where: { registrantId: { _eq: $registrantId } }) {
             id
+            registrantId
             googleAccountEmail
             youTubeData
         }
@@ -79,6 +80,7 @@ gql`
         content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
+            itemId
             item {
                 id
                 title
@@ -90,16 +92,19 @@ gql`
         content_Element(where: { id: { _in: $elementIds } }) {
             id
             name
+            itemId
             item {
                 id
                 shortTitle
                 title
                 elements {
                     id
+                    itemId
                     youTubeUploads {
                         id
                         videoTitle
                         videoId
+                        elementId
                     }
                 }
                 abstractElements: elements(
@@ -117,6 +122,10 @@ gql`
                 }
                 authors: itemPeople(where: { roleName: { _eq: "AUTHOR" } }, order_by: { priority: asc }) {
                     id
+                    itemId
+                    personId
+                    roleName
+                    priority
                     person {
                         id
                         name
@@ -125,6 +134,10 @@ gql`
                 }
                 presenters: itemPeople(where: { roleName: { _eq: "PRESENTER" } }, order_by: { priority: asc }) {
                     id
+                    itemId
+                    personId
+                    roleName
+                    priority
                     person {
                         id
                         name
@@ -138,6 +151,8 @@ gql`
     fragment UploadYouTubeVideos_Element on content_Element {
         id
         data
+        itemId
+        typeName
     }
 
     mutation UploadYouTubeVideos_RefreshYouTubeData($registrantId: uuid!, $registrantGoogleAccountId: uuid!) {

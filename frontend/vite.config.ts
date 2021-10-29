@@ -3,9 +3,6 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [react()],
-    esbuild: {
-        minify: true,
-    },
     build: {
         rollupOptions: {
             plugins: [],

@@ -41,6 +41,7 @@ gql`
                 data
                 uploadsRemaining
                 layoutData
+                itemId
             }
         }
     }

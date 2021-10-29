@@ -82,12 +82,15 @@ gql`
 
     fragment MenuSchedule_Event on schedule_Event {
         id
+        conferenceId
         name
         startTime
+        roomId
         room {
             id
             name
         }
+        itemId
         item {
             id
             title

@@ -36,10 +36,14 @@ gql`
         videoPrivacyStatus
         videoStatus
         videoTitle
+        conferenceId
+        createdAt
     }
 
     fragment UploadYouTubeVideos_UploadYouTubeVideoJob on job_queues_UploadYouTubeVideoJob {
         id
+        conferenceId
+        createdAt
         jobStatusName
         message
         element {

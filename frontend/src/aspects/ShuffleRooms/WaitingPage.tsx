@@ -62,6 +62,8 @@ gql`
         registrantId
         created_at
         updated_at
+        isExpired
+        shufflePeriodId
         shuffleRoom {
             id
             startedAt
@@ -73,6 +75,7 @@ gql`
     fragment SubdShuffleQueueEntryData on room_ShuffleQueueEntry {
         id
         isExpired
+        shufflePeriodId
         shuffleRoom {
             id
             roomId

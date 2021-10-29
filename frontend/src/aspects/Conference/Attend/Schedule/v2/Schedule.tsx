@@ -18,6 +18,7 @@ gql`
         name
         # colour
         priority
+        conferenceId
     }
 
     query ScheduleV2_Rooms($conferenceId: uuid!) {
@@ -31,6 +32,7 @@ gql`
         name
         colour
         priority
+        conferenceId
     }
 
     query ScheduleV2_Tags($conferenceId: uuid!) {

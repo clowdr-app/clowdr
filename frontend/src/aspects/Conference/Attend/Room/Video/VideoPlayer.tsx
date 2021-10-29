@@ -42,6 +42,7 @@ export function VideoPlayer({
                 isHidden
                 data
                 name
+                itemId
                 item {
                     id
                     title

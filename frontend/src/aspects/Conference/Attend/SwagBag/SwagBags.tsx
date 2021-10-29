@@ -22,6 +22,8 @@ gql`
     fragment SwagBag on content_Item {
         id
         title
+        conferenceId
+        typeName
         elements(where: { isHidden: { _eq: false } }) {
             ...ElementData
         }

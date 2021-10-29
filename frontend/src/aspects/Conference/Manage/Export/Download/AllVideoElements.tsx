@@ -21,11 +21,13 @@ gql`
     query DownloadVideos_GetAllVideos($conferenceId: uuid!) {
         content_Item(where: { conferenceId: { _eq: $conferenceId } }) {
             id
+            conferenceId
             elements(where: { typeName: { _in: [TEXT, VIDEO_FILE, VIDEO_BROADCAST, VIDEO_PREPUBLISH] } }) {
                 name
                 id
                 data
                 typeName
+                itemId
             }
             typeName
             title

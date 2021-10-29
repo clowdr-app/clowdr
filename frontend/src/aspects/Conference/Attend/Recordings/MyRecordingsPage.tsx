@@ -32,6 +32,7 @@ gql`
             order_by: { recording: { endedAt: desc } }
         ) {
             id
+            registrantId
             recording {
                 id
                 room {

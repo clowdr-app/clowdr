@@ -26,6 +26,8 @@ gql`
             name
             itemPeople(order_by: { item: { title: asc } }) {
                 id
+                itemId
+                personId
                 item {
                     id
                     title

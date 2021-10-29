@@ -18,12 +18,14 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import FAIcon from "../../../Icons/FAIcon";
 import RoomMembersProvider from "../../../Room/RoomMembersProvider";
 import useRoomMembers from "../../../Room/useRoomMembers";
 import { useRegistrants } from "../../RegistrantsContext";
 import { useConference } from "../../useConference";
+import { useConferenceCurrentUserActivePermissions } from "../../useConferenceCurrentUserActivePermissions";
 import { AddRoomPersonModal } from "./AddRoomPersonModal";
 
 export function RoomControlBar({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFragment }): JSX.Element {
@@ -111,6 +113,7 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
         ),
         [conference.slug, sortedRegistrants]
     );
+    const activePermissions = useConferenceCurrentUserActivePermissions();
 
     return (
         <>
@@ -124,7 +127,8 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             ) : (
                 roomMembersList
             )}
-            {roomDetails.selfAdminPerson?.length ? (
+            {roomDetails.selfAdminPerson?.length ||
+            activePermissions.has(Permissions_Permission_Enum.ConferenceManageSchedule) ? (
                 <Box textAlign="right" mb={2}>
                     <Button
                         mt={2}

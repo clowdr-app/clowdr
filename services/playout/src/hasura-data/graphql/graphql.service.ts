@@ -1,8 +1,8 @@
-import type { NormalizedCacheObject} from "@apollo/client/core";
+import type { NormalizedCacheObject } from "@apollo/client/core";
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client/core";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import type { OnModuleInit } from "@nestjs/common";
 import { Inject, Injectable } from "@nestjs/common";

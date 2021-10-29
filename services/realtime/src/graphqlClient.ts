@@ -1,4 +1,4 @@
-import type { NormalizedCacheObject} from "@apollo/client/core";
+import type { NormalizedCacheObject } from "@apollo/client/core";
 import { ApolloClient, gql, HttpLink, InMemoryCache, split } from "@apollo/client/core";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";

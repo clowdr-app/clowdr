@@ -1,15 +1,16 @@
-import type { FetchResult} from "@apollo/client/core";
+import type { FetchResult } from "@apollo/client/core";
 import { ApolloError, gql } from "@apollo/client/core";
 import type { ConsumeMessage } from "amqplib";
 import type {
     Chat_Message_Insert_Input,
     DeleteChatMessagesMutation,
     InsertChatMessagesMutation,
-    UpdateChatMessageMutation} from "../../../generated/graphql";
+    UpdateChatMessageMutation,
+} from "../../../generated/graphql";
 import {
     DeleteChatMessagesDocument,
     InsertChatMessagesDocument,
-    UpdateChatMessageDocument
+    UpdateChatMessageDocument,
 } from "../../../generated/graphql";
 import {
     onWritebackMessage,

@@ -1,5 +1,4 @@
-import type { Resolver as GraphCacheResolver, UpdateResolver as GraphCacheUpdateResolver, OptimisticMutationResolver as GraphCacheOptimisticMutationResolver, StorageAdapter as GraphCacheStorageAdapter } from '@urql/exchange-graphcache';
-import type { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
+import type { CacheExchangeOpts, Resolver as BaseGraphCacheResolver, UpdateResolver as GraphCacheUpdateResolver, OptimisticMutationResolver as GraphCacheOptimisticMutationResolver, StorageAdapter as GraphCacheStorageAdapter } from '@urql/exchange-graphcache';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -21,6 +20,7 @@ export type Scalars = {
   uuid: any;
 };
 
+type GraphCacheResolver<ParentData, Args, Result> = BaseGraphCacheResolver<ParentData, Args, Result | null | undefined>;
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
@@ -37462,9 +37462,9 @@ export type GetSponsorBoothsQueryVariables = Exact<{
 }>;
 
 
-export type GetSponsorBoothsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
+export type GetSponsorBoothsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
 
-export type SponsorBoothsList_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
+export type SponsorBoothsList_ItemFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type Schedule_HappeningSoonQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -39180,9 +39180,9 @@ export type MainMenuSponsors_GetSponsorsQueryVariables = Exact<{
 }>;
 
 
-export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
+export type MainMenuSponsors_GetSponsorsQuery = { readonly __typename?: 'query_root', readonly content_Item: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> }> };
 
-export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
+export type MainMenuSponsors_ItemDataFragment = { readonly __typename?: 'content_Item', readonly id: any, readonly conferenceId: any, readonly title: string, readonly shortTitle?: Maybe<string>, readonly rooms: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly priority: number }>, readonly logo: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person: { readonly __typename?: 'collection_ProgramPerson', readonly id: any, readonly registrantId?: Maybe<any> } }> };
 
 export type CreateDmMutationVariables = Exact<{
   registrantIds: ReadonlyArray<Maybe<Scalars['uuid']>> | Maybe<Scalars['uuid']>;
@@ -39987,6 +39987,7 @@ export const RoomTile_RoomFragmentDoc = gql`
 export const SponsorBoothsList_ItemFragmentDoc = gql`
     fragment SponsorBoothsList_Item on content_Item {
   id
+  conferenceId
   rooms(
     limit: 1
     order_by: {created_at: asc}
@@ -41161,6 +41162,7 @@ export const MenuSchedule_EventFragmentDoc = gql`
 export const MainMenuSponsors_ItemDataFragmentDoc = gql`
     fragment MainMenuSponsors_ItemData on content_Item {
   id
+  conferenceId
   rooms(
     limit: 1
     order_by: {created_at: asc}

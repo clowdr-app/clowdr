@@ -233,7 +233,6 @@ gql`
     }
 `;
 
-// CHAT_TODO: Message and reaction flagging / moderation
 gql`
     fragment ChatFlagData on chat_Flag {
         discussionChatId

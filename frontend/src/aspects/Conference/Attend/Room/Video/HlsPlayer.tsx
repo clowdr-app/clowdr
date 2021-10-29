@@ -1,4 +1,4 @@
-import type { AlertProps} from "@chakra-ui/react";
+import type { AlertProps } from "@chakra-ui/react";
 import { Alert, AlertDescription, AlertIcon, Button, chakra, CloseButton } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";

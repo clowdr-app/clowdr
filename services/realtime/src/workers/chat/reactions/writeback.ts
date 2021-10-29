@@ -1,15 +1,16 @@
-import type { FetchResult} from "@apollo/client/core";
+import type { FetchResult } from "@apollo/client/core";
 import { ApolloError, gql } from "@apollo/client/core";
 import type { ConsumeMessage } from "amqplib";
 import type {
     Chat_Reaction_Insert_Input,
     DeleteChatReactionsMutation,
     InsertChatReactionsMutation,
-    UpdateChatReactionMutation} from "../../../generated/graphql";
+    UpdateChatReactionMutation,
+} from "../../../generated/graphql";
 import {
     DeleteChatReactionsDocument,
     InsertChatReactionsDocument,
-    UpdateChatReactionDocument
+    UpdateChatReactionDocument,
 } from "../../../generated/graphql";
 import { ReactionWritebackIntervalMs, ReactionWritebackQueueSize } from "../../../rabbitmq/chat/params";
 import {

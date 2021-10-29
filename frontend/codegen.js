@@ -11,9 +11,12 @@ module.exports = {
         },
     ],
     documents: [
-        "./src/aspects/**/*.tsx", "./src/aspects/**/*.ts",
-        "./src/types/**/*.tsx", "./src/types/**/*.ts",
-        "./src/*.tsx", "./src/*.ts"
+        "./src/aspects/**/*.tsx",
+        "./src/aspects/**/*.ts",
+        "./src/types/**/*.tsx",
+        "./src/types/**/*.ts",
+        "./src/*.tsx",
+        "./src/*.ts",
     ],
     overwrite: true,
     generates: {
@@ -33,8 +36,8 @@ module.exports = {
         "./src/generated/graphql.schema.json": {
             plugins: ["urql-introspection"],
             config: {
-                minify: true,
-            }
+                minify: false,
+            },
         },
     },
 };

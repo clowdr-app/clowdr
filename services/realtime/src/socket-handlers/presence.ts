@@ -98,11 +98,7 @@ function getPageKey(confSlugs: string[], path: string): string | undefined {
     }
 }
 
-export function onEnterPage(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string
-): (path: string) => Promise<void> {
+export function onEnterPage(userId: string, socketId: string): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
@@ -123,11 +119,7 @@ export function onEnterPage(
     };
 }
 
-export function onLeavePage(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string
-): (path: string) => Promise<void> {
+export function onLeavePage(userId: string, socketId: string): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
@@ -148,11 +140,7 @@ export function onLeavePage(
     };
 }
 
-export function onObservePage(
-    conferenceSlugs: string[],
-    socketId: string,
-    socket: Socket
-): (path: string) => Promise<void> {
+export function onObservePage(socketId: string, socket: Socket): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {
@@ -184,11 +172,7 @@ export function onObservePage(
     };
 }
 
-export function onUnobservePage(
-    conferenceSlugs: string[],
-    socketId: string,
-    socket: Socket
-): (path: string) => Promise<void> {
+export function onUnobservePage(socketId: string, socket: Socket): (path: string) => Promise<void> {
     return async (path) => {
         try {
             if (typeof path === "string") {

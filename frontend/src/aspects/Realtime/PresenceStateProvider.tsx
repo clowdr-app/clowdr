@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import type { PresenceState} from "./PresenceState";
+import type { PresenceState } from "./PresenceState";
 import { State } from "./PresenceState";
 
 export const PresenceStateContext = React.createContext<PresenceState>(State);

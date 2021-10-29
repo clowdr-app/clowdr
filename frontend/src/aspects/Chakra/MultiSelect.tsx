@@ -13,7 +13,8 @@ import type {
     FlexProps,
     TagCloseButtonProps,
     TagLabelProps,
-    TagProps} from "@chakra-ui/react";
+    TagProps,
+} from "@chakra-ui/react";
 import {
     Box,
     Center,

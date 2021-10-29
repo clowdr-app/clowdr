@@ -1,5 +1,5 @@
 import { gql } from "@urql/core";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { useContext, useEffect } from "react";
 import { useGetAllRoomParticipantsQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";

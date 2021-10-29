@@ -1,5 +1,5 @@
 import { Button, Heading, Input, InputGroup, InputLeftElement, VStack } from "@chakra-ui/react";
-import type { MutableRefObject} from "react";
+import type { MutableRefObject } from "react";
 import React, { useMemo, useState } from "react";
 import FAIcon from "../Icons/FAIcon";
 

@@ -68,10 +68,10 @@ export function RemoteVideo({ participantWidth, tileId }: { tileId: number; part
         };
     }, [registrantId, audioVideo]);
 
-    const connectionData = useMemo(() => JSON.stringify({ registrantId: roster[registrantId]?.externalUserId }), [
-        registrantId,
-        roster,
-    ]);
+    const connectionData = useMemo(
+        () => JSON.stringify({ registrantId: roster[registrantId]?.externalUserId }),
+        [registrantId, roster]
+    );
     return (
         <Box
             data-testid="video-tile"

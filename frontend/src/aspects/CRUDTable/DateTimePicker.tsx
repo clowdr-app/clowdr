@@ -1,7 +1,7 @@
 import { Box, Input } from "@chakra-ui/react";
 import { format, getDate, getHours, getMinutes, getMonth, getSeconds, getYear, isValid, parse } from "date-fns";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 
 export const DateTimePicker = React.forwardRef(function DateTimePicker<D extends Date | undefined = Date | undefined>(

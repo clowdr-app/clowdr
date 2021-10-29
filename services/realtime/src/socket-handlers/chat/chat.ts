@@ -6,12 +6,7 @@ import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "
 import { canSelectChat } from "../../lib/permissions";
 import { redisClientP, redisClientPool } from "../../redis";
 
-export function onSubscribe(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+export function onSubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
     return async (chatId) => {
         if (chatId) {
             try {
@@ -51,12 +46,7 @@ export function onSubscribe(
     };
 }
 
-export function onUnsubscribe(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (chatId: any) => Promise<void> {
+export function onUnsubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
     return async (chatId) => {
         if (chatId) {
             try {

@@ -4,7 +4,6 @@ import jwksRsa from "jwks-rsa";
 import type { Socket } from "socket.io";
 import socketIO from "socket.io";
 import { createAdapter } from "socket.io-redis";
-import { GetUserConferenceSlugsDocument } from "../generated/graphql";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
 import { createRedisClient } from "../redis";
@@ -15,7 +14,6 @@ import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
 import { onDisconnect as onDisconnectHandRaise } from "../socket-handlers/handRaise";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
-import { testMode } from "../testMode";
 import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
 
@@ -79,13 +77,13 @@ socketServer.on("connection", async function (socket: Socket) {
     const socketId = socket.id;
 
     // Validate the token
-    if (!socket.decodedToken["https://hasura.io/jwt/claims"]) {
+    if (!socket.decodedToken?.sub) {
         console.error(`Socket ${socketId} attempted to connect with a JWT that was missing the relevant claims.`);
         socket.disconnect();
         return;
     }
 
-    const userId: string = socket.decodedToken["https://hasura.io/jwt/claims"]["x-hasura-user-id"];
+    const userId: string = socket.decodedToken.sub;
     if (userId) {
         console.log(`Authorized client connected: ${userId} / ${socketId}`);
 
@@ -97,17 +95,6 @@ socketServer.on("connection", async function (socket: Socket) {
             onDisconnectAnalytics(socketId, userId);
             onDisconnectHandRaise(socketId, userId);
         });
-
-        const conferenceSlugs = await testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: GetUserConferenceSlugsDocument,
-                    variables: { userId },
-                });
-                return response.data?.conference_Conference.map((x) => x.slug);
-            },
-            async () => ["test-conference-slug"]
-        );
 
         onConnectPresence(socket, userId, conferenceSlugs);
         onConnectChat(socket, userId, conferenceSlugs);

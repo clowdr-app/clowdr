@@ -7,7 +7,6 @@ import { canSelectChat } from "../../lib/permissions";
 import { sendUnreadCount } from "../../lib/unreadCounts";
 
 export function onRequestUnreadCount(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket
@@ -41,7 +40,6 @@ export function onRequestUnreadCount(
 }
 
 export function onSetReadUpToIndex(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket

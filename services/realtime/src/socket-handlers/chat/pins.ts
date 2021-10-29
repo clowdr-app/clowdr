@@ -5,7 +5,6 @@ import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatPinsChangedRoomName } from "../../lib/chat";
 
 export function onListenForPinsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket
@@ -34,7 +33,6 @@ export function onListenForPinsChanged(
 }
 
 export function onUnlistenForPinsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket

@@ -1,4 +1,4 @@
-import type { As, PropsOf} from "@chakra-ui/react";
+import type { As, PropsOf } from "@chakra-ui/react";
 import { Button, chakra, useBreakpointValue } from "@chakra-ui/react";
 import React, { forwardRef } from "react";
 import { FAIcon } from "../../Icons/FAIcon";

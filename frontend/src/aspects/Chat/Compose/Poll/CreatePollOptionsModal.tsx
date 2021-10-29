@@ -1,5 +1,4 @@
-import type {
-    ModalProps} from "@chakra-ui/react";
+import type { ModalProps } from "@chakra-ui/react";
 import {
     Box,
     Button,

@@ -1,4 +1,4 @@
-import type { MutableRefObject} from "react";
+import type { MutableRefObject } from "react";
 import React, { useState } from "react";
 
 export default function useResizeObserver<T extends Element>(

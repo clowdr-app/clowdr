@@ -17,13 +17,12 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Twemoji } from "react-emoji-render";
 import { useClient } from "urql";
-import type { MenuSchedule_EventFragment ,
+import type {
+    MenuSchedule_EventFragment,
     MenuSchedule_SearchEventsQuery,
-    MenuSchedule_SearchEventsQueryVariables} from "../../../../generated/graphql";
-import {
-    MenuSchedule_SearchEventsDocument,
-    useMenuScheduleQuery,
+    MenuSchedule_SearchEventsQueryVariables,
 } from "../../../../generated/graphql";
+import { MenuSchedule_SearchEventsDocument, useMenuScheduleQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useConference } from "../../../Conference/useConference";
 import useDebouncedState from "../../../CRUDTable/useDebouncedState";

@@ -42,18 +42,8 @@ import {
     useToken,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    LegacyRef,
-    MutableRefObject,
-    ReactNode,
-    ReactNodeArray} from "react";
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import type { LegacyRef, MutableRefObject, ReactNode, ReactNodeArray } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import { useRestorableState } from "../Generic/useRestorableState";
 import FAIcon from "../Icons/FAIcon";

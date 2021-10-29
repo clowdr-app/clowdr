@@ -13,13 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { formatRelative } from "date-fns";
 import React, { useMemo } from "react";
-import type {
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment} from "../../../../generated/graphql";
-import {
-    Content_ItemType_Enum,
-    Room_Mode_Enum,
-} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
+import { Content_ItemType_Enum, Room_Mode_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { ShufflePeriodBox } from "../../../ShuffleRooms/WaitingPage";
 import useCurrentRegistrant from "../../useCurrentRegistrant";

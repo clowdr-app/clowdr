@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback } from "react";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
 

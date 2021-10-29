@@ -1,4 +1,4 @@
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable } from "@nestjs/common";
 import OpenTok from "opentok";

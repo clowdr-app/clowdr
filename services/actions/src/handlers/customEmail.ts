@@ -2,8 +2,7 @@ import { gql } from "@apollo/client/core";
 import assert from "assert";
 import MarkdownIt from "markdown-it";
 import * as R from "ramda";
-import type {
-    Email_Insert_Input} from "../generated/graphql";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     CustomEmail_SelectRegistrantsDocument,
     MarkAndSelectUnprocessedCustomEmailJobsDocument,

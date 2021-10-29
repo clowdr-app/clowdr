@@ -74,9 +74,13 @@ export default function useCSVJSONXMLFileSelector(): {
     acceptedFiles: FileInfo[];
     component: JSX.Element;
 } {
-    const { acceptedFiles: rawAcceptedFiles, fileRejections, getRootProps, getInputProps } = useDropzone({
-        accept:
-            ".csv, .txt, .json, .xml, .CSV, .TXT, .JSON, .XML, .zip, .ZIP, text/plain, text/csv, application/json, text/xml, application/zip",
+    const {
+        acceptedFiles: rawAcceptedFiles,
+        fileRejections,
+        getRootProps,
+        getInputProps,
+    } = useDropzone({
+        accept: ".csv, .txt, .json, .xml, .CSV, .TXT, .JSON, .XML, .zip, .ZIP, text/plain, text/csv, application/json, text/xml, application/zip",
         multiple: true,
     });
 

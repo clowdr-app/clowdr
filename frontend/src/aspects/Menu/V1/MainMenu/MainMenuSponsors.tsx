@@ -29,6 +29,7 @@ gql`
 
     fragment MainMenuSponsors_ItemData on content_Item {
         id
+        conferenceId
         rooms(limit: 1, order_by: { created_at: asc }, where: { conferenceId: { _eq: $conferenceId } }) {
             id
             priority

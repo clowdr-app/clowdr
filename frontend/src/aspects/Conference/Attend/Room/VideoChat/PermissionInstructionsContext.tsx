@@ -1,5 +1,5 @@
 import { useDisclosure } from "@chakra-ui/react";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { createContext, useCallback, useState } from "react";
 
 export type DevicesProps = {

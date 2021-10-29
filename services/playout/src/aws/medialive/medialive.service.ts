@@ -4,7 +4,8 @@ import type {
     DescribeChannelResponse,
     EncoderSettings,
     OutputDestination,
-    ScheduleAction} from "@aws-sdk/client-medialive";
+    ScheduleAction,
+} from "@aws-sdk/client-medialive";
 import {
     BatchUpdateScheduleCommand,
     DescribeChannelCommand,
@@ -16,7 +17,7 @@ import {
     UpdateChannelCommand,
 } from "@aws-sdk/client-medialive";
 import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject, Injectable } from "@nestjs/common";
 import type { DescribeScheduleRequest } from "aws-sdk/clients/medialive";

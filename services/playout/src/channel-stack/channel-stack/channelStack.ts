@@ -4,8 +4,7 @@ import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import * as medialive from "@aws-cdk/aws-medialive";
 import * as mediapackage from "@aws-cdk/aws-mediapackage";
 import * as cdk from "@aws-cdk/core";
-import type {
-    VideoCodecSettings} from "@aws-sdk/client-medialive";
+import type { VideoCodecSettings } from "@aws-sdk/client-medialive";
 import {
     AacCodingMode,
     AacInputType,

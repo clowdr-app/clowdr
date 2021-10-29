@@ -46,12 +46,7 @@ gql`
     }
 `;
 
-export function onRaiseHand(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    _socket: Socket
-): (eventId: any) => Promise<void> {
+export function onRaiseHand(userId: string, socketId: string, _socket: Socket): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -91,12 +86,7 @@ export function onRaiseHand(
     };
 }
 
-export function onLowerHand(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    _socket: Socket
-): (eventId: any) => Promise<void> {
+export function onLowerHand(userId: string, socketId: string, _socket: Socket): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -132,12 +122,7 @@ export function onLowerHand(
     };
 }
 
-export function onFetchHandsRaised(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (eventId: any) => Promise<void> {
+export function onFetchHandsRaised(userId: string, socketId: string, socket: Socket): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -175,7 +160,6 @@ export function onFetchHandsRaised(
 }
 
 export function onAcceptHandRaised(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket
@@ -310,7 +294,6 @@ export function onAcceptHandRaised(
 }
 
 export function onRejectHandRaised(
-    conferenceSlugs: string[],
     userId: string,
     socketId: string,
     _socket: Socket
@@ -351,12 +334,7 @@ export function onRejectHandRaised(
     };
 }
 
-export function onObserveEvent(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (eventId: any) => Promise<void> {
+export function onObserveEvent(userId: string, socketId: string, socket: Socket): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {
@@ -384,12 +362,7 @@ export function onObserveEvent(
     };
 }
 
-export function onUnobserveEvent(
-    _conferenceSlugs: string[],
-    _userId: string,
-    socketId: string,
-    socket: Socket
-): (eventId: any) => Promise<void> {
+export function onUnobserveEvent(_userId: string, socketId: string, socket: Socket): (eventId: any) => Promise<void> {
     return async (eventId) => {
         if (eventId) {
             try {

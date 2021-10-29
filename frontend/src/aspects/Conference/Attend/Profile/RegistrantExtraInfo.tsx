@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import type { GridProps} from "@chakra-ui/react";
+import type { GridProps } from "@chakra-ui/react";
 import { Badge, chakra, Grid, GridItem, Link } from "@chakra-ui/react";
 import React from "react";
 import type { Registrant } from "../../useCurrentRegistrant";

@@ -7,13 +7,13 @@ import {
     onUnobservePage,
 } from "../socket-handlers/presence";
 
-export function onConnect(socket: Socket, userId: string, conferenceSlugs: string[]): void {
+export function onConnect(socket: Socket, userId: string): void {
     const socketId = socket.id;
 
     onConnectHandler(userId, socketId);
 
-    socket.on("enterPage", onEnterPage(conferenceSlugs, userId, socketId));
-    socket.on("leavePage", onLeavePage(conferenceSlugs, userId, socketId));
-    socket.on("observePage", onObservePage(conferenceSlugs, socketId, socket));
-    socket.on("unobservePage", onUnobservePage(conferenceSlugs, socketId, socket));
+    socket.on("enterPage", onEnterPage(userId, socketId));
+    socket.on("leavePage", onLeavePage(userId, socketId));
+    socket.on("observePage", onObservePage(socketId, socket));
+    socket.on("unobservePage", onUnobservePage(socketId, socket));
 }

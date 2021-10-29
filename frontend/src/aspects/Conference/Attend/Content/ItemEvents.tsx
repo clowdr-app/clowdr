@@ -129,6 +129,7 @@ fragment ItemRoomEvent on schedule_Event {
     endTime
     name
     intendedRoomModeName
+    roomId
 }
 
 query ItemEvent_RoomNearbyEvents {

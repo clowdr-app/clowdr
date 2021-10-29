@@ -1,4 +1,4 @@
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import type { NestMiddleware } from "@nestjs/common";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";

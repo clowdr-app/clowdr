@@ -26,6 +26,7 @@ gql`
 
     fragment ElementData on content_Element {
         id
+        itemId
         data
         layoutData
         name
@@ -34,6 +35,7 @@ gql`
 
     fragment ItemElements_ItemData on content_Item {
         id
+        conferenceId
         title
         typeName
         chatId
@@ -88,16 +90,19 @@ gql`
             name
             colour
             priority
+            conferenceId
         }
     }
 
     fragment ItemExhibitionData on content_ItemExhibition {
         id
+        itemId
         exhibition {
             id
             name
             priority
             colour
+            conferenceId
         }
     }
 `;

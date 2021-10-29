@@ -5,12 +5,7 @@ import { validate as uuidValidate } from "uuid";
 import { action } from "../../rabbitmq/chat/messages";
 import type { Action, Message } from "../../types/chat";
 
-export function onSend(
-    conferenceSlugs: string[],
-    userId: string,
-    socketId: string,
-    socket: Socket
-): (message: any) => Promise<void> {
+export function onSend(userId: string, socketId: string, socket: Socket): (message: any) => Promise<void> {
     return async (actionData) => {
         if (actionData) {
             try {

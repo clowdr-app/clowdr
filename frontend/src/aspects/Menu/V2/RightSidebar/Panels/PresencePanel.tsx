@@ -3,7 +3,7 @@ import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ProfileModal from "../../../../Conference/Attend/Registrant/ProfileModal";
-import type { RegistrantIdSpec} from "../../../../Conference/RegistrantsContext";
+import type { RegistrantIdSpec } from "../../../../Conference/RegistrantsContext";
 import { useRegistrant, useRegistrants } from "../../../../Conference/RegistrantsContext";
 import { useMaybeConference } from "../../../../Conference/useConference";
 import type { Registrant } from "../../../../Conference/useCurrentRegistrant";

@@ -1,5 +1,5 @@
 import { Button, chakra, Code, Text, VStack } from "@chakra-ui/react";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { useState } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { FAIcon } from "../../../../Icons/FAIcon";

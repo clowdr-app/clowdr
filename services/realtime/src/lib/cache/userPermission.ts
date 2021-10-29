@@ -58,7 +58,7 @@ const userPermissionCache = new Cache<UserPermission[]>(
 export async function hasAtLeastOnePermissionForConfSlug(
     userId: string,
     permissionNames: Permissions_Permission_Enum[],
-    conferenceSlugs: string[],
+
     refetchNow = false
 ): Promise<string[] | false> {
     const perms = await userPermissionCache.get(

@@ -16,11 +16,7 @@ type ViewCountInfo = {
     contentType: "Item" | "Element" | "Room.HLSStream";
 };
 
-export function onViewCount(
-    _conferenceSlugs: string[],
-    _userId: string,
-    _socketId: string
-): (info: any) => Promise<void> {
+export function onViewCount(_userId: string, _socketId: string): (info: any) => Promise<void> {
     return async (info) => {
         try {
             assert(is<ViewCountInfo>(info), "Submitted analytics info is invalid. (type)");

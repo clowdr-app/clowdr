@@ -1,4 +1,4 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, useColorModeValue } from "@chakra-ui/react";
 import type { EmojiData } from "emoji-mart";
 import React from "react";

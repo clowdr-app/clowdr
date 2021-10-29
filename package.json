@@ -12,7 +12,7 @@
         "type": "git",
         "url": "git+https://github.com/clowdr-app/clowdr.git"
     },
-    "author": "Ed Nutting",
+    "author": "Clowdr CIC",
     "license": "BSD-3-Clause",
     "bugs": {
         "url": "https://github.com/clowdr-app/clowdr/issues"
@@ -27,7 +27,6 @@
         "eslint-plugin-react": "^7.24.0",
         "eslint-plugin-react-hooks": "^4.2.0",
         "foreman": "^3.0.1",
-        "hasura-cli": "^2.0.9",
         "husky": "^7.0.0",
         "lint-staged": "^11.1.1",
         "prettier": "^2.3.2",

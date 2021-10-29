@@ -7,6 +7,7 @@ gql`
     query ConferenceBySlug($slug: String!) {
         conference_Conference(where: { slug: { _eq: $slug } }) {
             id
+            slug
         }
     }
 `;

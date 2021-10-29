@@ -3,7 +3,7 @@ import type { ChatInfo, Item } from "./cache/chatInfo";
 import { getChatInfo } from "./cache/chatInfo";
 import type { RegistrantInfo } from "./cache/registrantInfo";
 import { getRegistrantInfo } from "./cache/registrantInfo";
-import type { EventInfo} from "./cache/roomInfo";
+import type { EventInfo } from "./cache/roomInfo";
 import { getEventInfo } from "./cache/roomInfo";
 import { hasAtLeastOnePermissionForConfSlug } from "./cache/userPermission";
 
@@ -27,6 +27,7 @@ export async function canSelectChat(
     chatInfoPrior?: ChatInfo,
     refetchPermissionsNow = false
 ): Promise<boolean> {
+    // TODO: Something is wrong here - there is supposed to be an override for organizers/moderators, except there isn't!
     const hasPermissionForConfSlugs = await hasAtLeastOnePermissionForConfSlug(
         userId,
         expectedPermissions,

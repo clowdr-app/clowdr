@@ -49,6 +49,9 @@ gql`
     }
 
     fragment ItemList_ItemTagData on content_ItemTag {
+        id
+        tagId
+        itemId
         item {
             ...ItemList_ItemData
         }

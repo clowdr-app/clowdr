@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
-import type { Component} from "react";
+import type { Component } from "react";
 import React, { useCallback, useMemo, useState } from "react";
-import type { HtmlPortalNode} from "react-reverse-portal";
+import type { HtmlPortalNode } from "react-reverse-portal";
 import { createHtmlPortalNode, InPortal } from "react-reverse-portal";
 import usePolling from "../Generic/usePolling";
 import { useRealTime } from "../Generic/useRealTime";

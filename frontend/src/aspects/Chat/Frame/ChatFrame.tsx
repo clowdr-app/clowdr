@@ -1,4 +1,4 @@
-import type { BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import { Box, VStack } from "@chakra-ui/react";
 import type { RefObject } from "react";
 import React from "react";

@@ -1,4 +1,4 @@
-import type { StackProps} from "@chakra-ui/react";
+import type { StackProps } from "@chakra-ui/react";
 import { Button, Code, HStack, Text, Tooltip, useColorModeValue, useToast, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../../../generated/graphql";

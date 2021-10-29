@@ -25,6 +25,7 @@ gql`
             ...ItemPage_ItemRooms
             descriptionOfExhibitions {
                 id
+                descriptiveItemId
             }
         }
         schedule_Event(
@@ -37,6 +38,8 @@ gql`
     fragment ItemPage_ItemRooms on content_Item {
         rooms(where: { originatingEventId: { _is_null: true } }, limit: 1, order_by: { created_at: asc }) {
             id
+            originatingEventId
+            created_at
         }
     }
 
@@ -53,6 +56,7 @@ gql`
         endTime
         name
         intendedRoomModeName
+        itemId
     }
 `;
 

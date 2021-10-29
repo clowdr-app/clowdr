@@ -5,7 +5,6 @@ import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
 
 export function onListenForSubscriptionsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket
@@ -34,7 +33,6 @@ export function onListenForSubscriptionsChanged(
 }
 
 export function onUnlistenForSubscriptionsChanged(
-    _conferenceSlugs: string[],
     userId: string,
     socketId: string,
     socket: Socket

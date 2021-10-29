@@ -17,11 +17,13 @@ import { useRegistrant } from "../../RegistrantsContext";
 gql`
     fragment ProgramPersonData on content_ItemProgramPerson {
         id
+        itemId
         person {
             id
             name
             affiliation
             registrantId
+            conferenceId
         }
         roleName
         priority

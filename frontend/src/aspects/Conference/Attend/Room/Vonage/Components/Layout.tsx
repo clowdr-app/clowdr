@@ -17,7 +17,7 @@ import usePolling from "../../../../../Generic/usePolling";
 import useResizeObserver from "../../../../../Generic/useResizeObserver";
 import { useVonageLayout } from "../VonageLayoutProvider";
 import CameraPlaceholderImage from "./CameraPlaceholder";
-import type { Viewport} from "./LayoutTypes";
+import type { Viewport } from "./LayoutTypes";
 import { VisualLayoutType } from "./LayoutTypes";
 import StreamChooser from "./StreamChooser";
 import useVisualLayout from "./useVisualLayout";

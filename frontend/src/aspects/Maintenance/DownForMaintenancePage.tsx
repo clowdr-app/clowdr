@@ -1,5 +1,6 @@
 import { Center, Text, VStack } from "@chakra-ui/react";
 import React from "react";
+import { ExternalLinkButton } from "../Chakra/LinkButton";
 import GenericErrorPage from "../Errors/GenericErrorPage";
 
 export default function DownForMaintenancePage(): JSX.Element {
@@ -8,11 +9,12 @@ export default function DownForMaintenancePage(): JSX.Element {
             <GenericErrorPage heading="Offline for maintenance">
                 <VStack alignItems="flex-start" maxW={625}>
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                        Midspace is offline for maintenance ending 1am UTC on 4th May.
+                        Midspace is offline for maintenance.
                     </Text>
                     <Text fontSize="xl" lineHeight="revert" fontWeight="light">
-                        This is while we make important updates to the platform.
+                        Please check our status page for further information.
                     </Text>
+                    <ExternalLinkButton to="https://midspace.freshstatus.io/">View Service Status</ExternalLinkButton>
                 </VStack>
             </GenericErrorPage>
         </Center>

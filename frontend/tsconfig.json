@@ -1,5 +1,5 @@
 {
-    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "public/js/ServiceWorker.ts"],
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.json", "public/js/ServiceWorker.ts"],
     "exclude": ["./build"],
     "compilerOptions": {
         /* Basic Options */
@@ -35,7 +35,8 @@
 
         /* Advanced Options */
         "skipLibCheck": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "composite": true
     },
     "references": [
         { "path": "../packages/shared-types/tsconfig.esm.ref.json" },

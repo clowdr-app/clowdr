@@ -259,7 +259,7 @@ export async function handleCreateForItem(
     try {
         // todo: verify user role here. It's not critically important though.
         getRegistrant(userId, params.conferenceId);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Could not find registrant at conference when creating breakout room", e);
         return {
             message: "Registrant is not a member of the conference",
@@ -271,7 +271,7 @@ export async function handleCreateForItem(
         return {
             roomId,
         };
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to create content group breakout room", e);
         return {
             message: "Could not create room",

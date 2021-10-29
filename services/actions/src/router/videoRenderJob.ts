@@ -14,7 +14,7 @@ router.use(checkEventSecret);
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<VideoRenderJobData>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
@@ -22,7 +22,7 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
 
     try {
         await handleVideoRenderJobUpdated(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling ConferencePrepareJob inserted", e);
         res.status(500).json("Failure while handling event");
         return;
@@ -34,7 +34,7 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
 router.post("/processQueue", json(), async (_req: Request, res: Response) => {
     try {
         await handleProcessVideoRenderJobQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing VideoRenderJob queue", e);
         res.status(500).json("Failure while processing VideoRenderJob queue");
         return;

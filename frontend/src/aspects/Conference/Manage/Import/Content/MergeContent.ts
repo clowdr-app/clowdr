@@ -7,7 +7,7 @@ import type {
     IntermediaryItemPersonDescriptor,
     IntermediaryPersonDescriptor,
     IntermediaryTagDescriptor,
-} from "@clowdr-app/shared-types/build/import/intermediary";
+} from "@midspace/shared-types/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
 import type {
     ElementDescriptor,
@@ -118,6 +118,7 @@ function mergeElement(
                 result: y,
             };
         }
+        return;
     });
 
     changes.push({
@@ -419,7 +420,7 @@ function convertItem(context: Context, item: IntermediaryItemDescriptor | ItemDe
     }
 
     if ("tagIds" in item && item.tagIds) {
-        item.tagIds.forEach((id) => result.tagIds.add(id));
+        item.tagIds.forEach((id: any) => result.tagIds.add(id));
     }
 
     if ("tagNames" in item && item.tagNames) {
@@ -502,7 +503,7 @@ function findExistingItem(
 }
 
 function convertExhibition(
-    context: Context,
+    _context: Context,
     element: IntermediaryExhibitionDescriptor | ExhibitionDescriptor
 ): ExhibitionDescriptor {
     const result = {
@@ -723,7 +724,7 @@ function findExistingPersonForItem(
         x: ItemPersonDescriptor | IntermediaryItemPersonDescriptor
     ): { name: string; affiliation?: string } | undefined => {
         if ("name_affiliation" in x && x.name_affiliation) {
-            const parts = x.name_affiliation?.split("¦").map((x) => x.trim());
+            const parts = x.name_affiliation?.split("¦").map((x: any) => x.trim());
             return { name: parts[0], affiliation: parts[1].length ? parts[1] : undefined };
         }
 

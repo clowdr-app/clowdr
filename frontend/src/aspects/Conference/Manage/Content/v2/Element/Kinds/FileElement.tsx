@@ -1,7 +1,7 @@
 import { Box, Center, Heading, Image } from "@chakra-ui/react";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { assert } from "@midspace/assert";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -17,7 +17,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
         Content_ElementType_Enum.PosterFile,
     ],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.ImageFile ||
                 type === Content_ElementType_Enum.PaperFile ||
                 type === Content_ElementType_Enum.PosterFile,
@@ -69,7 +69,7 @@ export const FileElementTemplate: ElementBaseTemplate = {
             altText = latestVersion.data.altText;
             try {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                fileSrc = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                fileSrc = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             } catch {
                 /* Ignore */
             }

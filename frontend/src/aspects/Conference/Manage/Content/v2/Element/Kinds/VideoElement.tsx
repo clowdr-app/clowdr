@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { assert } from "@midspace/assert";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3Uri from "amazon-s3-uri";
-import assert from "assert";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -21,7 +21,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
     supported: true,
     allowCreate: [Content_ElementType_Enum.VideoBroadcast, Content_ElementType_Enum.VideoFile],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.VideoBroadcast ||
                 type === Content_ElementType_Enum.VideoCountdown ||
                 type === Content_ElementType_Enum.VideoFile ||

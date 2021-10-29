@@ -1,5 +1,5 @@
 import { Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, useToast } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
@@ -55,7 +55,7 @@ export default function UploadUrlForm({
                         if (handleFormSubmitted) {
                             handleFormSubmitted();
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
@@ -89,6 +89,7 @@ export default function UploadUrlForm({
                                     } catch (e) {
                                         return "Invalid URL";
                                     }
+                                    return undefined;
                                 }}
                             >
                                 {({ form, field }: FieldProps<string>) => (
@@ -103,9 +104,7 @@ export default function UploadUrlForm({
                             <Field
                                 name="title"
                                 validate={(inValue: string | null | undefined) => {
-                                    if (!inValue?.length) {
-                                        return "Missing title for accessibility";
-                                    }
+                                    return inValue?.length ? undefined : "Missing title for accessibility";
                                 }}
                             >
                                 {({ form, field }: FieldProps<string>) => (

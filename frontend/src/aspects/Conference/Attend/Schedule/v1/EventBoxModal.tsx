@@ -15,8 +15,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import { format } from "date-fns";
 import { DateTime } from "luxon";
 import React, { useEffect, useMemo, useRef } from "react";

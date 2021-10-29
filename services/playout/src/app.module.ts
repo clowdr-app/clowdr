@@ -1,6 +1,6 @@
 import { LoggingModule } from "@eropple/nestjs-bunyan";
 import { HasuraModule } from "@golevelup/nestjs-hasura";
-import type { MiddlewareConsumer, NestModule} from "@nestjs/common";
+import type { MiddlewareConsumer, NestModule } from "@nestjs/common";
 import { Module, RequestMethod } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ScheduleModule as NestScheduleModule } from "@nestjs/schedule";

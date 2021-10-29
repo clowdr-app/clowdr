@@ -442,7 +442,7 @@ function ContinuationOption({
                                     },
                                 }
                             );
-                        } catch (e) {
+                        } catch (e: any) {
                             toast({
                                 title: "Error deleting continuation",
                                 description: e.message ?? e.toString(),

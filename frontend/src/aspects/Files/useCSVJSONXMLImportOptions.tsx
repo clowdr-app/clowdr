@@ -20,7 +20,7 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useEffect, useMemo, useState } from "react";
 import type { FileInfo } from "./useCSVJSONXMLFileSelector";
 
@@ -76,7 +76,7 @@ function ImportOptionsPanel({
     });
     switch (options.type) {
         case "CSV":
-            assert(defaultOpts.type === "CSV");
+            assert.truthy(defaultOpts.type === "CSV");
             return (
                 <VStack spacing={4}>
                     <FormControl>
@@ -180,7 +180,7 @@ function ImportOptionsPanel({
                 </VStack>
             );
         case "JSON":
-            assert(defaultOpts.type === "JSON");
+            assert.truthy(defaultOpts.type === "JSON");
             return (
                 <VStack spacing={4}>
                     <FormControl>
@@ -208,7 +208,7 @@ function ImportOptionsPanel({
                 </VStack>
             );
         case "XML":
-            assert(defaultOpts.type === "XML");
+            assert.truthy(defaultOpts.type === "XML");
             return (
                 <VStack spacing={4}>
                     <FormControl>

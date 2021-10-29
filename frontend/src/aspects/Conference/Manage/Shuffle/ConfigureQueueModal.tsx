@@ -153,7 +153,7 @@ export default function ConfigureQueueModal({
             );
 
             onClose();
-        } catch (e) {
+        } catch (e: any) {
             toast({
                 description: e.message ?? e.toString(),
                 duration: 12000,

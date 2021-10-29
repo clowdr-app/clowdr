@@ -11,7 +11,7 @@ import {
     ChannelStack_SetChannelStackUpdateJobStatusDocument,
     ChannelStack_UpdateChannelStackDocument,
 } from "../../generated/graphql";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ChannelStackUpdateJobService {

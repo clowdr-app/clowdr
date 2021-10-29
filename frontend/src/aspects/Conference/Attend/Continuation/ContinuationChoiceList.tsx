@@ -1,5 +1,5 @@
 import { Button, chakra, List, ListItem, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
-import { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
+import { ContinuationDefaultFor } from "@midspace/shared-types/continuation";
 import * as R from "ramda";
 import React, { useEffect, useMemo } from "react";
 import Color from "tinycolor2";

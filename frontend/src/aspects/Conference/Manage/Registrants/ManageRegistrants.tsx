@@ -19,8 +19,8 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import Papa from "papaparse";
 import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
@@ -416,7 +416,7 @@ export default function ManageRegistrants(): JSX.Element {
                 get: (data) => data.invitation?.invitedEmailAddress ?? "",
                 set: (record, value: string) => {
                     if (!record.invitation) {
-                        assert(record.id);
+                        assert.truthy(record.id);
                         record.invitation = {
                             registrantId: record.id as DeepWriteable<any>,
                             createdAt: new Date().toISOString() as any as DeepWriteable<any>,
@@ -825,11 +825,8 @@ export default function ManageRegistrants(): JSX.Element {
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Midspace Registrants.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
-                        }
+
+                        csvURL = window.URL.createObjectURL(csvData);
 
                         const tempLink = document.createElement("a");
                         tempLink.href = csvURL ?? "";

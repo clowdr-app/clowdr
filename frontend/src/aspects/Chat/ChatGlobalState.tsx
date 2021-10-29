@@ -2,9 +2,9 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { RenderProps } from "@chakra-ui/react";
 import { Box, Button, ButtonGroup, CloseButton, createStandaloneToast, Heading, VStack } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import type { Client } from "@urql/core";
 import { CombinedError, gql } from "@urql/core";
-import assert from "assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import React from "react";
@@ -354,7 +354,7 @@ export class MessageState {
                 senderId: this.globalState.registrant.id,
             };
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "INSERT",
                 data: fullRct,
@@ -369,9 +369,9 @@ export class MessageState {
     public async deleteReaction(reactionSId: string): Promise<void> {
         try {
             const rct = this.reactions.find((x) => x.sId === reactionSId);
-            assert(rct, "Reaction not found");
+            assert.truthy(rct, "Reaction not found");
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const action: Action<Reaction> = {
                 op: "DELETE",
                 data: rct,
@@ -1088,7 +1088,7 @@ export class ChatState {
         this.isSendingObs.publish(this.isSending);
         try {
             const socket = this.globalState.socket;
-            assert(socket, "Not connected to chat service.");
+            assert.truthy(socket, "Not connected to chat service.");
             const sId = uuidv4();
             const newMsg: Message = {
                 sId,
@@ -1114,7 +1114,7 @@ export class ChatState {
                     }
                 };
             });
-            assert(
+            assert.truthy(
                 ackdSId === sId,
                 `Message failed to send - ack received for wrong message: (ackd) ${ackdSId} !== ${sId} (expected)`
             );
@@ -1284,6 +1284,7 @@ export class GlobalChatState {
                 observer(chat);
                 return true;
             }
+            return;
         });
 
         if (!this.chatStates?.has(chatId)) {
@@ -1759,7 +1760,7 @@ export class GlobalChatState {
 
     public async deleteMessage(msg: MessageState): Promise<void> {
         const socket = this.socket;
-        assert(socket, "Not connected to chat service.");
+        assert.truthy(socket, "Not connected to chat service.");
         const action: Action<Message> = {
             op: "DELETE",
             data: {

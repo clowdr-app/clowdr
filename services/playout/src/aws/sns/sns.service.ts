@@ -1,9 +1,9 @@
 import { SNS } from "@aws-sdk/client-sns";
 import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Inject } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import assert from "assert";
 import { AWS_MODULE_OPTIONS } from "../../constants";
 import type { AwsModuleOptions } from "../aws.module";

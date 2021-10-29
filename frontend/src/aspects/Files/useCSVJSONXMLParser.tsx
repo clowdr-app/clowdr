@@ -34,12 +34,11 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
                 {
                     const csvParsed = Papa.parse(str, {
                         delimiter: options.delimiter,
-                        encoding: options.encoding,
                         escapeChar: options.escapeChar,
                         quoteChar: options.quoteChar,
                         header: options.hasHeaders,
                         skipEmptyLines: true,
-                        trimHeaders: true,
+                        transformHeader: (h) => h.trim(),
                     });
                     if (csvParsed.errors.length) {
                         return {
@@ -105,7 +104,7 @@ async function parseFile<T>(options: ImportOptions, parser: Parser<T>): Promise<
                 error: parsed.error,
             };
         }
-    } catch (e) {
+    } catch (e: any) {
         return {
             fileName: options.file.name,
             error: e.message,

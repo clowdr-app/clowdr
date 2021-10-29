@@ -1266,11 +1266,8 @@ function EditableRoomsCRUDTable() {
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")} - Midspace Rooms.csv`;
-                        if (navigator.msSaveBlob) {
-                            navigator.msSaveBlob(csvData, fileName);
-                        } else {
-                            csvURL = window.URL.createObjectURL(csvData);
-                        }
+
+                        csvURL = window.URL.createObjectURL(csvData);
 
                         const tempLink = document.createElement("a");
                         tempLink.href = csvURL ?? "";

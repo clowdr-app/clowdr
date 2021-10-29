@@ -217,7 +217,7 @@ function AddItemPersonBody({
                                 );
 
                                 onClose();
-                            } catch (e) {
+                            } catch (e: any) {
                                 toast({
                                     title: "Error linking person",
                                     description: e.message ?? e.toString(),
@@ -476,7 +476,7 @@ function ItemPersonsList({
                                                     },
                                                 }
                                             );
-                                        } catch (e) {
+                                        } catch (e: any) {
                                             toast({
                                                 title: "Error unlinking person",
                                                 description: e.message ?? e.toString(),

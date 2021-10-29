@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
@@ -18,8 +18,8 @@ import {
     FindChannelStacksByStackArnDocument,
     GetChannelStackByRoomDocument,
 } from "../../generated/graphql";
-import type { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { ConferenceConfigurationService } from "../conference-configuration/conference-configuration.service";
+import { GraphQlService } from "../graphql/graphql.service";
 import type { ChannelStackDetails } from "./channel-stack-details";
 
 @Injectable()

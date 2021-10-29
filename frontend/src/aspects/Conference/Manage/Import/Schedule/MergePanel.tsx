@@ -9,8 +9,8 @@ import {
     Spinner,
     useToast,
 } from "@chakra-ui/react";
-import type { IntermediaryScheduleData } from "@clowdr-app/shared-types/build/import/intermediary";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import type { IntermediaryScheduleData } from "@midspace/shared-types/import/intermediary";
 import * as R from "ramda";
 import React, { useEffect, useState } from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
@@ -19,7 +19,7 @@ import { useConference } from "../../../useConference";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";
 import { useSaveScheduleDiff } from "../../Schedule/useSaveScheduleDiff";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../../Shared/Types";
-import type { ChangeSummary} from "../Merge";
+import type { ChangeSummary } from "../Merge";
 import { Set_toJSON } from "../Merge";
 import mergeSchedule from "./MergeSchedule";
 
@@ -82,7 +82,7 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                 setMergedOriginatingDatasMap(merged.newOriginatingDatas);
                 setChanges(merged.changes);
                 console.log("Merged", merged);
-            } catch (e) {
+            } catch (e: any) {
                 setMergedEventsMap(originalEvents);
                 setMergedRoomsMap(originalRooms);
                 setMergedTagsMap(originalTags);
@@ -186,11 +186,11 @@ export default function MergePanel({ data }: { data: Record<string, Intermediary
                     isLoading={isSaving}
                     onClick={async () => {
                         setIsSaving(true);
-                        assert(saveContentDiff.originalEvents);
-                        assert(mergedEventsMap);
-                        assert(mergedRoomsMap);
-                        assert(mergedTagsMap);
-                        assert(mergedOriginatingDatasMap);
+                        assert.truthy(saveContentDiff.originalEvents);
+                        assert.truthy(mergedEventsMap);
+                        assert.truthy(mergedRoomsMap);
+                        assert.truthy(mergedTagsMap);
+                        assert.truthy(mergedOriginatingDatasMap);
                         const newOriginatingDataKeys = new Set(
                             Array.from(mergedOriginatingDatasMap.values())
                                 .filter((x) => x.isNew)

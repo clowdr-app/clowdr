@@ -148,7 +148,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChim
     try {
         body = req.body;
         assertType<ActionPayload<joinRoomChimeSessionArgs>>(body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             message: "Invalid request",
@@ -158,7 +158,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChim
     try {
         const result = await handleJoinRoom(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             message: "Failure while handling request",

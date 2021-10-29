@@ -14,7 +14,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { gql } from "urql";
@@ -71,7 +71,7 @@ function AcceptInvitationPage_LoggedIn_WithCode({ inviteCode }: { inviteCode: st
 
     useEffect(() => {
         if (errorMsg === "true" || errorMsg.includes("same user") || duplicateRegistrantError) {
-            assert(data?.invitationConfirmCurrent?.confSlug);
+            assert.truthy(data?.invitationConfirmCurrent?.confSlug);
             history.push(`/conference/${data?.invitationConfirmCurrent?.confSlug}`);
         }
     }, [data?.invitationConfirmCurrent?.confSlug, duplicateRegistrantError, errorMsg, history]);

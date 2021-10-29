@@ -23,13 +23,13 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
     isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+} from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import type { PropsWithChildren } from "react";

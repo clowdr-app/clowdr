@@ -1,13 +1,11 @@
 import { gql } from "@apollo/client/core";
-import type { VideoBroadcastBlob } from "@clowdr-app/shared-types/build/content";
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
+import type { VideoBroadcastBlob } from "@midspace/shared-types/content";
 import { Injectable } from "@nestjs/common";
 import { add, addHours, addMinutes } from "date-fns";
 import * as R from "ramda";
-import type {
-    LocalSchedule_EventDetailsFragment,
-    LocalSchedule_EventFragment} from "../../generated/graphql";
+import type { LocalSchedule_EventDetailsFragment, LocalSchedule_EventFragment } from "../../generated/graphql";
 import {
     LocalSchedule_GetEventDocument,
     LocalSchedule_GetEventScheduleDocument,
@@ -19,8 +17,8 @@ import {
     ScheduleService_UpdateRtmpInputsDocument,
     Video_RtmpInput_Enum,
 } from "../../generated/graphql";
-import type { ContentElementDataService } from "../content/content-element.service";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { ContentElementDataService } from "../content/content-element.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 export interface LocalSchedule {
     roomId: string;

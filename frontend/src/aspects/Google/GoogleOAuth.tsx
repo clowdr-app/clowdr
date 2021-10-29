@@ -72,7 +72,7 @@ export function GoogleOAuth(): JSX.Element {
                 } else {
                     throw new Error("Invalid token returned from Google");
                 }
-            } catch (e) {
+            } catch (e: any) {
                 setMessage(e.message);
                 throw e;
             }

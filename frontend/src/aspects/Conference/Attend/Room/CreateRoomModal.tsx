@@ -93,7 +93,7 @@ export function CreateRoomModal({
                                     resolve();
                                 });
                             });
-                        } catch (e) {
+                        } catch (e: any) {
                             if ("message" in e && (e.message as string).includes("duplicate")) {
                                 toast({
                                     title: "Could not create room",

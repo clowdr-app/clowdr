@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import useBreadcrumbs from "use-react-router-breadcrumbs";

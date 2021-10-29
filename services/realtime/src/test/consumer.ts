@@ -1,6 +1,6 @@
 import assert from "assert";
 import fetch from "node-fetch";
-import { io } from "socket.io-client";
+import { default as io } from "socket.io-client";
 import type { Message } from "../types/chat";
 
 assert(process.env.SERVER_URL, "Missing SERVER_URL env var");
@@ -61,11 +61,11 @@ async function Main(chatId = process.env.CHAT_ID ?? "be7faf53-548c-465e-831a-aa9
             connected.done = true;
         });
 
-        client.on("connect_error", (e) => {
+        client.on("connect_error", (e: any) => {
             connected.done = "Websocket connect error: " + e;
         });
 
-        client.on("disconnect", (reason) => {
+        client.on("disconnect", (reason: any) => {
             throw new Error("Client disconnected: " + reason);
         });
 

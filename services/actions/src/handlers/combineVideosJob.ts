@@ -9,10 +9,10 @@ import {
     LanguageCode,
     OutputGroupType,
 } from "@aws-sdk/client-mediaconvert";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
-import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
-import type { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
+import type { CombineVideosJobDataBlob } from "@midspace/shared-types/combineVideosJob";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import assert from "assert";
 import * as R from "ramda";
 import { assertType } from "typescript-is";
@@ -73,8 +73,7 @@ export async function processCombineVideosJobQueue(): Promise<void> {
         }
 
         try {
-            assertType<CombineVideosJobDataBlob>(row.data);
-            const data: CombineVideosJobDataBlob = row.data;
+            const data = assertType<CombineVideosJobDataBlob>(row.data);
 
             const result = await apolloClient.query({
                 query: CombineVideosJob_GetElementsDocument,
@@ -197,7 +196,7 @@ export async function processCombineVideosJobQueue(): Promise<void> {
             await startCombineVideosJob(row.id, mediaConvertJobResult.Job.Id);
 
             console.log("Started CombineVideosJob MediaConvert job", row.id, mediaConvertJobResult.Job.Id);
-        } catch (e) {
+        } catch (e: any) {
             console.error("Error while handling process CombineVideosJob", e);
             await failCombineVideosJob(row.id, e.message);
         }
@@ -264,11 +263,15 @@ gql`
         }
     }
 
-    query MediaConvert_GetCombineVideosJob($combineVideosJobId: uuid!) {
+    query MediaConvert_GetCombineVideosJob($combineVideosJobId: uuid!, $itemId: uuid!) {
         job_queues_CombineVideosJob_by_pk(id: $combineVideosJobId) {
             id
             conferenceId
             outputName
+        }
+        content_Item_by_pk(id: $itemId) {
+            id
+            subconferenceId
         }
     }
 
@@ -310,6 +313,7 @@ export async function completeCombineVideosJob(
                     query: MediaConvert_GetCombineVideosJobDocument,
                     variables: {
                         combineVideosJobId,
+                        itemId,
                     },
                 })
         );
@@ -356,6 +360,7 @@ export async function completeCombineVideosJob(
                     mutation: CombineVideosJob_CreateElementDocument,
                     variables: {
                         conferenceId: combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk?.conferenceId,
+                        subconferenceId: combineVideosJobResult.data.content_Item_by_pk?.subconferenceId ?? null,
                         itemId,
                         data,
                         name:
@@ -374,7 +379,7 @@ export async function completeCombineVideosJob(
                     },
                 })
         );
-    } catch (e) {
+    } catch (e: any) {
         await failCombineVideosJob(combineVideosJobId, e.message);
     }
 }

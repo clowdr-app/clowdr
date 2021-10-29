@@ -18,9 +18,9 @@ import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 import type { AuthParameters } from "./AuthParameters";
 import { useAuthParameters } from "./AuthParameters";
 
-const useSecureProtocols = import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
+const useSecureProtocols = import.meta.env.VITE_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
 const httpProtocol = useSecureProtocols ? "https" : "http";
-export const GraphQLHTTPUrl = `${httpProtocol}://${import.meta.env.SNOWPACK_PUBLIC_GRAPHQL_API_DOMAIN}/v1/graphql`;
+export const GraphQLHTTPUrl = `${httpProtocol}://${import.meta.env.VITE_GRAPHQL_API_DOMAIN}/v1/graphql`;
 
 interface UrqlContext {
     reconnect: (cb?: () => void) => Promise<void>;

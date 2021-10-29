@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { assertIsElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { assertIsElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
 import type { ItemElements_ItemDataFragment } from "../../../../generated/graphql";

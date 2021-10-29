@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { LanguageCode } from "@aws-sdk/client-transcribe";
-import type { AudioElementBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
-import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
+import type { AudioElementBlob, VideoElementBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import path from "path";
@@ -17,7 +17,7 @@ import { apolloClient } from "../graphqlClient";
 import { S3, Transcribe } from "./aws/awsClient";
 import { getS3TextObject } from "./aws/s3";
 import { getLatestVersion } from "./element";
-import type { AmazonTranscribeOutput} from "./subtitleConvert";
+import type { AmazonTranscribeOutput } from "./subtitleConvert";
 import { convertJsonToSrt } from "./subtitleConvert";
 
 gql`

@@ -1,15 +1,14 @@
 import { gql } from "@apollo/client/core";
-import type { VonageSessionLayoutData} from "../../../../shared/build/vonage";
-import { VonageSessionLayoutType } from "../../../../shared/build/vonage";
-import type {
-    RoomParticipantFragment} from "../generated/graphql";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
+import type { RoomParticipantFragment } from "../generated/graphql";
 import {
     CountRoomParticipantsDocument,
     CreateRoomParticipantDocument,
     DeleteRoomParticipantsCreatedBeforeDocument,
     GetRoomParticipantDetailsDocument,
     InsertVonageSessionLayoutDocument,
-    RemoveRoomParticipantDocument
+    RemoveRoomParticipantDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "./vonage/vonageTools";
@@ -96,9 +95,9 @@ gql`
         $registrantId: uuid!
         $conferenceId: uuid!
         $roomId: uuid!
-        $vonageConnectionId: String
-        $chimeRegistrantId: String
-    ) {
+    ) # $vonageConnectionId: String
+    # $chimeRegistrantId: String
+    {
         delete_room_Participant(
             where: {
                 registrantId: { _eq: $registrantId }

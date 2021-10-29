@@ -19,14 +19,14 @@ router.use(checkEventSecret);
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<EventData>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleEventUpdated(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling event updated", e);
         res.status(500).json("Failure while handling event");
         return;
@@ -38,7 +38,7 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
     try {
         assertType<ScheduledEventPayload<{ eventId: string; startTime: string }>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");
         return;
@@ -50,7 +50,7 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
             req.body.payload.startTime,
             req.body.payload.updatedAt ?? null
         );
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling event/notifyStart", e);
         res.status(500).json("Failure while handling scheduled trigger");
         return;
@@ -62,7 +62,7 @@ router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
     console.log(req.originalUrl);
     try {
         assertType<ScheduledEventPayload<{ eventId: string; endTime: string }>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");
         return;
@@ -74,7 +74,7 @@ router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
             req.body.payload.endTime,
             req.body.payload.updatedAt ?? null
         );
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling event/notifyEnd", e);
         res.status(500).json("Failure while handling scheduled trigger");
         return;
@@ -87,7 +87,7 @@ router.post("/stopBroadcasts", json(), async (req: Request, res: Response<StopEv
     const params = req.body.input;
     try {
         assertType<stopEventBroadcastArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: invalid request`, req.body, e);
         return res.status(500).json({ broadcastsStopped: 0 });
     }
@@ -95,7 +95,7 @@ router.post("/stopBroadcasts", json(), async (req: Request, res: Response<StopEv
     try {
         const result = await handleStopEventBroadcasts(params);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to stop event broadcasts`, params, e);
         return res.status(500).json({ broadcastsStopped: 0 });
     }

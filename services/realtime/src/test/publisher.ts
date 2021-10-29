@@ -1,6 +1,6 @@
 import assert from "assert";
 import fetch from "node-fetch";
-import { io } from "socket.io-client";
+import { default as io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { Chat_MessageType_Enum, Chat_ReactionType_Enum } from "../generated/graphql";
 import type { Action, Message, Reaction } from "../types/chat";
@@ -59,11 +59,11 @@ async function Main(
             connected.done = true;
         });
 
-        client.on("connect_error", (e) => {
+        client.on("connect_error", (e: any) => {
             connected.done = "Websocket connect error: " + e;
         });
 
-        client.on("disconnect", (reason) => {
+        client.on("disconnect", (reason: any) => {
             throw new Error("Client disconnected: " + reason);
         });
 
@@ -88,10 +88,10 @@ async function Main(
         let totalMessagesSent = 0;
 
         let lastAckInfo: { msgSId: string; ack: boolean } = { msgSId: "", ack: false };
-        client.on("chat.messages.send.ack", (msgSId) => {
+        client.on("chat.messages.send.ack", (msgSId: any) => {
             lastAckInfo = { msgSId, ack: true };
         });
-        client.on("chat.messages.send.nack", (msgSId) => {
+        client.on("chat.messages.send.nack", (msgSId: any) => {
             lastAckInfo = { msgSId, ack: false };
         });
 

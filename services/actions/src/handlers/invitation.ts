@@ -196,7 +196,7 @@ export async function processInvitationEmailsQueue(): Promise<void> {
                 }
                 return false;
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
             failedJobIds.push(job.id);
         }
@@ -257,7 +257,7 @@ async function confirmUser(
                         userId,
                     },
                 });
-            } catch (e) {
+            } catch (e: any) {
                 ok = e.message || e.toString();
                 console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
             }
@@ -267,7 +267,7 @@ async function confirmUser(
             ok: ok === true ? "true" : ok,
             confSlug: invitation.registrant.conference.slug,
         };
-    } catch (e) {
+    } catch (e: any) {
         return {
             ok: e.message || e.toString(),
             confSlug: "<UNKNOWN>",

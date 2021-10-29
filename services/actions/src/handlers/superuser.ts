@@ -172,7 +172,7 @@ export async function handleInitialiseSuperUser(): Promise<InitialiseSuperUserOu
         });
 
         return { success: true, error: null };
-    } catch (e) {
+    } catch (e: any) {
         console.error("Unable to fetch current super state", e);
         return { success: false, error: "Could not fetch current superuser state." };
     }

@@ -211,6 +211,7 @@ export function CameraViewport({
         } catch (e) {
             console.error("Error during subscriber creation", e);
         }
+        return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stream]);
 
@@ -272,6 +273,8 @@ export function CameraViewport({
                 }
             };
         }
+
+        return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vonage.state.type, stream]);
 

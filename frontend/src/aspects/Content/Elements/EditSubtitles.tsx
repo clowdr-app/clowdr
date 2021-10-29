@@ -20,10 +20,10 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { SubtitleDetails } from "@clowdr-app/shared-types/build/content";
+import { assert } from "@midspace/assert";
+import type { SubtitleDetails } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import AmazonS3Uri from "amazon-s3-uri";
-import assert from "assert";
 import * as R from "ramda";
 import React, { Suspense, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -73,7 +73,7 @@ export default function EditSubtitles({
 
     const { bucket: _srtBucket, key: _srtKey } = AmazonS3Uri(data.s3Url);
     const { bucket: videoBucket, key: videoKey } = AmazonS3Uri(videoS3URL);
-    assert(videoKey);
+    assert.truthy(videoKey);
     const videoUrl = `https://${videoBucket}.s3-eu-west-1.amazonaws.com/${videoKey}`;
     const subtitlesUrl = `https://${_srtBucket}.s3.eu-west-1.amazonaws.com/${_srtKey}`;
     const { loading, error, data: subtitlesData = "" } = useFetch(subtitlesUrl, {}, []);
@@ -125,7 +125,7 @@ export default function EditSubtitles({
                     throw new Error(result.data?.updateSubtitles?.message ?? "Failed for unknown reason");
                 }
                 setHasUnsavedChanges(false);
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Failed to save subtitles", e);
                 toast({
                     title: "Failed to save subtitles",
@@ -204,7 +204,7 @@ export default function EditSubtitles({
                                                 await saveSubtitles(filesContent[0].content);
                                                 clear();
                                                 history.go(0);
-                                            } catch (err) {
+                                            } catch (err: any) {
                                                 console.error("Failed to save subtitles", err);
                                                 toast({
                                                     status: "error",

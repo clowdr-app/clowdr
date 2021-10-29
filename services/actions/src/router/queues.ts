@@ -16,7 +16,7 @@ router.post("/processEmailsJobQueue", json(), async (req: Request, res: Response
     try {
         console.log(`${req.originalUrl}: processing emails job queue`);
         await processEmailsJobQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing emails job queue", e);
         res.status(500).json("Failure");
         return;
@@ -28,7 +28,7 @@ router.post("/processSendSubmissionRequestsJobQueue", json(), async (req: Reques
     try {
         console.log(`${req.originalUrl}: processing send submission requests job queue`);
         await processSendSubmissionRequestsJobQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing send submission requests job queue", e);
         res.status(500).json("Failure");
         return;
@@ -40,7 +40,7 @@ router.post("/processInvitationEmailsQueue", json(), async (req: Request, res: R
     try {
         console.log(`${req.originalUrl}: processing invitation emails job queue`);
         await processInvitationEmailsQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing invitations emails job queue", e);
         res.status(500).json("Failure");
         return;
@@ -52,7 +52,7 @@ router.post("/processCustomEmailsJobQueue", json(), async (req: Request, res: Re
     try {
         console.log(`${req.originalUrl}: processing custom emails job queue`);
         await processCustomEmailsJobQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing invitations emails job queue", e);
         res.status(500).json("Failure");
         return;

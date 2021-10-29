@@ -1,6 +1,6 @@
 import { AspectRatio, Button, Center, Image, Text, Tooltip, useColorModeValue, VStack } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -22,7 +22,7 @@ function getLogoUrlFromData(data: any): string | null {
         } else if (latestData?.type === Content_ElementType_Enum.ImageFile) {
             try {
                 const { bucket, key } = new AmazonS3URI(latestData.s3Url);
-                return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             } catch {
                 return null;
             }

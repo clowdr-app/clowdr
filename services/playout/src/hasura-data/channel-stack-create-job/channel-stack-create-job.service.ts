@@ -12,7 +12,7 @@ import {
     GetChannelStackCreateJobDocument,
     Job_Queues_JobStatus_Enum,
 } from "../../generated/graphql";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ChannelStackCreateJobService {

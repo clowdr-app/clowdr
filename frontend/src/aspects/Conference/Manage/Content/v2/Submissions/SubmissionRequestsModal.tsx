@@ -26,9 +26,9 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email";
 import { gql } from "@urql/core";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
@@ -326,7 +326,7 @@ export function SendSubmissionRequestsModalInner({
                             isClosable: true,
                             status: "success",
                         });
-                    } catch (e) {
+                    } catch (e: any) {
                         toast({
                             status: "error",
                             title: "Could not send emails",

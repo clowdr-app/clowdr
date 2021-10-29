@@ -1,10 +1,10 @@
-import type { IntermediaryOriginatingDataDescriptor } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryOriginatingDataDescriptor } from "@midspace/shared-types/import/intermediary";
 import { levenshteinEditDistance } from "levenshtein-edit-distance";
 import { v4 as uuidv4 } from "uuid";
 import type { OriginatingDataDescriptor } from "../Shared/Types";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function Set_toJSON(key: string, value: any): any {
+export function Set_toJSON(_key: string, value: any): any {
     if (typeof value === "object" && value instanceof Set) {
         return [...value];
     }
@@ -692,7 +692,7 @@ export function mergeOriginatingDataIdInPlace<
 }
 
 export function convertOriginatingData<C>(
-    context: C,
+    _context: C,
     item: IntermediaryOriginatingDataDescriptor | OriginatingDataDescriptor
 ): OriginatingDataDescriptor {
     const result = {
@@ -707,7 +707,7 @@ export function convertOriginatingData<C>(
 }
 
 export function mergeOriginatingData<C>(
-    context: C,
+    _context: C,
     item1: OriginatingDataDescriptor,
     item2: OriginatingDataDescriptor
 ): {

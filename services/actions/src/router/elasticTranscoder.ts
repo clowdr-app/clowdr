@@ -1,4 +1,4 @@
-import type { ElasticTranscoderEvent } from "@clowdr-app/shared-types/build/sns/elasticTranscoder";
+import type { ElasticTranscoderEvent } from "@midspace/shared-types/sns/elasticTranscoder";
 import { text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -52,7 +52,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             event.userMetadata.videoRenderJobId,
                             event.messageDetails ?? event.errorCode?.toString() ?? "Unknown reason for failure"
                         );
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to record report of broadcast transcode failure", e, event.jobId);
                     }
                     break;
@@ -71,7 +71,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             console.log("Elastic Transcoder job finished without outputs", event.jobId);
                             throw new Error("Elastic Transcoder job finished without outputs");
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error(
                             "Failed to record completion of broadcast transcode",
                             event.userMetadata.videoRenderJobId,
@@ -96,7 +96,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         res.status(200).json("OK");
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to handle request`, e);
         res.status(500).json("Failure");
     }

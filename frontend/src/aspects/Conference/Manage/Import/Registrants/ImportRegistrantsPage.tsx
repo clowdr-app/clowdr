@@ -1,6 +1,6 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
-import { JSONataToIntermediaryRegistrant } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/intermediary";
+import { JSONataToIntermediaryRegistrant } from "@midspace/shared-types/import/intermediary";
 import React, { useMemo, useState } from "react";
 import { LinkButton } from "../../../../Chakra/LinkButton";
 import PageNotFound from "../../../../Errors/PageNotFound";

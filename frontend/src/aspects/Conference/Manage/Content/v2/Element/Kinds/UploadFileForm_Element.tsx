@@ -9,7 +9,8 @@ import {
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { assert } from "@midspace/assert";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
@@ -18,8 +19,7 @@ import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import FAIcon from "../../../../../../Icons/FAIcon";
@@ -56,7 +56,10 @@ export default function UploadFileForm_Element({
 
         uppy.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes, item.id]);
@@ -97,7 +100,7 @@ export default function UploadFileForm_Element({
         };
         uppy.on("error", onError);
 
-        const onUploadError = (file: unknown, err: Error) => {
+        const onUploadError = (_file: unknown, err: Error) => {
             console.error("Error while uploading file", { err });
             toast({
                 status: "error",
@@ -153,8 +156,8 @@ export default function UploadFileForm_Element({
 
                 try {
                     const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                    assert(bucket);
-                    assert(key);
+                    assert.truthy(bucket);
+                    assert.truthy(key);
 
                     toast({
                         status: "success",
@@ -217,7 +220,7 @@ export default function UploadFileForm_Element({
                             });
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to submit item", e);
                     toast({
                         status: "error",

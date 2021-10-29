@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client/core";
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import {
     VonageService_CreateEventVonageSessionDocument,
     VonageService_FindEventsWithMissingVonageSessionDocument,
 } from "../../generated/graphql";
-import type { GraphQlService } from "../../hasura-data/graphql/graphql.service";
-import type { VonageClientService } from "../../vonage/vonage/vonage-client.service";
+import { GraphQlService } from "../../hasura-data/graphql/graphql.service";
+import { VonageClientService } from "../../vonage/vonage/vonage-client.service";
 
 @Injectable()
 export class VonageService {

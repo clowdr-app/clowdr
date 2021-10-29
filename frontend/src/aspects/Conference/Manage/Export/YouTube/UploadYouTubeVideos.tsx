@@ -23,10 +23,10 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import type { YouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
-import { isYouTubeDataBlob } from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
+import type { YouTubeDataBlob } from "@midspace/shared-types/registrantGoogleAccount";
+import { isYouTubeDataBlob } from "@midspace/shared-types/registrantGoogleAccount";
 import { gql } from "@urql/core";
 import Mustache from "mustache";
 import * as R from "ramda";

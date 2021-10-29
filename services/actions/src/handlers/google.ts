@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3Uri from "amazon-s3-uri";
 import assert from "assert";
 import type { Credentials } from "google-auth-library";
@@ -281,7 +281,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                             },
                         });
                     });
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failure while recording failure of YouTube upload job", e);
                 }
             })
@@ -313,8 +313,10 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     });
                     await callWithRetry(async () => {
                         assert(result.data.id);
-                        assert(result.data.snippet);
+                        assert(result.data.snippet?.title);
                         assert(result.data.status);
+                        assert(result.data.status?.uploadStatus);
+                        assert(result.data.status?.privacyStatus);
                         await apolloClient.mutate({
                             mutation: CreateYouTubeUploadDocument,
                             variables: {
@@ -325,6 +327,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                                 videoPrivacyStatus: result.data.status.privacyStatus,
                                 uploadYouTubeVideoJobId: job.id,
                                 conferenceId: job.conferenceId,
+                                subconferenceId: job.subconferenceId,
                             },
                         });
                     });
@@ -380,7 +383,7 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                     } else {
                         console.log("No YouTube captions to upload", job.id);
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failure while recording completion of YouTube upload", job.id, e);
                     try {
                         await callWithRetry(async () => {
@@ -392,12 +395,12 @@ async function startUploadYouTubeVideoJob(job: UploadYouTubeVideoJobDataFragment
                                 },
                             });
                         });
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failure while recording failure to complete YouTube upload", e);
                     }
                 }
             });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure starting UploadYouTubeVideoJob", job.id, e);
         throw new Error("Failure starting job");
     }
@@ -429,6 +432,7 @@ gql`
     fragment UploadYouTubeVideoJobData on job_queues_UploadYouTubeVideoJob {
         id
         conferenceId
+        subconferenceId
         jobStatusName
         retriesCount
         registrantGoogleAccount {
@@ -500,7 +504,7 @@ export async function handleUploadYouTubeVideoJobQueue(): Promise<void> {
                         await startUploadYouTubeVideoJob(job);
                     });
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Could not start UploadYouTubeVideoJob", job.id, e);
                 return job.id;
             }
@@ -517,7 +521,7 @@ export async function handleUploadYouTubeVideoJobQueue(): Promise<void> {
                 },
             });
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Could not record failed UploadYouTubeVideoJobs", e);
     }
 }

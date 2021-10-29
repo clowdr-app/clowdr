@@ -1,6 +1,6 @@
 import { Heading, Image } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -39,7 +39,7 @@ export function RoomTitle({ roomDetails }: { roomDetails: RoomPage_RoomDetailsFr
                 return latestVersion.data.url;
             } else {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             }
         } catch {
             return null;

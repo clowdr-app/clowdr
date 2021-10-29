@@ -1,6 +1,6 @@
-import { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
-import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
+import { CombineVideosJobDataBlob } from "@midspace/shared-types/combineVideosJob";
+import { ElementDataBlob } from "@midspace/shared-types/content";
+import { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import {
     Chat_FlagType_Enum,

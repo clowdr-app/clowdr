@@ -16,7 +16,7 @@ import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
@@ -63,7 +63,10 @@ export default function UploadFileForm({
 
         uppy?.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes, elementId]);
@@ -110,7 +113,7 @@ export default function UploadFileForm({
                     let result;
                     try {
                         result = await uppy.upload();
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to upload file", e);
                         toast({
                             status: "error",
@@ -156,7 +159,7 @@ export default function UploadFileForm({
                         if (handleFormSubmitted) {
                             handleFormSubmitted();
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",
@@ -198,9 +201,9 @@ export default function UploadFileForm({
                                 <Field
                                     name="altText"
                                     validate={(inValue: string | null | undefined) => {
-                                        if (!inValue?.length) {
-                                            return "Missing alternative text for accessibility";
-                                        }
+                                        return inValue?.length
+                                            ? undefined
+                                            : "Missing alternative text for accessibility";
                                     }}
                                 >
                                     {({ form, field }: FieldProps<string>) => (

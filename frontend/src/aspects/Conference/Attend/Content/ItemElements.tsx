@@ -1,5 +1,5 @@
 import { Box, Heading, Text, VStack } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
 import React, { useMemo } from "react";
 import { Twemoji } from "react-emoji-render";

@@ -3,7 +3,7 @@ import type {
     IntermediaryRoomDescriptor,
     IntermediaryScheduleData,
     IntermediaryTagDescriptor,
-} from "@clowdr-app/shared-types/build/import/intermediary";
+} from "@midspace/shared-types/import/intermediary";
 import { v4 as uuidv4 } from "uuid";
 import type { ExhibitionDescriptor, ItemDescriptor } from "../../Content/Types";
 import type { EventDescriptor, RoomDescriptor } from "../../Schedule/Types";

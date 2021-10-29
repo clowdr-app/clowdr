@@ -83,11 +83,8 @@ export default function DownloadCalendarButton({
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - ${conference.shortName} - ${calendarName}.ics`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(dataBlob, fileName);
-                    } else {
-                        fileURL = window.URL.createObjectURL(dataBlob);
-                    }
+
+                    fileURL = window.URL.createObjectURL(dataBlob);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = fileURL ?? "";

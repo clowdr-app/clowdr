@@ -1,6 +1,7 @@
-import type { ChakraProps, SystemStyleObject } from "@chakra-ui/system";
-import { chakra, forwardRef } from "@chakra-ui/system";
+import type { ChakraProps, MergeWithAs, SystemStyleObject } from "@chakra-ui/react";
+import { chakra, forwardRef } from "@chakra-ui/react";
 import { cx, __DEV__ } from "@chakra-ui/utils";
+import type { ForwardedRef } from "react";
 import * as React from "react";
 
 export interface IconProps extends ChakraProps {
@@ -10,7 +11,10 @@ export interface IconProps extends ChakraProps {
     inline?: boolean;
 }
 
-export const FAIcon = forwardRef<IconProps, "i">(function Icon(props, ref) {
+export const FAIcon = forwardRef<IconProps, "i">(function Icon(
+    props: MergeWithAs<IconProps, any>,
+    ref: ForwardedRef<HTMLSpanElement>
+) {
     const { iconStyle, icon, fixedWidth, inline, as: element, color, className, __css, ...rest } = props;
 
     const _className = cx("chakra-icon", className);

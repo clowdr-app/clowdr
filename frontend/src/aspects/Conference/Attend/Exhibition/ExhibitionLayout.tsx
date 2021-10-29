@@ -10,8 +10,8 @@ import {
     useColorModeValue,
     useToken,
 } from "@chakra-ui/react";
-import type { ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import Color from "tinycolor2";
 import type {

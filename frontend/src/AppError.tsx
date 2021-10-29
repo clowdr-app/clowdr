@@ -1,5 +1,5 @@
 import { Button, chakra, Text, VStack } from "@chakra-ui/react";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import React, { useMemo } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { hasOwnProperty } from "./aspects/Generic/ObjectUtils";
@@ -23,7 +23,7 @@ ${graphQlErrors ? `GraphQL: ${JSON.stringify(graphQlErrors)}` : ""}
 ${error.stack}`}
             </chakra.pre>
             <Button
-                onClick={() => window.location.reload(false)}
+                onClick={() => window.location.reload()}
                 bgColor="#eee"
                 p="12px"
                 border="1px solid black"

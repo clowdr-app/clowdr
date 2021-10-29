@@ -1,4 +1,4 @@
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useEffect, useMemo, useState } from "react";
 import type { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { useChatConfiguration } from "../Configuration";
@@ -35,7 +35,7 @@ export default function SendMessageQueriesProvider({
     const config = useChatConfiguration();
     const [isSending, setIsSending] = useState<boolean>(false);
     useEffect(() => {
-        assert(
+        assert.truthy(
             config.state?.IsSending !== undefined,
             "config.state is null. Chat state is not available in the current context."
         );
@@ -44,7 +44,7 @@ export default function SendMessageQueriesProvider({
         });
     }, [config.state?.IsSending]);
     const ctx = useMemo(() => {
-        assert(config.state, "config.state is null. Chat state is not available in the current context.");
+        assert.truthy(config.state, "config.state is null. Chat state is not available in the current context.");
         return {
             send: config.state.send.bind(config.state),
             isSending,

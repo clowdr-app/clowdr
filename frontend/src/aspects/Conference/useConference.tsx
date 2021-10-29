@@ -1,6 +1,6 @@
 import { VStack } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import React from "react";
 import { AppError } from "../../AppError";
 import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
@@ -134,7 +134,7 @@ const ConferenceContext = React.createContext<ConferenceInfoFragment | undefined
 
 export function useConference(): ConferenceInfoFragment {
     const conf = React.useContext(ConferenceContext);
-    assert(conf, "useConference: Context not available");
+    assert.truthy(conf, "useConference: Context not available");
     return conf;
 }
 

@@ -15,9 +15,9 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { CombineVideosJobDataBlob, InputElement } from "@clowdr-app/shared-types/build/combineVideosJob";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { CombineVideosJobDataBlob, InputElement } from "@midspace/shared-types/combineVideosJob";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
@@ -220,7 +220,7 @@ function ModalInner({
                         throw new Error("Failed to create CombineVideosJob");
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Failed to submit CombineVideosJob", e);
                 toast({
                     status: "error",

@@ -1,6 +1,5 @@
 import React from "react";
-import { Route } from "react-router";
-import { Switch, useRouteMatch } from "react-router-dom";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
 import { DownloadVideosPage } from "./Download/DownloadVideosPage";
 import { YouTubeExportPage } from "./YouTube/YouTubeExportPage";

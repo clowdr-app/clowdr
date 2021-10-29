@@ -1,7 +1,7 @@
 import { Textarea, useToast } from "@chakra-ui/react";
-import type { AbstractBlob, TextBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
-import assert from "assert";
+import { assert } from "@midspace/assert";
+import type { AbstractBlob, TextBlob } from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Content_ElementType_Enum } from "../../../../../../../generated/graphql";
@@ -19,7 +19,7 @@ export const TextElementTemplate: ElementBaseTemplate = {
     supported: true,
     allowCreate: [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text],
     createDefault: (type, conferenceId, itemId) => {
-        assert(
+        assert.truthy(
             type === Content_ElementType_Enum.Abstract || type === Content_ElementType_Enum.Text,
             `Text Element Template mistakenly used for type ${type}.`
         );
@@ -98,7 +98,7 @@ export const TextElementTemplate: ElementBaseTemplate = {
                         };
                         update(newData);
                         setText(null);
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Error saving text", e);
                         toast({
                             status: "error",

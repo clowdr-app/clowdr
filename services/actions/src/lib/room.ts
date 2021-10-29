@@ -188,7 +188,7 @@ export async function createRoomChimeMeeting(roomId: string, conferenceId: strin
                 chimeMeetingId: chimeMeetingData.MeetingId,
             },
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to create a room Chime meeting", { err: e, roomId, conferenceId });
         throw e;
     }
@@ -281,7 +281,7 @@ export async function getRoomChimeMeeting(roomId: string, conferenceId: string):
     try {
         const chimeMeetingData = await createRoomChimeMeeting(roomId, conferenceId);
         return chimeMeetingData;
-    } catch (e) {
+    } catch (e: any) {
         const existingChimeMeetingData = await getExistingRoomChimeMeeting(roomId);
         if (existingChimeMeetingData) {
             return existingChimeMeetingData;

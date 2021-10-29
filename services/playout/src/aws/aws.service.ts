@@ -2,8 +2,7 @@ import type { App, Stack } from "@aws-cdk/core";
 import type { Credentials as NewSdkCredentials } from "@aws-sdk/types";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Inject, Injectable } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
-import type { DeployStackResult} from "aws-cdk";
+import type { DeployStackResult } from "aws-cdk";
 import { SdkProvider } from "aws-cdk";
 import { CloudFormationDeployments } from "aws-cdk/lib/api/cloudformation-deployments";
 import AWS, { CredentialProviderChain } from "aws-sdk";
@@ -18,11 +17,7 @@ export class AwsService {
     private readonly credentials: NewSdkCredentials;
     private readonly region: string;
 
-    constructor(
-        @RootLogger() logger: Bunyan,
-        @Inject(AWS_MODULE_OPTIONS) config: AwsModuleOptions,
-        private configService: ConfigService
-    ) {
+    constructor(@RootLogger() logger: Bunyan, @Inject(AWS_MODULE_OPTIONS) config: AwsModuleOptions) {
         this.logger = logger.child({ component: this.constructor.name });
 
         this.credentials = config.credentials;
@@ -42,7 +37,7 @@ export class AwsService {
         });
         const cloudFormation = new CloudFormationDeployments({ sdkProvider });
         return cloudFormation.deployStack({
-            stack: (stackArtifact as unknown) as any, // hack required due to weird type exports from CDK
+            stack: stackArtifact as unknown as any, // hack required due to weird type exports from CDK
             notificationArns: [notificationTopicArn],
             quiet: true,
         });

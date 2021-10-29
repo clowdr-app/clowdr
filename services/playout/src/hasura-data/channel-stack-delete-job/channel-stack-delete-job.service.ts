@@ -9,7 +9,7 @@ import {
     ChannelStackSync_GetStuckChannelStackDeleteJobsDocument,
     ChannelStack_CompleteChannelStackDeleteJobDocument,
 } from "../../generated/graphql";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ChannelStackDeleteJobService {

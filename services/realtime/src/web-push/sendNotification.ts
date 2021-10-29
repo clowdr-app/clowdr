@@ -27,7 +27,7 @@ export async function sendNotification(
                 subject: process.env.HOST_PUBLIC_URL,
             },
         });
-    } catch (error) {
+    } catch (error: any) {
         if (!(error.toString().includes("unsubscribed") || error.toString().includes("expired"))) {
             console.warn("ERROR in sending Notification.\nRemoving the endpoint record: " + subscription.endpoint, {
                 subscription,

@@ -325,7 +325,7 @@ export default function NewConferenceForm(): JSX.Element {
                         }
                         actions.setErrors(errors);
                     }
-                } catch (e) {
+                } catch (e: any) {
                     failed = e.toString();
                 }
 

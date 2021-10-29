@@ -16,7 +16,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { IntermediaryRegistrantData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryRegistrantData } from "@midspace/shared-types/import/intermediary";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useState } from "react";
 import { gql } from "urql";

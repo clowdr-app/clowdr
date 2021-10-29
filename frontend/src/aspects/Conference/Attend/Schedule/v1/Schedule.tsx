@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text, useColorMode, useColorModeValue, useToken } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import { DateTime } from "luxon";
 import * as R from "ramda";
 import React, { useCallback, useMemo, useState } from "react";
@@ -13,10 +13,9 @@ import type {
     Schedule_ProgramPersonFragment,
     Schedule_RoomSummaryFragment,
     Schedule_SelectSummariesQuery,
-    Schedule_TagFragment} from "../../../../../generated/graphql";
-import {
-    useSchedule_SelectSummariesQuery,
+    Schedule_TagFragment,
 } from "../../../../../generated/graphql";
+import { useSchedule_SelectSummariesQuery } from "../../../../../generated/graphql";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
@@ -292,7 +291,10 @@ function assignColumns(frames: Frame[]): Frame[] {
                 (x) => x.session.room?.priority ?? Number.POSITIVE_INFINITY,
                 currentFrame.items.filter((x) => x.column === -1)
             );
-            assert(currentFrameUnassignedItems.length <= availableColumns.length, "Hmm, something weird happened!");
+            assert.truthy(
+                currentFrameUnassignedItems.length <= availableColumns.length,
+                "Hmm, something weird happened!"
+            );
             let nextColIdx = 0;
             for (const item of currentFrameUnassignedItems) {
                 item.column = availableColumns[nextColIdx++];

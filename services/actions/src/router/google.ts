@@ -18,7 +18,7 @@ router.post("/getOAuthUrl", json(), async (req: Request, res: Response<GetGoogle
     const params = req.body.input;
     try {
         assertType<getGoogleOAuthUrlArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Invalid request:`, req.body.input);
         return res.status(500).json("Invalid request");
     }
@@ -26,7 +26,7 @@ router.post("/getOAuthUrl", json(), async (req: Request, res: Response<GetGoogle
     try {
         const result = await handleGetGoogleOAuthUrl(params);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Failed to get Google OAuth URL`, e);
         return res.status(500).json("Failed to get Google OAuth URL");
     }
@@ -36,7 +36,7 @@ router.post("/submitOAuthCode", json(), async (req: Request, res: Response<Submi
     const params: submitGoogleOAuthCodeArgs = req.body.input;
     try {
         assertType<submitGoogleOAuthCodeArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Invalid request:`, req.body.input);
         return res.status(500).json("Invalid request");
     }
@@ -44,7 +44,7 @@ router.post("/submitOAuthCode", json(), async (req: Request, res: Response<Submi
     try {
         const result = await handleSubmitGoogleOAuthToken(params, req.body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Failed to submit Google OAuth token`, e);
         return res.status(500).json("Failed to submit Google OAuth token");
     }
@@ -53,7 +53,7 @@ router.post("/submitOAuthCode", json(), async (req: Request, res: Response<Submi
 router.post("/processUploadYouTubeVideoQueue", json(), async (_req: Request, res: Response) => {
     try {
         await handleUploadYouTubeVideoJobQueue();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing UploadYouTubeVideoJob queue", e);
         res.status(500).json("Failure while processing UploadYouTubeVideoJob queue");
         return;

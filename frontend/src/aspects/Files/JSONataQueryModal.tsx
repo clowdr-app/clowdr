@@ -23,7 +23,7 @@ import jsonata from "jsonata";
 import React, { useEffect, useState } from "react";
 import FAIcon from "../Icons/FAIcon";
 
-function Set_toJSON(key: string, value: any) {
+function Set_toJSON(_key: string, value: any) {
     if (typeof value === "object" && value instanceof Set) {
         return [...value];
     }
@@ -57,7 +57,7 @@ export default function JSONataQueryModal({
                     const result = expression.evaluate(data);
                     setError(null);
                     setResult(result);
-                } catch (e) {
+                } catch (e: any) {
                     setError("Query is invalid: " + e.message);
                 }
             } else {

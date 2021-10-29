@@ -1,4 +1,4 @@
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import type { ReactNode, ReactNodeArray } from "react";
 import React, { useMemo } from "react";
 import type { Maybe, Registrant_RegistrantRole_Enum } from "../../generated/graphql";
@@ -37,7 +37,7 @@ const CurrentRegistrantContext = React.createContext<RegistrantContextT | undefi
 
 export default function useCurrentRegistrant(): RegistrantContextT {
     const ctx = React.useContext(CurrentRegistrantContext);
-    assert(ctx, "useCurrentRegistrant: Context not available");
+    assert.truthy(ctx, "useCurrentRegistrant: Context not available");
     return ctx;
 }
 

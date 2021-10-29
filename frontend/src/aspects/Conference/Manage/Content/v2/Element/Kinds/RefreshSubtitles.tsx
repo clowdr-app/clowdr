@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import { ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React from "react";
 import type { ElementDescriptor } from "./Types";

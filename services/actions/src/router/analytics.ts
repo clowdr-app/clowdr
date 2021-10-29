@@ -13,7 +13,7 @@ router.post("/gatherPresenceStats", json(), async (req: Request, res: Response) 
     try {
         console.log(`${req.originalUrl}: gathering presence stats`);
         await gatherPresenceStats();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while gathering presence stats", e);
         res.status(500).json("Failure");
         return;

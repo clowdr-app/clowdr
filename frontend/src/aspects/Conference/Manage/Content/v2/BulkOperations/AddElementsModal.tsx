@@ -24,8 +24,8 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { ElementBaseTypes } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
 import type { Content_Element_Insert_Input, ManageContent_ItemFragment } from "../../../../../../generated/graphql";

@@ -41,7 +41,7 @@ export async function generateTestJWT(req: Request, res: Response, _next?: NextF
         } else {
             res.status(503).send("Test JWKs not available");
         }
-    } catch (e) {
+    } catch (e: any) {
         res.status(500).send(e.toString());
     }
 }

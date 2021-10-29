@@ -11,8 +11,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { contains, getRelatedTarget } from "@chakra-ui/utils";
-import type { ElementDataBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, VideoElementBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gql } from "urql";

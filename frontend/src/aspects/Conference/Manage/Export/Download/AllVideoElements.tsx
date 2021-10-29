@@ -1,11 +1,11 @@
 import { Button, ButtonGroup, List, ListItem, Spinner } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import {
     AWSJobStatus,
     Content_ElementType_Enum,
     ElementBaseType,
     isElementDataBlob,
-} from "@clowdr-app/shared-types/build/content";
+} from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -51,7 +51,7 @@ function toS3Url(s3Url: string): string | undefined {
     try {
         const { bucket, key } = new AmazonS3URI(s3Url);
 
-        return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
     } catch (err) {
         return undefined;
     }

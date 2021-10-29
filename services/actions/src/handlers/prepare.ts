@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum } from "@midspace/shared-types/content";
 import assert from "assert";
 import {
     CompleteConferencePrepareJobDocument,
@@ -84,7 +84,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
             });
             console.log("Conference prepare: job completed without needing to render broadcast items", newRow.id);
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error("Conference prepare: fatal error while initialising job", e);
         await callWithRetry(async () => {
             await failConferencePrepareJob(newRow.id, e.message ?? "Unknown error while initialising job");
@@ -228,7 +228,7 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
         console.log("Creating Vonage session for event", { eventId: event.id });
         try {
             await createEventVonageSession(event.id, conferenceId);
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to create Vonage session", event.id, e);
             throw new Error(`Failed to create Vonage session: ${e.message}`);
         }

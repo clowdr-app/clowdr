@@ -1,7 +1,7 @@
 import { Logger } from "@eropple/nestjs-bunyan";
 import { Controller, Get } from "@nestjs/common";
 import type * as Bunyan from "bunyan";
-import type { AppService } from "./app.service";
+import { AppService } from "./app.service";
 
 @Controller()
 export class AppController {

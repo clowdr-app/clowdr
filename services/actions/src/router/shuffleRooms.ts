@@ -14,14 +14,14 @@ router.use(checkEventSecret);
 router.post("/entered", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ShuffleQueueEntryData>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleShuffleQueueEntered(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling shuffle queue entered", e);
         res.status(500).json("Failure while handling event");
         return;
@@ -32,7 +32,7 @@ router.post("/entered", json(), async (req: Request, res: Response) => {
 router.post("/process", async (_req: Request, res: Response) => {
     try {
         await processShuffleQueues();
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing shuffle queues", e);
         res.status(500).json("Failure");
         return;

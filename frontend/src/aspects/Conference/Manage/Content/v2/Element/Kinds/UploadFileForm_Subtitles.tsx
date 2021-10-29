@@ -9,6 +9,7 @@ import {
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import type {
     AudioFileBlob,
     VideoBroadcastBlob,
@@ -17,11 +18,9 @@ import type {
     VideoFillerBlob,
     VideoPrepublishBlob,
     VideoSponsorsFillerBlob,
-    VideoTitlesBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    AWSJobStatus,
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
+    VideoTitlesBlob,
+} from "@midspace/shared-types/content";
+import { AWSJobStatus, ElementBaseType } from "@midspace/shared-types/content";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
@@ -30,7 +29,6 @@ import "@uppy/drag-drop/dist/style.css";
 import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
 import { Form, Formik } from "formik";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -85,7 +83,10 @@ export default function UploadFileForm_Subtitles({
 
         uppy?.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [item.id]);
@@ -180,8 +181,8 @@ export default function UploadFileForm_Subtitles({
 
                     try {
                         const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                        assert(bucket);
-                        assert(key);
+                        assert.truthy(bucket);
+                        assert.truthy(key);
 
                         toast({
                             status: "success",
@@ -220,7 +221,7 @@ export default function UploadFileForm_Subtitles({
                                 ],
                             });
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",

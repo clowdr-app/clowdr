@@ -54,7 +54,7 @@ export function CreateRoomButton({
             }
 
             refetch?.();
-        } catch (e) {
+        } catch (e: any) {
             toast({
                 status: "error",
                 title: "Failed to create room.",

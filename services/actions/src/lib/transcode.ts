@@ -1,8 +1,6 @@
 import type { Captions, InputCaptions, Pipeline } from "@aws-sdk/client-elastic-transcoder";
 import { paginateListPipelines } from "@aws-sdk/client-elastic-transcoder";
-import type {
-    AudioDescription,
-    VideoDescription} from "@aws-sdk/client-mediaconvert";
+import type { AudioDescription, VideoDescription } from "@aws-sdk/client-mediaconvert";
 import {
     AacCodingMode,
     AacRateControlMode,
@@ -15,11 +13,11 @@ import {
     FileSourceConvert608To708,
     H264RateControlMode,
     OutputGroupType,
-    VideoCodec
+    VideoCodec,
 } from "@aws-sdk/client-mediaconvert";
-import type { TranscodeDetails, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
-import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
-import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import type { TranscodeDetails, VideoElementBlob } from "@midspace/shared-types/content";
+import { AWSJobStatus } from "@midspace/shared-types/content";
+import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import path from "path";

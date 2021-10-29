@@ -177,7 +177,7 @@ export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string
 
                 setUrl(null);
                 setKey(null);
-            } catch (e) {
+            } catch (e: any) {
                 toast({
                     status: "error",
                     title: "Error saving RTMP Output configuration",

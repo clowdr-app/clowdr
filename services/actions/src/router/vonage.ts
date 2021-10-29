@@ -31,7 +31,7 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
     try {
         assertType<SessionMonitoringWebhookReqBody>(req.body);
         payload = req.body;
-    } catch (e) {
+    } catch (e: any) {
         console.error("Invalid Vonage Session Monitoring webhook payload", e);
         res.status(500).json("Failure");
         return;
@@ -40,7 +40,7 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
     let result = false;
     try {
         result = await handleVonageSessionMonitoringWebhook(payload);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling Vonage SessionMonitoring webhook", e);
         res.status(200).json("Failure");
         return;
@@ -61,7 +61,7 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
     try {
         assertType<ArchiveMonitoringWebhookReqBody>(req.body);
         payload = req.body;
-    } catch (e) {
+    } catch (e: any) {
         console.error("Invalid Vonage Archive Monitoring webhook payload", e);
         res.status(500).json("Failure");
         return;
@@ -70,7 +70,7 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
     let result = false;
     try {
         result = await handleVonageArchiveMonitoringWebhook(payload);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling Vonage SessionMonitoring webhook", e);
         res.status(200).json("Failure");
         return;
@@ -88,7 +88,7 @@ router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVo
     try {
         body = req.body;
         assertType<ActionPayload<joinEventVonageSessionArgs>>(body);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: invalid request`, req.body.input, e);
         return res.status(200).json({});
     }
@@ -96,7 +96,7 @@ router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVo
     try {
         const result = await handleJoinEvent(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);
         return res.status(200).json({});
     }
@@ -107,7 +107,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomVona
     try {
         body = req.body;
         assertType<ActionPayload<joinRoomVonageSessionArgs>>(body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             message: "Invalid request",
@@ -117,7 +117,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomVona
     try {
         const result = await handleJoinRoom(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             message: "Failure while handling request",
@@ -130,7 +130,7 @@ router.post("/toggleRecordingState", json(), async (req: Request, res: Response<
     try {
         body = req.body;
         assertType<ActionPayload<toggleVonageRecordingStateArgs>>(body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             allowed: false,
@@ -141,7 +141,7 @@ router.post("/toggleRecordingState", json(), async (req: Request, res: Response<
     try {
         const result = await handleToggleVonageRecordingState(body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
         return res.status(200).json({
             allowed: false,

@@ -1,9 +1,9 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Button, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
-import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import { assert } from "@midspace/assert";
+import { ElementBaseTypes } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
-import assert from "assert";
 import React, { useMemo } from "react";
 import type { Content_Element_Insert_Input } from "../../../../../../generated/graphql";
 import { Content_ElementType_Enum, useAddContentMenu_CreateElementMutation } from "../../../../../../generated/graphql";
@@ -66,7 +66,7 @@ export function AddContentMenu({
                         onClick={async () => {
                             try {
                                 const template = ElementBaseTemplates[ElementBaseTypes[typeOpt.value]];
-                                assert(template.supported);
+                                assert.truthy(template.supported);
                                 const newContent = template.createDefault(typeOpt.value, conference.id, itemId);
                                 const obj: Content_Element_Insert_Input = {
                                     conferenceId: conference.id,
@@ -97,7 +97,7 @@ export function AddContentMenu({
                                 if (result.data?.insert_content_Element_one?.id) {
                                     onCreate(result.data?.insert_content_Element_one?.id);
                                 }
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error("Could not create new ContenItem", e);
                                 toast({
                                     status: "error",

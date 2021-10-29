@@ -10,10 +10,7 @@ import {
     Select,
     Textarea,
 } from "@chakra-ui/react";
-import type {
-    IntermediaryContentData,
-    IntermediaryScheduleData,
-} from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData, IntermediaryScheduleData } from "@midspace/shared-types/import/intermediary";
 import React, { useEffect, useState } from "react";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";
 

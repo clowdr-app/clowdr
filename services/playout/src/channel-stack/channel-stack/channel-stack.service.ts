@@ -6,19 +6,19 @@ import { ChannelState } from "@aws-sdk/client-medialive";
 import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { Injectable } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import parseArn from "@unbounce/parse-aws-arn";
 import assert from "assert";
 import type { DeployStackResult } from "aws-cdk/lib/api/deploy-stack";
 import pThrottle from "p-throttle";
-import type { AwsService } from "../../aws/aws.service";
-import type { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
-import type { MediaLiveService } from "../../aws/medialive/medialive.service";
+import { AwsService } from "../../aws/aws.service";
+import { CloudFormationService } from "../../aws/cloud-formation/cloud-formation.service";
+import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Job_Queues_JobStatus_Enum } from "../../generated/graphql";
-import type { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
-import type { ChannelStackDeleteJobService } from "../../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
-import type { ChannelStackUpdateJobService } from "../../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
-import type { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
+import { ChannelStackCreateJobService } from "../../hasura-data/channel-stack-create-job/channel-stack-create-job.service";
+import { ChannelStackDeleteJobService } from "../../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackUpdateJobService } from "../../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
+import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
 import { shortId } from "../../utils/id";
 import type { ChannelStackDescription, ChannelStackProps } from "./channelStack";
 import { ChannelStack } from "./channelStack";
@@ -284,7 +284,7 @@ export class ChannelStackService {
             description = await this.cloudFormationService.cloudFormation.describeStacks({
                 StackName: stackName,
             });
-        } catch (err) {
+        } catch (err: any) {
             if (err.toString().includes(`Stack with id ${stackName} does not exist`)) {
                 this.logger.info(
                     { stackName, err },
@@ -480,7 +480,7 @@ export class ChannelStackService {
             description = await this.cloudFormationService.cloudFormation.describeStacks({
                 StackName: stackName,
             });
-        } catch (err) {
+        } catch (err: any) {
             if (err.toString().includes(`Stack with id ${stackName} does not exist`)) {
                 this.logger.info({ stackName, err }, "Channel stack does not exist - it has already been deleted.");
                 await this.channelStackDeleteJobService.setStatusChannelStackDeleteJob(

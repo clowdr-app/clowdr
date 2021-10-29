@@ -1,13 +1,9 @@
 /* eslint-disable no-inner-declarations */
-import type {
-    ParticipantPlacement,
-    VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
-import {
-    VonageSessionLayoutType,
-} from "@clowdr-app/shared-types/build/vonage";
+import type { ParticipantPlacement, VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import * as R from "ramda";
 import { useMemo } from "react";
-import type { Viewport, VisualLayout} from "./LayoutTypes";
+import type { Viewport, VisualLayout } from "./LayoutTypes";
 import { VisualLayoutType } from "./LayoutTypes";
 
 export default function useVisualLayout(

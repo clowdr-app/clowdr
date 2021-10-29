@@ -31,6 +31,8 @@ export default function SendLockoutButton({
                 return config.answerConfig.sendCooloffPeriodMs;
             case Chat_MessageType_Enum.Poll:
                 return config.pollConfig.sendCooloffPeriodMs;
+            default:
+                return config.messageConfig.sendCooloffPeriodMs;
         }
     }, [
         compose.newMessageType,

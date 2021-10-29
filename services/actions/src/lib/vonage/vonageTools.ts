@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { DeleteAttendeeCommand } from "@aws-sdk/client-chime";
-import type { VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
-import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import type OpenTok from "opentok";
 import {
     CreateVonageParticipantStreamDocument,
@@ -131,7 +131,7 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
         for (const broadcast of startedSessionBroadcasts) {
             try {
                 await Vonage.stopBroadcast(broadcast.id);
-            } catch (e) {
+            } catch (e: any) {
                 console.error(
                     "Error while stopping invalid broadcast",
                     broadcastDetails.vonageSessionId,
@@ -186,7 +186,7 @@ export async function startEventBroadcast(eventId: string): Promise<void> {
                 resolution: "1280x720",
             });
             console.log("Started Vonage RTMP broadcast", broadcast.id, broadcastDetails.vonageSessionId, eventId);
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to start broadcast", broadcastDetails.vonageSessionId, eventId, e);
             return;
         }
@@ -203,7 +203,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
     let broadcastDetails: EventBroadcastDetails;
     try {
         broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error retrieving Vonage broadcast details for event", e);
         return;
     }
@@ -225,7 +225,7 @@ export async function stopEventBroadcasts(eventId: string): Promise<void> {
             if (existingBroadcast.status === "started" || existingBroadcast.status === "paused") {
                 await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("Could not stop existing session broadcast", eventId, existingBroadcast.id, e);
         }
     }
@@ -279,7 +279,7 @@ export async function startRoomVonageArchiving(
     let archiveDetails: RoomArchiveDetails;
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error retrieving Vonage broadcast details for room", e);
         return null;
     }
@@ -315,7 +315,7 @@ export async function startRoomVonageArchiving(
         for (const archive of startedSessionArchives) {
             try {
                 await callWithRetry(() => Vonage.stopArchive(archive.id));
-            } catch (e) {
+            } catch (e: any) {
                 console.error(
                     "Error while stopping previous archive",
                     archiveDetails.vonageSessionId,
@@ -382,7 +382,7 @@ export async function startRoomVonageArchiving(
             }
 
             return recordingId;
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to start archive", archiveDetails.vonageSessionId, roomId, e);
             return null;
         }
@@ -408,7 +408,7 @@ export async function stopRoomVonageArchiving(
     let archiveDetails: RoomArchiveDetails;
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error retrieving Vonage archive details for room", e);
         return;
     }
@@ -436,7 +436,7 @@ export async function stopRoomVonageArchiving(
                         },
                     })
                 );
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Could not disable recording for event", roomId, eventId, e);
             }
         }
@@ -447,7 +447,7 @@ export async function stopRoomVonageArchiving(
                     await callWithRetry(() => Vonage.stopArchive(existingArchive.id));
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("Could not stop existing session archive", roomId, existingArchive.id, e);
         }
     }
@@ -555,7 +555,7 @@ export async function addVonageParticipantStream(
                 vonageStreamType: stream.videoType ?? "camera",
             },
         });
-    } catch (e) {
+    } catch (e: any) {
         // If there is already a row for this event, kick the previous connection before recording the new one
         console.error("Error while adding vonage participant stream", registrantId, stream.id, e);
         throw new Error("Error while adding vonage participant stream");

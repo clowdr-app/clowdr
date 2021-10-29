@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import React, { useEffect, useMemo } from "react";
 import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
@@ -71,8 +71,8 @@ function CheckSlug(): JSX.Element {
         const entry = slugCache?.[origin];
         if (entry) {
             try {
-                assert(entry.expiry && typeof entry.expiry === "number");
-                assert(entry.value && typeof entry.expiry === "string");
+                assert.truthy(entry.expiry && typeof entry.expiry === "number");
+                assert.truthy(entry.value && typeof entry.expiry === "string");
                 if (entry.expiry > Date.now()) {
                     return entry.value as string;
                 } else {

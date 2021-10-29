@@ -1,10 +1,10 @@
-import { useToast } from "@chakra-ui/toast";
-import type { ContinuationDefaultFor, ExtendedContinuationTo } from "@clowdr-app/shared-types/build/continuation";
-import { ContinuationType, NavigationView } from "@clowdr-app/shared-types/build/continuation";
+import { useToast } from "@chakra-ui/react";
+import type { ContinuationDefaultFor, ExtendedContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationType, NavigationView } from "@midspace/shared-types/continuation";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import {
     useContinuationChoices_ContinuationsQuery,

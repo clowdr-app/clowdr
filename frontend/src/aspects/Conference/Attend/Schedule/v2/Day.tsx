@@ -468,6 +468,7 @@ const Day = React.forwardRef<HTMLTableRowElement, Props>(function Day(
                                         </Td>
                                     );
                                 }
+                                return undefined;
                             })}
                         </Tr>
                     );

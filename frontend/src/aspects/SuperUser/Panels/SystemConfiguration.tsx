@@ -1,30 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, chakra, Flex, FormLabel, Input, NumberInput, Select, useClipboard } from "@chakra-ui/react";
 import type { LegacyRef } from "react";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import { v4 as uuidv4 } from "uuid";
-import type {
-    SysConfigPermissionGrantFragment,
-    SystemConfigurationFragment,
-    System_Configuration,
-} from "../../../generated/graphql";
+import type { SystemConfigurationFragment, System_Configuration } from "../../../generated/graphql";
 import {
     System_ConfigurationKey_Enum,
     System_SuperUserPermission_Enum,
     useAllSystemConfigurationsQuery,
-    useDeleteSysConfigPermissionGrantsMutation,
-    useInsertSysConfigPermissionGrantMutation,
     useUserSysConfigPermissionsQuery,
 } from "../../../generated/graphql";
 import { TextColumnFilter } from "../../CRUDTable2/CRUDComponents";
-import type {
-    CellProps,
-    ColumnHeaderProps,
-    ColumnSpecification,
-    Delete,
-    Insert,
-    RowSpecification,
-} from "../../CRUDTable2/CRUDTable2";
+import type { CellProps, ColumnHeaderProps, ColumnSpecification, RowSpecification } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -369,54 +356,54 @@ export default function SystemConfiguration(): JSX.Element {
         [allConfigurationsResponse.data?.system_Configuration]
     );
 
-    const [insertResponse, insertM] = useInsertSysConfigPermissionGrantMutation();
-    const insert = useMemo<Insert<SysConfigPermissionGrantFragment>>(
-        () => ({
-            ongoing: insertResponse.fetching,
-            generateDefaults: () => ({
-                id: uuidv4(),
-                userId: currentUser.user.id,
-            }),
-            makeWhole: (d) => d as SysConfigPermissionGrantFragment,
-            start: (record) => {
-                insertM(
-                    {
-                        object: record,
-                    },
-                    {
-                        fetchOptions: {
-                            headers: {
-                                "X-Auth-Role": "superuser",
-                            },
-                        },
-                    }
-                );
-            },
-        }),
-        [currentUser.user.id, insertM, insertResponse.fetching]
-    );
+    // const [insertResponse, insertM] = useInsertSysConfigPermissionGrantMutation();
+    // const insert = useMemo<Insert<SysConfigPermissionGrantFragment>>(
+    //     () => ({
+    //         ongoing: insertResponse.fetching,
+    //         generateDefaults: () => ({
+    //             id: uuidv4(),
+    //             userId: currentUser.user.id,
+    //         }),
+    //         makeWhole: (d) => d as SysConfigPermissionGrantFragment,
+    //         start: (record) => {
+    //             insertM(
+    //                 {
+    //                     object: record,
+    //                 },
+    //                 {
+    //                     fetchOptions: {
+    //                         headers: {
+    //                             "X-Auth-Role": "superuser",
+    //                         },
+    //                     },
+    //                 }
+    //             );
+    //         },
+    //     }),
+    //     [currentUser.user.id, insertM, insertResponse.fetching]
+    // );
 
-    const [deleteResponse, deleteM] = useDeleteSysConfigPermissionGrantsMutation();
-    const deleteO = useMemo<Delete<SysConfigPermissionGrantFragment>>(
-        () => ({
-            ongoing: deleteResponse.fetching,
-            start: (keys) => {
-                deleteM(
-                    {
-                        ids: keys,
-                    },
-                    {
-                        fetchOptions: {
-                            headers: {
-                                "X-Auth-Role": "superuser",
-                            },
-                        },
-                    }
-                );
-            },
-        }),
-        [deleteM, deleteResponse.fetching]
-    );
+    // const [deleteResponse, deleteM] = useDeleteSysConfigPermissionGrantsMutation();
+    // const deleteO = useMemo<Delete<SysConfigPermissionGrantFragment>>(
+    //     () => ({
+    //         ongoing: deleteResponse.fetching,
+    //         start: (keys) => {
+    //             deleteM(
+    //                 {
+    //                     ids: keys,
+    //                 },
+    //                 {
+    //                     fetchOptions: {
+    //                         headers: {
+    //                             "X-Auth-Role": "superuser",
+    //                         },
+    //                     },
+    //                 }
+    //             );
+    //         },
+    //     }),
+    //     [deleteM, deleteResponse.fetching]
+    // );
 
     return (
         <CRUDTable

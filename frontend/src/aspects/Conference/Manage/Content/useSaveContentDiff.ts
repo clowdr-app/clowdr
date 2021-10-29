@@ -1,6 +1,6 @@
+import { assert } from "@midspace/assert";
 import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
-import assert from "assert";
 import { useEffect, useState } from "react";
 import type {
     Collection_Exhibition_Insert_Input,
@@ -995,7 +995,7 @@ export function useSaveContentDiff():
                             const deleteGroupExhibitionKeys = new Set<string>();
 
                             const existingGroup = original.items.get(group.id);
-                            assert(existingGroup);
+                            assert.truthy(existingGroup);
 
                             for (const item of group.elements) {
                                 if (item.isNew) {

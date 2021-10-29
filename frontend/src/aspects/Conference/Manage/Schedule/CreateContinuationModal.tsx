@@ -30,8 +30,8 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { ContinuationTo } from "@clowdr-app/shared-types/build/continuation";
-import { ContinuationDefaultFor, ContinuationType, NavigationView } from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationDefaultFor, ContinuationType, NavigationView } from "@midspace/shared-types/continuation";
 import { gql } from "@urql/core";
 import { format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";

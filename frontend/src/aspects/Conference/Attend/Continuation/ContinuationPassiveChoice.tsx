@@ -15,7 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import type { FocusableElement } from "@chakra-ui/utils";
-import type { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationDefaultFor } from "@midspace/shared-types/continuation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ContinuationChoices_ContinuationFragment } from "../../../../generated/graphql";
 import { defaultOutline_AsBoxShadow } from "../../../Chakra/Outline";

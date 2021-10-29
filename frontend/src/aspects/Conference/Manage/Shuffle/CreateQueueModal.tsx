@@ -162,7 +162,7 @@ export default function CreateQueueModal(): JSX.Element {
 
             reset();
             onClose();
-        } catch (e) {
+        } catch (e: any) {
             toast({
                 description: e.message ?? e.toString(),
                 duration: 12000,

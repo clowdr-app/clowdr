@@ -1,6 +1,6 @@
 import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
-import { JSONataToIntermediaryContent } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData } from "@midspace/shared-types/import/intermediary";
+import { JSONataToIntermediaryContent } from "@midspace/shared-types/import/intermediary";
 import React, { useMemo, useState } from "react";
 import PageNotFound from "../../../../Errors/PageNotFound";
 import type { ParsedData } from "../../../../Files/useCSVJSONXMLParser";

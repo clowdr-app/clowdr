@@ -5,10 +5,9 @@ import type {
     ElementDataBlob,
     ElementVersionData,
     TranscodeDetails,
-    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    ElementBaseType
-} from "@clowdr-app/shared-types/build/content";
+    VideoElementBlob,
+} from "@midspace/shared-types/content";
+import { ElementBaseType } from "@midspace/shared-types/content";
 import assert from "assert";
 import R from "ramda";
 import { is } from "typescript-is";

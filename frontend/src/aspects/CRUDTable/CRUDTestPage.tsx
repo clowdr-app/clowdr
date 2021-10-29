@@ -8,12 +8,9 @@ import type {
     CRUDTableProps,
     InstantModeCUDCallbacks,
     StringFieldSpec,
-    UpdateResult} from "./CRUDTable";
-import CRUDTable, {
-    BooleanFieldFormat,
-    defaultStringFilter,
-    FieldType
+    UpdateResult,
 } from "./CRUDTable";
+import CRUDTable, { BooleanFieldFormat, defaultStringFilter, FieldType } from "./CRUDTable";
 
 type TestCRUDData = {
     id: string;
@@ -85,7 +82,7 @@ export default function CRUDTestPage(): JSX.Element {
         },
         update: (values) => {
             const results: Map<string, UpdateResult> = new Map();
-            values.forEach((item, key) => {
+            values.forEach((_item, key) => {
                 results.set(key, true);
             });
 
@@ -134,7 +131,7 @@ export default function CRUDTestPage(): JSX.Element {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     const results: Map<string, UpdateResult> = new Map();
-                    values.forEach((item, key) => {
+                    values.forEach((_item, key) => {
                         results.set(key, true);
                     });
                     setTestData((oldData) => {
@@ -230,7 +227,7 @@ export default function CRUDTestPage(): JSX.Element {
                     cudCallbacks: bacthCUDMode ? syncCUDCallbacks : asyncCUDCallbacks,
                 }}
                 secondaryFields={{
-                    editSingle: (key, onClose) => {
+                    editSingle: (_key, onClose) => {
                         return {
                             includeCloseButton: false,
                             editorElement: <>Test</>,

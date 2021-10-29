@@ -1,20 +1,13 @@
 import { gql } from "@apollo/client/core";
-import type {
-    ElementDataBlob,
-    VideoBroadcastBlob,
-    VideoElementBlob} from "@clowdr-app/shared-types/build/content";
-import {
-    Content_ElementType_Enum,
-    ElementBaseType,
-    isElementDataBlob
-} from "@clowdr-app/shared-types/build/content";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
+import type { ElementDataBlob, VideoBroadcastBlob, VideoElementBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
 import { Injectable } from "@nestjs/common";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import { ContentElement_GetElementDocument } from "../../generated/graphql";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 @Injectable()
 export class ContentElementDataService {

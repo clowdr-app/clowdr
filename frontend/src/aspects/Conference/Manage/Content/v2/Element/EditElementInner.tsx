@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Divider, Text } from "@chakra-ui/react";
-import { ElementBaseTypes } from "@clowdr-app/shared-types/build/content";
+import { ElementBaseTypes } from "@midspace/shared-types/content";
 import React, { useMemo } from "react";
 import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";
 import { useManageContent_UpdateElementMutation } from "../../../../../../generated/graphql";

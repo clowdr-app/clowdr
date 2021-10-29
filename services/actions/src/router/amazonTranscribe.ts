@@ -1,4 +1,4 @@
-import type { TranscribeEvent } from "@clowdr-app/shared-types/build/sns/transcribe";
+import type { TranscribeEvent } from "@midspace/shared-types/sns/transcribe";
 import { text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -56,7 +56,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         res.status(200).json("OK");
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to handle request`, e);
         res.status(500).json("Failure");
     }

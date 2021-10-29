@@ -1,4 +1,4 @@
-import type { SNSNotification } from "@clowdr-app/shared-types/build/sns";
+import type { SNSNotification } from "@midspace/shared-types/sns/index";
 import axios from "axios";
 import MessageValidator from "sns-validator";
 import { assertType } from "typescript-is";
@@ -13,7 +13,7 @@ export async function validateSNSNotification(body: string): Promise<Maybe<SNSNo
         message = JSON.parse(body);
         await validate(message);
         assertType<SNSNotification<any>>(message);
-    } catch (e) {
+    } catch (e: any) {
         console.log("Received invalid SNS notification", e, body);
         return null;
     }
@@ -26,7 +26,7 @@ async function confirmSubscription(url: string): Promise<boolean> {
         await axios.get(url);
         console.log("Confirmed subscription");
         return true;
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to confirm subscription", e);
         return false;
     }

@@ -34,7 +34,7 @@ import { validateName, validateShortName } from "../NewConferenceForm";
 import RequireRole from "../RequireRole";
 import { useConference } from "../useConference";
 
-const _updateConferenceQueries = gql`
+gql`
     mutation UpdateConference($id: uuid!, $name: String = "", $shortName: String = "", $slug: String = "") {
         update_conference_Conference(
             where: { id: { _eq: $id } }
@@ -120,7 +120,7 @@ export default function ManageName(): JSX.Element {
                                 history.push(`/conference/${variables.slug}/manage/details`);
                             }
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         const msg = e.toString();
                         let expectedError: false | string = false;
                         if (msg.includes("Uniqueness violation")) {

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import {
@@ -118,6 +118,7 @@ gql`
                 item {
                     id
                     title
+                    subconferenceId
                 }
                 id
                 name
@@ -133,7 +134,7 @@ gql`
         $data: jsonb!
         $itemId: uuid!
         $conferenceId: uuid!
-        $subconferenceId: uuid!
+        $subconferenceId: uuid = null
         $name: String!
     ) {
         update_job_queues_MediaPackageHarvestJob_by_pk(
@@ -162,7 +163,7 @@ export async function completeMediaPackageHarvestJob(
     bucketName: string,
     manifestKey: string
 ): Promise<void> {
-    console.log("AWS harvest job completed", awsHarvestJobId);
+    console.log("AWS harvest job completed", { awsHarvestJobId });
 
     const result = await callWithRetry(
         async () =>
@@ -175,10 +176,9 @@ export async function completeMediaPackageHarvestJob(
     );
 
     if (!result.data.job_queues_MediaPackageHarvestJob.length) {
-        console.error(
-            "Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job",
-            awsHarvestJobId
-        );
+        console.error("Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job", {
+            awsHarvestJobId,
+        });
         return;
     }
 
@@ -213,6 +213,7 @@ export async function completeMediaPackageHarvestJob(
                     id: job.id,
                     message: `Completed successfully. Bucket name: ${bucketName}; manifest key: ${manifestKey}`,
                     conferenceId: job.conferenceId,
+                    subconferenceId: job.event.item?.subconferenceId ?? null,
                     itemId: job.event.item?.id,
                     data,
                     name: `Recording of ${job.event.name} from ${startTime}`,

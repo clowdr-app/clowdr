@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, chakra, Flex, useToken, VStack } from "@chakra-ui/react";
-import type { VonageSessionLayoutData} from "@clowdr-app/shared-types/build/vonage";
-import { VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import React, { useEffect, useState } from "react";
 import { useVonageLayout } from "../VonageLayoutProvider";
 

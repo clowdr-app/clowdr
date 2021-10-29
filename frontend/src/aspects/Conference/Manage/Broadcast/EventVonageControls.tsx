@@ -84,7 +84,7 @@ export function EventVonageControls({ conferenceId }: { conferenceId: string }):
                     } else {
                         throw new Error("No response from server");
                     }
-                } catch (e) {
+                } catch (e: any) {
                     toast({
                         status: "error",
                         title: "Failed to stop broadcasts",

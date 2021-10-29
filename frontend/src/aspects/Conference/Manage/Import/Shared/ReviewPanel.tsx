@@ -1,5 +1,5 @@
 import { Box, Button, Code, Text } from "@chakra-ui/react";
-import type { IntermediaryContentData } from "@clowdr-app/shared-types/build/import/intermediary";
+import type { IntermediaryContentData } from "@midspace/shared-types/import/intermediary";
 import React from "react";
 import JSONataQueryModal from "../../../../Files/JSONataQueryModal";
 import FAIcon from "../../../../Icons/FAIcon";

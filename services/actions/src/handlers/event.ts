@@ -1,10 +1,8 @@
 import { gql } from "@apollo/client/core";
-import type { ContinuationTo} from "@clowdr-app/shared-types/build/continuation";
-import { ContinuationType } from "@clowdr-app/shared-types/build/continuation";
+import type { ContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationType } from "@midspace/shared-types/continuation";
 import { is } from "typescript-is";
-import type {
-    EndChatDuplicationMutationVariables,
-    StartChatDuplicationMutationVariables} from "../generated/graphql";
+import type { EndChatDuplicationMutationVariables, StartChatDuplicationMutationVariables } from "../generated/graphql";
 import {
     EndChatDuplicationDocument,
     Event_GetEventVonageSessionDocument,
@@ -12,7 +10,7 @@ import {
     GetEventTimingsDocument,
     NotifyRealtimeEventEndedDocument,
     Room_Mode_Enum,
-    StartChatDuplicationDocument
+    StartChatDuplicationDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import {
@@ -323,7 +321,7 @@ export async function handleEventStartNotification(
                             try {
                                 await createItemVideoChatRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
                                 itemsCreatedRoomsFor.push(to.id);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error(
                                     "Failed to create automatic discussion room (specified item)",
                                     eventId,
@@ -339,7 +337,7 @@ export async function handleEventStartNotification(
                                     result.data.schedule_Event_by_pk.conferenceId
                                 );
                                 itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.error(
                                     "Failed to create automatic discussion room (matching event)",
                                     eventId,
@@ -366,7 +364,7 @@ export async function handleEventStartNotification(
                     result.data.schedule_Event_by_pk.item.id,
                     result.data.schedule_Event_by_pk.conferenceId
                 );
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Failed to create automatic discussion room (fallback)", eventId, e);
             }
         }
@@ -498,7 +496,7 @@ export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs):
             console.log("Attempting to stop broadcast", params.eventId, broadcast.id);
             await Vonage.stopBroadcast(broadcast.id);
             broadcastsStopped++;
-        } catch (e) {
+        } catch (e: any) {
             console.warn("Failure while trying to stop broadcast", params.eventId, broadcast.id, e);
         }
     }

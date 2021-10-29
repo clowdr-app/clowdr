@@ -5,13 +5,13 @@ import axios from "axios";
 import type * as Bunyan from "bunyan";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
-import type { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
+import { CloudFormationService } from "../aws/cloud-formation/cloud-formation.service";
 import { MediaLiveNotification } from "../aws/medialive/medialive-notification.dto";
-import type { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
+import { ChannelStackService } from "../channel-stack/channel-stack/channel-stack.service";
 import { Job_Queues_JobStatus_Enum } from "../generated/graphql";
-import type { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
-import type { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
-import type { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
+import { ChannelStackDeleteJobService } from "../hasura-data/channel-stack-delete-job/channel-stack-delete-job.service";
+import { ChannelStackUpdateJobService } from "../hasura-data/channel-stack-update-job/channel-stack-update-job.service";
+import { ScheduleSyncService } from "../schedule/schedule-sync/schedule-sync.service";
 import type { SNSNotificationDto } from "./sns-notification.dto";
 
 @Controller("aws")

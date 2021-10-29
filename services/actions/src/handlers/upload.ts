@@ -1,15 +1,15 @@
 import { gql } from "@apollo/client/core";
-import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import type {
     AudioElementBlob,
     ElementBlob,
     ElementVersionData,
     VideoElementBlob,
-} from "@clowdr-app/shared-types/build/content";
-import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@clowdr-app/shared-types/build/content";
-import type { EmailView_SubmissionRequest } from "@clowdr-app/shared-types/build/email";
-import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
+} from "@midspace/shared-types/content";
+import { AWSJobStatus, Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
+import type { EmailView_SubmissionRequest } from "@midspace/shared-types/email";
+import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { compile } from "handlebars";
@@ -85,7 +85,7 @@ async function checkS3Url(
             Bucket: bucket,
             Key: key,
         });
-    } catch (e) {
+    } catch (e: any) {
         return {
             result: "error",
             message: "Could not retrieve object from S3",
@@ -397,7 +397,7 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
                 uploadableElement.item.title,
                 uploadableElement.conference.name
             );
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to save new version of content item", e);
             return {
                 success: false,
@@ -474,7 +474,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
             Key: key,
             Body: args.subtitleText,
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to upload new subtitles", e);
         return {
             message: "Failed to upload new subtitles",
@@ -499,7 +499,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
                 newVersion,
             },
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to save new content item version", e);
         return {
             message: "Failed to save new content item version",
@@ -636,9 +636,9 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
             await apolloClient.mutate({
                 mutation: InsertSubmissionRequestEmailsDocument,
                 variables: {
-                    uploaderIds: emailsRecords
-                        .map((x) => ("uploaderId" in x ? x.uploaderId : undefined))
-                        .filter(isNotUndefined),
+                    // uploaderIds: emailsRecords
+                    //     .map((x) => ("uploaderId" in x ? x.uploaderId : undefined))
+                    //     .filter(isNotUndefined),
                     personIds: emailsRecords
                         .map((x) => ("personId" in x ? x.personId : undefined))
                         .filter(isNotUndefined),

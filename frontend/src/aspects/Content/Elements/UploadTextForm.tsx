@@ -13,7 +13,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
@@ -67,7 +67,7 @@ export default function UploadTextForm({
                         if (handleFormSubmitted) {
                             handleFormSubmitted();
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failed to submit item", e);
                         toast({
                             status: "error",

@@ -1,6 +1,6 @@
-import type { ButtonProps} from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
 import { Button, HStack, Tooltip } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Twemoji } from "react-emoji-render";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
@@ -17,7 +17,7 @@ export default function QuickSendEmote(): JSX.Element {
     const send = useCallback(
         (emoji: string) => {
             try {
-                assert(
+                assert.truthy(
                     config.state?.Id !== undefined,
                     "config.state is null. Chat state is not available in the current context."
                 );

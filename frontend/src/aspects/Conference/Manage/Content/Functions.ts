@@ -104,7 +104,7 @@ export function deepCloneItemDescriptor(group: ItemDescriptor): ItemDescriptor {
     return {
         id: group.id,
         elements: group.elements.map((item) => ({
-            data: item.data.map((d) => ({
+            data: item.data.map((d: any) => ({
                 createdAt: d.createdAt,
                 createdBy: d.createdBy,
                 data: { ...d.data },

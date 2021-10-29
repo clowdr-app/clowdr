@@ -1,5 +1,6 @@
-import type { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
-import { isVonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
+import { assert } from "@midspace/assert";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { isVonageSessionLayoutData } from "@midspace/shared-types/vonage";
 import OT from "@opentok/client";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
@@ -179,7 +180,8 @@ export class VonageGlobalState {
                 throw new Error("Invalid state transition: must be initialised");
             }
 
-            const session = OT.initSession(import.meta.env.SNOWPACK_PUBLIC_OPENTOK_API_KEY, this.state.sessionId, {});
+            assert.string(import.meta.env.VITE_OPENTOK_API_KEY);
+            const session = OT.initSession(import.meta.env.VITE_OPENTOK_API_KEY, this.state.sessionId, {});
             const token = await this.state.getToken(this.state.sessionId);
 
             session.on("streamCreated", (event) =>

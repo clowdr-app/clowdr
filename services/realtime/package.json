@@ -1,34 +1,18 @@
 {
-    "name": "clowdr-presence",
-    "version": "1.0.0",
-    "description": "Presence counters",
-    "main": "build/web-server.js",
-    "engines": {
-        "node": "16.x",
-        "npm": "^7.8.x"
-    },
+    "name": "@midspace/service-realtime",
+    "private": true,
     "scripts": {
-        "build": "npm run build-shared && npm run build-this && npm run-script copy-resources",
-        "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../ --workspace=shared build",
+        "build": "tsc --build && pnpm copy-resources",
+        "clean": "rimraf build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
-        "start": "node build/server.js",
-        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-realtime\"",
-        "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\"",
-        "gql-cdg": "npx --no-install -p @graphql-codegen/cli graphql-codegen -- --config codegen.js",
+        "start": "pnpm nf start --procfile Procfile -p 3002",
+        "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
+        "gql-cdg": "pnpm exec graphql-codegen --config codegen.js",
         "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
         "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/clowdr/clowdr-app.git"
-    },
     "author": "Clowdr CIC",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/clowdr/clowdr-app/issues"
-    },
-    "homepage": "https://github.com/clowdr/clowdr-app#readme",
+    "license": "BSD-3-Clause",
     "dependencies": {
         "@apollo/client": "^3.3.20",
         "@graphql-codegen/cli": "^1.21.6",
@@ -40,6 +24,7 @@
         "@graphql-codegen/typescript-graphql-files-modules": "^1.18.1",
         "@graphql-codegen/typescript-graphql-request": "^3.2.4",
         "@graphql-codegen/typescript-operations": "^1.18.3",
+        "@graphql-typed-document-node/core": "^3.1.0",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/express": "^4.17.12",
@@ -57,8 +42,10 @@
         "assert": "^2.0.0",
         "bufferutil": "^4.0.3",
         "cpy-cli": "^3.1.1",
+        "cross-fetch": "^3.1.4",
         "express": "^4.17.1",
         "generic-pool": "^3.8.2",
+        "graphql-tag": "^2.12.5",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.5",
         "jwks-rsa": "^2.0.3",
@@ -80,5 +67,9 @@
     },
     "devDependencies": {
         "tsc-watch": "^4.4.0"
+    },
+    "engines": {
+        "node": ">=16.x",
+        "pnpm": "^6.19.x"
     }
 }

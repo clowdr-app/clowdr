@@ -1,6 +1,6 @@
 import { Heading, Spinner } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import React, { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -178,7 +178,7 @@ export default function ManageGroups(): JSX.Element {
                         },
                         update: (items) => {
                             const results: Map<string, UpdateResult> = new Map();
-                            items.forEach((item, key) => {
+                            items.forEach((_item, key) => {
                                 results.set(key, true);
                             });
 
@@ -212,7 +212,7 @@ export default function ManageGroups(): JSX.Element {
                             return results;
                         },
                         save: async (keys) => {
-                            assert(allGroupsMap);
+                            assert.truthy(allGroupsMap);
 
                             const newKeys = new Set<string>();
                             const updatedKeys = new Set<string>();
@@ -253,7 +253,7 @@ export default function ManageGroups(): JSX.Element {
                                         deleteGroupIds: Array.from(deletedKeys.values()),
                                         insertGroups: Array.from(newKeys.values()).map((key) => {
                                             const item = allGroupsMap.get(key);
-                                            assert(item);
+                                            assert.truthy(item);
                                             return {
                                                 conferenceId: conference.id,
                                                 name: item.name,
@@ -297,7 +297,7 @@ export default function ManageGroups(): JSX.Element {
                                 updatedResults = await Promise.all(
                                     Array.from(updatedKeys.values()).map(async (key) => {
                                         const item = allGroupsMap.get(key);
-                                        assert(item);
+                                        assert.truthy(item);
                                         let result: any;
                                         try {
                                             result = await updateGroupMutation(

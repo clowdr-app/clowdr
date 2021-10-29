@@ -17,9 +17,9 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ImmediateSwitchData } from "@clowdr-app/shared-types/build/video/immediateSwitchData";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
+import { ImmediateSwitchData } from "@midspace/shared-types/video/immediateSwitchData";
 import { gql } from "@urql/core";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";

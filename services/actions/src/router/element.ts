@@ -15,14 +15,14 @@ router.use(checkEventSecret);
 router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ElementData>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleElementUpdated(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while handling element updated", e);
         res.status(500).json("Failure while handling event");
         return;
@@ -34,7 +34,7 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     const params = req.body.input;
     try {
         assertType<submitElementArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: invalid request`, params);
         return res.status(200).json({
             success: false,
@@ -46,7 +46,7 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
         console.log(`${req.originalUrl}: content item submitted`);
         const result = await handleElementSubmitted(params);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to submit content item`, e);
         return res.status(200).json({
             success: false,
@@ -61,7 +61,7 @@ router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
         assertType<updateSubtitlesArgs>(params);
         const result = await handleUpdateSubtitles(params);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: invalid request:`, req.body, e);
         return res.status(200).json({
             success: false,
@@ -74,7 +74,7 @@ router.post("/getUploadAgreement", json(), async (req: Request, res: Response<Ge
     const params = req.body.input;
     try {
         assertType<getUploadAgreementArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Invalid request:`, req.body.input);
         return res.status(500).json("Invalid request");
     }
@@ -82,7 +82,7 @@ router.post("/getUploadAgreement", json(), async (req: Request, res: Response<Ge
     try {
         const result = await handleGetUploadAgreement(params);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.path}: Failed to retrieve agreement text`, e);
         return res.status(500).json("Failed to retrieve agreement text");
     }

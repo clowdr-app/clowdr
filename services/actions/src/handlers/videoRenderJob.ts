@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { notEmpty } from "@clowdr-app/shared-types/build/utils";
+import { notEmpty } from "@midspace/shared-types/utils";
 import assert from "assert";
 import { assertType } from "typescript-is";
 import type { VideoRenderJobDataFragment } from "../generated/graphql";
@@ -57,7 +57,7 @@ export async function handleVideoRenderJobUpdated(payload: Payload<VideoRenderJo
                                 payload.event.data.new.conferencePrepareJobId
                             );
                         }
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error("Failure while processing completed render job", payload.event.data.new.id, e);
                         await VideoRenderJob.failVideoRenderJob(
                             payload.event.data.new.id,
@@ -186,7 +186,7 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
                         await updateVideoRenderJob(job.id, data);
                     });
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Could not start VideoRenderJob", job.id, e);
                 return job.id;
             }
@@ -207,7 +207,7 @@ export async function handleProcessVideoRenderJobQueue(): Promise<void> {
                     },
                 });
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error("Could not record failed VideoRenderJobs", e);
         }
     }

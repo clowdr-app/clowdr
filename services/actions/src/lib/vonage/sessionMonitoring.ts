@@ -221,7 +221,7 @@ export async function stopArchiveIfNoOngoingEvent(payload: SessionMonitoringWebh
         }
 
         return true;
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error handling stopArchiveIfNoOngoingEvent", payload.sessionId, e);
         return false;
     }
@@ -259,7 +259,7 @@ export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWeb
                         )
                 );
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(
                 "Failed to handle Vonage connectionCreated event",
                 payload.sessionId,
@@ -293,7 +293,7 @@ export async function addAndRemoveRoomParticipants(payload: SessionMonitoringWeb
                         await removeRoomParticipant(room.roomId, room.conferenceId, registrantId, payload.sessionId)
                 );
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(
                 "Failed to handle Vonage connectionDestroyed event",
                 payload.sessionId,
@@ -322,7 +322,7 @@ export async function addAndRemoveVonageParticipantStreams(payload: SessionMonit
             await callWithRetry(
                 async () => await addVonageParticipantStream(payload.sessionId, registrantId, payload.stream)
             );
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
             success = false;
         }
@@ -340,7 +340,7 @@ export async function addAndRemoveVonageParticipantStreams(payload: SessionMonit
             await callWithRetry(
                 async () => await removeVonageParticipantStream(payload.sessionId, registrantId, payload.stream)
             );
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);
             success = false;
         }

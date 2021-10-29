@@ -5,25 +5,25 @@ import { RootLogger } from "@eropple/nestjs-bunyan/dist";
 import { add } from "date-fns";
 import * as R from "ramda";
 import { v4 as uuidv4 } from "uuid";
-import type { MediaLiveService } from "../../aws/medialive/medialive.service";
+import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Room_Mode_Enum, Video_RtmpInput_Enum } from "../../generated/graphql";
 import type { ChannelStackDetails } from "../../hasura-data/channel-stack/channel-stack-details";
-import type { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
-import type { ContentElementDataService } from "../../hasura-data/content/content-element.service";
-import type {
+import { ChannelStackDataService } from "../../hasura-data/channel-stack/channel-stack.service";
+import { ContentElementDataService } from "../../hasura-data/content/content-element.service";
+import {
     LocalSchedule,
     LocalScheduleAction,
     LocalScheduleService,
     Room,
 } from "../../hasura-data/local-schedule/local-schedule.service";
-import type {
+import {
     EventAction,
     InvalidAction,
     RemoteSchedule,
     RemoteScheduleAction,
     RemoteScheduleService,
 } from "../remote-schedule/remote-schedule.service";
-import type { VonageService } from "../vonage/vonage.service";
+import { VonageService } from "../vonage/vonage.service";
 
 export class ScheduleSyncService {
     private readonly logger: Bunyan;

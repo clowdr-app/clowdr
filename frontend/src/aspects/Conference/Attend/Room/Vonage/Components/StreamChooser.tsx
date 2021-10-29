@@ -1,5 +1,5 @@
 import { Button, chakra, Flex, HStack, Menu, MenuButton, MenuItem, MenuList, Portal } from "@chakra-ui/react";
-import type { ParticipantPlacement } from "@clowdr-app/shared-types/build/vonage";
+import type { ParticipantPlacement } from "@midspace/shared-types/vonage";
 import * as R from "ramda";
 import React, { useCallback, useMemo } from "react";
 import FAIcon from "../../../../../Icons/FAIcon";

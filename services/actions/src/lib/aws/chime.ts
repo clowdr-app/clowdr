@@ -1,11 +1,5 @@
-import type {
-    Attendee,
-    Meeting} from "@aws-sdk/client-chime";
-import {
-    CreateAttendeeCommand,
-    CreateMeetingCommand,
-    GetMeetingCommand
-} from "@aws-sdk/client-chime";
+import type { Attendee, Meeting } from "@aws-sdk/client-chime";
+import { CreateAttendeeCommand, CreateMeetingCommand, GetMeetingCommand } from "@aws-sdk/client-chime";
 import { callWithRetry } from "../../utils";
 import { Chime } from "./awsClient";
 
@@ -35,7 +29,7 @@ export async function doesChimeMeetingExist(chimeMeetingId: string): Promise<boo
             )
         );
         return meeting.Meeting ? true : false;
-    } catch (e) {
+    } catch (e: any) {
         return false;
     }
 }

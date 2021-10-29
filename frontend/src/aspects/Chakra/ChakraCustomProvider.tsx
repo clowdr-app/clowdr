@@ -1,5 +1,5 @@
 import { ChakraProvider, extendTheme, PortalManager } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React, { useMemo, useState } from "react";
 import { applyComponentColorTheme } from "./Colors/applyComponentColorTheme";
 import componentMap from "./Colors/ComponentMap";
@@ -120,7 +120,7 @@ interface ConferenceThemeContext {
 const ConferenceThemeContext = React.createContext<ConferenceThemeContext | undefined>(undefined);
 export function useConferenceTheme(): ConferenceThemeContext {
     const conf = React.useContext(ConferenceThemeContext);
-    assert(conf, "useConferenceTheme: Context not available");
+    assert.truthy(conf, "useConferenceTheme: Context not available");
     return conf;
 }
 
@@ -133,13 +133,13 @@ export default function ChakraCustomProvider({
     const finalTheme = useMemo(
         () =>
             conferenceComponentMap
-                ? extendTheme<any>(baseThemeExtensions, {
+                ? extendTheme(baseThemeExtensions, {
                       colors: applyComponentColorTheme(
                           applyComponentColorTheme(colors, componentMap),
                           conferenceComponentMap
                       ),
                   })
-                : extendTheme<any>(baseThemeExtensions, {
+                : extendTheme(baseThemeExtensions, {
                       colors: applyComponentColorTheme(colors, componentMap),
                   }),
         [conferenceComponentMap]

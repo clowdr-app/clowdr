@@ -1,4 +1,4 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -16,7 +16,6 @@ export type Scalars = {
   timestamptz: any;
   uuid: any;
 };
-
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
@@ -808,8 +807,8 @@ export type ToggleVonageRecordingStateOutput = {
 export type UpdateProfilePhotoResponse = {
   __typename?: 'UpdateProfilePhotoResponse';
   ok: Scalars['Boolean'];
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "User" */
@@ -3182,7 +3181,6 @@ export enum Analytics_Mat_RoomPresence_Select_Column {
   Name = 'name'
 }
 
-
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
   _eq?: Maybe<Scalars['bigint']>;
@@ -4183,6 +4181,7 @@ export type Chat_Flag_Variance_Order_By = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_Message = {
   __typename?: 'chat_Message';
@@ -4222,6 +4221,7 @@ export type Chat_Message = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_MessageDataArgs = {
   path?: Maybe<Scalars['String']>;
@@ -4233,6 +4233,7 @@ export type Chat_MessageDataArgs = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_MessageFlagsArgs = {
   distinct_on?: Maybe<Array<Chat_Flag_Select_Column>>;
@@ -4248,6 +4249,7 @@ export type Chat_MessageFlagsArgs = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_MessageFlags_AggregateArgs = {
   distinct_on?: Maybe<Array<Chat_Flag_Select_Column>>;
@@ -4263,6 +4265,7 @@ export type Chat_MessageFlags_AggregateArgs = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_MessageReactionsArgs = {
   distinct_on?: Maybe<Array<Chat_Reaction_Select_Column>>;
@@ -4278,6 +4281,7 @@ export type Chat_MessageReactionsArgs = {
  *
  *
  * columns and relationships of "chat.Message"
+ *
  */
 export type Chat_MessageReactions_AggregateArgs = {
   distinct_on?: Maybe<Array<Chat_Reaction_Select_Column>>;
@@ -4820,6 +4824,7 @@ export type Chat_Message_Variance_Order_By = {
  *
  *
  * columns and relationships of "chat.Pin"
+ *
  */
 export type Chat_Pin = {
   __typename?: 'chat_Pin';
@@ -5630,6 +5635,7 @@ export enum Chat_ReadUpToIndex_Update_Column {
  *
  *
  * columns and relationships of "chat.Subscription"
+ *
  */
 export type Chat_Subscription = {
   __typename?: 'chat_Subscription';
@@ -13752,7 +13758,6 @@ export type Job_Queues_UploadYouTubeVideoJob_Variance_Fields = {
   retriesCount?: Maybe<Scalars['Float']>;
 };
 
-
 /** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
   /** is the column contained in the given json value */
@@ -18870,7 +18875,6 @@ export type Mutation_RootUpdate_Video_YouTubeUpload_By_PkArgs = {
   pk_columns: Video_YouTubeUpload_Pk_Columns_Input;
 };
 
-
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
 export type Numeric_Comparison_Exp = {
   _eq?: Maybe<Scalars['numeric']>;
@@ -22804,8 +22808,8 @@ export type Registrant_Profile = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   /** An object relationship */
   registrant: Registrant_Registrant;
@@ -22997,8 +23001,8 @@ export type Registrant_Profile_Bool_Exp = {
   photoS3BucketName?: Maybe<String_Comparison_Exp>;
   photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
   photoS3ObjectName?: Maybe<String_Comparison_Exp>;
-  photoURL_350x350?: Maybe<String_Comparison_Exp>;
   photoURL_50x50?: Maybe<String_Comparison_Exp>;
+  photoURL_350x350?: Maybe<String_Comparison_Exp>;
   pronouns?: Maybe<Jsonb_Comparison_Exp>;
   registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
   registrantId?: Maybe<Uuid_Comparison_Exp>;
@@ -23052,8 +23056,8 @@ export type Registrant_Profile_Insert_Input = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
   registrantId?: Maybe<Scalars['uuid']>;
@@ -23075,8 +23079,8 @@ export type Registrant_Profile_Max_Fields = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
   twitter?: Maybe<Scalars['String']>;
@@ -23096,8 +23100,8 @@ export type Registrant_Profile_Min_Fields = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
   twitter?: Maybe<Scalars['String']>;
@@ -23141,8 +23145,8 @@ export type Registrant_Profile_Order_By = {
   photoS3BucketName?: Maybe<Order_By>;
   photoS3BucketRegion?: Maybe<Order_By>;
   photoS3ObjectName?: Maybe<Order_By>;
-  photoURL_350x350?: Maybe<Order_By>;
   photoURL_50x50?: Maybe<Order_By>;
+  photoURL_350x350?: Maybe<Order_By>;
   pronouns?: Maybe<Order_By>;
   registrant?: Maybe<Registrant_Registrant_Order_By>;
   registrantId?: Maybe<Order_By>;
@@ -23188,9 +23192,9 @@ export enum Registrant_Profile_Select_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -23218,8 +23222,8 @@ export type Registrant_Profile_Set_Input = {
   photoS3BucketName?: Maybe<Scalars['String']>;
   photoS3BucketRegion?: Maybe<Scalars['String']>;
   photoS3ObjectName?: Maybe<Scalars['String']>;
-  photoURL_350x350?: Maybe<Scalars['String']>;
   photoURL_50x50?: Maybe<Scalars['String']>;
+  photoURL_350x350?: Maybe<Scalars['String']>;
   pronouns?: Maybe<Scalars['jsonb']>;
   registrantId?: Maybe<Scalars['uuid']>;
   timezoneUTCOffset?: Maybe<Scalars['Float']>;
@@ -23277,9 +23281,9 @@ export enum Registrant_Profile_Update_Column {
   /** column name */
   PhotoS3ObjectName = 'photoS3ObjectName',
   /** column name */
-  PhotoUrl_350x350 = 'photoURL_350x350',
-  /** column name */
   PhotoUrl_50x50 = 'photoURL_50x50',
+  /** column name */
+  PhotoUrl_350x350 = 'photoURL_350x350',
   /** column name */
   Pronouns = 'pronouns',
   /** column name */
@@ -28021,6 +28025,7 @@ export type Room_ShuffleRoom_Variance_Order_By = {
  *
  *
  * columns and relationships of "schedule.Continuation"
+ *
  */
 export type Schedule_Continuation = {
   __typename?: 'schedule_Continuation';
@@ -28045,6 +28050,7 @@ export type Schedule_Continuation = {
  *
  *
  * columns and relationships of "schedule.Continuation"
+ *
  */
 export type Schedule_ContinuationToArgs = {
   path?: Maybe<Scalars['String']>;
@@ -33590,7 +33596,6 @@ export enum System_SuperUserState_Select_Column {
   IsInitialised = 'isInitialised'
 }
 
-
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
 export type Timestamptz_Comparison_Exp = {
   _eq?: Maybe<Scalars['timestamptz']>;
@@ -33603,7 +33608,6 @@ export type Timestamptz_Comparison_Exp = {
   _neq?: Maybe<Scalars['timestamptz']>;
   _nin?: Maybe<Array<Scalars['timestamptz']>>;
 };
-
 
 /** Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'. */
 export type Uuid_Comparison_Exp = {
@@ -34925,6 +34929,7 @@ export type Video_MediaLiveChannelStatus_Variance_Fields = {
  *
  *
  * columns and relationships of "video.RoomRtmpOutput"
+ *
  */
 export type Video_RoomRtmpOutput = {
   __typename?: 'video_RoomRtmpOutput';
@@ -35806,6 +35811,7 @@ export type Video_VideoRenderJob_Variance_Order_By = {
  *
  *
  * columns and relationships of "video.VonageParticipantStream"
+ *
  */
 export type Video_VonageParticipantStream = {
   __typename?: 'video_VonageParticipantStream';
@@ -36917,63 +36923,26 @@ export type GetRoomsNeedingChannelStackQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomsNeedingChannelStackQuery = (
-  { __typename?: 'query_root' }
-  & { room_Room: Array<(
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id' | 'conferenceId' | 'name'>
-    & { rtmpOutput?: Maybe<(
-      { __typename?: 'video_RoomRtmpOutput' }
-      & Pick<Video_RoomRtmpOutput, 'id' | 'url' | 'streamKey'>
-    )> }
-  )> }
-);
+export type GetRoomsNeedingChannelStackQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, conferenceId: any, name: string, rtmpOutput?: { __typename?: 'video_RoomRtmpOutput', id: any, url: string, streamKey: string } | null | undefined }> };
 
 export type GetObsoleteChannelStacksQueryVariables = Exact<{
   past?: Maybe<Scalars['timestamptz']>;
 }>;
 
 
-export type GetObsoleteChannelStacksQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack: Array<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'cloudFormationStackArn' | 'mediaLiveChannelId'>
-    & { channelStackId: Video_ChannelStack['id'] }
-  )> }
-);
+export type GetObsoleteChannelStacksQuery = { __typename?: 'query_root', video_ChannelStack: Array<{ __typename?: 'video_ChannelStack', cloudFormationStackArn?: string | null | undefined, mediaLiveChannelId: string, channelStackId: any }> };
 
 export type GetChannelStacksThatMightNeedUpdateQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetChannelStacksThatMightNeedUpdateQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack: Array<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id' | 'cloudFormationStackArn' | 'mediaLiveChannelId' | 'rtmpOutputUri' | 'rtmpOutputStreamKey' | 'rtmpOutputDestinationId'>
-    & { room?: Maybe<(
-      { __typename?: 'room_Room' }
-      & Pick<Room_Room, 'id'>
-      & { rtmpOutput?: Maybe<(
-        { __typename?: 'video_RoomRtmpOutput' }
-        & Pick<Video_RoomRtmpOutput, 'id' | 'url' | 'streamKey'>
-      )> }
-    )> }
-  )> }
-);
+export type GetChannelStacksThatMightNeedUpdateQuery = { __typename?: 'query_root', video_ChannelStack: Array<{ __typename?: 'video_ChannelStack', id: any, cloudFormationStackArn?: string | null | undefined, mediaLiveChannelId: string, rtmpOutputUri?: string | null | undefined, rtmpOutputStreamKey?: string | null | undefined, rtmpOutputDestinationId?: string | null | undefined, room?: { __typename?: 'room_Room', id: any, rtmpOutput?: { __typename?: 'video_RoomRtmpOutput', id: any, url: string, streamKey: string } | null | undefined } | null | undefined }> };
 
 export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutationVariables = Exact<{
   objects: Array<Video_MediaLiveChannelStatus_Insert_Input> | Video_MediaLiveChannelStatus_Insert_Input;
 }>;
 
 
-export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_video_MediaLiveChannelStatus?: Maybe<(
-    { __typename?: 'video_MediaLiveChannelStatus_mutation_response' }
-    & Pick<Video_MediaLiveChannelStatus_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ChannelStatus_UpdatedMediaLiveChannelStatusesMutation = { __typename?: 'mutation_root', insert_video_MediaLiveChannelStatus?: { __typename?: 'video_MediaLiveChannelStatus_mutation_response', affected_rows: number } | null | undefined };
 
 export type CreateChannelStackCreateJobMutationVariables = Exact<{
   conferenceId: Scalars['uuid'];
@@ -36982,26 +36951,14 @@ export type CreateChannelStackCreateJobMutationVariables = Exact<{
 }>;
 
 
-export type CreateChannelStackCreateJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_job_queues_ChannelStackCreateJob_one?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'id'>
-  )> }
-);
+export type CreateChannelStackCreateJobMutation = { __typename?: 'mutation_root', insert_job_queues_ChannelStackCreateJob_one?: { __typename?: 'job_queues_ChannelStackCreateJob', id: any } | null | undefined };
 
 export type GetChannelStackCreateJobQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type GetChannelStackCreateJobQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackCreateJob_by_pk?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'id' | 'jobStatusName'>
-  )> }
-);
+export type GetChannelStackCreateJobQuery = { __typename?: 'query_root', job_queues_ChannelStackCreateJob_by_pk?: { __typename?: 'job_queues_ChannelStackCreateJob', id: any, jobStatusName: Job_Queues_JobStatus_Enum } | null | undefined };
 
 export type FailChannelStackCreateJobMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -37009,77 +36966,40 @@ export type FailChannelStackCreateJobMutationVariables = Exact<{
 }>;
 
 
-export type FailChannelStackCreateJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_job_queues_ChannelStackCreateJob_by_pk?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'id'>
-  )> }
-);
+export type FailChannelStackCreateJobMutation = { __typename?: 'mutation_root', update_job_queues_ChannelStackCreateJob_by_pk?: { __typename?: 'job_queues_ChannelStackCreateJob', id: any } | null | undefined };
 
 export type CompleteChannelStackCreateJobMutationVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type CompleteChannelStackCreateJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_job_queues_ChannelStackCreateJob_by_pk?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'id'>
-  )> }
-);
+export type CompleteChannelStackCreateJobMutation = { __typename?: 'mutation_root', update_job_queues_ChannelStackCreateJob_by_pk?: { __typename?: 'job_queues_ChannelStackCreateJob', id: any } | null | undefined };
 
 export type FindChannelStackCreateJobByLogicalResourceIdQueryVariables = Exact<{
   stackLogicalResourceId: Scalars['String'];
 }>;
 
 
-export type FindChannelStackCreateJobByLogicalResourceIdQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackCreateJob: Array<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'id' | 'conferenceId' | 'roomId'>
-  )> }
-);
+export type FindChannelStackCreateJobByLogicalResourceIdQuery = { __typename?: 'query_root', job_queues_ChannelStackCreateJob: Array<{ __typename?: 'job_queues_ChannelStackCreateJob', id: any, conferenceId: any, roomId: any }> };
 
 export type FindPotentiallyStuckChannelStackCreateJobsQueryVariables = Exact<{
   past: Scalars['timestamptz'];
 }>;
 
 
-export type FindPotentiallyStuckChannelStackCreateJobsQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackCreateJob: Array<(
-    { __typename?: 'job_queues_ChannelStackCreateJob' }
-    & Pick<Job_Queues_ChannelStackCreateJob, 'stackLogicalResourceId'>
-    & { jobId: Job_Queues_ChannelStackCreateJob['id'] }
-  )> }
-);
+export type FindPotentiallyStuckChannelStackCreateJobsQuery = { __typename?: 'query_root', job_queues_ChannelStackCreateJob: Array<{ __typename?: 'job_queues_ChannelStackCreateJob', stackLogicalResourceId: string, jobId: any }> };
 
 export type ChannelStackSync_GetChannelStackDeleteJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ChannelStackSync_GetChannelStackDeleteJobsQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackDeleteJob: Array<(
-    { __typename?: 'job_queues_ChannelStackDeleteJob' }
-    & Pick<Job_Queues_ChannelStackDeleteJob, 'id' | 'mediaLiveChannelId' | 'cloudFormationStackArn'>
-  )> }
-);
+export type ChannelStackSync_GetChannelStackDeleteJobsQuery = { __typename?: 'query_root', job_queues_ChannelStackDeleteJob: Array<{ __typename?: 'job_queues_ChannelStackDeleteJob', id: any, mediaLiveChannelId: string, cloudFormationStackArn: string }> };
 
 export type ChannelStackSync_GetStuckChannelStackDeleteJobsQueryVariables = Exact<{
   cutoff: Scalars['timestamptz'];
 }>;
 
 
-export type ChannelStackSync_GetStuckChannelStackDeleteJobsQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackDeleteJob: Array<(
-    { __typename?: 'job_queues_ChannelStackDeleteJob' }
-    & Pick<Job_Queues_ChannelStackDeleteJob, 'id' | 'mediaLiveChannelId' | 'cloudFormationStackArn'>
-  )> }
-);
+export type ChannelStackSync_GetStuckChannelStackDeleteJobsQuery = { __typename?: 'query_root', job_queues_ChannelStackDeleteJob: Array<{ __typename?: 'job_queues_ChannelStackDeleteJob', id: any, mediaLiveChannelId: string, cloudFormationStackArn: string }> };
 
 export type ChannelStack_CompleteChannelStackDeleteJobMutationVariables = Exact<{
   cloudFormationStackArn: Scalars['String'];
@@ -37088,37 +37008,19 @@ export type ChannelStack_CompleteChannelStackDeleteJobMutationVariables = Exact<
 }>;
 
 
-export type ChannelStack_CompleteChannelStackDeleteJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_job_queues_ChannelStackDeleteJob?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackDeleteJob_mutation_response' }
-    & Pick<Job_Queues_ChannelStackDeleteJob_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ChannelStack_CompleteChannelStackDeleteJobMutation = { __typename?: 'mutation_root', update_job_queues_ChannelStackDeleteJob?: { __typename?: 'job_queues_ChannelStackDeleteJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type ChannelStackSync_GetChannelStackUpdateJobsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ChannelStackSync_GetChannelStackUpdateJobsQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackUpdateJob: Array<(
-    { __typename?: 'job_queues_ChannelStackUpdateJob' }
-    & Pick<Job_Queues_ChannelStackUpdateJob, 'id' | 'channelStackId' | 'mediaLiveChannelId' | 'cloudFormationStackArn' | 'oldRtmpOutputUri' | 'oldRtmpOutputStreamKey' | 'oldRtmpOutputDestinationId' | 'newRtmpOutputUri' | 'newRtmpOutputStreamKey'>
-  )> }
-);
+export type ChannelStackSync_GetChannelStackUpdateJobsQuery = { __typename?: 'query_root', job_queues_ChannelStackUpdateJob: Array<{ __typename?: 'job_queues_ChannelStackUpdateJob', id: any, channelStackId?: any | null | undefined, mediaLiveChannelId: string, cloudFormationStackArn: string, oldRtmpOutputUri?: string | null | undefined, oldRtmpOutputStreamKey?: string | null | undefined, oldRtmpOutputDestinationId?: string | null | undefined, newRtmpOutputUri?: string | null | undefined, newRtmpOutputStreamKey?: string | null | undefined }> };
 
 export type ChannelStackSync_GetStuckChannelStackUpdateJobsQueryVariables = Exact<{
   cutoff: Scalars['timestamptz'];
 }>;
 
 
-export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = (
-  { __typename?: 'query_root' }
-  & { job_queues_ChannelStackUpdateJob: Array<(
-    { __typename?: 'job_queues_ChannelStackUpdateJob' }
-    & Pick<Job_Queues_ChannelStackUpdateJob, 'id' | 'channelStackId' | 'mediaLiveChannelId' | 'cloudFormationStackArn'>
-  )> }
-);
+export type ChannelStackSync_GetStuckChannelStackUpdateJobsQuery = { __typename?: 'query_root', job_queues_ChannelStackUpdateJob: Array<{ __typename?: 'job_queues_ChannelStackUpdateJob', id: any, channelStackId?: any | null | undefined, mediaLiveChannelId: string, cloudFormationStackArn: string }> };
 
 export type ChannelStack_UpdateChannelStackMutationVariables = Exact<{
   mediaLiveChannelId: Scalars['String'];
@@ -37128,13 +37030,7 @@ export type ChannelStack_UpdateChannelStackMutationVariables = Exact<{
 }>;
 
 
-export type ChannelStack_UpdateChannelStackMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_video_ChannelStack?: Maybe<(
-    { __typename?: 'video_ChannelStack_mutation_response' }
-    & Pick<Video_ChannelStack_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ChannelStack_UpdateChannelStackMutation = { __typename?: 'mutation_root', update_video_ChannelStack?: { __typename?: 'video_ChannelStack_mutation_response', affected_rows: number } | null | undefined };
 
 export type ChannelStack_SetChannelStackUpdateJobStatusMutationVariables = Exact<{
   cloudFormationStackArn: Scalars['String'];
@@ -37143,13 +37039,7 @@ export type ChannelStack_SetChannelStackUpdateJobStatusMutationVariables = Exact
 }>;
 
 
-export type ChannelStack_SetChannelStackUpdateJobStatusMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_job_queues_ChannelStackUpdateJob?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackUpdateJob_mutation_response' }
-    & Pick<Job_Queues_ChannelStackUpdateJob_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ChannelStack_SetChannelStackUpdateJobStatusMutation = { __typename?: 'mutation_root', update_job_queues_ChannelStackUpdateJob?: { __typename?: 'job_queues_ChannelStackUpdateJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables = Exact<{
   mediaLiveChannelId: Scalars['String'];
@@ -37158,30 +37048,14 @@ export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutationVariables =
 }>;
 
 
-export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_job_queues_ChannelStackUpdateJob?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackUpdateJob_mutation_response' }
-    & Pick<Job_Queues_ChannelStackUpdateJob_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ChannelStack_SetChannelStackUpdateJobStatusByMlciMutation = { __typename?: 'mutation_root', update_job_queues_ChannelStackUpdateJob?: { __typename?: 'job_queues_ChannelStackUpdateJob_mutation_response', affected_rows: number } | null | undefined };
 
 export type GetChannelStackByRoomQueryVariables = Exact<{
   roomId: Scalars['uuid'];
 }>;
 
 
-export type GetChannelStackByRoomQuery = (
-  { __typename?: 'query_root' }
-  & { room_Room_by_pk?: Maybe<(
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id' | 'conferenceId'>
-    & { channelStack?: Maybe<(
-      { __typename?: 'video_ChannelStack' }
-      & Pick<Video_ChannelStack, 'id' | 'mediaLiveChannelId' | 'mp4InputAttachmentName' | 'rtmpAInputAttachmentName' | 'rtmpBInputAttachmentName' | 'loopingMp4InputAttachmentName'>
-    )> }
-  )> }
-);
+export type GetChannelStackByRoomQuery = { __typename?: 'query_root', room_Room_by_pk?: { __typename?: 'room_Room', id: any, conferenceId: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaLiveChannelId: string, mp4InputAttachmentName: string, rtmpAInputAttachmentName: string, rtmpBInputAttachmentName?: string | null | undefined, loopingMp4InputAttachmentName: string } | null | undefined } | null | undefined };
 
 export type CreateChannelStackMutationVariables = Exact<{
   cloudFormationStackArn: Scalars['String'];
@@ -37208,73 +37082,35 @@ export type CreateChannelStackMutationVariables = Exact<{
 }>;
 
 
-export type CreateChannelStackMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_video_ChannelStack_one?: Maybe<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id'>
-  )> }
-);
+export type CreateChannelStackMutation = { __typename?: 'mutation_root', insert_video_ChannelStack_one?: { __typename?: 'video_ChannelStack', id: any } | null | undefined };
 
 export type ChannelStack_DeleteMutationVariables = Exact<{
   channelStackId: Scalars['uuid'];
 }>;
 
 
-export type ChannelStack_DeleteMutation = (
-  { __typename?: 'mutation_root' }
-  & { delete_video_ChannelStack_by_pk?: Maybe<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id' | 'cloudFormationStackArn'>
-  )> }
-);
+export type ChannelStack_DeleteMutation = { __typename?: 'mutation_root', delete_video_ChannelStack_by_pk?: { __typename?: 'video_ChannelStack', id: any, cloudFormationStackArn?: string | null | undefined } | null | undefined };
 
 export type FindChannelStacksByStackArnQueryVariables = Exact<{
   stackArn: Scalars['String'];
 }>;
 
 
-export type FindChannelStacksByStackArnQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack: Array<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id'>
-  )> }
-);
+export type FindChannelStacksByStackArnQuery = { __typename?: 'query_root', video_ChannelStack: Array<{ __typename?: 'video_ChannelStack', id: any }> };
 
 export type ChannelStack_DetachMutationVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type ChannelStack_DetachMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_video_ChannelStack_by_pk?: Maybe<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id'>
-  )> }
-);
+export type ChannelStack_DetachMutation = { __typename?: 'mutation_root', update_video_ChannelStack_by_pk?: { __typename?: 'video_ChannelStack', id: any } | null | undefined };
 
 export type ChannelStack_UpdateJob_GetChannelStackQueryVariables = Exact<{
   channelStackId: Scalars['uuid'];
 }>;
 
 
-export type ChannelStack_UpdateJob_GetChannelStackQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack_by_pk?: Maybe<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id' | 'cloudFormationStackArn' | 'rtmpOutputUri' | 'rtmpOutputStreamKey' | 'rtmpOutputDestinationId'>
-    & { room?: Maybe<(
-      { __typename?: 'room_Room' }
-      & Pick<Room_Room, 'id'>
-      & { rtmpOutput?: Maybe<(
-        { __typename?: 'video_RoomRtmpOutput' }
-        & Pick<Video_RoomRtmpOutput, 'id' | 'url' | 'streamKey'>
-      )> }
-    )> }
-  )> }
-);
+export type ChannelStack_UpdateJob_GetChannelStackQuery = { __typename?: 'query_root', video_ChannelStack_by_pk?: { __typename?: 'video_ChannelStack', id: any, cloudFormationStackArn?: string | null | undefined, rtmpOutputUri?: string | null | undefined, rtmpOutputStreamKey?: string | null | undefined, rtmpOutputDestinationId?: string | null | undefined, room?: { __typename?: 'room_Room', id: any, rtmpOutput?: { __typename?: 'video_RoomRtmpOutput', id: any, url: string, streamKey: string } | null | undefined } | null | undefined } | null | undefined };
 
 export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
   channelStackId: Scalars['uuid'];
@@ -37288,26 +37124,14 @@ export type ChannelStack_CreateChannelStackUpdateJobMutationVariables = Exact<{
 }>;
 
 
-export type ChannelStack_CreateChannelStackUpdateJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_job_queues_ChannelStackUpdateJob_one?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackUpdateJob' }
-    & Pick<Job_Queues_ChannelStackUpdateJob, 'id'>
-  )> }
-);
+export type ChannelStack_CreateChannelStackUpdateJobMutation = { __typename?: 'mutation_root', insert_job_queues_ChannelStackUpdateJob_one?: { __typename?: 'job_queues_ChannelStackUpdateJob', id: any } | null | undefined };
 
 export type ChannelStack_GetChannelStackCloudFormationStackArnQueryVariables = Exact<{
   channelStackId: Scalars['uuid'];
 }>;
 
 
-export type ChannelStack_GetChannelStackCloudFormationStackArnQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack_by_pk?: Maybe<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id' | 'cloudFormationStackArn'>
-  )> }
-);
+export type ChannelStack_GetChannelStackCloudFormationStackArnQuery = { __typename?: 'query_root', video_ChannelStack_by_pk?: { __typename?: 'video_ChannelStack', id: any, cloudFormationStackArn?: string | null | undefined } | null | undefined };
 
 export type ChannelStack_CreateChannelStackDeleteJobMutationVariables = Exact<{
   cloudFormationStackArn: Scalars['String'];
@@ -37315,25 +37139,12 @@ export type ChannelStack_CreateChannelStackDeleteJobMutationVariables = Exact<{
 }>;
 
 
-export type ChannelStack_CreateChannelStackDeleteJobMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_job_queues_ChannelStackDeleteJob_one?: Maybe<(
-    { __typename?: 'job_queues_ChannelStackDeleteJob' }
-    & Pick<Job_Queues_ChannelStackDeleteJob, 'id'>
-  )> }
-);
+export type ChannelStack_CreateChannelStackDeleteJobMutation = { __typename?: 'mutation_root', insert_job_queues_ChannelStackDeleteJob_one?: { __typename?: 'job_queues_ChannelStackDeleteJob', id: any } | null | undefined };
 
 export type ChannelStack_GetChannelStacksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ChannelStack_GetChannelStacksQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack: Array<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'conferenceId' | 'mediaLiveChannelId' | 'roomId'>
-    & { channelStackId: Video_ChannelStack['id'] }
-  )> }
-);
+export type ChannelStack_GetChannelStacksQuery = { __typename?: 'query_root', video_ChannelStack: Array<{ __typename?: 'video_ChannelStack', conferenceId: any, mediaLiveChannelId: string, roomId?: any | null | undefined, channelStackId: any }> };
 
 export type ChannelStack_GetFirstSyncableEventQueryVariables = Exact<{
   mediaLiveChannelId: Scalars['String'];
@@ -37342,27 +37153,7 @@ export type ChannelStack_GetFirstSyncableEventQueryVariables = Exact<{
 }>;
 
 
-export type ChannelStack_GetFirstSyncableEventQuery = (
-  { __typename?: 'query_root' }
-  & { video_ChannelStack: Array<(
-    { __typename?: 'video_ChannelStack' }
-    & Pick<Video_ChannelStack, 'id' | 'conferenceId'>
-    & { room?: Maybe<(
-      { __typename?: 'room_Room' }
-      & Pick<Room_Room, 'id'>
-      & { immediateEvent: Array<(
-        { __typename?: 'schedule_Event' }
-        & Pick<Schedule_Event, 'id'>
-      )>, delayedImmediateEvent: Array<(
-        { __typename?: 'schedule_Event' }
-        & Pick<Schedule_Event, 'id'>
-      )>, fixedEvent: Array<(
-        { __typename?: 'schedule_Event' }
-        & Pick<Schedule_Event, 'id'>
-      )> }
-    )> }
-  )> }
-);
+export type ChannelStack_GetFirstSyncableEventQuery = { __typename?: 'query_root', video_ChannelStack: Array<{ __typename?: 'video_ChannelStack', id: any, conferenceId: any, room?: { __typename?: 'room_Room', id: any, immediateEvent: Array<{ __typename?: 'schedule_Event', id: any }>, delayedImmediateEvent: Array<{ __typename?: 'schedule_Event', id: any }>, fixedEvent: Array<{ __typename?: 'schedule_Event', id: any }> } | null | undefined }> };
 
 export type ConferenceConfiguration_GetConfigurationValueQueryVariables = Exact<{
   key: Conference_ConfigurationKey_Enum;
@@ -37370,26 +37161,14 @@ export type ConferenceConfiguration_GetConfigurationValueQueryVariables = Exact<
 }>;
 
 
-export type ConferenceConfiguration_GetConfigurationValueQuery = (
-  { __typename?: 'query_root' }
-  & { conference_Configuration_by_pk?: Maybe<(
-    { __typename?: 'conference_Configuration' }
-    & Pick<Conference_Configuration, 'conferenceId' | 'key' | 'value'>
-  )> }
-);
+export type ConferenceConfiguration_GetConfigurationValueQuery = { __typename?: 'query_root', conference_Configuration_by_pk?: { __typename?: 'conference_Configuration', conferenceId: any, key: Conference_ConfigurationKey_Enum, value: any } | null | undefined };
 
 export type ContentElement_GetElementQueryVariables = Exact<{
   elementId: Scalars['uuid'];
 }>;
 
 
-export type ContentElement_GetElementQuery = (
-  { __typename?: 'query_root' }
-  & { content_Element_by_pk?: Maybe<(
-    { __typename?: 'content_Element' }
-    & Pick<Content_Element, 'id' | 'data' | 'conferenceId'>
-  )> }
-);
+export type ContentElement_GetElementQuery = { __typename?: 'query_root', content_Element_by_pk?: { __typename?: 'content_Element', id: any, data: any, conferenceId: any } | null | undefined };
 
 export type ImmediateSwitch_CompleteMutationVariables = Exact<{
   immediateSwitchId: Scalars['uuid'];
@@ -37397,13 +37176,7 @@ export type ImmediateSwitch_CompleteMutationVariables = Exact<{
 }>;
 
 
-export type ImmediateSwitch_CompleteMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_video_ImmediateSwitch_by_pk?: Maybe<(
-    { __typename?: 'video_ImmediateSwitch' }
-    & Pick<Video_ImmediateSwitch, 'id'>
-  )> }
-);
+export type ImmediateSwitch_CompleteMutation = { __typename?: 'mutation_root', update_video_ImmediateSwitch_by_pk?: { __typename?: 'video_ImmediateSwitch', id: any } | null | undefined };
 
 export type ImmediateSwitch_FailMutationVariables = Exact<{
   immediateSwitchId: Scalars['uuid'];
@@ -37411,39 +37184,21 @@ export type ImmediateSwitch_FailMutationVariables = Exact<{
 }>;
 
 
-export type ImmediateSwitch_FailMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_video_ImmediateSwitch_by_pk?: Maybe<(
-    { __typename?: 'video_ImmediateSwitch' }
-    & Pick<Video_ImmediateSwitch, 'id'>
-  )> }
-);
+export type ImmediateSwitch_FailMutation = { __typename?: 'mutation_root', update_video_ImmediateSwitch_by_pk?: { __typename?: 'video_ImmediateSwitch', id: any } | null | undefined };
 
 export type ScheduleService_GetRoomsWithBroadcastEventsQueryVariables = Exact<{
   now: Scalars['timestamptz'];
 }>;
 
 
-export type ScheduleService_GetRoomsWithBroadcastEventsQuery = (
-  { __typename?: 'query_root' }
-  & { room_Room: Array<(
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id'>
-  )> }
-);
+export type ScheduleService_GetRoomsWithBroadcastEventsQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any }> };
 
 export type LocalSchedule_GetEventScheduleQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type LocalSchedule_GetEventScheduleQuery = (
-  { __typename?: 'query_root' }
-  & { schedule_Event_by_pk?: Maybe<(
-    { __typename?: 'schedule_Event' }
-    & LocalSchedule_EventDetailsFragment
-  )> }
-);
+export type LocalSchedule_GetEventScheduleQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined, startTime: any, intendedRoomModeName: Room_Mode_Enum, item?: { __typename?: 'content_Item', id: any, elements: Array<{ __typename?: 'content_Element', id: any, data: any }> } | null | undefined, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, rtmpInputName: Video_RtmpInput_Enum } | null | undefined } | null | undefined };
 
 export type LocalSchedule_GetScheduleQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -37452,29 +37207,9 @@ export type LocalSchedule_GetScheduleQueryVariables = Exact<{
 }>;
 
 
-export type LocalSchedule_GetScheduleQuery = (
-  { __typename?: 'query_root' }
-  & { schedule_Event: Array<(
-    { __typename?: 'schedule_Event' }
-    & LocalSchedule_EventDetailsFragment
-  )> }
-);
+export type LocalSchedule_GetScheduleQuery = { __typename?: 'query_root', schedule_Event: Array<{ __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined, startTime: any, intendedRoomModeName: Room_Mode_Enum, item?: { __typename?: 'content_Item', id: any, elements: Array<{ __typename?: 'content_Element', id: any, data: any }> } | null | undefined, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, rtmpInputName: Video_RtmpInput_Enum } | null | undefined }> };
 
-export type LocalSchedule_EventDetailsFragment = (
-  { __typename?: 'schedule_Event' }
-  & Pick<Schedule_Event, 'id' | 'endTime' | 'startTime' | 'intendedRoomModeName'>
-  & { item?: Maybe<(
-    { __typename?: 'content_Item' }
-    & Pick<Content_Item, 'id'>
-    & { elements: Array<(
-      { __typename?: 'content_Element' }
-      & Pick<Content_Element, 'id' | 'data'>
-    )> }
-  )>, eventVonageSession?: Maybe<(
-    { __typename?: 'video_EventVonageSession' }
-    & Pick<Video_EventVonageSession, 'id' | 'rtmpInputName'>
-  )> }
-);
+export type LocalSchedule_EventDetailsFragment = { __typename?: 'schedule_Event', id: any, endTime?: any | null | undefined, startTime: any, intendedRoomModeName: Room_Mode_Enum, item?: { __typename?: 'content_Item', id: any, elements: Array<{ __typename?: 'content_Element', id: any, data: any }> } | null | undefined, eventVonageSession?: { __typename?: 'video_EventVonageSession', id: any, rtmpInputName: Video_RtmpInput_Enum } | null | undefined };
 
 export type ScheduleService_UpdateRtmpInputsMutationVariables = Exact<{
   evenIds: Array<Scalars['uuid']> | Scalars['uuid'];
@@ -37484,16 +37219,7 @@ export type ScheduleService_UpdateRtmpInputsMutationVariables = Exact<{
 }>;
 
 
-export type ScheduleService_UpdateRtmpInputsMutation = (
-  { __typename?: 'mutation_root' }
-  & { update_EvenEventVonageSessions?: Maybe<(
-    { __typename?: 'video_EventVonageSession_mutation_response' }
-    & Pick<Video_EventVonageSession_Mutation_Response, 'affected_rows'>
-  )>, update_OddEventVonageSessions?: Maybe<(
-    { __typename?: 'video_EventVonageSession_mutation_response' }
-    & Pick<Video_EventVonageSession_Mutation_Response, 'affected_rows'>
-  )> }
-);
+export type ScheduleService_UpdateRtmpInputsMutation = { __typename?: 'mutation_root', update_EvenEventVonageSessions?: { __typename?: 'video_EventVonageSession_mutation_response', affected_rows: number } | null | undefined, update_OddEventVonageSessions?: { __typename?: 'video_EventVonageSession_mutation_response', affected_rows: number } | null | undefined };
 
 export type LocalSchedule_GetRoomsWithEventsStartingQueryVariables = Exact<{
   from?: Maybe<Scalars['timestamptz']>;
@@ -37501,17 +37227,7 @@ export type LocalSchedule_GetRoomsWithEventsStartingQueryVariables = Exact<{
 }>;
 
 
-export type LocalSchedule_GetRoomsWithEventsStartingQuery = (
-  { __typename?: 'query_root' }
-  & { room_Room: Array<(
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id' | 'conferenceId'>
-    & { channelStack?: Maybe<(
-      { __typename?: 'video_ChannelStack' }
-      & Pick<Video_ChannelStack, 'id' | 'mediaLiveChannelId'>
-    )> }
-  )> }
-);
+export type LocalSchedule_GetRoomsWithEventsStartingQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, conferenceId: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaLiveChannelId: string } | null | undefined }> };
 
 export type LocalSchedule_GetRoomsWithoutEventsQueryVariables = Exact<{
   from?: Maybe<Scalars['timestamptz']>;
@@ -37519,57 +37235,21 @@ export type LocalSchedule_GetRoomsWithoutEventsQueryVariables = Exact<{
 }>;
 
 
-export type LocalSchedule_GetRoomsWithoutEventsQuery = (
-  { __typename?: 'query_root' }
-  & { room_Room: Array<(
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id' | 'conferenceId'>
-    & { channelStack?: Maybe<(
-      { __typename?: 'video_ChannelStack' }
-      & Pick<Video_ChannelStack, 'id' | 'mediaLiveChannelId'>
-    )> }
-  )> }
-);
+export type LocalSchedule_GetRoomsWithoutEventsQuery = { __typename?: 'query_root', room_Room: Array<{ __typename?: 'room_Room', id: any, conferenceId: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaLiveChannelId: string } | null | undefined }> };
 
 export type LocalSchedule_GetEventQueryVariables = Exact<{
   eventId: Scalars['uuid'];
 }>;
 
 
-export type LocalSchedule_GetEventQuery = (
-  { __typename?: 'query_root' }
-  & { schedule_Event_by_pk?: Maybe<(
-    { __typename?: 'schedule_Event' }
-    & LocalSchedule_EventFragment
-  )> }
-);
+export type LocalSchedule_GetEventQuery = { __typename?: 'query_root', schedule_Event_by_pk?: { __typename?: 'schedule_Event', id: any, conferenceId: any, endTime?: any | null | undefined, startTime: any, eventVonageSession?: { __typename?: 'video_EventVonageSession', rtmpInputName: Video_RtmpInput_Enum } | null | undefined, room: { __typename?: 'room_Room', id: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaLiveChannelId: string, rtmpAInputAttachmentName: string, rtmpBInputAttachmentName?: string | null | undefined, mp4InputAttachmentName: string, loopingMp4InputAttachmentName: string } | null | undefined } } | null | undefined };
 
-export type LocalSchedule_EventFragment = (
-  { __typename?: 'schedule_Event' }
-  & Pick<Schedule_Event, 'id' | 'conferenceId' | 'endTime' | 'startTime'>
-  & { eventVonageSession?: Maybe<(
-    { __typename?: 'video_EventVonageSession' }
-    & Pick<Video_EventVonageSession, 'rtmpInputName'>
-  )>, room: (
-    { __typename?: 'room_Room' }
-    & Pick<Room_Room, 'id'>
-    & { channelStack?: Maybe<(
-      { __typename?: 'video_ChannelStack' }
-      & Pick<Video_ChannelStack, 'id' | 'mediaLiveChannelId' | 'rtmpAInputAttachmentName' | 'rtmpBInputAttachmentName' | 'mp4InputAttachmentName' | 'loopingMp4InputAttachmentName'>
-    )> }
-  ) }
-);
+export type LocalSchedule_EventFragment = { __typename?: 'schedule_Event', id: any, conferenceId: any, endTime?: any | null | undefined, startTime: any, eventVonageSession?: { __typename?: 'video_EventVonageSession', rtmpInputName: Video_RtmpInput_Enum } | null | undefined, room: { __typename?: 'room_Room', id: any, channelStack?: { __typename?: 'video_ChannelStack', id: any, mediaLiveChannelId: string, rtmpAInputAttachmentName: string, rtmpBInputAttachmentName?: string | null | undefined, mp4InputAttachmentName: string, loopingMp4InputAttachmentName: string } | null | undefined } };
 
 export type VonageService_FindEventsWithMissingVonageSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type VonageService_FindEventsWithMissingVonageSessionQuery = (
-  { __typename?: 'query_root' }
-  & { schedule_Event: Array<(
-    { __typename?: 'schedule_Event' }
-    & Pick<Schedule_Event, 'id' | 'conferenceId'>
-  )> }
-);
+export type VonageService_FindEventsWithMissingVonageSessionQuery = { __typename?: 'query_root', schedule_Event: Array<{ __typename?: 'schedule_Event', id: any, conferenceId: any }> };
 
 export type VonageService_CreateEventVonageSessionMutationVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -37578,13 +37258,7 @@ export type VonageService_CreateEventVonageSessionMutationVariables = Exact<{
 }>;
 
 
-export type VonageService_CreateEventVonageSessionMutation = (
-  { __typename?: 'mutation_root' }
-  & { insert_video_EventVonageSession_one?: Maybe<(
-    { __typename?: 'video_EventVonageSession' }
-    & Pick<Video_EventVonageSession, 'id'>
-  )> }
-);
+export type VonageService_CreateEventVonageSessionMutation = { __typename?: 'mutation_root', insert_video_EventVonageSession_one?: { __typename?: 'video_EventVonageSession', id: any } | null | undefined };
 
 export const LocalSchedule_EventDetailsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LocalSchedule_EventDetails"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"schedule_Event"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"elements"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"typeName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"EnumValue","value":"VIDEO_BROADCAST"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"createdAt"},"value":{"kind":"EnumValue","value":"desc_nulls_last"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"data"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpInputName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intendedRoomModeName"}}]}}]} as unknown as DocumentNode<LocalSchedule_EventDetailsFragment, unknown>;
 export const LocalSchedule_EventFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LocalSchedule_Event"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"schedule_Event"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"eventVonageSession"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rtmpInputName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"channelStack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mediaLiveChannelId"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpAInputAttachmentName"}},{"kind":"Field","name":{"kind":"Name","value":"rtmpBInputAttachmentName"}},{"kind":"Field","name":{"kind":"Name","value":"mp4InputAttachmentName"}},{"kind":"Field","name":{"kind":"Name","value":"loopingMp4InputAttachmentName"}}]}}]}}]}}]} as unknown as DocumentNode<LocalSchedule_EventFragment, unknown>;

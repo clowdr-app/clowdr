@@ -1,6 +1,6 @@
+import { assert } from "@midspace/assert";
 import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
-import assert from "assert";
 import { useEffect, useState } from "react";
 import type {
     Collection_Tag_Insert_Input,
@@ -637,7 +637,7 @@ export function useSaveScheduleDiff():
                         let ok = false;
                         try {
                             const existingEvent = original.events.get(event.id);
-                            assert(existingEvent);
+                            assert.truthy(existingEvent);
 
                             await updateEventMutation(
                                 {

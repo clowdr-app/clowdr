@@ -274,7 +274,7 @@ function AddItemExhibitionBody({
                             );
 
                             onClose();
-                        } catch (e) {
+                        } catch (e: any) {
                             toast({
                                 title: "Error linking exhibition",
                                 description: e.message ?? e.toString(),
@@ -443,7 +443,7 @@ function ItemExhibitionsList({
                                             },
                                         }
                                     );
-                                } catch (e) {
+                                } catch (e: any) {
                                     toast({
                                         title: "Error unlinking item",
                                         description: e.message ?? e.toString(),

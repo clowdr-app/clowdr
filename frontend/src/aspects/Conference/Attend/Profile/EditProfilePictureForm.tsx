@@ -52,7 +52,10 @@ export default function EditProfilePitureForm({
 
         uppy?.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes, registrant.id]);

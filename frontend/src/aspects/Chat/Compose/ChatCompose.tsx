@@ -1,5 +1,4 @@
-import type {
-    BoxProps} from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -13,6 +12,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
@@ -20,7 +20,6 @@ import "@uppy/drag-drop/dist/style.css";
 import { StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import assert from "assert";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { FAIcon } from "../../Icons/FAIcon";
@@ -163,7 +162,10 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
 
         uppy.use(AwsS3Multipart, {
             limit: 4,
-            companionUrl: import.meta.env.SNOWPACK_PUBLIC_COMPANION_BASE_URL,
+            companionUrl:
+                typeof import.meta.env.VITE_COMPANION_BASE_URL === "string"
+                    ? import.meta.env.VITE_COMPANION_BASE_URL
+                    : "",
         });
         return uppy;
     }, [allowedFileTypes]);
@@ -213,13 +215,11 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
 
                 try {
                     const { bucket, key } = new AmazonS3URI(result.successful[0].uploadURL);
-                    assert(bucket);
-                    assert(key);
+                    assert.truthy(bucket);
+                    assert.truthy(key);
 
                     uppy.reset();
-                    const url = `https://${bucket}.s3-${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${key}`;
+                    const url = `https://${bucket}.s3-${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${key}`;
                     let type: MediaType;
                     switch (finalFiles[0].type) {
                         case "image/bmp":
@@ -307,7 +307,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                         alt: "No alt text provided.",
                     };
                     composeCtx.setFile({ file: finalFiles[0], data: mediaData });
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to submit file", e);
                     toast({
                         status: "error",
@@ -343,7 +343,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
         };
         uppy.on("error", onError);
 
-        const onUploadError = (file: unknown, err: Error) => {
+        const onUploadError = (_file: unknown, err: Error) => {
             console.error("Error while uploading file", { err });
             toast({
                 status: "error",
@@ -454,7 +454,7 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                                         type: ev.target.files[0].type,
                                     },
                                 });
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.info("Error selecting file for chat media upload", e);
                                 if (e.toString().includes("You can only upload")) {
                                     toast({

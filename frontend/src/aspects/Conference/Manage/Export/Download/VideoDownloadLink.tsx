@@ -1,5 +1,5 @@
 import { HStack, Tooltip } from "@chakra-ui/react";
-import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
 import * as R from "ramda";
 import React, { useContext, useMemo } from "react";
 import { DownloadButton } from "../../../../Chakra/LinkButton";

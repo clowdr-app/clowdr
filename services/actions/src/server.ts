@@ -100,7 +100,7 @@ app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, a
     try {
         const result = await invitationConfirmCurrentHandler(params, req.userId);
         return res.json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failure while processing /invitation/confirm/current", e);
         res.status(500).json("Failure");
         return;

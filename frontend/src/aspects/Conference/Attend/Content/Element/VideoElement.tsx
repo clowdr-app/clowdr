@@ -1,6 +1,6 @@
 import { Heading, Text } from "@chakra-ui/react";
-import type { AudioElementBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
+import type { AudioElementBlob, VideoElementBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import type Hls from "hls.js";
 import type { HlsConfig } from "hls.js";
@@ -39,7 +39,7 @@ export function VideoElement({
         }
         const { bucket, key } = new AmazonS3URI(s3Url);
 
-        return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+        return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
     }, [elementData]);
 
     const {
@@ -52,7 +52,7 @@ export function VideoElement({
         } else {
             try {
                 const { bucket, key } = new AmazonS3URI(elementData.subtitles["en_US"].s3Url);
-                const s3Url = `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                const s3Url = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
 
                 const response = await fetch(s3Url);
 
@@ -65,6 +65,7 @@ export function VideoElement({
                 return await new WebVTTConverter(blob).getURL();
             } catch (e) {
                 console.error("Failure while parsing subtitle location", e);
+                throw new Error("Failure while parsing subtitle location");
             }
         }
     }, [elementData.subtitles["en_US"]]);

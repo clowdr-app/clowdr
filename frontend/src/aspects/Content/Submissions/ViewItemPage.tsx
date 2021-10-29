@@ -10,8 +10,8 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import type { VideoFileBlob } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { VideoFileBlob } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import * as R from "ramda";
 import React from "react";
 import { gql } from "urql";

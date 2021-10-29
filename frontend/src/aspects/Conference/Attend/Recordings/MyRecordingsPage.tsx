@@ -148,7 +148,7 @@ export default function MyRecordingsPage(): JSX.Element {
                                                             linkProps={{ m: "3px" }}
                                                             isExternal
                                                             to={`https://${bucket}.s3-${
-                                                                import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
+                                                                import.meta.env.VITE_AWS_REGION
                                                             }.amazonaws.com/${key}`}
                                                             colorScheme="PrimaryActionButton"
                                                         >

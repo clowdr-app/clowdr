@@ -1,15 +1,13 @@
-import type { ExtendedContinuationTo } from "@clowdr-app/shared-types/build/continuation";
-import { ContinuationDefaultFor } from "@clowdr-app/shared-types/build/continuation";
+import type { ExtendedContinuationTo } from "@midspace/shared-types/continuation";
+import { ContinuationDefaultFor } from "@midspace/shared-types/continuation";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
     ContinuationChoices_ContinuationFragment,
     RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment} from "../../../../generated/graphql";
-import {
-    Room_Mode_Enum,
-    Schedule_EventProgramPersonRole_Enum,
+    Room_EventSummaryFragment,
 } from "../../../../generated/graphql";
+import { Room_Mode_Enum, Schedule_EventProgramPersonRole_Enum } from "../../../../generated/graphql";
 import { useRealTime } from "../../../Generic/useRealTime";
 import useCurrentRegistrant from "../../useCurrentRegistrant";
 import ContinuationChoices from "../Continuation/ContinuationChoices";

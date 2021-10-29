@@ -14,7 +14,7 @@ router.use(checkEventSecret);
 router.post("/inserted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ConferencePrepareJobData>>(req.body);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;

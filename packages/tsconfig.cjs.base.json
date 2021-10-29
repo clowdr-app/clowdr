@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        /* Basic Options */
+        "target": "es2020",
+        "module": "CommonJS",
+        "declaration": true,
+        "declarationMap": true,
+        "removeComments": true,
+
+        /* Strict Type-Checking Options */
+        "strict": true,
+        "strictPropertyInitialization": false,
+
+        /* Additional Checks */
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+
+        /* Module Resolution Options */
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+
+        /* Source Map Options */
+        "inlineSourceMap": true,
+
+        /* Experimental Options */
+        "experimentalDecorators": true,
+
+        /* Advanced Options */
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
+    }
+}

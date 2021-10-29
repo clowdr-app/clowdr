@@ -4,8 +4,7 @@ import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
 import wcmatch from "wildcard-match";
-import type {
-    Email_Insert_Input} from "../generated/graphql";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     ConferenceEmailConfigurationDocument,
     GetSendGridConfigDocument,
@@ -15,7 +14,7 @@ import {
     UnmarkUnsentEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import type { EmailTemplateContext} from "../lib/email/emailTemplate";
+import type { EmailTemplateContext } from "../lib/email/emailTemplate";
 import { EmailBuilder, getEmailTemplate } from "../lib/email/emailTemplate";
 import { formatSendingReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
@@ -259,7 +258,7 @@ async function initSGMail(): Promise<
                     : response.data.senderEmail.value,
                 replyTo: response.data.replyTo.value,
             };
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to initialise SendGrid mail", e);
         }
     }

@@ -1,14 +1,14 @@
 import { gql } from "@apollo/client/core";
-import type { Bunyan} from "@eropple/nestjs-bunyan/dist";
+import type { Bunyan } from "@eropple/nestjs-bunyan/dist";
 import { RootLogger } from "@eropple/nestjs-bunyan/dist";
-import type { ClassConstructor} from "class-transformer";
+import type { ClassConstructor } from "class-transformer";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import {
     ConferenceConfiguration_GetConfigurationValueDocument,
     Conference_ConfigurationKey_Enum,
 } from "../../generated/graphql";
-import type { GraphQlService } from "../graphql/graphql.service";
+import { GraphQlService } from "../graphql/graphql.service";
 
 export class ConferenceConfigurationService {
     private readonly logger: Bunyan;

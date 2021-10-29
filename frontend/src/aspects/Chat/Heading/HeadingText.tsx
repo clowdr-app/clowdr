@@ -1,12 +1,12 @@
 import { Heading } from "@chakra-ui/react";
-import assert from "assert";
+import { assert } from "@midspace/assert";
 import React from "react";
 import { Twemoji } from "react-emoji-render";
 import { useChatConfiguration } from "../Configuration";
 
 export function HeadingText(): JSX.Element {
     const config = useChatConfiguration();
-    assert(
+    assert.truthy(
         config.state?.Name !== undefined,
         "config.state is null. Chat state is not available in the current context."
     );

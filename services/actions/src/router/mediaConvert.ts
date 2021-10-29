@@ -1,5 +1,5 @@
-import type { MediaConvertEvent} from "@clowdr-app/shared-types/build/sns/mediaconvert";
-import { TranscodeMode } from "@clowdr-app/shared-types/build/sns/mediaconvert";
+import type { MediaConvertEvent } from "@midspace/shared-types/sns/mediaconvert";
+import { TranscodeMode } from "@midspace/shared-types/sns/mediaconvert";
 import { text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -86,7 +86,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             );
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to complete transcode", e);
                     res.status(500).json("Failed to complete transcode");
                     return;
@@ -118,7 +118,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                                 event.detail.errorMessage
                             );
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to record failed transcode", e);
                     res.status(500).json("Failed to record failed transcode");
                     return;
@@ -127,7 +127,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         res.status(200).json("OK");
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to handle request`, e);
         res.status(500).json("Failure");
     }

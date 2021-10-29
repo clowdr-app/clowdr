@@ -10,7 +10,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";

@@ -3,12 +3,8 @@
 
 import { gql } from "@apollo/client/core";
 import assert from "assert";
-import type {
-    Chat_ReadUpToIndex_Insert_Input} from "../../generated/graphql";
-import {
-    InsertReadUpToIndexDocument,
-    RegistrantIdsFromChatsAndUsersDocument,
-} from "../../generated/graphql";
+import type { Chat_ReadUpToIndex_Insert_Input } from "../../generated/graphql";
+import { InsertReadUpToIndexDocument, RegistrantIdsFromChatsAndUsersDocument } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
 import { getAndClearModified } from "../../lib/cache/readUpToIndex";
 
@@ -82,7 +78,7 @@ async function Main(continueExecuting = false) {
         if (!continueExecuting) {
             process.exit(0);
         }
-    } catch (e) {
+    } catch (e: any) {
         if (
             !e
                 .toString()

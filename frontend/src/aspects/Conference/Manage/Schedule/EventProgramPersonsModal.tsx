@@ -22,8 +22,8 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
@@ -211,7 +211,7 @@ export function AddEventProgramPerson_RegistrantModal({
                 isClosable: true,
                 position: "bottom",
             });
-        } catch (e) {
+        } catch (e: any) {
             setError(e.message || e.toString());
             setAdding(false);
         }
@@ -516,8 +516,8 @@ export function EventProgramPersonsModal({ isOpen, onOpen, onClose, event, progr
                                     }),
                                     makeWhole: (d) => d.personId && (d as EventProgramPersonInfoFragment),
                                     start: async (record) => {
-                                        assert(record.roleName);
-                                        assert(record.personId);
+                                        assert.truthy(record.roleName);
+                                        assert.truthy(record.personId);
                                         const newEventProgramPerson: Schedule_EventProgramPerson_Insert_Input = {
                                             id: uuidv4(),
                                             eventId: event.id,

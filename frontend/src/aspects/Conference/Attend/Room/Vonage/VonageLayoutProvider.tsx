@@ -1,6 +1,6 @@
 import { useDisclosure, useToast } from "@chakra-ui/react";
-import type { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
-import { isVonageSessionLayoutData, VonageSessionLayoutType } from "@clowdr-app/shared-types/build/vonage";
+import type { VonageSessionLayoutData } from "@midspace/shared-types/vonage";
+import { isVonageSessionLayoutData, VonageSessionLayoutType } from "@midspace/shared-types/vonage";
 import { gql } from "@urql/core";
 import type { PropsWithChildren } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";

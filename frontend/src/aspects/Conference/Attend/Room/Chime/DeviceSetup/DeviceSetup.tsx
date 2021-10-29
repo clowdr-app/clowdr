@@ -1,5 +1,4 @@
-import { Box, Button, Heading, HStack } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/toast";
+import { Box, Button, Heading, HStack, useToast } from "@chakra-ui/react";
 import { useMeetingManager } from "amazon-chime-sdk-component-library-react";
 import React, { useCallback, useState } from "react";
 import { CameraDevices } from "./CameraDevices";

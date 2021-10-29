@@ -1,0 +1,15 @@
+{
+    "name": "@midspace/hasura",
+    "private": "true",
+    "author": "Clowdr CIC",
+    "license": "BSD-3-Clause",
+    "scripts": {
+        "console-when-ready": "wait-on http-get://localhost:8080/v1/version && hasura console --console-port 9695 --envfile .env.local",
+        "migrate": "hasura migrate apply --envfile=.env.local",
+        "metadata": "hasura metadata apply --envfile=.env.local",
+        "reload-metadata": "hasura metadata reload --envfile=.env.local"},
+    "engines": {
+        "node": ">=16.x",
+        "pnpm": "^6.19.x"
+    }
+}

@@ -1,3 +1,4 @@
+import { assert } from "@midspace/assert";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import io from "socket.io-client";
@@ -42,9 +43,8 @@ export class RealtimeService {
                 this.socket = undefined;
             }
 
-            const url =
-                import.meta.env.SNOWPACK_PUBLIC_REALTIME_SERVICE_URL ??
-                import.meta.env.SNOWPACK_PUBLIC_PRESENCE_SERVICE_URL;
+            const url = import.meta.env.VITE_REALTIME_SERVICE_URL ?? import.meta.env.VITE_PRESENCE_SERVICE_URL;
+            assert.string(url, "Expected REALTIME_SERVICE_URL or PRESENCE_SERVICE_URL to be defined.");
             this.socket = io(url, {
                 transports: ["websocket"],
                 auth: {

@@ -26,8 +26,8 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
+import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import assert from "assert";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { OperationResult, UseMutationResponse, UseQueryState } from "urql";
@@ -308,7 +308,7 @@ function AddEventPeople_FromContentPanel({
                     isClosable: true,
                     position: "bottom",
                 });
-            } catch (e) {
+            } catch (e: any) {
                 setError(e.message || e.toString());
                 setCopying(false);
             }
@@ -423,11 +423,11 @@ function AddEventPeople_SingleProgramPersonPanel({
         setError(null);
 
         try {
-            assert(selectProgramPeopleQuery.data);
+            assert.truthy(selectProgramPeopleQuery.data);
             const selectedPerson = selectProgramPeopleQuery.data.collection_ProgramPerson.find(
                 (x) => x.id === selectedPersonId
             );
-            assert(selectedPerson);
+            assert.truthy(selectedPerson);
             const newEventPeople: Schedule_EventProgramPerson_Insert_Input[] = [];
             for (const event of events) {
                 const existingEventPeople = event.eventPeople;
@@ -455,7 +455,7 @@ function AddEventPeople_SingleProgramPersonPanel({
                 isClosable: true,
                 position: "bottom",
             });
-        } catch (e) {
+        } catch (e: any) {
             setError(e.message || e.toString());
             setAdding(false);
         }
@@ -607,7 +607,7 @@ function AddEventPeople_FromGroupPanel({
                     }
                 )
                 .toPromise();
-            assert(registrants.data, "API returned no data");
+            assert.truthy(registrants.data, "API returned no data");
             await addRegistrantsToEvent(
                 registrants.data.registrant_Registrant.map((x) => x.id),
                 selectRegistrantsQuery,
@@ -646,7 +646,7 @@ function AddEventPeople_FromGroupPanel({
                 isClosable: true,
                 position: "bottom",
             });
-        } catch (e) {
+        } catch (e: any) {
             setError(e.message || e.toString());
             setAdding(false);
         }
@@ -823,7 +823,7 @@ function AddEventPeople_SingleRegistrantPanel({
                 isClosable: true,
                 position: "bottom",
             });
-        } catch (e) {
+        } catch (e: any) {
             setError(e.message || e.toString());
             setAdding(false);
         }
@@ -886,7 +886,7 @@ function AddEventPeople_SingleRegistrantPanel({
 }
 
 async function insertEventPeople(
-    events: EventInfoFragment[],
+    _events: EventInfoFragment[],
     newEventPeople: Schedule_EventProgramPerson_Insert_Input[],
     insert: UseMutationResponse<
         AddEventPeople_InsertEventPeopleMutation,
@@ -936,7 +936,7 @@ export async function addRegistrantsToEvent(
             personIds.push(personId);
         } else {
             const registrant = selectRegistrantsQuery.data?.registrant_Registrant.find((x) => x.id === registrantId);
-            assert(registrant, `Failed to find registrant ${registrantId}`);
+            assert.truthy(registrant, `Failed to find registrant ${registrantId}`);
             insertProgramPersons.push({
                 name: registrant.displayName,
                 affiliation: registrant.profile?.affiliation,
@@ -960,7 +960,7 @@ export async function addRegistrantsToEvent(
                 },
             }
         );
-        assert(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
+        assert.truthy(newPeople.data?.insert_collection_ProgramPerson?.returning, "Failed to insert content people");
         personIds.push(...newPeople.data.insert_collection_ProgramPerson.returning.map((x) => x.id));
     }
 

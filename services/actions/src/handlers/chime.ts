@@ -10,7 +10,9 @@ export async function handleJoinRoom(
     payload: joinRoomChimeSessionArgs,
     userId: string
 ): Promise<JoinRoomChimeSessionOutput> {
-    const roomConferenceId = await getRoomConferenceId(payload.roomId);
+    const { conferenceId: roomConferenceId, subconferenceId: _roomSubconferenceId } = await getRoomConferenceId(
+        payload.roomId
+    );
     const registrant = await getRegistrant(userId, roomConferenceId);
     const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
 

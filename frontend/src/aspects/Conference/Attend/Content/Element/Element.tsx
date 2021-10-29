@@ -1,6 +1,6 @@
 import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
-import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@midspace/shared-types/content";
+import { Content_ElementType_Enum, isElementDataBlob } from "@midspace/shared-types/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -156,9 +156,7 @@ function ElementInner({
                     return (
                         <Box>
                             <Image
-                                src={`https://${bucket}.s3-${
-                                    import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                                }.amazonaws.com/${key}`}
+                                src={`https://${bucket}.s3-${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${key}`}
                                 alt={
                                     latestVersion.data.altText?.length
                                         ? latestVersion.data.altText
@@ -227,9 +225,7 @@ function ElementInner({
                     if (!bucket || !key) {
                         throw new Error("Missing S3 URI component");
                     }
-                    const url = `https://s3.${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${bucket}/${key}`;
+                    const url = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                     return (
                         <ExternalLinkButton to={url} isExternal={true} colorScheme="PrimaryActionButton">
                             Open {name}
@@ -251,9 +247,7 @@ function ElementInner({
                     if (!bucket || !key) {
                         throw new Error("Missing S3 URI component");
                     }
-                    const url = `https://s3.${
-                        import.meta.env.SNOWPACK_PUBLIC_AWS_REGION
-                    }.amazonaws.com/${bucket}/${key}`;
+                    const url = `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
                     if (
                         key.endsWith(".jpg") ||
                         key.endsWith(".gif") ||

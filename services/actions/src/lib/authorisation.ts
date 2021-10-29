@@ -12,13 +12,13 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
-export class Authorisation {
-    constructor(private sessionVariables: { [key: string]?: string }) {}
+// export class Authorisation {
+//     constructor(private sessionVariables: { [key: string]?: string }) {}
 
-    get userId(): string {
-        return this.sessionVariables["x-hasura-user-id"];
-    }
-}
+//     get userId(): string {
+//         return this.sessionVariables["x-hasura-user-id"];
+//     }
+// }
 
 export async function getRegistrant(userId: string, conferenceId: string): Promise<GetRegistrant_RegistrantFragment> {
     gql`
@@ -147,7 +147,7 @@ export async function registrantBelongsToUser(
         }
 
         return false;
-    } catch (e) {
+    } catch (e: any) {
         return false;
     }
 }
@@ -166,7 +166,7 @@ export async function getRegistrantDetails(registrantId: string): Promise<false 
         }
 
         return false;
-    } catch (e) {
+    } catch (e: any) {
         return false;
     }
 }

@@ -1,7 +1,7 @@
 import { Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
-import type { ElementBlob, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import { ElementBaseType, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { ElementBlob, ElementDataBlob } from "@midspace/shared-types/content";
+import { ElementBaseType, isElementDataBlob } from "@midspace/shared-types/content";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -282,7 +282,7 @@ function BagTile({ bag }: { bag: SwagBagFragment }) {
                 return latestVersion.data.url;
             } else {
                 const { bucket, key } = new AmazonS3URI(latestVersion.data.s3Url);
-                return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+                return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
             }
         } catch {
             return null;

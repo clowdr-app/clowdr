@@ -82,7 +82,7 @@ async function checkS3Url(
             Bucket: bucket,
             Key: key,
         });
-    } catch (e) {
+    } catch (e: any) {
         return {
             result: "error",
             message: "Could not retrieve object from S3",
@@ -148,7 +148,7 @@ router.post("/photo/update", async (req: Request, res: Response) => {
     const params: updateProfilePhotoArgs = req.body.input;
     try {
         assertType<updateProfilePhotoArgs>(params);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: invalid request`, params);
         return res.status(200).json({
             ok: false,
@@ -160,7 +160,7 @@ router.post("/photo/update", async (req: Request, res: Response) => {
         const userId = req.body.session_variables["x-hasura-user-id"];
         const result = await handleUpdateProfilePhoto(userId, params.registrantId, params.s3URL);
         return res.status(200).json(result);
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: profile photo upload failed`);
         return res.status(200).json({
             ok: false,

@@ -305,11 +305,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Video Analytics.csv`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(csvData, fileName);
-                    } else {
-                        csvURL = window.URL.createObjectURL(csvData);
-                    }
+
+                    csvURL = window.URL.createObjectURL(csvData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = csvURL ?? "";
@@ -328,11 +325,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Video Analytics.json`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(jsonData, fileName);
-                    } else {
-                        jsonURL = window.URL.createObjectURL(jsonData);
-                    }
+
+                    jsonURL = window.URL.createObjectURL(jsonData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = jsonURL ?? "";
@@ -515,11 +509,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Room Analytics - ${kind.field}.csv`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(csvData, fileName);
-                    } else {
-                        csvURL = window.URL.createObjectURL(csvData);
-                    }
+
+                    csvURL = window.URL.createObjectURL(csvData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = csvURL ?? "";
@@ -538,11 +529,8 @@ export default function AnalyticsDashboard(): JSX.Element {
                         .getMinutes()
                         .toString()
                         .padStart(2, "0")} - Room Analytics.json`;
-                    if (navigator.msSaveBlob) {
-                        navigator.msSaveBlob(jsonData, fileName);
-                    } else {
-                        jsonURL = window.URL.createObjectURL(jsonData);
-                    }
+
+                    jsonURL = window.URL.createObjectURL(jsonData);
 
                     const tempLink = document.createElement("a");
                     tempLink.href = jsonURL ?? "";

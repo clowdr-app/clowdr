@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client/core";
-import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
-import type { EmailView_SubtitlesGenerated } from "@clowdr-app/shared-types/build/email";
-import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
+import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
+import { AWSJobStatus } from "@midspace/shared-types/content";
+import type { EmailView_SubtitlesGenerated } from "@midspace/shared-types/email";
+import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@midspace/shared-types/email";
 import assert from "assert";
 import { compile } from "handlebars";
 import R from "ramda";

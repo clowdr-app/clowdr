@@ -3,7 +3,7 @@ import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
     YouTubePlaylistDetails,
-} from "@clowdr-app/shared-types/build/registrantGoogleAccount";
+} from "@midspace/shared-types/registrantGoogleAccount";
 import assert from "assert";
 import { IsNumber, IsString, validateSync } from "class-validator";
 import type { OAuth2Client } from "google-auth-library";

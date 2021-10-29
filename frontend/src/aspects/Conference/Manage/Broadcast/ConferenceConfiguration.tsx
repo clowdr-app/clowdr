@@ -65,7 +65,7 @@ function FillerVideoConfiguration({
                 return null;
             }
             const { bucket, key } = new AmazonS3URI(fillerVideos[0]);
-            return `https://s3.${import.meta.env.SNOWPACK_PUBLIC_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
+            return `https://s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${bucket}/${key}`;
         } catch {
             return null;
         }

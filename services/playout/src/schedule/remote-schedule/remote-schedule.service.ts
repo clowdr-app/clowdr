@@ -1,9 +1,9 @@
 import type { ScheduleAction } from "@aws-sdk/client-medialive";
-import type { Bunyan} from "@eropple/nestjs-bunyan";
+import type { Bunyan } from "@eropple/nestjs-bunyan";
 import { RootLogger } from "@eropple/nestjs-bunyan";
 import { Injectable } from "@nestjs/common";
 import { validate } from "uuid";
-import type { MediaLiveService } from "../../aws/medialive/medialive.service";
+import { MediaLiveService } from "../../aws/medialive/medialive.service";
 import { Video_RtmpInput_Enum } from "../../generated/graphql";
 
 @Injectable()

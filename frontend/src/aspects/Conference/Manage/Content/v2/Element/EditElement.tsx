@@ -21,7 +21,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import type { LayoutDataBlob } from "@clowdr-app/shared-types/build/content/layoutData";
+import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import { gql } from "@urql/core";
 import React, { useRef, useState } from "react";
 import type { ManageContent_ElementFragment } from "../../../../../../generated/graphql";

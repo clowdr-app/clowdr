@@ -46,6 +46,7 @@ gql`
 
     fragment ActiveShufflePeriod on room_ShufflePeriod {
         conferenceId
+        subconferenceId
         endAt
         id
         maxRegistrantsPerRoom
@@ -204,6 +205,7 @@ async function allocateToNewRoom(
     capacity: number,
     name: string,
     conferenceId: string,
+    subconferenceId: string | null,
     durationMinutes: number,
     reshuffleUponEnd: boolean,
     entries: UnallocatedShuffleQueueEntryFragment[],
@@ -215,6 +217,7 @@ async function allocateToNewRoom(
             capacity,
             name,
             conferenceId,
+            subconferenceId,
         },
     });
 
@@ -324,6 +327,7 @@ async function attemptToMatchEntry_FCFS(
                     activePeriod.maxRegistrantsPerRoom + 1,
                     activePeriod.name + " room: " + timeStr,
                     activePeriod.conferenceId,
+                    activePeriod.subconferenceId,
                     roomDurationMinutes,
                     reshuffleUponEnd,
                     [...entriesToAllocate, entry],
@@ -385,7 +389,7 @@ async function attemptToMatchEntries(
             try {
                 rooms = rooms.sort((x, y) => x.peopleRegistrantIds.length - y.peopleRegistrantIds.length);
                 await attemptToMatchEntry_FCFS(activePeriod, entry, unallocatedQueueEntries, rooms, allocateNewRooms);
-            } catch (e) {
+            } catch (e: any) {
                 console.error(`Error processing queue entry. Entry: ${entry.id}`, e);
             }
         }
@@ -473,7 +477,7 @@ async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
                         try {
                             console.info(`Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`);
                             await kickRegistrantFromRoom(shuffleRoom.room.id, participant.registrantId);
-                        } catch (e) {
+                        } catch (e: any) {
                             console.error(
                                 `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
                                 e
@@ -490,7 +494,7 @@ async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
                 ids: endedRooms.map((x) => x.id),
             },
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error(`Failed to terminate shuffle rooms. Period: ${period.id}`, e);
     }
 }

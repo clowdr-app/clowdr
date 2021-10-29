@@ -1,4 +1,4 @@
-import type { MediaPackageEvent } from "@clowdr-app/shared-types/build/sns/mediaPackage";
+import type { MediaPackageEvent } from "@midspace/shared-types/sns/mediaPackage";
 import { text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -64,7 +64,7 @@ router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
         }
 
         res.status(200).json("OK");
-    } catch (e) {
+    } catch (e: any) {
         console.error(`${req.originalUrl}: failed to handle request`, e);
         res.status(200).json("Failure");
     }

@@ -1,34 +1,18 @@
 {
-    "name": "clowdr-auth",
-    "version": "1.0.0",
-    "description": "Auth",
-    "main": "build/web-server.js",
-    "engines": {
-        "node": "16.x",
-        "npm": "^7.8.x"
-    },
+    "name": "@midspace/service-auth",
+    "private": true,
     "scripts": {
-        "build": "npm run build-shared && npm run build-this && npm run-script copy-resources",
-        "build-this": "ttsc",
-        "build-shared": "npm run --prefix=../../ --workspace=shared build",
+        "build": "tsc --build && pnpm copy-resources",
+        "clean": "rimraf build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
-        "start": "node build/server.js",
-        "dev-stage2": "tsc-watch --compiler \"ttypescript/bin/tsc\" --onSuccess \"npm run-script --prefix=../../ run-services-auth\"",
-        "dev": "npm run build-shared && node-env-run -E ./.env -e \"npm run dev-stage2\"",
-        "gql-cdg": "npx --no-install -p @graphql-codegen/cli graphql-codegen -- --config codegen.js",
+        "start": "pnpm nf start --procfile Procfile -p 3004",
+        "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
+        "gql-cdg": "pnpm exec graphql-codegen --config codegen.js",
         "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
         "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/clowdr/clowdr-app.git"
-    },
     "author": "Clowdr CIC",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/clowdr/clowdr-app/issues"
-    },
-    "homepage": "https://github.com/clowdr/clowdr-app#readme",
+    "license": "BSD-3-Clause",
     "dependencies": {
         "@graphql-codegen/cli": "^1.21.6",
         "@graphql-codegen/fragment-matcher": "^2.0.1",
@@ -63,6 +47,7 @@
         "express": "^4.17.1",
         "generic-pool": "^3.8.2",
         "graphql": "^15.6.1",
+        "graphql-tag": "^2.12.5",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.5",
         "jwks-rsa": "^2.0.3",
@@ -80,5 +65,9 @@
     },
     "devDependencies": {
         "tsc-watch": "^4.4.0"
+    },
+    "engines": {
+        "node": ">=16.x",
+        "pnpm": "^6.19.x"
     }
 }

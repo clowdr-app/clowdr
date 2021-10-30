@@ -138,11 +138,11 @@ export default function EditSubtitles({
     );
 
     return (
-        <>
+        <React.Fragment>
             {loading ? <Spinner /> : undefined}
             {error || (!loading && !error && !subtitlesData) ? <Text>Could not load subtitles.</Text> : undefined}
             {subtitlesData ? (
-                <>
+                <React.Fragment>
                     <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} />
                     <HStack wrap="wrap">
                         <Alert status="info" my={2} width={{ md: "100%", lg: "auto" }} minWidth="40ch" flex={4}>
@@ -272,18 +272,16 @@ export default function EditSubtitles({
                             )}
                         </VStack>
                     </HStack>
-                    <Box color="black">
-                        <Suspense fallback={<Spinner />}>
-                            <LazyTranscriptEditor
-                                srtTranscript={subtitlesData}
-                                mediaUrl={videoUrl}
-                                handleSaveEditor={saveSubtitles}
-                                handleChange={() => setHasUnsavedChanges(true)}
-                            />
-                        </Suspense>
-                    </Box>
-                </>
+                    <Suspense fallback={<Spinner />}>
+                        <LazyTranscriptEditor
+                            srtTranscript={subtitlesData}
+                            mediaUrl={videoUrl}
+                            handleSaveEditor={saveSubtitles}
+                            handleChange={() => setHasUnsavedChanges(true)}
+                        />
+                    </Suspense>
+                </React.Fragment>
             ) : undefined}
-        </>
+        </React.Fragment>
     );
 }

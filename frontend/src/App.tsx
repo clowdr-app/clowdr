@@ -2,7 +2,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
 import React, { useMemo } from "react";
 import type { RouteComponentProps } from "react-router-dom";
-import { Route, Switch, useLocation } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
 import AppPageV1 from "./aspects/App/AppPageV1";
@@ -22,7 +22,6 @@ import { CurrentRegistrantProvider } from "./aspects/Conference/useCurrentRegist
 import { EmojiFloatProvider } from "./aspects/Emoji/EmojiFloat";
 import ForceUserRefresh from "./aspects/ForceUserRefresh/ForceUserRefresh";
 import { LiveEventsProvider } from "./aspects/LiveEvents/LiveEvents";
-import DownForMaintenancePage from "./aspects/Maintenance/DownForMaintenancePage";
 import { RightSidebarCurrentTabProvider } from "./aspects/Menu/V2/RightSidebar/RightSidebarCurrentTab";
 import { RaiseHandProvider } from "./aspects/RaiseHand/RaiseHandProvider";
 import { EnableRoomParticipantsPollingProvider } from "./aspects/Room/EnableRoomParticipantsPollingContext";
@@ -31,20 +30,20 @@ import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvi
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
 
-function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
+// function useQuery() {
+//     return new URLSearchParams(useLocation().search);
+// }
 
 export default function App(): JSX.Element {
     const chimeTheme = useColorModeValue(lightTheme, darkTheme);
 
-    const query = useQuery();
-    const bypassDfmMatch = query.get("bypassMaintenance");
-    console.info("bypassDfmMatch", bypassDfmMatch);
+    // const query = useQuery();
+    // const bypassDfmMatch = query.get("bypassMaintenance");
+    // console.info("bypassDfmMatch", bypassDfmMatch);
 
-    if (!bypassDfmMatch) {
-        return <DownForMaintenancePage />;
-    }
+    // if (!bypassDfmMatch) {
+    //     return <DownForMaintenancePage />;
+    // }
 
     const routed = useMemo(
         () => (

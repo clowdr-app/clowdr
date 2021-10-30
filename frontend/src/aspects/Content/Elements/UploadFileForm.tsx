@@ -6,6 +6,7 @@ import {
     FormLabel,
     Input,
     ListItem,
+    Spinner,
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
@@ -14,15 +15,17 @@ import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import UploadAgreementField from "./UploadAgreementField";
+
+const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.DragDrop })));
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 export default function UploadFileForm({
     elementId,
@@ -100,7 +103,7 @@ export default function UploadFileForm({
     }, [toast, updateFiles, uppy]);
 
     return (
-        <>
+        <Suspense fallback={<Spinner />}>
             <Formik
                 initialValues={{
                     agree: false,
@@ -239,6 +242,6 @@ export default function UploadFileForm({
                     </>
                 )}
             </Formik>
-        </>
+        </Suspense>
     );
 }

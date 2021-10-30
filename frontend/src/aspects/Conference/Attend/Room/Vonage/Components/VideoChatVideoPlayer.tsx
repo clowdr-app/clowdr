@@ -1,8 +1,9 @@
 import type { ToastId } from "@chakra-ui/react";
-import { Box, useToast } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef } from "react";
+import { Box, Spinner, useToast } from "@chakra-ui/react";
+import React, { Suspense, useCallback, useEffect, useRef } from "react";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
-import { VideoPlayer } from "../../Video/VideoPlayer";
+
+const VideoPlayer = React.lazy(() => import("../../Video/VideoPlayer"));
 
 export default function VideoChatVideoPlayer({ elementId }: { elementId: string }): JSX.Element {
     const isMicOnRef = useRef<boolean>(false);
@@ -95,7 +96,9 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
 
     return (
         <Box>
-            <VideoPlayer elementId={elementId} mode="CONTROLLED" onPlay={onPlay} onPause={onPause} />
+            <Suspense fallback={<Spinner />}>
+                <VideoPlayer elementId={elementId} mode="CONTROLLED" onPlay={onPlay} onPause={onPause} />
+            </Suspense>
         </Box>
     );
 }

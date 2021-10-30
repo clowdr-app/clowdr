@@ -14,7 +14,7 @@ import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useMyBackstagesModal } from "../Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../Rooms/V2/LiveProgramRoomsModal";
-import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModal";
+import { SocialiseModalTab, useSocialiseModal } from "../Rooms/V2/SocialiseModalProvider";
 import { ProgramModalTab, useScheduleModal } from "../Schedule/ProgramModal";
 import ContinuationActiveChoice from "./ContinuationActiveChoice";
 import ContinuationPassiveChoice from "./ContinuationPassiveChoice";

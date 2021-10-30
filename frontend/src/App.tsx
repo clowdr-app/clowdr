@@ -1,17 +1,16 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import { darkTheme, lightTheme, MeetingProvider } from "amazon-chime-sdk-component-library-react";
-import React from "react";
+import React, { Suspense } from "react";
 import "reflect-metadata";
 import { ThemeProvider } from "styled-components";
 import "./App.css";
-import AppPageV1 from "./aspects/App/AppPageV1";
-import AppPageV2 from "./aspects/App/AppPageV2";
 import { AppSettingsProvider } from "./aspects/App/AppSettingsProvider";
+import CenteredSpinner from "./aspects/Chakra/CenteredSpinner";
 import { GlobalChatStateProvider } from "./aspects/Chat/GlobalChatStateProvider";
 import { MyBackstagesModalProvider } from "./aspects/Conference/Attend/Profile/MyBackstages";
 import { PermissionInstructionsProvider } from "./aspects/Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 import { LiveProgramRoomsModalProvider } from "./aspects/Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
-import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModal";
+import { SocialiseModalProvider } from "./aspects/Conference/Attend/Rooms/V2/SocialiseModalProvider";
 import { ScheduleModalProvider } from "./aspects/Conference/Attend/Schedule/ProgramModal";
 import StarredEventsModalProvider from "./aspects/Conference/Attend/Schedule/StarredEventsModal";
 import useConferenceIdUpdater from "./aspects/Conference/ConferenceIdUpdater";
@@ -29,6 +28,9 @@ import RoomParticipantsProvider from "./aspects/Room/RoomParticipantsProvider";
 import { SharedRoomContextProvider } from "./aspects/Room/SharedRoomContextProvider";
 import CurrentUserProvider from "./aspects/Users/CurrentUser/CurrentUserProvider";
 import { useUXChoice, UXChoice } from "./aspects/UXChoice/UXChoice";
+
+const AppPageV2 = React.lazy(() => import("./aspects/App/AppPageV2"));
+const AppPageV1 = React.lazy(() => import("./aspects/App/AppPageV1"));
 
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -63,7 +65,9 @@ export default function App(): JSX.Element {
 function AppInner(): JSX.Element {
     const { conferenceId } = useAuthParameters();
     const { choice } = useUXChoice();
-    const page = choice === UXChoice.V1 ? <AppPageV1 /> : <AppPageV2 />;
+    const page = (
+        <Suspense fallback={<CenteredSpinner />}>{choice === UXChoice.V1 ? <AppPageV1 /> : <AppPageV2 />}</Suspense>
+    );
 
     return (
         <EmojiFloatProvider>

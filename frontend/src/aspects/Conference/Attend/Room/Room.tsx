@@ -13,7 +13,7 @@ import {
 import type { ElementDataBlob, ZoomBlob } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
@@ -36,16 +36,17 @@ import { RoomContent } from "./RoomContent";
 import RoomContinuationChoices from "./RoomContinuationChoices";
 import { RoomControlBar } from "./RoomControlBar";
 import RoomTimeAlert from "./RoomTimeAlert";
-import { Backstages } from "./Stream/Backstages";
 import { UpcomingBackstageBanner } from "./Stream/UpcomingBackstage";
 import { useHLSUri } from "./Stream/useHLSUri";
 import StreamTextCaptions from "./StreamTextCaptions";
 import { useCurrentRoomEvent } from "./useCurrentRoomEvent";
-import { HlsPlayer } from "./Video/HlsPlayer";
-import { HlsPlayerV1 } from "./Video/HlsPlayerV1";
 import { VideoAspectWrapper } from "./Video/VideoAspectWrapper";
-import { VideoPlayer } from "./Video/VideoPlayer";
 import { VideoChatRoom } from "./VideoChat/VideoChatRoom";
+
+const Backstages = React.lazy(() => import("./Stream/Backstages"));
+const VideoPlayer = React.lazy(() => import("./Video/VideoPlayer"));
+const HlsPlayer = React.lazy(() => import("./Video/HlsPlayer"));
+const HlsPlayerV1 = React.lazy(() => import("./Video/HlsPlayerV1"));
 
 gql`
     query Room_GetEvents($roomId: uuid!, $now: timestamptz!, $cutoff: timestamptz!) {
@@ -501,19 +502,21 @@ function RoomInner({
 
     const backStageEl = useMemo(
         () => (
-            <Backstages
-                showBackstage={showBackstage}
-                roomName={roomDetails.name}
-                roomEvents={roomEventsForCurrentRegistrant}
-                currentRoomEventId={currentRoomEvent?.id}
-                nextRoomEventId={nextRoomEvent?.id}
-                selectedEventId={backstageSelectedEventId}
-                setWatchStreamForEventId={setWatchStreamForEventId}
-                onEventSelected={setBackstageSelectedEventId}
-                roomChatId={roomDetails.chatId}
-                onLeave={onLeaveBackstage}
-                hlsUri={hlsUri ?? undefined}
-            />
+            <Suspense fallback={<Spinner />}>
+                <Backstages
+                    showBackstage={showBackstage}
+                    roomName={roomDetails.name}
+                    roomEvents={roomEventsForCurrentRegistrant}
+                    currentRoomEventId={currentRoomEvent?.id}
+                    nextRoomEventId={nextRoomEvent?.id}
+                    selectedEventId={backstageSelectedEventId}
+                    setWatchStreamForEventId={setWatchStreamForEventId}
+                    onEventSelected={setBackstageSelectedEventId}
+                    roomChatId={roomDetails.chatId}
+                    onLeave={onLeaveBackstage}
+                    hlsUri={hlsUri ?? undefined}
+                />
+            </Suspense>
         ),
         [
             showBackstage,
@@ -606,7 +609,9 @@ function RoomInner({
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (
                 <Box pos="relative" ref={videoPlayerRef}>
                     {selectedVideoElementId ? (
-                        <VideoPlayer elementId={selectedVideoElementId} />
+                        <Suspense fallback={<Spinner />}>
+                            <VideoPlayer elementId={selectedVideoElementId} />
+                        </Suspense>
                     ) : (
                         <Center>
                             <AspectRatio
@@ -630,7 +635,7 @@ function RoomInner({
                 <Box pos="relative">
                     <VideoAspectWrapper>
                         {(onAspectRatioChange) => (
-                            <>
+                            <Suspense fallback={<Spinner />}>
                                 {choice === UXChoice.V1 ? (
                                     <HlsPlayerV1
                                         roomId={roomDetails.id}
@@ -647,7 +652,7 @@ function RoomInner({
                                     />
                                 )}
                                 <EmojiFloatContainer chatId={roomDetails.chatId ?? ""} />
-                            </>
+                            </Suspense>
                         )}
                     </VideoAspectWrapper>
                 </Box>

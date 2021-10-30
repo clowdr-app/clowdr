@@ -26,7 +26,7 @@ import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import Backstage from "./Backstage";
 import { isEventNow, isEventSoon } from "./isEventAt";
 
-export function Backstages({
+export default function Backstages({
     showBackstage,
     roomName,
     roomEvents,

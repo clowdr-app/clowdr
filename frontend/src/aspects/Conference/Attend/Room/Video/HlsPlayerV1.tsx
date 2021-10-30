@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { PlayerAnalytics } from "./PlayerAnalytics";
 
-export function HlsPlayerV1({
+export default function HlsPlayerV1({
     roomId,
     hlsUri,
     canPlay,

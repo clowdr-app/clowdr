@@ -1,18 +1,20 @@
-import { Box, Button, Flex, FormControl, FormHelperText, Image, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, Image, Spinner, Text, useToast } from "@chakra-ui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import { gql } from "@urql/core";
 import { Form, Formik } from "formik";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitProfilePhotoMutation } from "../../../../generated/graphql";
 import FAIcon from "../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { RegistrantContextT } from "../../useCurrentRegistrant";
+
+const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.DragDrop })));
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 gql`
     mutation SubmitProfilePhoto($registrantId: uuid!, $s3URL: String!) {
@@ -97,7 +99,7 @@ export default function EditProfilePitureForm({
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     return (
-        <>
+        <Suspense fallback={<Spinner />}>
             <Formik
                 initialValues={{}}
                 onSubmit={async (_values) => {
@@ -279,6 +281,6 @@ export default function EditProfilePitureForm({
                     </>
                 )}
             </Formik>
-        </>
+        </Suspense>
     );
 }

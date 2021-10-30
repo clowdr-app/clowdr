@@ -7,7 +7,7 @@ import { useCountSwagBagsQuery } from "../../../generated/graphql";
 import LogoutButton from "../../Auth/Buttons/LogoutButton";
 import { useMyBackstagesModal } from "../../Conference/Attend/Profile/MyBackstages";
 import { useLiveProgramRoomsModal } from "../../Conference/Attend/Rooms/V2/LiveProgramRoomsModal";
-import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModal";
+import { useSocialiseModal } from "../../Conference/Attend/Rooms/V2/SocialiseModalProvider";
 import { ProgramModalTab, useScheduleModal } from "../../Conference/Attend/Schedule/ProgramModal";
 import { useStarredEventsModal } from "../../Conference/Attend/Schedule/StarredEventsModal";
 import RequireRole from "../../Conference/RequireRole";

@@ -17,10 +17,9 @@ import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Chat_MessageType_Enum } from "../../../generated/graphql";
 import { FAIcon } from "../../Icons/FAIcon";
 import { ChatSpacing, useChatConfiguration } from "../Configuration";
@@ -32,6 +31,8 @@ import { MessageTypeButtons } from "./MessageTypeButtons";
 import { CreatePollOptionsButton } from "./Poll/CreatePollOptionsButton";
 import QuickSendEmote from "./QuickSendEmote";
 import { SendMessageButton } from "./SendMessageButton";
+
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
     const config = useChatConfiguration();
@@ -433,7 +434,9 @@ export function ChatCompose({ ...rest }: BoxProps): JSX.Element {
                 /> */}
             </Box>
             <Flex w="100%" alignItems="stretch" justifyContent="stretch" flexDir="column">
-                <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                <Suspense fallback={null}>
+                    <StatusBar uppy={uppy} hideAfterFinish hideUploadButton />
+                </Suspense>
             </Flex>
             <Flex w="100%" minH="2.4em" alignItems="center">
                 <input

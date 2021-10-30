@@ -1,9 +1,15 @@
-import React, { useMemo } from "react";
+import { Spinner } from "@chakra-ui/react";
+import React, { Suspense, useMemo } from "react";
 import * as portals from "react-reverse-portal";
-import { ChimeRoom } from "../Conference/Attend/Room/Chime/ChimeRoom";
-import { VonageRoom } from "../Conference/Attend/Room/Vonage/VonageRoom";
-import { PermissionInstructionsModal } from "./PermissionInstructionsModal";
 import { SharedRoomContext } from "./useSharedRoomContext";
+
+const PermissionInstructionsModal = React.lazy(() => import("./PermissionInstructionsModal"));
+const ChimeRoom = React.lazy(() =>
+    import("../Conference/Attend/Room/Chime/ChimeRoom").then((x) => ({ default: x.ChimeRoom }))
+);
+const VonageRoom = React.lazy(() =>
+    import("../Conference/Attend/Room/Vonage/VonageRoom").then((x) => ({ default: x.VonageRoom }))
+);
 
 export function SharedRoomContextProvider({
     children,
@@ -18,26 +24,32 @@ export function SharedRoomContextProvider({
     return (
         <>
             <portals.InPortal node={vonageNode}>
-                <VonageRoom
-                    getAccessToken={async () => ""}
-                    eventId={null}
-                    vonageSessionId=""
-                    disable={true}
-                    isBackstageRoom={false}
-                    raiseHandPrejoinEventId={null}
-                    isRaiseHandWaiting={undefined}
-                    requireMicrophoneOrCamera={false}
-                    completeJoinRef={undefined}
-                    canControlRecording={false}
-                    layout={undefined}
-                />
+                <Suspense fallback={<Spinner />}>
+                    <VonageRoom
+                        getAccessToken={async () => ""}
+                        eventId={null}
+                        vonageSessionId=""
+                        disable={true}
+                        isBackstageRoom={false}
+                        raiseHandPrejoinEventId={null}
+                        isRaiseHandWaiting={undefined}
+                        requireMicrophoneOrCamera={false}
+                        completeJoinRef={undefined}
+                        canControlRecording={false}
+                        layout={undefined}
+                    />
+                </Suspense>
             </portals.InPortal>
             <portals.InPortal node={chimeNode}>
-                <ChimeRoom disable={true} roomId="" />
+                <Suspense fallback={<Spinner />}>
+                    <ChimeRoom disable={true} roomId="" />
+                </Suspense>
             </portals.InPortal>
             <SharedRoomContext.Provider value={ctx}>
                 {children}
-                <PermissionInstructionsModal />
+                <Suspense fallback={null}>
+                    <PermissionInstructionsModal />
+                </Suspense>
             </SharedRoomContext.Provider>
         </>
     );

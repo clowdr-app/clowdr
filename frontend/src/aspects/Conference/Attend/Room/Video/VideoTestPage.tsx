@@ -1,9 +1,21 @@
-import { chakra, FormControl, FormLabel, Heading, HStack, Input, Select, Switch, Text } from "@chakra-ui/react";
+import {
+    chakra,
+    FormControl,
+    FormLabel,
+    Heading,
+    HStack,
+    Input,
+    Select,
+    Spinner,
+    Switch,
+    Text,
+} from "@chakra-ui/react";
 import type { ChangeEvent, FocusEvent } from "react";
-import React, { useCallback, useState } from "react";
-import { HlsPlayer } from "./HlsPlayer";
-import { HlsPlayerV1 } from "./HlsPlayerV1";
+import React, { Suspense, useCallback, useState } from "react";
 import { VideoAspectWrapper } from "./VideoAspectWrapper";
+
+const HlsPlayer = React.lazy(() => import("./HlsPlayer"));
+const HlsPlayerV1 = React.lazy(() => import("./HlsPlayerV1"));
 
 const defaultUri = "https://playertest.longtailvideo.com/streams/live-vtt-countdown/live.m3u8";
 
@@ -76,20 +88,22 @@ export function VideoTestPage(): JSX.Element {
             </chakra.form>
 
             {mountPlayer ? (
-                <VideoAspectWrapper>
-                    {(onAspectRatioChange) =>
-                        choice === "v1" ? (
-                            <HlsPlayerV1 canPlay={true} hlsUri={uri} />
-                        ) : (
-                            <HlsPlayer
-                                canPlay={true}
-                                hlsUri={uri}
-                                onAspectRatioChange={onAspectRatioChange}
-                                expectLivestream={expectLivestream ?? undefined}
-                            />
-                        )
-                    }
-                </VideoAspectWrapper>
+                <Suspense fallback={<Spinner />}>
+                    <VideoAspectWrapper>
+                        {(onAspectRatioChange) =>
+                            choice === "v1" ? (
+                                <HlsPlayerV1 canPlay={true} hlsUri={uri} />
+                            ) : (
+                                <HlsPlayer
+                                    canPlay={true}
+                                    hlsUri={uri}
+                                    onAspectRatioChange={onAspectRatioChange}
+                                    expectLivestream={expectLivestream ?? undefined}
+                                />
+                            )
+                        }
+                    </VideoAspectWrapper>
+                </Suspense>
             ) : undefined}
 
             <Text>This is a test of the HLS stream component.</Text>

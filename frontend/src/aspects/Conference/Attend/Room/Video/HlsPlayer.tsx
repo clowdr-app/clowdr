@@ -307,7 +307,7 @@ export function HlsPlayerInner({
     );
 }
 
-export function HlsPlayer(props: HlsPlayerProps): JSX.Element {
+export default function HlsPlayer(props: HlsPlayerProps): JSX.Element {
     return (
         <ErrorBoundary FallbackComponent={HlsPlayerError}>
             <HlsPlayerInner {...props} />

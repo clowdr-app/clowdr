@@ -5,6 +5,7 @@ import {
     Heading,
     List,
     ListItem,
+    Spinner,
     Text,
     UnorderedList,
     useToast,
@@ -26,17 +27,19 @@ import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { DragDrop, StatusBar } from "@uppy/react";
 import "@uppy/status-bar/dist/style.css";
 import AmazonS3URI from "amazon-s3-uri";
 import { Form, Formik } from "formik";
 import * as R from "ramda";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { SrtValidationError } from "srt-validator";
 import srtValidator from "srt-validator";
 import FAIcon from "../../../../../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../../../../../LeavingPageWarnings/UnsavedChangesWarning";
 import type { ElementDescriptor } from "./Types";
+
+const DragDrop = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.DragDrop })));
+const StatusBar = React.lazy(() => import("@uppy/react").then((x) => ({ default: x.StatusBar })));
 
 export default function UploadFileForm_Subtitles({
     item,
@@ -149,7 +152,7 @@ export default function UploadFileForm_Subtitles({
     }, [item.data]);
 
     return latestVersionData ? (
-        <>
+        <Suspense fallback={<Spinner />}>
             <Formik
                 initialValues={{}}
                 onSubmit={async (_values) => {
@@ -277,7 +280,7 @@ export default function UploadFileForm_Subtitles({
                     </>
                 )}
             </Formik>
-        </>
+        </Suspense>
     ) : (
         <></>
     );

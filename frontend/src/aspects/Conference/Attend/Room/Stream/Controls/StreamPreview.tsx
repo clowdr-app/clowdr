@@ -1,10 +1,11 @@
-import { Box, Button, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Box, Button, HStack, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import React, { Suspense, useState } from "react";
 import { gql } from "urql";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
-import { HlsPlayer } from "../../Video/HlsPlayer";
 import { VideoAspectWrapper } from "../../Video/VideoAspectWrapper";
+
+const HlsPlayer = React.lazy(() => import("../../Video/HlsPlayer"));
 
 gql`
     query EnableBackstageStreamPreview($conferenceId: uuid!) {
@@ -49,18 +50,20 @@ export default function StreamPreview({
             bgColor={bgColor}
         >
             <Box pos="relative" w="100%" maxH="240px" overflow="hidden" zIndex={1}>
-                <VideoAspectWrapper>
-                    {(onAspectRatioChange) => (
-                        <HlsPlayer
-                            canPlay={isLive}
-                            hlsUri={hlsUri}
-                            onAspectRatioChange={onAspectRatioChange}
-                            expectLivestream={isLive}
-                            forceMute={isLiveOnAir}
-                            initialMute={true}
-                        />
-                    )}
-                </VideoAspectWrapper>
+                <Suspense fallback={<Spinner />}>
+                    <VideoAspectWrapper>
+                        {(onAspectRatioChange) => (
+                            <HlsPlayer
+                                canPlay={isLive}
+                                hlsUri={hlsUri}
+                                onAspectRatioChange={onAspectRatioChange}
+                                expectLivestream={isLive}
+                                forceMute={isLiveOnAir}
+                                initialMute={true}
+                            />
+                        )}
+                    </VideoAspectWrapper>
+                </Suspense>
             </Box>
             <VStack
                 pos="absolute"

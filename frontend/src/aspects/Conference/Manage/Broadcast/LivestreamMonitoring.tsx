@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import * as R from "ramda";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import type {
     MonitorLivestreams_EventFragment,
@@ -40,8 +40,9 @@ import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import { usePresenceState } from "../../../Realtime/PresenceStateProvider";
-import { HlsPlayer } from "../../Attend/Room/Video/HlsPlayer";
 import { useConference } from "../../useConference";
+
+const HlsPlayer = React.lazy(() => import("../../Attend/Room/Video/HlsPlayer"));
 
 gql`
     query MonitorLivestreams($conferenceId: uuid!, $now: timestamptz!, $later: timestamptz!) {
@@ -586,11 +587,13 @@ function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
                     {name}
                 </Link>
             </Text>
-            {hlsUri ? (
-                <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
-            ) : (
-                <Spinner />
-            )}
+            <Suspense fallback={<Spinner />}>
+                {hlsUri ? (
+                    <HlsPlayer roomId={id} canPlay={true} hlsUri={hlsUri} initialMute={true} expectLivestream={true} />
+                ) : (
+                    <Spinner />
+                )}
+            </Suspense>
         </Box>
     );
 }

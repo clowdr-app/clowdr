@@ -6,7 +6,7 @@ import {
 } from "../Conference/Attend/Room/VideoChat/PermissionInstructions";
 import { PermissionInstructionsContext } from "../Conference/Attend/Room/VideoChat/PermissionInstructionsContext";
 
-export function PermissionInstructionsModal(): JSX.Element {
+export default function PermissionInstructionsModal(): JSX.Element {
     const { permissionsModal, devices, title } = useContext(PermissionInstructionsContext);
 
     return (

@@ -22,7 +22,7 @@ import { useAuthParameters } from "../../../../GQL/AuthParameters";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { VideoElement } from "../../Content/Element/VideoElement";
 
-export function VideoPlayer({
+export default function VideoPlayer({
     elementId,
     mode = "USER_DRIVEN",
     onPlay,

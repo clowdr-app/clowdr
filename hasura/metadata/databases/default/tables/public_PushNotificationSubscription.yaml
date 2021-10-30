@@ -64,9 +64,9 @@ event_triggers:
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
-  name: PushNotificationSubscriptionChanged
+  name: Cache_PushNotificationSubscription
   retry_conf:
     interval_sec: 120
     num_retries: 1
     timeout_sec: 60
-  webhook: "{{REALTIME_BASE_URL}}/pushNotificationSubscription/changed"
+  webhook: "{{CACHES_BASE_URL}}/cache/update/pushNotificationSubscription"

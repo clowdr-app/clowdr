@@ -4,7 +4,13 @@ import type { Request, Response } from "express";
 import express from "express";
 import { is } from "typescript-is";
 import {
+    handleChatCacheUpdate,
+    handleChatPinCacheUpdate,
+    handleChatSubscriptionCacheUpdate,
     handleConferenceCacheUpdate,
+    handleContentItemCacheUpdate,
+    handleEventCacheUpdate,
+    handlePushNotificationSubscriptionCacheUpdate,
     handleRegistrantCacheUpdate,
     handleRoomCacheUpdate,
     handleRoomMembershipCacheUpdate,
@@ -120,6 +126,102 @@ router.post("/user", json() as any, async (req: Request, res: Response) => {
         if (is<Payload<CacheUpdate.UserData>>(req.body)) {
             const payload: Payload<CacheUpdate.UserData> = req.body;
             await handleUserCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/event", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.EventData>>(req.body)) {
+            const payload: Payload<CacheUpdate.EventData> = req.body;
+            await handleEventCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/pushNotificationSubscription", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.PushNotificationSubscriptionData>>(req.body)) {
+            const payload: Payload<CacheUpdate.PushNotificationSubscriptionData> = req.body;
+            await handlePushNotificationSubscriptionCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/chat", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.ChatData>>(req.body)) {
+            const payload: Payload<CacheUpdate.ChatData> = req.body;
+            await handleChatCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/contentItem", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.ContentItemData>>(req.body)) {
+            const payload: Payload<CacheUpdate.ContentItemData> = req.body;
+            await handleContentItemCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/chatPin", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.ChatPinData>>(req.body)) {
+            const payload: Payload<CacheUpdate.ChatPinData> = req.body;
+            await handleChatPinCacheUpdate(payload);
+            res.status(200).json({});
+        } else {
+            throw new Error("Payload did not match expected type.");
+        }
+    } catch (e) {
+        console.error("Failure while handling Hasura cache event", e);
+        res.status(500).json("Failure while handling Hasura cache event");
+        return;
+    }
+});
+
+router.post("/chatSubscription", json() as any, async (req: Request, res: Response) => {
+    try {
+        if (is<Payload<CacheUpdate.ChatSubscriptionData>>(req.body)) {
+            const payload: Payload<CacheUpdate.ChatSubscriptionData> = req.body;
+            await handleChatSubscriptionCacheUpdate(payload);
             res.status(200).json({});
         } else {
             throw new Error("Payload did not match expected type.");

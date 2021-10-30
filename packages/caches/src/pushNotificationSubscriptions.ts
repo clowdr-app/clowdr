@@ -122,10 +122,12 @@ class PushNotificationSubscriptionsCache {
         update: (entity: PushNotificationSubscriptionsEntity) => PushNotificationSubscriptionsEntity | undefined,
         fetchIfNotFound = false
     ): Promise<void> {
-        const entity = await this.getEntity(id, fetchIfNotFound);
+        const entity = await this.getEntity(id, false);
         if (entity) {
             const newEntity = update(entity);
             await this.setEntity(id, newEntity);
+        } else if (fetchIfNotFound) {
+            await this.getEntity(id, true);
         }
     }
 }

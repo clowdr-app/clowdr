@@ -5,8 +5,6 @@ import { gql } from "graphql-tag";
 import { assertType } from "typescript-is";
 import type { FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables } from "../generated/graphql";
 import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
-import { deletePin, insertPin } from "../lib/cache/pin";
-import { deleteSubscription, insertSubscription } from "../lib/cache/subscription";
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
 import { sendNotifications } from "../lib/notifications";
 import { emitter } from "../socket-emitter/socket-emitter";
@@ -22,10 +20,8 @@ export async function subscriptionChanged(req: Request, res: Response, _next?: N
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertSubscription(sub.chatId, sub.registrantId);
             emitter.in(generateChatSubscriptionsChangedRoomName(sub.registrantId)).emit("chat.subscribed", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deleteSubscription(sub.chatId, sub.registrantId);
             emitter
                 .in(generateChatSubscriptionsChangedRoomName(sub.registrantId))
                 .emit("chat.unsubscribed", sub.chatId);
@@ -49,10 +45,8 @@ export async function pinChanged(req: Request, res: Response, _next?: NextFuncti
         assert(sub, "Missing data");
 
         if (data.event.op === "INSERT" || data.event.op === "MANUAL") {
-            await insertPin(sub.chatId, sub.registrantId);
             emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.pinned", sub.chatId);
         } else if (data.event.op === "DELETE") {
-            await deletePin(sub.chatId, sub.registrantId);
             emitter.in(generateChatPinsChangedRoomName(sub.registrantId)).emit("chat.unpinned", sub.chatId);
         }
 

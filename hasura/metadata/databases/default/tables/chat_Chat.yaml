@@ -182,3 +182,30 @@ delete_permissions:
         - subconferenceId:
             _in: X-Hasura-Subconference-Ids
   role: organizer
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - restrictToAdmins
+      - conferenceId
+      - enableMandatoryPin
+      - remoteServiceId
+      - enableAutoSubscribe
+      - enableMandatorySubscribe
+      - subconferenceId
+      - enableAutoPin
+      - duplicateToId
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: Cache_Chat
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{CACHES_BASE_URL}}/cache/update/chat"

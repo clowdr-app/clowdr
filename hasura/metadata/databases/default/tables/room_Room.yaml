@@ -494,6 +494,7 @@ event_triggers:
       columns:
       - managementModeName
       - name
+      - chatId
       - subconferenceId
   headers:
   - name: X-Hasura-Event-Secret

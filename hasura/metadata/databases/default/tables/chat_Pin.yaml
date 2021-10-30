@@ -159,7 +159,22 @@ event_triggers:
   headers:
   - name: x-hasura-event-secret
     value_from_env: EVENT_SECRET
-  name: ChatPinChanged
+  name: Cache_ChatPin
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{CACHES_BASE_URL}}/cache/update/chatPin"
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: Realtime_ChatPin
   retry_conf:
     interval_sec: 10
     num_retries: 0

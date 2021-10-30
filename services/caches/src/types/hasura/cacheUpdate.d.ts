@@ -25,6 +25,7 @@ declare namespace CacheUpdate {
         conferenceId: string;
         subconferenceId?: string | null;
         managementModeName: Room_ManagementMode_Enum;
+        chatId: string;
     }
 
     interface RegistrantData {
@@ -51,5 +52,42 @@ declare namespace CacheUpdate {
 
     interface UserData {
         id: string;
+    }
+
+    interface EventData {
+        id: string;
+        conferenceId: string;
+        subconferenceId: string;
+        roomId: string;
+    }
+
+    interface PushNotificationSubscriptionData {
+        userId: string;
+        endpoint: string;
+        p256dh: string;
+        auth: string;
+    }
+
+    interface ChatData {
+        id: string;
+        restrictToAdmins: boolean;
+        conferenceId: string;
+    }
+
+    interface ContentItemData {
+        id: string;
+        chatId: string;
+    }
+
+    interface ChatPinData {
+        chatId: string;
+        registrantId: string;
+        wasManuallyPinned: boolean;
+    }
+
+    interface ChatSubscriptionData {
+        chatId: string;
+        registrantId: string;
+        wasManuallySubscribed: boolean;
     }
 }

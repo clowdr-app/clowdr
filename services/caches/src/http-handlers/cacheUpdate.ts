@@ -1,11 +1,16 @@
+import { chatCache } from "@midspace/caches/chat";
 import { conferenceCache } from "@midspace/caches/conference";
 import { conferenceRoomsCache } from "@midspace/caches/conferenceRoom";
+import { eventCache } from "@midspace/caches/event";
+import { chatPinsCache } from "@midspace/caches/pin";
+import { pushNotificationSubscriptionsCache } from "@midspace/caches/pushNotificationSubscriptions";
 import type { SubconferenceMembership } from "@midspace/caches/registrant";
 import { registrantCache } from "@midspace/caches/registrant";
 import { roomCache } from "@midspace/caches/room";
 import { roomMembershipsCache } from "@midspace/caches/roomMembership";
 import { subconferenceCache } from "@midspace/caches/subconference";
 import { subconferenceRoomsCache } from "@midspace/caches/subconferenceRoom";
+import { chatSubscriptionsCache } from "@midspace/caches/subscription";
 import { userCache } from "@midspace/caches/user";
 import type { CacheUpdate } from "../types/hasura/cacheUpdate";
 import type { Payload } from "../types/hasura/event";
@@ -18,21 +23,21 @@ export async function handleConferenceCacheUpdate(payload: Payload<CacheUpdate.C
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
-                conferenceCache.updateEntity(newEntity.id, (old) => ({
+                await conferenceCache.updateEntity(newEntity.id, (old) => ({
                     ...old,
                     ...newEntity,
                 }));
             }
             break;
         case "DELETE":
-            conferenceCache.invalidateEntity(payload.event.data.old.id);
+            await conferenceCache.invalidateEntity(payload.event.data.old.id);
             break;
         case "MANUAL":
             if (payload.event.data.old) {
-                conferenceCache.invalidateEntity(payload.event.data.old.id);
+                await conferenceCache.invalidateEntity(payload.event.data.old.id);
             }
             if (payload.event.data.new) {
-                conferenceCache.invalidateEntity(payload.event.data.new.id);
+                await conferenceCache.invalidateEntity(payload.event.data.new.id);
             }
             break;
     }
@@ -43,7 +48,7 @@ export async function handleSubconferenceCacheUpdate(payload: Payload<CacheUpdat
         case "INSERT":
             {
                 const newEntity = payload.event.data.new;
-                conferenceCache.updateEntity(newEntity.conferenceId, (old) => ({
+                await conferenceCache.updateEntity(newEntity.conferenceId, (old) => ({
                     ...old,
                     subconferenceIds: [...old.subconferenceIds, newEntity.id],
                 }));
@@ -52,7 +57,7 @@ export async function handleSubconferenceCacheUpdate(payload: Payload<CacheUpdat
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
-                subconferenceCache.updateEntity(newEntity.id, (old) => ({
+                await subconferenceCache.updateEntity(newEntity.id, (old) => ({
                     ...old,
                     conferenceVisibilityLevel: newEntity.conferenceVisibilityLevel,
                 }));
@@ -61,8 +66,8 @@ export async function handleSubconferenceCacheUpdate(payload: Payload<CacheUpdat
         case "DELETE":
             {
                 const oldEntity = payload.event.data.old;
-                subconferenceCache.invalidateEntity(oldEntity.id);
-                conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
+                await subconferenceCache.invalidateEntity(oldEntity.id);
+                await conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
                     ...old,
                     subconferenceIds: old.subconferenceIds.filter((x) => x !== oldEntity.id),
                 }));
@@ -71,16 +76,16 @@ export async function handleSubconferenceCacheUpdate(payload: Payload<CacheUpdat
         case "MANUAL":
             if (payload.event.data.old) {
                 const oldEntity = payload.event.data.old;
-                subconferenceCache.invalidateEntity(oldEntity.id);
-                conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
+                await subconferenceCache.invalidateEntity(oldEntity.id);
+                await conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
                     ...old,
                     subconferenceIds: old.subconferenceIds.filter((x) => x !== oldEntity.id),
                 }));
             }
             if (payload.event.data.new) {
                 const oldEntity = payload.event.data.new;
-                subconferenceCache.invalidateEntity(oldEntity.id);
-                conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
+                await subconferenceCache.invalidateEntity(oldEntity.id);
+                await conferenceCache.updateEntity(oldEntity.conferenceId, (old) => ({
                     ...old,
                     subconferenceIds: [...old.subconferenceIds, oldEntity.id],
                 }));
@@ -95,44 +100,69 @@ export async function handleRoomCacheUpdate(payload: Payload<CacheUpdate.RoomDat
             {
                 const newEntity = payload.event.data.new;
                 if (!newEntity.subconferenceId) {
-                    conferenceRoomsCache.setField(newEntity.conferenceId, newEntity.id, newEntity.managementModeName);
+                    await conferenceRoomsCache.setField(
+                        newEntity.conferenceId,
+                        newEntity.id,
+                        newEntity.managementModeName
+                    );
                 } else {
-                    subconferenceRoomsCache.setField(
+                    await subconferenceRoomsCache.setField(
                         newEntity.conferenceId,
                         newEntity.id,
                         newEntity.managementModeName
                     );
                 }
+
+                await chatCache.updateEntity(newEntity.chatId, (old) => ({
+                    ...old,
+                    roomIds: [...old.roomIds, newEntity.id],
+                }));
             }
             break;
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
                 const oldEntity = payload.event.data.old;
-                roomCache.updateEntity(newEntity.id, (old) => ({
+                await roomCache.updateEntity(newEntity.id, (old) => ({
                     ...old,
                     managementModeName: newEntity.managementModeName,
                     subconferenceId: newEntity.subconferenceId,
                     name: newEntity.name,
                 }));
+                await chatCache.updateEntity(oldEntity.chatId, (old) => ({
+                    ...old,
+                    roomIds: old.roomIds.filter((x) => x !== oldEntity.chatId),
+                }));
+                await chatCache.updateEntity(newEntity.chatId, (old) => ({
+                    ...old,
+                    roomIds: [...old.roomIds.filter((x) => x !== oldEntity.chatId), newEntity.id],
+                }));
                 if (oldEntity.subconferenceId && !newEntity.subconferenceId) {
-                    subconferenceRoomsCache.invalidateField(oldEntity.subconferenceId, oldEntity.id);
-                    conferenceRoomsCache.setField(newEntity.conferenceId, newEntity.id, newEntity.managementModeName);
+                    await subconferenceRoomsCache.invalidateField(oldEntity.subconferenceId, oldEntity.id);
+                    await conferenceRoomsCache.setField(
+                        newEntity.conferenceId,
+                        newEntity.id,
+                        newEntity.managementModeName
+                    );
                 } else if (!oldEntity.subconferenceId && newEntity.subconferenceId) {
-                    conferenceRoomsCache.invalidateField(oldEntity.conferenceId, oldEntity.id);
-                    subconferenceRoomsCache.setField(
+                    await conferenceRoomsCache.invalidateField(oldEntity.conferenceId, oldEntity.id);
+                    await subconferenceRoomsCache.setField(
                         newEntity.subconferenceId,
                         newEntity.id,
                         newEntity.managementModeName
                     );
                 } else if (oldEntity.subconferenceId) {
-                    subconferenceRoomsCache.setField(
+                    await subconferenceRoomsCache.setField(
                         oldEntity.subconferenceId,
                         newEntity.id,
                         newEntity.managementModeName
                     );
                 } else {
-                    conferenceRoomsCache.setField(oldEntity.conferenceId, newEntity.id, newEntity.managementModeName);
+                    await conferenceRoomsCache.setField(
+                        oldEntity.conferenceId,
+                        newEntity.id,
+                        newEntity.managementModeName
+                    );
                 }
             }
             break;
@@ -140,38 +170,41 @@ export async function handleRoomCacheUpdate(payload: Payload<CacheUpdate.RoomDat
             {
                 const oldEntity = payload.event.data.old;
                 if (oldEntity.subconferenceId) {
-                    subconferenceRoomsCache.invalidateField(oldEntity.subconferenceId, oldEntity.id);
+                    await subconferenceRoomsCache.invalidateField(oldEntity.subconferenceId, oldEntity.id);
                 }
-                conferenceRoomsCache.invalidateField(oldEntity.conferenceId, oldEntity.id);
-                roomCache.invalidateEntity(oldEntity.id);
+                await conferenceRoomsCache.invalidateField(oldEntity.conferenceId, oldEntity.id);
+                await roomCache.invalidateEntity(oldEntity.id);
             }
             break;
         case "MANUAL":
             if (payload.event.data.old) {
                 if (payload.event.data.old.subconferenceId) {
-                    subconferenceRoomsCache.invalidateField(
+                    await subconferenceRoomsCache.invalidateField(
                         payload.event.data.old.subconferenceId,
                         payload.event.data.old.id
                     );
                 }
-                conferenceRoomsCache.invalidateField(payload.event.data.old.conferenceId, payload.event.data.old.id);
-                roomCache.invalidateEntity(payload.event.data.old.id);
+                await conferenceRoomsCache.invalidateField(
+                    payload.event.data.old.conferenceId,
+                    payload.event.data.old.id
+                );
+                await roomCache.invalidateEntity(payload.event.data.old.id);
             }
             if (payload.event.data.new) {
                 if (payload.event.data.new.subconferenceId) {
-                    subconferenceRoomsCache.setField(
+                    await subconferenceRoomsCache.setField(
                         payload.event.data.new.subconferenceId,
                         payload.event.data.new.id,
                         payload.event.data.new.managementModeName
                     );
                 } else {
-                    conferenceRoomsCache.setField(
+                    await conferenceRoomsCache.setField(
                         payload.event.data.new.conferenceId,
                         payload.event.data.new.id,
                         payload.event.data.new.managementModeName
                     );
                 }
-                roomCache.invalidateEntity(payload.event.data.new.id);
+                await roomCache.invalidateEntity(payload.event.data.new.id);
             }
             break;
     }
@@ -185,7 +218,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                 if (newEntity.userId) {
                     const id = newEntity.id;
                     const conferenceId = newEntity.conferenceId;
-                    userCache.updateEntity(newEntity.userId, (old) => ({
+                    await userCache.updateEntity(newEntity.userId, (old) => ({
                         ...old,
                         registrants: [
                             ...old.registrants,
@@ -204,7 +237,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                 const oldEntity = payload.event.data.old;
                 const id = oldEntity.id;
 
-                registrantCache.updateEntity(newEntity.id, (old) => ({
+                await registrantCache.updateEntity(newEntity.id, (old) => ({
                     ...old,
                     conferenceRole: newEntity.conferenceRole,
                     displayName: newEntity.displayName,
@@ -213,7 +246,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                     const conferenceId = newEntity.conferenceId;
                     if (oldEntity.userId !== newEntity.userId) {
                         if (oldEntity.userId) {
-                            userCache.updateEntity(oldEntity.userId, (old) => ({
+                            await userCache.updateEntity(oldEntity.userId, (old) => ({
                                 ...old,
                                 registrants: [
                                     ...old.registrants.filter((x) => x.id !== id),
@@ -224,7 +257,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                                 ],
                             }));
                         } else {
-                            userCache.updateEntity(newEntity.userId, (old) => ({
+                            await userCache.updateEntity(newEntity.userId, (old) => ({
                                 ...old,
                                 registrants: [
                                     ...old.registrants,
@@ -237,7 +270,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                         }
                     }
                 } else if (oldEntity.userId) {
-                    userCache.updateEntity(oldEntity.userId, (old) => ({
+                    await userCache.updateEntity(oldEntity.userId, (old) => ({
                         ...old,
                         registrants: old.registrants.filter((x) => x.id !== id),
                     }));
@@ -247,9 +280,9 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
         case "DELETE":
             {
                 const id = payload.event.data.old.id;
-                registrantCache.invalidateEntity(id);
+                await registrantCache.invalidateEntity(id);
                 if (payload.event.data.old.userId) {
-                    userCache.updateEntity(payload.event.data.old.userId, (old) => ({
+                    await userCache.updateEntity(payload.event.data.old.userId, (old) => ({
                         ...old,
                         registrants: old.registrants.filter((x) => x.id !== id),
                     }));
@@ -259,9 +292,9 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
         case "MANUAL":
             if (payload.event.data.old) {
                 const oldEntity = payload.event.data.old;
-                registrantCache.invalidateEntity(oldEntity.id);
+                await registrantCache.invalidateEntity(oldEntity.id);
                 if (oldEntity.userId) {
-                    userCache.updateEntity(oldEntity.userId, (old) => ({
+                    await userCache.updateEntity(oldEntity.userId, (old) => ({
                         ...old,
                         registrants: old.registrants.filter((x) => x.id !== oldEntity.id),
                     }));
@@ -271,9 +304,9 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                 const newEntity = payload.event.data.new;
                 const id = newEntity.id;
                 const conferenceId = newEntity.conferenceId;
-                registrantCache.invalidateEntity(newEntity.id);
+                await registrantCache.invalidateEntity(newEntity.id);
                 if (newEntity.userId) {
-                    userCache.updateEntity(newEntity.userId, (old) => ({
+                    await userCache.updateEntity(newEntity.userId, (old) => ({
                         ...old,
                         registrants: [
                             ...old.registrants,
@@ -301,7 +334,7 @@ export async function handleSubconferenceMembershipCacheUpdate(
                     subconferenceId: newEntity.subconferenceId,
                     role: newEntity.role,
                 };
-                registrantCache.updateEntity(newEntity.registrantId, (old) => ({
+                await registrantCache.updateEntity(newEntity.registrantId, (old) => ({
                     ...old,
                     subconferenceMemberships: [...old.subconferenceMemberships, obj],
                 }));
@@ -310,7 +343,7 @@ export async function handleSubconferenceMembershipCacheUpdate(
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
-                registrantCache.updateEntity(newEntity.registrantId, (old) => ({
+                await registrantCache.updateEntity(newEntity.registrantId, (old) => ({
                     ...old,
                     subconferenceMemberships: old.subconferenceMemberships.map((x) =>
                         x.subconferenceId === newEntity.subconferenceId ? { ...x, role: newEntity.role } : x
@@ -321,7 +354,7 @@ export async function handleSubconferenceMembershipCacheUpdate(
         case "DELETE":
             {
                 const oldEntity = payload.event.data.old;
-                registrantCache.updateEntity(oldEntity.registrantId, (old) => ({
+                await registrantCache.updateEntity(oldEntity.registrantId, (old) => ({
                     ...old,
                     subconferenceMemberships: old.subconferenceMemberships.filter(
                         (x) => x.subconferenceId !== oldEntity.subconferenceId
@@ -332,7 +365,7 @@ export async function handleSubconferenceMembershipCacheUpdate(
         case "MANUAL":
             if (payload.event.data.old) {
                 const oldEntity = payload.event.data.old;
-                registrantCache.updateEntity(oldEntity.registrantId, (old) => ({
+                await registrantCache.updateEntity(oldEntity.registrantId, (old) => ({
                     ...old,
                     subconferenceMemberships: old.subconferenceMemberships.filter(
                         (x) => x.subconferenceId !== oldEntity.subconferenceId
@@ -340,7 +373,7 @@ export async function handleSubconferenceMembershipCacheUpdate(
                 }));
             }
             if (payload.event.data.new) {
-                registrantCache.invalidateEntity(payload.event.data.new.registrantId);
+                await registrantCache.invalidateEntity(payload.event.data.new.registrantId);
             }
             break;
     }
@@ -351,29 +384,29 @@ export async function handleRoomMembershipCacheUpdate(payload: Payload<CacheUpda
         case "INSERT":
             {
                 const newEntity = payload.event.data.new;
-                roomMembershipsCache.setField(newEntity.roomId, newEntity.registrantId, newEntity.personRoleName);
+                await roomMembershipsCache.setField(newEntity.roomId, newEntity.registrantId, newEntity.personRoleName);
             }
             break;
         case "UPDATE":
             {
                 const newEntity = payload.event.data.new;
-                roomMembershipsCache.setField(newEntity.roomId, newEntity.registrantId, newEntity.personRoleName);
+                await roomMembershipsCache.setField(newEntity.roomId, newEntity.registrantId, newEntity.personRoleName);
             }
             break;
         case "DELETE":
             {
                 const oldEntity = payload.event.data.old;
-                roomMembershipsCache.invalidateField(oldEntity.roomId, oldEntity.registrantId);
+                await roomMembershipsCache.invalidateField(oldEntity.roomId, oldEntity.registrantId);
             }
             break;
         case "MANUAL":
             if (payload.event.data.old) {
                 const oldEntity = payload.event.data.old;
-                roomMembershipsCache.invalidateField(oldEntity.roomId, oldEntity.registrantId);
+                await roomMembershipsCache.invalidateField(oldEntity.roomId, oldEntity.registrantId);
             }
             if (payload.event.data.new) {
                 const newEntity = payload.event.data.new;
-                roomMembershipsCache.invalidateField(newEntity.roomId, newEntity.registrantId);
+                await roomMembershipsCache.invalidateField(newEntity.roomId, newEntity.registrantId);
             }
             break;
     }
@@ -382,20 +415,324 @@ export async function handleRoomMembershipCacheUpdate(payload: Payload<CacheUpda
 export async function handleUserCacheUpdate(payload: Payload<CacheUpdate.UserData>): Promise<void> {
     switch (payload.event.op) {
         case "INSERT":
-            // TODO
+            // Do nothing
             break;
         case "UPDATE":
             // Do nothing
             break;
         case "DELETE":
-            userCache.invalidateEntity(payload.event.data.old.id);
+            await userCache.invalidateEntity(payload.event.data.old.id);
             break;
         case "MANUAL":
             if (payload.event.data.old) {
-                userCache.invalidateEntity(payload.event.data.old.id);
+                await userCache.invalidateEntity(payload.event.data.old.id);
             }
             if (payload.event.data.new) {
-                userCache.invalidateEntity(payload.event.data.new.id);
+                await userCache.invalidateEntity(payload.event.data.new.id);
+            }
+            break;
+    }
+}
+
+export async function handleEventCacheUpdate(payload: Payload<CacheUpdate.EventData>): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            // Do nothing
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                await eventCache.updateEntity(newEntity.id, (old) => ({
+                    ...old,
+                    ...newEntity,
+                }));
+            }
+            break;
+        case "DELETE":
+            await eventCache.invalidateEntity(payload.event.data.old.id);
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                await eventCache.invalidateEntity(payload.event.data.old.id);
+            }
+            if (payload.event.data.new) {
+                await eventCache.invalidateEntity(payload.event.data.new.id);
+            }
+            break;
+    }
+}
+
+export async function handlePushNotificationSubscriptionCacheUpdate(
+    payload: Payload<CacheUpdate.PushNotificationSubscriptionData>
+): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            {
+                const newEntity = payload.event.data.new;
+                await pushNotificationSubscriptionsCache.updateEntity(
+                    newEntity.userId,
+                    (old) => ({
+                        userId: newEntity.userId,
+                        subscriptions: [
+                            ...old.subscriptions,
+                            {
+                                endpoint: newEntity.endpoint,
+                                keys: {
+                                    auth: newEntity.auth,
+                                    p256dh: newEntity.p256dh,
+                                },
+                            },
+                        ],
+                    }),
+                    true
+                );
+            }
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                await pushNotificationSubscriptionsCache.updateEntity(
+                    newEntity.userId,
+                    (old) => ({
+                        userId: newEntity.userId,
+                        subscriptions: [
+                            ...old.subscriptions,
+                            {
+                                endpoint: newEntity.endpoint,
+                                keys: {
+                                    auth: newEntity.auth,
+                                    p256dh: newEntity.p256dh,
+                                },
+                            },
+                        ],
+                    }),
+                    true
+                );
+            }
+            break;
+        case "DELETE":
+            {
+                const oldEntity = payload.event.data.old;
+                await pushNotificationSubscriptionsCache.updateEntity(oldEntity.userId, (old) => ({
+                    ...old,
+                    subscriptions: old.subscriptions.filter((x) => x.endpoint !== oldEntity.endpoint),
+                }));
+            }
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                const oldEntity = payload.event.data.old;
+                await pushNotificationSubscriptionsCache.updateEntity(oldEntity.userId, (old) => ({
+                    ...old,
+                    subscriptions: old.subscriptions.filter((x) => x.endpoint !== oldEntity.endpoint),
+                }));
+            }
+            if (payload.event.data.new) {
+                const newEntity = payload.event.data.new;
+                await pushNotificationSubscriptionsCache.updateEntity(
+                    newEntity.userId,
+                    (old) => ({
+                        userId: newEntity.userId,
+                        subscriptions: [
+                            ...old.subscriptions,
+                            {
+                                endpoint: newEntity.endpoint,
+                                keys: {
+                                    auth: newEntity.auth,
+                                    p256dh: newEntity.p256dh,
+                                },
+                            },
+                        ],
+                    }),
+                    true
+                );
+            }
+            break;
+    }
+}
+
+export async function handleChatCacheUpdate(payload: Payload<CacheUpdate.ChatData>): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            // Do nothing
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                await chatCache.updateEntity(newEntity.id, (old) => ({ ...old, ...newEntity }));
+            }
+            break;
+        case "DELETE":
+            {
+                const oldEntity = payload.event.data.old;
+                await chatCache.invalidateEntity(oldEntity.id);
+            }
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                const oldEntity = payload.event.data.old;
+                await chatCache.invalidateEntity(oldEntity.id);
+            }
+            if (payload.event.data.new) {
+                const newEntity = payload.event.data.new;
+                await chatCache.invalidateEntity(newEntity.id);
+            }
+            break;
+    }
+}
+
+export async function handleContentItemCacheUpdate(payload: Payload<CacheUpdate.ContentItemData>): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            {
+                const newEntity = payload.event.data.new;
+                if (newEntity.chatId) {
+                    await chatCache.updateEntity(newEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: [...old.itemIds, newEntity.id],
+                    }));
+                }
+            }
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                const oldEntity = payload.event.data.old;
+                if (oldEntity.chatId) {
+                    await chatCache.updateEntity(oldEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                    }));
+                }
+                if (newEntity.chatId) {
+                    await chatCache.updateEntity(newEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: [...old.itemIds, newEntity.id],
+                    }));
+                }
+            }
+            break;
+        case "DELETE":
+            {
+                const oldEntity = payload.event.data.old;
+                if (oldEntity.chatId) {
+                    await chatCache.updateEntity(oldEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                    }));
+                }
+            }
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                const oldEntity = payload.event.data.old;
+                if (oldEntity.chatId) {
+                    await chatCache.updateEntity(oldEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: old.itemIds.filter((x) => x !== oldEntity.id),
+                    }));
+                }
+            }
+            if (payload.event.data.new) {
+                const newEntity = payload.event.data.new;
+                if (newEntity.chatId) {
+                    await chatCache.updateEntity(newEntity.chatId, (old) => ({
+                        ...old,
+                        itemIds: [...old.itemIds, newEntity.id],
+                    }));
+                }
+            }
+            break;
+    }
+}
+
+export async function handleChatPinCacheUpdate(payload: Payload<CacheUpdate.ChatPinData>): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            {
+                const newEntity = payload.event.data.new;
+                await chatPinsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallyPinned ? "true" : "false"
+                );
+            }
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                await chatPinsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallyPinned ? "true" : "false"
+                );
+            }
+            break;
+        case "DELETE":
+            {
+                const oldEntity = payload.event.data.old;
+                await chatPinsCache.invalidateField(oldEntity.chatId, oldEntity.registrantId);
+            }
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                const oldEntity = payload.event.data.old;
+                await chatPinsCache.invalidateField(oldEntity.chatId, oldEntity.registrantId);
+            }
+            if (payload.event.data.new) {
+                const newEntity = payload.event.data.new;
+                await chatPinsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallyPinned ? "true" : "false"
+                );
+            }
+            break;
+    }
+}
+
+export async function handleChatSubscriptionCacheUpdate(
+    payload: Payload<CacheUpdate.ChatSubscriptionData>
+): Promise<void> {
+    switch (payload.event.op) {
+        case "INSERT":
+            {
+                const newEntity = payload.event.data.new;
+                await chatSubscriptionsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallySubscribed ? "true" : "false"
+                );
+            }
+            break;
+        case "UPDATE":
+            {
+                const newEntity = payload.event.data.new;
+                await chatSubscriptionsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallySubscribed ? "true" : "false"
+                );
+            }
+            break;
+        case "DELETE":
+            {
+                const oldEntity = payload.event.data.old;
+                await chatSubscriptionsCache.invalidateField(oldEntity.chatId, oldEntity.registrantId);
+            }
+            break;
+        case "MANUAL":
+            if (payload.event.data.old) {
+                const oldEntity = payload.event.data.old;
+                await chatSubscriptionsCache.invalidateField(oldEntity.chatId, oldEntity.registrantId);
+            }
+            if (payload.event.data.new) {
+                const newEntity = payload.event.data.new;
+                await chatSubscriptionsCache.setField(
+                    newEntity.chatId,
+                    newEntity.registrantId,
+                    newEntity.wasManuallySubscribed ? "true" : "false"
+                );
             }
             break;
     }

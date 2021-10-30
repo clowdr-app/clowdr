@@ -1,7 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
-import { devtoolsExchange } from "@urql/devtools";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { cacheExchange } from "@urql/exchange-graphcache";
@@ -18,7 +17,6 @@ import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 import type { AuthParameters } from "./AuthParameters";
 import { useAuthParameters } from "./AuthParameters";
-import { resolvers } from "./Cache/Resolvers";
 
 const useSecureProtocols = import.meta.env.VITE_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
 const httpProtocol = useSecureProtocols ? "https" : "http";
@@ -140,14 +138,12 @@ function UrqlProviderInner({
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
-                            // TODO: Disable this
-                            devtoolsExchange,
+                            // devtoolsExchange,
                             dedupExchange,
                             requestPolicyExchange({
                                 ttl: 30 * 60 * 1000,
-                                // TODO: Enable this
-                                shouldUpgrade: () => false,
-                                // authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
+                                shouldUpgrade: () =>
+                                    authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
                             }),
                             cacheExchange<GraphCacheConfig>({
                                 keys: {
@@ -166,8 +162,8 @@ function UrqlProviderInner({
                                     system_Configuration: (data) => data.key as string,
                                 },
                                 schema: schema as any,
-                                storage,
-                                resolvers,
+                                // storage,
+                                // resolvers,
                                 // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
                             }),
                             authExchange(authOptions),

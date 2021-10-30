@@ -1,6 +1,5 @@
 packages:
   - "frontend"
   - "services/**"
-  - "shared"
   - "aws"
   - "packages/**"

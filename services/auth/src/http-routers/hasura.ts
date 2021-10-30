@@ -1,10 +1,10 @@
+import { computeAuthHeaders } from "@midspace/auth/auth";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 import fetch from "node-fetch";
-import { handleAuthWebhook } from "../http-handlers/hasura";
 
 export const router = express.Router();
 
@@ -96,7 +96,7 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
         const role = getHeader("X-Auth-Role");
         const includeRoomIds = getHeader("X-Auth-Include-Room-Ids");
 
-        const result = await handleAuthWebhook(
+        const result = await computeAuthHeaders(
             { userId },
             {
                 conferenceId,

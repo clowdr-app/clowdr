@@ -1,18 +1,18 @@
+import type { Conference } from "./cache/conference";
+import { getConference } from "./cache/conference";
+import { ConferenceRoomCache } from "./cache/conferenceRoom";
+import { getRegistrant } from "./cache/registrant";
+import { getRoom } from "./cache/room";
+import { RoomMembershipCache } from "./cache/roomMembership";
+import { getSubconference } from "./cache/subconference";
+import { SubconferenceRoomCache } from "./cache/subconferenceRoom";
+import { getUser } from "./cache/user";
 import {
     Conference_VisibilityLevel_Enum,
     Registrant_RegistrantRole_Enum,
     Room_ManagementMode_Enum,
     Room_PersonRole_Enum,
-} from "../generated/graphql";
-import type { Conference } from "../lib/cache/conference";
-import { getConference } from "../lib/cache/conference";
-import { ConferenceRoomCache } from "../lib/cache/conferenceRoom";
-import { getRegistrant } from "../lib/cache/registrant";
-import { getRoom } from "../lib/cache/room";
-import { RoomMembershipCache } from "../lib/cache/roomMembership";
-import { getSubconference } from "../lib/cache/subconference";
-import { SubconferenceRoomCache } from "../lib/cache/subconferenceRoom";
-import { getUser } from "../lib/cache/user";
+} from "./generated/graphql";
 
 enum HasuraHeaders {
     Role = "x-hasura-role",
@@ -48,7 +48,7 @@ function formatArrayForHasuraHeader(values: string | string[]): string {
     }
 }
 
-export async function handleAuthWebhook(
+export async function computeAuthHeaders(
     verifiedParams: Partial<{ userId: string }>,
     unverifiedParams: Partial<{
         conferenceId: string;

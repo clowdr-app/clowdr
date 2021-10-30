@@ -35,5 +35,9 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
-    }
+    },
+    "references": [
+        { "path": "../../packages/component-clients/tsconfig.cjs.ref.json" },
+        { "path": "../../packages/auth/tsconfig.cjs.ref.json" }
+    ]
 }

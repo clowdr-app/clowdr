@@ -1,8 +1,8 @@
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { GetUserQuery, GetUserQueryVariables } from "../../generated/graphql";
-import { GetUserDocument } from "../../generated/graphql";
-import { gqlClient } from "../../graphqlClient";
-import { Cache } from "./cache";
+import type { GetUserQuery, GetUserQueryVariables } from "../generated/graphql";
+import { GetUserDocument } from "../generated/graphql";
 
 gql`
     query GetUser($id: String!) {

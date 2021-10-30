@@ -368,6 +368,194 @@ importers:
       ts-patch: 1.4.5_typescript@4.4.4
       typescript: 4.4.4
 
+  packages/auth:
+    specifiers:
+      '@graphql-codegen/cli': ^1.21.6
+      '@graphql-codegen/fragment-matcher': ^2.0.1
+      '@graphql-codegen/introspection': ^1.18.2
+      '@graphql-codegen/typed-document-node': ^1.18.9
+      '@graphql-codegen/typescript': ^1.22.4
+      '@graphql-codegen/typescript-document-nodes': ^1.17.15
+      '@graphql-codegen/typescript-graphql-files-modules': ^1.18.1
+      '@graphql-codegen/typescript-graphql-request': ^3.2.4
+      '@graphql-codegen/typescript-operations': ^1.18.3
+      '@graphql-codegen/typescript-urql': ^3.2.2
+      '@midspace/component-clients': workspace:*
+      '@socket.io/redis-emitter': ^4.1.0
+      '@types/amqplib': ^0.8.0
+      '@types/cors': ^2.8.12
+      '@types/express': ^4.17.12
+      '@types/generic-pool': ^3.1.10
+      '@types/jsonwebtoken': ^8.5.3
+      '@types/jwk-to-pem': ^2.0.0
+      '@types/node-fetch': ^2.5.10
+      '@types/redis': ^2.8.30
+      '@types/redlock': ^4.0.2
+      '@types/uuid': ^8.3.0
+      '@types/web-push': ^3.3.1
+      '@types/ws': ^7.4.5
+      '@urql/core': ^2.3.3
+      '@urql/exchange-retry': ^0.3.0
+      amqplib: ^0.8.0
+      assert: ^2.0.0
+      bufferutil: ^4.0.3
+      cors: ^2.8.5
+      cpy-cli: ^3.1.1
+      express: ^4.17.1
+      generic-pool: ^3.8.2
+      graphql: ^15.6.1
+      graphql-tag: ^2.12.5
+      jsonwebtoken: ^8.5.1
+      jwk-to-pem: ^2.0.5
+      jwks-rsa: ^2.0.3
+      node-env-run: ^4.0.2
+      node-fetch: ^2.6.1
+      redis: ^3.1.2
+      redlock: ^4.2.0
+      rimraf: ^3.0.2
+      subscriptions-transport-ws: ^0.9.19
+      ts-patch: ^1.4.5
+      tsc-watch: ^4.4.0
+      ttypescript: ^1.5.12
+      typescript: ^4.3.5
+      typescript-is: ^0.18.3
+      utf-8-validate: ^5.0.5
+      uuid: ^8.3.2
+    dependencies:
+      '@graphql-codegen/cli': 1.21.8_7cd52fead364b52d51a8a0a4b74e85e9
+      '@graphql-codegen/fragment-matcher': 2.0.1_graphql@15.7.2
+      '@graphql-codegen/introspection': 1.18.2_graphql@15.7.2
+      '@graphql-codegen/typed-document-node': 1.18.10_graphql@15.7.2
+      '@graphql-codegen/typescript': 1.23.0_graphql@15.7.2
+      '@graphql-codegen/typescript-document-nodes': 1.17.16_graphql@15.7.2
+      '@graphql-codegen/typescript-graphql-files-modules': 1.18.1_graphql@15.7.2
+      '@graphql-codegen/typescript-graphql-request': 3.2.5_eafe594c8348de22d1705a6c5772654c
+      '@graphql-codegen/typescript-operations': 1.18.4_graphql@15.7.2
+      '@graphql-codegen/typescript-urql': 3.2.2_eafe594c8348de22d1705a6c5772654c
+      '@midspace/component-clients': link:../component-clients
+      '@socket.io/redis-emitter': 4.1.0
+      '@types/amqplib': 0.8.2
+      '@types/cors': 2.8.12
+      '@types/express': 4.17.13
+      '@types/generic-pool': 3.1.10
+      '@types/jsonwebtoken': 8.5.5
+      '@types/jwk-to-pem': 2.0.1
+      '@types/node-fetch': 2.5.12
+      '@types/redis': 2.8.32
+      '@types/redlock': 4.0.2
+      '@types/uuid': 8.3.1
+      '@types/web-push': 3.3.2
+      '@types/ws': 7.4.7
+      '@urql/core': 2.3.4_graphql@15.7.2
+      '@urql/exchange-retry': 0.3.0_graphql@15.7.2
+      amqplib: 0.8.0
+      assert: 2.0.0
+      bufferutil: 4.0.5
+      cors: 2.8.5
+      cpy-cli: 3.1.1
+      express: 4.17.1
+      generic-pool: 3.8.2
+      graphql: 15.7.2
+      graphql-tag: 2.12.5_graphql@15.7.2
+      jsonwebtoken: 8.5.1
+      jwk-to-pem: 2.0.5
+      jwks-rsa: 2.0.5
+      node-env-run: 4.0.2
+      node-fetch: 2.6.5
+      redis: 3.1.2
+      redlock: 4.2.0
+      rimraf: 3.0.2
+      subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
+      ts-patch: 1.4.5_typescript@4.4.4
+      ttypescript: 1.5.12_typescript@4.4.4
+      typescript: 4.4.4
+      typescript-is: 0.18.3_typescript@4.4.4
+      utf-8-validate: 5.0.7
+      uuid: 8.3.2
+    devDependencies:
+      tsc-watch: 4.5.0_typescript@4.4.4
+
+  packages/component-clients:
+    specifiers:
+      '@socket.io/redis-emitter': ^4.1.0
+      '@types/amqplib': ^0.8.0
+      '@types/cors': ^2.8.12
+      '@types/express': ^4.17.12
+      '@types/generic-pool': ^3.1.10
+      '@types/jsonwebtoken': ^8.5.3
+      '@types/jwk-to-pem': ^2.0.0
+      '@types/node-fetch': ^2.5.10
+      '@types/redis': ^2.8.30
+      '@types/redlock': ^4.0.2
+      '@types/uuid': ^8.3.0
+      '@types/web-push': ^3.3.1
+      '@types/ws': ^7.4.5
+      '@urql/core': ^2.3.3
+      '@urql/exchange-retry': ^0.3.0
+      amqplib: ^0.8.0
+      assert: ^2.0.0
+      bufferutil: ^4.0.3
+      cors: ^2.8.5
+      cpy-cli: ^3.1.1
+      express: ^4.17.1
+      generic-pool: ^3.8.2
+      jsonwebtoken: ^8.5.1
+      jwk-to-pem: ^2.0.5
+      jwks-rsa: ^2.0.3
+      node-env-run: ^4.0.2
+      node-fetch: ^2.6.1
+      redis: ^3.1.2
+      redlock: ^4.2.0
+      rimraf: ^3.0.2
+      subscriptions-transport-ws: ^0.9.19
+      ts-patch: ^1.4.5
+      tsc-watch: ^4.4.0
+      ttypescript: ^1.5.12
+      typescript: ^4.3.5
+      typescript-is: ^0.18.3
+      utf-8-validate: ^5.0.5
+      uuid: ^8.3.2
+    dependencies:
+      '@socket.io/redis-emitter': 4.1.0
+      '@types/amqplib': 0.8.2
+      '@types/cors': 2.8.12
+      '@types/express': 4.17.13
+      '@types/generic-pool': 3.1.10
+      '@types/jsonwebtoken': 8.5.5
+      '@types/jwk-to-pem': 2.0.1
+      '@types/node-fetch': 2.5.12
+      '@types/redis': 2.8.32
+      '@types/redlock': 4.0.2
+      '@types/uuid': 8.3.1
+      '@types/web-push': 3.3.2
+      '@types/ws': 7.4.7
+      '@urql/core': 2.3.4
+      '@urql/exchange-retry': 0.3.0
+      amqplib: 0.8.0
+      assert: 2.0.0
+      bufferutil: 4.0.5
+      cors: 2.8.5
+      cpy-cli: 3.1.1
+      express: 4.17.1
+      generic-pool: 3.8.2
+      jsonwebtoken: 8.5.1
+      jwk-to-pem: 2.0.5
+      jwks-rsa: 2.0.5
+      node-env-run: 4.0.2
+      node-fetch: 2.6.5
+      redis: 3.1.2
+      redlock: 4.2.0
+      rimraf: 3.0.2
+      subscriptions-transport-ws: 0.9.19_5971b5a749a91823f5467a6d31a2f8b3
+      ts-patch: 1.4.5_typescript@4.4.4
+      ttypescript: 1.5.12_typescript@4.4.4
+      typescript: 4.4.4
+      typescript-is: 0.18.3_typescript@4.4.4
+      utf-8-validate: 5.0.7
+      uuid: 8.3.2
+    devDependencies:
+      tsc-watch: 4.5.0_typescript@4.4.4
+
   packages/opentok-types:
     specifiers: {}
 
@@ -578,6 +766,8 @@ importers:
       '@graphql-codegen/typescript-graphql-request': ^3.2.4
       '@graphql-codegen/typescript-operations': ^1.18.3
       '@graphql-codegen/typescript-urql': ^3.2.2
+      '@midspace/auth': workspace:*
+      '@midspace/component-clients': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.0
       '@types/cors': ^2.8.12
@@ -628,6 +818,8 @@ importers:
       '@graphql-codegen/typescript-graphql-request': 3.2.5_eafe594c8348de22d1705a6c5772654c
       '@graphql-codegen/typescript-operations': 1.18.4_graphql@15.7.2
       '@graphql-codegen/typescript-urql': 3.2.2_eafe594c8348de22d1705a6c5772654c
+      '@midspace/auth': link:../../packages/auth
+      '@midspace/component-clients': link:../../packages/component-clients
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
       '@types/cors': 2.8.12
@@ -851,6 +1043,8 @@ importers:
       '@graphql-codegen/typescript-graphql-request': ^3.2.4
       '@graphql-codegen/typescript-operations': ^1.18.3
       '@graphql-typed-document-node/core': ^3.1.0
+      '@midspace/auth': workspace:*
+      '@midspace/component-clients': workspace:*
       '@socket.io/redis-emitter': ^4.1.0
       '@types/amqplib': ^0.8.0
       '@types/express': ^4.17.12
@@ -903,6 +1097,8 @@ importers:
       '@graphql-codegen/typescript-graphql-request': 3.2.5_graphql-tag@2.12.5
       '@graphql-codegen/typescript-operations': 1.18.4
       '@graphql-typed-document-node/core': 3.1.0
+      '@midspace/auth': link:../../packages/auth
+      '@midspace/component-clients': link:../../packages/component-clients
       '@socket.io/redis-emitter': 4.1.0
       '@types/amqplib': 0.8.2
       '@types/express': 4.17.13
@@ -7569,7 +7765,7 @@ packages:
     resolution: {integrity: sha512-p+TFLzo52f8UanB+Nq6gyUi65yecAcRY3nYowU6MPGFtaJvEDxcnFWrxssSTkF+ts1W3zyQDvgVICLQem5WxRA==}
     dependencies:
       '@types/bluebird': 3.5.36
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
     dev: false
 
   /@types/babel__core/7.1.16:
@@ -7709,14 +7905,14 @@ packages:
   /@types/generic-pool/3.1.10:
     resolution: {integrity: sha512-WRT/9taXh9XJRA9yvrbC02IqGZhK9GbFE/vuP2LeSLrqmDzz5wdXsH0Ige/F+3+rbbZfwH3LEazDsU0JiSV3vA==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
     dev: false
 
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 3.0.5
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
     dev: false
 
   /@types/graceful-fs/4.1.5:
@@ -7792,7 +7988,7 @@ packages:
   /@types/jsonwebtoken/8.5.5:
     resolution: {integrity: sha512-OGqtHQ7N5/Ap/TUwO6IgHDuLiAoTmHhGpNvgkCm/F4N6pKzx/RBSfr2OXZSwC6vkfnsEdb6+7DNZVtiXiwdwFw==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
 
   /@types/jwk-to-pem/2.0.1:
     resolution: {integrity: sha512-QXmRPhR/LPzvXBHTPfG2BBfMTkNLUD7NyRcPft8m5xFCeANa1BZyLgT0Gw+OxdWx6i1WCpT27EqyggP4UUHMrA==}
@@ -7869,7 +8065,7 @@ packages:
   /@types/node-fetch/2.5.12:
     resolution: {integrity: sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
       form-data: 3.0.1
     dev: false
 
@@ -7976,7 +8172,7 @@ packages:
   /@types/redis/2.8.32:
     resolution: {integrity: sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
     dev: false
 
   /@types/redlock/4.0.2:
@@ -8122,7 +8318,7 @@ packages:
   /@types/ws/7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.6
     dev: false
 
   /@types/ws/8.2.0:
@@ -8457,6 +8653,15 @@ packages:
       lodash.throttle: 4.1.1
     dev: false
 
+  /@urql/core/2.3.4:
+    resolution: {integrity: sha512-KXeR55ONqkTZ2gwNgyFGJEGRp1/jEnyqkFjEguknnG6GFaikAwAX0TMijKcX6ZQ4qE59cDtVEtSbqpVkd9XNmA==}
+    peerDependencies:
+      graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+    dependencies:
+      '@graphql-typed-document-node/core': 3.1.0
+      wonka: 4.0.15
+    dev: false
+
   /@urql/core/2.3.4_graphql@15.7.2:
     resolution: {integrity: sha512-KXeR55ONqkTZ2gwNgyFGJEGRp1/jEnyqkFjEguknnG6GFaikAwAX0TMijKcX6ZQ4qE59cDtVEtSbqpVkd9XNmA==}
     peerDependencies:
@@ -8505,6 +8710,15 @@ packages:
     dependencies:
       '@urql/core': 2.3.4_graphql@15.7.2
       graphql: 15.7.2
+      wonka: 4.0.15
+    dev: false
+
+  /@urql/exchange-retry/0.3.0:
+    resolution: {integrity: sha512-hHqer2mcdVC0eYnVNbWyi28AlGOPb2vjH3lP3/Bc8Lc8BjhMsDwFMm7WhoP5C1+cfbr/QJ6Er3H/L08wznXxfg==}
+    peerDependencies:
+      graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+    dependencies:
+      '@urql/core': 2.3.4
       wonka: 4.0.15
     dev: false
 
@@ -8952,6 +9166,7 @@ packages:
   /ansi-regex/5.0.0:
     resolution: {integrity: sha512-bY6fj56OUQ0hU1KjFNDQuJFezqKdrAyFdIevADiqrWHwSlbmBNMHp5ak2f40Pm8JTFyM2mqxkG6ngkHO11f/lg==}
     engines: {node: '>=8'}
+    dev: true
 
   /ansi-regex/5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -15564,7 +15779,7 @@ packages:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       is-unicode-supported: 0.1.0
 
   /log-update/2.3.0:
@@ -18800,7 +19015,7 @@ packages:
     dependencies:
       emoji-regex: 8.0.0
       is-fullwidth-code-point: 3.0.0
-      strip-ansi: 6.0.0
+      strip-ansi: 6.0.1
 
   /string-width/4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
@@ -18877,6 +19092,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       ansi-regex: 5.0.0
+    dev: true
 
   /strip-ansi/6.0.1:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
@@ -20471,7 +20687,7 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       string-width: 4.2.0
-      strip-ansi: 6.0.0
+      strip-ansi: 6.0.1
 
   /wrappy/1.0.2:
     resolution: {integrity: sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=}

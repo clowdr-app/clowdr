@@ -2,19 +2,19 @@ import {
     invalidateCachedConference,
     updateCachedConference,
     updateCachedConferenceSubconferenceIds,
-} from "../lib/cache/conference";
-import { ConferenceRoomCache } from "../lib/cache/conferenceRoom";
-import type { SubconferenceMembership } from "../lib/cache/registrant";
+} from "@midspace/auth/cache/conference";
+import { ConferenceRoomCache } from "@midspace/auth/cache/conferenceRoom";
+import type { SubconferenceMembership } from "@midspace/auth/cache/registrant";
 import {
     invalidateCachedRegistrant,
     updateCachedRegistrant,
     updateCachedRegistrantSubconferenceMemberships,
-} from "../lib/cache/registrant";
-import { invalidateCachedRoom, updateCachedRoom } from "../lib/cache/room";
-import { RoomMembershipCache } from "../lib/cache/roomMembership";
-import { invalidateCachedSubconference, updateCachedSubconference } from "../lib/cache/subconference";
-import { SubconferenceRoomCache } from "../lib/cache/subconferenceRoom";
-import { invalidateCachedUser, updateCachedUserRegistrantIds } from "../lib/cache/user";
+} from "@midspace/auth/cache/registrant";
+import { invalidateCachedRoom, updateCachedRoom } from "@midspace/auth/cache/room";
+import { RoomMembershipCache } from "@midspace/auth/cache/roomMembership";
+import { invalidateCachedSubconference, updateCachedSubconference } from "@midspace/auth/cache/subconference";
+import { SubconferenceRoomCache } from "@midspace/auth/cache/subconferenceRoom";
+import { invalidateCachedUser, updateCachedUserRegistrantIds } from "@midspace/auth/cache/user";
 import type { CacheUpdate } from "../types/hasura/cacheUpdate";
 import type { Payload } from "../types/hasura/event";
 

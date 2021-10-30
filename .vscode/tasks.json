@@ -122,6 +122,20 @@
             },
             "args": ["gql-cdg"]
         },
+        // Auth package -- GraphQL Codegen
+        {
+            "label": "Auth package -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/packages/auth"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["gql-cdg"]
+        },
         // Auth service -- Local Development
         {
             "label": "Auth Service -- Local Development",

@@ -1,4 +1,4 @@
-import { redisClientP, redisClientPool, redlock } from "../../redis";
+import { redisClientP, redisClientPool, redlock } from "../redis";
 
 export class HashsetCache {
     constructor(

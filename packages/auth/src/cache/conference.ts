@@ -1,12 +1,12 @@
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
 import type {
     Conference_VisibilityLevel_Enum,
     GetConferenceQuery,
     GetConferenceQueryVariables,
-} from "../../generated/graphql";
-import { GetConferenceDocument } from "../../generated/graphql";
-import { gqlClient } from "../../graphqlClient";
-import { Cache } from "./cache";
+} from "../generated/graphql";
+import { GetConferenceDocument } from "../generated/graphql";
 
 gql`
     query GetConference($id: uuid!) {

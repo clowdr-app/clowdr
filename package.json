@@ -41,8 +41,5 @@
     "engines": {
         "node": ">=16.x",
         "pnpm": "^6.19.x"
-    },
-    "workspaces": [
-        "shared"
-    ]
+    }
 }

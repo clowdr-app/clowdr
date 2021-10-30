@@ -1,19 +1,26 @@
 {
-    "name": "@midspace/service-auth",
-    "private": true,
+    "name": "@midspace/auth",
     "scripts": {
-        "build": "tsc --build && pnpm copy-resources",
+        "build": "pnpm build:cjs && pnpm build:esm",
+        "build:cjs": "tsc --build tsconfig.json",
+        "build:esm": "tsc --build tsconfig.esm.json",
         "clean": "rimraf build",
-        "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
-        "start": "pnpm nf start --procfile Procfile -p 3004",
-        "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
-        "gql-cdg": "pnpm exec graphql-codegen --config codegen.js",
-        "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
-        "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
+        "prepare": "ts-patch install -s",
+        "gql-cdg": "graphql-codegen --config codegen.js"
     },
     "author": "Clowdr CIC",
     "license": "BSD-3-Clause",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/clowdr-app/clowdr.git",
+        "directory": "packages/auth"
+    },
+    "bugs": {
+        "url": "https://github.com/clowdr-app/clowdr/issues"
+    },
+    "homepage": "https://github.com/clowdr-app/clowdr#readme",
     "dependencies": {
+        "@midspace/component-clients": "workspace:*",
         "@graphql-codegen/cli": "^1.21.6",
         "@graphql-codegen/fragment-matcher": "^2.0.1",
         "@graphql-codegen/introspection": "^1.18.2",
@@ -24,8 +31,6 @@
         "@graphql-codegen/typescript-graphql-request": "^3.2.4",
         "@graphql-codegen/typescript-operations": "^1.18.3",
         "@graphql-codegen/typescript-urql": "^3.2.2",
-        "@midspace/auth": "workspace:*",
-        "@midspace/component-clients": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/cors": "^2.8.12",
@@ -59,6 +64,7 @@
         "redlock": "^4.2.0",
         "rimraf": "^3.0.2",
         "subscriptions-transport-ws": "^0.9.19",
+        "ts-patch": "^1.4.5",
         "ttypescript": "^1.5.12",
         "typescript": "^4.3.5",
         "typescript-is": "^0.18.3",
@@ -71,5 +77,18 @@
     "engines": {
         "node": ">=16.x",
         "pnpm": "^6.19.x"
+    },
+    "exports": {
+        "./*": {
+            "import": "./build/esm/*.js",
+            "require": "./build/cjs/*.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "build/esm/*"
+            ]
+        }
     }
 }

@@ -1,12 +1,12 @@
+import { HashsetCache } from "@midspace/component-clients/cache/hashsetCache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
 import type {
     GetConferenceRoomsQuery,
     GetConferenceRoomsQueryVariables,
     Room_ManagementMode_Enum,
-} from "../../generated/graphql";
-import { GetConferenceRoomsDocument } from "../../generated/graphql";
-import { gqlClient } from "../../graphqlClient";
-import { HashsetCache } from "./hashsetCache";
+} from "../generated/graphql";
+import { GetConferenceRoomsDocument } from "../generated/graphql";
 
 gql`
     query GetConferenceRooms($conferenceId: uuid!) {

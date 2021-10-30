@@ -1,8 +1,8 @@
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
-import type { GetRoomQuery, GetRoomQueryVariables, Room_ManagementMode_Enum } from "../../generated/graphql";
-import { GetRoomDocument } from "../../generated/graphql";
-import { gqlClient } from "../../graphqlClient";
-import { Cache } from "./cache";
+import type { GetRoomQuery, GetRoomQueryVariables, Room_ManagementMode_Enum } from "../generated/graphql";
+import { GetRoomDocument } from "../generated/graphql";
 
 gql`
     query GetRoom($id: uuid!) {

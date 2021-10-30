@@ -1,12 +1,12 @@
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "@urql/core";
 import type {
     GetRegistrantQuery,
     GetRegistrantQueryVariables,
     Registrant_RegistrantRole_Enum,
-} from "../../generated/graphql";
-import { GetRegistrantDocument } from "../../generated/graphql";
-import { gqlClient } from "../../graphqlClient";
-import { Cache } from "./cache";
+} from "../generated/graphql";
+import { GetRegistrantDocument } from "../generated/graphql";
 
 gql`
     query GetRegistrant($id: uuid!) {

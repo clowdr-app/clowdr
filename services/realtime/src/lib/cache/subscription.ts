@@ -1,7 +1,8 @@
 import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
+import type { SubscriptionsQuery, SubscriptionsQueryVariables } from "../../generated/graphql";
 import { SubscriptionsDocument } from "../../generated/graphql";
-import { testMode } from "../../testMode";
 
 gql`
     query Subscriptions($chatId: uuid!) {
@@ -19,27 +20,23 @@ export type Subscriptions = {
 
 const SubscriptionsCache = new Cache<Subscriptions>(
     "realtime.caches:Subscriptions",
-    async (chatId, testMode_ExpectedValue) => {
-        return testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: SubscriptionsDocument,
-                    variables: {
-                        chatId,
-                    },
-                });
+    async (chatId) => {
+        const response =
+            gqlClient &&
+            (await gqlClient
+                .query<SubscriptionsQuery, SubscriptionsQueryVariables>(SubscriptionsDocument, {
+                    chatId,
+                })
+                .toPromise());
 
-                const result: Subscriptions | undefined = response.data.chat_Subscription
-                    ? {
-                          chatId,
-                          registrantIds: response.data.chat_Subscription.map((x) => x.registrantId),
-                      }
-                    : undefined;
+        const result: Subscriptions | undefined = response?.data?.chat_Subscription
+            ? {
+                  chatId,
+                  registrantIds: response.data.chat_Subscription.map((x) => x.registrantId),
+              }
+            : undefined;
 
-                return result;
-            },
-            async () => testMode_ExpectedValue
-        );
+        return result;
     },
     JSON.stringify,
     JSON.parse,
@@ -47,14 +44,10 @@ const SubscriptionsCache = new Cache<Subscriptions>(
     5 * 60 * 1000
 );
 
-export async function getSubscriptions(
-    chatId: string,
-    testMode_ExpectedInfo: Subscriptions,
-    refetchNow = false
-): Promise<Subscriptions | undefined> {
-    const info = await SubscriptionsCache.get(chatId, testMode_ExpectedInfo, refetchNow);
+export async function getSubscriptions(chatId: string, refetchNow = false): Promise<Subscriptions | undefined> {
+    const info = await SubscriptionsCache.get(chatId, refetchNow);
     if (!info && !refetchNow) {
-        return getSubscriptions(chatId, testMode_ExpectedInfo, true);
+        return getSubscriptions(chatId, true);
     }
     return info;
 }
@@ -72,10 +65,7 @@ export async function insertSubscription(chatId: string, registrantId: string): 
                 return existing;
             }
         },
-        {
-            chatId,
-            registrantIds: [],
-        }
+        false
     );
 }
 
@@ -88,9 +78,6 @@ export async function deleteSubscription(chatId: string, registrantId: string): 
                 registrantIds: existing ? existing.registrantIds.filter((x) => x !== registrantId) : [],
             };
         },
-        {
-            chatId,
-            registrantIds: [registrantId],
-        }
+        false
     );
 }

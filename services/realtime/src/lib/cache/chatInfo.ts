@@ -1,19 +1,15 @@
 import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
-import type { Room_ManagementMode_Enum } from "../../generated/graphql";
+import type { ChatInfoQuery, ChatInfoQueryVariables } from "../../generated/graphql";
 import { ChatInfoDocument } from "../../generated/graphql";
-import { testMode } from "../../testMode";
 
 gql`
     query ChatInfo($chatId: uuid!) {
         chat_Chat_by_pk(id: $chatId) {
             id
             restrictToAdmins
-            conference {
-                id
-                slug
-                shortName
-            }
+            conferenceId
             items {
                 id
                 title
@@ -22,14 +18,6 @@ gql`
             rooms {
                 id
                 name
-                managementModeName
-                roomMemberships {
-                    id
-                    registrant {
-                        id
-                        userId
-                    }
-                }
             }
         }
     }
@@ -48,80 +36,57 @@ export type Item = {
 
 export type ChatInfo = {
     restrictToAdmins: boolean;
-    conference: {
-        id: string;
-        slug: string;
-        shortName?: string;
-    };
+    conferenceId: string;
     items: Item[];
     rooms: {
         id: string;
         name: string;
-        managementMode: Room_ManagementMode_Enum;
-        people: Person[];
     }[];
 };
 
 const chatInfoCache = new Cache<ChatInfo>(
     "realtime.caches:ChatInfo",
-    async (chatId, testMode_ExpectedValue) => {
-        return testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: ChatInfoDocument,
-                    variables: {
-                        chatId,
-                    },
-                });
+    async (chatId) => {
+        const response =
+            gqlClient &&
+            (await gqlClient
+                .query<ChatInfoQuery, ChatInfoQueryVariables>(ChatInfoDocument, {
+                    chatId,
+                })
+                .toPromise());
 
-                const result: ChatInfo | undefined = response.data.chat_Chat_by_pk
-                    ? {
-                          restrictToAdmins: response.data.chat_Chat_by_pk.restrictToAdmins,
-                          conference: {
-                              id: response.data.chat_Chat_by_pk.conference.id,
-                              slug: response.data.chat_Chat_by_pk.conference.slug,
-                              shortName: response.data.chat_Chat_by_pk.conference.shortName,
-                          },
-                          items: response.data.chat_Chat_by_pk.items.map((item) => ({
-                              id: item.id,
-                              shortTitle: item.shortTitle ?? undefined,
-                              title: item.title,
-                          })),
-                          rooms:
-                              response.data.chat_Chat_by_pk.rooms.length > 0
-                                  ? response.data.chat_Chat_by_pk.rooms.map(
-                                        (room) => ({
-                                            id: room.id,
-                                            name: room.name,
-                                            managementMode: room.managementModeName,
-                                            people: room.roomPeople.map<Person>((p) => ({
-                                                registrantId: p.registrant.id,
-                                                userId: p.registrant.userId ?? undefined,
-                                            })),
-                                        }),
-                                        []
-                                    )
-                                  : [],
-                      }
-                    : undefined;
+        const result: ChatInfo | undefined = response?.data?.chat_Chat_by_pk
+            ? {
+                  restrictToAdmins: response.data.chat_Chat_by_pk.restrictToAdmins,
+                  conferenceId: response.data.chat_Chat_by_pk.conferenceId,
+                  items: response.data.chat_Chat_by_pk.items.map((item) => ({
+                      id: item.id,
+                      shortTitle: item.shortTitle ?? undefined,
+                      title: item.title,
+                  })),
+                  rooms:
+                      response.data.chat_Chat_by_pk.rooms.length > 0
+                          ? response.data.chat_Chat_by_pk.rooms.map(
+                                (room) => ({
+                                    id: room.id,
+                                    name: room.name,
+                                }),
+                                []
+                            )
+                          : [],
+              }
+            : undefined;
 
-                return result;
-            },
-            async () => testMode_ExpectedValue
-        );
+        return result;
     },
     JSON.stringify,
     JSON.parse
 );
 
-export async function getChatInfo(
-    chatId: string,
-    testMode_ExpectedInfo: ChatInfo,
-    refetchNow = false
-): Promise<ChatInfo | undefined> {
-    const info = await chatInfoCache.get(chatId, testMode_ExpectedInfo, refetchNow);
+export async function getChatInfo(chatId: string, refetchNow = false): Promise<ChatInfo | undefined> {
+    const info = await chatInfoCache.get(chatId, refetchNow);
     if (!info && !refetchNow) {
-        return getChatInfo(chatId, testMode_ExpectedInfo, true);
+        return getChatInfo(chatId, true);
     }
     return info;
 }

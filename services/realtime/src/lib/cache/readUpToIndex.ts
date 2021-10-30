@@ -1,8 +1,9 @@
 import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { gql } from "graphql-tag";
+import type { ReadUpToIndexQuery, ReadUpToIndexQueryVariables } from "../../generated/graphql";
 import { ReadUpToIndexDocument } from "../../generated/graphql";
-import { testMode } from "../../testMode";
 
 gql`
     query ReadUpToIndex($chatId: uuid!, $userId: String!) {
@@ -22,33 +23,28 @@ export type ReadUpToIndex = {
 
 const ReadUpToIndexCache = new Cache<ReadUpToIndex>(
     "realtime.caches:ReadUpToIndex",
-    async (key, testMode_ExpectedValue) => {
-        return testMode(
-            async (apolloClient) => {
-                const keyParts = key.split("¬");
-                const chatId = keyParts[0];
-                const userId = keyParts[1];
-                const response = await apolloClient.query({
-                    query: ReadUpToIndexDocument,
-                    variables: {
-                        chatId,
-                        userId,
-                    },
-                });
+    async (key) => {
+        const keyParts = key.split("¬");
+        const chatId = keyParts[0];
+        const userId = keyParts[1];
+        const response =
+            gqlClient &&
+            (await gqlClient
+                ?.query<ReadUpToIndexQuery, ReadUpToIndexQueryVariables>(ReadUpToIndexDocument, {
+                    chatId,
+                    userId,
+                })
+                .toPromise());
 
-                const result: ReadUpToIndex | undefined =
-                    response.data.chat_ReadUpToIndex.length > 0
-                        ? {
-                              chatId,
-                              userId,
-                              messageSId: response.data.chat_ReadUpToIndex[0].messageSId ?? undefined,
-                          }
-                        : undefined;
+        const result: ReadUpToIndex | undefined = response?.data?.chat_ReadUpToIndex.length
+            ? {
+                  chatId,
+                  userId,
+                  messageSId: response.data.chat_ReadUpToIndex[0].messageSId ?? undefined,
+              }
+            : undefined;
 
-                return result;
-            },
-            async () => testMode_ExpectedValue
-        );
+        return result;
     },
     JSON.stringify,
     JSON.parse,
@@ -59,13 +55,12 @@ const ReadUpToIndexCache = new Cache<ReadUpToIndex>(
 export async function getReadUpToIndex(
     chatId: string,
     userId: string,
-    testMode_ExpectedInfo: ReadUpToIndex,
     refetchNow = false
 ): Promise<ReadUpToIndex | undefined> {
     const key = chatId + "¬" + userId;
-    const info = await ReadUpToIndexCache.get(key, testMode_ExpectedInfo, refetchNow);
+    const info = await ReadUpToIndexCache.get(key, refetchNow);
     if (!info && !refetchNow) {
-        return getReadUpToIndex(chatId, userId, testMode_ExpectedInfo, true);
+        return getReadUpToIndex(chatId, userId, true);
     }
     return info;
 }

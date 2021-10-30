@@ -1,7 +1,8 @@
 import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
+import type { PinsQuery, PinsQueryVariables } from "../../generated/graphql";
 import { PinsDocument } from "../../generated/graphql";
-import { testMode } from "../../testMode";
 
 gql`
     query Pins($chatId: uuid!) {
@@ -19,42 +20,34 @@ export type Pins = {
 
 const PinsCache = new Cache<Pins>(
     "realtime.caches:Pins",
-    async (chatId, testMode_ExpectedValue) => {
-        return testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: PinsDocument,
-                    variables: {
-                        chatId,
-                    },
-                });
+    async (chatId) => {
+        const response =
+            gqlClient &&
+            (await gqlClient
+                .query<PinsQuery, PinsQueryVariables>(PinsDocument, {
+                    chatId,
+                })
+                .toPromise());
 
-                const result: Pins | undefined = response.data.chat_Pin
-                    ? {
-                          chatId,
-                          registrantIds: response.data.chat_Pin.map((x) => x.registrantId),
-                      }
-                    : undefined;
+        const result: Pins | undefined = response?.data?.chat_Pin
+            ? {
+                  chatId,
+                  registrantIds: response.data.chat_Pin.map((x) => x.registrantId),
+              }
+            : undefined;
 
-                return result;
-            },
-            async () => testMode_ExpectedValue
-        );
+        return result;
     },
     JSON.stringify,
     JSON.parse,
-    24 * 60 * 60 * 1000,
-    5 * 60 * 1000
+    60 * 60 * 1000,
+    1 * 60 * 1000
 );
 
-export async function getPins(
-    chatId: string,
-    testMode_ExpectedInfo: Pins,
-    refetchNow = false
-): Promise<Pins | undefined> {
-    const info = await PinsCache.get(chatId, testMode_ExpectedInfo, refetchNow);
+export async function getPins(chatId: string, refetchNow = false): Promise<Pins | undefined> {
+    const info = await PinsCache.get(chatId, refetchNow);
     if (!info && !refetchNow) {
-        return getPins(chatId, testMode_ExpectedInfo, true);
+        return getPins(chatId, true);
     }
     return info;
 }
@@ -72,10 +65,7 @@ export async function insertPin(chatId: string, registrantId: string): Promise<v
                 return existing;
             }
         },
-        {
-            chatId,
-            registrantIds: [],
-        }
+        false
     );
 }
 
@@ -88,9 +78,6 @@ export async function deletePin(chatId: string, registrantId: string): Promise<v
                 registrantIds: existing ? existing.registrantIds.filter((x) => x !== registrantId) : [],
             };
         },
-        {
-            chatId,
-            registrantIds: [registrantId],
-        }
+        false
     );
 }

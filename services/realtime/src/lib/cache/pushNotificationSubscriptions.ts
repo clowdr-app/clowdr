@@ -1,8 +1,12 @@
 import { Cache } from "@midspace/component-clients/cache/cache";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { gql } from "graphql-tag";
 import type webPush from "web-push";
+import type {
+    PushNotificationSubscriptionsQuery,
+    PushNotificationSubscriptionsQueryVariables,
+} from "../../generated/graphql";
 import { PushNotificationSubscriptionsDocument } from "../../generated/graphql";
-import { testMode } from "../../testMode";
 
 gql`
     query PushNotificationSubscriptions($userId: String!) {
@@ -22,31 +26,31 @@ export type PushNotificationSubscriptions = {
 
 const PushNotificationSubscriptionsCache = new Cache<PushNotificationSubscriptions>(
     "realtime.caches:PushNotificationSubscriptions",
-    async (userId, testMode_ExpectedValue) => {
-        return testMode(
-            async (apolloClient) => {
-                const response = await apolloClient.query({
-                    query: PushNotificationSubscriptionsDocument,
-                    variables: {
+    async (userId) => {
+        const response =
+            gqlClient &&
+            (await gqlClient
+                .query<PushNotificationSubscriptionsQuery, PushNotificationSubscriptionsQueryVariables>(
+                    PushNotificationSubscriptionsDocument,
+                    {
                         userId,
+                    }
+                )
+                .toPromise());
+
+        const result: PushNotificationSubscriptions | undefined = {
+            userId,
+            subscriptions:
+                response?.data?.PushNotificationSubscription.map((x) => ({
+                    endpoint: x.endpoint,
+                    keys: {
+                        auth: x.auth,
+                        p256dh: x.p256dh,
                     },
-                });
+                })) ?? [],
+        };
 
-                const result: PushNotificationSubscriptions | undefined = {
-                    userId,
-                    subscriptions: response.data.PushNotificationSubscription.map((x) => ({
-                        endpoint: x.endpoint,
-                        keys: {
-                            auth: x.auth,
-                            p256dh: x.p256dh,
-                        },
-                    })),
-                };
-
-                return result;
-            },
-            async () => testMode_ExpectedValue
-        );
+        return result;
     },
     JSON.stringify,
     JSON.parse,
@@ -56,12 +60,11 @@ const PushNotificationSubscriptionsCache = new Cache<PushNotificationSubscriptio
 
 export async function getPushNotificationSubscriptions(
     userId: string,
-    testMode_ExpectedInfo: PushNotificationSubscriptions,
     refetchNow = false
 ): Promise<PushNotificationSubscriptions | undefined> {
-    const info = await PushNotificationSubscriptionsCache.get(userId, testMode_ExpectedInfo, refetchNow);
+    const info = await PushNotificationSubscriptionsCache.get(userId, refetchNow);
     if (!info && !refetchNow) {
-        return getPushNotificationSubscriptions(userId, testMode_ExpectedInfo, true);
+        return getPushNotificationSubscriptions(userId, true);
     }
     return info;
 }
@@ -85,10 +88,7 @@ export async function insertOrUpdatePushNotificationSubscription(
                 };
             }
         },
-        {
-            userId,
-            subscriptions: [],
-        }
+        false
     );
 }
 
@@ -101,9 +101,6 @@ export async function deletePushNotificationSubscription(userId: string, endpoin
                 subscriptions: existing ? existing.subscriptions.filter((x) => x.endpoint !== endpoint) : [],
             };
         },
-        {
-            userId,
-            subscriptions: [],
-        }
+        false
     );
 }

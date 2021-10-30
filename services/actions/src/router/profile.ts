@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client/core";
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";
@@ -9,9 +11,6 @@ import { assertType } from "typescript-is";
 import { UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { checkJwt } from "../middlewares/checkJwt";
-import { checkUserScopes } from "../middlewares/checkScopes";
 
 assert(process.env.AWS_ACTIONS_USER_ACCESS_KEY_ID, "AWS_ACTIONS_USER_ACCESS_KEY_ID environment variable not provided.");
 assert(
@@ -26,7 +25,6 @@ export const router = express.Router();
 router.use(checkEventSecret);
 router.use(json());
 router.use(checkJwt);
-router.use(checkUserScopes);
 
 gql`
     mutation UpdateProfilePhoto(

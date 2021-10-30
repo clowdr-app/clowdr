@@ -1,3 +1,5 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -8,9 +10,6 @@ import {
     handleRemoveOldRoomParticipants,
     handleRoomCreated,
 } from "../handlers/room";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
-import { checkJwt } from "../middlewares/checkJwt";
-import { checkUserScopes } from "../middlewares/checkScopes";
 import type { Payload, RoomData } from "../types/hasura/event";
 
 export const router = express.Router();
@@ -49,7 +48,6 @@ router.post("/removeOldParticipants", json(), async (_req: Request, res: Respons
 
 router.use(json());
 router.use(checkJwt);
-router.use(checkUserScopes);
 
 router.post("/createDm", async (req: Request, res: Response<CreateRoomDmOutput>) => {
     try {

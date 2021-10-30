@@ -1,5 +1,5 @@
 {
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "../../packages/auth/checkEventSecret.ts"],
     "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         /* Basic Options */
@@ -37,7 +37,7 @@
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
     },
     "references": [
-        { "path": "../../packages/component-clients/tsconfig.cjs.ref.json" },
-        { "path": "../../packages/auth/tsconfig.cjs.ref.json" }
+        { "path": "../../packages/auth/tsconfig.cjs.ref.json" },
+        { "path": "../../packages/caches/tsconfig.cjs.ref.json" }
     ]
 }

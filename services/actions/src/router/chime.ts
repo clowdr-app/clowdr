@@ -1,3 +1,4 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json, text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -9,7 +10,6 @@ import {
     handleJoinRoom,
 } from "../handlers/chime";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type {
     ChimeEventBase,
     ChimeMeetingEndedDetail,

@@ -27,6 +27,7 @@
         "@graphql-typed-document-node/core": "^3.1.0",
         "@midspace/auth": "workspace:*",
         "@midspace/component-clients": "workspace:*",
+        "@midspace/caches": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/express": "^4.17.12",

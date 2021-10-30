@@ -1,4 +1,4 @@
-import { apolloClient } from "@midspace/component-clients/graphqlClient";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import { gql } from "graphql-tag";
 import webPush from "web-push";
@@ -36,7 +36,7 @@ export async function sendNotification(
         }
 
         try {
-            await apolloClient?.mutate({
+            await gqlClient?.mutate({
                 mutation: DeletePushNotificationSubscriptionDocument,
                 variables: {
                     endpoint: subscription.endpoint,

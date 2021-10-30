@@ -32,9 +32,9 @@ let cachedVAPIDKeys: VapidKeys | null = null;
 export async function getVAPIDKeys(): Promise<VapidKeys> {
     if (!cachedVAPIDKeys) {
         cachedVAPIDKeys = await testMode(
-            async (apolloClient) => {
+            async (gqlClient) => {
                 // Check for existing keys
-                const response = await apolloClient.query({
+                const response = await gqlClient.query({
                     query: VapidKeysDocument,
                 });
                 if (response.data.publicKey && response.data.privateKey) {
@@ -45,7 +45,7 @@ export async function getVAPIDKeys(): Promise<VapidKeys> {
                 } else {
                     const newKeys = generateVAPIDKeys();
 
-                    await apolloClient.mutate({
+                    await gqlClient.mutate({
                         mutation: SetVapidKeysDocument,
                         variables: newKeys,
                     });

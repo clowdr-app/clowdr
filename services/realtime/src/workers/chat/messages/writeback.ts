@@ -1,6 +1,6 @@
-import type { FetchResult } from "@apollo/client/core";
-import { ApolloError, gql } from "@apollo/client/core";
 import type { ConsumeMessage } from "amqplib";
+import type { FetchResult } from "graphql-tag";
+import { ApolloError, gql } from "graphql-tag";
 import type {
     Chat_Message_Insert_Input,
     DeleteChatMessagesMutation,
@@ -101,8 +101,8 @@ async function processInsertQueue() {
 
     try {
         const response = await testMode<InsertChatMessagesResponse>(
-            async (apolloClient) => {
-                return apolloClient.mutate({
+            async (gqlClient) => {
+                return gqlClient.mutate({
                     mutation: InsertChatMessagesDocument,
                     variables: {
                         objects: insertObjects,
@@ -178,9 +178,9 @@ async function processInsertQueue() {
             const responses = await Promise.all(
                 insertObjects.map((obj, index) =>
                     testMode<InsertChatMessageResponse_Individual>(
-                        async (apolloClient) => {
+                        async (gqlClient) => {
                             try {
-                                const resp = await apolloClient.mutate({
+                                const resp = await gqlClient.mutate({
                                     mutation: InsertChatMessagesDocument,
                                     variables: {
                                         objects: [obj],
@@ -304,8 +304,8 @@ async function processUpdateQueue() {
     for (const updateAction of processNow) {
         try {
             const response = await testMode<UpdateChatMessageResponse>(
-                async (apolloClient) => {
-                    return apolloClient.mutate({
+                async (gqlClient) => {
+                    return gqlClient.mutate({
                         mutation: UpdateChatMessageDocument,
                         variables: {
                             messageId: updateAction.actionMsg.sId,
@@ -374,8 +374,8 @@ async function processDeleteQueue() {
     try {
         if (processNow.length > 0) {
             const response = await testMode<DeleteChatMessagesResponse>(
-                async (apolloClient) => {
-                    return apolloClient.mutate({
+                async (gqlClient) => {
+                    return gqlClient.mutate({
                         mutation: DeleteChatMessagesDocument,
                         variables: {
                             messageIds: processNow.map((x) => x.actionMsg.sId),

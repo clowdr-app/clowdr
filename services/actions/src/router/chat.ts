@@ -1,9 +1,9 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleFlagInserted } from "../handlers/chat";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type { FlagData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();

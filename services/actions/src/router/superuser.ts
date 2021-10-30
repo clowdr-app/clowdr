@@ -1,7 +1,7 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { handleInitialiseSuperUser } from "../handlers/superuser";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 
 export const router = express.Router();
 

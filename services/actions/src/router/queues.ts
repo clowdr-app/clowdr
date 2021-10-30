@@ -1,3 +1,4 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -5,7 +6,6 @@ import { processCustomEmailsJobQueue } from "../handlers/customEmail";
 import { processEmailsJobQueue } from "../handlers/email";
 import { processInvitationEmailsQueue } from "../handlers/invitation";
 import { processSendSubmissionRequestsJobQueue } from "../handlers/upload";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 
 export const router = express.Router();
 

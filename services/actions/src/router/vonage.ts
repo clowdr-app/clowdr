@@ -1,3 +1,4 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import assert from "assert";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
@@ -10,7 +11,6 @@ import {
     handleVonageArchiveMonitoringWebhook,
     handleVonageSessionMonitoringWebhook,
 } from "../handlers/vonage";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type { ActionPayload } from "../types/hasura/action";
 import type { ArchiveMonitoringWebhookReqBody, SessionMonitoringWebhookReqBody } from "../types/vonage";
 

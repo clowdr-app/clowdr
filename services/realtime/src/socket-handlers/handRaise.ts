@@ -10,7 +10,7 @@ import {
     Room_ManagementMode_Enum,
     Schedule_EventProgramPersonRole_Enum,
 } from "../generated/graphql";
-import { getEventInfo } from "../lib/cache/roomInfo";
+import { getEventInfo } from "../lib/cache/eventInfo";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
 import { canAccessEvent } from "../lib/permissions";
 import { socketServer } from "../servers/socket-server";
@@ -203,8 +203,8 @@ export function onAcceptHandRaised(
                     ))
                 ) {
                     const existingPeople = await testMode(
-                        async (apolloClient) => {
-                            const response = await apolloClient.query({
+                        async (gqlClient) => {
+                            const response = await gqlClient.query({
                                 query: GetExistingProgramPersonDocument,
                                 variables: {
                                     conferenceId: eventInfo.conference.id,
@@ -227,8 +227,8 @@ export function onAcceptHandRaised(
                     const registrant = existingPeople.registrants?.length ? existingPeople.registrants[0] : undefined;
                     if (existingPersonId || registrant) {
                         const insertResult = await testMode(
-                            async (apolloClient) => {
-                                const response = await apolloClient.mutate({
+                            async (gqlClient) => {
+                                const response = await gqlClient.mutate({
                                     mutation: InsertEventParticipantDocument,
                                     variables: {
                                         eventPerson: {

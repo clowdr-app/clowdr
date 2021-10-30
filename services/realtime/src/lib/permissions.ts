@@ -3,8 +3,8 @@ import type { ChatInfo, Item } from "./cache/chatInfo";
 import { getChatInfo } from "./cache/chatInfo";
 import type { RegistrantInfo } from "./cache/registrantInfo";
 import { getRegistrantInfo } from "./cache/registrantInfo";
-import type { EventInfo } from "./cache/roomInfo";
-import { getEventInfo } from "./cache/roomInfo";
+import type { EventInfo } from "./cache/eventInfo";
+import { getEventInfo } from "./cache/eventInfo";
 import { hasAtLeastOnePermissionForConfSlug } from "./cache/userPermission";
 
 export async function canSelectChat(

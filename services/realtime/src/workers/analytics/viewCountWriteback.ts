@@ -1,7 +1,7 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/analytics/viewCountWriteback.js
 
-import { apolloClient } from "@midspace/component-clients/graphqlClient";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import { gql } from "graphql-tag";
@@ -54,7 +54,7 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(apolloClient, "Apollo client needed for analytics view count writeback");
+        assert(gqlClient, "Apollo client needed for analytics view count writeback");
 
         console.info("Writing back analytics view counts");
 
@@ -149,7 +149,7 @@ async function Main(continueExecuting = false) {
             const itemIds = itemResults.map((x) => x.identifier);
             const elementIds = elementResults.map((x) => x.identifier);
             const roomIds = roomHLSResults.map((x) => x.identifier);
-            const existingCounts = await apolloClient.query({
+            const existingCounts = await gqlClient.query({
                 query: SelectViewCountsDocument,
                 variables: {
                     itemIds,
@@ -158,7 +158,7 @@ async function Main(continueExecuting = false) {
                     cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
                 },
             });
-            await apolloClient.mutate({
+            await gqlClient.mutate({
                 mutation: InsertViewCountsDocument,
                 variables: {
                     itemStats: itemResults.map((result) => {

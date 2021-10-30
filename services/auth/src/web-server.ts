@@ -1,3 +1,24 @@
-import { httpServer } from "./servers/http-server";
+import assert from "assert";
+import cors from "cors";
+import express from "express";
+import path from "path";
+import { router as hasuraRouter } from "./hasura";
 
-export default { httpServer };
+assert(process.env.REDIS_KEY, "REDIS_KEY env var not defined.");
+assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN env var not defined");
+assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
+
+const PORT = process.env.PORT || 3002;
+const server = express();
+server.use(
+    cors({
+        origin: process.env.CORS_ORIGIN.split(","),
+    })
+);
+
+server.use("/hasura", hasuraRouter);
+
+const INDEX_FILE = "../resources/index.html";
+server.use((_req, res) => res.sendFile(path.resolve(path.join(__dirname, INDEX_FILE))));
+
+export const httpServer = server.listen(PORT, () => console.log(`Listening on ${PORT}`));

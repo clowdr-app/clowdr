@@ -2,7 +2,7 @@
 // import express, { Request, Response } from "express";
 // import { assertType } from "typescript-is";
 // import { handlePublishVideoJobInserted } from "../handlers/publishVideoJob";
-// import { checkEventSecret } from "../middlewares/checkEventSecret";
+// import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 // import { Payload, PublishVideoJobData } from "../types/hasura/event";
 
 // export const router = express.Router();

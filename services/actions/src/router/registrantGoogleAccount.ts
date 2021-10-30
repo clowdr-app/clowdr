@@ -1,9 +1,9 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleRefreshYouTubeData, handleRegistrantGoogleAccountDeleted } from "../handlers/registrantGoogleAccount";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 
 export const router = express.Router();

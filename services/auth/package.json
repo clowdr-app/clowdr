@@ -25,7 +25,6 @@
         "@graphql-codegen/typescript-operations": "^1.18.3",
         "@graphql-codegen/typescript-urql": "^3.2.2",
         "@midspace/auth": "workspace:*",
-        "@midspace/component-clients": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/cors": "^2.8.12",

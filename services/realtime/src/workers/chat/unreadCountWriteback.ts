@@ -1,7 +1,7 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
-import { apolloClient } from "@midspace/component-clients/graphqlClient";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import { gql } from "graphql-tag";
 import type { Chat_ReadUpToIndex_Insert_Input } from "../../generated/graphql";
@@ -28,11 +28,11 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(apolloClient, "Apollo client needed for read up to index writeback");
+        assert(gqlClient, "Apollo client needed for read up to index writeback");
 
         console.info("Writing back read up to indices");
         const indicesToWriteBack = await getAndClearModified();
-        const registrantIds = await apolloClient.query({
+        const registrantIds = await gqlClient.query({
             query: RegistrantIdsFromChatsAndUsersDocument,
             variables: {
                 chatIds: indicesToWriteBack.map((x) => x.chatId),
@@ -45,8 +45,8 @@ async function Main(continueExecuting = false) {
         // so we don't get an accidental foreign key violation.
         await new Promise<void>((resolve) =>
             setTimeout(async () => {
-                assert(apolloClient, "Apollo client needed for read up to index writeback");
-                await apolloClient.mutate({
+                assert(gqlClient, "Apollo client needed for read up to index writeback");
+                await gqlClient.mutate({
                     mutation: InsertReadUpToIndexDocument,
                     variables: {
                         objects: indicesToWriteBack

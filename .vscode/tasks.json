@@ -136,6 +136,20 @@
             },
             "args": ["gql-cdg"]
         },
+        // Caches package -- GraphQL Codegen
+        {
+            "label": "Caches package -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/packages/caches"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["gql-cdg"]
+        },
         // Auth service -- Local Development
         {
             "label": "Auth Service -- Local Development",

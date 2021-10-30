@@ -1,14 +1,12 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
 import type { Request, Response } from "express";
 import express from "express";
-import type { AuthenticatedRequest } from "./checkScopes";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
-import { checkEventSecret } from "./middlewares/checkEventSecret";
-import { checkJwt } from "./middlewares/checkJwt";
-import { checkUserScopes } from "./middlewares/checkScopes";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
 import { router as chatRouter } from "./router/chat";
@@ -93,12 +91,11 @@ app.use(checkEventSecret);
 
 const jsonParser = json();
 
-app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, async (_req: Request, res: Response) => {
-    const req = _req as AuthenticatedRequest;
+app.post("/invitation/confirm/current", jsonParser, checkJwt, async (req: Request, res: Response) => {
     const params: invitationConfirmCurrentArgs = req.body.input;
     console.log("Invitation/confirm/current", params);
     try {
-        const result = await invitationConfirmCurrentHandler(params, req.userId);
+        const result = await invitationConfirmCurrentHandler(params, (req as any).user.sub);
         return res.json(result);
     } catch (e: any) {
         console.error("Failure while processing /invitation/confirm/current", e);

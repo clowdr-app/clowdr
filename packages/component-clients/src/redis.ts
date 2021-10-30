@@ -129,4 +129,10 @@ export const redisClientP = {
 
     expire: (redisClient: RedisClient) =>
         promisify((key: string, seconds: number, cb?: Callback<number>) => redisClient.expire(key, seconds, cb)),
+
+    exists: (redisClient: RedisClient) =>
+        promisify((key: string, cb?: Callback<number>) => redisClient.exists(key, cb)),
+    watch: (redisClient: RedisClient) => promisify((key: string, cb?: Callback<"OK">) => redisClient.watch(key, cb)),
+    unwatch: (redisClient: RedisClient) => promisify((cb?: Callback<"OK">) => redisClient.unwatch(cb)),
+    discard: (redisClient: RedisClient) => promisify((cb?: Callback<"OK">) => redisClient.discard(cb)),
 };

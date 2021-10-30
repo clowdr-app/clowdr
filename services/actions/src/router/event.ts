@@ -1,3 +1,4 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -8,7 +9,6 @@ import {
     handleEventUpdated,
     handleStopEventBroadcasts,
 } from "../handlers/event";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type { EventData, Payload, ScheduledEventPayload } from "../types/hasura/event";
 
 export const router = express.Router();

@@ -1,9 +1,9 @@
+import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleShuffleQueueEntered, processShuffleQueues } from "../handlers/shuffleRoom";
-import { checkEventSecret } from "../middlewares/checkEventSecret";
 import type { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
 
 export const router = express.Router();

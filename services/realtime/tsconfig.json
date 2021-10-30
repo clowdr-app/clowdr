@@ -71,6 +71,7 @@
     },
     "references": [
         { "path": "../../packages/component-clients/tsconfig.cjs.ref.json" },
-        { "path": "../../packages/auth/tsconfig.cjs.ref.json" }
+        { "path": "../../packages/auth/tsconfig.cjs.ref.json" },
+        { "path": "../../packages/caches/tsconfig.cjs.ref.json" }
     ]
 }

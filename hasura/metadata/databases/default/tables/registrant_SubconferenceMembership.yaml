@@ -127,9 +127,9 @@ event_triggers:
   headers:
   - name: X-Hasura-Event-Secret
     value_from_env: EVENT_SECRET
-  name: AuthCache_SubconferenceMembership
+  name: Cache_SubconferenceMembership
   retry_conf:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: "{{AUTH_BASE_URL}}/cache/update/subconferenceMembership"
+  webhook: "{{CACHES_BASE_URL}}/cache/update/subconferenceMembership"

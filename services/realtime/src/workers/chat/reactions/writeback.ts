@@ -1,11 +1,16 @@
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { redlock } from "@midspace/component-clients/redis";
+import { CombinedError } from "@urql/core";
 import type { ConsumeMessage } from "amqplib";
-import type { FetchResult } from "graphql-tag";
-import { ApolloError, gql } from "graphql-tag";
+import { gql } from "graphql-tag";
 import type {
     Chat_Reaction_Insert_Input,
     DeleteChatReactionsMutation,
+    DeleteChatReactionsMutationVariables,
     InsertChatReactionsMutation,
+    InsertChatReactionsMutationVariables,
     UpdateChatReactionMutation,
+    UpdateChatReactionMutationVariables,
 } from "../../../generated/graphql";
 import {
     DeleteChatReactionsDocument,
@@ -18,9 +23,7 @@ import {
     onWritebackReactionsComplete,
     onWritebackReactionsFail,
 } from "../../../rabbitmq/chat/reactions";
-import { testMode } from "../../../testMode";
 import type { Action, Reaction } from "../../../types/chat";
-import { redlock } from "../@midspace/component-clients/redis";
 
 console.info("Chat reactions writeback worker running");
 
@@ -31,18 +34,6 @@ type UnackedReactionInfo = {
 
 type Delayed<T> = T & {
     delayUntil: number;
-};
-
-type InsertChatReactionsResponse = FetchResult<InsertChatReactionsMutation, Record<string, any>, Record<string, any>>;
-type UpdateChatReactionResponse = FetchResult<UpdateChatReactionMutation, Record<string, any>, Record<string, any>>;
-type DeleteChatReactionsResponse = FetchResult<DeleteChatReactionsMutation, Record<string, any>, Record<string, any>>;
-
-type InsertChatReactionResponse_Individual = FetchResult<
-    InsertChatReactionsMutation,
-    Record<string, any>,
-    Record<string, any>
-> & {
-    sId: string;
 };
 
 // Note: We cannot assume that inserts, updates and deletes will be processed in
@@ -99,30 +90,15 @@ async function processInsertQueue() {
     }
 
     try {
-        const response = await testMode<InsertChatReactionsResponse>(
-            async (gqlClient) => {
-                return gqlClient.mutate({
-                    mutation: InsertChatReactionsDocument,
-                    variables: {
-                        objects: insertObjects,
-                    },
-                });
-            },
-            async () => {
-                return {
-                    data: {
-                        insert_chat_Reaction: {
-                            returning: insertObjects.map((x, id) => ({
-                                id,
-                                sId: x.sId,
-                            })),
-                        },
-                    },
-                };
-            }
-        );
-        if (response.errors) {
-            throw response.errors;
+        const response = await gqlClient
+            ?.mutation<InsertChatReactionsMutation, InsertChatReactionsMutationVariables>(InsertChatReactionsDocument, {
+                objects: insertObjects,
+            })
+            .toPromise();
+        if (!response) {
+            throw new Error("No response / no gqlClient");
+        } else if (response.error) {
+            throw response.error;
         }
 
         const results = insertQueue.map((original) => ({
@@ -160,7 +136,7 @@ async function processInsertQueue() {
         }
     } catch (e) {
         let wasNetworkError: boolean;
-        if (e instanceof ApolloError) {
+        if (e instanceof CombinedError) {
             if (e.networkError) {
                 wasNetworkError = true;
             } else if (e.graphQLErrors) {
@@ -178,44 +154,29 @@ async function processInsertQueue() {
             onWritebackReactionsFail(insertQueue.map((x) => x.rabbitMQMsg));
         } else {
             const responses = await Promise.all(
-                insertObjects.map((obj, index) =>
-                    testMode<InsertChatReactionResponse_Individual>(
-                        async (gqlClient) => {
-                            try {
-                                const resp = await gqlClient.mutate({
-                                    mutation: InsertChatReactionsDocument,
-                                    variables: {
-                                        objects: [obj],
-                                    },
-                                });
-                                if (resp.errors) {
-                                    throw resp.errors;
+                insertObjects.map(async (obj) => {
+                    try {
+                        const resp = await gqlClient
+                            ?.mutation<InsertChatReactionsMutation, InsertChatReactionsMutationVariables>(
+                                InsertChatReactionsDocument,
+                                {
+                                    objects: [obj],
                                 }
-                                return { ...resp, sId: obj.sId };
-                            } catch (e) {
-                                return {
-                                    sId: obj.sId,
-                                    errors: [e],
-                                };
-                            }
-                        },
-                        async () => {
-                            return {
-                                sId: obj.sId,
-                                data: {
-                                    insert_chat_Reaction: {
-                                        returning: [
-                                            {
-                                                id: index,
-                                                sId: obj.sId,
-                                            },
-                                        ],
-                                    },
-                                },
-                            };
+                            )
+                            .toPromise();
+                        if (!resp) {
+                            throw new Error("No response / no gqlClient");
+                        } else if (resp.error) {
+                            throw resp.error;
                         }
-                    )
-                )
+                        return { ...resp, sId: obj.sId };
+                    } catch (e) {
+                        return {
+                            sId: obj.sId,
+                            errors: [e],
+                        };
+                    }
+                })
             );
 
             const results = insertQueue.map((original) => ({
@@ -305,32 +266,17 @@ async function processUpdateQueue() {
 
     for (const updateAction of processNow) {
         try {
-            const response = await testMode<UpdateChatReactionResponse>(
-                async (gqlClient) => {
-                    return gqlClient.mutate({
-                        mutation: UpdateChatReactionDocument,
-                        variables: {
-                            reactionId: updateAction.actionRct.sId,
-                            object: updateAction.actionRct,
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            update_chat_Reaction: {
-                                returning: [
-                                    {
-                                        sId: updateAction.actionRct.sId,
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<UpdateChatReactionMutation, UpdateChatReactionMutationVariables>(
+                    UpdateChatReactionDocument,
+                    {
+                        reactionId: updateAction.actionRct.sId,
+                        object: updateAction.actionRct,
+                    }
+                )
+                .toPromise();
 
-            if (response.data?.update_chat_Reaction?.returning?.some((x) => x.sId === updateAction.actionRct.sId)) {
+            if (response?.data?.update_chat_Reaction?.returning?.some((x) => x.sId === updateAction.actionRct.sId)) {
                 completed.push(updateAction);
             } else {
                 if (updateAction.delayUntil === -1) {
@@ -375,43 +321,28 @@ async function processDeleteQueue() {
 
     try {
         if (processNow.length > 0) {
-            const response = await testMode<DeleteChatReactionsResponse>(
-                async (gqlClient) => {
-                    return gqlClient.mutate({
-                        mutation: DeleteChatReactionsDocument,
-                        variables: {
-                            reactionIds: processNow.map((x) => x.actionRct.sId),
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            delete_chat_Reaction: {
-                                returning: [
-                                    {
-                                        sId: processNow.map((x) => x.actionRct.sId),
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<DeleteChatReactionsMutation, DeleteChatReactionsMutationVariables>(
+                    DeleteChatReactionsDocument,
+                    {
+                        reactionIds: processNow.map((x) => x.actionRct.sId),
+                    }
+                )
+                .toPromise();
 
             completed = processNow.filter(
                 (deleteAction) =>
-                    !!response.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
+                    !!response?.data?.delete_chat_Reaction?.returning?.some((x) => x.sId === deleteAction.actionRct.sId)
             );
             failedFirst = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Reaction?.returning?.some(
+                    !response?.data?.delete_chat_Reaction?.returning?.some(
                         (x) => x.sId === deleteAction.actionRct.sId
                     ) && deleteAction.delayUntil === -1
             );
             failedSecond = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Reaction?.returning?.some(
+                    !response?.data?.delete_chat_Reaction?.returning?.some(
                         (x) => x.sId === deleteAction.actionRct.sId
                     ) && deleteAction.delayUntil !== -1
             );

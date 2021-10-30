@@ -19,7 +19,7 @@ export function onSend(userId: string, socketId: string, _socket: Socket): (reac
                     "duplicatedMessageSId invalid"
                 );
 
-                await action(actionData, userId, conferenceSlugs);
+                await action(actionData, userId);
             } catch (e) {
                 console.error(`Error processing chat.reactions.send (socket: ${socketId})`, e, actionData);
             }

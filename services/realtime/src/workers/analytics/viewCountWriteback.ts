@@ -5,6 +5,12 @@ import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import { gql } from "graphql-tag";
+import type {
+    InsertViewCountsMutation,
+    InsertViewCountsMutationVariables,
+    SelectViewCountsQuery,
+    SelectViewCountsQueryVariables,
+} from "../../generated/graphql";
 import { InsertViewCountsDocument, SelectViewCountsDocument } from "../../generated/graphql";
 
 gql`
@@ -149,50 +155,49 @@ async function Main(continueExecuting = false) {
             const itemIds = itemResults.map((x) => x.identifier);
             const elementIds = elementResults.map((x) => x.identifier);
             const roomIds = roomHLSResults.map((x) => x.identifier);
-            const existingCounts = await gqlClient.query({
-                query: SelectViewCountsDocument,
-                variables: {
+            const existingCounts = await gqlClient
+                .query<SelectViewCountsQuery, SelectViewCountsQueryVariables>(SelectViewCountsDocument, {
                     itemIds,
                     elementIds,
                     roomIds,
                     cutoff: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-                },
-            });
-            await gqlClient.mutate({
-                mutation: InsertViewCountsDocument,
-                variables: {
-                    itemStats: itemResults.map((result) => {
-                        const existing = existingCounts.data.analytics_ContentItemStats.find(
-                            (x) => x.itemId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            itemId: result.identifier,
-                            viewCount: (existing?.viewCount ?? 0) + result.count,
-                        };
-                    }),
-                    elementStats: elementResults.map((result) => {
-                        const existing = existingCounts.data.analytics_ContentElementStats.find(
-                            (x) => x.elementId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            elementId: result.identifier,
-                            viewCount: (existing?.viewCount ?? 0) + result.count,
-                        };
-                    }),
-                    roomStats: roomHLSResults.map((result) => {
-                        const existing = existingCounts.data.analytics_RoomStats.find(
-                            (x) => x.roomId === result.identifier
-                        );
-                        return {
-                            id: existing?.id,
-                            roomId: result.identifier,
-                            hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
-                        };
-                    }),
-                },
-            });
+                })
+                .toPromise();
+            if (existingCounts.data) {
+                const data = existingCounts.data;
+                await gqlClient
+                    .mutation<InsertViewCountsMutation, InsertViewCountsMutationVariables>(InsertViewCountsDocument, {
+                        itemStats: itemResults.map((result) => {
+                            const existing = data.analytics_ContentItemStats.find(
+                                (x) => x.itemId === result.identifier
+                            );
+                            return {
+                                id: existing?.id,
+                                itemId: result.identifier,
+                                viewCount: (existing?.viewCount ?? 0) + result.count,
+                            };
+                        }),
+                        elementStats: elementResults.map((result) => {
+                            const existing = data.analytics_ContentElementStats.find(
+                                (x) => x.elementId === result.identifier
+                            );
+                            return {
+                                id: existing?.id,
+                                elementId: result.identifier,
+                                viewCount: (existing?.viewCount ?? 0) + result.count,
+                            };
+                        }),
+                        roomStats: roomHLSResults.map((result) => {
+                            const existing = data.analytics_RoomStats.find((x) => x.roomId === result.identifier);
+                            return {
+                                id: existing?.id,
+                                roomId: result.identifier,
+                                hlsViewCount: (existing?.hlsViewCount ?? 0) + result.count,
+                            };
+                        }),
+                    })
+                    .toPromise();
+            }
         } finally {
             if (!clientReleased) {
                 redisClientPool.release("workers/analytics/viewCountWriteback/Main", client);

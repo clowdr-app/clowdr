@@ -1,20 +1,24 @@
+import { eventCache } from "@midspace/caches/event";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import gql from "graphql-tag";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
+import type {
+    GetExistingProgramPersonQuery,
+    GetExistingProgramPersonQueryVariables,
+    InsertEventParticipantMutation,
+    InsertEventParticipantMutationVariables,
+} from "../generated/graphql";
 import {
     GetExistingProgramPersonDocument,
     InsertEventParticipantDocument,
-    Permissions_Permission_Enum,
-    Room_ManagementMode_Enum,
     Schedule_EventProgramPersonRole_Enum,
 } from "../generated/graphql";
-import { getEventInfo } from "../lib/cache/eventInfo";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
 import { canAccessEvent } from "../lib/permissions";
 import { socketServer } from "../servers/socket-server";
-import { testMode } from "../testMode";
 
 gql`
     query GetExistingProgramPerson($conferenceId: uuid!, $userId: String!) {
@@ -52,18 +56,7 @@ export function onRaiseHand(userId: string, socketId: string, _socket: Socket): 
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
 
-                if (
-                    await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public
-                    )
-                ) {
+                if (await canAccessEvent(userId, eventId)) {
                     const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onRaiseHand");
                     try {
                         await redisClientP.zadd(redisClient)(
@@ -92,18 +85,7 @@ export function onLowerHand(userId: string, socketId: string, _socket: Socket): 
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
 
-                if (
-                    await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public
-                    )
-                ) {
+                if (await canAccessEvent(userId, eventId)) {
                     const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onLowerHand");
                     try {
                         await redisClientP.zrem(redisClient)(generateEventHandsRaisedKeyName(eventId), userId);
@@ -128,18 +110,7 @@ export function onFetchHandsRaised(userId: string, socketId: string, socket: Soc
             try {
                 assert(is<string>(eventId), "Data does not match expected type.");
 
-                if (
-                    await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public
-                    )
-                ) {
+                if (await canAccessEvent(userId, eventId)) {
                     const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onFetchHandsRaised");
                     try {
                         const userIds = await redisClientP.zrange(redisClient)(
@@ -172,93 +143,53 @@ export function onAcceptHandRaised(
 
                 const roleName = Schedule_EventProgramPersonRole_Enum.Participant;
 
-                const eventInfo = await getEventInfo(eventId, {
-                    conference: { id: "event:test-conference-id", slug: conferenceSlugs[0] },
-                    room: {
-                        id: "event:test-room-id",
-                        name: "event:test-room-name",
-                        people: [{ registrantId: "event:test-registrant-id", userId: targetUserId }],
-                        managementMode: Room_ManagementMode_Enum.Public,
-                    },
-                });
+                const eventInfo = await eventCache.getEntity(eventId);
                 if (
                     eventInfo &&
                     // TODO: Enforce event person role
-                    (await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        [
-                            Permissions_Permission_Enum.ConferenceViewAttendees,
-                            Permissions_Permission_Enum.ConferenceManageSchedule,
-                            Permissions_Permission_Enum.ConferenceModerateAttendees,
-                            Permissions_Permission_Enum.ConferenceManageAttendees,
-                        ],
-                        eventInfo
-                    ))
+                    (await canAccessEvent(userId, eventId))
                 ) {
-                    const existingPeople = await testMode(
-                        async (gqlClient) => {
-                            const response = await gqlClient.query({
-                                query: GetExistingProgramPersonDocument,
-                                variables: {
-                                    conferenceId: eventInfo.conference.id,
-                                    userId: targetUserId,
-                                },
-                            });
+                    const response = await gqlClient
+                        ?.query<GetExistingProgramPersonQuery, GetExistingProgramPersonQueryVariables>(
+                            GetExistingProgramPersonDocument,
+                            {
+                                conferenceId: eventInfo.conferenceId,
+                                userId: targetUserId,
+                            }
+                        )
+                        .toPromise();
 
-                            return {
-                                people: response.data?.collection_ProgramPerson,
-                                registrants: response.data?.registrant_Registrant,
-                            };
-                        },
-                        async () => ({
-                            people: [],
-                            registrants: [],
-                        })
-                    );
-
-                    const existingPersonId = existingPeople.people?.length ? existingPeople.people[0].id : undefined;
-                    const registrant = existingPeople.registrants?.length ? existingPeople.registrants[0] : undefined;
+                    const existingPersonId = response?.data?.collection_ProgramPerson.length
+                        ? response.data.collection_ProgramPerson[0].id
+                        : undefined;
+                    const registrant = response?.data?.registrant_Registrant.length
+                        ? response.data.registrant_Registrant[0]
+                        : undefined;
                     if (existingPersonId || registrant) {
-                        const insertResult = await testMode(
-                            async (gqlClient) => {
-                                const response = await gqlClient.mutate({
-                                    mutation: InsertEventParticipantDocument,
-                                    variables: {
-                                        eventPerson: {
-                                            eventId,
-                                            personId: existingPersonId,
-                                            person:
-                                                !existingPersonId && registrant
-                                                    ? {
-                                                          data: {
-                                                              conferenceId: eventInfo.conference.id,
-                                                              name: registrant.displayName,
-                                                              registrantId: registrant.id,
-                                                          },
-                                                      }
-                                                    : undefined,
-                                            roleName,
-                                        },
+                        const innerResponse = await gqlClient
+                            ?.mutation<InsertEventParticipantMutation, InsertEventParticipantMutationVariables>(
+                                InsertEventParticipantDocument,
+                                {
+                                    eventPerson: {
+                                        eventId,
+                                        personId: existingPersonId,
+                                        person:
+                                            !existingPersonId && registrant
+                                                ? {
+                                                      data: {
+                                                          conferenceId: eventInfo.conferenceId,
+                                                          name: registrant.displayName,
+                                                          registrantId: registrant.id,
+                                                      },
+                                                  }
+                                                : undefined,
+                                        roleName,
                                     },
-                                });
-                                return response.data?.insert_schedule_EventProgramPerson_one;
-                            },
-                            async () => ({
-                                id: "test-EventProgramPerson-id",
-                                person: {
-                                    id: "test-ProgramPerson-id",
-                                },
-                            })
-                        );
+                                }
+                            )
+                            .toPromise();
 
-                        if (insertResult) {
+                        if (innerResponse?.data?.insert_schedule_EventProgramPerson_one) {
                             const redisClient = await redisClientPool.acquire(
                                 "socket-handlers/handRaise/onAcceptHandRaised"
                             );
@@ -277,10 +208,10 @@ export function onAcceptHandRaised(
                                     eventId,
                                     userId: targetUserId,
                                     eventPerson: {
-                                        id: insertResult.id,
+                                        id: innerResponse.data.insert_schedule_EventProgramPerson_one.id,
                                         eventId,
                                         roleName,
-                                        person: insertResult.person,
+                                        person: innerResponse.data.insert_schedule_EventProgramPerson_one.person,
                                     },
                                 });
                         }
@@ -306,16 +237,7 @@ export function onRejectHandRaised(
 
                 if (
                     // TODO: Enforce event person role
-                    await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public
-                    )
+                    await canAccessEvent(userId, eventId)
                 ) {
                     const redisClient = await redisClientPool.acquire("socket-handlers/handRaise/onRejectHandRaised");
                     try {
@@ -342,16 +264,7 @@ export function onObserveEvent(userId: string, socketId: string, socket: Socket)
 
                 if (
                     // TODO: Enforce event person role
-                    await canAccessEvent(
-                        userId,
-                        eventId,
-                        conferenceSlugs,
-                        "event:test-registrant-id",
-                        "event:test-conference-id",
-                        "event:test-room-id",
-                        "event:test-room-name",
-                        Room_ManagementMode_Enum.Public
-                    )
+                    await canAccessEvent(userId, eventId)
                 ) {
                     await socket.join(generateEventHandsRaisedRoomName(eventId));
                 }

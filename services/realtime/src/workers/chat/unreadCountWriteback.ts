@@ -1,12 +1,16 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
+import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
 import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import { gql } from "graphql-tag";
-import type { Chat_ReadUpToIndex_Insert_Input } from "../../generated/graphql";
+import type {
+    Chat_ReadUpToIndex_Insert_Input,
+    RegistrantIdsFromChatsAndUsersQuery,
+    RegistrantIdsFromChatsAndUsersQueryVariables,
+} from "../../generated/graphql";
 import { InsertReadUpToIndexDocument, RegistrantIdsFromChatsAndUsersDocument } from "../../generated/graphql";
-import { getAndClearModified } from "../../lib/cache/readUpToIndex";
 
 gql`
     query RegistrantIdsFromChatsAndUsers($chatIds: [uuid!]!, $userIds: [String!]!) {
@@ -28,32 +32,33 @@ gql`
 
 async function Main(continueExecuting = false) {
     try {
-        assert(gqlClient, "Apollo client needed for read up to index writeback");
+        assert(gqlClient, "GQL client needed for read up to index writeback");
 
         console.info("Writing back read up to indices");
-        const indicesToWriteBack = await getAndClearModified();
-        const registrantIds = await gqlClient.query({
-            query: RegistrantIdsFromChatsAndUsersDocument,
-            variables: {
-                chatIds: indicesToWriteBack.map((x) => x.chatId),
-                userIds: indicesToWriteBack.map((x) => x.userId),
-            },
-        });
+        const indicesToWriteBack = await readUpToIndicesCache.getAndClearModified();
+        const registrantIds = await gqlClient
+            .query<RegistrantIdsFromChatsAndUsersQuery, RegistrantIdsFromChatsAndUsersQueryVariables>(
+                RegistrantIdsFromChatsAndUsersDocument,
+                {
+                    chatIds: indicesToWriteBack.map((x) => x.chatId),
+                    userIds: indicesToWriteBack.map((x) => x.userId),
+                }
+            )
+            .toPromise();
+        assert(registrantIds?.data);
+        const data = registrantIds.data;
 
         // Delay the writeback by 30s so that all the message writeback workers
         // (hopefully) have sufficient time to save their messages into Postgres
         // so we don't get an accidental foreign key violation.
         await new Promise<void>((resolve) =>
             setTimeout(async () => {
-                assert(gqlClient, "Apollo client needed for read up to index writeback");
-                await gqlClient.mutate({
-                    mutation: InsertReadUpToIndexDocument,
-                    variables: {
+                assert(gqlClient, "GQL client needed for read up to index writeback");
+                await gqlClient
+                    .mutation(InsertReadUpToIndexDocument, {
                         objects: indicesToWriteBack
                             .map((x) => {
-                                const registrantId = registrantIds.data.registrant_Registrant.find(
-                                    (y) => y.userId === x.userId
-                                )?.id;
+                                const registrantId = data.registrant_Registrant.find((y) => y.userId === x.userId)?.id;
                                 if (registrantId) {
                                     const r: Chat_ReadUpToIndex_Insert_Input = {
                                         registrantId,
@@ -69,8 +74,8 @@ async function Main(continueExecuting = false) {
                                 return undefined;
                             })
                             .filter((x) => !!x) as Chat_ReadUpToIndex_Insert_Input[],
-                    },
-                });
+                    })
+                    .toPromise();
                 resolve();
             }, 30000)
         );

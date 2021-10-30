@@ -241,6 +241,7 @@ export async function handleRegistrantCacheUpdate(payload: Payload<CacheUpdate.R
                     ...old,
                     conferenceRole: newEntity.conferenceRole,
                     displayName: newEntity.displayName,
+                    userId: newEntity.userId,
                 }));
                 if (newEntity.userId) {
                     const conferenceId = newEntity.conferenceId;

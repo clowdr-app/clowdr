@@ -2,7 +2,6 @@ import { redisClientP, redisClientPool } from "@midspace/component-clients/redis
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
 
@@ -12,20 +11,7 @@ export function onSubscribe(userId: string, socketId: string, socket: Socket): (
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onSubscribe");
                     try {
                         const existingChats = await redisClientP.smembers(client)(socketChatsKeyName(socketId));
@@ -52,20 +38,7 @@ export function onUnsubscribe(userId: string, socketId: string, socket: Socket):
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     socket.leave(generateChatRoomName(chatId));
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onUnsubscribe");
                     try {

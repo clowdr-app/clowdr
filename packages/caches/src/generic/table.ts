@@ -9,7 +9,7 @@ export class TableCache {
         private readonly ttlSeconds = 7 * 24 * 60 * 60
     ) {}
 
-    private generateEntityKey(itemKey: string): string {
+    public generateEntityKey(itemKey: string): string {
         return `caches.${this.redisRootKey}:${itemKey}`;
     }
 

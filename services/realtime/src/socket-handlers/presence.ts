@@ -79,17 +79,15 @@ export function invalidateSessions(): void {
     }
 }
 
-function getPageKey(confSlugs: string[], path: string): string | undefined {
+function getPageKey(path: string): string | undefined {
+    // TODO: Custom domains?
+    // TODO: Permission to view path?
     if (path.startsWith("/conference/")) {
         const confSlug = path.split("/")[2];
-        if (confSlugs.includes(confSlug)) {
-            const hash = crypto.createHash("sha256");
-            hash.write(confSlug, "utf8");
-            hash.write(path, "utf8");
-            return hash.digest("hex").toLowerCase();
-        } else {
-            return undefined;
-        }
+        const hash = crypto.createHash("sha256");
+        hash.write(confSlug, "utf8");
+        hash.write(path, "utf8");
+        return hash.digest("hex").toLowerCase();
     } else {
         const hash = crypto.createHash("sha256");
         hash.write("/<<NO-CONF>>/", "utf8");
@@ -102,7 +100,7 @@ export function onEnterPage(userId: string, socketId: string): (path: string) =>
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     enterPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
@@ -123,7 +121,7 @@ export function onLeavePage(userId: string, socketId: string): (path: string) =>
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     exitPresence(null, pageKey, userId, socketId, (err) => {
                         if (err) {
@@ -144,7 +142,7 @@ export function onObservePage(socketId: string, socket: Socket): (path: string) 
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const listId = getPageKey(conferenceSlugs, path);
+                const listId = getPageKey(path);
                 if (listId) {
                     const listKey = presenceListKey(listId);
                     const chan = presenceChannelName(listId);
@@ -176,7 +174,7 @@ export function onUnobservePage(socketId: string, socket: Socket): (path: string
     return async (path) => {
         try {
             if (typeof path === "string") {
-                const pageKey = getPageKey(conferenceSlugs, path);
+                const pageKey = getPageKey(path);
                 if (pageKey) {
                     const chan = presenceChannelName(pageKey);
                     // console.log(`${userId} unobserved ${pageKey}`);

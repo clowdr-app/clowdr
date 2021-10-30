@@ -1,8 +1,7 @@
+import { readUpToIndicesCache } from "@midspace/caches/readUpToIndex";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
-import { setReadUpToIndex } from "../../lib/cache/readUpToIndex";
 import { canSelectChat } from "../../lib/permissions";
 import { sendUnreadCount } from "../../lib/unreadCounts";
 
@@ -16,20 +15,7 @@ export function onRequestUnreadCount(
             try {
                 assert(is<string>(chatId), "Data does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
+                if (await canSelectChat(userId, chatId)) {
                     await sendUnreadCount(chatId, userId);
                 }
             } catch (e) {
@@ -50,21 +36,8 @@ export function onSetReadUpToIndex(
                 assert(is<string>(chatId), "Data (0) does not match expected type.");
                 assert(is<string>(messageSId), "Data (1) does not match expected type.");
 
-                if (
-                    await canSelectChat(
-                        userId,
-                        chatId,
-                        conferenceSlugs,
-                        false,
-                        "chat.onSubscribe:test-registrant-id",
-                        "chat.onSubscribe:test-conference-id",
-                        "chat.onSubscribe:test-room-id",
-                        "chat.onSubscribe:test-room-name",
-                        Room_ManagementMode_Enum.Public,
-                        []
-                    )
-                ) {
-                    await setReadUpToIndex(chatId, userId, messageSId);
+                if (await canSelectChat(userId, chatId)) {
+                    await readUpToIndicesCache.setField(chatId, userId, messageSId);
                     await sendUnreadCount(chatId, userId);
                 }
             } catch (e) {

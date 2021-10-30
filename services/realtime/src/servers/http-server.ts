@@ -5,7 +5,6 @@ import path from "path";
 import { router as chatRouter } from "../http-routers/chat";
 import { router as eventRouter } from "../http-routers/event";
 import { router as presenceRouter } from "../http-routers/presence";
-import { router as pushNotificationSubscriptionRouter } from "../http-routers/pushNotifications";
 import { router as testRouter } from "../http-routers/test";
 import { router as vapidRouter } from "../http-routers/vapid";
 
@@ -25,7 +24,6 @@ server.use(presenceRouter);
 server.use("/test", testRouter);
 server.use("/chat", chatRouter);
 server.use("/vapid", vapidRouter);
-server.use("/pushNotificationSubscription", pushNotificationSubscriptionRouter);
 server.use("/event", eventRouter);
 
 const INDEX_FILE = "../resources/index.html";

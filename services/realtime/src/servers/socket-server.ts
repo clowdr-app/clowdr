@@ -1,3 +1,4 @@
+import { authorize } from "@midspace/auth/websocket/authorize";
 import { createRedisClient } from "@midspace/component-clients/redis";
 import { gql } from "graphql-tag";
 import type { SigningKey } from "jwks-rsa";
@@ -14,7 +15,6 @@ import { onConnect as onConnectPresence } from "../socket-events/presence";
 import { onDisconnect as onDisconnectAnalytics } from "../socket-handlers/analytics";
 import { onDisconnect as onDisconnectHandRaise } from "../socket-handlers/handRaise";
 import { onDisconnect as onDisconnectPresence } from "../socket-handlers/presence";
-import { authorize } from "./authorize";
 import { httpServer } from "./http-server";
 
 // Initialise the websocket server

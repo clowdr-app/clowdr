@@ -1,11 +1,16 @@
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
+import { redlock } from "@midspace/component-clients/redis";
+import { CombinedError } from "@urql/core";
 import type { ConsumeMessage } from "amqplib";
-import type { FetchResult } from "graphql-tag";
-import { ApolloError, gql } from "graphql-tag";
+import { gql } from "graphql-tag";
 import type {
     Chat_Message_Insert_Input,
     DeleteChatMessagesMutation,
+    DeleteChatMessagesMutationVariables,
     InsertChatMessagesMutation,
+    InsertChatMessagesMutationVariables,
     UpdateChatMessageMutation,
+    UpdateChatMessageMutationVariables,
 } from "../../../generated/graphql";
 import {
     DeleteChatMessagesDocument,
@@ -18,9 +23,7 @@ import {
     onWritebackMessagesFail,
 } from "../../../rabbitmq/chat/messages";
 import { MessageWritebackIntervalMs, MessageWritebackQueueSize } from "../../../rabbitmq/chat/params";
-import { testMode } from "../../../testMode";
 import type { Action, Message } from "../../../types/chat";
-import { redlock } from "../@midspace/component-clients/redis";
 
 console.info("Chat messages writeback worker running");
 
@@ -31,18 +34,6 @@ type UnackedMessageInfo = {
 
 type Delayed<T> = T & {
     delayUntil: number;
-};
-
-type InsertChatMessagesResponse = FetchResult<InsertChatMessagesMutation, Record<string, any>, Record<string, any>>;
-type UpdateChatMessageResponse = FetchResult<UpdateChatMessageMutation, Record<string, any>, Record<string, any>>;
-type DeleteChatMessagesResponse = FetchResult<DeleteChatMessagesMutation, Record<string, any>, Record<string, any>>;
-
-type InsertChatMessageResponse_Individual = FetchResult<
-    InsertChatMessagesMutation,
-    Record<string, any>,
-    Record<string, any>
-> & {
-    sId: string;
 };
 
 // Note: We cannot assume that inserts, updates and deletes will be processed in
@@ -100,30 +91,15 @@ async function processInsertQueue() {
     }
 
     try {
-        const response = await testMode<InsertChatMessagesResponse>(
-            async (gqlClient) => {
-                return gqlClient.mutate({
-                    mutation: InsertChatMessagesDocument,
-                    variables: {
-                        objects: insertObjects,
-                    },
-                });
-            },
-            async () => {
-                return {
-                    data: {
-                        insert_chat_Message: {
-                            returning: insertObjects.map((x, id) => ({
-                                id,
-                                sId: x.sId,
-                            })),
-                        },
-                    },
-                };
-            }
-        );
-        if (response.errors) {
-            throw response.errors;
+        const response = await gqlClient
+            ?.mutation<InsertChatMessagesMutation, InsertChatMessagesMutationVariables>(InsertChatMessagesDocument, {
+                objects: insertObjects,
+            })
+            .toPromise();
+        if (!response) {
+            throw new Error("No response / no gqlClient");
+        } else if (response.error) {
+            throw response.error;
         }
 
         const results = insertQueue.map((original) => ({
@@ -158,7 +134,7 @@ async function processInsertQueue() {
         }
     } catch (e) {
         let wasNetworkError: boolean;
-        if (e instanceof ApolloError) {
+        if (e instanceof CombinedError) {
             if (e.networkError) {
                 wasNetworkError = true;
             } else if (e.graphQLErrors) {
@@ -176,44 +152,29 @@ async function processInsertQueue() {
             onWritebackMessagesFail(insertQueue.map((x) => x.rabbitMQMsg));
         } else {
             const responses = await Promise.all(
-                insertObjects.map((obj, index) =>
-                    testMode<InsertChatMessageResponse_Individual>(
-                        async (gqlClient) => {
-                            try {
-                                const resp = await gqlClient.mutate({
-                                    mutation: InsertChatMessagesDocument,
-                                    variables: {
-                                        objects: [obj],
-                                    },
-                                });
-                                if (resp.errors) {
-                                    throw resp.errors;
+                insertObjects.map(async (obj) => {
+                    try {
+                        const resp = await gqlClient
+                            ?.mutation<InsertChatMessagesMutation, InsertChatMessagesMutationVariables>(
+                                InsertChatMessagesDocument,
+                                {
+                                    objects: [obj],
                                 }
-                                return { ...resp, sId: obj.sId };
-                            } catch (e) {
-                                return {
-                                    sId: obj.sId,
-                                    errors: [e],
-                                };
-                            }
-                        },
-                        async () => {
-                            return {
-                                sId: obj.sId,
-                                data: {
-                                    insert_chat_Message: {
-                                        returning: [
-                                            {
-                                                id: index,
-                                                sId: obj.sId,
-                                            },
-                                        ],
-                                    },
-                                },
-                            };
+                            )
+                            .toPromise();
+                        if (!resp) {
+                            throw new Error("No response / no gqlClient");
+                        } else if (resp.error) {
+                            throw resp.error;
                         }
-                    )
-                )
+                        return { ...resp, sId: obj.sId };
+                    } catch (e) {
+                        return {
+                            sId: obj.sId,
+                            errors: [e],
+                        };
+                    }
+                })
             );
 
             const results = insertQueue.map((original) => ({
@@ -303,32 +264,14 @@ async function processUpdateQueue() {
 
     for (const updateAction of processNow) {
         try {
-            const response = await testMode<UpdateChatMessageResponse>(
-                async (gqlClient) => {
-                    return gqlClient.mutate({
-                        mutation: UpdateChatMessageDocument,
-                        variables: {
-                            messageId: updateAction.actionMsg.sId,
-                            object: updateAction.actionMsg,
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            update_chat_Message: {
-                                returning: [
-                                    {
-                                        sId: updateAction.actionMsg.sId,
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<UpdateChatMessageMutation, UpdateChatMessageMutationVariables>(UpdateChatMessageDocument, {
+                    messageId: updateAction.actionMsg.sId,
+                    object: updateAction.actionMsg,
+                })
+                .toPromise();
 
-            if (response.data?.update_chat_Message?.returning?.some((x) => x.sId === updateAction.actionMsg.sId)) {
+            if (response?.data?.update_chat_Message?.returning?.some((x) => x.sId === updateAction.actionMsg.sId)) {
                 completed.push(updateAction);
             } else {
                 if (updateAction.delayUntil === -1) {
@@ -373,43 +316,30 @@ async function processDeleteQueue() {
 
     try {
         if (processNow.length > 0) {
-            const response = await testMode<DeleteChatMessagesResponse>(
-                async (gqlClient) => {
-                    return gqlClient.mutate({
-                        mutation: DeleteChatMessagesDocument,
-                        variables: {
-                            messageIds: processNow.map((x) => x.actionMsg.sId),
-                        },
-                    });
-                },
-                async () => {
-                    return {
-                        data: {
-                            delete_chat_Message: {
-                                returning: [
-                                    {
-                                        sId: processNow.map((x) => x.actionMsg.sId),
-                                    },
-                                ],
-                            },
-                        },
-                    };
-                }
-            );
+            const response = await gqlClient
+                ?.mutation<DeleteChatMessagesMutation, DeleteChatMessagesMutationVariables>(
+                    DeleteChatMessagesDocument,
+                    {
+                        messageIds: processNow.map((x) => x.actionMsg.sId),
+                    }
+                )
+                .toPromise();
 
             completed = processNow.filter(
                 (deleteAction) =>
-                    !!response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId)
+                    !!response?.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId)
             );
             failedFirst = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
-                    deleteAction.delayUntil === -1
+                    !response?.data?.delete_chat_Message?.returning?.some(
+                        (x) => x.sId === deleteAction.actionMsg.sId
+                    ) && deleteAction.delayUntil === -1
             );
             failedSecond = processNow.filter(
                 (deleteAction) =>
-                    !response.data?.delete_chat_Message?.returning?.some((x) => x.sId === deleteAction.actionMsg.sId) &&
-                    deleteAction.delayUntil !== -1
+                    !response?.data?.delete_chat_Message?.returning?.some(
+                        (x) => x.sId === deleteAction.actionMsg.sId
+                    ) && deleteAction.delayUntil !== -1
             );
         }
     } catch (e) {

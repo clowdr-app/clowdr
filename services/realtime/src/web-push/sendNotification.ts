@@ -2,6 +2,10 @@ import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import { gql } from "graphql-tag";
 import webPush from "web-push";
+import type {
+    DeletePushNotificationSubscriptionMutation,
+    DeletePushNotificationSubscriptionMutationVariables,
+} from "../generated/graphql";
 import { DeletePushNotificationSubscriptionDocument } from "../generated/graphql";
 import type { Notification } from "../types/chat";
 import { getVAPIDKeys } from "./vapidKeys";
@@ -36,12 +40,14 @@ export async function sendNotification(
         }
 
         try {
-            await gqlClient?.mutate({
-                mutation: DeletePushNotificationSubscriptionDocument,
-                variables: {
+            await gqlClient
+                ?.mutation<
+                    DeletePushNotificationSubscriptionMutation,
+                    DeletePushNotificationSubscriptionMutationVariables
+                >(DeletePushNotificationSubscriptionDocument, {
                     endpoint: subscription.endpoint,
-                },
-            });
+                })
+                .toPromise();
         } catch (e) {
             console.error("Unable to delete push notification subscription from the database", e);
         }

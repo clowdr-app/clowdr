@@ -1,8 +1,7 @@
+import { downlink, uplink } from "@midspace/component-clients/rabbitmq";
 import type { Channel, ConsumeMessage } from "amqplib";
 import { is } from "typescript-is";
-import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { canIUDMessage } from "../../lib/permissions";
-import { downlink, uplink } from "../../rabbitmq";
 import type { Action, Message } from "../../types/chat";
 import { MessageDistributionQueueSize, MessageWritebackQueueSize } from "./params";
 
@@ -70,22 +69,8 @@ async function writebackDownChannel() {
     return channel;
 }
 
-export async function action(action: Action<Message>, userId: string, confSlugs: string[]): Promise<boolean> {
-    if (
-        await canIUDMessage(
-            userId,
-            action.data.chatId,
-            confSlugs,
-            action.data.senderId ?? undefined,
-            false,
-            "messages.send:test-registrant-id",
-            "messages.send:test-registrant-displayName",
-            "messages.send:test-room-id",
-            "messages.send:test-room-name",
-            Room_ManagementMode_Enum.Public,
-            []
-        )
-    ) {
+export async function action(action: Action<Message>, userId: string): Promise<boolean> {
+    if (await canIUDMessage(userId, action.data.chatId)) {
         if (action.op === "INSERT") {
             if ("id" in action.data) {
                 delete (action.data as any).id;

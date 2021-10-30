@@ -18,7 +18,7 @@ export function onSend(userId: string, socketId: string, socket: Socket): (messa
                     "duplicatedMessageSId invalid"
                 );
 
-                if (await action(actionData, userId, conferenceSlugs)) {
+                if (await action(actionData, userId)) {
                     socket.emit("chat.messages.send.ack", actionData.data.sId);
                 } else {
                     socket.emit("chat.messages.send.nack", actionData.data.sId);

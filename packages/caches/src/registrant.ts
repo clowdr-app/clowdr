@@ -14,6 +14,7 @@ gql`
             id
             conferenceRole
             displayName
+            userId
             subconferenceMemberships {
                 id
                 subconferenceId
@@ -33,6 +34,7 @@ export interface RegistrantEntity {
     id: string;
     displayName: string;
     conferenceRole: Registrant_RegistrantRole_Enum;
+    userId: string | undefined | null;
     subconferenceMemberships: SubconferenceMembership[];
 }
 
@@ -50,6 +52,7 @@ class RegistrantCache {
                 id: data.id,
                 displayName: data.displayName,
                 conferenceRole: data.conferenceRole,
+                userId: data.userId ?? "null",
                 subconferenceMemberships: JSON.stringify(
                     data.subconferenceMemberships.map((x) => ({
                         id: x.id,
@@ -70,6 +73,7 @@ class RegistrantCache {
                 displayName: rawEntity.displayName,
                 conferenceRole: rawEntity.conferenceRole as Registrant_RegistrantRole_Enum,
                 subconferenceMemberships: JSON.parse(rawEntity.subconferenceMemberships),
+                userId: rawEntity.userId === "null" ? null : rawEntity.userId,
             };
         }
         return undefined;
@@ -84,6 +88,8 @@ class RegistrantCache {
         if (rawField) {
             if (field === "id" || field === "conferenceRole" || field === "displayName") {
                 return rawField as RegistrantEntity[FieldKey];
+            } else if (field === "userId") {
+                return (rawField === "null" ? null : rawField) as RegistrantEntity[FieldKey];
             } else if (field === "subconferenceMemberships") {
                 return JSON.parse(rawField) as RegistrantEntity[FieldKey];
             }
@@ -99,6 +105,7 @@ class RegistrantCache {
                 displayName: value.displayName,
                 conferenceRole: value.conferenceRole,
                 subconferenceMemberships: JSON.stringify(value.subconferenceMemberships),
+                userId: value.userId ?? "null",
             }
         );
     }
@@ -111,8 +118,8 @@ class RegistrantCache {
         if (value === undefined) {
             await this.cache.setField(id, field, undefined);
         } else {
-            if (field === "id" || field === "conferenceRole" || field === "displayName") {
-                await this.cache.setField(id, field, value as string);
+            if (field === "id" || field === "conferenceRole" || field === "displayName" || field === "userId") {
+                await this.cache.setField(id, field, (value ?? "null") as string);
             } else if (field === "subconferenceMemberships") {
                 await this.cache.setField(id, field, JSON.stringify(value));
             }

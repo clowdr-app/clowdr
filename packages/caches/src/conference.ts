@@ -13,6 +13,7 @@ gql`
         conference_Conference_by_pk(id: $id) {
             id
             shortName
+            slug
             conferenceVisibilityLevel
             createdBy
             subconferences {
@@ -26,6 +27,7 @@ export interface ConferenceEntity {
     id: string;
     shortName: string;
     createdBy: string;
+    slug: string;
     conferenceVisibilityLevel: Conference_VisibilityLevel_Enum;
     subconferenceIds: string[];
 }
@@ -43,6 +45,7 @@ class ConferenceCache {
             return {
                 id: data.id,
                 createdBy: data.createdBy,
+                slug: data.slug,
                 conferenceVisibilityLevel: data.conferenceVisibilityLevel,
                 subconferenceIds: JSON.stringify(data.subconferences.map((x) => x.id)),
             };
@@ -56,6 +59,7 @@ class ConferenceCache {
             return {
                 id: rawEntity.id,
                 shortName: rawEntity.shortName,
+                slug: rawEntity.slug,
                 conferenceVisibilityLevel: rawEntity.conferenceVisibilityLevel as Conference_VisibilityLevel_Enum,
                 createdBy: rawEntity.createdBy,
                 subconferenceIds: JSON.parse(rawEntity.subconferenceIds) as string[],
@@ -75,7 +79,8 @@ class ConferenceCache {
                 field === "id" ||
                 field === "conferenceVisibilityLevel" ||
                 field === "createdBy" ||
-                field === "shortName"
+                field === "shortName" ||
+                field === "slug"
             ) {
                 return rawField as ConferenceEntity[FieldKey];
             } else if (field === "subconferenceIds") {
@@ -92,6 +97,7 @@ class ConferenceCache {
                 id: value.id,
                 shortName: value.shortName,
                 createdBy: value.createdBy,
+                slug: value.slug,
                 conferenceVisibilityLevel: value.conferenceVisibilityLevel,
                 subconferenceIds: JSON.stringify(value.subconferenceIds),
             }
@@ -110,7 +116,8 @@ class ConferenceCache {
                 field === "id" ||
                 field === "conferenceVisibilityLevel" ||
                 field === "createdBy" ||
-                field === "shortName"
+                field === "shortName" ||
+                field === "slug"
             ) {
                 await this.cache.setField(id, field, value as string);
             } else if (field === "subconferenceIds") {

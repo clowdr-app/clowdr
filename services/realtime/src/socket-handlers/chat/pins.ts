@@ -1,7 +1,7 @@
+import { userCache } from "@midspace/caches/user";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatPinsChangedRoomName } from "../../lib/chat";
 
 export function onListenForPinsChanged(
@@ -14,12 +14,8 @@ export function onListenForPinsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForPinsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await userCache.getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatPinsChangedRoomName(registrantId));
                 }
             } catch (e) {
@@ -42,12 +38,8 @@ export function onUnlistenForPinsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForPinsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await userCache.getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatPinsChangedRoomName(registrantId));
                 }
             } catch (e) {

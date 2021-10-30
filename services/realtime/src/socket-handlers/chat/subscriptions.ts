@@ -1,7 +1,7 @@
+import { userCache } from "@midspace/caches/user";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
-import { getRegistrantInfo } from "../../lib/cache/registrantInfo";
 import { generateChatSubscriptionsChangedRoomName } from "../../lib/chat";
 
 export function onListenForSubscriptionsChanged(
@@ -14,12 +14,8 @@ export function onListenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await userCache.getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.join(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
             } catch (e) {
@@ -42,12 +38,8 @@ export function onUnlistenForSubscriptionsChanged(
             try {
                 assert(is<string>(registrantId), "Data does not match expected type.");
 
-                const registrantInfo = await getRegistrantInfo(registrantId, {
-                    displayName: "chat.onListenForSubscriptionsChanged:test-registrant-id",
-                    userId,
-                });
-
-                if (registrantInfo?.userId === userId) {
+                const registrants = await userCache.getField(userId, "registrants");
+                if (registrants?.some((x) => x.id === registrantId)) {
                     socket.leave(generateChatSubscriptionsChangedRoomName(registrantId));
                 }
             } catch (e) {

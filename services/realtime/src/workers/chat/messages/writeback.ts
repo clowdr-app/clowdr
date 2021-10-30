@@ -18,9 +18,9 @@ import {
     onWritebackMessagesFail,
 } from "../../../rabbitmq/chat/messages";
 import { MessageWritebackIntervalMs, MessageWritebackQueueSize } from "../../../rabbitmq/chat/params";
-import { redlock } from "../../../redis";
 import { testMode } from "../../../testMode";
 import type { Action, Message } from "../../../types/chat";
+import { redlock } from "../@midspace/component-clients/redis";
 
 console.info("Chat messages writeback worker running");
 

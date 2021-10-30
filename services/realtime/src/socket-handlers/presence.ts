@@ -1,7 +1,7 @@
+import { redisClientPool } from "@midspace/component-clients/redis";
 import crypto from "crypto";
 import type { Socket } from "socket.io";
 import { enterPresence, exitAllPresences, exitPresence, presenceChannelName, presenceListKey } from "../lib/presence";
-import { redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 
 const ALL_SESSION_USER_IDS_KEY = "Presence.SessionAndUserIds";

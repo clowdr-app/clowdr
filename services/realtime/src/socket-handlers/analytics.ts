@@ -1,7 +1,7 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import { is } from "typescript-is";
 import { validate } from "uuid";
-import { redisClientP, redisClientPool } from "../redis";
 
 export function onConnect(_userId: string, _socketId: string): void {
     // TODO

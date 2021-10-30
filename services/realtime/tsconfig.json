@@ -68,5 +68,9 @@
         "skipLibCheck": true /* Skip type checking of declaration files. */,
         "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
-    }
+    },
+    "references": [
+        { "path": "../../packages/component-clients/tsconfig.cjs.ref.json" },
+        { "path": "../../packages/auth/tsconfig.cjs.ref.json" }
+    ]
 }

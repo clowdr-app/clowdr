@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gql } from "graphql-tag";
 import type webPush from "web-push";
 import { PushNotificationSubscriptionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 
 gql`
     query PushNotificationSubscriptions($userId: String!) {

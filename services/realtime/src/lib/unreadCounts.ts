@@ -1,4 +1,4 @@
-import { redisClientP, redisClientPool } from "../redis";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import { emitter } from "../socket-emitter/socket-emitter";
 import { getReadUpToIndex } from "./cache/readUpToIndex";
 import { generateChatRecentMessagesSetKey, notificationsRoomName } from "./chat";

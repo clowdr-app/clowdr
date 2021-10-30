@@ -36,13 +36,70 @@ type ConditionalClauses<FieldKeys extends string = any> = DiadicBooleanClauses &
             | null;
     };
 
-function satisfiesScalarConditions(where: FieldClauses, fieldValue: any, _cache: Cache): boolean {
+function satisfiesScalarConditions(where: FieldClauses, fieldValue: any, _args: Variables, _cache: Cache): boolean {
     // TODO
     console.log("Scalar condition", { where, fieldValue });
-    return true;
+
+    if ("_eq" in where && where._eq) {
+        if (typeof where._eq === "string") {
+            // TODO
+        } else {
+            // TODO
+        }
+    } else if ("_gt" in where && where._gt) {
+        // TODO
+    } else if ("_gte" in where && where._gte) {
+        // TODO
+    } else if ("_in" in where && where._in) {
+        // TODO
+    } else if ("_is_null" in where && where._is_null) {
+        // TODO
+    } else if ("_lt" in where && where._lt) {
+        // TODO
+    } else if ("_lte" in where && where._lte) {
+        // TODO
+    } else if ("_neq" in where && where._neq) {
+        // TODO
+    } else if ("_nin" in where && where._nin) {
+        // TODO
+    } else if ("_contained_in" in where && where._contained_in) {
+        // TODO
+    } else if ("_contains" in where && where._contains) {
+        // TODO
+    } else if ("_has_key" in where && where._has_key) {
+        // TODO
+    } else if ("_has_keys_all" in where && where._has_keys_all) {
+        // TODO
+    } else if ("_has_keys_any" in where && where._has_keys_any) {
+        // TODO
+    } else if ("_ilike" in where && where._ilike) {
+        // TODO
+    } else if ("_iregex" in where && where._iregex) {
+        // TODO
+    } else if ("_like" in where && where._like) {
+        // TODO
+    } else if ("_nilike" in where && where._nilike) {
+        // TODO
+    } else if ("_niregex" in where && where._niregex) {
+        // TODO
+    } else if ("_nlike" in where && where._nlike) {
+        // TODO
+    } else if ("_nregex" in where && where._nregex) {
+        // TODO
+    } else if ("_nsimilar" in where && where._nsimilar) {
+        // TODO
+    } else if ("_regex" in where && where._regex) {
+        // TODO
+    } else if ("_similar" in where && where._similar) {
+        // TODO
+    } else {
+        return true;
+    }
+
+    return false;
 }
 
-function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache: Cache): boolean {
+function satisfiesConditions(where: ConditionalClauses, entityKey: string, args: Variables, cache: Cache): boolean {
     console.log("Conditions", { where, entityKey });
 
     for (const conditionKey in where) {
@@ -50,7 +107,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
             const conditions = where[conditionKey];
             if (conditions) {
                 for (const innerCondition of conditions) {
-                    if (!satisfiesConditions(innerCondition, entityKey, cache)) {
+                    if (!satisfiesConditions(innerCondition, entityKey, args, cache)) {
                         return false;
                     }
                 }
@@ -60,7 +117,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
             if (conditions) {
                 let ok = false;
                 for (const innerCondition of conditions) {
-                    if (satisfiesConditions(innerCondition, entityKey, cache)) {
+                    if (satisfiesConditions(innerCondition, entityKey, args, cache)) {
                         ok = true;
                         break;
                     }
@@ -72,7 +129,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
         } else if (conditionKey === "_not") {
             const innerCondition = where[conditionKey];
             if (innerCondition) {
-                if (satisfiesConditions(innerCondition, entityKey, cache)) {
+                if (satisfiesConditions(innerCondition, entityKey, args, cache)) {
                     return false;
                 }
             }
@@ -84,7 +141,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
                     // Scalar condition
                     const typedCondition: FieldClauses = condition as FieldClauses;
                     const fieldValue = cache.resolve(entityKey, conditionKey);
-                    if (!satisfiesScalarConditions(typedCondition, fieldValue, cache)) {
+                    if (!satisfiesScalarConditions(typedCondition, fieldValue, args, cache)) {
                         return false;
                     }
                 } else {
@@ -98,7 +155,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
                         if (innerEntityKeys instanceof Array) {
                             let ok = false;
                             for (const innerEntityKey of innerEntityKeys) {
-                                if (satisfiesConditions(typedCondition, innerEntityKey, cache)) {
+                                if (satisfiesConditions(typedCondition, innerEntityKey, args, cache)) {
                                     ok = true;
                                     break;
                                 }
@@ -107,7 +164,7 @@ function satisfiesConditions(where: ConditionalClauses, entityKey: string, cache
                                 return false;
                             }
                         } else {
-                            if (!satisfiesConditions(typedCondition, innerEntityKeys, cache)) {
+                            if (!satisfiesConditions(typedCondition, innerEntityKeys, args, cache)) {
                                 return false;
                             }
                         }

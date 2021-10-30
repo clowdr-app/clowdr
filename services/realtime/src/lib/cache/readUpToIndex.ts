@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
+import { gql } from "graphql-tag";
 import { ReadUpToIndexDocument } from "../../generated/graphql";
-import { redisClientP, redisClientPool } from "../../redis";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 
 gql`
     query ReadUpToIndex($chatId: uuid!, $userId: String!) {

@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gql } from "graphql-tag";
 import type { Permissions_Permission_Enum } from "../../generated/graphql";
 import { UserPermissionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 
 gql`
     query UserRoles($userId: String!) {

@@ -1,10 +1,10 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import type { Socket } from "socket.io";
 import { is } from "typescript-is";
 import { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { chatListenersKeyName, generateChatRoomName, socketChatsKeyName } from "../../lib/chat";
 import { canSelectChat } from "../../lib/permissions";
-import { redisClientP, redisClientPool } from "../../redis";
 
 export function onSubscribe(userId: string, socketId: string, socket: Socket): (chatId: any) => Promise<void> {
     return async (chatId) => {

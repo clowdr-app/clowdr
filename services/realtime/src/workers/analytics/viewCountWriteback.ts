@@ -1,11 +1,11 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/analytics/viewCountWriteback.js
 
-import { gql } from "@apollo/client/core";
+import { apolloClient } from "@midspace/component-clients/graphqlClient";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
+import { gql } from "graphql-tag";
 import { InsertViewCountsDocument, SelectViewCountsDocument } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
-import { redisClientP, redisClientPool } from "../../redis";
 
 gql`
     query SelectViewCounts($cutoff: timestamptz!, $itemIds: [uuid!]!, $elementIds: [uuid!]!, $roomIds: [uuid!]!) {

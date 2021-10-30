@@ -1,4 +1,4 @@
-import { redisClientP, redisClientPool } from "../redis";
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 
 export function generateChatRoomName(chatId: string): string {
     return `chat:chat.${chatId}`;

@@ -8,9 +8,9 @@ import { chatListenersKeyName, generateChatRecentMessagesSetKey, generateChatRoo
 import { sendNotifications } from "../../../lib/notifications";
 import { maxUnreadMessages, sendUnreadCount } from "../../../lib/unreadCounts";
 import { onDistributionMessage } from "../../../rabbitmq/chat/messages";
-import { redisClientP, redisClientPool } from "../../../redis";
 import { emitter } from "../../../socket-emitter/socket-emitter";
 import type { Action, Message } from "../../../types/chat";
+import { redisClientP, redisClientPool } from "../@midspace/component-clients/redis";
 
 console.info("Chat messages distribution worker running");
 

@@ -14,7 +14,6 @@
     "author": "Clowdr CIC",
     "license": "BSD-3-Clause",
     "dependencies": {
-        "@apollo/client": "^3.3.20",
         "@graphql-codegen/cli": "^1.21.6",
         "@graphql-codegen/fragment-matcher": "^2.0.1",
         "@graphql-codegen/introspection": "^1.18.2",
@@ -24,7 +23,10 @@
         "@graphql-codegen/typescript-graphql-files-modules": "^1.18.1",
         "@graphql-codegen/typescript-graphql-request": "^3.2.4",
         "@graphql-codegen/typescript-operations": "^1.18.3",
+        "@graphql-codegen/typescript-urql": "^3.2.2",
         "@graphql-typed-document-node/core": "^3.1.0",
+        "@midspace/auth": "workspace:*",
+        "@midspace/component-clients": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/express": "^4.17.12",

@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client/core";
+import { apolloClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
+import { gql } from "graphql-tag";
 import webPush from "web-push";
 import { DeletePushNotificationSubscriptionDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
 import type { Notification } from "../types/chat";
 import { getVAPIDKeys } from "./vapidKeys";
 

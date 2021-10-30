@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gql } from "graphql-tag";
 import { SubscriptionsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 
 gql`
     query Subscriptions($chatId: uuid!) {

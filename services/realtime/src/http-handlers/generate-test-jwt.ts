@@ -19,24 +19,14 @@ export async function generateTestJWT(req: Request, res: Response, _next?: NextF
 
             // Fake parts of an Auth0 token
             res.status(200).send(
-                jwt.sign(
-                    {
-                        "https://hasura.io/jwt/claims": {
-                            "x-hasura-default-role": "user",
-                            "x-hasura-allowed-roles": ["user"],
-                            "x-hasura-user-id": req.query.userId,
-                        },
-                    },
-                    testPEM,
-                    {
-                        algorithm: testJWKs[0].alg,
-                        audience: ["hasura", "https://clowdr.eu.auth0.com/userinfo"],
-                        issuer: "https://auth.midspace.app/",
-                        subject: req.query.userId as string,
-                        keyid: testJWKs[0].kid,
-                        expiresIn: "1800s",
-                    }
-                )
+                jwt.sign({}, testPEM, {
+                    algorithm: testJWKs[0].alg,
+                    audience: ["hasura", "https://clowdr.eu.auth0.com/userinfo"],
+                    issuer: "https://auth.midspace.app/",
+                    subject: req.query.userId as string,
+                    keyid: testJWKs[0].kid,
+                    expiresIn: "1800s",
+                })
             );
         } else {
             res.status(503).send("Test JWKs not available");

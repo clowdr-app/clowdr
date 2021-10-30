@@ -1,9 +1,10 @@
-import { gql } from "@apollo/client/core";
+import { gqlClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
 import type { NextFunction, Request, Response } from "express";
+import { gql } from "graphql-tag";
 import { assertType } from "typescript-is";
+import type { FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables } from "../generated/graphql";
 import { FlagInserted_GetModeratorsDocument } from "../generated/graphql";
-import { apolloClient } from "../graphqlClient";
 import { deletePin, insertPin } from "../lib/cache/pin";
 import { deleteSubscription, insertSubscription } from "../lib/cache/subscription";
 import { generateChatPinsChangedRoomName, generateChatSubscriptionsChangedRoomName } from "../lib/chat";
@@ -88,12 +89,14 @@ export async function flagInserted(req: Request, res: Response, _next?: NextFunc
         const newFlag: Flag = data.event.data.new;
 
         const messageSId = newFlag.messageSId;
-        const response = await apolloClient?.query({
-            query: FlagInserted_GetModeratorsDocument,
-            variables: {
-                messageSId,
-            },
-        });
+        const response = await gqlClient
+            ?.query<FlagInserted_GetModeratorsQuery, FlagInserted_GetModeratorsQueryVariables>(
+                FlagInserted_GetModeratorsDocument,
+                {
+                    messageSId,
+                }
+            )
+            .toPromise();
         assert(response?.data, "List of moderators could not be retrieved.");
         if (response.data.chat_Message.length) {
             const message = response.data.chat_Message[0];

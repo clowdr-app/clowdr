@@ -1,8 +1,8 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gql } from "graphql-tag";
 import type { Room_ManagementMode_Enum } from "../../generated/graphql";
 import { EventInfoDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 import type { Person } from "./chatInfo";
 
 gql`

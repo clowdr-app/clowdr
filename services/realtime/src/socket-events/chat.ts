@@ -1,6 +1,6 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import type { Socket } from "socket.io";
 import { allSocketsAndUserIds, chatListenersKeyName, socketChatsKeyName, socketUserKeyName } from "../lib/chat";
-import { redisClientP, redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 import * as chat from "../socket-handlers/chat/chat";
 import * as chat_messages from "../socket-handlers/chat/messages";

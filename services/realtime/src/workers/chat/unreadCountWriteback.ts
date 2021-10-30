@@ -1,11 +1,11 @@
 // Set this up as a CronToGo task
 // CRON_TO_GO_ACTIVE=true node services/realtime/build/workers/chat/unreadCountWriteback.js
 
-import { gql } from "@apollo/client/core";
+import { apolloClient } from "@midspace/component-clients/graphqlClient";
 import assert from "assert";
+import { gql } from "graphql-tag";
 import type { Chat_ReadUpToIndex_Insert_Input } from "../../generated/graphql";
 import { InsertReadUpToIndexDocument, RegistrantIdsFromChatsAndUsersDocument } from "../../generated/graphql";
-import { apolloClient } from "../../graphqlClient";
 import { getAndClearModified } from "../../lib/cache/readUpToIndex";
 
 gql`

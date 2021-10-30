@@ -1,4 +1,5 @@
-import { gql } from "@apollo/client/core";
+import { createRedisClient } from "@midspace/component-clients/redis";
+import { gql } from "graphql-tag";
 import type { SigningKey } from "jwks-rsa";
 import jwksRsa from "jwks-rsa";
 import type { Socket } from "socket.io";
@@ -6,7 +7,6 @@ import socketIO from "socket.io";
 import { createAdapter } from "socket.io-redis";
 import { testJWKs } from "../jwks";
 import { notificationsRoomName } from "../lib/chat";
-import { createRedisClient } from "../redis";
 import { onConnect as onConnectAnalytics } from "../socket-events/analytics";
 import { onConnect as onConnectChat, onDisconnect as onDisconnectChat } from "../socket-events/chat";
 import { onConnect as onConnectHandRaise } from "../socket-events/handRaise";
@@ -96,10 +96,10 @@ socketServer.on("connection", async function (socket: Socket) {
             onDisconnectHandRaise(socketId, userId);
         });
 
-        onConnectPresence(socket, userId, conferenceSlugs);
-        onConnectChat(socket, userId, conferenceSlugs);
-        onConnectAnalytics(socket, userId, conferenceSlugs);
-        onConnectHandRaise(socket, userId, conferenceSlugs);
+        onConnectPresence(socket, userId);
+        onConnectChat(socket, userId);
+        onConnectAnalytics(socket, userId);
+        onConnectHandRaise(socket, userId);
 
         socket.on("time", (syncPacket: any) => {
             try {

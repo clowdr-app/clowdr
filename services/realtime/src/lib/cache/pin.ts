@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client/core";
+import { Cache } from "@midspace/component-clients/cache/cache";
+import { gql } from "graphql-tag";
 import { PinsDocument } from "../../generated/graphql";
 import { testMode } from "../../testMode";
-import { Cache } from "./cache";
 
 gql`
     query Pins($chatId: uuid!) {

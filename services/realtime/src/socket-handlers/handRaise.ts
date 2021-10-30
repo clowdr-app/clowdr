@@ -1,3 +1,4 @@
+import { redisClientP, redisClientPool } from "@midspace/component-clients/redis";
 import assert from "assert";
 import gql from "graphql-tag";
 import type { Socket } from "socket.io";
@@ -12,7 +13,6 @@ import {
 import { getEventInfo } from "../lib/cache/roomInfo";
 import { generateEventHandsRaisedKeyName, generateEventHandsRaisedRoomName } from "../lib/handRaise";
 import { canAccessEvent } from "../lib/permissions";
-import { redisClientP, redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 import { testMode } from "../testMode";
 

@@ -18,9 +18,9 @@ import {
     onWritebackReactionsComplete,
     onWritebackReactionsFail,
 } from "../../../rabbitmq/chat/reactions";
-import { redlock } from "../../../redis";
 import { testMode } from "../../../testMode";
 import type { Action, Reaction } from "../../../types/chat";
+import { redlock } from "../@midspace/component-clients/redis";
 
 console.info("Chat reactions writeback worker running");
 

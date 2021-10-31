@@ -4,10 +4,8 @@
     "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         "outDir": "./build/esm",
-        "rootDir": "./src/"
+        "rootDir": "./src/",
+        "composite": true
     },
-    "references": [
-        { "path": "../component-clients/tsconfig.esm.ref.json" },
-        { "path": "../caches/tsconfig.esm.ref.json" }
-    ]
+    "references": [{ "path": "../component-clients/tsconfig.esm.json" }, { "path": "../caches/tsconfig.esm.json" }]
 }

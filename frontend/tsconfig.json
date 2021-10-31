@@ -39,7 +39,7 @@
         "composite": true
     },
     "references": [
-        { "path": "../packages/shared-types/tsconfig.esm.ref.json" },
-        { "path": "../packages/assert/tsconfig.esm.ref.json" }
+        { "path": "../packages/shared-types/tsconfig.esm.json" },
+        { "path": "../packages/assert/tsconfig.esm.json" }
     ]
 }

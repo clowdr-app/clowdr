@@ -37,5 +37,5 @@
         "forceConsistentCasingInFileNames": true,
         "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
     },
-    "references": [{ "path": "../../packages/shared-types/tsconfig.cjs.ref.json" }]
+    "references": [{ "path": "../../packages/shared-types/tsconfig.cjs.json" }]
 }

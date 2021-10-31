@@ -4,6 +4,7 @@
     "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         "outDir": "./build/cjs",
-        "rootDir": "./src/"
+        "rootDir": "./src/",
+        "composite": true
     }
 }

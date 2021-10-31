@@ -325,6 +325,7 @@
                 "Hasura Console -- Local Development",
                 "Auth Service -- Local Development",
                 "Actions Service -- Local Development",
+                "Caches Service -- Local Development",
                 "Real-time Service -- Local Development",
                 "Playout Service -- Local Development",
                 "Frontend -- Local Development"

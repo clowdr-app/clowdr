@@ -43,8 +43,8 @@ export class RealtimeService {
                 this.socket = undefined;
             }
 
-            const url = import.meta.env.VITE_REALTIME_SERVICE_URL ?? import.meta.env.VITE_PRESENCE_SERVICE_URL;
-            assert.string(url, "Expected REALTIME_SERVICE_URL or PRESENCE_SERVICE_URL to be defined.");
+            const url = import.meta.env.VITE_REALTIME_SERVICE_URL;
+            assert.string(url, "Expected REALTIME_SERVICE_URL to be defined.");
             this.socket = io(url, {
                 transports: ["websocket"],
                 auth: {

@@ -1,5 +1,6 @@
 {
     "name": "@midspace/service-realtime",
+    "version": "0.0.0",
     "private": true,
     "scripts": {
         "build": "tsc --build && pnpm copy-resources",

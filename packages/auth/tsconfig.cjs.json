@@ -6,5 +6,8 @@
         "outDir": "./build/cjs",
         "rootDir": "./src/"
     },
-    "references": [{ "path": "../component-clients/tsconfig.cjs.ref.json" }]
+    "references": [
+        { "path": "../component-clients/tsconfig.cjs.ref.json" },
+        { "path": "../caches/tsconfig.cjs.ref.json" }
+    ]
 }

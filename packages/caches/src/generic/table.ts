@@ -1,6 +1,6 @@
+import { redisClientP, redisClientPool, redlock } from "@midspace/component-clients/redis";
 import type { Callback, RedisClient } from "redis";
 import { promisify } from "util";
-import { redisClientP, redisClientPool, redlock } from "../../../component-clients/build/esm/redis";
 
 export class TableCache {
     constructor(

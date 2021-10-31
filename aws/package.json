@@ -1,5 +1,6 @@
 {
     "name": "@midspace/aws",
+    "version": "0.0.0",
     "private": true,
     "bin": {
         "aws": "bin/aws.js"

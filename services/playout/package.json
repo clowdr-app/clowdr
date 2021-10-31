@@ -1,5 +1,6 @@
 {
     "name": "@midspace/service-playout",
+    "version": "0.0.0",
     "private": true,
     "scripts": {
         "prebuild": "rimraf build",

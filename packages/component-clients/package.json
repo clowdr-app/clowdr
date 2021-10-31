@@ -1,8 +1,9 @@
 {
     "name": "@midspace/component-clients",
+    "version": "0.0.0",
     "scripts": {
         "build": "pnpm build:cjs && pnpm build:esm",
-        "build:cjs": "tsc --build tsconfig.json",
+        "build:cjs": "tsc --build tsconfig.cjs.json",
         "build:esm": "tsc --build tsconfig.esm.json",
         "clean": "rimraf build",
         "prepare": "ts-patch install -s",

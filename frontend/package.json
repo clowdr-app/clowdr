@@ -1,5 +1,6 @@
 {
     "name": "@midspace/frontend",
+    "version": "0.0.0",
     "private": true,
     "scripts": {
         "build": "pnpm build:tsc && pnpm build:vite",

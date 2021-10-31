@@ -531,7 +531,7 @@ importers:
       ts-patch: ^1.4.5
       tsc-watch: ^4.4.0
       ttypescript: ^1.5.12
-      typescript: ^4.3.5
+      typescript: ^4.4.4
       typescript-is: ^0.18.3
       utf-8-validate: ^5.0.5
       uuid: ^8.3.2
@@ -578,7 +578,6 @@ importers:
       node-fetch: 2.6.5
       redis: 3.1.2
       redlock: 4.2.0
-      rimraf: 3.0.2
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
       ts-patch: 1.4.5_typescript@4.4.4
       ttypescript: 1.5.12_typescript@4.4.4
@@ -587,6 +586,7 @@ importers:
       utf-8-validate: 5.0.7
       uuid: 8.3.2
     devDependencies:
+      rimraf: 3.0.2
       tsc-watch: 4.5.0_typescript@4.4.4
 
   packages/component-clients:
@@ -1077,7 +1077,6 @@ importers:
       node-fetch: 2.6.5
       redis: 3.1.2
       redlock: 4.2.0
-      rimraf: 3.0.2
       subscriptions-transport-ws: 0.9.19_acd0233f23cbd4adaed8ca3972580acc
       ttypescript: 1.5.12_typescript@4.4.4
       typescript: 4.4.4
@@ -1085,6 +1084,7 @@ importers:
       utf-8-validate: 5.0.7
       uuid: 8.3.2
     devDependencies:
+      rimraf: 3.0.2
       tsc-watch: 4.5.0_typescript@4.4.4
 
   services/playout:

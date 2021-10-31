@@ -3,15 +3,11 @@ import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
-import { cacheExchange } from "@urql/exchange-graphcache";
-import { requestPolicyExchange } from "@urql/exchange-request-policy";
 import { retryExchange } from "@urql/exchange-retry";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Client as UrqlClient } from "urql";
 import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
-import type { GraphCacheConfig } from "../../generated/graphql";
-import schema from "../../generated/graphql.schema.json";
 import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 import type { AuthParameters } from "./AuthParameters";
@@ -139,32 +135,32 @@ function UrqlProviderInner({
                         exchanges: [
                             // devtoolsExchange,
                             dedupExchange,
-                            requestPolicyExchange({
-                                ttl: 30 * 60 * 1000,
-                                shouldUpgrade: () =>
-                                    authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
-                            }),
-                            cacheExchange<GraphCacheConfig>({
-                                keys: {
-                                    analytics_ElementTotalViews: (data) => data.elementId as string,
-                                    analytics_ItemTotalViews: (data) => data.itemId as string,
-                                    chat_Pin: (data) => data.chatId + "-" + data.registrantId,
-                                    chat_Reaction: (data) => data.sId as string,
-                                    chat_ReadUpToIndex: (data) => data.chatId + "-" + data.registrantId,
-                                    chat_Subscription: (data) => data.chatId + "-" + data.registrantId,
-                                    conference_Configuration: (data) => data.key + "-" + data.conferenceId,
-                                    PushNotificationSubscription: (data) => data.userId + "-" + data.endpoint,
-                                    registrant_Profile: (data) => data.registrantId as string,
-                                    registrant_ProfileBadges: (data) => data.registrantId + "-" + data.name,
-                                    room_LivestreamDurations: (data) => data.roomId as string,
-                                    schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
-                                    system_Configuration: (data) => data.key as string,
-                                },
-                                schema: schema as any,
-                                // storage,
-                                // resolvers,
-                                // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
-                            }),
+                            // requestPolicyExchange({
+                            //     ttl: 30 * 60 * 1000,
+                            //     shouldUpgrade: () =>
+                            //         authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
+                            // }),
+                            // cacheExchange<GraphCacheConfig>({
+                            //     keys: {
+                            //         analytics_ElementTotalViews: (data) => data.elementId as string,
+                            //         analytics_ItemTotalViews: (data) => data.itemId as string,
+                            //         chat_Pin: (data) => data.chatId + "-" + data.registrantId,
+                            //         chat_Reaction: (data) => data.sId as string,
+                            //         chat_ReadUpToIndex: (data) => data.chatId + "-" + data.registrantId,
+                            //         chat_Subscription: (data) => data.chatId + "-" + data.registrantId,
+                            //         conference_Configuration: (data) => data.key + "-" + data.conferenceId,
+                            //         PushNotificationSubscription: (data) => data.userId + "-" + data.endpoint,
+                            //         registrant_Profile: (data) => data.registrantId as string,
+                            //         registrant_ProfileBadges: (data) => data.registrantId + "-" + data.name,
+                            //         room_LivestreamDurations: (data) => data.roomId as string,
+                            //         schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
+                            //         system_Configuration: (data) => data.key as string,
+                            //     },
+                            //     schema: schema as any,
+                            //     // storage,
+                            //     // resolvers,
+                            //     // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
+                            // }),
                             authExchange(authOptions),
                             retryExchange(retryOptions),
                             fetchExchange,

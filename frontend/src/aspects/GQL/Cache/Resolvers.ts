@@ -229,7 +229,7 @@ function genericConditionalLookup(parent: any, args: Variables, cache: Cache, in
         }
 
         for (const key of keysToTest) {
-            if (satisfiesConditions(where, key, cache)) {
+            if (satisfiesConditions(where, key, args, cache)) {
                 result.add(key);
             }
         }

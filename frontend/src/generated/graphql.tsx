@@ -1,7 +1,9 @@
-import type { Resolver as GraphCacheResolver, UpdateResolver as GraphCacheUpdateResolver, OptimisticMutationResolver as GraphCacheOptimisticMutationResolver, StorageAdapter as GraphCacheStorageAdapter } from '@urql/exchange-graphcache';
-import type { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
+import type { CacheExchangeOpts, Resolver as BaseGraphCacheResolver, UpdateResolver as GraphCacheUpdateResolver, OptimisticMutationResolver as GraphCacheOptimisticMutationResolver, StorageAdapter as GraphCacheStorageAdapter } from '@urql/exchange-graphcache';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
+
+type GraphCacheResolver<ParentData, Args, Result> = BaseGraphCacheResolver<ParentData, Args, Result | null | undefined>;
+
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -53120,7 +53122,7 @@ export type GraphCacheOptimisticUpdaters = {
 };
 
 export type GraphCacheUpdaters = {
-  Mutation?: {
+  Mutation_Root?: {
     createItemRoom?: GraphCacheUpdateResolver<{ createItemRoom: Maybe<WithTypename<CreateItemRoomOutput>> }, Mutation_RootCreateItemRoomArgs>,
     createRoomDm?: GraphCacheUpdateResolver<{ createRoomDm: Maybe<WithTypename<CreateRoomDmOutput>> }, Mutation_RootCreateRoomDmArgs>,
     delete_Email?: GraphCacheUpdateResolver<{ delete_Email: Maybe<WithTypename<Email_Mutation_Response>> }, Mutation_RootDelete_EmailArgs>,
@@ -53991,7 +53993,7 @@ export type GraphCacheUpdaters = {
 };
 
 export type GraphCacheConfig = {
-  schema?: IntrospectionData,
+    schema?: CacheExchangeOpts["schema"],
   updates?: GraphCacheUpdaters,
   keys?: GraphCacheKeysConfig,
   optimistic?: GraphCacheOptimisticUpdaters,

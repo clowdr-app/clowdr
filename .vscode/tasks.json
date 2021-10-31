@@ -165,6 +165,21 @@
             },
             "args": ["dev"]
         },
+        // Caches service -- Local Development
+        {
+            "label": "Caches Service -- Local Development",
+            "type": "shell",
+            "isBackground": true,
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/services/caches"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["dev"]
+        },
         // Real-time service -- GraphQL Codegen
         {
             "label": "Real-time service -- GraphQL Codegen",
@@ -325,6 +340,7 @@
                 "Packetriot",
                 "Hasura Console -- Local Development",
                 "Auth Service -- Local Development",
+                "Caches Service -- Local Development",
                 "Actions Service -- Local Development",
                 "Frontend -- Local Development"
             ],

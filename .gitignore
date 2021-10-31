@@ -128,7 +128,8 @@ pktriot.json
 certs
 
 # Hasura GraphQL service config
-hasura/config.yaml
+## Please don't ever ignore this file - it will break our production deployments
+# hasura/config.yaml
 
 # Database restore from backup
 restore/

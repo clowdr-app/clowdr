@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { Room_EventSummaryFragment} from "../../../../generated/graphql";
+import type { Room_EventSummaryFragment } from "../../../../generated/graphql";
 import { Room_Mode_Enum } from "../../../../generated/graphql";
 import usePolling from "../../../Generic/usePolling";
 
@@ -9,6 +9,7 @@ interface Result {
     nextRoomEvent: Room_EventSummaryFragment | null;
     nonCurrentLiveEvents: Room_EventSummaryFragment[] | null;
     nonCurrentLiveEventsInNext20Mins: Room_EventSummaryFragment[] | null;
+    withinStreamLatencySinceBroadcastEvent: boolean;
     withinThreeMinutesOfBroadcastEvent: boolean;
     broadcastEventStartsAt: number;
     zoomEventStartsAt: number;
@@ -54,6 +55,18 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             return startTime - 3 * 60 * 1000 < now && now < endTime + 3 * 60 * 1000;
         });
         setWithinThreeMinutesOfBroadcastEvent(eventsSoon.length > 0);
+    }, [broadcastEvents]);
+
+    const [withinStreamLatencySinceBroadcastEvent, setWithinStreamLatencySinceBroadcastEvent] =
+        useState<boolean>(false);
+    const getWithinStreamLatencySinceBroadcastEvent = useCallback(() => {
+        const now = Date.now();
+        const maybeOngoingStreams = broadcastEvents.filter((event) => {
+            const startTime = Date.parse(event.startTime);
+            const endTime = Date.parse(event.endTime);
+            return startTime < now && now < endTime + 45 * 1000;
+        });
+        setWithinStreamLatencySinceBroadcastEvent(maybeOngoingStreams.length > 0);
     }, [broadcastEvents]);
 
     const [broadcastEventStartsAt, setBroadcastEventStartsAt] = useState<number>(Number.MAX_SAFE_INTEGER);
@@ -127,6 +140,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
 
     const infrequentUpdate = useCallback(() => {
         getWithinThreeMinutesOfEvent();
+        getWithinStreamLatencySinceBroadcastEvent();
         getCurrentEvent();
         getNextEvent();
         getNonCurrentEvents();
@@ -136,6 +150,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         getNextEvent,
         getNonCurrentEvents,
         getNonCurrentEventsInNext20Mins,
+        getWithinStreamLatencySinceBroadcastEvent,
         getWithinThreeMinutesOfEvent,
     ]);
     usePolling(infrequentUpdate, 10000, true);
@@ -148,6 +163,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
         () => ({
             currentRoomEvent,
             withinThreeMinutesOfBroadcastEvent,
+            withinStreamLatencySinceBroadcastEvent,
             nextRoomEvent,
             nonCurrentLiveEvents,
             nonCurrentLiveEventsInNext20Mins,
@@ -161,6 +177,7 @@ export function useCurrentRoomEvent(roomEvents: readonly Room_EventSummaryFragme
             nonCurrentLiveEventsInNext20Mins,
             broadcastEventStartsAt,
             zoomEventStartsAt,
+            withinStreamLatencySinceBroadcastEvent,
             withinThreeMinutesOfBroadcastEvent,
         ]
     );

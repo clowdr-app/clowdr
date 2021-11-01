@@ -14,9 +14,7 @@ import {
 import type { ElementDataBlob, ZoomBlob } from "@clowdr-app/shared-types/build/content";
 import * as R from "ramda";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-    RoomPage_RoomDetailsFragment,
-    Room_EventSummaryFragment} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment, Room_EventSummaryFragment } from "../../../../generated/graphql";
 import {
     Content_ItemType_Enum,
     Room_EventSummaryFragmentDoc,
@@ -214,6 +212,7 @@ function RoomInner({
         nonCurrentLiveEvents,
         nonCurrentLiveEventsInNext20Mins,
         withinThreeMinutesOfBroadcastEvent,
+        withinStreamLatencySinceBroadcastEvent,
         broadcastEventStartsAt,
         zoomEventStartsAt,
     } = useCurrentRoomEvent(roomEvents);
@@ -632,7 +631,9 @@ function RoomInner({
     const playerEl = useMemo(() => {
         const currentEventIsVideoPlayer = currentRoomEvent?.intendedRoomModeName === Room_Mode_Enum.VideoPlayer;
         const shouldShowLivePlayer =
-            !currentEventModeIsNone && !showDefaultVideoChatRoom && withinThreeMinutesOfBroadcastEvent;
+            !currentEventModeIsNone &&
+            (!showDefaultVideoChatRoom || withinStreamLatencySinceBroadcastEvent) &&
+            withinThreeMinutesOfBroadcastEvent;
 
         return !showBackstage ? (
             currentEventIsVideoPlayer || (selectedVideoElementId && !currentRoomEvent) ? (

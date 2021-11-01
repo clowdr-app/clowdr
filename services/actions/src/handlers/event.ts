@@ -287,13 +287,14 @@ export async function handleEventStartNotification(
         const eventId = result.data.schedule_Event_by_pk.id;
         const roomId = result.data.schedule_Event_by_pk.roomId;
         const intendedRoomModeName = result.data.schedule_Event_by_pk.intendedRoomModeName;
+        const intendedRecordingEnabled = result.data.schedule_Event_by_pk.enableRecording;
 
         setTimeout(() => {
             if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
                 startEventBroadcast(eventId).catch((e) => {
                     console.error("Failed to start event broadcast", { eventId, e });
                 });
-            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
+            } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && intendedRecordingEnabled) {
                 startRoomVonageArchiving(roomId, eventId).catch((e) => {
                     console.error("Failed to start event archiving", {
                         roomId,

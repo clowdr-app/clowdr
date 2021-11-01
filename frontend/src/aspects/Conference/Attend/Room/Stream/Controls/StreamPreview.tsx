@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { Box, Button, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useEnableBackstageStreamPreviewQuery } from "../../../../../../generated/graphql";
 import { useConference } from "../../../../useConference";
 import { HlsPlayer } from "../../Video/HlsPlayer";
@@ -34,11 +34,20 @@ export default function StreamPreview({
         },
     });
 
+    const [delayCompleted, setDelayCompleted] = useState<boolean>(false);
+    useEffect(() => {
+        if (hlsUri) {
+            setTimeout(() => {
+                setDelayCompleted(true);
+            }, 5000);
+        }
+    }, [hlsUri]);
+
     if (configResponse.data?.conference_Configuration_by_pk?.value !== true) {
         return <></>;
     }
 
-    return hlsUri && isLive && enabled ? (
+    return hlsUri && (isLive || delayCompleted) && enabled ? (
         <Box
             pos="relative"
             spacing={1}
@@ -97,8 +106,15 @@ export default function StreamPreview({
                 </Button>
             </HStack>
         </Box>
-    ) : isLive && !enabled ? (
-        <Button colorScheme="PrimaryActionButton" size="md" onClick={() => setEnabled(true)}>
+    ) : hlsUri && (!enabled || !delayCompleted) ? (
+        <Button
+            colorScheme="PrimaryActionButton"
+            size="md"
+            onClick={() => {
+                setEnabled(true);
+                setDelayCompleted(true);
+            }}
+        >
             Enable stream preview
         </Button>
     ) : (

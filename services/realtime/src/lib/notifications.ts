@@ -26,9 +26,10 @@ export async function sendNotifications(userIds: Set<string>, notification: Noti
             const pushNotifSub = pushNotifSubs.get(userId);
             if (pushNotifSub?.subscriptions.length) {
                 await Promise.all(pushNotifSub.subscriptions.map((sub) => sendNotification(sub, notification)));
-            } else {
-                emitter.in(notificationsRoomName(userId)).emit("notification", notification);
             }
+            // else {
+            emitter.in(notificationsRoomName(userId)).emit("notification", notification);
+            // }
         })
     );
 }

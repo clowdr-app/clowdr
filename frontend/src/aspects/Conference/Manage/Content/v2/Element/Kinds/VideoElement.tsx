@@ -106,7 +106,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                     onElementChange={(newElement) => {
                         const newData = {
                             ...data,
-                            element: newElement,
+                            ...newElement,
                         };
                         update(newData);
                     }}
@@ -117,7 +117,7 @@ export const VideoElementTemplate: SupportedElementBaseTemplate = {
                     onElementChange={(newElement) => {
                         const newData = {
                             ...data,
-                            element: newElement,
+                            ...newElement,
                         };
                         update(newData);
                     }}

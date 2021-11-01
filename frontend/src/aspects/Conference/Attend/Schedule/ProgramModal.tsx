@@ -227,7 +227,7 @@ export function ScheduleModal({
                 getter={(x) => ({
                     rooms: R.uniqBy(
                         (r) => r.id,
-                        x.schedule_Event.flatMap((e) => e.room)
+                        x.schedule_Event.filter((e) => Boolean(e.room)).flatMap((e) => e.room)
                     ),
                     events: x.schedule_Event,
                     items: x.schedule_Event.filter((x) => !!x.item).map((x) => x.item) as Schedule_ItemFieldsFragment[],

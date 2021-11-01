@@ -17,8 +17,11 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
-import { useRoomPage_IsAdminQuery } from "../../../../generated/graphql";
+import {
+    Registrant_RegistrantRole_Enum,
+    RoomPage_RoomDetailsFragment,
+    useRoomPage_IsAdminQuery,
+} from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
@@ -115,7 +118,6 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
         ),
         [conferencePath, sortedRegistrants]
     );
-
     const context = useShieldedHeaders({
         "X-Auth-Role": "room-member",
         "X-Auth-Room-Id": roomDetails.id,
@@ -140,7 +142,8 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
             ) : (
                 roomMembersList
             )}
-            {selfIsAdminResponse.data?.room_RoomMembership.length ? (
+            {selfIsAdminResponse.data?.room_RoomMembership.length ||
+            registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ? (
                 <Box textAlign="right" mb={2}>
                     <Button
                         mt={2}

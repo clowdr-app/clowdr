@@ -77,7 +77,7 @@ export const AudioElementTemplate: SupportedElementBaseTemplate = {
                     onElementChange={(newElement) => {
                         const newData = {
                             ...data,
-                            element: newElement,
+                            ...newElement,
                         };
                         update(newData);
                     }}
@@ -88,7 +88,7 @@ export const AudioElementTemplate: SupportedElementBaseTemplate = {
                     onElementChange={(newElement) => {
                         const newData = {
                             ...data,
-                            element: newElement,
+                            ...newElement,
                         };
                         update(newData);
                     }}

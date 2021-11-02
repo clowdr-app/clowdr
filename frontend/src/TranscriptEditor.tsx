@@ -26,7 +26,9 @@ export default (props: Props) => {
                 />
             </FormControl>
             <Flex flexBasis={0} flexGrow={1} flexDirection="column" alignItems="center" justifyContent="space-between">
-                <p>This is a video</p>
+                <video src={props.mediaUrl} controls>
+                    This is a video
+                </video>
                 <Button
                     colorScheme="green"
                     onClick={() => {

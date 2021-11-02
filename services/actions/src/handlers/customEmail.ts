@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import assert from "assert";
 import MarkdownIt from "markdown-it";
 import * as R from "ramda";
@@ -59,8 +60,6 @@ async function sendCustomEmails(
         throw new Error(result.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
     }
 
-    const emailsToSend: Array<Email_Insert_Input> = [];
-
     const markdownIt = new MarkdownIt("commonmark", {
         linkify: true,
     });
@@ -69,23 +68,25 @@ async function sendCustomEmails(
     const conferenceName = result.data.conference_Conference_by_pk?.shortName ?? "your conference";
     const htmlContents = `<p><strong>A message from the organisers of ${conferenceName}:</strong></p>${userHtmlBody}`;
 
-    for (const registrant of result.data.registrant_Registrant) {
-        const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
+    const emailsToSend: Array<Email_Insert_Input> = result.data.registrant_Registrant
+        .map((registrant) => {
+            const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
-        if (!email) {
-            console.warn("User has no known email address", { registrantId: registrant.id });
-            continue;
-        }
+            if (!email) {
+                console.warn("User has no known email address", { registrantId: registrant.id });
+                return null;
+            }
 
-        emailsToSend.push({
-            recipientName: registrant.displayName,
-            emailAddress: email,
-            htmlContents,
-            reason: EmailReason.CustomEmail,
-            userId: registrant?.user?.id ?? null,
-            subject,
-        });
-    }
+            return {
+                recipientName: registrant.displayName,
+                emailAddress: email,
+                htmlContents,
+                reason: EmailReason.CustomEmail,
+                userId: registrant?.user?.id ?? null,
+                subject,
+            };
+        })
+        .filter(notEmpty);
 
     const copyToEmail =
         result.data.conference_Conference_by_pk?.techSupportAddress?.[0]?.value ?? result.data.platformAddress?.value;

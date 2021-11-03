@@ -41,11 +41,11 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import * as R from "ramda";
+import type { LegacyRef } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    RoomWithParticipantInfoFragment} from "../../../generated/graphql";
+import type { RoomWithParticipantInfoFragment } from "../../../generated/graphql";
 import {
     Permissions_Permission_Enum,
     RoomWithParticipantInfoFragmentDoc,
@@ -76,10 +76,9 @@ import type {
     ColumnSpecification,
     DeepWriteable,
     ExtraButton,
-    RowSpecification} from "../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection,
+    RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
 import FAIcon from "../../Icons/FAIcon";
@@ -279,7 +278,7 @@ function RoomSecondaryEditor({
                         groupId,
                     });
                     if (!result.error && result.data) {
-                        insertRoomPeople({
+                        await insertRoomPeople({
                             variables: {
                                 people: result.data.permissions_GroupRegistrant.map((x) => ({
                                     registrantId: x.registrantId,
@@ -288,17 +287,28 @@ function RoomSecondaryEditor({
                                 })),
                             },
                         });
+                        await people.refetch();
                     }
                 } catch (e) {
                     console.error("Error inserting room people", e);
                 }
             }
         },
-        [groupRegistrantsQ, insertRoomPeople, room]
+        [groupRegistrantsQ, insertRoomPeople, room, people]
     );
 
     const { onCopy: onCopyRoomId, hasCopied: hasCopiedRoomId } = useClipboard(room?.id ?? "");
     const createdAt = useMemo(() => (room ? new Date(room.created_at) : new Date()), [room]);
+
+    const sortedParticipants = useMemo(
+        () => (room?.participants ? R.sortBy((x) => x.registrant?.displayName, room.participants) : []),
+        [room?.participants]
+    );
+    const sortedMembers = useMemo(
+        () =>
+            people.data?.room_RoomPerson ? R.sortBy((x) => x.registrant?.displayName, people.data.room_RoomPerson) : [],
+        [people.data?.room_RoomPerson]
+    );
 
     return (
         <Drawer
@@ -366,7 +376,7 @@ function RoomSecondaryEditor({
                                                 <FAIcon iconStyle="s" icon="user-plus" mr={2} />
                                                 Add people from group
                                             </MenuButton>
-                                            <MenuList>
+                                            <MenuList maxH="max(250px, min(400px, 100vh - 25ex))" overflow="auto">
                                                 {groups.data?.permissions_Group.map((group) => (
                                                     <MenuItem
                                                         key={group.id}
@@ -388,11 +398,11 @@ function RoomSecondaryEditor({
                                             <AccordionIcon />
                                         </AccordionButton>
                                         <AccordionPanel pt={4} pb={4}>
-                                            {room.participants.length === 0 ? (
+                                            {sortedParticipants.length === 0 ? (
                                                 "Room is currently empty."
                                             ) : (
                                                 <UnorderedList>
-                                                    {room.participants.map((participant) => (
+                                                    {sortedParticipants.map((participant) => (
                                                         <ListItem key={participant.id}>
                                                             {participant.registrant.displayName}
                                                         </ListItem>
@@ -448,7 +458,7 @@ function RoomSecondaryEditor({
                                         </AccordionItem>
                                     ) : undefined}
 
-                                    {people.data && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
+                                    {sortedMembers && room.managementModeName !== Room_ManagementMode_Enum.Public ? (
                                         <AccordionItem>
                                             <AccordionButton>
                                                 <Box flex="1" textAlign="left">
@@ -457,11 +467,11 @@ function RoomSecondaryEditor({
                                                 <AccordionIcon />
                                             </AccordionButton>
                                             <AccordionPanel pt={4} pb={4}>
-                                                {people.data.room_RoomPerson.length === 0 ? (
+                                                {sortedMembers.length === 0 ? (
                                                     "Room has no members."
                                                 ) : (
                                                     <UnorderedList>
-                                                        {people.data.room_RoomPerson.map((member) => (
+                                                        {sortedMembers.map((member) => (
                                                             <ListItem key={member.id}>
                                                                 {member.registrant.displayName}
                                                             </ListItem>

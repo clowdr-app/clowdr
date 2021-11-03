@@ -67,6 +67,7 @@ export class RealtimeService {
             this.socket.on("heartbeat", this.onHeartbeat.bind(this));
 
             this.socket.on("time", this.onTime.bind(this));
+            this.socket.on("server.ready", this.onServerReady.bind(this));
 
             // setTimeout(() => {
             //     this.RealTimeOffsetSync(true);
@@ -107,6 +108,10 @@ export class RealtimeService {
 
     private onConnect() {
         datadogLogs.logger.info("Connected to realtime service");
+    }
+
+    private onServerReady() {
+        datadogLogs.logger.info("Realtime service: Server side reported it's ready");
 
         if (this.socket) {
             for (const handler of this._onSocketAvailable.values()) {

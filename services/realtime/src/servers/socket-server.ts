@@ -138,5 +138,7 @@ socketServer.on("connection", async function (socket: Socket) {
         });
 
         socket.join(notificationsRoomName(userId));
+
+        socket.emit("server.ready");
     }
 });

@@ -25,6 +25,9 @@ if (import.meta.env.SNOWPACK_PUBLIC_DD_CLIENT_TOKEN && import.meta.env.SNOWPACK_
             if (event.message.includes("Download the Apollo DevTools for a better development experience")) {
                 return false;
             }
+            if (event.message.includes("ResizeObserver loop limit exceeded")) {
+                return false;
+            }
             if (event.message.includes("Initial chat data")) {
                 event.message = "Initial chat data";
             }

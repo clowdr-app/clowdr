@@ -265,7 +265,7 @@ async function trySendTranscriptionEmail(elementId: string) {
             };
         });
 
-        await insertEmails(emails, element.conference.id);
+        await insertEmails(emails, element.conference.id, undefined);
     } catch (err) {
         console.error("Error while sending transcription emails", { elementId, err });
         return;
@@ -331,7 +331,7 @@ path            /item/${element.item.id}/element/${elementId}
         });
     }
 
-    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id, undefined);
 }
 
 async function trySendTranscodeFailedEmail(
@@ -394,7 +394,7 @@ path            /item/${element.item.id}/element/${elementId}
         });
     }
 
-    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id, undefined);
 }
 
 gql`

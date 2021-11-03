@@ -4,17 +4,15 @@ import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
 import wcmatch from "wildcard-match";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     ConferenceEmailConfigurationDocument,
-    Email_Insert_Input,
     GetSendGridConfigDocument,
     InsertEmailsDocument,
-    MarkAndSelectUnsentEmailsDocument,
-    SelectUnsentEmailIdsDocument,
-    UnmarkUnsentEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { EmailBuilder, EmailTemplateContext, getEmailTemplate } from "../lib/email/emailTemplate";
+import type { EmailTemplateContext } from "../lib/email/emailTemplate";
+import { EmailBuilder, getEmailTemplate } from "../lib/email/emailTemplate";
 import { formatSendingReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
 
@@ -62,15 +60,18 @@ gql`
     }
 
     mutation InsertEmails($objects: [Email_insert_input!]!) {
-        insert_Email(objects: $objects) {
+        insert_Email(objects: $objects, on_conflict: { constraint: Email_idempotencyKey_key, update_columns: [] }) {
             affected_rows
         }
     }
 `;
 
+export const EMAIL_IDEMPOTENCY_NAMESPACE = "315a82fd-feeb-4aa6-86b5-261252c290d1";
+
 export async function insertEmails(
     emails: Email_Insert_Input[],
-    conferenceId: string | undefined
+    conferenceId: string | undefined,
+    jobId: string | undefined
 ): Promise<number | undefined> {
     const configResponse = await apolloClient.query({
         query: ConferenceEmailConfigurationDocument,
@@ -151,20 +152,43 @@ export async function insertEmails(
                 plainTextContents: htmlToText(compiledEmail.body),
             };
         });
-    if (emailsToInsert.length < emails.length) {
-        console.info(
-            `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
-        );
+
+    const batchSize = 100;
+    const batches = Math.ceil(emailsToInsert.length / batchSize);
+
+    console.log("Queuing emails to send", {
+        totalEmails: emails.length,
+        permittedEmails: emailsToInsert.length,
+        batches: batches,
+        message:
+            emailsToInsert.length < emails.length
+                ? "Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly."
+                : undefined,
+        jobId,
+    });
+
+    let insertedCount = 0;
+
+    for (let i = 0; i < batches; i++) {
+        const batch = emailsToInsert.slice(i * batchSize, (i + 1) * batchSize);
+        const r = await apolloClient.mutate({
+            mutation: InsertEmailsDocument,
+            variables: {
+                objects: batch,
+            },
+        });
+        insertedCount += r.data?.insert_Email?.affected_rows ?? 0;
+        console.log("Queued email batch", {
+            insertedCount: r.data?.insert_Email?.affected_rows,
+            batchSize: batch.length,
+            batchNumber: i + 1,
+            batches,
+            jobId,
+        });
     }
 
-    console.log(`Queuing ${emailsToInsert.length} emails to send`);
-    const r = await apolloClient.mutate({
-        mutation: InsertEmailsDocument,
-        variables: {
-            objects: emailsToInsert,
-        },
-    });
-    return r.data?.insert_Email?.affected_rows;
+    console.log("Finished queuing emails", { jobId, batches, insertedCount });
+    return insertedCount;
 }
 
 gql`

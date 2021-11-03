@@ -55,7 +55,8 @@ to view and resolve the report.</p>
 `,
                     },
                 ],
-                conference.id
+                conference.id,
+                `flag-inserted-organiser:${data.id}`
             );
         } else {
             await insertEmails(
@@ -72,7 +73,8 @@ to view and resolve the report.</p>
 `,
                     },
                 ],
-                conference.id
+                conference.id,
+                `flag-inserted-administrator:${data.id}`
             );
         }
     }

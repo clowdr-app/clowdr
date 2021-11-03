@@ -3,16 +3,17 @@ import { notEmpty } from "@clowdr-app/shared-types/build/utils";
 import assert from "assert";
 import MarkdownIt from "markdown-it";
 import * as R from "ramda";
+import { v5 as uuidv5 } from "uuid";
 import {
+    CompleteCustomEmailJobsDocument,
     CustomEmail_SelectRegistrantsDocument,
     Email_Insert_Input,
-    MarkAndSelectUnprocessedCustomEmailJobsDocument,
-    UnmarkCustomEmailJobsDocument,
+    SelectUnprocessedCustomEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { EmailReason } from "../lib/email/sendingReasons";
 import { callWithRetry } from "../utils";
-import { insertEmails } from "./email";
+import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     query CustomEmail_SelectRegistrants($conferenceId: uuid!, $registrantIds: [uuid!]!) {
@@ -40,11 +41,17 @@ gql`
     }
 `;
 
+/** @summary Generate an idempotency key that uniquely identifies each email in a custom email job. */
+function generateIdempotencyKey(jobId: string, registrantId: string): string {
+    return uuidv5(`custom-email,${jobId},${registrantId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
+}
+
 async function sendCustomEmails(
     registrantIds: string[],
     conferenceId: string,
     userMarkdownBody: string,
-    subject: string
+    subject: string,
+    jobId: string
 ): Promise<void> {
     const result = await apolloClient.query({
         query: CustomEmail_SelectRegistrantsDocument,
@@ -84,6 +91,7 @@ async function sendCustomEmails(
                 reason: EmailReason.CustomEmail,
                 userId: registrant?.user?.id ?? null,
                 subject,
+                idempotencyKey: generateIdempotencyKey(jobId, registrant.id),
             };
         })
         .filter(notEmpty);
@@ -98,27 +106,26 @@ async function sendCustomEmails(
             reason: EmailReason.CustomEmail,
             userId: null,
             subject: `[${conferenceName} | CUSTOM EMAIL | ${result.data.registrant_Registrant.length} recipients] ${subject}`,
+            idempotencyKey: generateIdempotencyKey(jobId, "tech-support-address"),
         });
     }
 
-    await insertEmails(emailsToSend, conferenceId);
+    await insertEmails(emailsToSend, conferenceId, `custom-email:${jobId}`);
 }
 
 gql`
-    mutation MarkAndSelectUnprocessedCustomEmailJobs {
-        update_job_queues_CustomEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
-            returning {
-                id
-                registrantIds
-                conferenceId
-                subject
-                markdownBody
-            }
+    query SelectUnprocessedCustomEmailJobs {
+        job_queues_CustomEmailJob(where: { processed: { _eq: false } }) {
+            id
+            registrantIds
+            conferenceId
+            subject
+            markdownBody
         }
     }
 
-    mutation UnmarkCustomEmailJobs($ids: [uuid!]!) {
-        update_job_queues_CustomEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+    mutation CompleteCustomEmailJobs($ids: [uuid!]!) {
+        update_job_queues_CustomEmailJob(where: { id: { _in: $ids } }, _set: { processed: true }) {
             returning {
                 id
             }
@@ -128,28 +135,28 @@ gql`
 `;
 
 export async function processCustomEmailsJobQueue(): Promise<void> {
-    const jobs = await apolloClient.mutate({
-        mutation: MarkAndSelectUnprocessedCustomEmailJobsDocument,
+    const jobs = await apolloClient.query({
+        query: SelectUnprocessedCustomEmailJobsDocument,
         variables: {},
     });
-    assert(jobs.data?.update_job_queues_CustomEmailJob?.returning, "Unable to fetch custom email jobs.");
+    assert(jobs.data?.job_queues_CustomEmailJob, "Unable to fetch custom email jobs.");
 
-    const failedJobIds: string[] = [];
-    for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
+    const completedJobIds: string[] = [];
+    for (const job of jobs.data.job_queues_CustomEmailJob) {
         try {
-            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
+            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject, job.id);
+            completedJobIds.push(job.id);
         } catch (error: any) {
             console.error("Failed to process send custom email job", { jobId: job.id, error });
-            failedJobIds.push(job.id);
         }
     }
 
     callWithRetry(
         async () =>
             await apolloClient.mutate({
-                mutation: UnmarkCustomEmailJobsDocument,
+                mutation: CompleteCustomEmailJobsDocument,
                 variables: {
-                    ids: failedJobIds,
+                    ids: completedJobIds,
                 },
             })
     );

@@ -18,16 +18,16 @@ import assert from "assert";
 import { compile } from "handlebars";
 import R from "ramda";
 import { is } from "typescript-is";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import {
+    CompleteSubmissionRequestEmailJobsDocument,
     Conference_ConfigurationKey_Enum,
     ElementAddNewVersionDocument,
     Email_Insert_Input,
     GetUploadersDocument,
     InsertSubmissionRequestEmailsDocument,
-    MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
+    SelectUnprocessedSubmissionRequestEmailJobsDocument,
     SetUploadableElementUploadsRemainingDocument,
-    UnmarkSubmissionRequestEmailJobsDocument,
     UploadableElementDocument,
     UploadableElementFieldsFragment,
 } from "../generated/graphql";
@@ -35,8 +35,7 @@ import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
 import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { extractLatestVersion } from "../lib/element";
-import { callWithRetry } from "../utils";
-import { insertEmails } from "./email";
+import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     query UploadableElement($accessToken: String!) {
@@ -341,7 +340,7 @@ async function sendSubmittedEmail(
             });
         }
 
-        await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId);
+        await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId, undefined);
     }
 }
 
@@ -625,31 +624,29 @@ function generateContentTypeFriendlyName(type: Content_ElementType_Enum) {
 }
 
 gql`
-    mutation MarkAndSelectUnprocessedSubmissionRequestEmailJobs {
-        update_job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
-            returning {
+    query SelectUnprocessedSubmissionRequestEmailJobs {
+        job_queues_SubmissionRequestEmailJob(where: { processed: { _eq: false } }) {
+            id
+            emailTemplate
+            uploader {
+                ...UploaderParts
+            }
+            person {
                 id
-                emailTemplate
-                uploader {
-                    ...UploaderParts
-                }
-                person {
+                name
+                email
+                accessToken
+                conference {
                     id
                     name
-                    email
-                    accessToken
-                    conference {
-                        id
-                        name
-                        shortName
-                    }
+                    shortName
                 }
             }
         }
     }
 
-    mutation UnmarkSubmissionRequestEmailJobs($ids: [uuid!]!) {
-        update_job_queues_SubmissionRequestEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+    mutation CompleteSubmissionRequestEmailJobs($ids: [uuid!]!) {
+        update_job_queues_SubmissionRequestEmailJob(where: { id: { _in: $ids } }, _set: { processed: true }) {
             affected_rows
         }
     }
@@ -667,15 +664,20 @@ type SubmissionRequestEmail = { email: Email_Insert_Input; jobId: string } & (
     | { personId: string }
 );
 
+/** @summary Generate an idempotency key that uniquely identifies each email in a submission request job. */
+function generateIdempotencyKey(jobId: string): string {
+    return uuidv5(`invite-email,${jobId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
+}
+
 export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
     const jobsToProcess = await apolloClient.mutate({
-        mutation: MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
+        mutation: SelectUnprocessedSubmissionRequestEmailJobsDocument,
         variables: {},
     });
-    assert(jobsToProcess.data?.update_job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
+    assert(jobsToProcess.data?.job_queues_SubmissionRequestEmailJob, "Failed to fetch jobs to process.");
 
     const emails = new Map<string, SubmissionRequestEmail[]>();
-    for (const job of jobsToProcess.data.update_job_queues_SubmissionRequestEmailJob.returning) {
+    for (const job of jobsToProcess.data.job_queues_SubmissionRequestEmailJob) {
         let result: SubmissionRequestEmail | undefined;
         let conferenceId: string | undefined;
 
@@ -723,6 +725,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 htmlContents: htmlBody,
                 reason: "upload-request",
                 subject,
+                idempotencyKey: generateIdempotencyKey(job.id),
             };
             conferenceId = job.uploader.conference.id;
 
@@ -764,6 +767,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 htmlContents: htmlBody,
                 reason: "upload-request",
                 subject,
+                idempotencyKey: generateIdempotencyKey(job.id),
             };
             conferenceId = job.person.conference.id;
 
@@ -784,7 +788,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         try {
             const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
             if (emailsToInsert.length > 0) {
-                await insertEmails(emailsToInsert, conferenceId);
+                await insertEmails(emailsToInsert, conferenceId, undefined);
             }
 
             await apolloClient.mutate({
@@ -798,26 +802,19 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                         .filter(isNotUndefined),
                 },
             });
-        } catch (e: any) {
-            console.error(
-                `Could not process jobs: ${emailsRecords
-                    .map((x) => x.jobId)
-                    .reduce((acc, x) => `${acc}, ${x}`, "")}:\n${e.toString()}`
-            );
 
-            try {
-                const jobIds = emailsRecords.map((x) => x.jobId);
-                await callWithRetry(async () => {
-                    await apolloClient.mutate({
-                        mutation: UnmarkSubmissionRequestEmailJobsDocument,
-                        variables: {
-                            ids: jobIds,
-                        },
-                    });
-                });
-            } catch (e: any) {
-                console.error(`Could not unmark failed emails: ${e.toString()}`);
-            }
+            await apolloClient.mutate({
+                mutation: CompleteSubmissionRequestEmailJobsDocument,
+                variables: {
+                    ids: emailsRecords.map((x) => x.jobId),
+                },
+            });
+        } catch (error: any) {
+            console.error("Could not process submission request jobs", {
+                jobIds: emailsRecords.map((x) => x.jobId),
+                conferenceId,
+                error,
+            });
         }
     });
 }

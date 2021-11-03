@@ -715,15 +715,19 @@ export class ChatState {
     public get IsLoadingMessages(): Observable<boolean> {
         return this.isLoadingMessagesObs;
     }
-    public async loadMoreMessages(pageSize: number = ChatState.DefaultPageSize): Promise<void> {
+    public async loadMoreMessages(
+        pageSize: number = ChatState.DefaultPageSize,
+        startAtIndex = this.lastHistoricallyFetchedMessageId
+    ): Promise<void> {
         const release = await this.messagesMutex.acquire();
         this.isLoadingMessages = true;
         this.isLoadingMessagesObs.publish(this.isLoadingMessages);
 
         let newMessageStates: MessageState[] | undefined;
+        const isNewMessages = startAtIndex === Math.pow(2, 31) - 1;
 
         try {
-            if (this.lastHistoricallyFetchedMessageId !== -1) {
+            if (startAtIndex !== -1) {
                 const result = await this.globalState.apolloClient.query<
                     SelectMessagesPageQuery,
                     SelectMessagesPageQueryVariables
@@ -732,10 +736,9 @@ export class ChatState {
                     variables: {
                         chatId: this.Id,
                         maxCount: pageSize,
-                        startAtIndex: this.lastHistoricallyFetchedMessageId,
+                        startAtIndex: startAtIndex,
                     },
-                    fetchPolicy:
-                        this.lastHistoricallyFetchedMessageId === Math.pow(2, 31) - 1 ? "network-only" : undefined,
+                    fetchPolicy: startAtIndex === Math.pow(2, 31) - 1 ? "network-only" : undefined,
                 });
                 if (result.data.chat_Message.length > 0) {
                     result.data.chat_Message.forEach((msg) => {
@@ -771,7 +774,6 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            console.error(`Error loading more messages: ${this.Id}`, e);
             datadogLogs.logger.error(`Error loading more messages: ${this.Id}`, e);
         } finally {
             this.isLoadingMessages = false;
@@ -781,7 +783,7 @@ export class ChatState {
 
             if (newMessageStates && newMessageStates.length > 0) {
                 this.messagesObs.publish({
-                    op: "loaded_historic",
+                    op: isNewMessages ? "loaded_new" : "loaded_historic",
                     messages: newMessageStates,
                 });
                 this.mightHaveMoreMessagesObs.publish(this.lastHistoricallyFetchedMessageId !== -1);
@@ -810,7 +812,7 @@ export class ChatState {
             this.connectionCount++;
             this.lastDisconnect = null;
             if (this.connectionCount === 1) {
-                await this.applyConnect(false);
+                await this.applyConnect(false, false);
             }
         } catch (e) {
             datadogLogs.logger.error(`Error subscribing to chat: ${this.Id}`, e);
@@ -832,7 +834,7 @@ export class ChatState {
 
         this.globalState.onChatChannelDisconnect();
     }
-    public async applyConnect(takeLock = true): Promise<void> {
+    public async applyConnect(takeLock = true, isReestablishingConnection = false): Promise<void> {
         const release = takeLock ? await this.subMutex.acquire() : undefined;
 
         try {
@@ -849,6 +851,10 @@ export class ChatState {
                 datadogLogs.logger.error("Cannot subscribe to chat because there is no socket instance!");
             }
             socket?.emit("chat.subscribe", this.Id);
+
+            if (isReestablishingConnection) {
+                this.loadMoreMessages(40, Math.pow(2, 31) - 1);
+            }
         } finally {
             release?.();
         }
@@ -1447,7 +1453,7 @@ export class GlobalChatState {
                         if (this.chatStates) {
                             for (const chatState of this.chatStates) {
                                 if (chatState[1].connectionCount > 0) {
-                                    chatState[1].applyConnect();
+                                    chatState[1].applyConnect(true, true);
                                 }
                             }
                         }
@@ -1498,6 +1504,7 @@ export class GlobalChatState {
             datadogLogs.logger.info("Global Chat State: Tearing down");
 
             this.offSocketAvailable?.();
+            this.offSocketUnavailable?.();
 
             if (!this.hasTorndown) {
                 this.hasTorndown = true;

@@ -1,15 +1,11 @@
-require("dotenv").config();
+/* eslint-disable @typescript-eslint/no-var-requires */
+const schema = require.resolve("@midspace/graphql/schema.graphql");
 
 module.exports = {
-    schema: [
-        {
-            "http://localhost:8080/v1/graphql": {
-                headers: {
-                    "X-Hasura-Admin-Secret": process.env.HASURA_ADMIN_SECRET,
-                },
-            },
-        },
-    ],
+    schema: [schema],
+    hooks: {
+        afterAllFileWrite: "prettier --write",
+    },
     documents: [
         "./src/aspects/**/*.tsx",
         "./src/aspects/**/*.ts",
@@ -27,6 +23,7 @@ module.exports = {
                 withHooks: true,
                 withHOC: false,
                 withComponent: false,
+                useTypeImports: true,
                 immutableTypes: true,
                 withResultType: true,
                 preResolveTypes: true,

@@ -1,16 +1,13 @@
-require("dotenv").config();
+/* eslint-disable @typescript-eslint/no-var-requires */
+const schema = require.resolve("@midspace/graphql/schema.graphql");
 
+/** @type import("@graphql-codegen/plugin-helpers/types").Types.Config */
 module.exports = {
-    schema: [
-        {
-            "http://localhost:8080/v1/graphql": {
-                headers: {
-                    "X-Hasura-Admin-Secret": process.env.HASURA_ADMIN_SECRET,
-                },
-            },
-        },
-    ],
-    documents: ["./src/**/*.ts", "!./src/**/*.d.ts"],
+    schema: [schema],
+    hooks: {
+        afterAllFileWrite: "prettier --write",
+    },
+    // documents: ["./src/**/*.ts", "!./src/**/*.d.ts"],
     overwrite: true,
     generates: {
         "./src/generated/graphql.ts": {
@@ -20,12 +17,8 @@ module.exports = {
                 withHooks: false,
                 withHOC: false,
                 withComponent: false,
-            },
-        },
-        "./graphql.schema.json": {
-            plugins: ["introspection"],
-            config: {
-                minify: true,
+                useTypeImports: true,
+                documentMode: "documentNodeImportFragments",
             },
         },
     },

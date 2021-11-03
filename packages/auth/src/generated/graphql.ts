@@ -1,9 +1,7 @@
-import gql from "graphql-tag";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
     ID: string;
@@ -806,8 +804,8 @@ export type ToggleVonageRecordingStateOutput = {
 export type UpdateProfilePhotoResponse = {
     __typename?: "UpdateProfilePhotoResponse";
     ok: Scalars["Boolean"];
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "User" */
@@ -21758,8 +21756,8 @@ export type Registrant_Profile = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     /** An object relationship */
     registrant: Registrant_Registrant;
@@ -21947,8 +21945,8 @@ export type Registrant_Profile_Bool_Exp = {
     photoS3BucketName?: Maybe<String_Comparison_Exp>;
     photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
     photoS3ObjectName?: Maybe<String_Comparison_Exp>;
-    photoURL_350x350?: Maybe<String_Comparison_Exp>;
     photoURL_50x50?: Maybe<String_Comparison_Exp>;
+    photoURL_350x350?: Maybe<String_Comparison_Exp>;
     pronouns?: Maybe<Jsonb_Comparison_Exp>;
     registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: Maybe<Uuid_Comparison_Exp>;
@@ -22002,8 +22000,8 @@ export type Registrant_Profile_Insert_Input = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: Maybe<Scalars["uuid"]>;
@@ -22025,8 +22023,8 @@ export type Registrant_Profile_Max_Fields = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
     twitter?: Maybe<Scalars["String"]>;
@@ -22046,8 +22044,8 @@ export type Registrant_Profile_Min_Fields = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
     twitter?: Maybe<Scalars["String"]>;
@@ -22091,8 +22089,8 @@ export type Registrant_Profile_Order_By = {
     photoS3BucketName?: Maybe<Order_By>;
     photoS3BucketRegion?: Maybe<Order_By>;
     photoS3ObjectName?: Maybe<Order_By>;
-    photoURL_350x350?: Maybe<Order_By>;
     photoURL_50x50?: Maybe<Order_By>;
+    photoURL_350x350?: Maybe<Order_By>;
     pronouns?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;
     registrantId?: Maybe<Order_By>;
@@ -22138,9 +22136,9 @@ export enum Registrant_Profile_Select_Column {
     /** column name */
     PhotoS3ObjectName = "photoS3ObjectName",
     /** column name */
-    PhotoUrl_350x350 = "photoURL_350x350",
-    /** column name */
     PhotoUrl_50x50 = "photoURL_50x50",
+    /** column name */
+    PhotoUrl_350x350 = "photoURL_350x350",
     /** column name */
     Pronouns = "pronouns",
     /** column name */
@@ -22168,8 +22166,8 @@ export type Registrant_Profile_Set_Input = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
@@ -22227,9 +22225,9 @@ export enum Registrant_Profile_Update_Column {
     /** column name */
     PhotoS3ObjectName = "photoS3ObjectName",
     /** column name */
-    PhotoUrl_350x350 = "photoURL_350x350",
-    /** column name */
     PhotoUrl_50x50 = "photoURL_50x50",
+    /** column name */
+    PhotoUrl_350x350 = "photoURL_350x350",
     /** column name */
     Pronouns = "pronouns",
     /** column name */
@@ -35440,177 +35438,3 @@ export enum Video_YouTubeUpload_Update_Column {
     /** column name */
     VideoTitle = "videoTitle",
 }
-
-export type GetConferenceQueryVariables = Exact<{
-    id: Scalars["uuid"];
-}>;
-
-export type GetConferenceQuery = { __typename?: "query_root" } & {
-    conference_Conference_by_pk?: Maybe<
-        { __typename?: "conference_Conference" } & Pick<
-            Conference_Conference,
-            "id" | "conferenceVisibilityLevel" | "createdBy"
-        > & {
-                subconferences: Array<
-                    { __typename?: "conference_Subconference" } & Pick<Conference_Subconference, "id">
-                >;
-            }
-    >;
-};
-
-export type GetConferenceRoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
-}>;
-
-export type GetConferenceRoomsQuery = { __typename?: "query_root" } & {
-    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id" | "managementModeName">>;
-};
-
-export type GetRegistrantQueryVariables = Exact<{
-    id: Scalars["uuid"];
-}>;
-
-export type GetRegistrantQuery = { __typename?: "query_root" } & {
-    registrant_Registrant_by_pk?: Maybe<
-        { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "id" | "conferenceRole"> & {
-                subconferenceMemberships: Array<
-                    { __typename?: "registrant_SubconferenceMembership" } & Pick<
-                        Registrant_SubconferenceMembership,
-                        "id" | "subconferenceId" | "role"
-                    >
-                >;
-            }
-    >;
-};
-
-export type GetRoomQueryVariables = Exact<{
-    id: Scalars["uuid"];
-}>;
-
-export type GetRoomQuery = { __typename?: "query_root" } & {
-    room_Room_by_pk?: Maybe<
-        { __typename?: "room_Room" } & Pick<Room_Room, "id" | "conferenceId" | "subconferenceId" | "managementModeName">
-    >;
-};
-
-export type GetRoomMembershipsQueryVariables = Exact<{
-    roomId: Scalars["uuid"];
-}>;
-
-export type GetRoomMembershipsQuery = { __typename?: "query_root" } & {
-    room_RoomMembership: Array<
-        { __typename?: "room_RoomMembership" } & Pick<Room_RoomMembership, "id" | "registrantId" | "personRoleName">
-    >;
-};
-
-export type GetSubconferenceQueryVariables = Exact<{
-    id: Scalars["uuid"];
-}>;
-
-export type GetSubconferenceQuery = { __typename?: "query_root" } & {
-    conference_Subconference_by_pk?: Maybe<
-        { __typename?: "conference_Subconference" } & Pick<Conference_Subconference, "id" | "conferenceVisibilityLevel">
-    >;
-};
-
-export type GetSubconferenceRoomsQueryVariables = Exact<{
-    subconferenceId: Scalars["uuid"];
-}>;
-
-export type GetSubconferenceRoomsQuery = { __typename?: "query_root" } & {
-    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id" | "managementModeName">>;
-};
-
-export type GetUserQueryVariables = Exact<{
-    id: Scalars["String"];
-}>;
-
-export type GetUserQuery = { __typename?: "query_root" } & {
-    User_by_pk?: Maybe<
-        { __typename?: "User" } & Pick<User, "id"> & {
-                registrants: Array<
-                    { __typename?: "registrant_Registrant" } & Pick<Registrant_Registrant, "id" | "conferenceId">
-                >;
-            }
-    >;
-};
-
-export const GetConferenceDocument: any = gql`
-    query GetConference($id: uuid!) {
-        conference_Conference_by_pk(id: $id) {
-            id
-            conferenceVisibilityLevel
-            createdBy
-            subconferences {
-                id
-            }
-        }
-    }
-`;
-export const GetConferenceRoomsDocument: any = gql`
-    query GetConferenceRooms($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: { _is_null: true } }) {
-            id
-            managementModeName
-        }
-    }
-`;
-export const GetRegistrantDocument: any = gql`
-    query GetRegistrant($id: uuid!) {
-        registrant_Registrant_by_pk(id: $id) {
-            id
-            conferenceRole
-            subconferenceMemberships {
-                id
-                subconferenceId
-                role
-            }
-        }
-    }
-`;
-export const GetRoomDocument: any = gql`
-    query GetRoom($id: uuid!) {
-        room_Room_by_pk(id: $id) {
-            id
-            conferenceId
-            subconferenceId
-            managementModeName
-        }
-    }
-`;
-export const GetRoomMembershipsDocument: any = gql`
-    query GetRoomMemberships($roomId: uuid!) {
-        room_RoomMembership(where: { roomId: { _eq: $roomId } }) {
-            id
-            registrantId
-            personRoleName
-        }
-    }
-`;
-export const GetSubconferenceDocument: any = gql`
-    query GetSubconference($id: uuid!) {
-        conference_Subconference_by_pk(id: $id) {
-            id
-            conferenceVisibilityLevel
-        }
-    }
-`;
-export const GetSubconferenceRoomsDocument: any = gql`
-    query GetSubconferenceRooms($subconferenceId: uuid!) {
-        room_Room(where: { subconferenceId: { _eq: $subconferenceId } }) {
-            id
-            managementModeName
-        }
-    }
-`;
-export const GetUserDocument: any = gql`
-    query GetUser($id: String!) {
-        User_by_pk(id: $id) {
-            id
-            registrants {
-                id
-                conferenceId
-            }
-        }
-    }
-`;

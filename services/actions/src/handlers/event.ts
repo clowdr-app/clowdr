@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import type { EventData, Payload } from "@midspace/hasura/event";
 import type { ContinuationTo } from "@midspace/shared-types/continuation";
 import { ContinuationType } from "@midspace/shared-types/continuation";
 import { is } from "typescript-is";
@@ -29,7 +30,6 @@ import {
     stopEventBroadcasts,
     stopRoomVonageArchiving,
 } from "../lib/vonage/vonageTools";
-import type { EventData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 

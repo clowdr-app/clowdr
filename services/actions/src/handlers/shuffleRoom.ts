@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import type { Payload, ShuffleQueueEntryData } from "@midspace/hasura/event";
 import type {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
@@ -18,7 +19,6 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { kickRegistrantFromRoom } from "../lib/vonage/vonageTools";
-import type { Payload, ShuffleQueueEntryData } from "../types/hasura/event";
 
 gql`
     fragment UnallocatedShuffleQueueEntry on room_ShuffleQueueEntry {

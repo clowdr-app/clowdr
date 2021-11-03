@@ -1,10 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { Payload, VideoRenderJobData } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleProcessVideoRenderJobQueue, handleVideoRenderJobUpdated } from "../handlers/videoRenderJob";
-import type { Payload, VideoRenderJobData } from "../types/hasura/event";
 
 export const router = express.Router();
 

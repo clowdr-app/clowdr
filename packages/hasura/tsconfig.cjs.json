@@ -1,0 +1,11 @@
+{
+    "extends": "../tsconfig.cjs.base.json",
+    "include": ["src/**/*", "src/index.d.ts"],
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+    "compilerOptions": {
+        "outDir": "./build/cjs",
+        "rootDir": "./src/",
+        "composite": true
+    },
+    "references": [{ "path": "../shared-types/tsconfig.cjs.json" }, { "path": "../graphql/tsconfig.cjs.json" }]
+}

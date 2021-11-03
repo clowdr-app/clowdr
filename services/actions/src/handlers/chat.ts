@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client/core";
+import type { FlagData, Payload } from "@midspace/hasura/event";
 import assert from "assert";
 import { FlagInserted_GetSupportAddressDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import type { FlagData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`

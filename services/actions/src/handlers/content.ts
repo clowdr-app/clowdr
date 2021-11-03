@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import type { ElementData, Payload } from "@midspace/hasura/event";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { AWSJobStatus } from "@midspace/shared-types/content";
@@ -19,7 +20,6 @@ import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
 import { EmailReason } from "../lib/email/sendingReasons";
 import { startPreviewTranscode } from "../lib/transcode";
 import { startTranscribe } from "../lib/transcribe";
-import type { ElementData, Payload } from "../types/hasura/event";
 import { insertEmails } from "./email";
 
 gql`

@@ -1,10 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { Payload, VonageSessionLayoutData_Record } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleVonageSessionLayoutCreated } from "../handlers/vonageSessionLayout";
-import type { Payload, VonageSessionLayoutData_Record } from "../types/hasura/event";
 
 export const router = express.Router();
 

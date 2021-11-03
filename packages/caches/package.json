@@ -1,5 +1,6 @@
 {
     "name": "@midspace/caches",
+    "version": "0.0.0",
     "scripts": {
         "build": "pnpm build:cjs && pnpm build:esm",
         "build:cjs": "tsc --build tsconfig.cjs.json",
@@ -31,6 +32,7 @@
         "@graphql-codegen/typescript-operations": "^1.18.3",
         "@graphql-codegen/typescript-urql": "^3.2.2",
         "@midspace/component-clients": "workspace:*",
+        "@midspace/graphql": "workspace:*",
         "@socket.io/redis-emitter": "^4.1.0",
         "@types/amqplib": "^0.8.0",
         "@types/cors": "^2.8.12",
@@ -53,7 +55,7 @@
         "cpy-cli": "^3.1.1",
         "express": "^4.17.1",
         "generic-pool": "^3.8.2",
-        "graphql": "^15.6.1",
+        "graphql": "^15.7.2",
         "graphql-tag": "^2.12.5",
         "jsonwebtoken": "^8.5.1",
         "jwk-to-pem": "^2.0.5",
@@ -71,6 +73,7 @@
         "uuid": "^8.3.2"
     },
     "devDependencies": {
+        "@graphql-codegen/plugin-helpers": "^2.3.0",
         "rimraf": "^3.0.2",
         "tsc-watch": "^4.4.0"
     },

@@ -1,10 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { MediaPackageHarvestJob, Payload } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleMediaPackageHarvestJobUpdated } from "../handlers/recording";
-import type { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import "@midspace/hasura";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";

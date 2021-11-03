@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client/core";
+import type { MP4Input } from "@midspace/hasura/broadcastContentItem";
+import type { BroadcastRenderJobDataBlob, VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
 import {
     CompleteVideoRenderJobDocument,
     CountUnfinishedVideoRenderJobsDocument,

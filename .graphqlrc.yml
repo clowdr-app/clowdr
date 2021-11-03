@@ -1,1 +1,1 @@
-schema: ./services/actions/graphql.schema.json
+schema: ./packages/graphql/build/schema.graphql

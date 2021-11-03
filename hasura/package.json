@@ -1,5 +1,5 @@
 {
-    "name": "@midspace/hasura",
+    "name": "@midspace/service-hasura",
     "private": "true",
     "author": "Clowdr CIC",
     "license": "BSD-3-Clause",

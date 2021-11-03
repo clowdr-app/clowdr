@@ -1,10 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { ConferencePrepareJobData, Payload } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
 import { handleConferencePrepareJobInserted } from "../handlers/prepare";
-import type { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 
 export const router = express.Router();
 

@@ -1,4 +1,7 @@
 import { gql } from "@apollo/client/core";
+import "@midspace/hasura";
+import type { Payload, VideoRenderJobData } from "@midspace/hasura/event";
+import type { VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
 import { notEmpty } from "@midspace/shared-types/utils";
 import assert from "assert";
 import { assertType } from "typescript-is";
@@ -16,7 +19,6 @@ import * as Element from "../lib/element";
 import * as Transcode from "../lib/transcode";
 import * as VideoRenderJob from "../lib/videoRenderJob";
 import { updateVideoRenderJob } from "../lib/videoRenderJob";
-import type { Payload, VideoRenderJobData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

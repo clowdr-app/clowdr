@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import type { DocumentNode } from "graphql";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -806,8 +806,8 @@ export type ToggleVonageRecordingStateOutput = {
 export type UpdateProfilePhotoResponse = {
     __typename?: "UpdateProfilePhotoResponse";
     ok: Scalars["Boolean"];
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
 };
 
 /** columns and relationships of "User" */
@@ -21758,8 +21758,8 @@ export type Registrant_Profile = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     /** An object relationship */
     registrant: Registrant_Registrant;
@@ -21947,8 +21947,8 @@ export type Registrant_Profile_Bool_Exp = {
     photoS3BucketName?: Maybe<String_Comparison_Exp>;
     photoS3BucketRegion?: Maybe<String_Comparison_Exp>;
     photoS3ObjectName?: Maybe<String_Comparison_Exp>;
-    photoURL_350x350?: Maybe<String_Comparison_Exp>;
     photoURL_50x50?: Maybe<String_Comparison_Exp>;
+    photoURL_350x350?: Maybe<String_Comparison_Exp>;
     pronouns?: Maybe<Jsonb_Comparison_Exp>;
     registrant?: Maybe<Registrant_Registrant_Bool_Exp>;
     registrantId?: Maybe<Uuid_Comparison_Exp>;
@@ -22002,8 +22002,8 @@ export type Registrant_Profile_Insert_Input = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     registrant?: Maybe<Registrant_Registrant_Obj_Rel_Insert_Input>;
     registrantId?: Maybe<Scalars["uuid"]>;
@@ -22025,8 +22025,8 @@ export type Registrant_Profile_Max_Fields = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
     twitter?: Maybe<Scalars["String"]>;
@@ -22046,8 +22046,8 @@ export type Registrant_Profile_Min_Fields = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
     twitter?: Maybe<Scalars["String"]>;
@@ -22091,8 +22091,8 @@ export type Registrant_Profile_Order_By = {
     photoS3BucketName?: Maybe<Order_By>;
     photoS3BucketRegion?: Maybe<Order_By>;
     photoS3ObjectName?: Maybe<Order_By>;
-    photoURL_350x350?: Maybe<Order_By>;
     photoURL_50x50?: Maybe<Order_By>;
+    photoURL_350x350?: Maybe<Order_By>;
     pronouns?: Maybe<Order_By>;
     registrant?: Maybe<Registrant_Registrant_Order_By>;
     registrantId?: Maybe<Order_By>;
@@ -22138,9 +22138,9 @@ export enum Registrant_Profile_Select_Column {
     /** column name */
     PhotoS3ObjectName = "photoS3ObjectName",
     /** column name */
-    PhotoUrl_350x350 = "photoURL_350x350",
-    /** column name */
     PhotoUrl_50x50 = "photoURL_50x50",
+    /** column name */
+    PhotoUrl_350x350 = "photoURL_350x350",
     /** column name */
     Pronouns = "pronouns",
     /** column name */
@@ -22168,8 +22168,8 @@ export type Registrant_Profile_Set_Input = {
     photoS3BucketName?: Maybe<Scalars["String"]>;
     photoS3BucketRegion?: Maybe<Scalars["String"]>;
     photoS3ObjectName?: Maybe<Scalars["String"]>;
-    photoURL_350x350?: Maybe<Scalars["String"]>;
     photoURL_50x50?: Maybe<Scalars["String"]>;
+    photoURL_350x350?: Maybe<Scalars["String"]>;
     pronouns?: Maybe<Scalars["jsonb"]>;
     registrantId?: Maybe<Scalars["uuid"]>;
     timezoneUTCOffset?: Maybe<Scalars["Float"]>;
@@ -22227,9 +22227,9 @@ export enum Registrant_Profile_Update_Column {
     /** column name */
     PhotoS3ObjectName = "photoS3ObjectName",
     /** column name */
-    PhotoUrl_350x350 = "photoURL_350x350",
-    /** column name */
     PhotoUrl_50x50 = "photoURL_50x50",
+    /** column name */
+    PhotoUrl_350x350 = "photoURL_350x350",
     /** column name */
     Pronouns = "pronouns",
     /** column name */
@@ -35610,150 +35610,816 @@ export type GetUserQuery = { __typename?: "query_root" } & {
     >;
 };
 
-export const GetChatDocument: any = gql`
-    query GetChat($id: uuid!) {
-        chat_Chat_by_pk(id: $id) {
-            id
-            restrictToAdmins
-            conferenceId
-            items {
-                id
-            }
-            rooms {
-                id
-            }
-        }
-    }
-`;
-export const GetConferenceDocument: any = gql`
-    query GetConference($id: uuid!) {
-        conference_Conference_by_pk(id: $id) {
-            id
-            shortName
-            slug
-            conferenceVisibilityLevel
-            createdBy
-            subconferences {
-                id
-            }
-        }
-    }
-`;
-export const GetConferenceRoomsDocument: any = gql`
-    query GetConferenceRooms($conferenceId: uuid!) {
-        room_Room(where: { conferenceId: { _eq: $conferenceId }, subconferenceId: { _is_null: true } }) {
-            id
-            managementModeName
-        }
-    }
-`;
-export const GetEventDocument: any = gql`
-    query GetEvent($id: uuid!) {
-        schedule_Event_by_pk(id: $id) {
-            id
-            conferenceId
-            roomId
-        }
-    }
-`;
-export const GetChatPinsDocument: any = gql`
-    query GetChatPins($chatId: uuid!) {
-        chat_Pin(where: { chatId: { _eq: $chatId } }) {
-            chatId
-            registrantId
-            wasManuallyPinned
-        }
-    }
-`;
-export const GetPushNotificationSubscriptionsDocument: any = gql`
-    query GetPushNotificationSubscriptions($userId: String!) {
-        PushNotificationSubscription(where: { userId: { _eq: $userId } }) {
-            userId
-            endpoint
-            p256dh
-            auth
-        }
-    }
-`;
-export const GetReadUpToIndicesDocument: any = gql`
-    query GetReadUpToIndices($chatId: uuid!) {
-        chat_ReadUpToIndex(where: { chatId: { _eq: $chatId }, registrant: { userId: { _is_null: false } } }) {
-            chatId
-            registrant {
-                userId
-            }
-            messageSId
-        }
-    }
-`;
-export const GetRegistrantDocument: any = gql`
-    query GetRegistrant($id: uuid!) {
-        registrant_Registrant_by_pk(id: $id) {
-            id
-            conferenceRole
-            displayName
-            userId
-            subconferenceMemberships {
-                id
-                subconferenceId
-                role
-            }
-        }
-    }
-`;
-export const GetRoomDocument: any = gql`
-    query GetRoom($id: uuid!) {
-        room_Room_by_pk(id: $id) {
-            id
-            name
-            conferenceId
-            subconferenceId
-            managementModeName
-        }
-    }
-`;
-export const GetRoomMembershipsDocument: any = gql`
-    query GetRoomMemberships($roomId: uuid!) {
-        room_RoomMembership(where: { roomId: { _eq: $roomId } }) {
-            id
-            registrantId
-            personRoleName
-        }
-    }
-`;
-export const GetSubconferenceDocument: any = gql`
-    query GetSubconference($id: uuid!) {
-        conference_Subconference_by_pk(id: $id) {
-            id
-            conferenceVisibilityLevel
-        }
-    }
-`;
-export const GetSubconferenceRoomsDocument: any = gql`
-    query GetSubconferenceRooms($subconferenceId: uuid!) {
-        room_Room(where: { subconferenceId: { _eq: $subconferenceId } }) {
-            id
-            managementModeName
-        }
-    }
-`;
-export const GetChatSubscriptionsDocument: any = gql`
-    query GetChatSubscriptions($chatId: uuid!) {
-        chat_Subscription(where: { chatId: { _eq: $chatId } }) {
-            chatId
-            registrantId
-            wasManuallySubscribed
-        }
-    }
-`;
-export const GetUserDocument: any = gql`
-    query GetUser($id: String!) {
-        User_by_pk(id: $id) {
-            id
-            registrants {
-                id
-                conferenceId
-            }
-        }
-    }
-`;
+export const GetChatDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChat" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Chat_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "restrictToAdmins" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "items" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "rooms" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetConferenceDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetConference" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "shortName" } },
+                                { kind: "Field", name: { kind: "Name", value: "slug" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
+                                { kind: "Field", name: { kind: "Name", value: "createdBy" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "subconferences" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetConferenceRoomsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetConferenceRooms" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_is_null" },
+                                                        value: { kind: "BooleanValue", value: true },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetEventDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetEvent" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "schedule_Event_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "roomId" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetChatPinsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChatPins" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "chatId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Pin" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "chatId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "chatId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                                { kind: "Field", name: { kind: "Name", value: "wasManuallyPinned" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetPushNotificationSubscriptionsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetPushNotificationSubscriptions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "PushNotificationSubscription" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "userId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "userId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                                { kind: "Field", name: { kind: "Name", value: "endpoint" } },
+                                { kind: "Field", name: { kind: "Name", value: "p256dh" } },
+                                { kind: "Field", name: { kind: "Name", value: "auth" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetReadUpToIndicesDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetReadUpToIndices" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "chatId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_ReadUpToIndex" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "chatId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "chatId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "registrant" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "userId" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_is_null" },
+                                                                    value: { kind: "BooleanValue", value: false },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "registrant" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [{ kind: "Field", name: { kind: "Name", value: "userId" } }],
+                                    },
+                                },
+                                { kind: "Field", name: { kind: "Name", value: "messageSId" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetRegistrantDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRegistrant" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Registrant_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceRole" } },
+                                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "subconferenceMemberships" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                                            { kind: "Field", name: { kind: "Name", value: "role" } },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetRoomDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRoom" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "name" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "subconferenceId" } },
+                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetRoomMembershipsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetRoomMemberships" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "roomId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_RoomMembership" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "roomId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "roomId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                                { kind: "Field", name: { kind: "Name", value: "personRoleName" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetSubconferenceDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetSubconference" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Subconference_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "conferenceVisibilityLevel" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetSubconferenceRoomsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetSubconferenceRooms" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "subconferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "subconferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "subconferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "managementModeName" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetChatSubscriptionsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetChatSubscriptions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "chatId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "chat_Subscription" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "chatId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "chatId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "chatId" } },
+                                { kind: "Field", name: { kind: "Name", value: "registrantId" } },
+                                { kind: "Field", name: { kind: "Name", value: "wasManuallySubscribed" } },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export const GetUserDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "GetUser" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "User_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "registrants" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            { kind: "Field", name: { kind: "Name", value: "id" } },
+                                            { kind: "Field", name: { kind: "Name", value: "conferenceId" } },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;

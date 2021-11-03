@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import type { Payload, RoomData } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -10,7 +11,6 @@ import {
     handleRemoveOldRoomParticipants,
     handleRoomCreated,
 } from "../handlers/room";
-import type { Payload, RoomData } from "../types/hasura/event";
 
 export const router = express.Router();
 

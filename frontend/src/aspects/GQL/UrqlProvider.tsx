@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import schema from "@midspace/graphql/graphql.schema.json";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";
@@ -11,7 +12,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Client as UrqlClient } from "urql";
 import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
 import type { GraphCacheConfig } from "../../generated/graphql";
-import schema from "../../generated/graphql.schema.json";
 import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 import type { AuthParameters } from "./AuthParameters";

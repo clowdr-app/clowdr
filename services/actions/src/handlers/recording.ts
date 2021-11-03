@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import type { MediaPackageHarvestJob, Payload } from "@midspace/hasura/event";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import assert from "assert";
@@ -15,7 +16,6 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createHarvestJob } from "../lib/aws/mediaPackage";
-import type { MediaPackageHarvestJob, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

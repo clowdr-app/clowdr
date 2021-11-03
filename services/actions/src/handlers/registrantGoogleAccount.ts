@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import type { Payload, RegistrantGoogleAccountData } from "@midspace/hasura/event";
 import type {
     YouTubeChannelDetails,
     YouTubeDataBlob,
@@ -16,7 +17,6 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { createOAuth2Client } from "../lib/googleAuth";
-import type { Payload, RegistrantGoogleAccountData } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 export async function handleRegistrantGoogleAccountDeleted(

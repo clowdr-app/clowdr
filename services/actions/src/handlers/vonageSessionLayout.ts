@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client/core";
+import type { Payload, VonageSessionLayoutData_Record } from "@midspace/hasura/event";
 import assert from "assert";
 import { VonageSession_RemoveInvalidStreamsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { applyVonageSessionLayout, convertLayout } from "../lib/vonage/vonageTools";
-import type { Payload, VonageSessionLayoutData_Record } from "../types/hasura/event";
 
 async function removeInvalidEventParticipantStreams(validStreamIds: string[], vonageSessionId: string) {
     gql`

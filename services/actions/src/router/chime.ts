@@ -1,4 +1,5 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { ActionPayload } from "@midspace/hasura/action";
 import { json, text } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -16,7 +17,6 @@ import type {
     ChimeRegistrantJoinedDetail,
     ChimeRegistrantLeftDetail,
 } from "../types/chime";
-import type { ActionPayload } from "../types/hasura/action";
 
 export const router = express.Router();
 

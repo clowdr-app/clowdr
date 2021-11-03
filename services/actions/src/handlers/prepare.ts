@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client/core";
+import type { ConferencePrepareJobData, Payload } from "@midspace/hasura/event";
+import { BroadcastRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum } from "@midspace/shared-types/content";
 import assert from "assert";
@@ -12,7 +14,6 @@ import {
 import { apolloClient } from "../graphqlClient";
 import { failConferencePrepareJob } from "../lib/conferencePrepareJob";
 import { createEventVonageSession } from "../lib/event";
-import type { ConferencePrepareJobData, Payload } from "../types/hasura/event";
 import { callWithRetry } from "../utils";
 
 gql`

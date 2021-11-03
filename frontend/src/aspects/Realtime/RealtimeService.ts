@@ -1,3 +1,4 @@
+import { datadogLogs } from "@datadog/browser-logs";
 import { Mutex } from "async-mutex";
 import * as R from "ramda";
 import io from "socket.io-client";
@@ -10,6 +11,7 @@ export class RealtimeService {
     private _onSocketAvailable: Map<number, (socket: SocketIOClient.Socket) => void> = new Map();
     private _onSocketAvailableGen = 1;
     onSocketAvailable(handler: (socket: SocketIOClient.Socket) => void): () => void {
+        datadogLogs.logger.info("Realtime service: Socket available");
         const id = this._onSocketAvailableGen++;
         this._onSocketAvailable.set(id, handler);
 
@@ -35,13 +37,18 @@ export class RealtimeService {
     }
 
     async begin(token: string): Promise<void> {
+        datadogLogs.logger.info("Connecting to realtime service");
+
         const release = await this.mutex.acquire();
         try {
+            datadogLogs.logger.info("Connecting to realtime service: Begun");
             if (this.socket) {
+                datadogLogs.logger.info("Connecting to realtime service: Tearing down an existing socket");
                 this.socket.close();
                 this.socket = undefined;
             }
 
+            datadogLogs.logger.info("Connecting to realtime service: Connecting new socket");
             const url =
                 import.meta.env.SNOWPACK_PUBLIC_REALTIME_SERVICE_URL ??
                 import.meta.env.SNOWPACK_PUBLIC_PRESENCE_SERVICE_URL;
@@ -52,10 +59,12 @@ export class RealtimeService {
                 },
             } as any);
 
+            datadogLogs.logger.info("Connecting to realtime service: Attaching event handlers");
             this.socket.on("connect", this.onConnect.bind(this));
             this.socket.on("disconnect", this.onDisconnect.bind(this));
             this.socket.on("connect_error", this.onConnectError.bind(this));
             this.socket.on("unauthorized", this.onUnauthorized.bind(this));
+            this.socket.on("heartbeat", this.onHeartbeat.bind(this));
 
             this.socket.on("time", this.onTime.bind(this));
 
@@ -68,8 +77,10 @@ export class RealtimeService {
             //     }) as TimerHandler,
             //     5 * 60000
             // );
+
+            datadogLogs.logger.info("Connecting to realtime service: Done.");
         } catch (e) {
-            console.error("Failed to create socket for realtime service.");
+            datadogLogs.logger.error("Failed to create socket for realtime service.", e);
             this.socket = undefined;
         } finally {
             release();
@@ -95,7 +106,7 @@ export class RealtimeService {
     }
 
     private onConnect() {
-        console.log("Connected to realtime service");
+        datadogLogs.logger.info("Connected to realtime service");
 
         if (this.socket) {
             for (const handler of this._onSocketAvailable.values()) {
@@ -105,7 +116,7 @@ export class RealtimeService {
     }
 
     private onDisconnect() {
-        console.log("Disconnected from realtime service");
+        datadogLogs.logger.info("Disconnected from realtime service");
 
         if (this.socket) {
             for (const handler of this._onSocketUnavailable.values()) {
@@ -116,15 +127,24 @@ export class RealtimeService {
 
     private onConnectError(e: any) {
         // TODO
-        console.error("Error connecting to realtime service", e);
+        datadogLogs.logger.error("Error connecting to realtime service", e);
     }
 
     private onUnauthorized(error: any) {
         if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
             // TODO
-            console.warn("User token has expired");
+            datadogLogs.logger.warn("User token has expired");
         } else {
-            console.error("Error connecting to realtime servie", error);
+            datadogLogs.logger.error("Error connecting to realtime servie", error);
+        }
+    }
+
+    private onHeartbeat(data: any) {
+        datadogLogs.logger.log("Heartbeat received, responding");
+        if (this.socket) {
+            this.socket.emit(data);
+        } else {
+            datadogLogs.logger.warn("Unable to respond to heartbeat");
         }
     }
 

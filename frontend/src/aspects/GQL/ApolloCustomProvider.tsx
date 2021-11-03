@@ -1,9 +1,11 @@
-import type { NormalizedCacheObject} from "@apollo/client";
+import type { NormalizedCacheObject } from "@apollo/client";
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
 import { useAuth0 } from "@auth0/auth0-react";
+import { datadogLogs } from "@datadog/browser-logs";
+import { datadogRum } from "@datadog/browser-rum";
 import { Mutex } from "async-mutex";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -246,6 +248,20 @@ export default function ApolloCustomProvider({
     const location = useLocation();
     const matches = location.pathname.match(/^\/conference\/([^/]+)/);
     const conferenceSlug = matches && matches.length > 1 ? matches[1] : undefined;
+
+    useEffect(() => {
+        datadogLogs.removeLoggerGlobalContext("user");
+        datadogLogs.addLoggerGlobalContext("user", {
+            isAuthenticated,
+            userId: user?.sub,
+        });
+
+        datadogRum.removeRumGlobalContext("user");
+        datadogRum.addRumGlobalContext("user", {
+            isAuthenticated,
+            userId: user?.sub,
+        });
+    }, [isAuthenticated, user?.sub]);
 
     if (isLoading) {
         return <>Loading...</>;

@@ -8,6 +8,7 @@
         "run-services-actions": "npx foreman start --procfile ./Procfile -p 3001",
         "run-services-realtime": "npx foreman start --procfile ./Realtime.Procfile -p 3002",
         "run-services-playout": "npx foreman start --procfile ./Playout.Procfile -p 3003",
+        "run-services-dd-proxy": "npx foreman start --procfile ./DD-Proxy.Procfile -p 3006",
         "lint-staged": "lint-staged",
         "prepare": "node ./prepare.js",
         "hasura:console-when-ready": "cd hasura && npx wait-on http-get://localhost:8080/v1/version && hasura console",

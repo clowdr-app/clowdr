@@ -4,11 +4,14 @@ import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
 import wcmatch from "wildcard-match";
-import type { Email_Insert_Input } from "../generated/graphql";
 import {
     ConferenceEmailConfigurationDocument,
+    Email_Insert_Input,
     GetSendGridConfigDocument,
     InsertEmailsDocument,
+    MarkAndSelectUnsentEmailsDocument,
+    SelectUnsentEmailIdsDocument,
+    UnmarkUnsentEmailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import type { EmailTemplateContext } from "../lib/email/emailTemplate";

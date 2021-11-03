@@ -8,6 +8,7 @@ import { AppError } from "./AppError";
 import Auth0CustomProvider from "./aspects/Auth/Auth0CustomProvider";
 import ChakraCustomProvider from "./aspects/Chakra/ChakraCustomProvider";
 import { VonageGlobalStateProvider } from "./aspects/Conference/Attend/Room/Vonage/VonageGlobalStateProvider";
+import "./aspects/DataDog/DataDog";
 import ApolloCustomProvider from "./aspects/GQL/ApolloCustomProvider";
 import { UXChoiceProvider } from "./aspects/UXChoice/UXChoice";
 import UXChoiceDialog from "./aspects/UXChoice/UXChoiceDialog";

@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import schema from "@midspace/graphql/graphql.schema.json";
+import { schema } from "@midspace/graphql/graphql-schema";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
 import type { AuthConfig } from "@urql/exchange-auth";

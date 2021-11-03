@@ -10,6 +10,7 @@ import type {
     Room_Mode_Enum,
     Schedule_EventProgramPersonRole_Enum,
 } from "./generated/graphql";
+import type { VideoRenderJobDataBlob } from "./videoRenderJob";
 
 export interface Payload<T = any> {
     event: {

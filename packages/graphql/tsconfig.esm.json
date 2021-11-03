@@ -1,6 +1,6 @@
 {
     "extends": "../tsconfig.esm.base.json",
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "src/generated/graphql.schema.json"],
     "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
     "compilerOptions": {
         "outDir": "./build/esm",

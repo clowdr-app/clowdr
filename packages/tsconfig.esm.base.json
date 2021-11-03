@@ -26,6 +26,7 @@
         /* Module Resolution Options */
         "moduleResolution": "node",
         "esModuleInterop": true,
+        "resolveJsonModule": true,
 
         /* Source Map Options */
         "inlineSourceMap": true,

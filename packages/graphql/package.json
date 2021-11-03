@@ -5,7 +5,7 @@
         "build": "pnpm build:cjs && pnpm build:esm",
         "build:cjs": "tsc --build tsconfig.cjs.json",
         "build:esm": "tsc --build tsconfig.esm.json",
-        "copy-resources": "cpy --cwd=generated/ \"*\" ../build/cjs/ --parents && cpy --cwd=generated/ \"*\" ../build/esm/ --parents",
+        "copy-resources": "cpy --cwd=src/generated/ \"schema.graphql\" ../../build/cjs/ --parents && cpy --cwd=src/generated/ \"schema.graphql\" ../../build/esm/ --parents",
         "clean": "rimraf build",
         "prepare": "ts-patch install -s",
         "gql-cdg": "graphql-codegen --config codegen.js && pnpm copy-resources"

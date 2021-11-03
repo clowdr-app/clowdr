@@ -25,13 +25,13 @@ module.exports = {
                 useTypeImports: true,
             },
         },
-        "./generated/schema.graphql": {
+        "./src/generated/schema.graphql": {
             plugins: ["schema-ast"],
             config: {
                 includeDirectives: true,
             },
         },
-        "./generated/graphql.schema.json": {
+        "./src/generated/graphql.schema.json": {
             plugins: ["introspection"],
             config: {
                 includeDirectives: true,

@@ -125,7 +125,7 @@ export function VideoElement({
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
         return !videoURL || !config ? undefined : (
-            <Box>
+            <Box flexDir="column">
                 <ReactPlayer
                     url={videoURL}
                     controls={true}
@@ -157,19 +157,11 @@ export function VideoElement({
                     }}
                     config={{ ...config }}
                     ref={playerRef}
-                    style={
-                        isHLS
-                            ? { borderRadius: "10px", overflow: "hidden" }
-                            : { borderTopRightRadius: "10px", borderTopLeftRadius: "10px", overflow: "hidden" }
-                    }
+                    style={{ borderRadius: "10px", overflow: "hidden" }}
                     playbackRate={playbackRate}
                 />
                 {!isHLS ? (
-                    <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end">
-                        {/* <SpeedControl
-                            options={["0.5x", "0.75x", "1x", "1.2x", "1.5x", "2x"]}
-                            onChange={(value) => setPlaybackRate(parseFloat(value))}
-                        /> */}
+                    <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end" w="100%">
                         <Menu>
                             <MenuButton as={Button} size="xs">
                                 Speed <FAIcon iconStyle="s" icon="chevron-down" />
@@ -233,54 +225,3 @@ function TrackVideoView({ elementId, isPlaying }: { elementId: string; isPlaying
     useTrackView(isPlaying, elementId, "Element");
     return <></>;
 }
-
-// function SpeedControl({ onChange, options }: { options: string[]; onChange: (value: string) => void }) {
-//     const { getRootProps, getRadioProps } = useRadioGroup({
-//         name: "framework",
-//         defaultValue: "react",
-//         onChange,
-//     });
-
-//     const group: any = getRootProps();
-//     return (
-//         <ButtonGroup {...group} spacing={0} isAttached>
-//             {options.map((value) => {
-//                 const radio = getRadioProps({ value });
-//                 return (
-//                     <SpeedControlRadioCard key={value} {...radio}>
-//                         {value}
-//                     </SpeedControlRadioCard>
-//                 );
-//             })}
-//         </ButtonGroup>
-//     );
-// }
-
-// function SpeedControlRadioCard(props: React.PropsWithChildren<UseRadioProps>) {
-//     const { getInputProps, getCheckboxProps } = useRadio(props);
-
-//     const input: any = getInputProps();
-//     const checkbox: any = getCheckboxProps();
-
-//     return (
-//         <Box as="label">
-//             <input {...input} />
-//             <Box
-//                 {...checkbox}
-//                 cursor="pointer"
-//                 boxShadow="md"
-//                 _checked={{
-//                     bg: "PrimaryActionButton.500",
-//                     color: "white",
-//                 }}
-//                 _focus={{
-//                     boxShadow: "outline",
-//                 }}
-//                 px={1}
-//                 py={0}
-//             >
-//                 {props.children}
-//             </Box>
-//         </Box>
-//     );
-// }

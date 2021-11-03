@@ -107,7 +107,7 @@ app.post("/invitation/confirm/current", jsonParser, checkJwt, checkUserScopes, a
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
-    console.log(`App is listening on port ${process.env.PORT}!`);
+    console.log(`App is listening on port ${portNumber}!`);
     console.log("Initialising AWS client");
     initialiseAwsClient().then(() => {
         console.log("Initialised AWS client");

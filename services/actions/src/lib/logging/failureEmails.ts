@@ -16,7 +16,7 @@ ${stackTrace ? `<p>Stack trace: ${stackTrace}</p>` : ""}`;
             },
         ];
 
-        await insertEmails(emails, undefined);
+        await insertEmails(emails, undefined, undefined);
     } catch (e) {
         console.error("Failed to send failure email!", failureReason, e);
     }

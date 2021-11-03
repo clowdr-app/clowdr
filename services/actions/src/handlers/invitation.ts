@@ -1,18 +1,18 @@
 import { gql } from "@apollo/client/core";
-import assert from "assert";
+import { v5 as uuidv5 } from "uuid";
 import {
+    CompleteInvitationEmailJobsDocument,
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
-    MarkAndSelectUnprocessedInvitationEmailJobsDocument,
     RegistrantWithInvitePartsFragment,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
+    SelectUnprocessedInvitationEmailJobsDocument,
     SetRegistrantUserIdDocument,
-    UnmarkInvitationEmailJobsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { insertEmails } from "./email";
+import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
     fragment InvitationParts on registrant_Invitation {
@@ -113,25 +113,29 @@ gql`
         }
     }
 
-    mutation MarkAndSelectUnprocessedInvitationEmailJobs {
-        update_job_queues_InvitationEmailJob(where: { processed: { _eq: false } }, _set: { processed: true }) {
-            returning {
-                id
-                registrantIds
-                sendRepeat
-            }
+    query SelectUnprocessedInvitationEmailJobs {
+        job_queues_InvitationEmailJob(where: { processed: { _eq: false } }) {
+            id
+            registrantIds
+            sendRepeat
         }
     }
 
-    mutation UnmarkInvitationEmailJobs($ids: [uuid!]!) {
-        update_job_queues_InvitationEmailJob(where: { id: { _in: $ids } }, _set: { processed: false }) {
+    mutation CompleteInvitationEmailJobs($ids: [uuid!]!) {
+        update_job_queues_InvitationEmailJob(where: { id: { _in: $ids } }, _set: { processed: true }) {
             affected_rows
         }
     }
 `;
 
+/** @summary Generate an idempotency key that uniquely identifies each email in a invite email job. */
+function generateIdempotencyKey(jobId: string, registrantId: string): string {
+    return uuidv5(`invite-email,${jobId},${registrantId}`, EMAIL_IDEMPOTENCY_NAMESPACE);
+}
+
 async function sendInviteEmails(
     registrantIds: Array<string>,
+    jobId: string,
     shouldSend: (registrant: RegistrantWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<void> {
     if (registrantIds.length === 0) {
@@ -144,12 +148,6 @@ async function sendInviteEmails(
             registrantIds,
         },
     });
-
-    if (registrants.error) {
-        throw new Error(registrants.error.message);
-    } else if (registrants.errors && registrants.errors.length > 0) {
-        throw new Error(registrants.errors.reduce((a, e) => `${a}\n* ${e};`, ""));
-    }
 
     if (registrants.data.registrant_Registrant.length > 0) {
         const emailsToSend: Map<string, Email_Insert_Input> = new Map();
@@ -179,26 +177,32 @@ your account and access the conference.</p>
                             registrant.conference.shortName
                         }`,
                         htmlContents,
+                        idempotencyKey: generateIdempotencyKey(jobId, registrant.id),
                     });
                 }
             }
         }
 
-        await insertEmails(Array.from(emailsToSend.values()), registrants.data.registrant_Registrant[0].conference.id);
+        if (emailsToSend.size) {
+            await insertEmails(
+                Array.from(emailsToSend.values()),
+                registrants.data.registrant_Registrant[0].conference.id,
+                `invitation:${jobId}`
+            );
+        }
     }
 }
 
 export async function processInvitationEmailsQueue(): Promise<void> {
-    const jobs = await apolloClient.mutate({
-        mutation: MarkAndSelectUnprocessedInvitationEmailJobsDocument,
+    const jobs = await apolloClient.query({
+        query: SelectUnprocessedInvitationEmailJobsDocument,
         variables: {},
     });
-    assert(jobs.data?.update_job_queues_InvitationEmailJob?.returning, "Unable to fetch Send Invitations jobs.");
 
-    const failedJobIds: string[] = [];
-    for (const job of jobs.data.update_job_queues_InvitationEmailJob.returning) {
+    const completedJobIds: string[] = [];
+    for (const job of jobs.data.job_queues_InvitationEmailJob) {
         try {
-            await sendInviteEmails(job.registrantIds, (registrant) => {
+            await sendInviteEmails(job.registrantIds, job.id, (registrant) => {
                 if (
                     !!registrant.invitation &&
                     registrant.invitation.emails.filter((x) => x.reason === "invite").length === 0
@@ -209,16 +213,16 @@ export async function processInvitationEmailsQueue(): Promise<void> {
                 }
                 return false;
             });
-        } catch (e) {
+            completedJobIds.push(job.id);
+        } catch (e: any) {
             console.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
-            failedJobIds.push(job.id);
         }
     }
 
     await apolloClient.mutate({
-        mutation: UnmarkInvitationEmailJobsDocument,
+        mutation: CompleteInvitationEmailJobsDocument,
         variables: {
-            ids: failedJobIds,
+            ids: completedJobIds,
         },
     });
 }
@@ -270,7 +274,7 @@ async function confirmUser(
                         userId,
                     },
                 });
-            } catch (e) {
+            } catch (e: any) {
                 ok = e.message || e.toString();
                 console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
             }
@@ -280,7 +284,7 @@ async function confirmUser(
             ok: ok === true ? "true" : ok,
             confSlug: invitation.registrant.conference.slug,
         };
-    } catch (e) {
+    } catch (e: any) {
         return {
             ok: e.message || e.toString(),
             confSlug: "<UNKNOWN>",

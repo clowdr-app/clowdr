@@ -7,7 +7,7 @@
         "build:esm": "tsc --build tsconfig.esm.json",
         "clean": "rimraf build",
         "prepare": "ts-patch install -s",
-        "gql-cdg": "graphql-codegen --config codegen.js"
+        "codegen": "graphql-codegen --config codegen.js"
     },
     "author": "Clowdr CIC",
     "license": "BSD-3-Clause",

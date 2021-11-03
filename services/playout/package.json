@@ -8,7 +8,7 @@
         "clean": "rimraf build",
         "start": "pnpm nf start --procfile Procfile -p 3003",
         "dev": "tsc-watch -b --onSuccess \"pnpm start\"",
-        "gql-cdg": "pnpm graphql-codegen --config codegen.js",
+        "codegen": "pnpm graphql-codegen --config codegen.js",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",

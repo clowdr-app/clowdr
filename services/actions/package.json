@@ -7,7 +7,7 @@
         "clean": "rimraf build",
         "start": "pnpm nf start --procfile Procfile -p 3001",
         "dev": "tsc-watch -b --onSuccess \"pnpm start\"",
-        "gql-cdg": "pnpm exec graphql-codegen --config codegen.js",
+        "codegen": "pnpm exec graphql-codegen --config codegen.js",
         "test": "jest --config jest.config.ts --forceExit"
     },
     "author": "Clowdr CIC",

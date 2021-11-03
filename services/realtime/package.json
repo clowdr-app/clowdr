@@ -8,7 +8,7 @@
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
         "start": "pnpm nf start --procfile Procfile -p 3002",
         "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
-        "gql-cdg": "pnpm exec graphql-codegen --config codegen.js",
+        "codegen": "pnpm exec graphql-codegen --config codegen.js",
         "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
         "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
     },

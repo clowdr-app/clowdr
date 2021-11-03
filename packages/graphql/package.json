@@ -8,7 +8,7 @@
         "copy-resources": "cpy --cwd=src/generated/ \"schema.graphql\" ../../build/cjs/ --parents && cpy --cwd=src/generated/ \"schema.graphql\" ../../build/esm/ --parents",
         "clean": "rimraf build",
         "prepare": "ts-patch install -s",
-        "gql-cdg": "graphql-codegen --config codegen.js && pnpm copy-resources"
+        "codegen": "graphql-codegen --config codegen.js && pnpm copy-resources"
     },
     "author": "Clowdr CIC",
     "license": "BSD-3-Clause",

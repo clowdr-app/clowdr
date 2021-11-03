@@ -64,6 +64,34 @@
             },
             "args": ["console-when-ready", "--envfile='./.env.ci-test'"]
         },
+        // All -- GraphQL Codegen
+        {
+            "label": "All -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "-r"]
+        },
+        // Offline -- GraphQL Codegen
+        {
+            "label": "Offline -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "-r", "--filter \"...^@midspace/graphql\""]
+        },
         // Action service -- Local Development
         {
             "label": "Actions Service -- Local Development",
@@ -93,62 +121,6 @@
                 "instanceLimit": 1
             },
             "args": ["local", "web"]
-        },
-        // Actions service -- GraphQL Codegen
-        {
-            "label": "Actions service -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/services/actions"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
-        },
-        // Auth service -- GraphQL Codegen
-        {
-            "label": "Auth service -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/services/auth"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
-        },
-        // Auth package -- GraphQL Codegen
-        {
-            "label": "Auth package -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/packages/auth"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
-        },
-        // Caches package -- GraphQL Codegen
-        {
-            "label": "Caches package -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/packages/caches"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
         },
         // Auth service -- Local Development
         {
@@ -180,20 +152,6 @@
             },
             "args": ["dev"]
         },
-        // Real-time service -- GraphQL Codegen
-        {
-            "label": "Real-time service -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/services/realtime"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
-        },
         // Real-time service -- Local Development
         {
             "label": "Real-time Service -- Local Development",
@@ -223,34 +181,6 @@
                 "instanceLimit": 1
             },
             "args": ["dev"]
-        },
-        // Playout service -- GraphQL Codegen
-        {
-            "label": "Playout service -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/services/playout"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["gql-cdg"]
-        },
-        // Frontend -- GraphQL Codegen
-        {
-            "label": "Frontend -- GraphQL Codegen",
-            "type": "shell",
-            "command": "pnpm",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "runOptions": {
-                "instanceLimit": 1
-            },
-            "args": ["graphql-codegen"]
         },
         // Frontend -- Local Development
         {
@@ -303,6 +233,20 @@
             },
             "args": ["prettier", "--write", "."]
         },
+        // All -- Build
+        {
+            "label": "All -- Build",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["build", "-r"]
+        },
         // Packetriot
         {
             "label": "Packetriot",
@@ -344,20 +288,6 @@
                 "Caches Service -- Local Development",
                 "Actions Service -- Local Development",
                 "Frontend -- Local Development"
-            ],
-            "dependsOrder": "parallel",
-            "isBackground": true,
-            "problemMatcher": []
-        },
-        // Generate All - GraphQL Codegen
-        {
-            "label": "Generate All -- GraphQL Codegen",
-            "dependsOn": [
-                "Auth service -- GraphQL Codegen",
-                "Actions service -- GraphQL Codegen",
-                "Real-time service -- GraphQL Codegen",
-                "Playout service -- GraphQL Codegen",
-                "Frontend -- GraphQL Codegen"
             ],
             "dependsOrder": "parallel",
             "isBackground": true,

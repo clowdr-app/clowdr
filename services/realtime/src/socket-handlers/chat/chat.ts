@@ -33,13 +33,12 @@ export function onSubscribe(
                 ) {
                     const client = await redisClientPool.acquire("socket-handlers/chat/chat/onSubscribe");
                     try {
-                        const existingChats = await redisClientP.smembers(client)(socketChatsKeyName(socketId));
-                        if (!existingChats.includes(chatId)) {
-                            socket.join(generateChatRoomName(chatId));
+                        // Always call join - a websocket re-establishing its connection to chat needs to rejoin the session
+                        socket.join(generateChatRoomName(chatId));
 
-                            await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
-                            await redisClientP.sadd(client)(socketChatsKeyName(socketId), chatId);
-                        }
+                        // And these are harmless - doesn't matter if we're re-adding
+                        await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);
+                        await redisClientP.sadd(client)(socketChatsKeyName(socketId), chatId);
                     } finally {
                         redisClientPool.release("socket-handlers/chat/chat/onSubscribe", client);
                     }

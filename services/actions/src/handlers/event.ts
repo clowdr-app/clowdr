@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/actionTypes";
 import type { EventData, Payload } from "@midspace/hasura/event";
 import type { ContinuationTo } from "@midspace/shared-types/continuation";
 import { ContinuationType } from "@midspace/shared-types/continuation";

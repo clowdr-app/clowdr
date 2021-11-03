@@ -1,174 +1,174 @@
-type Maybe<T> = T | null;
+export type Maybe<T> = T | null;
 
-type jsonb = any;
+export type jsonb = any;
 
-type uuid = string;
+export type uuid = string;
 
-type SampleInput = {
+export type SampleInput = {
     username: string;
     password: string;
 };
 
-type EchoInput = {
+export type EchoInput = {
     message: string;
 };
 
-type SubmitElementInput = {
+export type SubmitElementInput = {
     elementData: jsonb;
 };
 
-type ConfirmInvitationInput = {
+export type ConfirmInvitationInput = {
     inviteCode: uuid;
     confirmationCode: string;
 };
 
-type InvitationConfirmationEmailInput = {
+export type InvitationConfirmationEmailInput = {
     inviteCode: uuid;
 };
 
-type SubmitUpdatedSubtitlesInput = {
+export type SubmitUpdatedSubtitlesInput = {
     elementId: string;
     subtitleText: string;
     accessToken: string;
 };
 
-type SampleOutput = {
+export type SampleOutput = {
     accessToken: string;
 };
 
-type EchoOutput = {
+export type EchoOutput = {
     message: string;
 };
 
-type ProtectedEchoOutput = {
+export type ProtectedEchoOutput = {
     message: string;
 };
 
-type SubmitElementOutput = {
+export type SubmitElementOutput = {
     success: boolean;
     message: string;
 };
 
-type ConfirmInvitationOutput = {
+export type ConfirmInvitationOutput = {
     ok: string;
     confSlug?: Maybe<string>;
 };
 
-type InvitationConfirmationEmailOutput = {
+export type InvitationConfirmationEmailOutput = {
     sent: boolean;
 };
 
-type InvitationSendEmailResult = {
+export type InvitationSendEmailResult = {
     registrantId: string;
     sent: boolean;
 };
 
-type SubmitUpdatedSubtitlesOutput = {
+export type SubmitUpdatedSubtitlesOutput = {
     success: boolean;
     message: string;
 };
 
-type GetUploadAgreementOutput = {
+export type GetUploadAgreementOutput = {
     agreementText?: Maybe<string>;
     agreementUrl?: Maybe<string>;
 };
 
-type ConferencePrepareOutput = {
+export type ConferencePrepareOutput = {
     success: boolean;
     message?: Maybe<string>;
 };
 
-type UploaderSendSubmissionRequestResult = {
+export type UploaderSendSubmissionRequestResult = {
     uploaderId: uuid;
     sent: boolean;
 };
 
-type JoinEventVonageSessionOutput = {
+export type JoinEventVonageSessionOutput = {
     accessToken?: Maybe<string>;
     isRecorded?: Maybe<boolean>;
 };
 
-type JoinRoomVonageSessionOutput = {
+export type JoinRoomVonageSessionOutput = {
     sessionId?: Maybe<string>;
     accessToken?: Maybe<string>;
     message?: Maybe<string>;
     isRecorded?: Maybe<boolean>;
 };
 
-type ProfilePhotoURLResponse = {
+export type ProfilePhotoURLResponse = {
     url: string;
 };
 
-type UpdateProfilePhotoResponse = {
+export type UpdateProfilePhotoResponse = {
     ok: boolean;
     photoURL_350x350?: Maybe<string>;
     photoURL_50x50?: Maybe<string>;
 };
 
-type CreateRoomDmOutput = {
+export type CreateRoomDmOutput = {
     roomId?: Maybe<uuid>;
     chatId?: Maybe<uuid>;
     message?: Maybe<string>;
 };
 
-type CreateContentGroupRoomOutput = {
+export type CreateContentGroupRoomOutput = {
     roomId?: Maybe<string>;
     message?: Maybe<string>;
 };
 
-type StopEventBroadcastOutput = {
+export type StopEventBroadcastOutput = {
     broadcastsStopped: number;
 };
 
-type GetGoogleOAuthUrlOutput = {
+export type GetGoogleOAuthUrlOutput = {
     url: string;
 };
 
-type SubmitGoogleOAuthTokenOutput = {
+export type SubmitGoogleOAuthTokenOutput = {
     success: boolean;
     message?: Maybe<string>;
 };
 
-type SubmitGoogleOAuthCodeOutput = {
+export type SubmitGoogleOAuthCodeOutput = {
     success: boolean;
     message?: Maybe<string>;
 };
 
-type RefreshYouTubeDataOutput = {
+export type RefreshYouTubeDataOutput = {
     success: boolean;
     message?: Maybe<string>;
 };
 
-type ChatRemoteToken = {
+export type ChatRemoteToken = {
     jwt: string;
     expiry: number;
 };
 
-type GenerateChatRemoteServiceIdsOutput = {
+export type GenerateChatRemoteServiceIdsOutput = {
     error?: Maybe<string>;
 };
 
-type GenerateChatRemoteUserIdsOutput = {
+export type GenerateChatRemoteUserIdsOutput = {
     error?: Maybe<string>;
 };
 
-type PresenceSummaryOutput = {
+export type PresenceSummaryOutput = {
     total_unique_tabs: number;
     total_unique_user_ids: number;
     pages?: Maybe<jsonb>;
 };
 
-type PresenceFlushOutput = {
+export type PresenceFlushOutput = {
     ok?: Maybe<string>;
 };
 
-type JoinRoomChimeSessionOutput = {
+export type JoinRoomChimeSessionOutput = {
     meeting?: Maybe<jsonb>;
     registrant?: Maybe<jsonb>;
     message?: Maybe<string>;
 };
 
-type Query = {
+export type Query = {
     echo?: Maybe<EchoOutput>;
     getSlug?: Maybe<GetSlugOutput>;
     getUploadAgreement?: Maybe<GetUploadAgreementOutput>;
@@ -176,7 +176,7 @@ type Query = {
     protectedEcho?: Maybe<ProtectedEchoOutput>;
 };
 
-type Mutation = {
+export type Mutation = {
     createContentGroupRoom?: Maybe<CreateContentGroupRoomOutput>;
     createRoomDm?: Maybe<CreateRoomDmOutput>;
     generateChatRemoteServiceIds?: Maybe<GenerateChatRemoteServiceIdsOutput>;
@@ -199,136 +199,136 @@ type Mutation = {
     updateSubtitles?: Maybe<SubmitUpdatedSubtitlesOutput>;
 };
 
-type echoArgs = {
+export type echoArgs = {
     message: string;
 };
 
-type getElementArgs = {
+export type getElementArgs = {
     magicToken: string;
 };
 
-type getUploadAgreementArgs = {
+export type getUploadAgreementArgs = {
     magicToken: string;
 };
 
-type presence_SummaryArgs = {};
+export type presence_SummaryArgs = {};
 
-type protectedEchoArgs = {
+export type protectedEchoArgs = {
     message: string;
 };
 
-type createContentGroupRoomArgs = {
+export type createContentGroupRoomArgs = {
     itemId: uuid;
     conferenceId: uuid;
 };
 
-type createRoomDmArgs = {
+export type createRoomDmArgs = {
     conferenceId: uuid;
     registrantIds: Array<uuid>;
 };
 
-type generateChatRemoteServiceIdsArgs = {};
+export type generateChatRemoteServiceIdsArgs = {};
 
-type generateChatRemoteTokenArgs = {
+export type generateChatRemoteTokenArgs = {
     registrantId: uuid;
 };
 
-type generateChatRemoteUserIdsArgs = {};
+export type generateChatRemoteUserIdsArgs = {};
 
-type getGoogleOAuthUrlArgs = {
+export type getGoogleOAuthUrlArgs = {
     registrantId: uuid;
     scopes: Array<string>;
 };
 
-type invitationConfirmCurrentArgs = {
+export type invitationConfirmCurrentArgs = {
     inviteCode: uuid;
 };
 
-type invitationConfirmSendInitialEmailArgs = {
+export type invitationConfirmSendInitialEmailArgs = {
     inviteInput: InvitationConfirmationEmailInput;
 };
 
-type invitationConfirmSendRepeatEmailArgs = {
+export type invitationConfirmSendRepeatEmailArgs = {
     inviteInput: InvitationConfirmationEmailInput;
 };
 
-type invitationConfirmWithCodeArgs = {
+export type invitationConfirmWithCodeArgs = {
     inviteInput: ConfirmInvitationInput;
 };
 
-type joinEventVonageSessionArgs = {
+export type joinEventVonageSessionArgs = {
     eventId: uuid;
 };
 
-type joinRoomChimeSessionArgs = {
+export type joinRoomChimeSessionArgs = {
     roomId: uuid;
 };
 
-type joinRoomVonageSessionArgs = {
+export type joinRoomVonageSessionArgs = {
     roomId: uuid;
 };
 
-type presence_FlushArgs = {};
+export type presence_FlushArgs = {};
 
-type refreshYouTubeDataArgs = {
+export type refreshYouTubeDataArgs = {
     registrantId: uuid;
     registrantGoogleAccountId: uuid;
 };
 
-type stopEventBroadcastArgs = {
+export type stopEventBroadcastArgs = {
     eventId: uuid;
 };
 
-type submitElementArgs = {
+export type submitElementArgs = {
     data: jsonb;
     magicToken: string;
 };
 
-type submitGoogleOAuthCodeArgs = {
+export type submitGoogleOAuthCodeArgs = {
     code: string;
     state: string;
 };
 
-type updateProfilePhotoArgs = {
+export type updateProfilePhotoArgs = {
     registrantId: uuid;
     s3URL?: Maybe<string>;
 };
 
-type updateSubtitlesArgs = {
+export type updateSubtitlesArgs = {
     elementId: string;
     subtitleText: string;
     magicToken: string;
 };
 
-type getSlugArgs = {
+export type getSlugArgs = {
     url: string;
 };
 
-type GetSlugOutput = {
+export type GetSlugOutput = {
     slug?: Maybe<string>;
 };
 
-type getProgramPersonAccessTokenArgs = {
+export type getProgramPersonAccessTokenArgs = {
     elementId: uuid;
     uploaderEmail: string;
     elementAccessToken: string;
 };
 
-type MatchingPersonOutput = {
+export type MatchingPersonOutput = {
     accessToken?: Maybe<string>;
 };
 
-type toggleVonageRecordingStateArgs = {
+export type toggleVonageRecordingStateArgs = {
     recordingActive: boolean;
     vonageSessionId: string;
 };
 
-type ToggleVonageRecordingStateOutput = {
+export type ToggleVonageRecordingStateOutput = {
     allowed: boolean;
     recordingState: boolean;
 };
 
-type InitialiseSuperUserOutput = {
+export type InitialiseSuperUserOutput = {
     success: boolean;
     error?: Maybe<string>;
 };

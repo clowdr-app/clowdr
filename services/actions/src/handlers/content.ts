@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { getUploadAgreementArgs, GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";

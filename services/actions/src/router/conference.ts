@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import type { ActionPayload } from "@midspace/hasura/action";
+import type { getSlugArgs } from "@midspace/hasura/actionTypes";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";

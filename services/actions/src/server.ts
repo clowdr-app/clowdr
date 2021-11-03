@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";

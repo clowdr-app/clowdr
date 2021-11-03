@@ -1,4 +1,5 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/actionTypes";
 import type { EventData, Payload, ScheduledEventPayload } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";

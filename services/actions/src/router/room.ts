@@ -1,5 +1,11 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import type {
+    createContentGroupRoomArgs,
+    CreateContentGroupRoomOutput,
+    createRoomDmArgs,
+    CreateRoomDmOutput,
+} from "@midspace/hasura/actionTypes";
 import type { Payload, RoomData } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";

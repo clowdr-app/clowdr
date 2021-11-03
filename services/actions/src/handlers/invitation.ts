@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
 import assert from "assert";
 import type {
     Email_Insert_Input,

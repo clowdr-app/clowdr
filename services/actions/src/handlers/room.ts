@@ -1,4 +1,10 @@
 import { gql } from "@apollo/client/core";
+import {
+    createContentGroupRoomArgs,
+    CreateContentGroupRoomOutput,
+    createRoomDmArgs,
+    CreateRoomDmOutput,
+} from "@midspace/hasura/actionTypes";
 import type { Payload, RoomData } from "@midspace/hasura/event";
 import assert from "assert";
 import { sub } from "date-fns";

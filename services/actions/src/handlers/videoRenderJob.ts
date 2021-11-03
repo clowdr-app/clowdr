@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client/core";
-import "@midspace/hasura";
 import type { Payload, VideoRenderJobData } from "@midspace/hasura/event";
 import type { VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
 import { notEmpty } from "@midspace/shared-types/utils";

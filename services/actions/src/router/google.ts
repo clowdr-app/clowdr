@@ -1,4 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type {
+    getGoogleOAuthUrlArgs,
+    GetGoogleOAuthUrlOutput,
+    submitGoogleOAuthCodeArgs,
+    SubmitGoogleOAuthCodeOutput,
+} from "@midspace/hasura/actionTypes";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";

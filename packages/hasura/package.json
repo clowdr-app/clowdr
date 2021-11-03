@@ -3,8 +3,8 @@
     "version": "0.0.0",
     "scripts": {
         "build": "pnpm build:cjs && pnpm build:esm",
-        "build:cjs": "tsc --build tsconfig.cjs.json && cpy --cwd=src/resources \"**/*\" ../../build/cjs --parents",
-        "build:esm": "tsc --build tsconfig.esm.json && cpy --cwd=src/resources \"**/*\" ../../build/esm --parents",
+        "build:cjs": "tsc --build tsconfig.cjs.json",
+        "build:esm": "tsc --build tsconfig.esm.json",
         "clean": "rimraf build",
         "prepare": "ts-patch install -s",
         "codegen": "graphql-codegen --config codegen.js"

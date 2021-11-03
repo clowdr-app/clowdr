@@ -1,4 +1,10 @@
 import { gql } from "@apollo/client/core";
+import {
+    submitElementArgs,
+    SubmitElementOutput,
+    SubmitUpdatedSubtitlesOutput,
+    updateSubtitlesArgs,
+} from "@midspace/hasura/actionTypes";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import type {

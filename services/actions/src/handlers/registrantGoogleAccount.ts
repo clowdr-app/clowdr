@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/actionTypes";
 import type { Payload, RegistrantGoogleAccountData } from "@midspace/hasura/event";
 import type {
     YouTubeChannelDetails,

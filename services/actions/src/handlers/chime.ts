@@ -1,3 +1,4 @@
+import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
 import { getRegistrant } from "../lib/authorisation";
 import { addRegistrantToChimeMeeting } from "../lib/aws/chime";
 import { canUserJoinRoom, getRoomByChimeMeetingId, getRoomChimeMeeting, getRoomConferenceId } from "../lib/room";

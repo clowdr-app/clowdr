@@ -1,3 +1,4 @@
+import type { Maybe } from "@midspace/hasura/actionTypes";
 import type { SNSNotification } from "@midspace/shared-types/sns/index";
 import axios from "axios";
 import MessageValidator from "sns-validator";

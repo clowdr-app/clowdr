@@ -1,4 +1,5 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type { refreshYouTubeDataArgs, RefreshYouTubeDataOutput } from "@midspace/hasura/actionTypes";
 import type { Payload, RegistrantGoogleAccountData } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";

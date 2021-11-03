@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/actionTypes";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";
@@ -8,7 +9,7 @@ import crypto from "crypto";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
-import { UpdateProfilePhotoDocument } from "../generated/graphql";
+import { Maybe, UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
 

@@ -1,5 +1,13 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import type { ActionPayload } from "@midspace/hasura/action";
+import type {
+    joinEventVonageSessionArgs,
+    JoinEventVonageSessionOutput,
+    joinRoomVonageSessionArgs,
+    JoinRoomVonageSessionOutput,
+    toggleVonageRecordingStateArgs,
+    ToggleVonageRecordingStateOutput,
+} from "@midspace/hasura/actionTypes";
 import assert from "assert";
 import { json } from "body-parser";
 import type { Request, Response } from "express";

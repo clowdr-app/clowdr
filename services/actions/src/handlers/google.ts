@@ -1,4 +1,10 @@
 import { gql } from "@apollo/client/core";
+import {
+    getGoogleOAuthUrlArgs,
+    GetGoogleOAuthUrlOutput,
+    submitGoogleOAuthCodeArgs,
+    SubmitGoogleOAuthCodeOutput,
+} from "@midspace/hasura/actionTypes";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import AmazonS3Uri from "amazon-s3-uri";

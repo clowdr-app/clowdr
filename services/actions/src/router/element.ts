@@ -1,4 +1,10 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import type {
+    getUploadAgreementArgs,
+    GetUploadAgreementOutput,
+    submitElementArgs,
+    updateSubtitlesArgs,
+} from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import { json } from "body-parser";
 import type { Request, Response } from "express";

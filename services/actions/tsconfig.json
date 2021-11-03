@@ -38,6 +38,8 @@
     },
     "references": [
         { "path": "../../packages/shared-types/tsconfig.cjs.json" },
+        { "path": "../../packages/graphql/tsconfig.cjs.json" },
+        { "path": "../../packages/hasura/tsconfig.cjs.json" },
         { "path": "../../packages/auth/tsconfig.cjs.json" }
     ]
 }

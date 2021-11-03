@@ -35,6 +35,7 @@ export function onSubscribe(
                     try {
                         // Always call join - a websocket re-establishing its connection to chat needs to rejoin the session
                         socket.join(generateChatRoomName(chatId));
+                        socket.emit("chat.subscribe.ack", chatId);
 
                         // And these are harmless - doesn't matter if we're re-adding
                         await redisClientP.sadd(client)(chatListenersKeyName(chatId), `${socketId}¬${userId}`);

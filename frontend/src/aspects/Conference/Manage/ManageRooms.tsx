@@ -20,6 +20,7 @@ import {
     DrawerContent,
     DrawerHeader,
     DrawerOverlay,
+    Flex,
     FormLabel,
     Heading,
     Input,
@@ -53,6 +54,7 @@ import {
     Room_Mode_Enum,
     Room_PersonRole_Enum,
     useCreateRoomMutation,
+    useDeleteRoomPersonMutation,
     useDeleteRoomsMutation,
     useGetIsExternalRtmpBroadcastEnabledQuery,
     useInsertRoomPeopleMutation,
@@ -231,6 +233,14 @@ gql`
         }
     }
 
+    mutation DeleteRoomPerson($id: uuid!) {
+        delete_room_RoomPerson(where: { id: { _eq: $id } }) {
+            returning {
+                id
+            }
+        }
+    }
+
     query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
         conference_Configuration_by_pk(conferenceId: $conferenceId, key: ENABLE_EXTERNAL_RTMP_BROADCAST) {
             conferenceId
@@ -262,13 +272,16 @@ function RoomSecondaryEditor({
             roomId: room?.id,
         },
         skip: !room,
+        fetchPolicy: "network-only",
     });
     const groupRegistrantsQ = useManageRooms_SelectGroupRegistrantsQuery({
         skip: true,
     });
     const [insertRoomPeople, insertRoomPeopleResponse] = useInsertRoomPeopleMutation();
+    const [deleteRoomPerson, deleteRoomPersonResponse] = useDeleteRoomPersonMutation();
     useQueryErrorToast(groupRegistrantsQ.error, false, "ManaheConferenceRoomsPage: ManageRooms_SelectGroupRegistrants");
     useQueryErrorToast(insertRoomPeopleResponse.error, false, "ManaheConferenceRoomsPage: InsertRoomPeople (mutation)");
+    useQueryErrorToast(deleteRoomPersonResponse.error, false, "ManaheConferenceRoomsPage: DeleteRoomPerson (mutation)");
 
     const addUsersFromGroup = useCallback(
         async (groupId: string) => {
@@ -470,10 +483,42 @@ function RoomSecondaryEditor({
                                                 {sortedMembers.length === 0 ? (
                                                     "Room has no members."
                                                 ) : (
-                                                    <UnorderedList>
+                                                    <UnorderedList spacing={1}>
                                                         {sortedMembers.map((member) => (
-                                                            <ListItem key={member.id}>
-                                                                {member.registrant.displayName}
+                                                            <ListItem
+                                                                key={member.id}
+                                                                _hover={{
+                                                                    bgColor: "rgba(0, 0, 0, 0.25)",
+                                                                }}
+                                                                p={1}
+                                                            >
+                                                                <Flex>
+                                                                    {member.registrant.displayName}
+                                                                    <Button
+                                                                        ml="auto"
+                                                                        size="xs"
+                                                                        colorScheme="DestructiveActionButton"
+                                                                        aria-label="Remove room member"
+                                                                        isDisabled={deleteRoomPersonResponse.loading}
+                                                                        onClick={async () => {
+                                                                            try {
+                                                                                await deleteRoomPerson({
+                                                                                    variables: {
+                                                                                        id: member.id,
+                                                                                    },
+                                                                                });
+                                                                                await people.refetch();
+                                                                            } catch (e) {
+                                                                                console.error(
+                                                                                    "Unable to delete room person",
+                                                                                    e
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <FAIcon iconStyle="s" icon="trash-alt" />
+                                                                    </Button>
+                                                                </Flex>
                                                             </ListItem>
                                                         ))}
                                                     </UnorderedList>

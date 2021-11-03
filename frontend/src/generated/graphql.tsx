@@ -63,6 +63,7 @@ export type Email = {
   readonly emailAddress: Scalars['String'];
   readonly htmlContents: Scalars['String'];
   readonly id: Scalars['uuid'];
+  readonly idempotencyKey: Scalars['uuid'];
   /** An object relationship */
   readonly invitation?: Maybe<Registrant_Invitation>;
   readonly invitationId?: Maybe<Scalars['uuid']>;
@@ -150,6 +151,7 @@ export type Email_Bool_Exp = {
   readonly emailAddress?: Maybe<String_Comparison_Exp>;
   readonly htmlContents?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
+  readonly idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
   readonly invitationId?: Maybe<Uuid_Comparison_Exp>;
   readonly plainTextContents?: Maybe<String_Comparison_Exp>;
@@ -166,6 +168,8 @@ export type Email_Bool_Exp = {
 /** unique or primary key constraints on table "Email" */
 export enum Email_Constraint {
   /** unique or primary key constraint */
+  EmailIdempotencyKeyKey = 'Email_idempotencyKey_key',
+  /** unique or primary key constraint */
   EmailPkey = 'Email_pkey'
 }
 
@@ -180,6 +184,7 @@ export type Email_Insert_Input = {
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly idempotencyKey?: Maybe<Scalars['uuid']>;
   readonly invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
@@ -200,6 +205,7 @@ export type Email_Max_Fields = {
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly idempotencyKey?: Maybe<Scalars['uuid']>;
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
@@ -217,6 +223,7 @@ export type Email_Max_Order_By = {
   readonly emailAddress?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly idempotencyKey?: Maybe<Order_By>;
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
   readonly reason?: Maybe<Order_By>;
@@ -235,6 +242,7 @@ export type Email_Min_Fields = {
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly idempotencyKey?: Maybe<Scalars['uuid']>;
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
@@ -252,6 +260,7 @@ export type Email_Min_Order_By = {
   readonly emailAddress?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly idempotencyKey?: Maybe<Order_By>;
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
   readonly reason?: Maybe<Order_By>;
@@ -285,6 +294,7 @@ export type Email_Order_By = {
   readonly emailAddress?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
+  readonly idempotencyKey?: Maybe<Order_By>;
   readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
   readonly invitationId?: Maybe<Order_By>;
   readonly plainTextContents?: Maybe<Order_By>;
@@ -314,6 +324,8 @@ export enum Email_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IdempotencyKey = 'idempotencyKey',
+  /** column name */
   InvitationId = 'invitationId',
   /** column name */
   PlainTextContents = 'plainTextContents',
@@ -339,6 +351,7 @@ export type Email_Set_Input = {
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
+  readonly idempotencyKey?: Maybe<Scalars['uuid']>;
   readonly invitationId?: Maybe<Scalars['uuid']>;
   readonly plainTextContents?: Maybe<Scalars['String']>;
   readonly reason?: Maybe<Scalars['String']>;
@@ -404,6 +417,8 @@ export enum Email_Update_Column {
   HtmlContents = 'htmlContents',
   /** column name */
   Id = 'id',
+  /** column name */
+  IdempotencyKey = 'idempotencyKey',
   /** column name */
   InvitationId = 'invitationId',
   /** column name */
@@ -40967,6 +40982,13 @@ export type InsertRoomPeopleMutationVariables = Exact<{
 
 export type InsertRoomPeopleMutation = { readonly __typename?: 'mutation_root', readonly insert_room_RoomPerson?: Maybe<{ readonly __typename?: 'room_RoomPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any, readonly personRoleName: Room_PersonRole_Enum, readonly registrant: { readonly __typename?: 'registrant_Registrant', readonly id: any, readonly displayName: string } }> }> };
 
+export type DeleteRoomPersonMutationVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type DeleteRoomPersonMutation = { readonly __typename?: 'mutation_root', readonly delete_room_RoomPerson?: Maybe<{ readonly __typename?: 'room_RoomPerson_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }> }> };
+
 export type GetIsExternalRtmpBroadcastEnabledQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
 }>;
@@ -51433,6 +51455,41 @@ export function useInsertRoomPeopleMutation(baseOptions?: Apollo.MutationHookOpt
 export type InsertRoomPeopleMutationHookResult = ReturnType<typeof useInsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationResult = Apollo.MutationResult<InsertRoomPeopleMutation>;
 export type InsertRoomPeopleMutationOptions = Apollo.BaseMutationOptions<InsertRoomPeopleMutation, InsertRoomPeopleMutationVariables>;
+export const DeleteRoomPersonDocument = gql`
+    mutation DeleteRoomPerson($id: uuid!) {
+  delete_room_RoomPerson(where: {id: {_eq: $id}}) {
+    returning {
+      id
+    }
+  }
+}
+    `;
+export type DeleteRoomPersonMutationFn = Apollo.MutationFunction<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>;
+
+/**
+ * __useDeleteRoomPersonMutation__
+ *
+ * To run a mutation, you first call `useDeleteRoomPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRoomPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRoomPersonMutation, { data, loading, error }] = useDeleteRoomPersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRoomPersonMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>(DeleteRoomPersonDocument, options);
+      }
+export type DeleteRoomPersonMutationHookResult = ReturnType<typeof useDeleteRoomPersonMutation>;
+export type DeleteRoomPersonMutationResult = Apollo.MutationResult<DeleteRoomPersonMutation>;
+export type DeleteRoomPersonMutationOptions = Apollo.BaseMutationOptions<DeleteRoomPersonMutation, DeleteRoomPersonMutationVariables>;
 export const GetIsExternalRtmpBroadcastEnabledDocument = gql`
     query GetIsExternalRtmpBroadcastEnabled($conferenceId: uuid!) {
   conference_Configuration_by_pk(

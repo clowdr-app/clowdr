@@ -173,7 +173,7 @@ async function insertChatDuplicationMarkers(eventId: string, isStart: boolean): 
         if (chatInfo.data.schedule_Event_by_pk.item) {
             const chatId1 = chatInfo.data.schedule_Event_by_pk.item.chatId;
             const chatId2 = chatInfo.data.schedule_Event_by_pk.room.chatId;
-            if (chatId1 && chatId2) {
+            if (chatId1 && chatId2 && (!isStart || chatId1 !== chatId2)) {
                 await apolloClient.mutate({
                     mutation: isStart ? StartChatDuplicationDocument : EndChatDuplicationDocument,
                     variables: {

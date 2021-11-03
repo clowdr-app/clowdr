@@ -853,7 +853,7 @@ export class ChatState {
             socket?.emit("chat.subscribe", this.Id);
 
             if (isReestablishingConnection) {
-                this.loadMoreMessages(40, Math.pow(2, 31) - 1);
+                this.loadMoreMessages(20, Math.pow(2, 31) - 1);
             }
         } finally {
             release?.();

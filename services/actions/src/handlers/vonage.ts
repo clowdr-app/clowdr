@@ -12,6 +12,7 @@ import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-type
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
+import type { P } from "pino";
 import { validate as validateUUID } from "uuid";
 import {
     AddVonageRoomRecordingToUserListDocument,
@@ -27,6 +28,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getRegistrantWithPermissions } from "../lib/authorisation";
+import { ForbiddenError, NotFoundError } from "../lib/errors";
 import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveRoomParticipants,
@@ -75,40 +77,43 @@ gql`
     }
 `;
 
-export async function handleVonageSessionMonitoringWebhook(payload: SessionMonitoringWebhookReqBody): Promise<boolean> {
+export async function handleVonageSessionMonitoringWebhook(
+    logger: P.Logger,
+    payload: SessionMonitoringWebhookReqBody
+): Promise<boolean> {
     let success = true;
 
     try {
         if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
-            success &&= await startBroadcastIfOngoingEvent(payload);
+            success &&= await startBroadcastIfOngoingEvent(logger, payload);
         }
     } catch (e: any) {
-        console.error("Error while starting broadcast if ongoing event", e);
+        logger.error("Error while starting broadcast if ongoing event", e);
         success = false;
     }
 
     try {
         if (payload.event === "connectionCreated" || payload.event === "streamCreated") {
-            success &&= await startArchiveIfOngoingEvent(payload);
+            success &&= await startArchiveIfOngoingEvent(logger, payload);
         } else if (payload.event === "connectionDestroyed") {
-            success &&= await stopArchiveIfNoOngoingEvent(payload);
+            success &&= await stopArchiveIfNoOngoingEvent(logger, payload);
         }
     } catch (e: any) {
-        console.error("Error while starting or stopping archive of any ongoing event", e);
+        logger.error("Error while starting or stopping archive of any ongoing event", e);
         success = false;
     }
 
     try {
-        success &&= await addAndRemoveRoomParticipants(payload);
+        success &&= await addAndRemoveRoomParticipants(logger, payload);
     } catch (e: any) {
-        console.error("Error while adding/removing room participants", e);
+        logger.error("Error while adding/removing room participants", e);
         success = false;
     }
 
     try {
-        success &&= await addAndRemoveVonageParticipantStreams(payload);
+        success &&= await addAndRemoveVonageParticipantStreams(logger, payload);
     } catch (e: any) {
-        console.error("Error while adding/removing event participant streams", e);
+        logger.error("Error while adding/removing event participant streams", e);
         success = false;
     }
 
@@ -177,8 +182,11 @@ gql`
     }
 `;
 
-export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonitoringWebhookReqBody): Promise<boolean> {
-    // console.log("Vonage archive monitoring webhook payload", roomId, eventId, payload);
+export async function handleVonageArchiveMonitoringWebhook(
+    logger: P.Logger,
+    payload: ArchiveMonitoringWebhookReqBody
+): Promise<boolean> {
+    // logger.info("Vonage archive monitoring webhook payload", roomId, eventId, payload);
     const nameParts = payload.name.split("/");
     const roomId = nameParts[0];
     const eventId = nameParts[1];
@@ -194,7 +202,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
 
             const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
-            console.info("Vonage archive uploaded", { sessionId: payload.sessionId, endedAt, s3Url });
+            logger.info("Vonage archive uploaded", { sessionId: payload.sessionId, endedAt, s3Url });
 
             // Always try to save the recording into our Vonage Room Recording table
             // (This is also what enables users to access the list of recordings they've participated in)
@@ -233,7 +241,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 });
 
                 if (!eventResponse.data?.schedule_Event_by_pk) {
-                    console.error("Could not find event for Vonage archive", {
+                    logger.error("Could not find event for Vonage archive", {
                         roomId,
                         eventId,
                         sessionId: payload.sessionId,
@@ -245,7 +253,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                 const event = eventResponse.data.schedule_Event_by_pk;
 
                 if (!event.item) {
-                    console.log("Nowhere to store event Vonage archive", {
+                    logger.info("Nowhere to store event Vonage archive", {
                         roomId,
                         eventId,
                         sessionId: payload.sessionId,
@@ -292,7 +300,7 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
                         },
                     });
                 } catch (e: any) {
-                    console.error("Failed to store event Vonage archive", {
+                    logger.error("Failed to store event Vonage archive", {
                         roomId,
                         eventId,
                         sessionId: payload.sessionId,
@@ -307,9 +315,9 @@ export async function handleVonageArchiveMonitoringWebhook(payload: ArchiveMonit
         const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
         if (payload.status === "failed") {
-            console.error("Vonage archive failed", payload);
+            logger.error("Vonage archive failed", payload);
         } else {
-            console.info("Vonage archive stopped", { sessionId: payload.sessionId, endedAt });
+            logger.info("Vonage archive stopped", { sessionId: payload.sessionId, endedAt });
         }
 
         if (payload.duration > 0) {
@@ -374,6 +382,7 @@ gql`
 `;
 
 export async function handleJoinEvent(
+    logger: P.Logger,
     payload: joinEventVonageSessionArgs,
     userId: string
 ): Promise<JoinEventVonageSessionOutput> {
@@ -386,7 +395,7 @@ export async function handleJoinEvent(
     });
 
     if (!result.data || !result.data.schedule_Event_by_pk || result.error) {
-        console.error("Could not retrieve event information", payload.eventId);
+        logger.error("Could not retrieve event information", payload.eventId);
         return {};
     }
 
@@ -397,16 +406,12 @@ export async function handleJoinEvent(
             ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
             : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
     if (!vonageSessionId) {
-        console.error("Could not retrieve Vonage session associated with event", payload.eventId);
+        logger.error("Could not retrieve Vonage session associated with event", payload.eventId);
         return {};
     }
 
     if (!result.data.schedule_Event_by_pk.conference.registrants.length) {
-        console.error(
-            "User does not have registrant at conference, refusing event join token",
-            userId,
-            payload.eventId
-        );
+        logger.error("User does not have registrant at conference, refusing event join token", userId, payload.eventId);
         return {};
     }
 
@@ -436,12 +441,12 @@ export async function handleJoinEvent(
             vonageSessionId,
             registrant.id
         ).catch((error) => {
-            console.error("Error adding Vonage recording to user's list", { userId, payload, error });
+            logger.error("Error adding Vonage recording to user's list", { userId, payload, error });
         });
 
         return { accessToken, isRecorded: !!recordingId || result.data.schedule_Event_by_pk.enableRecording };
     } catch (e: any) {
-        console.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
+        logger.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
     }
 
     return {};
@@ -457,27 +462,26 @@ gql`
 `;
 
 export async function handleJoinRoom(
+    logger: P.Logger,
     payload: joinRoomVonageSessionArgs,
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
     const { conferenceId: roomConferenceId, subconferenceId: roomSubconferenceId } = await getRoomConferenceId(
-        payload.roomId
+        payload.roomId_
     );
     const registrant = await getRegistrantWithPermissions(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
+    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId_, roomConferenceId);
 
     if (!canJoinRoom) {
-        console.warn("User tried to join a Vonage room, but was not permitted", { payload, userId });
-        throw new Error("User is not permitted to join this room");
+        logger.warn({ payload, userId }, "User not permitted to join room");
+        throw new ForbiddenError("Not permitted to join this room", {});
     }
 
-    const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId);
+    const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId_);
 
     if (!maybeVonageMeetingId) {
-        console.error("Could not get Vonage meeting id", { payload, userId, registrantId: registrant.id });
-        return {
-            message: "Could not find meeting",
-        };
+        logger.error({ payload, userId, registrantId: registrant.id }, "Could not find Vonage session");
+        throw new NotFoundError("Could not find Vonage session", {});
     }
 
     const connectionData: CustomConnectionData = {
@@ -494,11 +498,13 @@ export async function handleJoinRoom(
         role: isConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
-    const recordingId = await addRegistrantToVonageRecording(payload.roomId, maybeVonageMeetingId, registrant.id).catch(
-        (error) => {
-            console.error("Error adding Vonage recording to user's list", { userId, payload, error });
-        }
-    );
+    const recordingId = await addRegistrantToVonageRecording(
+        payload.roomId_,
+        maybeVonageMeetingId,
+        registrant.id
+    ).catch((error) => {
+        logger.error({ userId, payload, error }, "Error adding Vonage recording to user's list");
+    });
 
     return {
         accessToken,
@@ -571,6 +577,7 @@ gql`
 `;
 
 export async function handleToggleVonageRecordingState(
+    logger: P.Logger,
     args: toggleVonageRecordingStateArgs,
     userId: string
 ): Promise<ToggleVonageRecordingStateOutput> {
@@ -617,9 +624,9 @@ export async function handleToggleVonageRecordingState(
 
         const eventId = room.events[0]?.id;
         if (!ongoingArchive) {
-            await startVonageArchive(room.id, eventId, args.vonageSessionId, registrantId);
+            await startVonageArchive(logger, room.id, eventId, args.vonageSessionId, registrantId);
         } else {
-            await stopRoomVonageArchiving(room.id, eventId, true);
+            await stopRoomVonageArchiving(logger, room.id, eventId, true);
         }
 
         return {

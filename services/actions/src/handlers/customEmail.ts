@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import assert from "assert";
 import MarkdownIt from "markdown-it";
+import type { P } from "pino";
 import * as R from "ramda";
 import type { Email_Insert_Input } from "../generated/graphql";
 import {
@@ -40,6 +41,7 @@ gql`
 `;
 
 async function sendCustomEmails(
+    logger: P.Logger,
     registrantIds: string[],
     conferenceId: string,
     userMarkdownBody: string,
@@ -73,7 +75,7 @@ async function sendCustomEmails(
         const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
         if (!email) {
-            console.warn("User has no known email address", { registrantId: registrant.id });
+            logger.warn("User has no known email address", { registrantId: registrant.id });
             continue;
         }
 
@@ -100,7 +102,7 @@ async function sendCustomEmails(
         });
     }
 
-    await insertEmails(emailsToSend, conferenceId);
+    await insertEmails(logger, emailsToSend, conferenceId);
 }
 
 gql`
@@ -126,7 +128,7 @@ gql`
     }
 `;
 
-export async function processCustomEmailsJobQueue(): Promise<void> {
+export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<void> {
     const jobs = await apolloClient.mutate({
         mutation: MarkAndSelectUnprocessedCustomEmailJobsDocument,
         variables: {},
@@ -136,9 +138,9 @@ export async function processCustomEmailsJobQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_CustomEmailJob.returning) {
         try {
-            await sendCustomEmails(job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
+            await sendCustomEmails(logger, job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
         } catch (error: any) {
-            console.error("Failed to process send custom email job", { jobId: job.id, error });
+            logger.error("Failed to process send custom email job", { jobId: job.id, error });
             failedJobIds.push(job.id);
         }
     }

@@ -1,13 +1,18 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
-import { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
+import type { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
 import type { Request, Response } from "express";
 import express from "express";
+import pino from "pino";
+import pinoHttp from "pino-http";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
+import { logger } from "./lib/logger";
+import { errorHandler } from "./middlewares/error-handler";
+import { requestId } from "./middlewares/request-id";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
 import { router as chatRouter } from "./router/chat";
@@ -46,6 +51,29 @@ assert(
 assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
 export const app: express.Application = express();
+
+app.use(requestId());
+
+app.use(
+    pinoHttp({
+        logger: logger as any, // 7.0-compatible @types not yet released for pino-http
+        autoLogging: false,
+        genReqId: (req) => req.id,
+        serializers: {
+            req: pino.stdSerializers.wrapRequestSerializer((r) => {
+                const headers = { ...r.headers };
+                delete headers["authorization"];
+                delete headers["x-hasura-admin-secret"];
+                delete headers["x-hasura-event-secret"];
+                const s = {
+                    ...r,
+                    headers,
+                };
+                return s;
+            }),
+        },
+    })
+);
 
 app.use(
     cors({
@@ -94,22 +122,24 @@ const jsonParser = json();
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, async (req: Request, res: Response) => {
     const params: invitationConfirmCurrentArgs = req.body.input;
-    console.log("Invitation/confirm/current", params);
+    req.log.info("Invitation/confirm/current", params);
     try {
-        const result = await invitationConfirmCurrentHandler(params, (req as any).user.sub);
+        const result = await invitationConfirmCurrentHandler(req.log, params, (req as any).user.sub);
         return res.json(result);
     } catch (e: any) {
-        console.error("Failure while processing /invitation/confirm/current", e);
+        req.log.error("Failure while processing /invitation/confirm/current", e);
         res.status(500).json("Failure");
         return;
     }
 });
 
+app.use(errorHandler);
+
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
-    console.log(`App is listening on port ${process.env.PORT}!`);
-    console.log("Initialising AWS client");
-    initialiseAwsClient().then(() => {
-        console.log("Initialised AWS client");
+    logger.info(`App is listening on port ${process.env.PORT}!`);
+    logger.info("Initialising AWS client");
+    initialiseAwsClient(logger).then(() => {
+        logger.info("Initialised AWS client");
     });
 });

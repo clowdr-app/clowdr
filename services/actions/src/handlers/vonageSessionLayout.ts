@@ -1,12 +1,17 @@
 import { gql } from "@apollo/client/core";
 import type { Payload, VonageSessionLayoutData_Record } from "@midspace/hasura/event";
 import assert from "assert";
+import type { P } from "pino";
 import { VonageSession_RemoveInvalidStreamsDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { applyVonageSessionLayout, convertLayout } from "../lib/vonage/vonageTools";
 
-async function removeInvalidEventParticipantStreams(validStreamIds: string[], vonageSessionId: string) {
+async function removeInvalidEventParticipantStreams(
+    logger: P.Logger,
+    validStreamIds: string[],
+    vonageSessionId: string
+) {
     gql`
         mutation VonageSession_RemoveInvalidStreams(
             $validStreamIds: [String!]!
@@ -26,7 +31,7 @@ async function removeInvalidEventParticipantStreams(validStreamIds: string[], vo
         }
     `;
 
-    console.log("Attempting to remove invalid VonageParticipantStreams", { vonageSessionId });
+    logger.info("Attempting to remove invalid VonageParticipantStreams", { vonageSessionId });
 
     await apolloClient.mutate({
         mutation: VonageSession_RemoveInvalidStreamsDocument,
@@ -39,6 +44,7 @@ async function removeInvalidEventParticipantStreams(validStreamIds: string[], vo
 }
 
 export async function handleVonageSessionLayoutCreated(
+    logger: P.Logger,
     payload: Payload<VonageSessionLayoutData_Record>
 ): Promise<void> {
     assert(payload.event.data.new, "Expected payload to have new row");
@@ -54,10 +60,11 @@ export async function handleVonageSessionLayoutCreated(
     // record/receive the callback. So we'll just settle for removing invalid ones.
     const streams = await Vonage.listStreams(newRow.vonageSessionId);
     if (!streams) {
-        console.error("Could not retrieve list of streams from Vonage", { vonageSessionId: newRow.vonageSessionId });
+        logger.error("Could not retrieve list of streams from Vonage", { vonageSessionId: newRow.vonageSessionId });
         throw new Error("Could not retrieve list of streams from Vonage");
     }
     await removeInvalidEventParticipantStreams(
+        logger,
         streams.map((x) => x.id),
         newRow.vonageSessionId
     );
@@ -65,9 +72,9 @@ export async function handleVonageSessionLayoutCreated(
     const layout = convertLayout(layoutData);
     let streamCount: number | undefined;
     try {
-        streamCount = await applyVonageSessionLayout(newRow.vonageSessionId, layout);
+        streamCount = await applyVonageSessionLayout(logger, newRow.vonageSessionId, layout);
     } catch (err) {
-        console.error("Failed to apply Vonage layout", {
+        logger.error("Failed to apply Vonage layout", {
             err,
             vonageSessionId: newRow.vonageSessionId,
             vonageSessionLayoutId: newRow.id,
@@ -83,7 +90,7 @@ export async function handleVonageSessionLayoutCreated(
             });
         }
     } catch (err) {
-        console.error("Failed to send Vonage layout signal", {
+        logger.error("Failed to send Vonage layout signal", {
             err,
             vonageSessionId: newRow.vonageSessionId,
             vonageSessionLayoutId: newRow.id,

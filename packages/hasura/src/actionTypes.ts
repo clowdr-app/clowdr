@@ -265,7 +265,7 @@ export type joinRoomChimeSessionArgs = {
 };
 
 export type joinRoomVonageSessionArgs = {
-    roomId: uuid;
+    roomId_: uuid;
 };
 
 export type presence_FlushArgs = {};

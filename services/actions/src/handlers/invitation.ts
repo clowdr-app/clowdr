@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
-import { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
+import type { ConfirmInvitationOutput, invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
 import assert from "assert";
+import type { P } from "pino";
 import type {
     Email_Insert_Input,
     InvitationPartsFragment,
@@ -119,6 +120,7 @@ gql`
 `;
 
 async function sendInviteEmails(
+    logger: P.Logger,
     registrantIds: Array<string>,
     shouldSend: (registrant: RegistrantWithInvitePartsFragment) => "INITIAL" | "REPEAT" | false
 ): Promise<void> {
@@ -172,11 +174,15 @@ your account and access the conference.</p>
             }
         }
 
-        await insertEmails(Array.from(emailsToSend.values()), registrants.data.registrant_Registrant[0].conference.id);
+        await insertEmails(
+            logger,
+            Array.from(emailsToSend.values()),
+            registrants.data.registrant_Registrant[0].conference.id
+        );
     }
 }
 
-export async function processInvitationEmailsQueue(): Promise<void> {
+export async function processInvitationEmailsQueue(logger: P.Logger): Promise<void> {
     const jobs = await apolloClient.mutate({
         mutation: MarkAndSelectUnprocessedInvitationEmailJobsDocument,
         variables: {},
@@ -186,7 +192,7 @@ export async function processInvitationEmailsQueue(): Promise<void> {
     const failedJobIds: string[] = [];
     for (const job of jobs.data.update_job_queues_InvitationEmailJob.returning) {
         try {
-            await sendInviteEmails(job.registrantIds, (registrant) => {
+            await sendInviteEmails(logger, job.registrantIds, (registrant) => {
                 if (
                     !!registrant.invitation &&
                     registrant.invitation.emails.filter((x) => x.reason === "invite").length === 0
@@ -198,7 +204,7 @@ export async function processInvitationEmailsQueue(): Promise<void> {
                 return false;
             });
         } catch (e: any) {
-            console.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
+            logger.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
             failedJobIds.push(job.id);
         }
     }
@@ -240,6 +246,7 @@ async function getInvitationAndUser(
 }
 
 async function confirmUser(
+    logger: P.Logger,
     inviteCode: string,
     userId: string,
     validate: (invitation: InvitationPartsFragment, user: InvitedUserPartsFragment) => Promise<true | string>
@@ -260,7 +267,7 @@ async function confirmUser(
                 });
             } catch (e: any) {
                 ok = e.message || e.toString();
-                console.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
+                logger.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
             }
         }
 
@@ -277,10 +284,11 @@ async function confirmUser(
 }
 
 export async function invitationConfirmCurrentHandler(
+    logger: P.Logger,
     args: invitationConfirmCurrentArgs,
     userId: string
 ): Promise<ConfirmInvitationOutput> {
-    return confirmUser(args.inviteCode, userId, async (invitation, user): Promise<true | string> => {
+    return confirmUser(logger, args.inviteCode, userId, async (invitation, user): Promise<true | string> => {
         return !invitation.invitedEmailAddress
             ? "No invited email address"
             : !user.email

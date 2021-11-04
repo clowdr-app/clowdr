@@ -115,7 +115,6 @@ export function useVonageComputedState({
     const joining = !!overrideJoining || _joining;
     const joinRoom = useCallback(async () => {
         async function doJoinRoom() {
-            console.log("Joining room");
             setJoining(true);
 
             try {

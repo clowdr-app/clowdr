@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import {
+import type {
     createContentGroupRoomArgs,
     CreateContentGroupRoomOutput,
     createRoomDmArgs,
@@ -8,6 +8,7 @@ import {
 import type { Payload, RoomData } from "@midspace/hasura/event";
 import assert from "assert";
 import { sub } from "date-fns";
+import type { P } from "pino";
 import * as R from "ramda";
 import {
     AddRegistrantToRoomMembershipsDocument,
@@ -24,7 +25,7 @@ import { createItemVideoChatRoom } from "../lib/room";
 import { deleteRoomParticipantsCreatedBefore } from "../lib/roomParticipant";
 import Vonage from "../lib/vonage/vonageClient";
 
-export async function handleRoomCreated(payload: Payload<RoomData>): Promise<void> {
+export async function handleRoomCreated(logger: P.Logger, payload: Payload<RoomData>): Promise<void> {
     assert(payload.event.data.new, "Expected new row data");
 
     if (!payload.event.data.new.publicVonageSessionId) {
@@ -34,6 +35,7 @@ export async function handleRoomCreated(payload: Payload<RoomData>): Promise<voi
     // If room was created by a user, add them as an admin
     if (payload.event.session_variables && "x-hasura-user-id" in payload.event.session_variables) {
         await addUserToRoomMemberships(
+            logger,
             payload.event.session_variables["x-hasura-user-id"],
             payload.event.data.new.id,
             Room_PersonRole_Enum.Admin
@@ -68,6 +70,7 @@ async function createRoomVonageSession(roomId: string): Promise<string> {
 }
 
 export async function addUserToRoomMemberships(
+    logger: P.Logger,
     userId: string,
     roomId: string,
     role: Room_PersonRole_Enum
@@ -91,7 +94,7 @@ export async function addUserToRoomMemberships(
     });
 
     if (!result.data.registrant_Registrant?.length) {
-        console.error("Could not find an registrant to be added to the room people list", { userId, roomId });
+        logger.error("Could not find an registrant to be added to the room people list", { userId, roomId });
         throw new Error("Could not find an registrant to be added to the room people list");
     }
 
@@ -259,6 +262,7 @@ export async function handleCreateDmRoom(params: createRoomDmArgs, userId: strin
 }
 
 export async function handleCreateForItem(
+    logger: P.Logger,
     params: createContentGroupRoomArgs,
     userId: string
 ): Promise<CreateContentGroupRoomOutput> {
@@ -266,27 +270,27 @@ export async function handleCreateForItem(
         // todo: verify user role here. It's not critically important though.
         getRegistrant(userId, params.conferenceId);
     } catch (e: any) {
-        console.error("Could not find registrant at conference when creating breakout room", e);
+        logger.error("Could not find registrant at conference when creating breakout room", e);
         return {
             message: "Registrant is not a member of the conference",
         };
     }
 
     try {
-        const roomId = await createItemVideoChatRoom(params.itemId, params.conferenceId);
+        const roomId = await createItemVideoChatRoom(logger, params.itemId, params.conferenceId);
         return {
             roomId,
         };
     } catch (e: any) {
-        console.error("Failed to create content group breakout room", e);
+        logger.error("Failed to create content group breakout room", e);
         return {
             message: "Could not create room",
         };
     }
 }
 
-export async function handleRemoveOldRoomParticipants(): Promise<void> {
-    console.log("Removing room participants created more than 24 hours ago");
+export async function handleRemoveOldRoomParticipants(logger: P.Logger): Promise<void> {
+    logger.info("Removing room participants created more than 24 hours ago");
     const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 24 }));
-    console.log(`Removed ${deleted} room participants created more than 24 hours ago`);
+    logger.info(`Removed ${deleted} room participants created more than 24 hours ago`);
 }

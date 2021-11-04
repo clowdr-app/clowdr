@@ -11,7 +11,9 @@ import { Transcribe } from "@aws-sdk/client-transcribe";
 import type { Credentials } from "@aws-sdk/types";
 import assert from "assert";
 import { customAlphabet } from "nanoid";
+import type { P } from "pino";
 import { getHostUrl } from "../../utils";
+import { logger } from "../logger";
 import { fromEnv } from "./credentialProviders";
 
 assert(process.env.AWS_PREFIX, "Missing AWS_PREFIX environment variable");
@@ -134,7 +136,7 @@ const chime = new Chime({
                 sessionToken: Credentials.SessionToken,
             };
 
-            console.log("Generated new Chime credentials", { roleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN });
+            logger.info("Generated new Chime credentials", { roleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN });
         }
 
         return chimeCredentials;
@@ -175,20 +177,20 @@ async function getMediaConvertClient(): Promise<MediaConvert> {
     });
 }
 
-async function initialiseAwsClient(): Promise<void> {
+async function initialiseAwsClient(logger: P.Logger): Promise<void> {
     mediaconvert = await getMediaConvertClient();
 
     // Subscribe to transcode SNS topic
     const transcodeNotificationUrl = new URL(getHostUrl());
     transcodeNotificationUrl.pathname = "/mediaConvert/notify";
 
-    console.log("Subscribing to SNS topic: transcode notifications");
+    logger.info("Subscribing to SNS topic: transcode notifications");
     const transcodeSubscribeResult = await sns.subscribe({
         Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: transcodeNotificationUrl.toString(),
     });
-    console.log("Subscribed to SNS topic: transcode notifications");
+    logger.info("Subscribed to SNS topic: transcode notifications");
 
     if (!transcodeSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to transcode notifications");
@@ -198,13 +200,13 @@ async function initialiseAwsClient(): Promise<void> {
     const transcribeNotificationUrl = new URL(getHostUrl());
     transcribeNotificationUrl.pathname = "/amazonTranscribe/notify";
 
-    console.log("Subscribing to SNS topic: transcribe notifications");
+    logger.info("Subscribing to SNS topic: transcribe notifications");
     const transcribeSubscribeResult = await sns.subscribe({
         Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_TRANSCRIBE_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: transcribeNotificationUrl.toString(),
     });
-    console.log("Subscribed to SNS topic: transcribe notifications");
+    logger.info("Subscribed to SNS topic: transcribe notifications");
 
     if (!transcribeSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to transcribe notifications");
@@ -214,13 +216,13 @@ async function initialiseAwsClient(): Promise<void> {
     const elasticTranscoderNotificationUrl = new URL(getHostUrl());
     elasticTranscoderNotificationUrl.pathname = "/elasticTranscoder/notify";
 
-    console.log("Subscribing to SNS topic: Elastic Transcoder notifications");
+    logger.info("Subscribing to SNS topic: Elastic Transcoder notifications");
     const elasticTranscoderSubscribeResult = await sns.subscribe({
         Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: elasticTranscoderNotificationUrl.toString(),
     });
-    console.log("Subscribed to SNS topic: Elastic Transcoder notifications");
+    logger.info("Subscribed to SNS topic: Elastic Transcoder notifications");
 
     if (!elasticTranscoderSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to Elastic Transcoder notifications");
@@ -230,13 +232,13 @@ async function initialiseAwsClient(): Promise<void> {
     const mediaPackageHarvestNotificationUrl = new URL(getHostUrl());
     mediaPackageHarvestNotificationUrl.pathname = "/mediaPackage/harvest/notify";
 
-    console.log("Subscribing to SNS topic: MediaPackage harvest job notifications");
+    logger.info("Subscribing to SNS topic: MediaPackage harvest job notifications");
     const mediaPackageHarvestSubscribeResult = await sns.subscribe({
         Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
         TopicArn: process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN,
         Endpoint: mediaPackageHarvestNotificationUrl.toString(),
     });
-    console.log("Subscribed to SNS topic: MediaPackage harvest notifications");
+    logger.info("Subscribed to SNS topic: MediaPackage harvest notifications");
 
     if (!mediaPackageHarvestSubscribeResult.SubscriptionArn) {
         throw new Error("Could not subscribe to MediaPackage harvest notifications");
@@ -247,19 +249,19 @@ async function initialiseAwsClient(): Promise<void> {
     chimeNotificationUrl.pathname = "/chime/notify";
 
     if (process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
-        console.log("Subscribing to SNS topic: Chime notifications");
+        logger.info("Subscribing to SNS topic: Chime notifications");
         const chimeSubscribeResult = await snsChime.subscribe({
             Protocol: process.env.HOST_SECURE_PROTOCOLS !== "false" ? "https" : "http",
             TopicArn: process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN,
             Endpoint: chimeNotificationUrl.toString(),
         });
-        console.log("Subscribed to SNS topic: Chime notifications");
+        logger.info("Subscribed to SNS topic: Chime notifications");
 
         if (!chimeSubscribeResult.SubscriptionArn) {
             throw new Error("Could not subscribe to Chime notifications");
         }
     } else {
-        console.warn("Not subscribing to SNS topic: Chime notifications (AWS_CHIME_NOTIFICATIONS_TOPIC_ARN not set)");
+        logger.warn("Not subscribing to SNS topic: Chime notifications (AWS_CHIME_NOTIFICATIONS_TOPIC_ARN not set)");
     }
 }
 

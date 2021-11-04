@@ -15,15 +15,15 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<MediaPackageHarvestJob>>(req.body);
     } catch (e: any) {
-        console.error("Received incorrect payload", e);
+        req.log.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
     }
 
     try {
-        await handleMediaPackageHarvestJobUpdated(req.body);
+        await handleMediaPackageHarvestJobUpdated(req.log, req.body);
     } catch (e: any) {
-        console.error("Failure while handling ConferencePrepareJob inserted", e);
+        req.log.error("Failure while handling ConferencePrepareJob inserted", e);
         res.status(500).json("Failure while handling event");
         return;
     }

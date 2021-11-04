@@ -4,6 +4,7 @@ import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum, ElementBaseType } from "@midspace/shared-types/content";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
+import type { P } from "pino";
 import {
     CreateMediaPackageHarvestJobDocument,
     FailMediaPackageHarvestJobDocument,
@@ -44,7 +45,10 @@ gql`
     }
 `;
 
-export async function handleMediaPackageHarvestJobUpdated(payload: Payload<MediaPackageHarvestJob>): Promise<void> {
+export async function handleMediaPackageHarvestJobUpdated(
+    logger: P.Logger,
+    payload: Payload<MediaPackageHarvestJob>
+): Promise<void> {
     assert(payload.event.data.new, "Expected new MediaPackageHarvestJob data");
 
     const newRow = payload.event.data.new;
@@ -54,7 +58,7 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
             !payload.event.data.old ||
             (payload.event.data.old && payload.event.data.old.jobStatusName !== Job_Queues_JobStatus_Enum.New)
         ) {
-            console.log("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
+            logger.info("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
             const eventResult = await apolloClient.query({
                 query: Recording_GetEventDocument,
                 variables: {
@@ -83,7 +87,7 @@ export async function handleMediaPackageHarvestJobUpdated(payload: Payload<Media
                     awsJobId: harvestJobId,
                 },
             });
-            console.log("Started MediaPackage harvest job", harvestJobId, newRow.eventId);
+            logger.info("Started MediaPackage harvest job", harvestJobId, newRow.eventId);
         }
     }
 }
@@ -98,8 +102,12 @@ gql`
     }
 `;
 
-export async function createMediaPackageHarvestJob(eventId: string, conferenceId: string): Promise<void> {
-    console.log("Creating MediaPackage harvest job", eventId);
+export async function createMediaPackageHarvestJob(
+    logger: P.Logger,
+    eventId: string,
+    conferenceId: string
+): Promise<void> {
+    logger.info("Creating MediaPackage harvest job", eventId);
 
     await apolloClient.mutate({
         mutation: CreateMediaPackageHarvestJobDocument,
@@ -159,11 +167,12 @@ gql`
 `;
 
 export async function completeMediaPackageHarvestJob(
+    logger: P.Logger,
     awsHarvestJobId: string,
     bucketName: string,
     manifestKey: string
 ): Promise<void> {
-    console.log("AWS harvest job completed", { awsHarvestJobId });
+    logger.info("AWS harvest job completed", { awsHarvestJobId });
 
     const result = await callWithRetry(
         async () =>
@@ -176,7 +185,7 @@ export async function completeMediaPackageHarvestJob(
     );
 
     if (!result.data.job_queues_MediaPackageHarvestJob.length) {
-        console.error("Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job", {
+        logger.error("Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job", {
             awsHarvestJobId,
         });
         return;
@@ -185,8 +194,8 @@ export async function completeMediaPackageHarvestJob(
     const job = result.data.job_queues_MediaPackageHarvestJob[0];
 
     if (!job.event.item) {
-        console.warn("No ContentGroup associated with harvested event, skipping.", awsHarvestJobId, job.event.id);
-        await ignoreMediaPackageHarvestJob(job.id, bucketName, manifestKey);
+        logger.warn("No ContentGroup associated with harvested event, skipping.", awsHarvestJobId, job.event.id);
+        await ignoreMediaPackageHarvestJob(logger, job.id, bucketName, manifestKey);
         return;
     }
 
@@ -203,7 +212,7 @@ export async function completeMediaPackageHarvestJob(
         },
     ];
 
-    console.log("Completing MediaPackage harvest job", job.event.id, job.id);
+    logger.info("Completing MediaPackage harvest job", job.event.id, job.id);
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
         async () =>
@@ -233,8 +242,13 @@ gql`
     }
 `;
 
-export async function ignoreMediaPackageHarvestJob(id: string, bucketName: string, manifestKey: string): Promise<void> {
-    console.log("Ignoring result of MediaPackage harvest job", id);
+export async function ignoreMediaPackageHarvestJob(
+    logger: P.Logger,
+    id: string,
+    bucketName: string,
+    manifestKey: string
+): Promise<void> {
+    logger.info("Ignoring result of MediaPackage harvest job", id);
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -258,8 +272,12 @@ gql`
     }
 `;
 
-export async function failMediaPackageHarvestJob(awsHarvestJobId: string, message: string): Promise<void> {
-    console.log("Recording failure of MediaPackage harvest job", awsHarvestJobId, message);
+export async function failMediaPackageHarvestJob(
+    logger: P.Logger,
+    awsHarvestJobId: string,
+    message: string
+): Promise<void> {
+    logger.info("Recording failure of MediaPackage harvest job", awsHarvestJobId, message);
     await callWithRetry(
         async () =>
             await apolloClient.mutate({

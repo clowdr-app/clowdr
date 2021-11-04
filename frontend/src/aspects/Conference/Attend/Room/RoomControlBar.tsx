@@ -17,11 +17,8 @@ import {
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import { gql } from "urql";
-import {
-    Registrant_RegistrantRole_Enum,
-    RoomPage_RoomDetailsFragment,
-    useRoomPage_IsAdminQuery,
-} from "../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
+import { Registrant_RegistrantRole_Enum, useRoomPage_IsAdminQuery } from "../../../../generated/graphql";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
 import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";

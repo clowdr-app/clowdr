@@ -15,25 +15,25 @@ router.post("/entered", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ShuffleQueueEntryData>>(req.body);
     } catch (e: any) {
-        console.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
-        await handleShuffleQueueEntered(req.body);
+        await handleShuffleQueueEntered(req.log, req.body);
     } catch (e: any) {
-        console.error("Failure while handling shuffle queue entered", e);
+        req.log.error("Failure while handling shuffle queue entered", e);
         res.status(500).json("Failure while handling event");
         return;
     }
     res.status(200).json("OK");
 });
 
-router.post("/process", async (_req: Request, res: Response) => {
+router.post("/process", async (req: Request, res: Response) => {
     try {
-        await processShuffleQueues();
+        await processShuffleQueues(req.log);
     } catch (e: any) {
-        console.error("Failure while processing shuffle queues", e);
+        req.log.error("Failure while processing shuffle queues", e);
         res.status(500).json("Failure");
         return;
     }

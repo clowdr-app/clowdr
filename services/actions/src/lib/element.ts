@@ -10,6 +10,7 @@ import type {
 } from "@midspace/shared-types/content";
 import { ElementBaseType } from "@midspace/shared-types/content";
 import assert from "assert";
+import type { P } from "pino";
 import R from "ramda";
 import { is } from "typescript-is";
 import { ElementAddNewVersionDocument, GetElementByIdDocument } from "../generated/graphql";
@@ -101,7 +102,11 @@ export async function createNewVersionFromBroadcastTranscode(
     return newVersion;
 }
 
-export async function addNewElementVersion(elementId: string, version: ElementVersionData): Promise<void> {
+export async function addNewElementVersion(
+    logger: P.Logger,
+    elementId: string,
+    version: ElementVersionData
+): Promise<void> {
     const result = await apolloClient.mutate({
         mutation: ElementAddNewVersionDocument,
         variables: {
@@ -111,22 +116,23 @@ export async function addNewElementVersion(elementId: string, version: ElementVe
     });
 
     if (result.errors) {
-        console.error("Failed to add new content item version", result.errors);
+        logger.error("Failed to add new content item version", result.errors);
         throw new Error(`Failed to add new content item version: ${result.errors}`);
     }
 }
 
 export async function addNewBroadcastTranscode(
+    logger: P.Logger,
     elementId: string,
     s3Url: string,
     durationSeconds: number | null
 ): Promise<void> {
-    console.log("Updating content item with result of broadcast transcode", elementId);
+    logger.info("Updating content item with result of broadcast transcode", elementId);
     const transcodeDetails: BroadcastTranscodeDetails = {
         updatedTimestamp: new Date().getTime(),
         durationSeconds: durationSeconds ?? undefined,
         s3Url,
     };
     const newVersion = await createNewVersionFromBroadcastTranscode(elementId, transcodeDetails);
-    await addNewElementVersion(elementId, newVersion);
+    await addNewElementVersion(logger, elementId, newVersion);
 }

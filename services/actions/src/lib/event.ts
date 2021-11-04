@@ -1,17 +1,23 @@
 import { gql } from "@apollo/client/core";
+import type { P } from "pino";
 import { GetEventVonageSessionDocument, Room_Mode_Enum, SetEventVonageSessionIdDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import Vonage from "../lib/vonage/vonageClient";
 import { hasura } from "./hasura/hasuraMetadata";
 
-export async function createEventStartTrigger(eventId: string, startTime: string, updatedAt: number): Promise<void> {
+export async function createEventStartTrigger(
+    logger: P.Logger,
+    eventId: string,
+    startTime: string,
+    updatedAt: number
+): Promise<void> {
     const startTimeMillis = Date.parse(startTime);
 
     if (startTimeMillis < new Date().getTime()) {
-        console.log("Start time of event is in the past, skipping.", eventId, startTime);
+        logger.info("Start time of event is in the past, skipping.", eventId, startTime);
         return;
     }
-    console.log("Creating new start time trigger for event", eventId, startTime);
+    logger.info("Creating new start time trigger for event", eventId, startTime);
     await hasura.createScheduledEvent({
         schedule_at: new Date(startTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyStart",
@@ -25,14 +31,19 @@ export async function createEventStartTrigger(eventId: string, startTime: string
     });
 }
 
-export async function createEventEndTrigger(eventId: string, endTime: string, updatedAt: number): Promise<void> {
+export async function createEventEndTrigger(
+    logger: P.Logger,
+    eventId: string,
+    endTime: string,
+    updatedAt: number
+): Promise<void> {
     const endTimeMillis = Date.parse(endTime);
 
     if (endTimeMillis < new Date().getTime()) {
-        console.log("End time of event is in the past, skipping.", eventId, endTime);
+        logger.info("End time of event is in the past, skipping.", eventId, endTime);
         return;
     }
-    console.log("Creating new end time trigger for event", eventId, endTime);
+    logger.info("Creating new end time trigger for event", eventId, endTime);
     await hasura.createScheduledEvent({
         schedule_at: new Date(endTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyEnd",
@@ -65,8 +76,8 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
     return !!result.data.video_EventVonageSession.length;
 }
 
-export async function createEventVonageSession(eventId: string, conferenceId: string): Promise<void> {
-    console.log("Creating EventVonageSession for event", { eventId, conferenceId });
+export async function createEventVonageSession(logger: P.Logger, eventId: string, conferenceId: string): Promise<void> {
+    logger.info("Creating EventVonageSession for event", { eventId, conferenceId });
     const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
 
     if (!sessionResult) {

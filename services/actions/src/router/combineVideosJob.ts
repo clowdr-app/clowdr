@@ -10,13 +10,13 @@ export const router = express.Router();
 router.use(checkEventSecret);
 
 router.post("/process", json(), async (req: Request, res: Response) => {
-    console.log(`${req.originalUrl}: processing combine videos job queue`);
-    processCombineVideosJobQueue()
+    req.log.info(`${req.originalUrl}: processing combine videos job queue`);
+    processCombineVideosJobQueue(req.log)
         .then(() => {
-            console.log("Finished processing CombineVideosJob queue");
+            req.log.info("Finished processing CombineVideosJob queue");
         })
         .catch((e) => {
-            console.error("Failure processing CombineVideosJob queue", e);
+            req.log.error("Failure processing CombineVideosJob queue", e);
         });
     return res.status(200).json("OK");
 });

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import {
+import type {
     submitElementArgs,
     SubmitElementOutput,
     SubmitUpdatedSubtitlesOutput,
@@ -19,6 +19,7 @@ import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@midspace/shared-types/email"
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { compile } from "handlebars";
+import type { P } from "pino";
 import R from "ramda";
 import { is } from "typescript-is";
 import { v4 as uuidv4 } from "uuid";
@@ -274,6 +275,7 @@ gql`
 `;
 
 async function sendSubmittedEmail(
+    logger: P.Logger,
     elementId: string,
     uploadableElementName: string,
     itemTitle: string,
@@ -331,11 +333,11 @@ async function sendSubmittedEmail(
             });
         }
 
-        await insertEmails(emails, uploaders.data.content_Element_by_pk.conferenceId);
+        await insertEmails(logger, emails, uploaders.data.content_Element_by_pk.conferenceId);
     }
 }
 
-export async function handleElementSubmitted(args: submitElementArgs): Promise<SubmitElementOutput> {
+export async function handleElementSubmitted(logger: P.Logger, args: submitElementArgs): Promise<SubmitElementOutput> {
     const itemByToken = await getItemByToken(args.magicToken);
     if ("error" in itemByToken) {
         return {
@@ -398,13 +400,14 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
                 },
             });
             await sendSubmittedEmail(
+                logger,
                 uploadableElement.id,
                 uploadableElement.name,
                 uploadableElement.item.title,
                 uploadableElement.conference.name
             );
         } catch (e: any) {
-            console.error("Failed to save new version of content item", e);
+            logger.error("Failed to save new version of content item", e);
             return {
                 success: false,
                 message: "Failed to save new version of content item",
@@ -436,7 +439,10 @@ export async function handleElementSubmitted(args: submitElementArgs): Promise<S
     };
 }
 
-export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<SubmitUpdatedSubtitlesOutput> {
+export async function handleUpdateSubtitles(
+    logger: P.Logger,
+    args: updateSubtitlesArgs
+): Promise<SubmitUpdatedSubtitlesOutput> {
     const itemByToken = await getItemByToken(args.magicToken);
     if ("error" in itemByToken) {
         return {
@@ -481,7 +487,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
             Body: args.subtitleText,
         });
     } catch (e: any) {
-        console.error("Failed to upload new subtitles", e);
+        logger.error("Failed to upload new subtitles", e);
         return {
             message: "Failed to upload new subtitles",
             success: false,
@@ -506,7 +512,7 @@ export async function handleUpdateSubtitles(args: updateSubtitlesArgs): Promise<
             },
         });
     } catch (e: any) {
-        console.error("Failed to save new content item version", e);
+        logger.error("Failed to save new content item version", e);
         return {
             message: "Failed to save new content item version",
             success: false,
@@ -567,7 +573,7 @@ type SubmissionRequestEmail = { email: Email_Insert_Input; jobId: string } & (
     | { personId: string }
 );
 
-export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
+export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): Promise<void> {
     const jobsToProcess = await apolloClient.mutate({
         mutation: MarkAndSelectUnprocessedSubmissionRequestEmailJobsDocument,
         variables: {},
@@ -636,7 +642,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
         try {
             const emailsToInsert = emailsRecords.map((x) => x.email).filter(isNotUndefined);
             if (emailsToInsert.length > 0) {
-                await insertEmails(emailsToInsert, conferenceId);
+                await insertEmails(logger, emailsToInsert, conferenceId);
             }
 
             await apolloClient.mutate({
@@ -651,7 +657,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                 },
             });
         } catch (e: any) {
-            console.error(
+            logger.error(
                 `Could not process jobs: ${emailsRecords
                     .map((x) => x.jobId)
                     .reduce((acc, x) => `${acc}, ${x}`, "")}:\n${e.toString()}`
@@ -668,7 +674,7 @@ export async function processSendSubmissionRequestsJobQueue(): Promise<void> {
                     });
                 });
             } catch (e: any) {
-                console.error(`Could not unmark failed emails: ${e.toString()}`);
+                logger.error(`Could not unmark failed emails: ${e.toString()}`);
             }
         }
     });

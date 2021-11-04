@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client/core";
-import { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/actionTypes";
+import type { stopEventBroadcastArgs, StopEventBroadcastOutput } from "@midspace/hasura/actionTypes";
 import type { EventData, Payload } from "@midspace/hasura/event";
 import type { ContinuationTo } from "@midspace/shared-types/continuation";
 import { ContinuationType } from "@midspace/shared-types/continuation";
+import type { P } from "pino";
 import { is } from "typescript-is";
 import type { EndChatDuplicationMutationVariables, StartChatDuplicationMutationVariables } from "../generated/graphql";
 import {
@@ -34,21 +35,21 @@ import {
 import { callWithRetry } from "../utils";
 import { createMediaPackageHarvestJob } from "./recording";
 
-export async function handleEventUpdated(payload: Payload<EventData>): Promise<void> {
+export async function handleEventUpdated(logger: P.Logger, payload: Payload<EventData>): Promise<void> {
     const newRow = payload.event.data.new;
 
     if (!newRow) {
-        console.error("handleEventUpdated: new content was empty");
+        logger.error("handleEventUpdated: new content was empty");
         return;
     }
 
     try {
         if (newRow) {
-            await createEventStartTrigger(newRow.id, newRow.startTime, Date.parse(newRow.timings_updated_at));
+            await createEventStartTrigger(logger, newRow.id, newRow.startTime, Date.parse(newRow.timings_updated_at));
             if (newRow.endTime) {
-                await createEventEndTrigger(newRow.id, newRow.endTime, Date.parse(newRow.timings_updated_at));
+                await createEventEndTrigger(logger, newRow.id, newRow.endTime, Date.parse(newRow.timings_updated_at));
             } else {
-                console.error(
+                logger.error(
                     "Event does not have end time (this should never happen). Didn't create event end trigger.",
                     { eventId: newRow.id }
                 );
@@ -56,18 +57,18 @@ export async function handleEventUpdated(payload: Payload<EventData>): Promise<v
             }
         }
     } catch (err) {
-        console.error("Could not insert event start/end triggers", { eventId: newRow.id, err });
-        await sendFailureEmail("Could not insert event start/end triggers", JSON.stringify(err));
+        logger.error("Could not insert event start/end triggers", { eventId: newRow.id, err });
+        await sendFailureEmail(logger, "Could not insert event start/end triggers", JSON.stringify(err));
     }
 
     try {
         const hasVonageSession = await eventHasVonageSession(newRow.id);
         if (!hasVonageSession && isLive(newRow.intendedRoomModeName)) {
-            await createEventVonageSession(newRow.id, newRow.conferenceId);
+            await createEventVonageSession(logger, newRow.id, newRow.conferenceId);
         }
     } catch (err) {
-        console.error("Could not create Vonage session for event", { eventId: newRow.id, err });
-        await sendFailureEmail("Could not create Vonage session for event", JSON.stringify(err));
+        logger.error("Could not create Vonage session for event", { eventId: newRow.id, err });
+        await sendFailureEmail(logger, "Could not create Vonage session for event", JSON.stringify(err));
     }
 }
 
@@ -260,11 +261,12 @@ gql`
 `;
 
 export async function handleEventStartNotification(
+    logger: P.Logger,
     eventId: string,
     startTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    console.log("Handling event start", eventId, startTime);
+    logger.info("Handling event start", eventId, startTime);
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -280,7 +282,7 @@ export async function handleEventStartNotification(
         result.data.schedule_Event_by_pk.startTime === startTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
-        console.log("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
+        logger.info("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
         const preloadMillis = 10000;
@@ -291,12 +293,12 @@ export async function handleEventStartNotification(
 
         setTimeout(() => {
             if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
-                startEventBroadcast(eventId).catch((e) => {
-                    console.error("Failed to start event broadcast", { eventId, e });
+                startEventBroadcast(logger, eventId).catch((e) => {
+                    logger.error("Failed to start event broadcast", { eventId, e });
                 });
             } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
-                startRoomVonageArchiving(roomId, eventId).catch((e) => {
-                    console.error("Failed to start event archiving", {
+                startRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
+                    logger.error("Failed to start event archiving", {
                         roomId,
                         eventId,
                         e,
@@ -307,7 +309,7 @@ export async function handleEventStartNotification(
 
         setTimeout(() => {
             insertChatDuplicationMarkers(eventId, true).catch((e) => {
-                console.error("Failed to insert chat duplication start markers", { eventId, e });
+                logger.error("Failed to insert chat duplication start markers", { eventId, e });
             });
         }, startTimeMillis - nowMillis + 500);
 
@@ -320,30 +322,27 @@ export async function handleEventStartNotification(
                     if (to.id) {
                         if (!itemsCreatedRoomsFor.includes(to.id)) {
                             try {
-                                await createItemVideoChatRoom(to.id, result.data.schedule_Event_by_pk.conferenceId);
+                                await createItemVideoChatRoom(
+                                    logger,
+                                    to.id,
+                                    result.data.schedule_Event_by_pk.conferenceId
+                                );
                                 itemsCreatedRoomsFor.push(to.id);
                             } catch (e: any) {
-                                console.error(
-                                    "Failed to create automatic discussion room (specified item)",
-                                    eventId,
-                                    e
-                                );
+                                logger.error("Failed to create automatic discussion room (specified item)", eventId, e);
                             }
                         }
                     } else if (result.data.schedule_Event_by_pk.item?.id) {
                         if (!itemsCreatedRoomsFor.includes(result.data.schedule_Event_by_pk.item.id)) {
                             try {
                                 await createItemVideoChatRoom(
+                                    logger,
                                     result.data.schedule_Event_by_pk.item.id,
                                     result.data.schedule_Event_by_pk.conferenceId
                                 );
                                 itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
                             } catch (e: any) {
-                                console.error(
-                                    "Failed to create automatic discussion room (matching event)",
-                                    eventId,
-                                    e
-                                );
+                                logger.error("Failed to create automatic discussion room (matching event)", eventId, e);
                             }
                         }
                     }
@@ -362,15 +361,16 @@ export async function handleEventStartNotification(
         ) {
             try {
                 await createItemVideoChatRoom(
+                    logger,
                     result.data.schedule_Event_by_pk.item.id,
                     result.data.schedule_Event_by_pk.conferenceId
                 );
             } catch (e: any) {
-                console.error("Failed to create automatic discussion room (fallback)", eventId, e);
+                logger.error("Failed to create automatic discussion room (fallback)", eventId, e);
             }
         }
     } else {
-        console.log("Event start notification did not match current event start time, skipping.", {
+        logger.info("Event start notification did not match current event start time, skipping.", {
             eventId,
             startTime,
             updatedAt,
@@ -379,11 +379,12 @@ export async function handleEventStartNotification(
 }
 
 export async function handleEventEndNotification(
+    logger: P.Logger,
     eventId: string,
     endTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    console.log("Handling event end", eventId, endTime);
+    logger.info("Handling event end", eventId, endTime);
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -399,7 +400,7 @@ export async function handleEventEndNotification(
         result.data.schedule_Event_by_pk.endTime === endTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
-        console.log("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
+        logger.info("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
         const nowMillis = new Date().getTime();
         const endTimeMillis = Date.parse(endTime);
         const preloadMillis = 1000;
@@ -412,23 +413,23 @@ export async function handleEventEndNotification(
 
         setTimeout(() => {
             if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
-                stopEventBroadcasts(eventId).catch((e) => {
-                    console.error("Failed to stop event broadcasts", { eventId, e });
+                stopEventBroadcasts(logger, eventId).catch((e) => {
+                    logger.error("Failed to stop event broadcasts", { eventId, e });
                 });
             } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && enableRecording) {
-                stopRoomVonageArchiving(roomId, eventId).catch((e) => {
-                    console.error("Failed to stop event archiving", { eventId, e });
+                stopRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
+                    logger.error("Failed to stop event archiving", { eventId, e });
                 });
             }
 
             notifyRealtimeServiceEventEnded(eventId).catch((e) => {
-                console.error("Failed to notify real-time service event ended", { eventId, e });
+                logger.error("Failed to notify real-time service event ended", { eventId, e });
             });
         }, waitForMillis);
 
         setTimeout(() => {
             insertChatDuplicationMarkers(eventId, false).catch((e) => {
-                console.error("Failed to insert chat duplication end markers", { eventId, e });
+                logger.error("Failed to insert chat duplication end markers", { eventId, e });
             });
         }, endTimeMillis - nowMillis - 500);
 
@@ -439,14 +440,14 @@ export async function handleEventEndNotification(
                     intendedRoomModeName === Room_Mode_Enum.Presentation ||
                     intendedRoomModeName === Room_Mode_Enum.QAndA
                 ) {
-                    createMediaPackageHarvestJob(eventId, conferenceId).catch((e) => {
-                        console.error("Failed to create MediaPackage harvest job", { eventId, e });
+                    createMediaPackageHarvestJob(logger, eventId, conferenceId).catch((e) => {
+                        logger.error("Failed to create MediaPackage harvest job", { eventId, e });
                     });
                 }
             }, harvestJobWaitForMillis);
         }
     } else {
-        console.log("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
+        logger.info("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
     }
 }
 
@@ -462,8 +463,11 @@ gql`
     }
 `;
 
-export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs): Promise<StopEventBroadcastOutput> {
-    console.log("Stopping broadcasts for event", params.eventId);
+export async function handleStopEventBroadcasts(
+    logger: P.Logger,
+    params: stopEventBroadcastArgs
+): Promise<StopEventBroadcastOutput> {
+    logger.info("Stopping broadcasts for event", params.eventId);
 
     const eventDetails = await apolloClient.query({
         query: Event_GetEventVonageSessionDocument,
@@ -473,12 +477,12 @@ export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs):
     });
 
     if (!eventDetails.data.schedule_Event_by_pk) {
-        console.error("Could not retrieve event", params.eventId);
+        logger.error("Could not retrieve event", params.eventId);
         throw new Error("Could not retrieve event");
     }
 
     if (!eventDetails.data.schedule_Event_by_pk.eventVonageSession) {
-        console.log("Event has no associated Vonage session", params.eventId);
+        logger.info("Event has no associated Vonage session", params.eventId);
         return { broadcastsStopped: 0 };
     }
 
@@ -487,18 +491,18 @@ export async function handleStopEventBroadcasts(params: stopEventBroadcastArgs):
     });
 
     if (!broadcasts) {
-        console.log("No broadcasts return for Vonage session", params.eventId);
+        logger.info("No broadcasts return for Vonage session", params.eventId);
         return { broadcastsStopped: 0 };
     }
 
     let broadcastsStopped = 0;
     for (const broadcast of broadcasts) {
         try {
-            console.log("Attempting to stop broadcast", params.eventId, broadcast.id);
+            logger.info("Attempting to stop broadcast", params.eventId, broadcast.id);
             await Vonage.stopBroadcast(broadcast.id);
             broadcastsStopped++;
         } catch (e: any) {
-            console.warn("Failure while trying to stop broadcast", params.eventId, broadcast.id, e);
+            logger.warn("Failure while trying to stop broadcast", params.eventId, broadcast.id, e);
         }
     }
 

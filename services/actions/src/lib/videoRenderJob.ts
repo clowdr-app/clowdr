@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import type { MP4Input } from "@midspace/hasura/broadcastContentItem";
 import type { BroadcastRenderJobDataBlob, VideoRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
+import type { P } from "pino";
 import {
     CompleteVideoRenderJobDocument,
     CountUnfinishedVideoRenderJobsDocument,
@@ -35,6 +36,7 @@ interface CompleteVideoRenderJobResult {
 }
 
 export async function completeVideoRenderJob(
+    logger: P.Logger,
     videoRenderJobId: string,
     s3Url: string,
     durationSeconds: number | undefined
@@ -48,7 +50,7 @@ export async function completeVideoRenderJob(
     });
 
     if (!broadcastRenderJobResult.data.video_VideoRenderJob_by_pk) {
-        console.warn("Could not complete video render job: video render job not found", videoRenderJobId);
+        logger.warn("Could not complete video render job: video render job not found", videoRenderJobId);
         return {
             status: "CouldNotFindVideoRenderJob",
         };
@@ -57,7 +59,7 @@ export async function completeVideoRenderJob(
     const videoRenderJob = broadcastRenderJobResult.data.video_VideoRenderJob_by_pk;
 
     if (videoRenderJob.conferencePrepareJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
-        console.warn(
+        logger.warn(
             "Could not complete video render job: conference prepare job not in progress",
             videoRenderJobId,
             videoRenderJob.conferencePrepareJob.jobStatusName
@@ -72,7 +74,7 @@ export async function completeVideoRenderJob(
     }
 
     if (videoRenderJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
-        console.warn(
+        logger.warn(
             "Could not complete video render job: video render job not in progress",
             videoRenderJobId,
             videoRenderJob.jobStatusName
@@ -184,7 +186,7 @@ gql`
     }
 `;
 
-export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string): Promise<boolean> {
+export async function allVideoRenderJobsCompleted(logger: P.Logger, conferencePrepareJobId: string): Promise<boolean> {
     const result = await apolloClient.query({
         query: CountUnfinishedVideoRenderJobsDocument,
         variables: {
@@ -193,7 +195,7 @@ export async function allVideoRenderJobsCompleted(conferencePrepareJobId: string
     });
 
     if (result.data.video_VideoRenderJob_aggregate.aggregate?.count) {
-        console.log(
+        logger.info(
             `Conference prepare job ${conferencePrepareJobId}: ${result.data.video_VideoRenderJob_aggregate.aggregate.count} jobs remaining`
         );
     }

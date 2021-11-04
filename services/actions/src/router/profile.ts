@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
-import { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/actionTypes";
+import type { updateProfilePhotoArgs, UpdateProfilePhotoResponse } from "@midspace/hasura/actionTypes";
 import AmazonS3URI from "amazon-s3-uri";
 import assert from "assert";
 import { json } from "body-parser";
@@ -9,7 +9,8 @@ import crypto from "crypto";
 import type { Request, Response } from "express";
 import express from "express";
 import { assertType } from "typescript-is";
-import { Maybe, UpdateProfilePhotoDocument } from "../generated/graphql";
+import type { Maybe } from "../generated/graphql";
+import { UpdateProfilePhotoDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
 
@@ -148,19 +149,19 @@ router.post("/photo/update", async (req: Request, res: Response) => {
     try {
         assertType<updateProfilePhotoArgs>(params);
     } catch (e: any) {
-        console.error(`${req.originalUrl}: invalid request`, params);
+        req.log.error(`${req.originalUrl}: invalid request`, params);
         return res.status(200).json({
             ok: false,
         });
     }
 
     try {
-        console.log(`${req.originalUrl}: profile photo upload requested`);
+        req.log.info(`${req.originalUrl}: profile photo upload requested`);
         const userId = req.body.session_variables["x-hasura-user-id"];
         const result = await handleUpdateProfilePhoto(userId, params.registrantId, params.s3URL);
         return res.status(200).json(result);
     } catch (e: any) {
-        console.error(`${req.originalUrl}: profile photo upload failed`);
+        req.log.error(`${req.originalUrl}: profile photo upload failed`);
         return res.status(200).json({
             ok: false,
         });

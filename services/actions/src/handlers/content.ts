@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import { getUploadAgreementArgs, GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
+import type { getUploadAgreementArgs, GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
@@ -8,6 +8,7 @@ import type { EmailView_SubtitlesGenerated } from "@midspace/shared-types/email"
 import { EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@midspace/shared-types/email";
 import assert from "assert";
 import { compile } from "handlebars";
+import type { P } from "pino";
 import R from "ramda";
 import type { Email_Insert_Input } from "../generated/graphql";
 import {
@@ -31,17 +32,17 @@ gql`
     }
 `;
 
-export async function handleElementUpdated(payload: Payload<ElementData>): Promise<void> {
+export async function handleElementUpdated(logger: P.Logger, payload: Payload<ElementData>): Promise<void> {
     const oldRow = payload.event.data.old;
     const newRow = payload.event.data.new;
 
     if (!newRow?.data) {
-        console.error("handleElementUpdated: new content was empty", newRow?.id);
+        logger.error("handleElementUpdated: new content was empty", newRow?.id);
         return;
     }
 
     if (newRow.data.length === 0) {
-        console.log("handleElementUpdated: content item does not have any versions yet, ignoring", newRow.id);
+        logger.info("handleElementUpdated: content item does not have any versions yet, ignoring", newRow.id);
         return;
     }
 
@@ -50,7 +51,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
 
     // If new version is not a video or audio file
     if (currentVersion.data.baseType !== "video" && currentVersion.data.baseType !== "audio") {
-        console.log("Content item updated: was not a video or audio file.", newRow.id);
+        logger.info("Content item updated: was not a video or audio file.", newRow.id);
         return;
     }
 
@@ -68,7 +69,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
             (!currentVersion.data.transcode ||
                 currentVersion.data.transcode.updatedTimestamp < currentVersion.createdAt)
         ) {
-            const transcodeResult = await startPreviewTranscode(currentVersion.data.s3Url, newRow.id);
+            const transcodeResult = await startPreviewTranscode(logger, currentVersion.data.s3Url, newRow.id);
 
             // Update data item with new version
             const newVersion = R.clone(currentVersion);
@@ -92,7 +93,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
 
             assert(mutateResult.data?.update_content_Element_by_pk?.id, "Failed to record transcode initialisation");
         } else {
-            console.log("Content item video URL has not changed.", newRow.id);
+            logger.info("Content item video URL has not changed.", newRow.id);
         }
     }
 
@@ -106,7 +107,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
             (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
-            await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
+            await startTranscribe(logger, currentVersion.data.transcode.s3Url, newRow.id);
         }
     } else if (currentVersion.data.baseType === "audio") {
         if (
@@ -117,7 +118,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 oldVersion.data.s3Url !== currentVersion.data.s3Url) ||
             (!oldVersion && currentVersion.data.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
-            await startTranscribe(currentVersion.data.s3Url, newRow.id);
+            await startTranscribe(logger, currentVersion.data.s3Url, newRow.id);
         }
     }
 
@@ -130,7 +131,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
     ) {
         // Send email if new machine-generated subtitles have been added
         if (currentVersion.createdBy === "system") {
-            await trySendTranscriptionEmail(newRow.id);
+            await trySendTranscriptionEmail(logger, newRow.id);
         }
     }
 
@@ -141,6 +142,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
         currentVersion.data.subtitles["en_US"]?.status === "FAILED"
     ) {
         await trySendTranscriptionFailedEmail(
+            logger,
             newRow.id,
             newRow.name,
             currentVersion.data.baseType,
@@ -157,6 +159,7 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
             (!oldVersion && currentVersion.data.transcode?.status === "FAILED")
         ) {
             await trySendTranscodeFailedEmail(
+                logger,
                 newRow.id,
                 newRow.name,
                 currentVersion.data.baseType,
@@ -198,7 +201,7 @@ gql`
     }
 `;
 
-async function trySendTranscriptionEmail(elementId: string) {
+async function trySendTranscriptionEmail(logger: P.Logger, elementId: string) {
     try {
         const elementDetails = await apolloClient.query({
             query: GetElementDetailsDocument,
@@ -264,14 +267,15 @@ async function trySendTranscriptionEmail(elementId: string) {
             };
         });
 
-        await insertEmails(emails, element.conference.id);
+        await insertEmails(logger, emails, element.conference.id);
     } catch (err) {
-        console.error("Error while sending transcription emails", { elementId, err });
+        logger.error("Error while sending transcription emails", { elementId, err });
         return;
     }
 }
 
 async function trySendTranscriptionFailedEmail(
+    logger: P.Logger,
     elementId: string,
     elementName: string,
     elementType: "video" | "audio",
@@ -285,7 +289,7 @@ async function trySendTranscriptionFailedEmail(
     });
 
     if (!elementDetails.data.content_Element_by_pk) {
-        console.error("Could not find the specified element");
+        logger.error("Could not find the specified element");
         return;
     }
 
@@ -330,10 +334,11 @@ path            /item/${element.item.id}/element/${elementId}
         });
     }
 
-    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(logger, emails, elementDetails.data.content_Element_by_pk?.conference.id);
 }
 
 async function trySendTranscodeFailedEmail(
+    logger: P.Logger,
     elementId: string,
     elementName: string,
     elementType: "video" | "audio",
@@ -347,7 +352,7 @@ async function trySendTranscodeFailedEmail(
     });
 
     if (!elementDetails.data.content_Element_by_pk) {
-        console.error("Could not find the specified element");
+        logger.error("Could not find the specified element");
         return;
     }
 
@@ -393,7 +398,7 @@ path            /item/${element.item.id}/element/${elementId}
         });
     }
 
-    await insertEmails(emails, elementDetails.data.content_Element_by_pk?.conference.id);
+    await insertEmails(logger, emails, elementDetails.data.content_Element_by_pk?.conference.id);
 }
 
 gql`

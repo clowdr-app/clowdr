@@ -15,14 +15,14 @@ router.post("/inserted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<VonageSessionLayoutData_Record>>(req.body);
     } catch (e: any) {
-        console.error("Received incorrect payload", e);
+        req.log.error("Received incorrect payload", e);
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
-        await handleVonageSessionLayoutCreated(req.body);
+        await handleVonageSessionLayoutCreated(req.log, req.body);
     } catch (e: any) {
-        console.error("Failure while handling vonageSessionLayout inserted", e);
+        req.log.error("Failure while handling vonageSessionLayout inserted", e);
         res.status(500).json("Failure while handling event");
         return;
     }

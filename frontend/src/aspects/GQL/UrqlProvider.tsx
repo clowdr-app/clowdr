@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { schema } from "@midspace/graphql/graphql-schema";
 import type { CombinedError, Operation } from "@urql/core";
 import { makeOperation } from "@urql/core";
+import { devtoolsExchange } from "@urql/devtools";
 import type { AuthConfig } from "@urql/exchange-auth";
 import { authExchange } from "@urql/exchange-auth";
 import { cacheExchange } from "@urql/exchange-graphcache";
@@ -137,7 +138,7 @@ function UrqlProviderInner({
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
-                            // devtoolsExchange,
+                            devtoolsExchange,
                             dedupExchange,
                             // requestPolicyExchange({
                             //     ttl: 30 * 60 * 1000,

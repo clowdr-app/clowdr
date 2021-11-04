@@ -1,11 +1,12 @@
 import type { Maybe } from "@midspace/hasura/actionTypes";
 import type { SNSNotification } from "@midspace/shared-types/sns/index";
 import axios from "axios";
+import type { P } from "pino";
 import MessageValidator from "sns-validator";
 import { assertType } from "typescript-is";
 import { promisify } from "util";
 
-export async function validateSNSNotification(body: string): Promise<Maybe<SNSNotification<any>>> {
+export async function validateSNSNotification(logger: P.Logger, body: string): Promise<Maybe<SNSNotification<any>>> {
     const validator = new MessageValidator();
     const validate = promisify(validator.validate.bind(validator));
 
@@ -15,20 +16,20 @@ export async function validateSNSNotification(body: string): Promise<Maybe<SNSNo
         await validate(message);
         assertType<SNSNotification<any>>(message);
     } catch (e: any) {
-        console.log("Received invalid SNS notification", e, body);
+        logger.info("Received invalid SNS notification", e, body);
         return null;
     }
 
     return message;
 }
 
-async function confirmSubscription(url: string): Promise<boolean> {
+async function confirmSubscription(logger: P.Logger, url: string): Promise<boolean> {
     try {
         await axios.get(url);
-        console.log("Confirmed subscription");
+        logger.info("Confirmed subscription");
         return true;
     } catch (e: any) {
-        console.error("Failed to confirm subscription", e);
+        logger.error("Failed to confirm subscription", e);
         return false;
     }
 }
@@ -39,9 +40,12 @@ async function confirmSubscription(url: string): Promise<boolean> {
  *
  * @return Whether the SNSNotification was a subscription confirmation.
  */
-export async function tryConfirmSubscription(notification: SNSNotification<unknown>): Promise<boolean> {
+export async function tryConfirmSubscription(
+    logger: P.Logger,
+    notification: SNSNotification<unknown>
+): Promise<boolean> {
     if (notification.Type === "SubscriptionConfirmation") {
-        if (await confirmSubscription(notification.SubscribeURL)) {
+        if (await confirmSubscription(logger, notification.SubscribeURL)) {
             return true;
         } else {
             throw new Error("Failed while attempting to subscribe to an SNS topic");

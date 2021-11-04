@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import type { Payload, ShuffleQueueEntryData } from "@midspace/hasura/event";
+import type { P } from "pino";
 import type {
     ActiveShufflePeriodFragment,
     ActiveShuffleRoomFragment,
@@ -265,6 +266,7 @@ async function allocateToNewRoom(
  * First-come, first-serve algorithm with optional auto-creation of rooms
  */
 async function attemptToMatchEntry_FCFS(
+    logger: P.Logger,
     activePeriod: ActiveShufflePeriodFragment,
     entry: UnallocatedShuffleQueueEntryFragment,
     unallocatedQueueEntries: Map<number, UnallocatedShuffleQueueEntryFragment>,
@@ -360,7 +362,7 @@ async function attemptToMatchEntry_FCFS(
     }
 
     // We failed to match :(
-    console.info(
+    logger.info(
         `[This is not an error]: Unable to match shuffle queue entry: ${entry.id} (Probably not enough people online!)`
     );
     return false;
@@ -370,6 +372,7 @@ async function attemptToMatchEntry_FCFS(
  * First-come, first-serve algorithm with optional auto-creation of rooms
  */
 async function attemptToMatchEntries(
+    logger: P.Logger,
     activePeriod: ActiveShufflePeriodFragment,
     entryIds: number[],
     activeRooms: ActiveShuffleRoomFragment[],
@@ -388,9 +391,16 @@ async function attemptToMatchEntries(
         if (entry) {
             try {
                 rooms = rooms.sort((x, y) => x.peopleRegistrantIds.length - y.peopleRegistrantIds.length);
-                await attemptToMatchEntry_FCFS(activePeriod, entry, unallocatedQueueEntries, rooms, allocateNewRooms);
+                await attemptToMatchEntry_FCFS(
+                    logger,
+                    activePeriod,
+                    entry,
+                    unallocatedQueueEntries,
+                    rooms,
+                    allocateNewRooms
+                );
             } catch (e: any) {
-                console.error(`Error processing queue entry. Entry: ${entry.id}`, e);
+                logger.error(`Error processing queue entry. Entry: ${entry.id}`, e);
             }
         }
     }
@@ -414,7 +424,7 @@ async function attemptToMatchEntries(
     });
 }
 
-async function processShufflePeriod(period: ActiveShufflePeriodFragment, entryIds: number[]) {
+async function processShufflePeriod(logger: P.Logger, period: ActiveShufflePeriodFragment, entryIds: number[]) {
     const now = Date.now();
     const activeRooms = period.activeRooms.filter((shuffleRoom) => {
         const startedAt = Date.parse(shuffleRoom.startedAt);
@@ -423,21 +433,24 @@ async function processShufflePeriod(period: ActiveShufflePeriodFragment, entryId
     });
     switch (period.algorithm) {
         case Room_ShuffleAlgorithm_Enum.Fcfs:
-            await attemptToMatchEntries(period, entryIds, activeRooms, true);
+            await attemptToMatchEntries(logger, period, entryIds, activeRooms, true);
             break;
         case Room_ShuffleAlgorithm_Enum.FcfsFixedRooms:
-            await attemptToMatchEntries(period, entryIds, activeRooms, false);
+            await attemptToMatchEntries(logger, period, entryIds, activeRooms, false);
             break;
         case Room_ShuffleAlgorithm_Enum.None:
             // Do nothing
             break;
         default:
-            console.warn("Unable to process shuffle period: Unrecognised algorithm", period);
+            logger.warn("Unable to process shuffle period: Unrecognised algorithm", period);
             break;
     }
 }
 
-export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEntryData>): Promise<void> {
+export async function handleShuffleQueueEntered(
+    logger: P.Logger,
+    payload: Payload<ShuffleQueueEntryData>
+): Promise<void> {
     if (!payload.event.data.new) {
         throw new Error("Shuffled queue entered: 'new' data is null?!");
     }
@@ -457,11 +470,11 @@ export async function handleShuffleQueueEntered(payload: Payload<ShuffleQueueEnt
     }
     const startAt = Date.parse(result.data.room_ShufflePeriod_by_pk.startAt);
     if (startAt < Date.now()) {
-        await processShufflePeriod(result.data.room_ShufflePeriod_by_pk, [entry.id]);
+        await processShufflePeriod(logger, result.data.room_ShufflePeriod_by_pk, [entry.id]);
     }
 }
 
-async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
+async function endRooms(logger: P.Logger, period: ActiveShufflePeriodFragment): Promise<void> {
     try {
         const now = Date.now();
         const endedRooms = period.activeRooms.filter((shuffleRoom) => {
@@ -471,14 +484,14 @@ async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
         });
         await Promise.all(
             endedRooms.map(async (shuffleRoom) => {
-                console.info(`Ending shuffle room: ${shuffleRoom.id}`);
+                logger.info(`Ending shuffle room: ${shuffleRoom.id}`);
                 await Promise.all(
                     shuffleRoom.room.participants.map(async (participant) => {
                         try {
-                            console.info(`Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`);
-                            await kickRegistrantFromRoom(shuffleRoom.room.id, participant.registrantId);
+                            logger.info(`Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`);
+                            await kickRegistrantFromRoom(logger, shuffleRoom.room.id, participant.registrantId);
                         } catch (e: any) {
-                            console.error(
+                            logger.error(
                                 `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
                                 e
                             );
@@ -495,14 +508,14 @@ async function endRooms(period: ActiveShufflePeriodFragment): Promise<void> {
             },
         });
     } catch (e: any) {
-        console.error(`Failed to terminate shuffle rooms. Period: ${period.id}`, e);
+        logger.error(`Failed to terminate shuffle rooms. Period: ${period.id}`, e);
     }
 }
 
-export async function processShuffleQueues(): Promise<void> {
+export async function processShuffleQueues(logger: P.Logger): Promise<void> {
     const now = Date.now();
 
-    console.info("Shuffle rooms: Fetching");
+    logger.info("Shuffle rooms: Fetching");
 
     const result = await apolloClient.query({
         query: SelectActiveShufflePeriodsDocument,
@@ -513,12 +526,13 @@ export async function processShuffleQueues(): Promise<void> {
         },
     });
 
-    console.info("Shuffle rooms: Matching entries and ending rooms");
+    logger.info("Shuffle rooms: Matching entries and ending rooms");
     await Promise.all([
         ...result.data.room_ShufflePeriod.map(async (period) => {
-            await endRooms(period);
+            await endRooms(logger, period);
             if (Date.parse(period.startAt) <= now && Date.parse(period.endAt) >= now + 30000) {
                 await processShufflePeriod(
+                    logger,
                     period,
                     period.unallocatedQueueEntries.map((x) => x.id)
                 );
@@ -526,5 +540,5 @@ export async function processShuffleQueues(): Promise<void> {
         }),
     ]);
 
-    console.info("Shuffle rooms: Done.");
+    logger.info("Shuffle rooms: Done.");
 }

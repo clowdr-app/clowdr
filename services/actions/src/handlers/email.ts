@@ -3,6 +3,7 @@ import sgMail from "@sendgrid/mail";
 import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
+import type { P } from "pino";
 import wcmatch from "wildcard-match";
 import type { Email_Insert_Input } from "../generated/graphql";
 import {
@@ -70,6 +71,7 @@ gql`
 `;
 
 export async function insertEmails(
+    logger: P.Logger,
     emails: Email_Insert_Input[],
     conferenceId: string | undefined
 ): Promise<number | undefined> {
@@ -90,22 +92,22 @@ export async function insertEmails(
     let allowedDomains: string[] = configResponse.data.allowEmailsToDomains?.value;
     if (!allowedDomains) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - value is not defined");
+        logger.error("Error! Allowed domains is misconfigured - value is not defined");
     }
     if (!(allowedDomains instanceof Array)) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - value is not an array");
+        logger.error("Error! Allowed domains is misconfigured - value is not an array");
     }
     if (!allowedDomains.every((x) => typeof x === "string")) {
         allowedDomains = [];
-        console.error("Error! Allowed domains is misconfigured - array elements are not strings");
+        logger.error("Error! Allowed domains is misconfigured - array elements are not strings");
     }
     if (allowedDomains.length === 0) {
-        console.error("Error! Allowed domains is misconfigured - array is empty");
+        logger.error("Error! Allowed domains is misconfigured - array is empty");
     }
     const allowedDomainMatches = allowedDomains.map((x) => wcmatch(x));
 
-    const defaultEmailTemplate = await getEmailTemplate();
+    const defaultEmailTemplate = await getEmailTemplate(logger);
     const emailBuilder = new EmailBuilder(defaultEmailTemplate);
 
     const hostOrganisationName = configResponse.data.hostOrganisationName?.value;
@@ -153,12 +155,12 @@ export async function insertEmails(
             };
         });
     if (emailsToInsert.length < emails.length) {
-        console.info(
+        logger.info(
             `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
         );
     }
 
-    console.log(`Queuing ${emailsToInsert.length} emails to send`);
+    logger.info(`Queuing ${emailsToInsert.length} emails to send`);
     const r = await apolloClient.mutate({
         mutation: InsertEmailsDocument,
         variables: {
@@ -224,7 +226,7 @@ let sgMailInitialised:
           sender: string | { name: string; email: string };
           replyTo: string;
       } = false;
-async function initSGMail(): Promise<
+async function initSGMail(logger: P.Logger): Promise<
     | false
     | {
           apiKey: string;
@@ -238,15 +240,15 @@ async function initSGMail(): Promise<
                 query: GetSendGridConfigDocument,
             });
             if (!response.data.apiKey) {
-                console.error("Unable to initialise SendGrid email. SendGrid API Key not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid API Key not configured");
                 return false;
             }
             if (!response.data.senderEmail) {
-                console.error("Unable to initialise SendGrid email. SendGrid Sender not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid Sender not configured");
                 return false;
             }
             if (!response.data.replyTo) {
-                console.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
+                logger.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
                 return false;
             }
 
@@ -259,15 +261,15 @@ async function initSGMail(): Promise<
                 replyTo: response.data.replyTo.value,
             };
         } catch (e: any) {
-            console.error("Failed to initialise SendGrid mail", e);
+            logger.error("Failed to initialise SendGrid mail", e);
         }
     }
 
     return sgMailInitialised;
 }
 
-export async function processEmailsJobQueue(): Promise<void> {
-    const sgConfig = await initSGMail();
+export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
+    const sgConfig = await initSGMail(logger);
     if (sgConfig) {
         const sender = sgConfig.sender;
         const replyToAddress = sgConfig.replyTo;
@@ -301,7 +303,7 @@ export async function processEmailsJobQueue(): Promise<void> {
                         await callWithRetry(() => sgMail.send(msg));
                     }
                 } catch (e: any) {
-                    console.error(`Could not send email ${email.id}: ${e.toString()}`);
+                    logger.error(`Could not send email ${email.id}: ${e.toString()}`);
                     return email.id;
                 }
                 return undefined;
@@ -318,10 +320,10 @@ export async function processEmailsJobQueue(): Promise<void> {
                 });
             });
         } catch (e: any) {
-            console.error(`Could not unmark failed emails: ${e.toString()}`);
+            logger.error(`Could not unmark failed emails: ${e.toString()}`);
         }
     } else {
-        console.warn(
+        logger.warn(
             "Unable to send email - could not initialise email client. Perhaps a system configuration key is missing?"
         );
     }

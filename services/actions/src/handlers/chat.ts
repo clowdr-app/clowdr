@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import type { FlagData, Payload } from "@midspace/hasura/event";
 import assert from "assert";
+import type { P } from "pino";
 import { FlagInserted_GetSupportAddressDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { insertEmails } from "./email";
@@ -26,7 +27,7 @@ gql`
     }
 `;
 
-export async function handleFlagInserted(data: Payload<FlagData>): Promise<void> {
+export async function handleFlagInserted(logger: P.Logger, data: Payload<FlagData>): Promise<void> {
     const newFlag = data.event.data.new;
     if (newFlag) {
         const response = await apolloClient.query({
@@ -41,6 +42,7 @@ export async function handleFlagInserted(data: Payload<FlagData>): Promise<void>
         const conference = response.data.chat_Message[0].chat.conference;
         if (conference.supportAddress.length > 0) {
             await insertEmails(
+                logger,
                 [
                     {
                         recipientName: "Conference Organiser",
@@ -59,6 +61,7 @@ to view and resolve the report.</p>
             );
         } else {
             await insertEmails(
+                logger,
                 [
                     {
                         recipientName: "System Administrator",

@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import type { InitialiseSuperUserOutput } from "@midspace/hasura/actionTypes";
+import type { P } from "pino";
 import { InitialiseSuperUserStateDocument, SuperUserStateDocument } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 
@@ -137,7 +138,7 @@ gql`
     }
 `;
 
-export async function handleInitialiseSuperUser(): Promise<InitialiseSuperUserOutput> {
+export async function handleInitialiseSuperUser(logger: P.Logger): Promise<InitialiseSuperUserOutput> {
     try {
         const queryResponse = await apolloClient.query({
             query: SuperUserStateDocument,
@@ -174,7 +175,7 @@ export async function handleInitialiseSuperUser(): Promise<InitialiseSuperUserOu
 
         return { success: true, error: null };
     } catch (e: any) {
-        console.error("Unable to fetch current super state", e);
+        logger.error("Unable to fetch current super state", e);
         return { success: false, error: "Could not fetch current superuser state." };
     }
 }

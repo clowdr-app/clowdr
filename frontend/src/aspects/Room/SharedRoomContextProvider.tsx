@@ -23,8 +23,8 @@ export function SharedRoomContextProvider({
 
     return (
         <>
-            <portals.InPortal node={vonageNode}>
-                <Suspense fallback={<Spinner />}>
+            <Suspense fallback={<Spinner />}>
+                <portals.InPortal node={vonageNode}>
                     <VonageRoom
                         getAccessToken={async () => ""}
                         eventId={null}
@@ -38,13 +38,13 @@ export function SharedRoomContextProvider({
                         canControlRecording={false}
                         layout={undefined}
                     />
-                </Suspense>
-            </portals.InPortal>
-            <portals.InPortal node={chimeNode}>
-                <Suspense fallback={<Spinner />}>
+                </portals.InPortal>
+            </Suspense>
+            <Suspense fallback={<Spinner />}>
+                <portals.InPortal node={chimeNode}>
                     <ChimeRoom disable={true} roomId="" />
-                </Suspense>
-            </portals.InPortal>
+                </portals.InPortal>
+            </Suspense>
             <SharedRoomContext.Provider value={ctx}>
                 {children}
                 <Suspense fallback={null}>

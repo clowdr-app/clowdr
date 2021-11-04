@@ -1,9 +1,10 @@
 import { gql } from "@apollo/client/core";
 import type { ConferencePrepareJobData, Payload } from "@midspace/hasura/event";
-import { BroadcastRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
+import type { BroadcastRenderJobDataBlob } from "@midspace/hasura/videoRenderJob";
 import type { ElementDataBlob } from "@midspace/shared-types/content";
 import { Content_ElementType_Enum } from "@midspace/shared-types/content";
 import assert from "assert";
+import type { P } from "pino";
 import {
     CompleteConferencePrepareJobDocument,
     CreateVideoRenderJobDocument,
@@ -38,12 +39,15 @@ gql`
     }
 `;
 
-export async function handleConferencePrepareJobInserted(payload: Payload<ConferencePrepareJobData>): Promise<void> {
+export async function handleConferencePrepareJobInserted(
+    logger: P.Logger,
+    payload: Payload<ConferencePrepareJobData>
+): Promise<void> {
     assert(payload.event.data.new, "Payload must contain new row data");
 
     const newRow = payload.event.data.new;
 
-    console.log("Conference prepare: job triggered", {
+    logger.info("Conference prepare: job triggered", {
         conferencePrepareJobId: newRow.id,
         conferenceId: newRow.conferenceId,
     });
@@ -59,7 +63,7 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
         });
 
         if (otherJobs.data.job_queues_PrepareJob.length > 0) {
-            console.log(
+            logger.info(
                 "Conference prepare: another job in progress, aborting.",
                 otherJobs.data.job_queues_PrepareJob[0].id,
                 newRow.id
@@ -69,10 +73,10 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
             );
         }
 
-        const createdJob = await createBroadcastTranscodes(newRow.id, newRow.conferenceId);
-        await createEventVonageSessionsBroadcastItems(newRow.conferenceId);
+        const createdJob = await createBroadcastTranscodes(logger, newRow.id, newRow.conferenceId);
+        await createEventVonageSessionsBroadcastItems(logger, newRow.conferenceId);
 
-        console.log("Conference prepare: finished initialising job", newRow.id);
+        logger.info("Conference prepare: finished initialising job", newRow.id);
 
         if (!createdJob) {
             await callWithRetry(async () => {
@@ -83,24 +87,28 @@ export async function handleConferencePrepareJobInserted(payload: Payload<Confer
                     },
                 });
             });
-            console.log("Conference prepare: job completed without needing to render broadcast items", newRow.id);
+            logger.info("Conference prepare: job completed without needing to render broadcast items", newRow.id);
         }
     } catch (e: any) {
-        console.error("Conference prepare: fatal error while initialising job", e);
+        logger.error("Conference prepare: fatal error while initialising job", e);
         await callWithRetry(async () => {
             await failConferencePrepareJob(newRow.id, e.message ?? "Unknown error while initialising job");
         });
     }
 }
 
-async function createBroadcastTranscodes(conferencePrepareJobId: string, conferenceId: string): Promise<boolean> {
+async function createBroadcastTranscodes(
+    logger: P.Logger,
+    conferencePrepareJobId: string,
+    conferenceId: string
+): Promise<boolean> {
     const videoBroadcastItems = await apolloClient.query({
         query: GetVideoBroadcastElementsDocument,
         variables: {
             conferenceId,
         },
     });
-    console.log("Conference prepare: found video broadcast items", {
+    logger.info("Conference prepare: found video broadcast items", {
         count: videoBroadcastItems.data.content_Element.length,
         conferencePrepareJobId,
     });
@@ -109,14 +117,14 @@ async function createBroadcastTranscodes(conferencePrepareJobId: string, confere
 
     // Create broadcast transcodes for elements that need one
     for (const element of videoBroadcastItems.data.content_Element) {
-        console.log("Conference prepare: preparing video broadcast element", {
+        logger.info("Conference prepare: preparing video broadcast element", {
             elementId: element.id,
             conferencePrepareJobId,
         });
         const content: ElementDataBlob = element.data;
 
         if (content.length < 1) {
-            console.warn("Conference prepare: no content item versions", {
+            logger.warn("Conference prepare: no content item versions", {
                 elementId: element.id,
                 conferencePrepareJobId,
             });
@@ -126,7 +134,7 @@ async function createBroadcastTranscodes(conferencePrepareJobId: string, confere
         const latestVersion = content[content.length - 1];
 
         if (latestVersion.data.type !== Content_ElementType_Enum.VideoBroadcast) {
-            console.warn("Conference prepare: invalid content item data (not a video broadcast)", {
+            logger.warn("Conference prepare: invalid content item data (not a video broadcast)", {
                 elementId: element.id,
                 conferencePrepareJobId,
             });
@@ -138,12 +146,12 @@ async function createBroadcastTranscodes(conferencePrepareJobId: string, confere
             latestVersion.data.broadcastTranscode.s3Url &&
             latestVersion.data.broadcastTranscode.durationSeconds
         ) {
-            console.log("Conference prepare: item already has up-to-date broadcast transcode", {
+            logger.info("Conference prepare: item already has up-to-date broadcast transcode", {
                 elementId: element.id,
                 conferencePrepareJobId,
             });
         } else {
-            console.log("Conference prepare: item needs broadcast transcode", {
+            logger.info("Conference prepare: item needs broadcast transcode", {
                 elementId: element.id,
                 conferencePrepareJobId,
             });
@@ -156,7 +164,7 @@ async function createBroadcastTranscodes(conferencePrepareJobId: string, confere
                 !latestVersion.data.subtitles["en_US"] ||
                 !latestVersion.data.subtitles["en_US"].s3Url
             ) {
-                console.log(
+                logger.info(
                     "Conference prepare: Skipping item because it is missing one or more pieces of information needed to prepare it",
                     { elementId: element.id, conferencePrepareJobId }
                 );
@@ -206,8 +214,8 @@ gql`
     }
 `;
 
-async function createEventVonageSessionsBroadcastItems(conferenceId: string): Promise<void> {
-    console.log("Creating broadcast content items for presenter Vonage rooms", conferenceId);
+async function createEventVonageSessionsBroadcastItems(logger: P.Logger, conferenceId: string): Promise<void> {
+    logger.info("Creating broadcast content items for presenter Vonage rooms", conferenceId);
     gql`
         query GetEventsWithoutVonageSession($conferenceId: uuid!) {
             schedule_Event(
@@ -226,11 +234,11 @@ async function createEventVonageSessionsBroadcastItems(conferenceId: string): Pr
     });
 
     for (const event of eventsWithoutSessionResult.data.schedule_Event) {
-        console.log("Creating Vonage session for event", { eventId: event.id });
+        logger.info("Creating Vonage session for event", { eventId: event.id });
         try {
-            await createEventVonageSession(event.id, conferenceId);
+            await createEventVonageSession(logger, event.id, conferenceId);
         } catch (e: any) {
-            console.error("Failed to create Vonage session", event.id, e);
+            logger.error("Failed to create Vonage session", event.id, e);
             throw new Error(`Failed to create Vonage session: ${e.message}`);
         }
     }

@@ -5,7 +5,7 @@
     "scripts": {
         "build": "tsc --build",
         "clean": "rimraf build",
-        "start": "pnpm nf start --procfile Procfile -p 3001",
+        "start": "node -r dotenv/config build/server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
         "dev": "tsc-watch -b --onSuccess \"pnpm start\"",
         "codegen": "pnpm exec graphql-codegen --config codegen.js",
         "test": "jest --config jest.config.ts --forceExit"
@@ -51,6 +51,7 @@
         "@types/markdown-it": "^12.2.3",
         "@types/node-fetch": "^2.5.12",
         "@types/opentok": "workspace:*",
+        "@types/pino-http": "^5.8.0",
         "@types/ramda": "^0.27.44",
         "@types/sns-validator": "^0.3.0",
         "@types/uuid": "^8.3.1",
@@ -84,6 +85,8 @@
         "node-fetch": "^2.6.1",
         "opentok": "^2.12.0",
         "p-retry": "^4.6.1",
+        "pino": "^7.1.0",
+        "pino-http": "^6.0.0",
         "ramda": "^0.27.1",
         "rimraf": "^3.0.2",
         "slugify": "^1.6.0",
@@ -100,7 +103,9 @@
     },
     "devDependencies": {
         "@types/supertest": "^2.0.11",
+        "dotenv": "^10.0.0",
         "node-env-run": "^4.0.2",
+        "pino-pretty": "^7.2.0",
         "ts-jest": "^27.0.5",
         "tsc-watch": "^4.5.0"
     },

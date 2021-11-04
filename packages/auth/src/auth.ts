@@ -14,7 +14,7 @@ import { subconferenceCache } from "@midspace/caches/subconference";
 import { subconferenceRoomsCache } from "@midspace/caches/subconferenceRoom";
 import { userCache } from "@midspace/caches/user";
 
-enum HasuraHeaders {
+export enum HasuraHeaders {
     Role = "x-hasura-role",
 
     UserId = "x-hasura-user-id",
@@ -38,6 +38,34 @@ enum HasuraRoleNames {
     RoomAdmin = "room-admin",
     RoomMember = "room-member",
     Superuser = "superuser",
+}
+
+export function getAuthHeader(
+    headers: Partial<Record<string, string | string[]>>,
+    headerName: HasuraHeaders | string
+): string | undefined {
+    if (headers[headerName]) {
+        const header = headers[headerName];
+        if (typeof header === "string" && header.length) {
+            return header;
+        }
+    }
+    const lowercaseHeaderName = headerName.toLowerCase();
+    if (headers[lowercaseHeaderName]) {
+        const header = headers[lowercaseHeaderName];
+        if (typeof header === "string" && header.length) {
+            return header;
+        }
+    }
+    const uppercaseHeaderName = headerName.toUpperCase();
+    if (headers[uppercaseHeaderName]) {
+        const header = headers[uppercaseHeaderName];
+        if (typeof header === "string" && header.length) {
+            return header;
+        }
+    }
+
+    return undefined;
 }
 
 function formatArrayForHasuraHeader(values: string | string[]): string {

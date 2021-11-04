@@ -25,7 +25,7 @@ router.post("/getOAuthUrl", json(), async (req: Request, res: Response<GetGoogle
     try {
         assertType<getGoogleOAuthUrlArgs>(params);
     } catch (e: any) {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+        req.log.error(`${req.path}: Invalid request:`, req.body.input);
         return res.status(500).json("Invalid request");
     }
 
@@ -33,7 +33,7 @@ router.post("/getOAuthUrl", json(), async (req: Request, res: Response<GetGoogle
         const result = await handleGetGoogleOAuthUrl(params);
         return res.status(200).json(result);
     } catch (e: any) {
-        console.error(`${req.path}: Failed to get Google OAuth URL`, e);
+        req.log.error(`${req.path}: Failed to get Google OAuth URL`, e);
         return res.status(500).json("Failed to get Google OAuth URL");
     }
 });
@@ -43,24 +43,28 @@ router.post("/submitOAuthCode", json(), async (req: Request, res: Response<Submi
     try {
         assertType<submitGoogleOAuthCodeArgs>(params);
     } catch (e: any) {
-        console.error(`${req.path}: Invalid request:`, req.body.input);
+        req.log.error(`${req.path}: Invalid request:`, req.body.input);
         return res.status(500).json("Invalid request");
     }
 
     try {
-        const result = await handleSubmitGoogleOAuthToken(params, req.body.session_variables["x-hasura-user-id"]);
+        const result = await handleSubmitGoogleOAuthToken(
+            req.log,
+            params,
+            req.body.session_variables["x-hasura-user-id"]
+        );
         return res.status(200).json(result);
     } catch (e: any) {
-        console.error(`${req.path}: Failed to submit Google OAuth token`, e);
+        req.log.error(`${req.path}: Failed to submit Google OAuth token`, e);
         return res.status(500).json("Failed to submit Google OAuth token");
     }
 });
 
-router.post("/processUploadYouTubeVideoQueue", json(), async (_req: Request, res: Response) => {
+router.post("/processUploadYouTubeVideoQueue", json(), async (req: Request, res: Response) => {
     try {
-        await handleUploadYouTubeVideoJobQueue();
+        await handleUploadYouTubeVideoJobQueue(req.log);
     } catch (e: any) {
-        console.error("Failure while processing UploadYouTubeVideoJob queue", e);
+        req.log.error("Failure while processing UploadYouTubeVideoJob queue", e);
         res.status(500).json("Failure while processing UploadYouTubeVideoJob queue");
         return;
     }

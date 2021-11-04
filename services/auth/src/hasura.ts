@@ -1,4 +1,4 @@
-import { computeAuthHeaders } from "@midspace/auth/auth";
+import { computeAuthHeaders, getAuthHeader } from "@midspace/auth/auth";
 import { json } from "body-parser";
 import type { Request, Response } from "express";
 import express from "express";
@@ -43,30 +43,8 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
     try {
         const { openIdConfig, jwksClient } = await getOpenIdConfig();
 
-        const getHeader = (normalcaseHeaderName: string): string | undefined => {
-            if (req.headers[normalcaseHeaderName]) {
-                const header = req.headers[normalcaseHeaderName];
-                if (typeof header === "string" && header.length) {
-                    return header;
-                }
-            }
-            const lowercaseHeaderName = normalcaseHeaderName.toLowerCase();
-            if (req.headers[lowercaseHeaderName]) {
-                const header = req.headers[lowercaseHeaderName];
-                if (typeof header === "string" && header.length) {
-                    return header;
-                }
-            }
-            const uppercaseHeaderName = normalcaseHeaderName.toUpperCase();
-            if (req.headers[uppercaseHeaderName]) {
-                const header = req.headers[uppercaseHeaderName];
-                if (typeof header === "string" && header.length) {
-                    return header;
-                }
-            }
-
-            return undefined;
-        };
+        const getHeader = (normalcaseHeaderName: string): string | undefined =>
+            getAuthHeader(req.headers, normalcaseHeaderName);
 
         let decodedToken: any | null = null;
         const encodedToken = getHeader("Authorization")?.split(" ")[1];

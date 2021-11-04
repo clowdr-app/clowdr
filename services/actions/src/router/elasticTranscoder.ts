@@ -10,69 +10,70 @@ export const router = express.Router();
 
 // Unprotected routes
 router.post("/notify", text(), async (req: Request, res: Response) => {
-    console.log(req.originalUrl);
+    req.log.info(req.originalUrl);
 
     try {
-        const message = await validateSNSNotification(req.body);
+        const message = await validateSNSNotification(req.log, req.body);
         if (!message) {
             res.status(403).json("Access denied");
             return;
         }
 
         if (message.TopicArn !== process.env.AWS_ELASTIC_TRANSCODER_NOTIFICATIONS_TOPIC_ARN) {
-            console.log(`${req.originalUrl}: received SNS notification for the wrong topic`, message.TopicArn);
+            req.log.info(`${req.originalUrl}: received SNS notification for the wrong topic`, message.TopicArn);
             res.status(403).json("Access denied");
             return;
         }
 
-        const subscribed = await tryConfirmSubscription(message);
+        const subscribed = await tryConfirmSubscription(req.log, message);
         if (subscribed) {
             res.status(200).json("OK");
             return;
         }
 
         if (message.Type === "Notification") {
-            console.log(`${req.originalUrl}: received message`, message.MessageId, message.Message);
+            req.log.info(`${req.originalUrl}: received message`, message.MessageId, message.Message);
 
             let event: ElasticTranscoderEvent;
             try {
                 event = JSON.parse(message.Message);
                 assertType<ElasticTranscoderEvent>(event);
             } catch (err) {
-                console.error(`${req.originalUrl}: Unrecognised notification message`, err);
+                req.log.error(`${req.originalUrl}: Unrecognised notification message`, err);
                 res.status(500).json("Unrecognised notification message");
                 return;
             }
 
             switch (event.state) {
                 case "ERROR": {
-                    console.log("Elastic Transcoder job errored", { jobId: event.jobId });
+                    req.log.info("Elastic Transcoder job errored", { jobId: event.jobId });
                     try {
                         await VideoRenderJob.failVideoRenderJob(
                             event.userMetadata.videoRenderJobId,
                             event.messageDetails ?? event.errorCode?.toString() ?? "Unknown reason for failure"
                         );
                     } catch (e: any) {
-                        console.error("Failed to record report of broadcast transcode failure", e, event.jobId);
+                        req.log.error("Failed to record report of broadcast transcode failure", e, event.jobId);
                     }
                     break;
                 }
                 case "COMPLETED": {
                     try {
                         if (event.outputs.length === 1) {
-                            console.log("Elastic Transcoder job completed", event.jobId);
+                            req.log.info("Elastic Transcoder job completed", event.jobId);
                             const s3Url = `s3://${event.userMetadata.bucket}/${event.outputs[0].key}`;
                             await VideoRenderJob.completeVideoRenderJob(
+                                req.log,
                                 event.userMetadata.videoRenderJobId,
                                 s3Url,
                                 event.outputs[0].duration
                             );
                         } else {
-                            console.log("Elastic Transcoder job finished without outputs", event.jobId);
+                            req.log.info("Elastic Transcoder job finished without outputs", event.jobId);
                             throw new Error("Elastic Transcoder job finished without outputs");
                         }
                     } catch (e: any) {
-                        console.error(
+                        req.log.error(
                             "Failed to record completion of broadcast transcode",
                             event.userMetadata.videoRenderJobId,
                             e
@@ -85,11 +86,11 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                     break;
                 }
                 case "WARNING": {
-                    console.log("Elastic Transcoder job produced warning", event.jobId);
+                    req.log.info("Elastic Transcoder job produced warning", event.jobId);
                     const warningText = event.outputs
                         .map((output) => `Output ${output.id}: ${output.statusDetail}`)
                         .join("; ");
-                    console.warn("Received warning from Elastic Transcoder", warningText, event.jobId);
+                    req.log.warn("Received warning from Elastic Transcoder", warningText, event.jobId);
                     break;
                 }
             }
@@ -97,7 +98,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
 
         res.status(200).json("OK");
     } catch (e: any) {
-        console.error(`${req.originalUrl}: failed to handle request`, e);
+        req.log.error(`${req.originalUrl}: failed to handle request`, e);
         res.status(500).json("Failure");
     }
 });

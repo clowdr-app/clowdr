@@ -1,6 +1,6 @@
 import { Button, Flex, Input, ListItem, OrderedList, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type { ChatReactionDataFragment} from "../../../generated/graphql";
+import type { ChatReactionDataFragment } from "../../../generated/graphql";
 import { Chat_ReactionType_Enum } from "../../../generated/graphql";
 import type { MessageState } from "../ChatGlobalState";
 import { useChatConfiguration } from "../Configuration";
@@ -30,9 +30,13 @@ function PollOption({ value, count, onClick }: { value: string; count: number; o
                     w="100%"
                     justifyContent="flex-start"
                     minH="100%"
+                    h="auto"
                     m={0}
-                    py={1}
+                    py={2}
                     px={2}
+                    whiteSpace="normal"
+                    overflowWrap="normal"
+                    textAlign="left"
                 >
                     {contents}
                 </Button>
@@ -67,9 +71,10 @@ export default function PollOptions({
 }): JSX.Element {
     const config = useChatConfiguration();
     const currentRegistrantId = config.currentRegistrantId;
-    const isClosed = useMemo(() => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed), [
-        reactions,
-    ]);
+    const isClosed = useMemo(
+        () => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollClosed),
+        [reactions]
+    );
     const isCompleted = useMemo(
         () => reactions.some((reaction) => reaction.type === Chat_ReactionType_Enum.PollComplete),
         [reactions]

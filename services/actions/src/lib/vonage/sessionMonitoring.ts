@@ -7,7 +7,7 @@ import {
     OngoingBroadcastableVideoRoomEventsDocument,
 } from "../../generated/graphql";
 import { apolloClient } from "../../graphqlClient";
-import { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../types/vonage";
+import type { CustomConnectionData, SessionMonitoringWebhookReqBody } from "../../types/vonage";
 import { callWithRetry } from "../../utils";
 import { getRoomByVonageSessionId } from "../room";
 import { addRoomParticipant, removeRoomParticipant } from "../roomParticipant";
@@ -206,7 +206,7 @@ export async function stopArchiveIfNoOngoingEvent(payload: SessionMonitoringWebh
                     payload.sessionId
                 );
                 await stopRoomVonageArchiving(ongoingMatchingEvents.data.room_Room[0].id, undefined);
-            } else {
+            } else if (ongoingMatchingEvents.data.room_Room.length > 1) {
                 console.error(
                     "Error: Found multiple rooms for the same public Vonage session id! Can't stop archiving.",
                     payload.sessionId

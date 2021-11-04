@@ -55,6 +55,7 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
             itemId,
             accessToken,
         },
+        fetchPolicy: "network-only",
         context: {
             headers: {
                 "X-Hasura-Magic-Token": magicToken,

@@ -16766,6 +16766,7 @@ export type Mutation_RootJoinRoomChimeSessionArgs = {
 
 /** mutation root */
 export type Mutation_RootJoinRoomVonageSessionArgs = {
+    registrantId: Scalars["uuid"];
     roomId: Scalars["uuid"];
 };
 

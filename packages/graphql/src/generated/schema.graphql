@@ -22295,7 +22295,7 @@ type mutation_root {
     invitationConfirmCurrent(inviteCode: uuid!): ConfirmInvitationOutput
     joinEventVonageSession(eventId: uuid!): JoinEventVonageSessionOutput
     joinRoomChimeSession(roomId: uuid!): JoinRoomChimeSessionOutput
-    joinRoomVonageSession(roomId: uuid!): JoinRoomVonageSessionOutput
+    joinRoomVonageSession(registrantId: uuid!, roomId: uuid!): JoinRoomVonageSessionOutput
     notifyEventEnded(eventId: uuid!): NotifyEventEnded!
     presence_Flush: PresenceFlushOutput!
     refreshYouTubeData(registrantGoogleAccountId: uuid!, registrantId: uuid!): RefreshYouTubeDataOutput

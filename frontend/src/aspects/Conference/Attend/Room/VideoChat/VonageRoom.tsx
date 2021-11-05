@@ -26,7 +26,9 @@ import {
     useGetRoomVonageTokenMutation,
 } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
+import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 gql`
     mutation GetEventVonageToken($eventId: uuid!) {
@@ -36,8 +38,8 @@ gql`
         }
     }
 
-    mutation GetRoomVonageToken($roomId: uuid!) {
-        joinRoomVonageSession(roomId: $roomId) {
+    mutation GetRoomVonageToken($roomId: uuid!, $registrantId: uuid!) {
+        joinRoomVonageSession(roomId: $roomId, registrantId: $registrantId) {
             accessToken
             sessionId
             isRecorded
@@ -66,7 +68,13 @@ export function VideoChatVonageRoom({
     isChairOrOrganizer: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
+    const { id: registrantId } = useCurrentRegistrant();
 
+    const context = useShieldedHeaders({
+        "X-Auth-Role": "room-member",
+        "X-Auth-Room-Id": room.id,
+        "X-Auth-Include-Room-Ids": "true",
+    });
     const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
 
@@ -75,9 +83,12 @@ export function VideoChatVonageRoom({
     const getAccessToken = useCallback(() => {
         return new Promise<string>((resolve, reject) => {
             if (eventId) {
-                getEventVonageToken({
-                    eventId,
-                })
+                getEventVonageToken(
+                    {
+                        eventId,
+                    },
+                    context
+                )
                     .then((result) => {
                         if (!result.data?.joinEventVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
@@ -101,9 +112,13 @@ export function VideoChatVonageRoom({
                     })
                     .catch(reject);
             } else {
-                getRoomVonageToken({
-                    roomId: room.id,
-                })
+                getRoomVonageToken(
+                    {
+                        roomId: room.id,
+                        registrantId,
+                    },
+                    context
+                )
                     .then((result) => {
                         if (!result.data?.joinRoomVonageSession?.accessToken) {
                             throw new Error("No Vonage session ID");
@@ -128,7 +143,7 @@ export function VideoChatVonageRoom({
                     .catch(reject);
             }
         });
-    }, [eventId, getEventVonageToken, getRoomVonageToken, room.id]);
+    }, [context, eventId, getEventVonageToken, getRoomVonageToken, registrantId, room.id]);
 
     const [publicVonageSessionId, setPublicVonageSessionId] = useState<string | null | undefined>(
         room.publicVonageSessionId

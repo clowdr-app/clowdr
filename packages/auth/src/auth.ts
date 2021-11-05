@@ -68,6 +68,33 @@ export function getAuthHeader(
     return undefined;
 }
 
+export class ParseHeaderArrayError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
+/** @summary Parse an array-type Hasura session variable from a header value.
+ *  @remarks Hasura session variables are serialised in Postgres-literal format. e.g. `{1,2,3}`.
+ *  Does not currently support string literals in array (especially commas inside string literals!).
+ *  @returns Array of values in the header.
+ *  @emits
+ */
+export function parseHasuraHeaderArray(value: string): string[] {
+    if (value.charAt(0) !== "{") {
+        throw new ParseHeaderArrayError("Expected '{' at position 0");
+    }
+    if (value.charAt(value.length - 1) !== "}") {
+        throw new ParseHeaderArrayError(`Expected '{' at position ${value.length - 1}`);
+    }
+    const innerValue = value.slice(1, -1);
+    const values = innerValue
+        .split(",")
+        .map((v) => (v.charAt(0) === '"' && v.charAt(v.length - 1) === '"' ? v.slice(1, -1) : v))
+        .map((v) => (v.charAt(0) === "'" && v.charAt(v.length - 1) === "'" ? v.slice(1, -1) : v));
+    return values;
+}
+
 function formatArrayForHasuraHeader(values: string | string[]): string {
     if (typeof values === "string") {
         return `{"${values}"}`;

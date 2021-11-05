@@ -27,9 +27,9 @@ import {
     Vonage_GetEventDetailsDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
-import { getRegistrantWithPermissions } from "../lib/authorisation";
+import { getRegistrantDetails } from "../lib/authorisation";
 import { ForbiddenError, NotFoundError } from "../lib/errors";
-import { canUserJoinRoom, getRoomConferenceId, getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
+import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveRoomParticipants,
     addAndRemoveVonageParticipantStreams,
@@ -482,52 +482,77 @@ gql`
 export async function handleJoinRoom(
     logger: P.Logger,
     payload: joinRoomVonageSessionArgs,
+    allowedRegistrantIds: string[],
+    allowedRoomIds: string[],
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
-    const { conferenceId: roomConferenceId, subconferenceId: roomSubconferenceId } = await getRoomConferenceId(
-        payload.roomId_
-    );
-    const registrant = await getRegistrantWithPermissions(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId_, roomConferenceId);
-
-    if (!canJoinRoom) {
-        logger.warn({ payload, userId }, "User not permitted to join room");
-        throw new ForbiddenError("Not permitted to join this room", {});
+    if (!allowedRegistrantIds.includes(payload.registrantId)) {
+        throw new ForbiddenError("Forbidden to join room", {
+            privateMessage: "Registrant is not in list of allowed registrants",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+                allowedRegistrantIds,
+            },
+        });
     }
 
-    const maybeVonageMeetingId = await getRoomVonageSession(payload.roomId_);
+    if (!allowedRoomIds.includes(payload.roomId)) {
+        throw new ForbiddenError("Forbiddent to join room", {
+            privateMessage: "Room is not in list of allowed rooms",
+            privateErrorData: {
+                roomId: payload.roomId,
+                allowedRoomIds,
+            },
+        });
+    }
 
-    if (!maybeVonageMeetingId) {
-        logger.error({ payload, userId, registrantId: registrant.id }, "Could not find Vonage session");
-        throw new NotFoundError("Could not find Vonage session", {});
+    const sessionId = await getRoomVonageSession(payload.roomId);
+
+    if (!sessionId) {
+        throw new NotFoundError("Could not find Vonage session", {
+            privateErrorData: {
+                roomId: payload.roomId,
+            },
+        });
     }
 
     const connectionData: CustomConnectionData = {
-        registrantId: registrant.id,
+        registrantId: payload.registrantId,
         userId,
     };
+
+    const registrant = await getRegistrantDetails(payload.registrantId);
+
+    if (!registrant) {
+        throw new NotFoundError("Registrant not found", {
+            privateErrorData: {
+                registrantId: payload.registrantId,
+            },
+        });
+    }
 
     const isConferenceOrganizerOrConferenceModerator =
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Organizer ||
         registrant.conferenceRole === Registrant_RegistrantRole_Enum.Moderator;
 
-    const accessToken = Vonage.vonage.generateToken(maybeVonageMeetingId, {
+    const accessToken = Vonage.vonage.generateToken(sessionId, {
         data: JSON.stringify(connectionData),
         role: isConferenceOrganizerOrConferenceModerator ? "moderator" : "publisher",
     });
 
-    const recordingId = await addRegistrantToVonageRecording(
-        payload.roomId_,
-        maybeVonageMeetingId,
-        registrant.id
-    ).catch((error) => {
-        logger.error({ userId, payload, error }, "Error adding Vonage recording to user's list");
-    });
+    const recordingId = await addRegistrantToVonageRecording(payload.roomId, sessionId, registrant.id).catch(
+        (error) => {
+            logger.error(
+                { registrantId: registrant.id, payload, error },
+                "Error adding Vonage recording to registrant's list"
+            );
+        }
+    );
 
     return {
         accessToken,
-        sessionId: maybeVonageMeetingId,
-        isRecorded: !!recordingId,
+        sessionId,
+        isRecorded: Boolean(recordingId),
     };
 }
 

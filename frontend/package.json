@@ -11,7 +11,7 @@
         "start": "vite preview --port 3000",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-        "graphql-codegen": "graphql-codegen --config codegen.js"
+        "codegen": "graphql-codegen --config codegen.js"
     },
     "dependencies": {
         "@ahanapediatrics/ahana-fp": "^2.6.0",

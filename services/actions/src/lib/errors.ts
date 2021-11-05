@@ -1,5 +1,6 @@
 interface ErrorOptions {
     privateMessage?: string;
+    privateErrorData?: Partial<Record<string, any>>;
     originalError?: Error;
 }
 

@@ -1,5 +1,5 @@
-import { HasuraHeaders } from "@midspace/auth/auth";
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { ActionPayload } from "@midspace/hasura/action";
 import type {
     joinEventVonageSessionArgs,
@@ -115,15 +115,14 @@ router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVo
 router.post(
     "/joinRoom",
     json(),
+    parseSessionVariables,
     async (req: Request, res: Response<JoinRoomVonageSessionOutput>, next: NextFunction): Promise<void> => {
         try {
             const body = assertType<ActionPayload<joinRoomVonageSessionArgs>>(req.body);
-            const result = await handleJoinRoom(
-                req.log,
-                body.input,
-                body.session_variables[HasuraHeaders.UserId]
-                //body.session_variables[HasuraHeaders.RoomIds]
-            );
+            if (!req.userId) {
+                throw new BadRequestError("Invalid request", { privateMessage: "No User ID available" });
+            }
+            const result = await handleJoinRoom(req.log, body.input, req.registrantIds, req.roomIds, req.userId);
             res.status(200).json(result);
         } catch (err: unknown) {
             if (err instanceof TypeGuardError) {

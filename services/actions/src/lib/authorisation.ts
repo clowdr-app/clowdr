@@ -52,6 +52,7 @@ export async function getRegistrant(userId: string, conferenceId: string): Promi
     return myRegistrantResult.data.registrant_Registrant[0];
 }
 
+/** @deprecated */
 export async function getRegistrantWithPermissions(
     userId: string,
     conferenceId: string

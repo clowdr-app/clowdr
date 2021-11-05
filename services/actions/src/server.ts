@@ -57,7 +57,7 @@ app.use(requestId());
 app.use(
     pinoHttp({
         logger: logger as any, // 7.0-compatible @types not yet released for pino-http
-        autoLogging: false,
+        autoLogging: process.env.DEBUG === "true" ? true : false,
         genReqId: (req) => req.id,
         serializers: {
             req: pino.stdSerializers.wrapRequestSerializer((r) => {
@@ -72,6 +72,7 @@ app.use(
                 return s;
             }),
         },
+        useLevel: process.env.DEBUG === "true" ? "trace" : "info",
     })
 );
 

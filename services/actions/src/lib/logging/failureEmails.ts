@@ -19,6 +19,6 @@ ${stackTrace ? `<p>Stack trace: ${stackTrace}</p>` : ""}`;
 
         await insertEmails(logger, emails, undefined);
     } catch (e: any) {
-        logger.error("Failed to send failure email!", failureReason, e);
+        logger.error({ failureReason, err: e }, "Failed to send failure email!");
     }
 }

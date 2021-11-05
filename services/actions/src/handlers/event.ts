@@ -39,7 +39,7 @@ export async function handleEventUpdated(logger: P.Logger, payload: Payload<Even
     const newRow = payload.event.data.new;
 
     if (!newRow) {
-        logger.error("handleEventUpdated: new content was empty");
+        logger.error({ oldEventId: payload.event.data.old?.id }, "handleEventUpdated: new content was empty");
         return;
     }
 
@@ -50,14 +50,14 @@ export async function handleEventUpdated(logger: P.Logger, payload: Payload<Even
                 await createEventEndTrigger(logger, newRow.id, newRow.endTime, Date.parse(newRow.timings_updated_at));
             } else {
                 logger.error(
-                    "Event does not have end time (this should never happen). Didn't create event end trigger.",
-                    { eventId: newRow.id }
+                    { eventId: newRow.id },
+                    "Event does not have end time (this should never happen). Didn't create event end trigger."
                 );
                 throw new Error("Event does not have end time.");
             }
         }
     } catch (err) {
-        logger.error("Could not insert event start/end triggers", { eventId: newRow.id, err });
+        logger.error({ eventId: newRow.id, err }, "Could not insert event start/end triggers");
         await sendFailureEmail(logger, "Could not insert event start/end triggers", JSON.stringify(err));
     }
 
@@ -67,7 +67,7 @@ export async function handleEventUpdated(logger: P.Logger, payload: Payload<Even
             await createEventVonageSession(logger, newRow.id, newRow.conferenceId);
         }
     } catch (err) {
-        logger.error("Could not create Vonage session for event", { eventId: newRow.id, err });
+        logger.error({ eventId: newRow.id, err }, "Could not create Vonage session for event");
         await sendFailureEmail(logger, "Could not create Vonage session for event", JSON.stringify(err));
     }
 }
@@ -266,7 +266,7 @@ export async function handleEventStartNotification(
     startTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    logger.info("Handling event start", eventId, startTime);
+    logger.info({ eventId, startTime }, "Handling event start");
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -282,7 +282,10 @@ export async function handleEventStartNotification(
         result.data.schedule_Event_by_pk.startTime === startTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
-        logger.info("Handling event start: matched expected startTime", result.data.schedule_Event_by_pk.id, startTime);
+        logger.info(
+            { eventId: result.data.schedule_Event_by_pk.id, startTime },
+            "Handling event start: matched expected startTime"
+        );
         const nowMillis = new Date().getTime();
         const startTimeMillis = Date.parse(startTime);
         const preloadMillis = 10000;
@@ -294,22 +297,25 @@ export async function handleEventStartNotification(
         setTimeout(() => {
             if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
                 startEventBroadcast(logger, eventId).catch((e) => {
-                    logger.error("Failed to start event broadcast", { eventId, e });
+                    logger.error({ eventId, err: e }, "Failed to start event broadcast");
                 });
             } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat) {
                 startRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
-                    logger.error("Failed to start event archiving", {
-                        roomId,
-                        eventId,
-                        e,
-                    });
+                    logger.error(
+                        {
+                            roomId,
+                            eventId,
+                            err: e,
+                        },
+                        "Failed to start event archiving"
+                    );
                 });
             }
         }, waitForMillis);
 
         setTimeout(() => {
             insertChatDuplicationMarkers(eventId, true).catch((e) => {
-                logger.error("Failed to insert chat duplication start markers", { eventId, e });
+                logger.error({ eventId, err: e }, "Failed to insert chat duplication start markers");
             });
         }, startTimeMillis - nowMillis + 500);
 
@@ -329,7 +335,10 @@ export async function handleEventStartNotification(
                                 );
                                 itemsCreatedRoomsFor.push(to.id);
                             } catch (e: any) {
-                                logger.error("Failed to create automatic discussion room (specified item)", eventId, e);
+                                logger.error(
+                                    { eventId, err: e },
+                                    "Failed to create automatic discussion room (specified item)"
+                                );
                             }
                         }
                     } else if (result.data.schedule_Event_by_pk.item?.id) {
@@ -342,7 +351,10 @@ export async function handleEventStartNotification(
                                 );
                                 itemsCreatedRoomsFor.push(result.data.schedule_Event_by_pk.item.id);
                             } catch (e: any) {
-                                logger.error("Failed to create automatic discussion room (matching event)", eventId, e);
+                                logger.error(
+                                    { eventId, err: e },
+                                    "Failed to create automatic discussion room (matching event)"
+                                );
                             }
                         }
                     }
@@ -366,15 +378,18 @@ export async function handleEventStartNotification(
                     result.data.schedule_Event_by_pk.conferenceId
                 );
             } catch (e: any) {
-                logger.error("Failed to create automatic discussion room (fallback)", eventId, e);
+                logger.error({ eventId, err: e }, "Failed to create automatic discussion room (fallback)");
             }
         }
     } else {
-        logger.info("Event start notification did not match current event start time, skipping.", {
-            eventId,
-            startTime,
-            updatedAt,
-        });
+        logger.info(
+            {
+                eventId,
+                startTime,
+                updatedAt,
+            },
+            "Event start notification did not match current event start time, skipping."
+        );
     }
 }
 
@@ -384,7 +399,7 @@ export async function handleEventEndNotification(
     endTime: string,
     updatedAt: number | null
 ): Promise<void> {
-    logger.info("Handling event end", eventId, endTime);
+    logger.info({ eventId, endTime }, "Handling event end");
     const result = await callWithRetry(
         async () =>
             await apolloClient.query({
@@ -400,7 +415,10 @@ export async function handleEventEndNotification(
         result.data.schedule_Event_by_pk.endTime === endTime &&
         (!updatedAt || Date.parse(result.data.schedule_Event_by_pk.timingsUpdatedAt) === updatedAt)
     ) {
-        logger.info("Handling event end: matched expected endTime", result.data.schedule_Event_by_pk.id, endTime);
+        logger.info(
+            { eventId: result.data.schedule_Event_by_pk.id, endTime },
+            "Handling event end: matched expected endTime"
+        );
         const nowMillis = new Date().getTime();
         const endTimeMillis = Date.parse(endTime);
         const preloadMillis = 1000;
@@ -414,22 +432,22 @@ export async function handleEventEndNotification(
         setTimeout(() => {
             if (intendedRoomModeName === Room_Mode_Enum.Presentation || intendedRoomModeName === Room_Mode_Enum.QAndA) {
                 stopEventBroadcasts(logger, eventId).catch((e) => {
-                    logger.error("Failed to stop event broadcasts", { eventId, e });
+                    logger.error({ eventId, e }, "Failed to stop event broadcasts");
                 });
             } else if (intendedRoomModeName === Room_Mode_Enum.VideoChat && enableRecording) {
                 stopRoomVonageArchiving(logger, roomId, eventId).catch((e) => {
-                    logger.error("Failed to stop event archiving", { eventId, e });
+                    logger.error({ eventId, e }, "Failed to stop event archiving");
                 });
             }
 
             notifyRealtimeServiceEventEnded(eventId).catch((e) => {
-                logger.error("Failed to notify real-time service event ended", { eventId, e });
+                logger.error({ eventId, e }, "Failed to notify real-time service event ended");
             });
         }, waitForMillis);
 
         setTimeout(() => {
             insertChatDuplicationMarkers(eventId, false).catch((e) => {
-                logger.error("Failed to insert chat duplication end markers", { eventId, e });
+                logger.error({ eventId, e }, "Failed to insert chat duplication end markers");
             });
         }, endTimeMillis - nowMillis - 500);
 
@@ -441,13 +459,13 @@ export async function handleEventEndNotification(
                     intendedRoomModeName === Room_Mode_Enum.QAndA
                 ) {
                     createMediaPackageHarvestJob(logger, eventId, conferenceId).catch((e) => {
-                        logger.error("Failed to create MediaPackage harvest job", { eventId, e });
+                        logger.error({ eventId, e }, "Failed to create MediaPackage harvest job");
                     });
                 }
             }, harvestJobWaitForMillis);
         }
     } else {
-        logger.info("Event stop notification did not match current event, skipping.", { eventId, endTime, updatedAt });
+        logger.info({ eventId, endTime, updatedAt }, "Event stop notification did not match current event, skipping.");
     }
 }
 
@@ -467,7 +485,7 @@ export async function handleStopEventBroadcasts(
     logger: P.Logger,
     params: stopEventBroadcastArgs
 ): Promise<StopEventBroadcastOutput> {
-    logger.info("Stopping broadcasts for event", params.eventId);
+    logger.info({ eventId: params.eventId }, "Stopping broadcasts for event");
 
     const eventDetails = await apolloClient.query({
         query: Event_GetEventVonageSessionDocument,
@@ -477,12 +495,12 @@ export async function handleStopEventBroadcasts(
     });
 
     if (!eventDetails.data.schedule_Event_by_pk) {
-        logger.error("Could not retrieve event", params.eventId);
+        logger.error({ eventId: params.eventId }, "Could not retrieve event");
         throw new Error("Could not retrieve event");
     }
 
     if (!eventDetails.data.schedule_Event_by_pk.eventVonageSession) {
-        logger.info("Event has no associated Vonage session", params.eventId);
+        logger.info({ eventId: params.eventId }, "Event has no associated Vonage session");
         return { broadcastsStopped: 0 };
     }
 
@@ -491,18 +509,21 @@ export async function handleStopEventBroadcasts(
     });
 
     if (!broadcasts) {
-        logger.info("No broadcasts return for Vonage session", params.eventId);
+        logger.info({ eventId: params.eventId }, "No broadcasts return for Vonage session");
         return { broadcastsStopped: 0 };
     }
 
     let broadcastsStopped = 0;
     for (const broadcast of broadcasts) {
         try {
-            logger.info("Attempting to stop broadcast", params.eventId, broadcast.id);
+            logger.info({ eventId: params.eventId, broadcastId: broadcast.id }, "Attempting to stop broadcast");
             await Vonage.stopBroadcast(broadcast.id);
             broadcastsStopped++;
         } catch (e: any) {
-            logger.warn("Failure while trying to stop broadcast", params.eventId, broadcast.id, e);
+            logger.warn(
+                { eventId: params.eventId, broadcastId: broadcast.id, err: e },
+                "Failure while trying to stop broadcast"
+            );
         }
     }
 

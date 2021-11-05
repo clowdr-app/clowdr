@@ -75,7 +75,7 @@ export async function createItemVideoChatRoom(logger: P.Logger, itemId: string, 
         }
     `;
 
-    logger.info("Creating new breakout room for content group", itemId, conferenceId);
+    logger.info({ itemId, conferenceId }, "Creating new breakout room for content group");
 
     const createResult = await apolloClient.mutate({
         mutation: Item_CreateRoomDocument,
@@ -190,7 +190,7 @@ export async function createRoomChimeMeeting(logger: P.Logger, roomId: string, c
             },
         });
     } catch (e: any) {
-        logger.error("Failed to create a room Chime meeting", { err: e, roomId, conferenceId });
+        logger.error({ err: e, roomId, conferenceId }, "Failed to create a room Chime meeting");
         throw e;
     }
 
@@ -218,19 +218,25 @@ export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: stri
         const chimeMeetingId = result.data.room_ChimeMeeting[0].id;
         const chimeMeetingData: Meeting = result.data.room_ChimeMeeting[0].chimeMeetingData;
         if (!is<Meeting>(chimeMeetingData)) {
-            logger.warn("Retrieved Chime meeting data could not be validated, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Retrieved Chime meeting data could not be validated, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
 
         if (!chimeMeetingData.MeetingId || typeof chimeMeetingData.MeetingId !== "string") {
-            logger.warn("Retrieved Chime meeting data could not be validated, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Retrieved Chime meeting data could not be validated, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
@@ -238,10 +244,13 @@ export async function getExistingRoomChimeMeeting(logger: P.Logger, roomId: stri
         const exists = await doesChimeMeetingExist(chimeMeetingData.MeetingId);
 
         if (!exists) {
-            logger.warn("Chime meeting no longer exists, deleting record", {
-                chimeMeetingData,
-                roomId,
-            });
+            logger.warn(
+                {
+                    chimeMeetingData,
+                    roomId,
+                },
+                "Chime meeting no longer exists, deleting record"
+            );
             await deleteRoomChimeMeeting(chimeMeetingId);
             return null;
         }
@@ -288,7 +297,7 @@ export async function getRoomChimeMeeting(logger: P.Logger, roomId: string, conf
             return existingChimeMeetingData;
         }
 
-        logger.error("Could not get Chime meeting data", { err: e, roomId, conferenceId });
+        logger.error({ err: e, roomId, conferenceId }, "Could not get Chime meeting data");
         throw new Error("Could not get Chime meeting data");
     }
 }

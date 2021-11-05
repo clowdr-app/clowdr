@@ -42,12 +42,12 @@ export async function handleVideoRenderJobUpdated(
                 case Job_Queues_JobStatus_Enum.New:
                     break;
                 case Job_Queues_JobStatus_Enum.Completed: {
-                    logger.info("Completed broadcast render job", payload.event.data.new.id);
+                    logger.info({ jobId: payload.event.data.new.id }, "Completed broadcast render job");
                     try {
                         if (!payload.event.data.new.data.broadcastContentItemData) {
                             logger.error(
-                                "Did not find any broadcast content item data in completed video render job",
-                                payload.event.data.new.id
+                                { jobId: payload.event.data.new.id },
+                                "Did not find any broadcast content item data in completed video render job"
                             );
                             throw new Error(
                                 "Did not find any broadcast content item data in completed video render job"
@@ -65,7 +65,10 @@ export async function handleVideoRenderJobUpdated(
                             );
                         }
                     } catch (e: any) {
-                        logger.error("Failure while processing completed render job", payload.event.data.new.id, e);
+                        logger.error(
+                            { err: e, jobId: payload.event.data.new.id },
+                            "Failure while processing completed render job"
+                        );
                         await VideoRenderJob.failVideoRenderJob(
                             payload.event.data.new.id,
                             e?.message ?? "Unknown failure when processing completed render job"
@@ -74,7 +77,7 @@ export async function handleVideoRenderJobUpdated(
                     break;
                 }
                 case Job_Queues_JobStatus_Enum.Failed: {
-                    logger.info(`Failed broadcast render job ${payload.event.data.new.id}`);
+                    logger.info({ jobId: payload.event.data.new.id }, "Failed broadcast render job");
                     await ConferencePrepareJob.failConferencePrepareJob(
                         payload.event.data.new.conferencePrepareJobId,
                         `Render job ${payload.event.data.new.id} failed: ${payload.event.data.new.message}`
@@ -82,14 +85,17 @@ export async function handleVideoRenderJobUpdated(
                     break;
                 }
                 case Job_Queues_JobStatus_Enum.InProgress: {
-                    logger.info(`In progress broadcast render job ${payload.event.data.new.id}`);
+                    logger.info({ jobId: payload.event.data.new.id }, "In progress broadcast render job");
                     break;
                 }
             }
             return;
         }
         default:
-            logger.warn("Unsupported render job completed", { type: payload.event.data.new.data.type });
+            logger.warn(
+                { type: payload.event.data.new.data.type, jobId: payload.event.data.new.id },
+                "Unsupported render job completed"
+            );
             return;
     }
 }
@@ -100,7 +106,7 @@ async function startVideoRenderJob(logger: P.Logger, job: VideoRenderJobDataFrag
 
     switch (data.type) {
         case "BroadcastRenderJob": {
-            logger.info("Starting new broadcast render job", { jobId: job.id });
+            logger.info({ jobId: job.id }, "Starting new broadcast render job");
             const result = await apolloClient.query({
                 query: GetElementIdForVideoRenderJobDocument,
                 variables: {
@@ -121,7 +127,7 @@ async function startVideoRenderJob(logger: P.Logger, job: VideoRenderJobDataFrag
             return data;
         }
         default:
-            logger.error("Could not start unsupported video render job type", { type: data.type });
+            logger.error({ type: data.type, jobId: job.id }, "Could not start unsupported video render job type");
             throw new Error("Could not start unsupported video render job type");
     }
 }
@@ -195,7 +201,7 @@ export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promis
                     });
                 }
             } catch (e: any) {
-                logger.error("Could not start VideoRenderJob", job.id, e);
+                logger.error({ jobId: job.id, err: e }, "Could not start VideoRenderJob");
                 return job.id;
             }
             return undefined;
@@ -206,7 +212,7 @@ export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promis
 
     if (jobIdsToUnmark.length) {
         try {
-            logger.info("Unmarking unsuccessful video render jobs", { jobIdsToUnmark, count: jobIdsToUnmark.length });
+            logger.info({ jobIdsToUnmark, count: jobIdsToUnmark.length }, "Unmarking unsuccessful video render jobs");
             await callWithRetry(async () => {
                 await apolloClient.mutate({
                     mutation: UnmarkVideoRenderJobsDocument,
@@ -216,7 +222,7 @@ export async function handleProcessVideoRenderJobQueue(logger: P.Logger): Promis
                 });
             });
         } catch (e: any) {
-            logger.error("Could not record failed VideoRenderJobs", e);
+            logger.error({ err: e }, "Could not record failed VideoRenderJobs");
         }
     }
 }

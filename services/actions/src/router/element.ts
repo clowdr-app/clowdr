@@ -22,14 +22,14 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ElementData>>(req.body);
     } catch (e: any) {
-        req.log.error("Received incorrect payload", e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleElementUpdated(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling element updated", e);
+        req.log.error({ err: e }, "Failure while handling element updated");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -41,7 +41,7 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     try {
         assertType<submitElementArgs>(params);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, params);
+        req.log.error({ params }, "Invalid request");
         return res.status(200).json({
             success: false,
             message: "Invalid request",
@@ -49,11 +49,11 @@ router.post("/submit", json(), async (req: Request, res: Response) => {
     }
 
     try {
-        req.log.info(`${req.originalUrl}: content item submitted`);
+        req.log.info("Content item submitted");
         const result = await handleElementSubmitted(req.log, params);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failed to submit content item`, e);
+        req.log.error({ err: e }, "Failed to submit content item");
         return res.status(200).json({
             success: false,
             message: "Failed to submit content item",
@@ -68,7 +68,7 @@ router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
         const result = await handleUpdateSubtitles(req.log, params);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request:`, req.body, e);
+        req.log.error({ body: req.body, err: e }, "Invalid request");
         return res.status(200).json({
             success: false,
             message: "Invalid request",
@@ -81,7 +81,7 @@ router.post("/getUploadAgreement", json(), async (req: Request, res: Response<Ge
     try {
         assertType<getUploadAgreementArgs>(params);
     } catch (e: any) {
-        req.log.error(`${req.path}: Invalid request:`, req.body.input);
+        req.log.error({ input: req.body.input }, "Invalid request");
         return res.status(500).json("Invalid request");
     }
 
@@ -89,7 +89,7 @@ router.post("/getUploadAgreement", json(), async (req: Request, res: Response<Ge
         const result = await handleGetUploadAgreement(params);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.path}: Failed to retrieve agreement text`, e);
+        req.log.error({ err: e }, "Failed to retrieve agreement text");
         return res.status(500).json("Failed to retrieve agreement text");
     }
 });

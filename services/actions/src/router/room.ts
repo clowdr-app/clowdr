@@ -27,14 +27,14 @@ router.post("/created", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<RoomData>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleRoomCreated(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling room created", e);
+        req.log.error({ err: e }, "Failure while handling room created");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -45,7 +45,7 @@ router.post("/removeOldParticipants", json(), async (req: Request, res: Response
     try {
         await handleRemoveOldRoomParticipants(req.log);
     } catch (err) {
-        req.log.error("Failure while handling remove old room participants", err);
+        req.log.error({ err }, "Failure while handling remove old room participants");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -62,7 +62,7 @@ router.post("/createDm", async (req: Request, res: Response<CreateRoomDmOutput>)
         const result = await handleCreateDmRoom(params, req.body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, req.body, e);
+        req.log.error({ body: req.body, err: e }, "Invalid request");
         return res.status(200).json({
             message: "Invalid request",
         });
@@ -76,7 +76,7 @@ router.post("/createForItem", async (req: Request, res: Response<CreateContentGr
         const result = await handleCreateForItem(req.log, params, req.body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, req.body, e);
+        req.log.error({ body: req.body, err: e }, "Invalid request");
         return res.status(200).json({
             message: "Invalid request",
         });

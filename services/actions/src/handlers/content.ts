@@ -37,12 +37,18 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
     const newRow = payload.event.data.new;
 
     if (!newRow?.data) {
-        logger.error("handleElementUpdated: new content was empty", newRow?.id);
+        logger.error(
+            { oldElementId: oldRow?.id, newElementId: newRow?.id },
+            "handleElementUpdated: new content was empty"
+        );
         return;
     }
 
     if (newRow.data.length === 0) {
-        logger.info("handleElementUpdated: content item does not have any versions yet, ignoring", newRow.id);
+        logger.info(
+            { elementId: newRow.id },
+            "handleElementUpdated: content item does not have any versions yet, ignoring"
+        );
         return;
     }
 
@@ -51,7 +57,7 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
 
     // If new version is not a video or audio file
     if (currentVersion.data.baseType !== "video" && currentVersion.data.baseType !== "audio") {
-        logger.info("Content item updated: was not a video or audio file.", newRow.id);
+        logger.info({ elementId: newRow.id }, "Content item updated: was not a video or audio file.");
         return;
     }
 
@@ -93,7 +99,7 @@ export async function handleElementUpdated(logger: P.Logger, payload: Payload<El
 
             assert(mutateResult.data?.update_content_Element_by_pk?.id, "Failed to record transcode initialisation");
         } else {
-            logger.info("Content item video URL has not changed.", newRow.id);
+            logger.info({ elementId: newRow.id }, "Content item video URL has not changed.");
         }
     }
 
@@ -269,7 +275,7 @@ async function trySendTranscriptionEmail(logger: P.Logger, elementId: string) {
 
         await insertEmails(logger, emails, element.conference.id);
     } catch (err) {
-        logger.error("Error while sending transcription emails", { elementId, err });
+        logger.error({ elementId, err }, "Error while sending transcription emails");
         return;
     }
 }
@@ -289,7 +295,7 @@ async function trySendTranscriptionFailedEmail(
     });
 
     if (!elementDetails.data.content_Element_by_pk) {
-        logger.error("Could not find the specified element");
+        logger.error({ elementId }, "Could not find the specified element");
         return;
     }
 
@@ -352,7 +358,7 @@ async function trySendTranscodeFailedEmail(
     });
 
     if (!elementDetails.data.content_Element_by_pk) {
-        logger.error("Could not find the specified element");
+        logger.error({ elementId }, "Could not find the specified element");
         return;
     }
 

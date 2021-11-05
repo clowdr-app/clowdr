@@ -75,7 +75,7 @@ async function sendCustomEmails(
         const email = registrant.user?.email ?? registrant.invitation?.invitedEmailAddress;
 
         if (!email) {
-            logger.warn("User has no known email address", { registrantId: registrant.id });
+            logger.warn({ registrantId: registrant.id }, "User has no known email address");
             continue;
         }
 
@@ -140,7 +140,7 @@ export async function processCustomEmailsJobQueue(logger: P.Logger): Promise<voi
         try {
             await sendCustomEmails(logger, job.registrantIds, job.conferenceId, job.markdownBody, job.subject);
         } catch (error: any) {
-            logger.error("Failed to process send custom email job", { jobId: job.id, error });
+            logger.error({ jobId: job.id, error }, "Failed to process send custom email job");
             failedJobIds.push(job.id);
         }
     }

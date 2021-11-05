@@ -88,7 +88,7 @@ export async function handleVonageSessionMonitoringWebhook(
             success &&= await startBroadcastIfOngoingEvent(logger, payload);
         }
     } catch (e: any) {
-        logger.error("Error while starting broadcast if ongoing event", e);
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while starting broadcast if ongoing event");
         success = false;
     }
 
@@ -99,21 +99,24 @@ export async function handleVonageSessionMonitoringWebhook(
             success &&= await stopArchiveIfNoOngoingEvent(logger, payload);
         }
     } catch (e: any) {
-        logger.error("Error while starting or stopping archive of any ongoing event", e);
+        logger.error(
+            { err: e, sessionId: payload.sessionId },
+            "Error while starting or stopping archive of any ongoing event"
+        );
         success = false;
     }
 
     try {
         success &&= await addAndRemoveRoomParticipants(logger, payload);
     } catch (e: any) {
-        logger.error("Error while adding/removing room participants", e);
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while adding/removing room participants");
         success = false;
     }
 
     try {
         success &&= await addAndRemoveVonageParticipantStreams(logger, payload);
     } catch (e: any) {
-        logger.error("Error while adding/removing event participant streams", e);
+        logger.error({ err: e, sessionId: payload.sessionId }, "Error while adding/removing event participant streams");
         success = false;
     }
 
@@ -202,7 +205,7 @@ export async function handleVonageArchiveMonitoringWebhook(
 
             const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
-            logger.info("Vonage archive uploaded", { sessionId: payload.sessionId, endedAt, s3Url });
+            logger.info({ sessionId: payload.sessionId, endedAt, s3Url }, "Vonage archive uploaded");
 
             // Always try to save the recording into our Vonage Room Recording table
             // (This is also what enables users to access the list of recordings they've participated in)
@@ -241,24 +244,30 @@ export async function handleVonageArchiveMonitoringWebhook(
                 });
 
                 if (!eventResponse.data?.schedule_Event_by_pk) {
-                    logger.error("Could not find event for Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                    });
+                    logger.error(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                        },
+                        "Could not find event for Vonage archive"
+                    );
                     return false;
                 }
 
                 const event = eventResponse.data.schedule_Event_by_pk;
 
                 if (!event.item) {
-                    logger.info("Nowhere to store event Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                    });
+                    logger.info(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                        },
+                        "Nowhere to store event Vonage archive"
+                    );
                     return true;
                 }
 
@@ -300,13 +309,16 @@ export async function handleVonageArchiveMonitoringWebhook(
                         },
                     });
                 } catch (e: any) {
-                    logger.error("Failed to store event Vonage archive", {
-                        roomId,
-                        eventId,
-                        sessionId: payload.sessionId,
-                        archiveId: payload.id,
-                        error: e,
-                    });
+                    logger.error(
+                        {
+                            roomId,
+                            eventId,
+                            sessionId: payload.sessionId,
+                            archiveId: payload.id,
+                            error: e,
+                        },
+                        "Failed to store event Vonage archive"
+                    );
                     return false;
                 }
             }
@@ -315,9 +327,9 @@ export async function handleVonageArchiveMonitoringWebhook(
         const endedAt = new Date(payload.createdAt + 1000 * payload.duration).toISOString();
 
         if (payload.status === "failed") {
-            logger.error("Vonage archive failed", payload);
+            logger.error({ payload }, "Vonage archive failed");
         } else {
-            logger.info("Vonage archive stopped", { sessionId: payload.sessionId, endedAt });
+            logger.info({ sessionId: payload.sessionId, endedAt }, "Vonage archive stopped");
         }
 
         if (payload.duration > 0) {
@@ -395,7 +407,7 @@ export async function handleJoinEvent(
     });
 
     if (!result.data || !result.data.schedule_Event_by_pk || result.error) {
-        logger.error("Could not retrieve event information", payload.eventId);
+        logger.error({ eventId: payload.eventId }, "Could not retrieve event information");
         return {};
     }
 
@@ -406,12 +418,15 @@ export async function handleJoinEvent(
             ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
             : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
     if (!vonageSessionId) {
-        logger.error("Could not retrieve Vonage session associated with event", payload.eventId);
+        logger.error({ eventId: payload.eventId }, "Could not retrieve Vonage session associated with event");
         return {};
     }
 
     if (!result.data.schedule_Event_by_pk.conference.registrants.length) {
-        logger.error("User does not have registrant at conference, refusing event join token", userId, payload.eventId);
+        logger.error(
+            { userId, eventId: payload.eventId },
+            "User does not have registrant at conference, refusing event join token"
+        );
         return {};
     }
 
@@ -441,12 +456,15 @@ export async function handleJoinEvent(
             vonageSessionId,
             registrant.id
         ).catch((error) => {
-            logger.error("Error adding Vonage recording to user's list", { userId, payload, error });
+            logger.error({ userId, payload, err: error }, "Error adding Vonage recording to user's list");
         });
 
         return { accessToken, isRecorded: !!recordingId || result.data.schedule_Event_by_pk.enableRecording };
     } catch (e: any) {
-        logger.error("Failure while generating event Vonage session token", payload.eventId, vonageSessionId, e);
+        logger.error(
+            { eventId: payload.eventId, vonageSessionId, err: e },
+            "Failure while generating event Vonage session token"
+        );
     }
 
     return {};

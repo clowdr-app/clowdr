@@ -400,7 +400,7 @@ async function attemptToMatchEntries(
                     allocateNewRooms
                 );
             } catch (e: any) {
-                logger.error(`Error processing queue entry. Entry: ${entry.id}`, e);
+                logger.error({ entryId: entry.id, err: e }, "Error processing queue entry");
             }
         }
     }
@@ -442,7 +442,7 @@ async function processShufflePeriod(logger: P.Logger, period: ActiveShufflePerio
             // Do nothing
             break;
         default:
-            logger.warn("Unable to process shuffle period: Unrecognised algorithm", period);
+            logger.warn({ period }, "Unable to process shuffle period: Unrecognised algorithm");
             break;
     }
 }
@@ -484,16 +484,19 @@ async function endRooms(logger: P.Logger, period: ActiveShufflePeriodFragment): 
         });
         await Promise.all(
             endedRooms.map(async (shuffleRoom) => {
-                logger.info(`Ending shuffle room: ${shuffleRoom.id}`);
+                logger.info({ shuffleRoomId: shuffleRoom.id }, "Ending shuffle room");
                 await Promise.all(
                     shuffleRoom.room.participants.map(async (participant) => {
                         try {
-                            logger.info(`Kicking shuffle room participant: ${participant.id} from ${shuffleRoom.id}`);
+                            logger.info(
+                                { participantId: participant.id, shuffleRoomId: shuffleRoom.id },
+                                "Kicking shuffle room participant"
+                            );
                             await kickRegistrantFromRoom(logger, shuffleRoom.room.id, participant.registrantId);
                         } catch (e: any) {
                             logger.error(
-                                `Failed to kick participant while terminating shuffle room. Participant: ${participant.id}`,
-                                e
+                                { participantId: participant.id, shuffleRoomId: shuffleRoom.id, err: e },
+                                "Failed to kick participant while terminating shuffle room"
                             );
                         }
                     })
@@ -508,7 +511,7 @@ async function endRooms(logger: P.Logger, period: ActiveShufflePeriodFragment): 
             },
         });
     } catch (e: any) {
-        logger.error(`Failed to terminate shuffle rooms. Period: ${period.id}`, e);
+        logger.error({ periodId: period.id, err: e }, "Failed to terminate shuffle rooms");
     }
 }
 

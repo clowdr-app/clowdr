@@ -17,7 +17,7 @@ router.post("/getSlug", async (req: Request, res: Response) => {
     try {
         assertType<ActionPayload<getSlugArgs>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -25,7 +25,7 @@ router.post("/getSlug", async (req: Request, res: Response) => {
         const slug = await handleGetSlug(req.body.input);
         res.status(200).json({ slug });
     } catch (e: any) {
-        req.log.error("Failure while handling get slug", e);
+        req.log.error({ err: e }, "Failure while handling get slug");
         res.status(500).json("Failure while handling get slug");
         return;
     }

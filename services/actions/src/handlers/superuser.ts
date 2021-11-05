@@ -175,7 +175,7 @@ export async function handleInitialiseSuperUser(logger: P.Logger): Promise<Initi
 
         return { success: true, error: null };
     } catch (e: any) {
-        logger.error("Unable to fetch current super state", e);
+        logger.error({ err: e }, "Unable to fetch current superuser state");
         return { success: false, error: "Could not fetch current superuser state." };
     }
 }

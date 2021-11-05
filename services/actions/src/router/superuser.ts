@@ -14,7 +14,7 @@ router.post("/initialise", json(), async (req: Request, res: Response) => {
         const result = await handleInitialiseSuperUser(req.log);
         res.status(200).json(result);
     } catch (e: any) {
-        req.log.error("Failure while handling initialise superuser", e);
+        req.log.error({ err: e }, "Failure while handling initialise superuser");
         res.status(200).json({ success: false, error: e.toString() });
         return;
     }

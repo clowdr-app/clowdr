@@ -67,7 +67,7 @@ export async function startPreviewTranscode(
     s3InputUrl: string,
     elementId: string
 ): Promise<StartTranscodeOutput> {
-    logger.info(`Creating preview MediaConvert job for ${s3InputUrl}`);
+    logger.info({ s3InputUrl, elementId }, "Creating preview MediaConvert job");
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
 
@@ -120,7 +120,7 @@ export async function startPreviewTranscode(
 
     assert(result.Job?.Id && result.Job.CreatedAt, `Failed to create MediaConvert preview job for ${s3InputUrl}`);
 
-    logger.info(`Started preview MediaConvert job for ${s3InputUrl} (id: ${result.Job?.Id})`);
+    logger.info({ s3InputUrl, jobId: result.Job?.Id }, "Started preview MediaConvert job");
 
     return {
         jobId: result.Job.Id,
@@ -134,7 +134,7 @@ export async function startElasticBroadcastTranscode(
     s3CaptionsUrl: string | null,
     videoRenderJobId: string
 ): Promise<StartTranscodeOutput> {
-    logger.info(`Create broadcast Elastic Transcoder job for ${s3VideoUrl}`);
+    logger.info({ s3VideoUrl, videoRenderJobId }, "Create broadcast Elastic Transcoder job");
 
     assert(ElasticTranscoder, "AWS Elastic Transcoder client is not initialised");
 
@@ -247,7 +247,7 @@ export async function startBroadcastTranscode(
     s3CaptionsUrl: string | null,
     videoRenderJobId: string
 ): Promise<StartTranscodeOutput> {
-    logger.info(`Creating broadcast MediaConvert job for ${s3VideoUrl}`);
+    logger.info({ s3VideoUrl, videoRenderJobId }, "Creating broadcast MediaConvert job");
 
     assert(MediaConvert, "AWS MediaConvert client is not initialised");
 
@@ -326,7 +326,7 @@ export async function startBroadcastTranscode(
 
     assert(result.Job?.Id && result.Job.CreatedAt, `Failed to create MediaConvert broadcast job for ${s3VideoUrl}`);
 
-    logger.info(`Started broadcast MediaConvert job for ${s3VideoUrl} (id: ${result.Job?.Id})`);
+    logger.info({ s3VideoUrl, mediaConvertJobId: result.Job?.Id }, "Started broadcast MediaConvert job");
 
     return {
         jobId: result.Job.Id,
@@ -369,7 +369,7 @@ export async function failPreviewTranscode(
         !latestVersion.data.transcode ||
         latestVersion.data.transcode.jobId !== transcodeJobId
     ) {
-        logger.info("Received notification of transcode failure, but did not record it");
+        logger.info({ elementId, transcodeJobId }, "Received notification of transcode failure, but did not record it");
         return;
     }
 
@@ -392,7 +392,7 @@ export async function failPreviewTranscode(
     });
 
     if (result.errors) {
-        logger.error(`Failed to record transcode failure for ${elementId}`, result.errors);
+        logger.error({ elementId, errors: result.errors }, "Failed to record transcode failure");
         throw new Error(`Failed to record transcode failure for ${elementId}`);
     }
 }

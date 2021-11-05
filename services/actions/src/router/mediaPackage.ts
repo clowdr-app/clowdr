@@ -10,7 +10,7 @@ export const router = express.Router();
 
 // Unprotected routes
 router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Received MediaPackage notification");
 
     try {
         const message = await validateSNSNotification(req.log, req.body);
@@ -20,7 +20,7 @@ router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.TopicArn !== process.env.AWS_MEDIAPACKAGE_HARVEST_NOTIFICATIONS_TOPIC_ARN) {
-            req.log.info(`${req.originalUrl}: received SNS notification for the wrong topic`, message.TopicArn);
+            req.log.info({ TopicArn: message.TopicArn }, "Received SNS notification for the wrong topic");
             res.status(403).json("Access denied");
             return;
         }
@@ -32,14 +32,14 @@ router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.Type === "Notification") {
-            req.log.info(`${req.originalUrl}: received message`, message.MessageId, message.Message);
+            req.log.info({ MessageId: message.MessageId, Message: message.Message }, "Received message");
 
             let event: MediaPackageEvent;
             try {
                 event = JSON.parse(message.Message);
                 assertType<MediaPackageEvent>(event);
             } catch (err) {
-                req.log.error(`${req.originalUrl}: Unrecognised notification message`, err);
+                req.log.error({ err }, "Unrecognised notification message");
                 res.status(500).json("Unrecognised notification message");
                 return;
             }
@@ -67,7 +67,7 @@ router.post("/harvest/notify", text(), async (req: Request, res: Response) => {
 
         res.status(200).json("OK");
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failed to handle request`, e);
+        req.log.error({ err: e }, "Failed to handle request");
         res.status(200).json("Failure");
     }
 });

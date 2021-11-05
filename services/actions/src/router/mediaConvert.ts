@@ -12,7 +12,7 @@ export const router = express.Router();
 
 // Unprotected routes
 router.post("/notify", text(), async (req: Request, res: Response) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Received MediaConvert notification");
 
     try {
         const message = await validateSNSNotification(req.log, req.body);
@@ -22,7 +22,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.TopicArn !== process.env.AWS_TRANSCODE_NOTIFICATIONS_TOPIC_ARN) {
-            req.log.info(`${req.originalUrl}: received SNS notification for the wrong topic`, message.TopicArn);
+            req.log.info({ TopicArn: message.TopicArn }, "Received SNS notification for the wrong topic");
             res.status(403).json("Access denied");
             return;
         }
@@ -34,14 +34,14 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.Type === "Notification") {
-            req.log.info(`${req.originalUrl}: received message`, message.MessageId, message.Message);
+            req.log.info({ MessageId: message.MessageId, Message: message.Message }, "Received message");
 
             let event: MediaConvertEvent;
             try {
                 event = JSON.parse(message.Message);
                 assertType<MediaConvertEvent>(event);
             } catch (err) {
-                req.log.error(`${req.originalUrl}: Unrecognised notification message`, err);
+                req.log.error({ err }, "Unrecognised notification message");
                 res.status(500).json("Unrecognised notification message");
                 return;
             }
@@ -51,9 +51,8 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 event.detail.userMetadata.environment !== process.env.AWS_PREFIX
             ) {
                 req.log.warn(
-                    "Received MediaConvert event for AWS environment that does not match this one",
-                    event.detail.userMetadata.environment,
-                    process.env.AWS_PREFIX
+                    { environment: event.detail.userMetadata.environment, AWS_PREFIX: process.env.AWS_PREFIX },
+                    "Received MediaConvert event for AWS environment that does not match this one"
                 );
                 res.status(200).json("Environment mismatch");
             }
@@ -89,7 +88,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                         }
                     }
                 } catch (e: any) {
-                    req.log.error("Failed to complete transcode", e);
+                    req.log.error({ err: e }, "Failed to complete transcode");
                     res.status(500).json("Failed to complete transcode");
                     return;
                 }
@@ -112,9 +111,11 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             break;
                         case TranscodeMode.COMBINE:
                             req.log.info(
-                                "Received MediaConvert notification of failed CombineVideosJob",
-                                event.detail.jobId,
-                                event.detail.userMetadata.combineVideosJobId
+                                {
+                                    jobId: event.detail.jobId,
+                                    combineVideosJobId: event.detail.userMetadata.combineVideosJobId,
+                                },
+                                "Received MediaConvert notification of failed CombineVideosJob"
                             );
                             await failCombineVideosJob(
                                 req.log,
@@ -123,7 +124,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                             );
                     }
                 } catch (e: any) {
-                    req.log.error("Failed to record failed transcode", e);
+                    req.log.error({ err: e }, "Failed to record failed transcode");
                     res.status(500).json("Failed to record failed transcode");
                     return;
                 }
@@ -132,7 +133,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
 
         res.status(200).json("OK");
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failed to handle request`, e);
+        req.log.error({ err: e }, "Failed to handle request");
         res.status(500).json("Failure");
     }
 });

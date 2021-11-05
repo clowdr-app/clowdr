@@ -15,7 +15,7 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<VideoRenderJobData>>(req.body);
     } catch (e: any) {
-        req.log.error("Received incorrect payload", e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -23,7 +23,7 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         await handleVideoRenderJobUpdated(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling ConferencePrepareJob inserted", e);
+        req.log.error({ err: e }, "Failure while handling ConferencePrepareJob inserted");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -35,7 +35,7 @@ router.post("/processQueue", json(), async (req: Request, res: Response) => {
     try {
         await handleProcessVideoRenderJobQueue(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing VideoRenderJob queue", e);
+        req.log.error({ err: e }, "Failure while processing VideoRenderJob queue");
         res.status(500).json("Failure while processing VideoRenderJob queue");
         return;
     }

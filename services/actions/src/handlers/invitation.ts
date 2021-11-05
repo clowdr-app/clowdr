@@ -204,7 +204,7 @@ export async function processInvitationEmailsQueue(logger: P.Logger): Promise<vo
                 return false;
             });
         } catch (e: any) {
-            logger.error("Failed to process send invite emails job", { jobId: job.id, error: e.message ?? e });
+            logger.error({ jobId: job.id, err: e }, "Failed to process send invite emails job");
             failedJobIds.push(job.id);
         }
     }
@@ -267,7 +267,10 @@ async function confirmUser(
                 });
             } catch (e: any) {
                 ok = e.message || e.toString();
-                logger.error(`Failed to link user to invitation (${user.id}, ${invitation.id})`, e);
+                logger.error(
+                    { userId: user.id, invitationId: invitation.id, err: e },
+                    "Failed to link user to invitation"
+                );
             }
         }
 

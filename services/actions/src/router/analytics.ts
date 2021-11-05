@@ -11,10 +11,10 @@ router.use(checkEventSecret);
 
 router.post("/gatherPresenceStats", json(), async (req: Request, res: Response) => {
     try {
-        req.log.info(`${req.originalUrl}: gathering presence stats`);
+        req.log.info("Gathering presence stats");
         await gatherPresenceStats();
     } catch (e: any) {
-        req.log.error("Failure while gathering presence stats", e);
+        req.log.error({ err: e }, "Failure while gathering presence stats");
         res.status(500).json("Failure");
         return;
     }

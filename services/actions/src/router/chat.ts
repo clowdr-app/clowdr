@@ -16,14 +16,14 @@ router.post("/flag/inserted", async (req: Request, res: Response) => {
     try {
         assertType<Payload<FlagData>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleFlagInserted(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling flag inserted", e);
+        req.log.error({ err: e }, "Failure while handling flag inserted");
         res.status(500).json("Failure while handling flag inserted");
         return;
     }

@@ -94,7 +94,7 @@ export async function addUserToRoomMemberships(
     });
 
     if (!result.data.registrant_Registrant?.length) {
-        logger.error("Could not find an registrant to be added to the room people list", { userId, roomId });
+        logger.error({ userId, roomId }, "Could not find an registrant to be added to the room people list");
         throw new Error("Could not find an registrant to be added to the room people list");
     }
 
@@ -270,7 +270,7 @@ export async function handleCreateForItem(
         // todo: verify user role here. It's not critically important though.
         getRegistrant(userId, params.conferenceId);
     } catch (e: any) {
-        logger.error("Could not find registrant at conference when creating breakout room", e);
+        logger.error({ err: e }, "Could not find registrant at conference when creating breakout room");
         return {
             message: "Registrant is not a member of the conference",
         };
@@ -282,7 +282,7 @@ export async function handleCreateForItem(
             roomId,
         };
     } catch (e: any) {
-        logger.error("Failed to create content group breakout room", e);
+        logger.error({ err: e }, "Failed to create content group breakout room");
         return {
             message: "Could not create room",
         };
@@ -292,5 +292,5 @@ export async function handleCreateForItem(
 export async function handleRemoveOldRoomParticipants(logger: P.Logger): Promise<void> {
     logger.info("Removing room participants created more than 24 hours ago");
     const deleted = await deleteRoomParticipantsCreatedBefore(sub(new Date(), { hours: 24 }));
-    logger.info(`Removed ${deleted} room participants created more than 24 hours ago`);
+    logger.info({ count: deleted }, `Removed ${deleted} room participants created more than 24 hours ago`);
 }

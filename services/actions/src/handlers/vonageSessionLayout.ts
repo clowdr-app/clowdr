@@ -31,7 +31,7 @@ async function removeInvalidEventParticipantStreams(
         }
     `;
 
-    logger.info("Attempting to remove invalid VonageParticipantStreams", { vonageSessionId });
+    logger.info({ vonageSessionId }, "Attempting to remove invalid VonageParticipantStreams");
 
     await apolloClient.mutate({
         mutation: VonageSession_RemoveInvalidStreamsDocument,
@@ -60,7 +60,7 @@ export async function handleVonageSessionLayoutCreated(
     // record/receive the callback. So we'll just settle for removing invalid ones.
     const streams = await Vonage.listStreams(newRow.vonageSessionId);
     if (!streams) {
-        logger.error("Could not retrieve list of streams from Vonage", { vonageSessionId: newRow.vonageSessionId });
+        logger.error({ vonageSessionId: newRow.vonageSessionId }, "Could not retrieve list of streams from Vonage");
         throw new Error("Could not retrieve list of streams from Vonage");
     }
     await removeInvalidEventParticipantStreams(
@@ -74,12 +74,15 @@ export async function handleVonageSessionLayoutCreated(
     try {
         streamCount = await applyVonageSessionLayout(logger, newRow.vonageSessionId, layout);
     } catch (err) {
-        logger.error("Failed to apply Vonage layout", {
-            err,
-            vonageSessionId: newRow.vonageSessionId,
-            vonageSessionLayoutId: newRow.id,
-            type: layoutData.type,
-        });
+        logger.error(
+            {
+                err,
+                vonageSessionId: newRow.vonageSessionId,
+                vonageSessionLayoutId: newRow.id,
+                type: layoutData.type,
+            },
+            "Failed to apply Vonage layout"
+        );
     }
 
     try {
@@ -90,11 +93,14 @@ export async function handleVonageSessionLayoutCreated(
             });
         }
     } catch (err) {
-        logger.error("Failed to send Vonage layout signal", {
-            err,
-            vonageSessionId: newRow.vonageSessionId,
-            vonageSessionLayoutId: newRow.id,
-            type: layoutData.type,
-        });
+        logger.error(
+            {
+                err,
+                vonageSessionId: newRow.vonageSessionId,
+                vonageSessionLayoutId: newRow.id,
+                type: layoutData.type,
+            },
+            "Failed to send Vonage layout signal"
+        );
     }
 }

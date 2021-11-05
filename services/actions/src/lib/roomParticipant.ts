@@ -64,11 +64,14 @@ export async function addRoomParticipant(
     } catch (err) {
         if ("vonageConnectionId" in identifier) {
             // If there is already a row for this room, kick the previous connection before recording the new one
-            logger.info("Registrant is already in the Vonage room, kicking from previous session", {
-                roomId,
-                registrantId,
-                conferenceId,
-            });
+            logger.info(
+                {
+                    roomId,
+                    registrantId,
+                    conferenceId,
+                },
+                "Registrant is already in the Vonage room, kicking from previous session"
+            );
             await kickRegistrantFromRoom(logger, roomId, registrantId);
 
             await apolloClient.mutate({
@@ -83,11 +86,14 @@ export async function addRoomParticipant(
                 },
             });
         } else {
-            logger.info("Registrant is already in the Chime room, ignoring", {
-                roomId,
-                registrantId,
-                conferenceId,
-            });
+            logger.info(
+                {
+                    roomId,
+                    registrantId,
+                    conferenceId,
+                },
+                "Registrant is already in the Chime room, ignoring"
+            );
         }
     }
 }
@@ -145,7 +151,7 @@ export async function removeRoomParticipant(
             !removeResult.data?.delete_room_Participant?.affected_rows ||
             removeResult.data.delete_room_Participant.affected_rows === 0
         ) {
-            logger.warn("Could not find participant to remove for room", { roomId, registrantId });
+            logger.warn({ roomId, registrantId }, "Could not find participant to remove for room");
         } else if (vonageSessionId) {
             const response = await apolloClient.query({
                 query: CountRoomParticipantsDocument,
@@ -170,7 +176,7 @@ export async function removeRoomParticipant(
             }
         }
     } catch (err) {
-        logger.error("Failed to remove RoomParticipant record", { roomId, conferenceId, registrantId, err });
+        logger.error({ roomId, conferenceId, registrantId, err }, "Failed to remove RoomParticipant record");
         throw new Error("Failed to remove RoomParticipant record");
     }
 }

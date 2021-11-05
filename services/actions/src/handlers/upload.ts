@@ -407,7 +407,7 @@ export async function handleElementSubmitted(logger: P.Logger, args: submitEleme
                 uploadableElement.conference.name
             );
         } catch (e: any) {
-            logger.error("Failed to save new version of content item", e);
+            logger.error({ err: e }, "Failed to save new version of content item");
             return {
                 success: false,
                 message: "Failed to save new version of content item",
@@ -487,7 +487,7 @@ export async function handleUpdateSubtitles(
             Body: args.subtitleText,
         });
     } catch (e: any) {
-        logger.error("Failed to upload new subtitles", e);
+        logger.error({ err: e }, "Failed to upload new subtitles");
         return {
             message: "Failed to upload new subtitles",
             success: false,
@@ -512,7 +512,7 @@ export async function handleUpdateSubtitles(
             },
         });
     } catch (e: any) {
-        logger.error("Failed to save new content item version", e);
+        logger.error({ err: e }, "Failed to save new content item version");
         return {
             message: "Failed to save new content item version",
             success: false,
@@ -657,11 +657,7 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                 },
             });
         } catch (e: any) {
-            logger.error(
-                `Could not process jobs: ${emailsRecords
-                    .map((x) => x.jobId)
-                    .reduce((acc, x) => `${acc}, ${x}`, "")}:\n${e.toString()}`
-            );
+            logger.error({ jobIds: emailsRecords.map((x) => x.jobId), err: e }, "Could not process jobs");
 
             try {
                 const jobIds = emailsRecords.map((x) => x.jobId);
@@ -674,7 +670,7 @@ export async function processSendSubmissionRequestsJobQueue(logger: P.Logger): P
                     });
                 });
             } catch (e: any) {
-                logger.error(`Could not unmark failed emails: ${e.toString()}`);
+                logger.error({ err: e }, "Could not unmark failed emails");
             }
         }
     });

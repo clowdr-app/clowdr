@@ -20,7 +20,7 @@ export async function handleJoinRoom(
     const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
 
     if (!canJoinRoom) {
-        logger.warn("User tried to join a Chime room, but was not permitted", { payload, userId });
+        logger.warn({ payload, userId }, "User tried to join a Chime room, but was not permitted");
         throw new Error("User is not permitted to join this room");
     }
 
@@ -46,10 +46,13 @@ export async function handleChimeRegistrantJoinedNotification(
     const room = await callWithRetry(() => getRoomByChimeMeetingId(payload.meetingId));
 
     if (!room) {
-        logger.info("No room matching this Chime meeting, skipping participant addition.", {
-            meetingId: payload.meetingId,
-            registrantId: payload.externalUserId,
-        });
+        logger.info(
+            {
+                meetingId: payload.meetingId,
+                registrantId: payload.externalUserId,
+            },
+            "No room matching this Chime meeting, skipping participant addition."
+        );
         return;
     }
 
@@ -71,10 +74,13 @@ export async function handleChimeRegistrantLeftNotification(
     const room = await callWithRetry(() => getRoomByChimeMeetingId(payload.meetingId));
 
     if (!room) {
-        logger.info("No room matching this Chime meeting, skipping participant removal.", {
-            meetingId: payload.meetingId,
-            registrantId: payload.externalUserId,
-        });
+        logger.info(
+            {
+                meetingId: payload.meetingId,
+                registrantId: payload.externalUserId,
+            },
+            "No room matching this Chime meeting, skipping participant removal."
+        );
         return;
     }
 
@@ -87,13 +93,19 @@ export async function handleChimeMeetingEndedNotification(
     logger: P.Logger,
     payload: ChimeMeetingEndedDetail
 ): Promise<void> {
-    logger.info("Handling notification that Chime meeting ended", {
-        chimeMeetingId: payload.meetingId,
-        roomId: payload.externalMeetingId,
-    });
+    logger.info(
+        {
+            chimeMeetingId: payload.meetingId,
+            roomId: payload.externalMeetingId,
+        },
+        "Handling notification that Chime meeting ended"
+    );
     const count = await deleteRoomChimeMeetingForRoom(payload.externalMeetingId, payload.meetingId);
-    logger.info(`Deleted records for ${count} ended Chime meeting(s)`, {
-        chimeMeetingId: payload.meetingId,
-        roomId: payload.externalMeetingId,
-    });
+    logger.info(
+        {
+            chimeMeetingId: payload.meetingId,
+            roomId: payload.externalMeetingId,
+        },
+        `Deleted records for ${count} ended Chime meeting(s)`
+    );
 }

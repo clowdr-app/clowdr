@@ -87,7 +87,10 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
             const itemIds = R.uniq(result.data.content_Element.map((item) => item.itemId));
 
             if (itemIds.length > 1 || itemIds.length === 0) {
-                logger.error("Can only combine content items from exactly one content group", row.id, itemIds);
+                logger.error(
+                    { jobId: row.id, itemIds },
+                    "Can only combine content items from exactly one content group"
+                );
                 throw new Error("Can only combine content items from exactly one content group");
             }
 
@@ -196,9 +199,12 @@ export async function processCombineVideosJobQueue(logger: P.Logger): Promise<vo
 
             await startCombineVideosJob(logger, row.id, mediaConvertJobResult.Job.Id);
 
-            logger.info("Started CombineVideosJob MediaConvert job", row.id, mediaConvertJobResult.Job.Id);
+            logger.info(
+                { combineVideosJobId: row.id, mediaConvertJobId: mediaConvertJobResult.Job.Id },
+                "Started CombineVideosJob MediaConvert job"
+            );
         } catch (e: any) {
-            logger.error("Error while handling process CombineVideosJob", e);
+            logger.error({ err: e }, "Error while handling process CombineVideosJob");
             await failCombineVideosJob(logger, row.id, e.message);
         }
     });
@@ -220,7 +226,7 @@ export async function failCombineVideosJob(
     combineVideosJobId: string,
     message: string
 ): Promise<void> {
-    logger.info("Recording CombineVideosJob as failed", combineVideosJobId, message);
+    logger.info({ combineVideosJobId, message }, "Recording CombineVideosJob as failed");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -245,7 +251,7 @@ gql`
 `;
 
 async function startCombineVideosJob(logger: P.Logger, combineVideosJobId: string, mediaConvertJobId: string) {
-    logger.info("Recording CombineVideosJob as started", combineVideosJobId, mediaConvertJobId);
+    logger.info({ combineVideosJobId, mediaConvertJobId }, "Recording CombineVideosJob as started");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -310,7 +316,7 @@ export async function completeCombineVideosJob(
     subtitleS3Url: string,
     itemId: string
 ): Promise<void> {
-    logger.info("Recording CombineVideosJob as completed", combineVideosJobId);
+    logger.info({ combineVideosJobId }, "Recording CombineVideosJob as completed");
 
     try {
         const combineVideosJobResult = await callWithRetry(
@@ -325,7 +331,7 @@ export async function completeCombineVideosJob(
         );
 
         if (!combineVideosJobResult.data.job_queues_CombineVideosJob_by_pk) {
-            logger.error("Could not find related CombineVideosJob", combineVideosJobId);
+            logger.error({ combineVideosJobId }, "Could not find related CombineVideosJob");
             throw new Error("Could not find related CombineVideosJob");
         }
 

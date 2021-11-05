@@ -32,7 +32,7 @@ export const router = express.Router();
 router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Response) => {
     // Validate token
     if (!req.params.token || req.params.token !== process.env.VONAGE_WEBHOOK_SECRET) {
-        req.log.error("Received Vonage Session Monitoring webhook with invalid token", req.params.token);
+        req.log.error({ token: req.params.token }, "Received Vonage Session Monitoring webhook with invalid token");
         res.status(403).json("Access denied");
         return;
     }
@@ -42,7 +42,7 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
         assertType<SessionMonitoringWebhookReqBody>(req.body);
         payload = req.body;
     } catch (e: any) {
-        req.log.error("Invalid Vonage Session Monitoring webhook payload", e);
+        req.log.error({ err: e }, "Invalid Vonage Session Monitoring webhook payload");
         res.status(500).json("Failure");
         return;
     }
@@ -51,7 +51,7 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
     try {
         result = await handleVonageSessionMonitoringWebhook(req.log, payload);
     } catch (e: any) {
-        req.log.error("Failure while handling Vonage SessionMonitoring webhook", e);
+        req.log.error({ err: e }, "Failure while handling Vonage SessionMonitoring webhook");
         res.status(200).json("Failure");
         return;
     }
@@ -62,7 +62,7 @@ router.post("/sessionMonitoring/:token", json(), async (req: Request, res: Respo
 router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Response) => {
     // Validate token
     if (!req.params.token || req.params.token !== process.env.VONAGE_WEBHOOK_SECRET) {
-        req.log.error("Received Vonage Archive Monitoring webhook with invalid token", req.params.token);
+        req.log.error({ token: req.params.token }, "Received Vonage Archive Monitoring webhook with invalid token");
         res.status(403).json("Access denied");
         return;
     }
@@ -72,7 +72,7 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
         assertType<ArchiveMonitoringWebhookReqBody>(req.body);
         payload = req.body;
     } catch (e: any) {
-        req.log.error("Invalid Vonage Archive Monitoring webhook payload", e);
+        req.log.error({ err: e }, "Invalid Vonage Archive Monitoring webhook payload");
         res.status(500).json("Failure");
         return;
     }
@@ -81,7 +81,7 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
     try {
         result = await handleVonageArchiveMonitoringWebhook(req.log, payload);
     } catch (e: any) {
-        req.log.error("Failure while handling Vonage SessionMonitoring webhook", e);
+        req.log.error({ err: e }, "Failure while handling Vonage SessionMonitoring webhook");
         res.status(200).json("Failure");
         return;
     }
@@ -99,7 +99,7 @@ router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVo
         body = req.body;
         assertType<ActionPayload<joinEventVonageSessionArgs>>(body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, req.body.input, e);
+        req.log.error({ input: req.body.input, err: e }, "Invalid request");
         return res.status(200).json({});
     }
 
@@ -107,7 +107,7 @@ router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVo
         const result = await handleJoinEvent(req.log, body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failure while handling request`, req.body.input, e);
+        req.log.error({ input: req.body.input, err: e }, "Failure while handling request");
         return res.status(200).json({});
     }
 });
@@ -143,7 +143,7 @@ router.post("/toggleRecordingState", json(), async (req: Request, res: Response<
         body = req.body;
         assertType<ActionPayload<toggleVonageRecordingStateArgs>>(body);
     } catch (e: any) {
-        req.log.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
+        req.log.error({ input: req.body.input, err: e }, "Invalid request");
         return res.status(200).json({
             allowed: false,
             recordingState: false,
@@ -158,7 +158,7 @@ router.post("/toggleRecordingState", json(), async (req: Request, res: Response<
         );
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
+        req.log.error({ input: req.body.input, err: e }, "Failure while handling request");
         return res.status(200).json({
             allowed: false,
             recordingState: false,

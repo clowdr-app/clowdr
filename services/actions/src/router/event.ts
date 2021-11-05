@@ -21,14 +21,14 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<EventData>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleEventUpdated(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling event updated", e);
+        req.log.error({ err: e }, "Failure while handling event updated");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -36,11 +36,11 @@ router.post("/updated", json(), async (req: Request, res: Response) => {
 });
 
 router.post("/notifyStart", json(), async (req: Request, res: Response) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Event started");
     try {
         assertType<ScheduledEventPayload<{ eventId: string; startTime: string }>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -53,7 +53,7 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
             req.body.payload.updatedAt ?? null
         );
     } catch (e: any) {
-        req.log.error("Failure while handling event/notifyStart", e);
+        req.log.error({ err: e }, "Failure while handling event/notifyStart");
         res.status(500).json("Failure while handling scheduled trigger");
         return;
     }
@@ -61,11 +61,11 @@ router.post("/notifyStart", json(), async (req: Request, res: Response) => {
 });
 
 router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Event ended");
     try {
         assertType<ScheduledEventPayload<{ eventId: string; endTime: string }>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -78,7 +78,7 @@ router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
             req.body.payload.updatedAt ?? null
         );
     } catch (e: any) {
-        req.log.error("Failure while handling event/notifyEnd", e);
+        req.log.error({ err: e }, "Failure while handling event/notifyEnd");
         res.status(500).json("Failure while handling scheduled trigger");
         return;
     }
@@ -86,12 +86,12 @@ router.post("/notifyEnd", json(), async (req: Request, res: Response) => {
 });
 
 router.post("/stopBroadcasts", json(), async (req: Request, res: Response<StopEventBroadcastOutput>) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Stop broadcasts");
     const params = req.body.input;
     try {
         assertType<stopEventBroadcastArgs>(params);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, req.body, e);
+        req.log.error({ body: req.body, err: e }, "Invalid request");
         return res.status(500).json({ broadcastsStopped: 0 });
     }
 
@@ -99,7 +99,7 @@ router.post("/stopBroadcasts", json(), async (req: Request, res: Response<StopEv
         const result = await handleStopEventBroadcasts(req.log, params);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failed to stop event broadcasts`, params, e);
+        req.log.error({ params, err: e }, "Failed to stop event broadcasts");
         return res.status(500).json({ broadcastsStopped: 0 });
     }
 });

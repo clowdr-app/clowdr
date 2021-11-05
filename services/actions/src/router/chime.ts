@@ -23,7 +23,7 @@ export const router = express.Router();
 
 // Unprotected routes
 router.post("/notify", text(), async (req: Request, res: Response) => {
-    req.log.info(req.originalUrl);
+    req.log.info("Received Chime notification");
 
     try {
         const message = await validateSNSNotification(req.log, req.body);
@@ -33,10 +33,13 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.TopicArn !== process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
-            req.log.info("Received SNS notification for the wrong topic", {
-                originalUrl: req.originalUrl,
-                topicArn: message.TopicArn,
-            });
+            req.log.info(
+                {
+                    originalUrl: req.originalUrl,
+                    topicArn: message.TopicArn,
+                },
+                "Received SNS notification for the wrong topic"
+            );
             res.status(403).json("Access denied");
             return;
         }
@@ -48,18 +51,21 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         }
 
         if (message.Type === "Notification") {
-            req.log.info("Received SNS notification", {
-                originalUrl: req.originalUrl,
-                messageId: message.MessageId,
-                message: message.Message,
-            });
+            req.log.info(
+                {
+                    originalUrl: req.originalUrl,
+                    messageId: message.MessageId,
+                    message: message.Message,
+                },
+                "Received SNS notification"
+            );
 
             let event: ChimeEventBase;
             try {
                 event = JSON.parse(message.Message);
                 assertType<ChimeEventBase>(event);
             } catch (err) {
-                req.log.error("Unrecognised notification message", { originalUrl: req.originalUrl, err });
+                req.log.error({ err }, "Unrecognised notification message");
                 res.status(500).json("Unrecognised notification message");
                 return;
             }
@@ -69,19 +75,22 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 try {
                     assertType<ChimeRegistrantLeftDetail>(event.detail);
                 } catch (err) {
-                    req.log.error("Invalid SNS event detail", {
-                        eventType: "chime:RegistrantLeft",
-                        eventDetail: event.detail,
-                    });
+                    req.log.error(
+                        {
+                            eventType: "chime:RegistrantLeft",
+                            eventDetail: event.detail,
+                        },
+                        "Invalid SNS event detail"
+                    );
                     res.status(500).json("Invalid event detail");
                     return;
                 }
 
                 try {
-                    req.log.info("Received chime:RegistrantLeft notification", detail);
+                    req.log.info({ detail }, "Received chime:RegistrantLeft notification");
                     await handleChimeRegistrantLeftNotification(req.log, detail);
                 } catch (err) {
-                    req.log.error("Failure while handling chime:RegistrantLeft event", { err });
+                    req.log.error({ err }, "Failure while handling chime:RegistrantLeft event");
                 }
                 res.status(200).json("OK");
                 return;
@@ -92,19 +101,22 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 try {
                     assertType<ChimeRegistrantJoinedDetail>(event.detail);
                 } catch (err) {
-                    req.log.error("Invalid SNS event detail", {
-                        eventType: "chime:RegistrantJoined",
-                        eventDetail: event.detail,
-                    });
+                    req.log.error(
+                        {
+                            eventType: "chime:RegistrantJoined",
+                            eventDetail: event.detail,
+                        },
+                        "Invalid SNS event detail"
+                    );
                     res.status(500).json("Invalid event detail");
                     return;
                 }
 
                 try {
-                    req.log.info("Received chime:RegistrantJoined notification", detail);
+                    req.log.info({ detail }, "Received chime:RegistrantJoined notification");
                     await handleChimeRegistrantJoinedNotification(req.log, detail);
                 } catch (err) {
-                    req.log.error("Failure while handling chime:RegistrantJoined event", { err });
+                    req.log.error({ err }, "Failure while handling chime:RegistrantJoined event");
                 }
                 res.status(200).json("OK");
                 return;
@@ -115,19 +127,22 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
                 try {
                     assertType<ChimeMeetingEndedDetail>(event.detail);
                 } catch (err) {
-                    req.log.error("Invalid SNS event detail", {
-                        eventType: "chime:MeetingEnded",
-                        eventDetail: event.detail,
-                    });
+                    req.log.error(
+                        {
+                            eventType: "chime:MeetingEnded",
+                            eventDetail: event.detail,
+                        },
+                        "Invalid SNS event detail"
+                    );
                     res.status(500).json("Invalid event detail");
                     return;
                 }
 
                 try {
-                    req.log.info("Received chime:MeetingEnded notification", detail);
+                    req.log.info({ detail }, "Received chime:MeetingEnded notification");
                     await handleChimeMeetingEndedNotification(req.log, detail);
                 } catch (err) {
-                    req.log.error("Failure while handling chime:MeetingEnded event", { err });
+                    req.log.error({ err }, "Failure while handling chime:MeetingEnded event");
                 }
                 res.status(200).json("OK");
                 return;
@@ -136,7 +151,7 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
             res.status(200).json("OK");
         }
     } catch (err) {
-        req.log.error("Failed to handle request", { originalUrl: req.originalUrl, err });
+        req.log.error({ err }, "Failed to handle request");
         res.status(500).json("Failure");
     }
 });
@@ -150,7 +165,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChim
         body = req.body;
         assertType<ActionPayload<joinRoomChimeSessionArgs>>(body);
     } catch (e: any) {
-        req.log.error("Invalid request", { url: req.originalUrl, input: req.body.input, err: e });
+        req.log.error({ input: req.body.input, err: e }, "Invalid request");
         return res.status(200).json({
             message: "Invalid request",
         });
@@ -160,7 +175,7 @@ router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChim
         const result = await handleJoinRoom(req.log, body.input, body.session_variables["x-hasura-user-id"]);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error("Failure while handling request", { url: req.originalUrl, input: req.body.input, err: e });
+        req.log.error({ input: req.body.input, err: e }, "Failure while handling request");
         return res.status(200).json({
             message: "Failure while handling request",
         });

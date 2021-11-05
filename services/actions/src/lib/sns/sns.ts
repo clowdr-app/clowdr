@@ -16,7 +16,7 @@ export async function validateSNSNotification(logger: P.Logger, body: string): P
         await validate(message);
         assertType<SNSNotification<any>>(message);
     } catch (e: any) {
-        logger.info("Received invalid SNS notification", e, body);
+        logger.info({ err: e, body }, "Received invalid SNS notification");
         return null;
     }
 
@@ -29,7 +29,7 @@ async function confirmSubscription(logger: P.Logger, url: string): Promise<boole
         logger.info("Confirmed subscription");
         return true;
     } catch (e: any) {
-        logger.error("Failed to confirm subscription", e);
+        logger.error({ err: e }, "Failed to confirm subscription");
         return false;
     }
 }

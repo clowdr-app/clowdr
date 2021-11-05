@@ -31,11 +31,11 @@ export async function handleRegistrantGoogleAccountDeleted(
     const accessToken = oldRow.tokenData.access_token;
 
     if (accessToken) {
-        logger.info("Revoking credentials for registrant Google account", { googleAccountId: oldRow.id });
+        logger.info({ googleAccountId: oldRow.id }, "Revoking credentials for registrant Google account");
         const oauth2Client = createOAuth2Client();
         oauth2Client.setCredentials(payload.event.data.old.tokenData);
         await callWithRetry(async () => await oauth2Client.revokeCredentials());
-        logger.info("Revoked credentials for registrant Google account", { googleAccountId: oldRow.id });
+        logger.info({ googleAccountId: oldRow.id }, "Revoked credentials for registrant Google account");
     }
     return;
 }
@@ -81,7 +81,7 @@ export async function createGoogleOAuthClient(logger: P.Logger, tokenData: unkno
     const errors = validateSync(credentials);
 
     if (errors.length) {
-        logger.error("Invalid Google credentials", { errors });
+        logger.error({ errors }, "Invalid Google credentials");
         throw new Error("Invalid Google credentials");
     }
 
@@ -95,6 +95,7 @@ export async function handleRefreshYouTubeData(
     logger: P.Logger,
     payload: refreshYouTubeDataArgs
 ): Promise<RefreshYouTubeDataOutput> {
+    logger.info({ registrantId: payload.registrantId }, "Refreshing YouTube data");
     const registrantGoogleAccount = await apolloClient.query({
         query: RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument,
         variables: {
@@ -107,7 +108,10 @@ export async function handleRefreshYouTubeData(
         !registrantGoogleAccount.data.registrant_GoogleAccount_by_pk?.registrantId ||
         registrantGoogleAccount.data.registrant_GoogleAccount_by_pk.registrantId !== payload.registrantId
     ) {
-        logger.error("Could not find matching Google account for registrant", payload.registrantGoogleAccountId);
+        logger.error(
+            { registrantGoogleAccountId: payload.registrantGoogleAccountId },
+            "Could not find matching Google account for registrant"
+        );
         throw new Error("Could not find Google account");
     }
 

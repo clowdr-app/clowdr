@@ -58,7 +58,7 @@ export async function handleMediaPackageHarvestJobUpdated(
             !payload.event.data.old ||
             (payload.event.data.old && payload.event.data.old.jobStatusName !== Job_Queues_JobStatus_Enum.New)
         ) {
-            logger.info("Creating new MediaPackage harvest job", newRow.id, newRow.eventId);
+            logger.info({ jobId: newRow.id, eventId: newRow.eventId }, "Creating new MediaPackage harvest job");
             const eventResult = await apolloClient.query({
                 query: Recording_GetEventDocument,
                 variables: {
@@ -87,7 +87,12 @@ export async function handleMediaPackageHarvestJobUpdated(
                     awsJobId: harvestJobId,
                 },
             });
-            logger.info("Started MediaPackage harvest job", harvestJobId, newRow.eventId);
+            logger.info(
+                { harvestJobId, eventId: newRow.eventId },
+                "Started MediaPackage harvest job",
+                harvestJobId,
+                newRow.eventId
+            );
         }
     }
 }
@@ -107,7 +112,7 @@ export async function createMediaPackageHarvestJob(
     eventId: string,
     conferenceId: string
 ): Promise<void> {
-    logger.info("Creating MediaPackage harvest job", eventId);
+    logger.info({ eventId }, "Creating MediaPackage harvest job");
 
     await apolloClient.mutate({
         mutation: CreateMediaPackageHarvestJobDocument,
@@ -172,7 +177,7 @@ export async function completeMediaPackageHarvestJob(
     bucketName: string,
     manifestKey: string
 ): Promise<void> {
-    logger.info("AWS harvest job completed", { awsHarvestJobId });
+    logger.info({ awsHarvestJobId }, "AWS harvest job completed");
 
     const result = await callWithRetry(
         async () =>
@@ -185,16 +190,22 @@ export async function completeMediaPackageHarvestJob(
     );
 
     if (!result.data.job_queues_MediaPackageHarvestJob.length) {
-        logger.error("Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job", {
-            awsHarvestJobId,
-        });
+        logger.error(
+            {
+                awsHarvestJobId,
+            },
+            "Could not find MediaPackageHarvestJob entry associated with this MediaPackage Harvest Job"
+        );
         return;
     }
 
     const job = result.data.job_queues_MediaPackageHarvestJob[0];
 
     if (!job.event.item) {
-        logger.warn("No ContentGroup associated with harvested event, skipping.", awsHarvestJobId, job.event.id);
+        logger.warn(
+            { awsHarvestJobId, eventId: job.event.id },
+            "No ContentGroup associated with harvested event, skipping."
+        );
         await ignoreMediaPackageHarvestJob(logger, job.id, bucketName, manifestKey);
         return;
     }
@@ -212,7 +223,7 @@ export async function completeMediaPackageHarvestJob(
         },
     ];
 
-    logger.info("Completing MediaPackage harvest job", job.event.id, job.id);
+    logger.info({ eventId: job.event.id, jobId: job.id }, "Completing MediaPackage harvest job");
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
         async () =>
@@ -248,7 +259,7 @@ export async function ignoreMediaPackageHarvestJob(
     bucketName: string,
     manifestKey: string
 ): Promise<void> {
-    logger.info("Ignoring result of MediaPackage harvest job", id);
+    logger.info({ jobId: id }, "Ignoring result of MediaPackage harvest job");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({
@@ -277,7 +288,7 @@ export async function failMediaPackageHarvestJob(
     awsHarvestJobId: string,
     message: string
 ): Promise<void> {
-    logger.info("Recording failure of MediaPackage harvest job", awsHarvestJobId, message);
+    logger.info({ awsHarvestJobId, message }, "Recording failure of MediaPackage harvest job");
     await callWithRetry(
         async () =>
             await apolloClient.mutate({

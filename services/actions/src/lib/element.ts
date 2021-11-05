@@ -116,7 +116,7 @@ export async function addNewElementVersion(
     });
 
     if (result.errors) {
-        logger.error("Failed to add new content item version", result.errors);
+        logger.error({ errors: result.errors }, "Failed to add new content item version");
         throw new Error(`Failed to add new content item version: ${result.errors}`);
     }
 }
@@ -127,7 +127,7 @@ export async function addNewBroadcastTranscode(
     s3Url: string,
     durationSeconds: number | null
 ): Promise<void> {
-    logger.info("Updating content item with result of broadcast transcode", elementId);
+    logger.info({ elementId }, "Updating content item with result of broadcast transcode");
     const transcodeDetails: BroadcastTranscodeDetails = {
         updatedTimestamp: new Date().getTime(),
         durationSeconds: durationSeconds ?? undefined,

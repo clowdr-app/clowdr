@@ -136,7 +136,7 @@ const chime = new Chime({
                 sessionToken: Credentials.SessionToken,
             };
 
-            logger.info("Generated new Chime credentials", { roleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN });
+            logger.info({ roleArn: process.env.AWS_CHIME_MANAGER_ROLE_ARN }, "Generated new Chime credentials");
         }
 
         return chimeCredentials;

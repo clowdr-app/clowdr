@@ -15,7 +15,7 @@ router.post("/inserted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ConferencePrepareJobData>>(req.body);
     } catch (e: any) {
-        req.log.error("Received incorrect payload", e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -23,14 +23,15 @@ router.post("/inserted", json(), async (req: Request, res: Response) => {
     const params: Payload<ConferencePrepareJobData> = req.body;
     handleConferencePrepareJobInserted(req.log, params)
         .then(() => {
-            req.log.info("Finished handling new ConferencePrepareJob", params.id, params.event.data.new?.id);
+            req.log.info({ id: params.id }, "Finished handling new ConferencePrepareJob");
         })
         .catch((e) => {
             req.log.error(
-                "Failure while handling ConferencePrepareJob inserted",
-                params.id,
-                params.event.data.new?.id,
-                e
+                {
+                    id: params.id,
+                    err: e,
+                },
+                "Failure while handling ConferencePrepareJob inserted"
             );
         });
     return res.status(200).json("OK");

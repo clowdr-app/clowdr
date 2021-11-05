@@ -33,32 +33,25 @@ export async function startBroadcastIfOngoingEvent(
         },
     });
 
-    if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
-        logger.error(
-            "Error while retrieving ongoing broadcast events related to a Vonage session.",
-            payload.sessionId,
-            ongoingMatchingEvents.error,
-            ongoingMatchingEvents.errors
-        );
-        return false;
-    }
-
     if (ongoingMatchingEvents.data.schedule_Event.length === 0) {
-        logger.info("No ongoing broadcast events connected to this session.", payload.sessionId);
+        logger.info({ sessionId: payload.sessionId }, "No ongoing broadcast events connected to this session.");
         return true;
     }
 
     if (ongoingMatchingEvents.data.schedule_Event.length > 1) {
         logger.error(
-            "Unexpectedly found multiple ongoing broadcast events connected to this session. Aborting.",
-            payload.sessionId
+            { sessionId: payload.sessionId },
+            "Unexpectedly found multiple ongoing broadcast events connected to this session. Aborting."
         );
         return false;
     }
 
     const ongoingMatchingEvent = ongoingMatchingEvents.data.schedule_Event[0];
 
-    logger.info("Vonage session has ongoing matching event, ensuring broadcast is started", payload.sessionId);
+    logger.info(
+        { sessionId: payload.sessionId },
+        "Vonage session has ongoing matching event, ensuring broadcast is started"
+    );
     await startEventBroadcast(logger, ongoingMatchingEvent.id);
 
     return true;
@@ -76,25 +69,15 @@ export async function startArchiveIfOngoingEvent(
         },
     });
 
-    if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
-        logger.error(
-            "Error while retrieving ongoing archivable events related to a Vonage session.",
-            payload.sessionId,
-            ongoingMatchingEvents.error,
-            ongoingMatchingEvents.errors
-        );
-        return false;
-    }
-
     if (ongoingMatchingEvents.data.schedule_Event.length === 0) {
-        logger.info("No ongoing archivable events connected to this session.", payload.sessionId);
+        logger.info({ sessionId: payload.sessionId }, "No ongoing archivable events connected to this session.");
         return true;
     }
 
     if (ongoingMatchingEvents.data.schedule_Event.length > 1) {
         logger.error(
-            "Unexpectedly found multiple ongoing archivable events connected to this session. Aborting.",
-            payload.sessionId
+            { sessionId: payload.sessionId },
+            "Unexpectedly found multiple ongoing archivable events connected to this session. Aborting."
         );
         return false;
     }
@@ -102,7 +85,10 @@ export async function startArchiveIfOngoingEvent(
     const ongoingMatchingEvent = ongoingMatchingEvents.data.schedule_Event[0];
 
     if (ongoingMatchingEvent.enableRecording) {
-        logger.info("Vonage session has ongoing matching event, ensuring archive is started", payload.sessionId);
+        logger.info(
+            { sessionId: payload.sessionId },
+            "Vonage session has ongoing matching event, ensuring archive is started"
+        );
 
         let registrantId: string | undefined;
         if (payload.event === "connectionCreated") {
@@ -136,8 +122,8 @@ export async function startVonageArchive(
     const recordingId = await startRoomVonageArchiving(logger, roomId, eventId, registrantId);
     if (recordingId) {
         logger.info(
-            "Archive just started, adding to registrant's saved recordings (because join session might not have).",
-            vonageSessionId
+            { vonageSessionId },
+            "Archive just started, adding to registrant's saved recordings (because join session might not have)."
         );
 
         try {
@@ -151,12 +137,15 @@ export async function startVonageArchive(
                 });
             }
         } catch (error) {
-            logger.error("Could not save Vonage recording to registrant's list of recordings!", {
-                sessionId: vonageSessionId,
-                roomId,
-                eventId,
-                error,
-            });
+            logger.error(
+                {
+                    sessionId: vonageSessionId,
+                    roomId,
+                    eventId,
+                    error,
+                },
+                "Could not save Vonage recording to registrant's list of recordings!"
+            );
         }
     }
 }
@@ -188,8 +177,8 @@ export async function stopArchiveIfNoOngoingEvent(
         const streams = await callWithRetry(() => Vonage.listStreams(payload.sessionId));
         if (!streams) {
             logger.error(
-                "Error: Unable to retrieve streams for Vonage session. Skipping stop archive check.",
-                payload.sessionId
+                { sessionId: payload.sessionId },
+                "Error: Unable to retrieve streams for Vonage session. Skipping stop archive check."
             );
             return false;
         }
@@ -206,40 +195,30 @@ export async function stopArchiveIfNoOngoingEvent(
             },
         });
 
-        if (ongoingMatchingEvents.error || ongoingMatchingEvents.errors) {
-            logger.error(
-                "Error while retrieving ongoing archivable events related to a Vonage session.",
-                payload.sessionId,
-                ongoingMatchingEvents.error,
-                ongoingMatchingEvents.errors
-            );
-            return false;
-        }
-
         if (ongoingMatchingEvents.data.schedule_Event.length === 0) {
             if (ongoingMatchingEvents.data.room_Room.length === 1) {
                 logger.info(
-                    "No ongoing archivable events connected to this session. Stopping archiving.",
-                    payload.sessionId
+                    { sessionId: payload.sessionId },
+                    "No ongoing archivable events connected to this session. Stopping archiving."
                 );
                 await stopRoomVonageArchiving(logger, ongoingMatchingEvents.data.room_Room[0].id, undefined);
             } else {
                 logger.error(
-                    "Error: Found multiple rooms for the same public Vonage session id! Can't stop archiving.",
-                    payload.sessionId
+                    { sessionId: payload.sessionId },
+                    "Error: Found multiple rooms for the same public Vonage session id! Can't stop archiving."
                 );
                 return false;
             }
         } else {
             logger.info(
-                "Ongoing archivable events connected to this session. Not stopping archiving.",
-                payload.sessionId
+                { sessionId: payload.sessionId },
+                "Ongoing archivable events connected to this session. Not stopping archiving."
             );
         }
 
         return true;
     } catch (e: any) {
-        logger.error("Error handling stopArchiveIfNoOngoingEvent", payload.sessionId, e);
+        logger.error({ sessionId: payload.sessionId, err: e }, "Error handling stopArchiveIfNoOngoingEvent");
         return false;
     }
 }
@@ -253,9 +232,8 @@ export async function addAndRemoveRoomParticipants(
     if (payload.event === "connectionCreated") {
         try {
             logger.info(
-                "connectionCreated: adding participant to room if necessary",
-                payload.sessionId,
-                payload.connection.data
+                { sessionId: payload.sessionId, connectionData: payload.connection.data },
+                "connectionCreated: adding participant to room if necessary"
             );
             const data = JSON.parse(payload.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
@@ -263,10 +241,13 @@ export async function addAndRemoveRoomParticipants(
             const room = await getRoomByVonageSessionId(payload.sessionId);
 
             if (!room) {
-                logger.info("No room matching this Vonage session, skipping participant addition.", {
-                    sessionId: payload.sessionId,
-                    registrantId,
-                });
+                logger.info(
+                    {
+                        sessionId: payload.sessionId,
+                        registrantId,
+                    },
+                    "No room matching this Vonage session, skipping participant addition."
+                );
                 success = false;
             } else {
                 await callWithRetry(
@@ -282,10 +263,8 @@ export async function addAndRemoveRoomParticipants(
             }
         } catch (e: any) {
             logger.error(
-                "Failed to handle Vonage connectionCreated event",
-                payload.sessionId,
-                payload.connection.data,
-                e
+                { err: e, sessionId: payload.sessionId, connectionData: payload.connection.data },
+                "Failed to handle Vonage connectionCreated event"
             );
             success = false;
         }
@@ -294,19 +273,21 @@ export async function addAndRemoveRoomParticipants(
     if (payload.event === "connectionDestroyed") {
         try {
             logger.info(
-                "connectionDestroyed: removing participant from room if necessary",
-                payload.sessionId,
-                payload.connection.data
+                { sessionId: payload.sessionId, connectionData: payload.connection.data },
+                "connectionDestroyed: removing participant from room if necessary"
             );
             const data = JSON.parse(payload.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
             const room = await getRoomByVonageSessionId(payload.sessionId);
 
             if (!room) {
-                logger.info("No room matching this Vonage session, skipping participant removal.", {
-                    sessionId: payload.sessionId,
-                    registrantId,
-                });
+                logger.info(
+                    {
+                        sessionId: payload.sessionId,
+                        registrantId,
+                    },
+                    "No room matching this Vonage session, skipping participant removal."
+                );
                 success = false;
             } else {
                 await callWithRetry(
@@ -322,10 +303,8 @@ export async function addAndRemoveRoomParticipants(
             }
         } catch (e: any) {
             logger.error(
-                "Failed to handle Vonage connectionDestroyed event",
-                payload.sessionId,
-                payload.connection.data,
-                e
+                { err: e, sessionId: payload.sessionId, connectionData: payload.connection.data },
+                "Failed to handle Vonage connectionDestroyed event"
             );
             success = false;
         }
@@ -343,9 +322,8 @@ export async function addAndRemoveVonageParticipantStreams(
     if (payload.event === "streamCreated") {
         try {
             logger.info(
-                "streamCreated: adding participant stream to event if necessary",
-                payload.sessionId,
-                payload.stream.id
+                { sessionId: payload.sessionId, streamId: payload.stream.id },
+                "streamCreated: adding participant stream to event if necessary"
             );
             const data = JSON.parse(payload.stream.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
@@ -353,7 +331,10 @@ export async function addAndRemoveVonageParticipantStreams(
                 async () => await addVonageParticipantStream(logger, payload.sessionId, registrantId, payload.stream)
             );
         } catch (e: any) {
-            logger.error("Failed to handle Vonage streamCreated event", payload.sessionId, payload.stream.id, e);
+            logger.error(
+                { sessionId: payload.sessionId, streamId: payload.stream.id, err: e },
+                "Failed to handle Vonage streamCreated event"
+            );
             success = false;
         }
     }
@@ -361,9 +342,8 @@ export async function addAndRemoveVonageParticipantStreams(
     if (payload.event === "streamDestroyed") {
         try {
             logger.info(
-                "streamCreated: removing participant stream from event if necessary",
-                payload.sessionId,
-                payload.stream.id
+                { sessionId: payload.sessionId, streamId: payload.stream.id },
+                "streamCreated: removing participant stream from event if necessary"
             );
             const data = JSON.parse(payload.stream.connection.data);
             const { registrantId } = assertType<CustomConnectionData>(data);
@@ -371,7 +351,10 @@ export async function addAndRemoveVonageParticipantStreams(
                 async () => await removeVonageParticipantStream(logger, payload.sessionId, registrantId, payload.stream)
             );
         } catch (e: any) {
-            logger.error("Failed to handle Vonage streamDestroyed event", payload.sessionId, payload.stream.id, e);
+            logger.error(
+                { sessionId: payload.sessionId, streamId: payload.stream.id, err: e },
+                "Failed to handle Vonage streamDestroyed event"
+            );
             success = false;
         }
     }

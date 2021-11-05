@@ -122,12 +122,12 @@ const jsonParser = json();
 
 app.post("/invitation/confirm/current", jsonParser, checkJwt, async (req: Request, res: Response) => {
     const params: invitationConfirmCurrentArgs = req.body.input;
-    req.log.info("Invitation/confirm/current", params);
+    req.log.info({ params }, "Invitation/confirm/current");
     try {
         const result = await invitationConfirmCurrentHandler(req.log, params, (req as any).user.sub);
         return res.json(result);
     } catch (e: any) {
-        req.log.error("Failure while processing /invitation/confirm/current", e);
+        req.log.error({ err: e }, "Failure while processing /invitation/confirm/current");
         res.status(500).json("Failure");
         return;
     }
@@ -137,7 +137,7 @@ app.use(errorHandler);
 
 const portNumber = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 export const server = app.listen(portNumber, function () {
-    logger.info(`App is listening on port ${process.env.PORT}!`);
+    logger.info({ port: process.env.PORT }, "Actions service is listening");
     logger.info("Initialising AWS client");
     initialiseAwsClient(logger).then(() => {
         logger.info("Initialised AWS client");

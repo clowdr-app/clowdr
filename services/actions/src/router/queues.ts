@@ -14,10 +14,10 @@ router.use(checkEventSecret);
 
 router.post("/processEmailsJobQueue", json(), async (req: Request, res: Response) => {
     try {
-        req.log.info(`${req.originalUrl}: processing emails job queue`);
+        req.log.info("Processing emails job queue");
         await processEmailsJobQueue(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing emails job queue", e);
+        req.log.error({ err: e }, "Failure while processing emails job queue");
         res.status(500).json("Failure");
         return;
     }
@@ -26,10 +26,10 @@ router.post("/processEmailsJobQueue", json(), async (req: Request, res: Response
 
 router.post("/processSendSubmissionRequestsJobQueue", json(), async (req: Request, res: Response) => {
     try {
-        req.log.info(`${req.originalUrl}: processing send submission requests job queue`);
+        req.log.info("Processing send submission requests job queue");
         await processSendSubmissionRequestsJobQueue(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing send submission requests job queue", e);
+        req.log.error({ err: e }, "Failure while processing send submission requests job queue");
         res.status(500).json("Failure");
         return;
     }
@@ -38,10 +38,10 @@ router.post("/processSendSubmissionRequestsJobQueue", json(), async (req: Reques
 
 router.post("/processInvitationEmailsQueue", json(), async (req: Request, res: Response) => {
     try {
-        req.log.info(`${req.originalUrl}: processing invitation emails job queue`);
+        req.log.info("Processing invitation emails job queue");
         await processInvitationEmailsQueue(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing invitations emails job queue", e);
+        req.log.error({ err: e }, "Failure while processing invitations emails job queue");
         res.status(500).json("Failure");
         return;
     }
@@ -50,10 +50,10 @@ router.post("/processInvitationEmailsQueue", json(), async (req: Request, res: R
 
 router.post("/processCustomEmailsJobQueue", json(), async (req: Request, res: Response) => {
     try {
-        req.log.info(`${req.originalUrl}: processing custom emails job queue`);
+        req.log.info("Processing custom emails job queue");
         await processCustomEmailsJobQueue(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing invitations emails job queue", e);
+        req.log.error({ err: e }, "Failure while processing invitations emails job queue");
         res.status(500).json("Failure");
         return;
     }

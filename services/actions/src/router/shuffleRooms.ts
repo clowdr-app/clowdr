@@ -15,14 +15,14 @@ router.post("/entered", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<ShuffleQueueEntryData>>(req.body);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: received incorrect payload`, e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
     try {
         await handleShuffleQueueEntered(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling shuffle queue entered", e);
+        req.log.error({ err: e }, "Failure while handling shuffle queue entered");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -33,7 +33,7 @@ router.post("/process", async (req: Request, res: Response) => {
     try {
         await processShuffleQueues(req.log);
     } catch (e: any) {
-        req.log.error("Failure while processing shuffle queues", e);
+        req.log.error({ err: e }, "Failure while processing shuffle queues");
         res.status(500).json("Failure");
         return;
     }

@@ -149,19 +149,19 @@ router.post("/photo/update", async (req: Request, res: Response) => {
     try {
         assertType<updateProfilePhotoArgs>(params);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, params);
+        req.log.error({ params }, "Invalid request");
         return res.status(200).json({
             ok: false,
         });
     }
 
     try {
-        req.log.info(`${req.originalUrl}: profile photo upload requested`);
+        req.log.info("Profile photo upload requested");
         const userId = req.body.session_variables["x-hasura-user-id"];
         const result = await handleUpdateProfilePhoto(userId, params.registrantId, params.s3URL);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: profile photo upload failed`);
+        req.log.error("Profile photo upload failed");
         return res.status(200).json({
             ok: false,
         });

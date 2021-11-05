@@ -50,7 +50,7 @@ export async function completeVideoRenderJob(
     });
 
     if (!broadcastRenderJobResult.data.video_VideoRenderJob_by_pk) {
-        logger.warn("Could not complete video render job: video render job not found", videoRenderJobId);
+        logger.warn({ videoRenderJobId }, "Could not complete video render job: video render job not found");
         return {
             status: "CouldNotFindVideoRenderJob",
         };
@@ -60,9 +60,8 @@ export async function completeVideoRenderJob(
 
     if (videoRenderJob.conferencePrepareJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
         logger.warn(
-            "Could not complete video render job: conference prepare job not in progress",
-            videoRenderJobId,
-            videoRenderJob.conferencePrepareJob.jobStatusName
+            { videoRenderJobId, jobStatusName: videoRenderJob.conferencePrepareJob.jobStatusName },
+            "Could not complete video render job: conference prepare job not in progress"
         );
         await expireVideoRenderJob(
             videoRenderJobId,
@@ -75,9 +74,8 @@ export async function completeVideoRenderJob(
 
     if (videoRenderJob.jobStatusName !== Job_Queues_JobStatus_Enum.InProgress) {
         logger.warn(
-            "Could not complete video render job: video render job not in progress",
-            videoRenderJobId,
-            videoRenderJob.jobStatusName
+            { videoRenderJobId, jobStatusName: videoRenderJob.jobStatusName },
+            "Could not complete video render job: video render job not in progress"
         );
         if (videoRenderJob.jobStatusName === Job_Queues_JobStatus_Enum.New) {
             await failVideoRenderJob(videoRenderJobId, "Tried to complete job before it started.");
@@ -196,7 +194,8 @@ export async function allVideoRenderJobsCompleted(logger: P.Logger, conferencePr
 
     if (result.data.video_VideoRenderJob_aggregate.aggregate?.count) {
         logger.info(
-            `Conference prepare job ${conferencePrepareJobId}: ${result.data.video_VideoRenderJob_aggregate.aggregate.count} jobs remaining`
+            { conferencePrepareJobId, jobsRemaining: result.data.video_VideoRenderJob_aggregate.aggregate.count },
+            "Some conference prepare jobs remaining"
         );
     }
 

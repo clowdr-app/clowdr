@@ -124,7 +124,10 @@ export async function completeTranscriptionJob(logger: P.Logger, awsTranscribeJo
     });
 
     if (transcriptionJobResult.errors) {
-        logger.error(`Failed to record completed transcription for ${job.elementId}`, transcriptionJobResult.errors);
+        logger.error(
+            { elementId: job.elementId, errors: transcriptionJobResult.errors },
+            "Failed to record completed transcription"
+        );
         throw new Error(`Failed to record completed transcription for ${job.elementId}`);
     }
 }
@@ -173,22 +176,25 @@ export async function failTranscriptionJob(logger: P.Logger, awsTranscribeJobNam
     });
 
     if (transcriptionJobResult.errors) {
-        logger.error(`Failed to record failure of transcribe for ${job.elementId}`, transcriptionJobResult.errors);
+        logger.error(
+            { elementId: job.elementId, errors: transcriptionJobResult.errors },
+            "Failed to record failure of transcribe"
+        );
         throw new Error(`Failed to record failure of transcribe for ${job.elementId}`);
     }
 }
 
 export async function startTranscribe(logger: P.Logger, transcodeS3Url: string, elementId: string): Promise<void> {
-    logger.info(`Starting transcribe for ${transcodeS3Url}`);
+    logger.info({ transcodeS3Url, elementId }, "Starting transcribe");
     const { bucket, key } = AmazonS3URI(transcodeS3Url);
 
     if (bucket !== process.env.AWS_CONTENT_BUCKET_ID) {
-        logger.error("Unexpected S3 bucket", bucket);
+        logger.error({ bucket, elementId }, "Unexpected S3 bucket");
         throw new Error(`Unexpected S3 bucket: ${bucket}`);
     }
 
     if (!key) {
-        logger.error("Could not parse S3 URL:", transcodeS3Url);
+        logger.error({ transcodeS3Url, elementId }, "Could not parse S3 URL");
         throw new Error(`Could not parse S3 URL: ${transcodeS3Url}`);
     }
 
@@ -221,5 +227,5 @@ export async function startTranscribe(logger: P.Logger, transcodeS3Url: string, 
         },
     });
 
-    logger.info(`Started transcribe for ${transcodeS3Url}`);
+    logger.info({ transcodeS3Url, elementId }, "Started transcribe");
 }

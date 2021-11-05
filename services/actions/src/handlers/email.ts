@@ -156,11 +156,12 @@ export async function insertEmails(
         });
     if (emailsToInsert.length < emails.length) {
         logger.info(
+            { emailsToInsert: emailsToInsert.length, totalEmails: emails.length },
             `${emailsToInsert.length} of ${emails.length} are being sent. Check ALLOW_EMAILS_TO_DOMAINS system configuration is configured correctly.`
         );
     }
 
-    logger.info(`Queuing ${emailsToInsert.length} emails to send`);
+    logger.info({ emailsToInsert: emailsToInsert.length }, `Queuing ${emailsToInsert.length} emails to send`);
     const r = await apolloClient.mutate({
         mutation: InsertEmailsDocument,
         variables: {
@@ -261,7 +262,7 @@ async function initSGMail(logger: P.Logger): Promise<
                 replyTo: response.data.replyTo.value,
             };
         } catch (e: any) {
-            logger.error("Failed to initialise SendGrid mail", e);
+            logger.error({ err: e }, "Failed to initialise SendGrid mail");
         }
     }
 
@@ -303,7 +304,7 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
                         await callWithRetry(() => sgMail.send(msg));
                     }
                 } catch (e: any) {
-                    logger.error(`Could not send email ${email.id}: ${e.toString()}`);
+                    logger.error({ err: e, emailId: email.id }, "Could not send email");
                     return email.id;
                 }
                 return undefined;
@@ -320,7 +321,7 @@ export async function processEmailsJobQueue(logger: P.Logger): Promise<void> {
                 });
             });
         } catch (e: any) {
-            logger.error(`Could not unmark failed emails: ${e.toString()}`);
+            logger.error({ err: e }, "Could not unmark failed emails");
         }
     } else {
         logger.warn(

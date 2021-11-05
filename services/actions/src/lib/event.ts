@@ -14,10 +14,10 @@ export async function createEventStartTrigger(
     const startTimeMillis = Date.parse(startTime);
 
     if (startTimeMillis < new Date().getTime()) {
-        logger.info("Start time of event is in the past, skipping.", eventId, startTime);
+        logger.info({ eventId, startTime }, "Start time of event is in the past, skipping.");
         return;
     }
-    logger.info("Creating new start time trigger for event", eventId, startTime);
+    logger.info({ eventId, startTime }, "Creating new start time trigger for event");
     await hasura.createScheduledEvent({
         schedule_at: new Date(startTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyStart",
@@ -40,10 +40,10 @@ export async function createEventEndTrigger(
     const endTimeMillis = Date.parse(endTime);
 
     if (endTimeMillis < new Date().getTime()) {
-        logger.info("End time of event is in the past, skipping.", eventId, endTime);
+        logger.info({ eventId, endTime }, "End time of event is in the past, skipping.");
         return;
     }
-    logger.info("Creating new end time trigger for event", eventId, endTime);
+    logger.info({ eventId, endTime }, "Creating new end time trigger for event");
     await hasura.createScheduledEvent({
         schedule_at: new Date(endTimeMillis - 70000).toISOString(),
         webhook: "{{ACTION_BASE_URL}}/event/notifyEnd",
@@ -77,7 +77,7 @@ export async function eventHasVonageSession(eventId: string): Promise<boolean> {
 }
 
 export async function createEventVonageSession(logger: P.Logger, eventId: string, conferenceId: string): Promise<void> {
-    logger.info("Creating EventVonageSession for event", { eventId, conferenceId });
+    logger.info({ eventId, conferenceId }, "Creating EventVonageSession for event");
     const sessionResult = await Vonage.createSession({ mediaMode: "routed" });
 
     if (!sessionResult) {

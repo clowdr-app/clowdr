@@ -16,7 +16,7 @@ router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
         assertType<Payload<RegistrantGoogleAccountData>>(req.body);
     } catch (e: any) {
-        req.log.error("Received incorrect payload", e);
+        req.log.error({ err: e }, "Received incorrect payload");
         res.status(500).json("Unexpected payload");
         return;
     }
@@ -24,7 +24,7 @@ router.post("/deleted", json(), async (req: Request, res: Response) => {
     try {
         await handleRegistrantGoogleAccountDeleted(req.log, req.body);
     } catch (e: any) {
-        req.log.error("Failure while handling RegistrantGoogleAccount deleted", e);
+        req.log.error({ err: e }, "Failure while handling RegistrantGoogleAccount deleted");
         res.status(500).json("Failure while handling event");
         return;
     }
@@ -33,12 +33,11 @@ router.post("/deleted", json(), async (req: Request, res: Response) => {
 });
 
 router.post("/refreshYouTubeData", json(), async (req: Request, res: Response<RefreshYouTubeDataOutput>) => {
-    req.log.info(req.originalUrl);
     const params = req.body.input;
     try {
         assertType<refreshYouTubeDataArgs>(params);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: invalid request`, req.body, e);
+        req.log.error({ err: e, body: req.body }, "Invalid request");
         return res.status(500).json({ success: false, message: e.message });
     }
 
@@ -46,7 +45,7 @@ router.post("/refreshYouTubeData", json(), async (req: Request, res: Response<Re
         const result = await handleRefreshYouTubeData(req.log, params);
         return res.status(200).json(result);
     } catch (e: any) {
-        req.log.error(`${req.originalUrl}: failed to refresh YouTube data`, params, e);
+        req.log.error({ params, err: e }, "Failed to refresh YouTube data");
         return res.status(500).json({ success: false, message: e.message });
     }
 });

@@ -98,7 +98,7 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
     try {
         broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
     } catch (err) {
-        logger.error("Error retrieving Vonage broadcast details for event", { eventId, err });
+        logger.error({ eventId, err }, "Error retrieving Vonage broadcast details for event");
         return;
     }
 
@@ -110,7 +110,10 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
     );
 
     if (existingSessionBroadcasts === undefined) {
-        logger.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
+        logger.error(
+            { vonageSessionId: broadcastDetails.vonageSessionId },
+            "Could not retrieve existing session broadcasts."
+        );
         return;
     }
 
@@ -119,25 +122,25 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
     );
 
     logger.info(
-        `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`,
-        broadcastDetails.vonageSessionId,
-        startedSessionBroadcasts
+        { vonageSessionId: broadcastDetails.vonageSessionId, startedSessionBroadcasts },
+        `Vonage session has ${startedSessionBroadcasts.length} existing live broadcasts`
     );
 
     if (startedSessionBroadcasts.length > 1) {
         logger.warn(
-            "Found more than one live broadcast for session - which is not allowed. Stopping them.",
-            broadcastDetails.vonageSessionId
+            {
+                vonageSessionId: broadcastDetails.vonageSessionId,
+                startedSessionBroadcastsCount: startedSessionBroadcasts.length,
+            },
+            "Found more than one live broadcast for session - which is not allowed. Stopping them."
         );
         for (const broadcast of startedSessionBroadcasts) {
             try {
                 await Vonage.stopBroadcast(broadcast.id);
             } catch (e: any) {
                 logger.error(
-                    "Error while stopping invalid broadcast",
-                    broadcastDetails.vonageSessionId,
-                    broadcast.status,
-                    e
+                    { err: e, vonageSessionId: broadcastDetails.vonageSessionId, status: broadcast.status },
+                    "Error while stopping invalid broadcast"
                 );
             }
         }
@@ -156,10 +159,8 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
     if (!existingBroadcast) {
         const rtmpId = shortId();
         logger.info(
-            "Starting a broadcast from session to event room",
-            broadcastDetails.vonageSessionId,
-            eventId,
-            rtmpId
+            { vonageSessionId: broadcastDetails.vonageSessionId, eventId, rtmpId },
+            "Starting a broadcast from session to event room"
         );
         try {
             const dirtyLayoutData = await getVonageLayout(broadcastDetails.vonageSessionId);
@@ -186,16 +187,21 @@ export async function startEventBroadcast(logger: P.Logger, eventId: string): Pr
                 },
                 resolution: "1280x720",
             });
-            logger.info("Started Vonage RTMP broadcast", broadcast.id, broadcastDetails.vonageSessionId, eventId);
+            logger.info(
+                { broadcastId: broadcast.id, vonageSessionId: broadcastDetails.vonageSessionId, eventId },
+                "Started Vonage RTMP broadcast"
+            );
         } catch (e: any) {
-            logger.error("Failed to start broadcast", broadcastDetails.vonageSessionId, eventId, e);
+            logger.error(
+                { vonageSessionId: broadcastDetails.vonageSessionId, eventId, err: e },
+                "Failed to start broadcast"
+            );
             return;
         }
     } else {
         logger.info(
-            "There is already an existing RTMP broadcast from the session to the ongoing event.",
-            broadcastDetails.vonageSessionId,
-            eventId
+            { vonageSessionId: broadcastDetails.vonageSessionId, eventId },
+            "There is already an existing RTMP broadcast from the session to the ongoing event."
         );
     }
 }
@@ -205,7 +211,7 @@ export async function stopEventBroadcasts(logger: P.Logger, eventId: string): Pr
     try {
         broadcastDetails = await callWithRetry(async () => await getEventBroadcastDetails(eventId));
     } catch (e: any) {
-        logger.error("Error retrieving Vonage broadcast details for event", e);
+        logger.error({ err: e, eventId }, "Error retrieving Vonage broadcast details for event");
         return;
     }
 
@@ -217,7 +223,10 @@ export async function stopEventBroadcasts(logger: P.Logger, eventId: string): Pr
     );
 
     if (!existingSessionBroadcasts) {
-        logger.error("Could not retrieve existing session broadcasts.", broadcastDetails.vonageSessionId);
+        logger.error(
+            { vonageSessionId: broadcastDetails.vonageSessionId },
+            "Could not retrieve existing session broadcasts."
+        );
         return;
     }
 
@@ -227,7 +236,10 @@ export async function stopEventBroadcasts(logger: P.Logger, eventId: string): Pr
                 await callWithRetry(async () => await Vonage.stopBroadcast(existingBroadcast.id));
             }
         } catch (e: any) {
-            logger.error("Could not stop existing session broadcast", eventId, existingBroadcast.id, e);
+            logger.error(
+                { eventId, existingBroadcastId: existingBroadcast.id, err: e },
+                "Could not stop existing session broadcast"
+            );
         }
     }
 }
@@ -282,7 +294,7 @@ export async function startRoomVonageArchiving(
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
     } catch (e: any) {
-        logger.error("Error retrieving Vonage broadcast details for room", e);
+        logger.error({ roomId, err: e }, "Error retrieving Vonage broadcast details for room");
         return null;
     }
 
@@ -293,7 +305,10 @@ export async function startRoomVonageArchiving(
     );
 
     if (existingSessionArchives === undefined) {
-        logger.error("Could not retrieve existing session archives.", archiveDetails.vonageSessionId);
+        logger.error(
+            { vonageSessionId: archiveDetails.vonageSessionId },
+            "Could not retrieve existing session archives."
+        );
         return null;
     }
 
@@ -302,9 +317,8 @@ export async function startRoomVonageArchiving(
     );
 
     logger.info(
-        `Vonage session has ${startedSessionArchives.length} existing live archives`,
-        archiveDetails.vonageSessionId,
-        startedSessionArchives
+        { vonageSessionId: archiveDetails.vonageSessionId, startedSessionArchives },
+        `Vonage session has ${startedSessionArchives.length} existing live archives`
     );
 
     if (
@@ -312,17 +326,15 @@ export async function startRoomVonageArchiving(
             (archive) => !archive.name.startsWith(roomId) || archive.name.split("/")[1] !== eventId
         ).length > 0
     ) {
-        logger.warn("Stopping previous archives of the session.", archiveDetails.vonageSessionId);
+        logger.warn({ vonageSessionId: archiveDetails.vonageSessionId }, "Stopping previous archives of the session.");
 
         for (const archive of startedSessionArchives) {
             try {
                 await callWithRetry(() => Vonage.stopArchive(archive.id));
             } catch (e: any) {
                 logger.error(
-                    "Error while stopping previous archive",
-                    archiveDetails.vonageSessionId,
-                    archive.status,
-                    e
+                    { vonageSessionId: archiveDetails.vonageSessionId, status: archive.status, err: e },
+                    "Error while stopping previous archive"
                 );
             }
         }
@@ -334,7 +346,7 @@ export async function startRoomVonageArchiving(
         (archive) => archive.name.startsWith(roomId) && archive.name.split("/")[1] === eventId
     );
     if (!existingArchive) {
-        logger.info("Starting archive for session", archiveDetails.vonageSessionId, roomId);
+        logger.info({ vonageSessionId: archiveDetails.vonageSessionId, roomId }, "Starting archive for session");
         try {
             const dirtyLayoutData = await getVonageLayout(archiveDetails.vonageSessionId);
             const dirtyLayout = dirtyLayoutData ? convertLayout(dirtyLayoutData) : null;
@@ -371,9 +383,15 @@ export async function startRoomVonageArchiving(
             );
 
             if (archive) {
-                logger.info("Started Vonage archive", archive.id, archiveDetails.vonageSessionId, roomId);
+                logger.info(
+                    { archiveId: archive.id, vonageSessionId: archiveDetails.vonageSessionId, roomId },
+                    "Started Vonage archive"
+                );
             } else {
-                logger.error("No archive returned by Vonage", archiveDetails.vonageSessionId, roomId);
+                logger.error(
+                    { vonageSessionId: archiveDetails.vonageSessionId, roomId },
+                    "No archive returned by Vonage"
+                );
             }
 
             const recordingId = recordingResponse.data?.insert_video_VonageRoomRecording_one?.id ?? null;
@@ -387,11 +405,17 @@ export async function startRoomVonageArchiving(
 
             return recordingId;
         } catch (e: any) {
-            logger.error("Failed to start archive", archiveDetails.vonageSessionId, roomId, e);
+            logger.error(
+                { vonageSessionId: archiveDetails.vonageSessionId, roomId, err: e },
+                "Failed to start archive"
+            );
             return null;
         }
     } else {
-        logger.info("There is already an existing archive for the session.", archiveDetails.vonageSessionId, roomId);
+        logger.info(
+            { vonageSessionId: archiveDetails.vonageSessionId, roomId },
+            "There is already an existing archive for the session."
+        );
         return null;
     }
 }
@@ -414,7 +438,7 @@ export async function stopRoomVonageArchiving(
     try {
         archiveDetails = await callWithRetry(async () => await getRoomArchiveDetails(roomId));
     } catch (e: any) {
-        logger.error("Error retrieving Vonage archive details for room", e);
+        logger.error({ err: e }, "Error retrieving Vonage archive details for room");
         return;
     }
 
@@ -426,7 +450,10 @@ export async function stopRoomVonageArchiving(
     );
 
     if (!existingSessionArchives) {
-        logger.error("Could not retrieve existing session archives.", archiveDetails.vonageSessionId);
+        logger.error(
+            { vonageSessionId: archiveDetails.vonageSessionId },
+            "Could not retrieve existing session archives."
+        );
         return;
     }
 
@@ -442,7 +469,7 @@ export async function stopRoomVonageArchiving(
                     })
                 );
             } catch (e: any) {
-                logger.error("Could not disable recording for event", roomId, eventId, e);
+                logger.error({ roomId, eventId, err: e }, "Could not disable recording for event");
             }
         }
 
@@ -453,7 +480,10 @@ export async function stopRoomVonageArchiving(
                 }
             }
         } catch (e: any) {
-            logger.error("Could not stop existing session archive", roomId, existingArchive.id, e);
+            logger.error(
+                { roomId, existingArchiveId: existingArchive.id, err: e },
+                "Could not stop existing session archive"
+            );
         }
     }
 }
@@ -462,7 +492,7 @@ export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, r
     const roomParticipants = await getRoomParticipantDetails(roomId, registrantId);
 
     if (roomParticipants.length !== 1) {
-        logger.error("Could not find a room participant to kick", roomId, registrantId);
+        logger.error({ roomId, registrantId }, "Could not find a room participant to kick");
         throw new Error("Could not find a room participant to kick");
     }
 
@@ -470,16 +500,16 @@ export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, r
 
     if (roomParticipant.vonageConnectionId) {
         if (!roomParticipant.room.publicVonageSessionId) {
-            logger.warn("Could not find Vonage session to kick participant from", { roomId, registrantId });
+            logger.warn({ roomId, registrantId }, "Could not find Vonage session to kick participant from");
         } else {
-            logger.info("Forcing Vonage disconnection of registrant", { roomId, registrantId });
+            logger.info({ roomId, registrantId }, "Forcing Vonage disconnection of registrant");
             try {
                 await Vonage.forceDisconnect(
                     roomParticipant.room.publicVonageSessionId,
                     roomParticipant.vonageConnectionId
                 );
             } catch (err) {
-                logger.error("Failed to force Vonage disconnection of registrant", { roomId, registrantId, err });
+                logger.error({ roomId, registrantId, err }, "Failed to force Vonage disconnection of registrant");
                 throw new Error("Failed to force Vonage disconnection of registrant");
             }
         }
@@ -487,9 +517,9 @@ export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, r
         await removeRoomParticipant(logger, roomId, roomParticipant.room.conferenceId, registrantId);
     } else if (roomParticipant.chimeRegistrantId) {
         if (!roomParticipant.room.chimeMeeting) {
-            logger.warn("Could not find Chime session to kick participant from", { roomId, registrantId });
+            logger.warn({ roomId, registrantId }, "Could not find Chime session to kick participant from");
         } else {
-            logger.info("Forcing Chime disconnection of registrant", { roomId, registrantId });
+            logger.info({ roomId, registrantId }, "Forcing Chime disconnection of registrant");
             try {
                 await Chime.send(
                     new DeleteAttendeeCommand({
@@ -498,7 +528,7 @@ export async function kickRegistrantFromRoom(logger: P.Logger, roomId: string, r
                     })
                 );
             } catch (err) {
-                logger.error("Failed to force Chime disconnection of registrant", { roomId, registrantId, err });
+                logger.error({ roomId, registrantId, err }, "Failed to force Chime disconnection of registrant");
                 throw new Error("Failed to force Chime disconnection of registrant");
             }
         }
@@ -563,7 +593,7 @@ export async function addVonageParticipantStream(
         });
     } catch (e: any) {
         // If there is already a row for this event, kick the previous connection before recording the new one
-        logger.error("Error while adding vonage participant stream", registrantId, stream.id, e);
+        logger.error({ err: e, registrantId, streamId: stream.id }, "Error while adding vonage participant stream");
         throw new Error("Error while adding vonage participant stream");
     }
 }
@@ -621,10 +651,8 @@ export async function removeVonageParticipantStream(
         removeResult.data.update_video_VonageParticipantStream.affected_rows === 0
     ) {
         logger.warn(
-            "Could not find participant stream to remove for vonage session",
-            sessionId,
-            registrantId,
-            stream.id
+            { sessionId, registrantId, streamId: stream.id },
+            "Could not find participant stream to remove for vonage session"
         );
     }
 }
@@ -673,7 +701,7 @@ export interface VonageLayoutBuiltin {
 }
 
 async function getOngoingBroadcastIds(logger: P.Logger, vonageSessionId: string): Promise<string[]> {
-    logger.info("Getting list of Vonage broadcasts", { vonageSessionId });
+    logger.info({ vonageSessionId }, "Getting list of Vonage broadcasts");
     const broadcasts = await Vonage.listBroadcasts({
         sessionId: vonageSessionId,
     });
@@ -686,7 +714,7 @@ async function getOngoingBroadcastIds(logger: P.Logger, vonageSessionId: string)
 }
 
 async function getOngoingArchiveIds(logger: P.Logger, vonageSessionId: string): Promise<string[]> {
-    logger.info("Getting list of Vonage archives", { vonageSessionId });
+    logger.info({ vonageSessionId }, "Getting list of Vonage archives");
     const archives = await Vonage.listArchives({
         sessionId: vonageSessionId,
     });
@@ -719,34 +747,27 @@ export async function applyVonageSessionLayout(
     try {
         const allStreamsTransform = streamsToClear.concat(streamsToSet);
         if (allStreamsTransform.length > 0) {
-            logger.info(
-                "Setting Vonage stream class list:" +
-                    JSON.stringify(
-                        {
-                            vonageSessionId,
-                            classListArray: allStreamsTransform,
-                        },
-                        undefined,
-                        2
-                    )
-            );
+            logger.info({ vonageSessionId, classListArray: allStreamsTransform }, "Setting Vonage stream class list");
 
             await Vonage.setStreamClassLists(vonageSessionId, allStreamsTransform);
         }
     } catch (err) {
-        logger.error("Error setting Vonage stream class list", {
-            vonageSessionId,
-            streamsToClear,
-            streamsToSet,
-            err,
-        });
+        logger.error(
+            {
+                vonageSessionId,
+                streamsToClear,
+                streamsToSet,
+                err,
+            },
+            "Error setting Vonage stream class list"
+        );
         throw err;
     }
 
     // Update broadcasts
     const startedBroadcastIds = await getOngoingBroadcastIds(logger, vonageSessionId);
     if (startedBroadcastIds.length > 0) {
-        logger.info("Setting layout of Vonage broadcasts", { vonageSessionId, startedBroadcastIds });
+        logger.info({ vonageSessionId, startedBroadcastIds }, "Setting layout of Vonage broadcasts");
         for (const startedBroadcastId of startedBroadcastIds) {
             try {
                 switch (layout.layout.type) {
@@ -763,11 +784,14 @@ export async function applyVonageSessionLayout(
                         break;
                 }
             } catch (err) {
-                logger.error("Failed to set layout for Vonage broadcast", {
-                    vonageSessionId,
-                    startedBroadcastId,
-                    err,
-                });
+                logger.error(
+                    {
+                        vonageSessionId,
+                        startedBroadcastId,
+                        err,
+                    },
+                    "Failed to set layout for Vonage broadcast"
+                );
             }
         }
     }
@@ -775,7 +799,7 @@ export async function applyVonageSessionLayout(
     // Update archives
     const startedArchiveIds = await getOngoingArchiveIds(logger, vonageSessionId);
     if (startedArchiveIds.length > 0) {
-        logger.info("Setting layout of Vonage archives", { vonageSessionId, startedArchiveIds });
+        logger.info({ vonageSessionId, startedArchiveIds }, "Setting layout of Vonage archives");
         for (const startedArchiveId of startedArchiveIds) {
             try {
                 switch (layout.layout.type) {
@@ -787,11 +811,14 @@ export async function applyVonageSessionLayout(
                         break;
                 }
             } catch (err) {
-                logger.error("Failed to set layout for Vonage archive", {
-                    vonageSessionId,
-                    startedBroadcastId: startedArchiveId,
-                    err,
-                });
+                logger.error(
+                    {
+                        vonageSessionId,
+                        startedBroadcastId: startedArchiveId,
+                        err,
+                    },
+                    "Failed to set layout for Vonage archive"
+                );
             }
         }
     }
@@ -811,7 +838,7 @@ export async function sanitizeLayout(
 
     const streams = await Vonage.listStreams(vonageSessionId);
     if (!streams) {
-        logger.error("Could not retrieve list of streams from Vonage", { vonageSessionId });
+        logger.error({ vonageSessionId }, "Could not retrieve list of streams from Vonage");
         throw new Error("Could not retrieve list of streams from Vonage");
     }
 

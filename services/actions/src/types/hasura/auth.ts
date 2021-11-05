@@ -4,6 +4,8 @@ interface AuthPayload {
         "x-hasura-magic-token"?: string;
         "X-Hasura-Conference-Slug"?: string;
         "X-Hasura-Magic-Token"?: string;
+        "X-Hasura-Invite-Code"?: string;
+        "x-hasura-invite-code"?: string;
         Authorization?: string;
         authorization?: string;
     };

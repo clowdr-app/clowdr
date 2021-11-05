@@ -35,7 +35,6 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         if (message.TopicArn !== process.env.AWS_CHIME_NOTIFICATIONS_TOPIC_ARN) {
             req.log.info(
                 {
-                    originalUrl: req.originalUrl,
                     topicArn: message.TopicArn,
                 },
                 "Received SNS notification for the wrong topic"
@@ -53,7 +52,6 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
         if (message.Type === "Notification") {
             req.log.info(
                 {
-                    originalUrl: req.originalUrl,
                     messageId: message.MessageId,
                     message: message.Message,
                 },

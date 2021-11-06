@@ -379,6 +379,7 @@ gql`
 `;
 
 export async function processEmailWebhook(payloads: Record<string, any>[]): Promise<void> {
+    const completedIds = new Set<string>();
     for (const payload of payloads) {
         const eventName = payload.event;
         const midspaceEmailId = payload.midspaceEmailId;
@@ -392,33 +393,43 @@ export async function processEmailWebhook(payloads: Record<string, any>[]): Prom
                 case "dropped":
                     status = "dropped";
                     errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
                     break;
                 case "delivered":
                     status = "delivered";
+                    completedIds.add(midspaceEmailId);
                     break;
                 case "deferred":
                     status = "deferred";
                     errorMessage = payload.response;
+                    completedIds.add(midspaceEmailId);
                     break;
                 case "bounce":
                     status = "bounce";
                     errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
                     break;
                 case "blocked":
                     status = "blocked";
                     errorMessage = payload.reason;
+                    completedIds.add(midspaceEmailId);
                     break;
                 default:
                     throw new Error("Unrecognised webhook event");
             }
-            apolloClient.mutate({
-                mutation: UpdateEmailStatusDocument,
-                variables: {
-                    id: midspaceEmailId,
-                    status,
-                    errorMessage,
-                },
-            });
+            if (status !== "processed" || !completedIds.has(midspaceEmailId)) {
+                console.log(
+                    `Email webhook: Setting email status: { "midspaceEmailId": "${midspaceEmailId}", "status": "${status}", "errorMessage": "${errorMessage}" }`
+                );
+                await apolloClient.mutate({
+                    mutation: UpdateEmailStatusDocument,
+                    variables: {
+                        id: midspaceEmailId,
+                        status,
+                        errorMessage,
+                    },
+                });
+            }
         }
     }
 }

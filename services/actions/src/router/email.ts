@@ -23,7 +23,7 @@ router.post("/webhook", async (req, resp) => {
             const requestBody = req.body;
 
             if (signature && timestamp && verifyRequest(key, requestBody, signature, timestamp)) {
-                await processEmailWebhook(requestBody);
+                await processEmailWebhook(JSON.parse(requestBody));
                 resp.sendStatus(204);
             } else {
                 resp.sendStatus(403);

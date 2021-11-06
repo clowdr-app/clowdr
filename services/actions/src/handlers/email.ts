@@ -378,45 +378,47 @@ gql`
     }
 `;
 
-export async function processEmailWebhook(payload: Record<string, any>): Promise<void> {
-    const eventName = payload.event;
-    const midspaceEmailId = payload.midspaceEmailId;
-    if (eventName && typeof eventName === "string" && midspaceEmailId && typeof midspaceEmailId === "string") {
-        let status: string;
-        let errorMessage: string | null = null;
-        switch (eventName) {
-            case "processed":
-                status = "processed";
-                break;
-            case "dropped":
-                status = "dropped";
-                errorMessage = payload.reason;
-                break;
-            case "delivered":
-                status = "delivered";
-                break;
-            case "deferred":
-                status = "deferred";
-                errorMessage = payload.response;
-                break;
-            case "bounce":
-                status = "bounce";
-                errorMessage = payload.reason;
-                break;
-            case "blocked":
-                status = "blocked";
-                errorMessage = payload.reason;
-                break;
-            default:
-                throw new Error("Unrecognised webhook event");
+export async function processEmailWebhook(payloads: Record<string, any>[]): Promise<void> {
+    for (const payload of payloads) {
+        const eventName = payload.event;
+        const midspaceEmailId = payload.midspaceEmailId;
+        if (eventName && typeof eventName === "string" && midspaceEmailId && typeof midspaceEmailId === "string") {
+            let status: string;
+            let errorMessage: string | null = null;
+            switch (eventName) {
+                case "processed":
+                    status = "processed";
+                    break;
+                case "dropped":
+                    status = "dropped";
+                    errorMessage = payload.reason;
+                    break;
+                case "delivered":
+                    status = "delivered";
+                    break;
+                case "deferred":
+                    status = "deferred";
+                    errorMessage = payload.response;
+                    break;
+                case "bounce":
+                    status = "bounce";
+                    errorMessage = payload.reason;
+                    break;
+                case "blocked":
+                    status = "blocked";
+                    errorMessage = payload.reason;
+                    break;
+                default:
+                    throw new Error("Unrecognised webhook event");
+            }
+            apolloClient.mutate({
+                mutation: UpdateEmailStatusDocument,
+                variables: {
+                    id: midspaceEmailId,
+                    status,
+                    errorMessage,
+                },
+            });
         }
-        apolloClient.mutate({
-            mutation: UpdateEmailStatusDocument,
-            variables: {
-                id: midspaceEmailId,
-                status,
-                errorMessage,
-            },
-        });
     }
 }

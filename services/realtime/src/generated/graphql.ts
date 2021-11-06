@@ -16751,10 +16751,12 @@ export type Mutation_RootInvitationConfirmCurrentArgs = {
 /** mutation root */
 export type Mutation_RootJoinEventVonageSessionArgs = {
     eventId: Scalars["uuid"];
+    registrantId: Scalars["uuid"];
 };
 
 /** mutation root */
 export type Mutation_RootJoinRoomChimeSessionArgs = {
+    registrantId: Scalars["uuid"];
     roomId: Scalars["uuid"];
 };
 

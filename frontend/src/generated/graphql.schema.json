@@ -36752,6 +36752,16 @@
                                         "name": "Any"
                                     }
                                 }
+                            },
+                            {
+                                "name": "registrantId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
                             }
                         ]
                     },
@@ -36763,6 +36773,16 @@
                             "ofType": null
                         },
                         "args": [
+                            {
+                                "name": "registrantId",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "Any"
+                                    }
+                                }
+                            },
                             {
                                 "name": "roomId",
                                 "type": {

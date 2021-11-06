@@ -22293,8 +22293,8 @@ type mutation_root {
         on_conflict: video_YouTubeUpload_on_conflict
     ): video_YouTubeUpload
     invitationConfirmCurrent(inviteCode: uuid!): ConfirmInvitationOutput
-    joinEventVonageSession(eventId: uuid!): JoinEventVonageSessionOutput
-    joinRoomChimeSession(roomId: uuid!): JoinRoomChimeSessionOutput
+    joinEventVonageSession(eventId: uuid!, registrantId: uuid!): JoinEventVonageSessionOutput
+    joinRoomChimeSession(registrantId: uuid!, roomId: uuid!): JoinRoomChimeSessionOutput
     joinRoomVonageSession(registrantId: uuid!, roomId: uuid!): JoinRoomVonageSessionOutput
     notifyEventEnded(eventId: uuid!): NotifyEventEnded!
     presence_Flush: PresenceFlushOutput!

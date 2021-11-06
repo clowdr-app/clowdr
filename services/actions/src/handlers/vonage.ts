@@ -28,7 +28,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { getRegistrantDetails } from "../lib/authorisation";
-import { ForbiddenError, NotFoundError } from "../lib/errors";
+import { BadRequestError, ForbiddenError, NotFoundError, ServerError } from "../lib/errors";
 import { getRoomVonageMeeting as getRoomVonageSession } from "../lib/room";
 import {
     addAndRemoveRoomParticipants,
@@ -365,7 +365,7 @@ export async function handleVonageArchiveMonitoringWebhook(
 }
 
 gql`
-    query Vonage_GetEventDetails($eventId: uuid!, $userId: String!) {
+    query Vonage_GetEventDetails($eventId: uuid!, $registrantId: uuid!) {
         schedule_Event_by_pk(id: $eventId) {
             conferenceId
             id
@@ -379,16 +379,13 @@ gql`
                 id
                 publicVonageSessionId
             }
-            eventPeople(where: { person: { registrant: { userId: { _eq: $userId } } } }) {
+            eventPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
                 id
                 roleName
             }
-            conference {
-                id
-                registrants(where: { userId: { _eq: $userId } }) {
-                    ...GetRegistrant_Registrant
-                }
-            }
+        }
+        registrant_Registrant_by_pk(id: $registrantId) {
+            ...GetRegistrant_Registrant
         }
     }
 `;
@@ -396,19 +393,29 @@ gql`
 export async function handleJoinEvent(
     logger: P.Logger,
     payload: joinEventVonageSessionArgs,
-    userId: string
+    userId: string,
+    allowedRegistrantIds: string[]
 ): Promise<JoinEventVonageSessionOutput> {
+    if (!allowedRegistrantIds.includes(payload.registrantId)) {
+        throw new ForbiddenError("Forbidden to join event room", {
+            privateMessage: "Registrant is not in list of allowed registrants",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+                allowedRegistrantIds,
+            },
+        });
+    }
+
     const result = await apolloClient.query({
         query: Vonage_GetEventDetailsDocument,
         variables: {
             eventId: payload.eventId,
-            userId,
+            registrantId: payload.registrantId,
         },
     });
 
-    if (!result.data || !result.data.schedule_Event_by_pk || result.error) {
-        logger.error({ eventId: payload.eventId }, "Could not retrieve event information");
-        return {};
+    if (!result.data?.schedule_Event_by_pk) {
+        throw new NotFoundError("Event not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
     const vonageSessionId =
@@ -418,19 +425,24 @@ export async function handleJoinEvent(
             ? result.data.schedule_Event_by_pk.eventVonageSession?.sessionId
             : result.data.schedule_Event_by_pk.room.publicVonageSessionId;
     if (!vonageSessionId) {
-        logger.error({ eventId: payload.eventId }, "Could not retrieve Vonage session associated with event");
-        return {};
+        throw new NotFoundError("Vonage session not found", { privateErrorData: { eventId: payload.eventId } });
     }
 
-    if (!result.data.schedule_Event_by_pk.conference.registrants.length) {
-        logger.error(
-            { userId, eventId: payload.eventId },
-            "User does not have registrant at conference, refusing event join token"
-        );
-        return {};
+    if (result.data.registrant_Registrant_by_pk?.conferenceId !== result.data.schedule_Event_by_pk.conferenceId) {
+        throw new BadRequestError("Invalid request", {
+            privateMessage: "Registrant is not for same conference as event",
+            privateErrorData: { eventId: payload.eventId, registrantId: payload.registrantId },
+        });
     }
 
-    const registrant = result.data.schedule_Event_by_pk.conference.registrants[0];
+    const registrant = result.data.registrant_Registrant_by_pk;
+
+    if (!registrant) {
+        throw new NotFoundError("Registrant not found", {
+            privateErrorData: { registrantId: payload.registrantId },
+        });
+    }
+
     const isChairOrConferenceOrganizerOrConferenceModerator =
         result.data.schedule_Event_by_pk.eventPeople.some(
             (eventPerson) =>
@@ -460,14 +472,16 @@ export async function handleJoinEvent(
         });
 
         return { accessToken, isRecorded: !!recordingId || result.data.schedule_Event_by_pk.enableRecording };
-    } catch (e: any) {
-        logger.error(
-            { eventId: payload.eventId, vonageSessionId, err: e },
-            "Failure while generating event Vonage session token"
-        );
+    } catch (err: unknown) {
+        throw new ServerError("Server error", {
+            privateMessage: "Failed to generate Vonage token",
+            privateErrorData: {
+                eventId: payload.eventId,
+                registrantId: payload.registrantId,
+            },
+            originalError: err instanceof Error ? err : undefined,
+        });
     }
-
-    return {};
 }
 
 gql`
@@ -486,6 +500,8 @@ export async function handleJoinRoom(
     allowedRoomIds: string[],
     userId: string
 ): Promise<JoinRoomVonageSessionOutput> {
+    // Assumption: list of registrants will never include a registrant that does not have access
+    // to a room in the list of rooms.
     if (!allowedRegistrantIds.includes(payload.registrantId)) {
         throw new ForbiddenError("Forbidden to join room", {
             privateMessage: "Registrant is not in list of allowed registrants",

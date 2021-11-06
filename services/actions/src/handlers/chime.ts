@@ -1,8 +1,8 @@
 import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
 import type { P } from "pino";
-import { getRegistrant } from "../lib/authorisation";
 import { addRegistrantToChimeMeeting } from "../lib/aws/chime";
-import { canUserJoinRoom, getRoomByChimeMeetingId, getRoomChimeMeeting, getRoomConferenceId } from "../lib/room";
+import { ForbiddenError, ServerError } from "../lib/errors";
+import { getRoomByChimeMeetingId, getRoomChimeMeeting } from "../lib/room";
 import { deleteRoomChimeMeetingForRoom } from "../lib/roomChimeMeeting";
 import { addRoomParticipant, removeRoomParticipant } from "../lib/roomParticipant";
 import type { ChimeMeetingEndedDetail, ChimeRegistrantJoinedDetail, ChimeRegistrantLeftDetail } from "../types/chime";
@@ -11,26 +11,41 @@ import { callWithRetry } from "../utils";
 export async function handleJoinRoom(
     logger: P.Logger,
     payload: joinRoomChimeSessionArgs,
-    userId: string
+    allowedRegistrantIds: string[],
+    allowedRoomIds: string[]
 ): Promise<JoinRoomChimeSessionOutput> {
-    const { conferenceId: roomConferenceId, subconferenceId: _roomSubconferenceId } = await getRoomConferenceId(
-        payload.roomId
-    );
-    const registrant = await getRegistrant(userId, roomConferenceId);
-    const canJoinRoom = await canUserJoinRoom(registrant.id, payload.roomId, roomConferenceId);
-
-    if (!canJoinRoom) {
-        logger.warn({ payload, userId }, "User tried to join a Chime room, but was not permitted");
-        throw new Error("User is not permitted to join this room");
+    // Assumption: list of registrants will never include a registrant that does not have access
+    // to a room in the list of rooms.
+    if (!allowedRegistrantIds.includes(payload.registrantId)) {
+        throw new ForbiddenError("Forbidden to join room", {
+            privateMessage: "Registrant is not in list of allowed registrants",
+            privateErrorData: {
+                registrantId: payload.registrantId,
+                allowedRegistrantIds,
+            },
+        });
     }
 
-    const maybeChimeMeeting = await getRoomChimeMeeting(logger, payload.roomId, roomConferenceId);
+    if (!allowedRoomIds.includes(payload.roomId)) {
+        throw new ForbiddenError("Forbiddent to join room", {
+            privateMessage: "Room is not in list of allowed rooms",
+            privateErrorData: {
+                roomId: payload.roomId,
+                allowedRoomIds,
+            },
+        });
+    }
+
+    const maybeChimeMeeting = await getRoomChimeMeeting(logger, payload.roomId);
 
     if (!maybeChimeMeeting.MeetingId) {
-        throw new Error("Could not get Chime meeting ID for room");
+        throw new ServerError("Server erro", {
+            privateMessage: "Could not get Chime meeting ID for room",
+            privateErrorData: { roomId: payload.roomId },
+        });
     }
 
-    const chimeRegistrant = await addRegistrantToChimeMeeting(registrant.id, maybeChimeMeeting.MeetingId);
+    const chimeRegistrant = await addRegistrantToChimeMeeting(payload.registrantId, maybeChimeMeeting.MeetingId);
 
     return {
         registrant: chimeRegistrant,

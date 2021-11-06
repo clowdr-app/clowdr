@@ -281,7 +281,7 @@ export async function getExistingRoomVonageMeeting(roomId: string): Promise<stri
     return result.data.room_Room_by_pk?.publicVonageSessionId ?? null;
 }
 
-export async function getRoomChimeMeeting(logger: P.Logger, roomId: string, conferenceId: string): Promise<Meeting> {
+export async function getRoomChimeMeeting(logger: P.Logger, roomId: string): Promise<Meeting> {
     const existingChimeMeetingData = await getExistingRoomChimeMeeting(logger, roomId);
 
     if (existingChimeMeetingData) {
@@ -289,6 +289,7 @@ export async function getRoomChimeMeeting(logger: P.Logger, roomId: string, conf
     }
 
     try {
+        const { conferenceId } = await getRoomConferenceId(roomId);
         const chimeMeetingData = await createRoomChimeMeeting(logger, roomId, conferenceId);
         return chimeMeetingData;
     } catch (e: any) {
@@ -297,7 +298,7 @@ export async function getRoomChimeMeeting(logger: P.Logger, roomId: string, conf
             return existingChimeMeetingData;
         }
 
-        logger.error({ err: e, roomId, conferenceId }, "Could not get Chime meeting data");
+        logger.error({ err: e, roomId }, "Could not get Chime meeting data");
         throw new Error("Could not get Chime meeting data");
     }
 }

@@ -16750,10 +16750,12 @@ export type Mutation_RootInvitationConfirmCurrentArgs = {
 /** mutation root */
 export type Mutation_RootJoinEventVonageSessionArgs = {
     eventId: Scalars["uuid"];
+    registrantId: Scalars["uuid"];
 };
 
 /** mutation root */
 export type Mutation_RootJoinRoomChimeSessionArgs = {
+    registrantId: Scalars["uuid"];
     roomId: Scalars["uuid"];
 };
 
@@ -37000,7 +37002,7 @@ export type SaveVonageRoomRecordingMutation = {
 
 export type Vonage_GetEventDetailsQueryVariables = Exact<{
     eventId: Scalars["uuid"];
-    userId: Scalars["String"];
+    registrantId: Scalars["uuid"];
 }>;
 
 export type Vonage_GetEventDetailsQuery = {
@@ -37022,17 +37024,16 @@ export type Vonage_GetEventDetailsQuery = {
                   id: any;
                   roleName: Schedule_EventProgramPersonRole_Enum;
               }>;
-              conference: {
-                  __typename?: "conference_Conference";
-                  id: any;
-                  registrants: Array<{
-                      __typename?: "registrant_Registrant";
-                      id: any;
-                      displayName: string;
-                      conferenceId: any;
-                      conferenceRole: Registrant_RegistrantRole_Enum;
-                  }>;
-              };
+          }
+        | null
+        | undefined;
+    registrant_Registrant_by_pk?:
+        | {
+              __typename?: "registrant_Registrant";
+              id: any;
+              displayName: string;
+              conferenceId: any;
+              conferenceRole: Registrant_RegistrantRole_Enum;
           }
         | null
         | undefined;
@@ -47294,8 +47295,8 @@ export const Vonage_GetEventDetailsDocument = {
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "userId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "registrantId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
                 },
             ],
             selectionSet: {
@@ -47358,31 +47359,19 @@ export const Vonage_GetEventDetailsDocument = {
                                                             fields: [
                                                                 {
                                                                     kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "registrant" },
+                                                                    name: { kind: "Name", value: "registrantId" },
                                                                     value: {
                                                                         kind: "ObjectValue",
                                                                         fields: [
                                                                             {
                                                                                 kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "userId" },
+                                                                                name: { kind: "Name", value: "_eq" },
                                                                                 value: {
-                                                                                    kind: "ObjectValue",
-                                                                                    fields: [
-                                                                                        {
-                                                                                            kind: "ObjectField",
-                                                                                            name: {
-                                                                                                kind: "Name",
-                                                                                                value: "_eq",
-                                                                                            },
-                                                                                            value: {
-                                                                                                kind: "Variable",
-                                                                                                name: {
-                                                                                                    kind: "Name",
-                                                                                                    value: "userId",
-                                                                                                },
-                                                                                            },
-                                                                                        },
-                                                                                    ],
+                                                                                    kind: "Variable",
+                                                                                    name: {
+                                                                                        kind: "Name",
+                                                                                        value: "registrantId",
+                                                                                    },
                                                                                 },
                                                                             },
                                                                         ],
@@ -47403,60 +47392,23 @@ export const Vonage_GetEventDetailsDocument = {
                                         ],
                                     },
                                 },
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "conference" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            { kind: "Field", name: { kind: "Name", value: "id" } },
-                                            {
-                                                kind: "Field",
-                                                name: { kind: "Name", value: "registrants" },
-                                                arguments: [
-                                                    {
-                                                        kind: "Argument",
-                                                        name: { kind: "Name", value: "where" },
-                                                        value: {
-                                                            kind: "ObjectValue",
-                                                            fields: [
-                                                                {
-                                                                    kind: "ObjectField",
-                                                                    name: { kind: "Name", value: "userId" },
-                                                                    value: {
-                                                                        kind: "ObjectValue",
-                                                                        fields: [
-                                                                            {
-                                                                                kind: "ObjectField",
-                                                                                name: { kind: "Name", value: "_eq" },
-                                                                                value: {
-                                                                                    kind: "Variable",
-                                                                                    name: {
-                                                                                        kind: "Name",
-                                                                                        value: "userId",
-                                                                                    },
-                                                                                },
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                },
-                                                            ],
-                                                        },
-                                                    },
-                                                ],
-                                                selectionSet: {
-                                                    kind: "SelectionSet",
-                                                    selections: [
-                                                        {
-                                                            kind: "FragmentSpread",
-                                                            name: { kind: "Name", value: "GetRegistrant_Registrant" },
-                                                        },
-                                                    ],
-                                                },
-                                            },
-                                        ],
-                                    },
-                                },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "registrant_Registrant_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "registrantId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "GetRegistrant_Registrant" } },
                             ],
                         },
                     },

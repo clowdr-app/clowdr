@@ -31,8 +31,8 @@ import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
 gql`
-    mutation GetEventVonageToken($eventId: uuid!) {
-        joinEventVonageSession(eventId: $eventId) {
+    mutation GetEventVonageToken($eventId: uuid!, $registrantId: uuid!) {
+        joinEventVonageSession(eventId: $eventId, registrantId: $registrantId) {
             accessToken
             isRecorded
         }
@@ -73,7 +73,6 @@ export function VideoChatVonageRoom({
     const context = useShieldedHeaders({
         "X-Auth-Role": "room-member",
         "X-Auth-Room-Id": room.id,
-        "X-Auth-Include-Room-Ids": "true",
     });
     const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();

@@ -43,12 +43,14 @@ type Mutation {
 
 type Mutation {
   joinEventVonageSession(
+    registrantId: uuid!
     eventId: uuid!
   ): JoinEventVonageSessionOutput
 }
 
 type Mutation {
   joinRoomChimeSession(
+    registrantId: uuid!
     roomId: uuid!
   ): JoinRoomChimeSessionOutput
 }

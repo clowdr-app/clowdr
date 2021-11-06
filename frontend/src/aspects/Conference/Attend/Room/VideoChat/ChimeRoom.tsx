@@ -6,8 +6,8 @@ import { useGetRoomChimeDataMutation } from "../../../../../generated/graphql";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 
 gql`
-    mutation GetRoomChimeData($roomId: uuid!) {
-        joinRoomChimeSession(roomId: $roomId) {
+    mutation GetRoomChimeData($roomId: uuid!, $registrantId: uuid!) {
+        joinRoomChimeSession(roomId: $roomId, registrantId: $registrantId) {
             registrant
             meeting
             message

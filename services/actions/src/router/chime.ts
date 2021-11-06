@@ -2,15 +2,16 @@ import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import type { ActionPayload } from "@midspace/hasura/action";
 import type { joinRoomChimeSessionArgs, JoinRoomChimeSessionOutput } from "@midspace/hasura/actionTypes";
 import { json, text } from "body-parser";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import { assertType } from "typescript-is";
+import { assertType, TypeGuardError } from "typescript-is";
 import {
     handleChimeMeetingEndedNotification,
     handleChimeRegistrantJoinedNotification,
     handleChimeRegistrantLeftNotification,
     handleJoinRoom,
 } from "../handlers/chime";
+import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 import { tryConfirmSubscription, validateSNSNotification } from "../lib/sns/sns";
 import type {
     ChimeEventBase,
@@ -157,25 +158,25 @@ router.post("/notify", text(), async (req: Request, res: Response) => {
 // Protected routes
 router.use(checkEventSecret);
 
-router.post("/joinRoom", json(), async (req: Request, res: Response<JoinRoomChimeSessionOutput>) => {
-    let body: ActionPayload<joinRoomChimeSessionArgs>;
-    try {
-        body = req.body;
-        assertType<ActionPayload<joinRoomChimeSessionArgs>>(body);
-    } catch (e: any) {
-        req.log.error({ input: req.body.input, err: e }, "Invalid request");
-        return res.status(200).json({
-            message: "Invalid request",
-        });
+router.post(
+    "/joinRoom",
+    json(),
+    async (req: Request, res: Response<JoinRoomChimeSessionOutput>, next: NextFunction) => {
+        try {
+            const body = assertType<ActionPayload<joinRoomChimeSessionArgs>>(req.body);
+            if (!req.userId) {
+                throw new BadRequestError("Invalid request", { privateMessage: "No User ID available" });
+            }
+            const result = await handleJoinRoom(req.log, body.input, req.registrantIds, req.roomIds);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
+        }
     }
-
-    try {
-        const result = await handleJoinRoom(req.log, body.input, body.session_variables["x-hasura-user-id"]);
-        return res.status(200).json(result);
-    } catch (e: any) {
-        req.log.error({ input: req.body.input, err: e }, "Failure while handling request");
-        return res.status(200).json({
-            message: "Failure while handling request",
-        });
-    }
-});
+);

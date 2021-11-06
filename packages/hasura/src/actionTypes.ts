@@ -257,10 +257,12 @@ export type invitationConfirmWithCodeArgs = {
 };
 
 export type joinEventVonageSessionArgs = {
+    registrantId: uuid;
     eventId: uuid;
 };
 
 export type joinRoomChimeSessionArgs = {
+    registrantId: uuid;
     roomId: uuid;
 };
 

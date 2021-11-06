@@ -93,24 +93,28 @@ router.post("/archiveMonitoring/:token", json(), async (req: Request, res: Respo
 
 router.use(checkEventSecret);
 
-router.post("/joinEvent", json(), async (req: Request, res: Response<JoinEventVonageSessionOutput>) => {
-    let body: ActionPayload<joinEventVonageSessionArgs>;
-    try {
-        body = req.body;
-        assertType<ActionPayload<joinEventVonageSessionArgs>>(body);
-    } catch (e: any) {
-        req.log.error({ input: req.body.input, err: e }, "Invalid request");
-        return res.status(200).json({});
+router.post(
+    "/joinEvent",
+    json(),
+    async (req: Request, res: Response<JoinEventVonageSessionOutput>, next: NextFunction) => {
+        try {
+            const body = assertType<ActionPayload<joinEventVonageSessionArgs>>(req.body);
+            if (!req.userId) {
+                throw new BadRequestError("Invalid request", { privateMessage: "No User ID available" });
+            }
+            const result = await handleJoinEvent(req.log, body.input, req.userId, req.registrantIds);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
+        }
     }
-
-    try {
-        const result = await handleJoinEvent(req.log, body.input, body.session_variables["x-hasura-user-id"]);
-        return res.status(200).json(result);
-    } catch (e: any) {
-        req.log.error({ input: req.body.input, err: e }, "Failure while handling request");
-        return res.status(200).json({});
-    }
-});
+);
 
 router.post(
     "/joinRoom",
@@ -126,7 +130,7 @@ router.post(
             res.status(200).json(result);
         } catch (err: unknown) {
             if (err instanceof TypeGuardError) {
-                next(new BadRequestError(`Invalid request: ${err.message}`, { originalError: err }));
+                next(new BadRequestError("Invalid request", { originalError: err }));
             } else if (err instanceof Error) {
                 next(err);
             } else {

@@ -57,6 +57,7 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
   __typename?: 'Email';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt: Scalars['timestamptz'];
   emailAddress: Scalars['String'];
   errorMessage?: Maybe<Scalars['String']>;
@@ -147,6 +148,7 @@ export type Email_Bool_Exp = {
   _and?: Maybe<Array<Email_Bool_Exp>>;
   _not?: Maybe<Email_Bool_Exp>;
   _or?: Maybe<Array<Email_Bool_Exp>>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   emailAddress?: Maybe<String_Comparison_Exp>;
   errorMessage?: Maybe<String_Comparison_Exp>;
@@ -182,6 +184,7 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
@@ -205,6 +208,7 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
   __typename?: 'Email_max_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
@@ -225,6 +229,7 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
   errorMessage?: Maybe<Order_By>;
@@ -246,6 +251,7 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
   __typename?: 'Email_min_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
@@ -266,6 +272,7 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
   errorMessage?: Maybe<Order_By>;
@@ -302,6 +309,7 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
   errorMessage?: Maybe<Order_By>;
@@ -329,6 +337,8 @@ export type Email_Pk_Columns_Input = {
 
 /** select columns of table "Email" */
 export enum Email_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -365,6 +375,7 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
@@ -429,6 +440,8 @@ export type Email_Sum_Order_By = {
 
 /** update columns of table "Email" */
 export enum Email_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -26342,6 +26355,8 @@ export type Registrant_Registrant = {
   id: Scalars['uuid'];
   /** An object relationship */
   invitation?: Maybe<Registrant_Invitation>;
+  /** A computed field, executes function "registrant.InvitationEmailStatus" */
+  invitationStatus?: Maybe<Scalars['jsonb']>;
   /** A computed field, executes function "registrant.HasBeenInvited" */
   inviteSent?: Maybe<Scalars['Boolean']>;
   /** An object relationship */
@@ -26398,6 +26413,12 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Permissions_GroupRegistrant_Order_By>>;
   where?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -26489,6 +26510,7 @@ export type Registrant_Registrant_Bool_Exp = {
   groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+  invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
   inviteSent?: Maybe<Boolean_Comparison_Exp>;
   profile?: Maybe<Registrant_Profile_Bool_Exp>;
   programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -26599,6 +26621,7 @@ export type Registrant_Registrant_Order_By = {
   groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
+  invitationStatus?: Maybe<Order_By>;
   inviteSent?: Maybe<Order_By>;
   profile?: Maybe<Registrant_Profile_Order_By>;
   programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;

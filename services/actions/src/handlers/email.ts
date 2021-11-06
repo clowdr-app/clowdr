@@ -155,6 +155,7 @@ export async function insertEmails(
                 htmlContents: compiledEmail.body,
                 plainTextContents: htmlToText(compiledEmail.body),
                 status: "processing",
+                conferenceId,
             };
         });
 

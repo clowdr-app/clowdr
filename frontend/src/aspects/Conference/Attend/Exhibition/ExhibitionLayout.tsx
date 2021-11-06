@@ -17,11 +17,9 @@ import Color from "tinycolor2";
 import type {
     ElementDataFragment,
     ExhibitionItemFragment,
-    ExhibitionWithContentFragment} from "../../../../generated/graphql";
-import {
-    Content_ElementType_Enum,
-    useSelectExhibitionQuery,
+    ExhibitionWithContentFragment,
 } from "../../../../generated/graphql";
+import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
@@ -108,7 +106,11 @@ function ItemTile({
     }, [item.elements]);
 
     const secondaryItems: ElementDataFragment[] = useMemo(() => {
-        const sortOrder = [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text];
+        const sortOrder =
+            item.elements.reduce((acc, x) => (x.typeName === Content_ElementType_Enum.Abstract ? acc + 1 : acc), 0) ===
+            1
+                ? [Content_ElementType_Enum.Abstract]
+                : [Content_ElementType_Enum.Abstract, Content_ElementType_Enum.Text];
 
         return [...item.elements]
             .filter((x) => {

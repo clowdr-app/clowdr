@@ -418,10 +418,8 @@ export default function ManageRegistrants(): JSX.Element {
                             return (
                                 <Center>
                                     <Tooltip
-                                        label={`Error sending invitation email! ${
-                                            value.errorMessage
-                                                ? `Message from server: ${value.errorMessage}`
-                                                : "Reason for failure could not be identified."
+                                        label={`Error sending invitation email! Reason: ${value.status}.${
+                                            value.errorMessage ? ` Message from server: ${value.errorMessage}` : ""
                                         }`}
                                     >
                                         <FAIcon iconStyle="s" icon="exclamation-circle" />

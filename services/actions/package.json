@@ -52,6 +52,7 @@
         "@graphql-codegen/typescript-graphql-files-modules": "^2.1.0",
         "@graphql-codegen/typescript-graphql-request": "^4.1.2",
         "@graphql-codegen/typescript-operations": "^2.1.2",
+        "@sendgrid/eventwebhook": "^7.4.5",
         "@sendgrid/mail": "^7.4.6",
         "@types/cors": "^2.8.12",
         "@types/d3-format": "^2.0.0",

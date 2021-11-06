@@ -1,0 +1,4 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE  INDEX "public_Email_created_at" on
+--   "public"."Email" using btree ("created_at" DESC);

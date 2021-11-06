@@ -61,6 +61,7 @@ export type Email = {
   readonly __typename?: 'Email';
   readonly createdAt: Scalars['timestamptz'];
   readonly emailAddress: Scalars['String'];
+  readonly errorMessage?: Maybe<Scalars['String']>;
   readonly htmlContents: Scalars['String'];
   readonly id: Scalars['uuid'];
   readonly idempotencyKey: Scalars['uuid'];
@@ -72,6 +73,7 @@ export type Email = {
   readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount: Scalars['Int'];
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly subject: Scalars['String'];
   readonly updatedAt: Scalars['timestamptz'];
   /** An object relationship */
@@ -149,6 +151,7 @@ export type Email_Bool_Exp = {
   readonly _or?: Maybe<ReadonlyArray<Email_Bool_Exp>>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emailAddress?: Maybe<String_Comparison_Exp>;
+  readonly errorMessage?: Maybe<String_Comparison_Exp>;
   readonly htmlContents?: Maybe<String_Comparison_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
@@ -159,6 +162,7 @@ export type Email_Bool_Exp = {
   readonly recipientName?: Maybe<String_Comparison_Exp>;
   readonly retriesCount?: Maybe<Int_Comparison_Exp>;
   readonly sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+  readonly status?: Maybe<String_Comparison_Exp>;
   readonly subject?: Maybe<String_Comparison_Exp>;
   readonly updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly user?: Maybe<User_Bool_Exp>;
@@ -182,6 +186,7 @@ export type Email_Inc_Input = {
 export type Email_Insert_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly errorMessage?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -192,6 +197,7 @@ export type Email_Insert_Input = {
   readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -203,6 +209,7 @@ export type Email_Max_Fields = {
   readonly __typename?: 'Email_max_fields';
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly errorMessage?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -212,6 +219,7 @@ export type Email_Max_Fields = {
   readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly userId?: Maybe<Scalars['String']>;
@@ -221,6 +229,7 @@ export type Email_Max_Fields = {
 export type Email_Max_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
+  readonly errorMessage?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly idempotencyKey?: Maybe<Order_By>;
@@ -230,6 +239,7 @@ export type Email_Max_Order_By = {
   readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
+  readonly status?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly userId?: Maybe<Order_By>;
@@ -240,6 +250,7 @@ export type Email_Min_Fields = {
   readonly __typename?: 'Email_min_fields';
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly errorMessage?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -249,6 +260,7 @@ export type Email_Min_Fields = {
   readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly userId?: Maybe<Scalars['String']>;
@@ -258,6 +270,7 @@ export type Email_Min_Fields = {
 export type Email_Min_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
+  readonly errorMessage?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly idempotencyKey?: Maybe<Order_By>;
@@ -267,6 +280,7 @@ export type Email_Min_Order_By = {
   readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
+  readonly status?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly userId?: Maybe<Order_By>;
@@ -292,6 +306,7 @@ export type Email_On_Conflict = {
 export type Email_Order_By = {
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
+  readonly errorMessage?: Maybe<Order_By>;
   readonly htmlContents?: Maybe<Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly idempotencyKey?: Maybe<Order_By>;
@@ -302,6 +317,7 @@ export type Email_Order_By = {
   readonly recipientName?: Maybe<Order_By>;
   readonly retriesCount?: Maybe<Order_By>;
   readonly sentAt?: Maybe<Order_By>;
+  readonly status?: Maybe<Order_By>;
   readonly subject?: Maybe<Order_By>;
   readonly updatedAt?: Maybe<Order_By>;
   readonly user?: Maybe<User_Order_By>;
@@ -319,6 +335,8 @@ export enum Email_Select_Column {
   CreatedAt = 'createdAt',
   /** column name */
   EmailAddress = 'emailAddress',
+  /** column name */
+  ErrorMessage = 'errorMessage',
   /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
@@ -338,6 +356,8 @@ export enum Email_Select_Column {
   /** column name */
   SentAt = 'sentAt',
   /** column name */
+  Status = 'status',
+  /** column name */
   Subject = 'subject',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -349,6 +369,7 @@ export enum Email_Select_Column {
 export type Email_Set_Input = {
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
+  readonly errorMessage?: Maybe<Scalars['String']>;
   readonly htmlContents?: Maybe<Scalars['String']>;
   readonly id?: Maybe<Scalars['uuid']>;
   readonly idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -358,6 +379,7 @@ export type Email_Set_Input = {
   readonly recipientName?: Maybe<Scalars['String']>;
   readonly retriesCount?: Maybe<Scalars['Int']>;
   readonly sentAt?: Maybe<Scalars['timestamptz']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly subject?: Maybe<Scalars['String']>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly userId?: Maybe<Scalars['String']>;
@@ -414,6 +436,8 @@ export enum Email_Update_Column {
   /** column name */
   EmailAddress = 'emailAddress',
   /** column name */
+  ErrorMessage = 'errorMessage',
+  /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
   Id = 'id',
@@ -431,6 +455,8 @@ export enum Email_Update_Column {
   RetriesCount = 'retriesCount',
   /** column name */
   SentAt = 'sentAt',
+  /** column name */
+  Status = 'status',
   /** column name */
   Subject = 'subject',
   /** column name */
@@ -26308,6 +26334,8 @@ export type Registrant_Registrant = {
   readonly id: Scalars['uuid'];
   /** An object relationship */
   readonly invitation?: Maybe<Registrant_Invitation>;
+  /** A computed field, executes function "registrant.InvitationEmailStatus" */
+  readonly invitationStatus?: Maybe<Scalars['jsonb']>;
   /** A computed field, executes function "registrant.HasBeenInvited" */
   readonly inviteSent?: Maybe<Scalars['Boolean']>;
   /** An object relationship */
@@ -26364,6 +26392,12 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Permissions_GroupRegistrant_Order_By>>;
   where?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -26455,6 +26489,7 @@ export type Registrant_Registrant_Bool_Exp = {
   readonly groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   readonly id?: Maybe<Uuid_Comparison_Exp>;
   readonly invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+  readonly invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
   readonly inviteSent?: Maybe<Boolean_Comparison_Exp>;
   readonly profile?: Maybe<Registrant_Profile_Bool_Exp>;
   readonly programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -26565,6 +26600,7 @@ export type Registrant_Registrant_Order_By = {
   readonly groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   readonly id?: Maybe<Order_By>;
   readonly invitation?: Maybe<Registrant_Invitation_Order_By>;
+  readonly invitationStatus?: Maybe<Order_By>;
   readonly inviteSent?: Maybe<Order_By>;
   readonly profile?: Maybe<Registrant_Profile_Order_By>;
   readonly programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -35341,6 +35377,7 @@ export enum System_ConfigurationKey_Enum {
   SendgridSender = 'SENDGRID_SENDER',
   /** The name emails are from when sent via SendGrid. */
   SendgridSenderName = 'SENDGRID_SENDER_NAME',
+  SendgridWebhookPublicKey = 'SENDGRID_WEBHOOK_PUBLIC_KEY',
   /** Contact address for people to request emails never be sent to them again. */
   StopEmailsContactEmailAddress = 'STOP_EMAILS_CONTACT_EMAIL_ADDRESS',
   /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -41000,7 +41037,7 @@ export type GetIsExternalRtmpBroadcastEnabledQuery = { readonly __typename?: 'qu
 
 export type InvitationPartsFragment = { readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> };
 
-export type RegistrantPartsFragment = { readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
+export type RegistrantPartsFragment = { readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly invitationStatus?: Maybe<any>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
 
 export type ManageRegistrants_ProfileFragment = { readonly __typename?: 'registrant_Profile', readonly registrantId: any, readonly badges?: Maybe<any>, readonly affiliation?: Maybe<string>, readonly country?: Maybe<string>, readonly timezoneUTCOffset?: Maybe<number>, readonly bio?: Maybe<string>, readonly website?: Maybe<string>, readonly github?: Maybe<string>, readonly twitter?: Maybe<string>, readonly affiliationURL?: Maybe<string>, readonly pronouns?: Maybe<any>, readonly photoURL_50x50?: Maybe<string>, readonly photoURL_350x350?: Maybe<string>, readonly hasBeenEdited: boolean };
 
@@ -41009,7 +41046,7 @@ export type SelectAllRegistrantsQueryVariables = Exact<{
 }>;
 
 
-export type SelectAllRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
+export type SelectAllRegistrantsQuery = { readonly __typename?: 'query_root', readonly registrant_Registrant: ReadonlyArray<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly invitationStatus?: Maybe<any>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
 
 export type ManageRegistrants_SelectProfilesQueryVariables = Exact<{
   registrantIds: ReadonlyArray<Scalars['uuid']> | Scalars['uuid'];
@@ -41024,14 +41061,14 @@ export type InsertRegistrantMutationVariables = Exact<{
 }>;
 
 
-export type InsertRegistrantMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }>, readonly insert_registrant_Invitation_one?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
+export type InsertRegistrantMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly invitationStatus?: Maybe<any>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }>, readonly insert_registrant_Invitation_one?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> };
 
 export type InsertRegistrantWithoutInviteMutationVariables = Exact<{
   registrant: Registrant_Registrant_Insert_Input;
 }>;
 
 
-export type InsertRegistrantWithoutInviteMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
+export type InsertRegistrantWithoutInviteMutation = { readonly __typename?: 'mutation_root', readonly insert_registrant_Registrant_one?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly invitationStatus?: Maybe<any>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }> };
 
 export type DeleteRegistrantsMutationVariables = Exact<{
   deleteRegistrantIds?: Maybe<ReadonlyArray<Scalars['uuid']> | Scalars['uuid']>;
@@ -41048,7 +41085,7 @@ export type UpdateRegistrantMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRegistrantMutation = { readonly __typename?: 'mutation_root', readonly update_registrant_Registrant_by_pk?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly inviteSent?: Maybe<boolean>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }>, readonly insert_permissions_GroupRegistrant?: Maybe<{ readonly __typename?: 'permissions_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any, readonly registrantId: any, readonly groupId: any }> }>, readonly delete_permissions_GroupRegistrant?: Maybe<{ readonly __typename?: 'permissions_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any }> }> };
+export type UpdateRegistrantMutation = { readonly __typename?: 'mutation_root', readonly update_registrant_Registrant_by_pk?: Maybe<{ readonly __typename?: 'registrant_Registrant', readonly conferenceId: any, readonly id: any, readonly userId?: Maybe<string>, readonly updatedAt: any, readonly createdAt: any, readonly displayName: string, readonly invitationStatus?: Maybe<any>, readonly groupRegistrants: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly registrantId: any, readonly id: any, readonly groupId: any }>, readonly invitation?: Maybe<{ readonly __typename?: 'registrant_Invitation', readonly registrantId: any, readonly id: any, readonly inviteCode: any, readonly invitedEmailAddress: string, readonly linkToUserId?: Maybe<string>, readonly createdAt: any, readonly updatedAt: any, readonly hash?: Maybe<string> }> }>, readonly insert_permissions_GroupRegistrant?: Maybe<{ readonly __typename?: 'permissions_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any, readonly registrantId: any, readonly groupId: any }> }>, readonly delete_permissions_GroupRegistrant?: Maybe<{ readonly __typename?: 'permissions_GroupRegistrant_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'permissions_GroupRegistrant', readonly id: any }> }> };
 
 export type InsertInvitationEmailJobsMutationVariables = Exact<{
   registrantIds: Scalars['jsonb'];
@@ -43279,7 +43316,7 @@ export const RegistrantPartsFragmentDoc = gql`
   updatedAt
   createdAt
   displayName
-  inviteSent
+  invitationStatus
 }
     ${InvitationPartsFragmentDoc}`;
 export const ManageRegistrants_ProfileFragmentDoc = gql`

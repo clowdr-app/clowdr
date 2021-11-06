@@ -59,6 +59,7 @@ export type Email = {
   __typename?: 'Email';
   createdAt: Scalars['timestamptz'];
   emailAddress: Scalars['String'];
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents: Scalars['String'];
   id: Scalars['uuid'];
   idempotencyKey: Scalars['uuid'];
@@ -70,6 +71,7 @@ export type Email = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount: Scalars['Int'];
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject: Scalars['String'];
   updatedAt: Scalars['timestamptz'];
   /** An object relationship */
@@ -147,6 +149,7 @@ export type Email_Bool_Exp = {
   _or?: Maybe<Array<Email_Bool_Exp>>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   emailAddress?: Maybe<String_Comparison_Exp>;
+  errorMessage?: Maybe<String_Comparison_Exp>;
   htmlContents?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
@@ -157,6 +160,7 @@ export type Email_Bool_Exp = {
   recipientName?: Maybe<String_Comparison_Exp>;
   retriesCount?: Maybe<Int_Comparison_Exp>;
   sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+  status?: Maybe<String_Comparison_Exp>;
   subject?: Maybe<String_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   user?: Maybe<User_Bool_Exp>;
@@ -180,6 +184,7 @@ export type Email_Inc_Input = {
 export type Email_Insert_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -190,6 +195,7 @@ export type Email_Insert_Input = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -201,6 +207,7 @@ export type Email_Max_Fields = {
   __typename?: 'Email_max_fields';
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -210,6 +217,7 @@ export type Email_Max_Fields = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -219,6 +227,7 @@ export type Email_Max_Fields = {
 export type Email_Max_Order_By = {
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   idempotencyKey?: Maybe<Order_By>;
@@ -228,6 +237,7 @@ export type Email_Max_Order_By = {
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   userId?: Maybe<Order_By>;
@@ -238,6 +248,7 @@ export type Email_Min_Fields = {
   __typename?: 'Email_min_fields';
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -247,6 +258,7 @@ export type Email_Min_Fields = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -256,6 +268,7 @@ export type Email_Min_Fields = {
 export type Email_Min_Order_By = {
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   idempotencyKey?: Maybe<Order_By>;
@@ -265,6 +278,7 @@ export type Email_Min_Order_By = {
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   userId?: Maybe<Order_By>;
@@ -290,6 +304,7 @@ export type Email_On_Conflict = {
 export type Email_Order_By = {
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   idempotencyKey?: Maybe<Order_By>;
@@ -300,6 +315,7 @@ export type Email_Order_By = {
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   user?: Maybe<User_Order_By>;
@@ -317,6 +333,8 @@ export enum Email_Select_Column {
   CreatedAt = 'createdAt',
   /** column name */
   EmailAddress = 'emailAddress',
+  /** column name */
+  ErrorMessage = 'errorMessage',
   /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
@@ -336,6 +354,8 @@ export enum Email_Select_Column {
   /** column name */
   SentAt = 'sentAt',
   /** column name */
+  Status = 'status',
+  /** column name */
   Subject = 'subject',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -347,6 +367,7 @@ export enum Email_Select_Column {
 export type Email_Set_Input = {
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   idempotencyKey?: Maybe<Scalars['uuid']>;
@@ -356,6 +377,7 @@ export type Email_Set_Input = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -412,6 +434,8 @@ export enum Email_Update_Column {
   /** column name */
   EmailAddress = 'emailAddress',
   /** column name */
+  ErrorMessage = 'errorMessage',
+  /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
   Id = 'id',
@@ -429,6 +453,8 @@ export enum Email_Update_Column {
   RetriesCount = 'retriesCount',
   /** column name */
   SentAt = 'sentAt',
+  /** column name */
+  Status = 'status',
   /** column name */
   Subject = 'subject',
   /** column name */
@@ -8339,6 +8365,16 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+  /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+  AutomaticInvitationsEnd = 'AUTOMATIC_INVITATIONS_END',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatEnd = 'AUTOMATIC_INVITATIONS_REPEAT_END',
+  /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+  AutomaticInvitationsRepeatFrequency = 'AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatStart = 'AUTOMATIC_INVITATIONS_REPEAT_START',
+  /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+  AutomaticInvitationsStart = 'AUTOMATIC_INVITATIONS_START',
   /** A list of videos to be used as the background for title/sponsor slides. */
   BackgroundVideos = 'BACKGROUND_VIDEOS',
   /** A string representing the app version. Changing this causes the user's browsers to refresh. */
@@ -8353,6 +8389,8 @@ export enum Conference_ConfigurationKey_Enum {
   EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
   /** Boolean. Whether to enable the External RTMP Broadcast feature. */
   EnableExternalRtmpBroadcast = 'ENABLE_EXTERNAL_RTMP_BROADCAST',
+  /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
+  EventBoxHideExhibitionPeople = 'EVENT_BOX_HIDE_EXHIBITION_PEOPLE',
   /** List of S3 URLs. */
   FillerVideos = 'FILLER_VIDEOS',
   /** Boolean. Switches on the Sponsors menu button (even if no sponsors exist). */
@@ -35337,6 +35375,7 @@ export enum System_ConfigurationKey_Enum {
   SendgridSender = 'SENDGRID_SENDER',
   /** The name emails are from when sent via SendGrid. */
   SendgridSenderName = 'SENDGRID_SENDER_NAME',
+  SendgridWebhookPublicKey = 'SENDGRID_WEBHOOK_PUBLIC_KEY',
   /** Contact address for people to request emails never be sent to them again. */
   StopEmailsContactEmailAddress = 'STOP_EMAILS_CONTACT_EMAIL_ADDRESS',
   /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -39466,7 +39505,16 @@ export type UnmarkUnsentEmailsMutation = { __typename?: 'mutation_root', update_
 export type GetSendGridConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSendGridConfigQuery = { __typename?: 'query_root', apiKey?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderEmail?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderName?: Maybe<{ __typename?: 'system_Configuration', value: any }>, replyTo?: Maybe<{ __typename?: 'system_Configuration', value: any }> };
+export type GetSendGridConfigQuery = { __typename?: 'query_root', apiKey?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderEmail?: Maybe<{ __typename?: 'system_Configuration', value: any }>, senderName?: Maybe<{ __typename?: 'system_Configuration', value: any }>, replyTo?: Maybe<{ __typename?: 'system_Configuration', value: any }>, webhookPublicKey?: Maybe<{ __typename?: 'system_Configuration', value: any }> };
+
+export type UpdateEmailStatusMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  status: Scalars['String'];
+  errorMessage?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateEmailStatusMutation = { __typename?: 'mutation_root', update_Email_by_pk?: Maybe<{ __typename?: 'Email', id: any }> };
 
 export type GetEventChatInfoQueryVariables = Exact<{
   eventId: Scalars['uuid'];
@@ -40463,7 +40511,8 @@ export const InsertEmailsDocument = {"kind":"Document","definitions":[{"kind":"O
 export const SelectUnsentEmailIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SelectUnsentEmailIds"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"300"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SelectUnsentEmailIdsQuery, SelectUnsentEmailIdsQueryVariables>;
 export const MarkAndSelectUnsentEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAndSelectUnsentEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sentAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sentAt"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_inc"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"retriesCount"},"value":{"kind":"IntValue","value":"1"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recipientName"}},{"kind":"Field","name":{"kind":"Name","value":"emailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"htmlContents"}},{"kind":"Field","name":{"kind":"Name","value":"plainTextContents"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"retriesCount"}}]}}]}}]}}]} as unknown as DocumentNode<MarkAndSelectUnsentEmailsMutation, MarkAndSelectUnsentEmailsMutationVariables>;
 export const UnmarkUnsentEmailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnmarkUnsentEmails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_Email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sentAt"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UnmarkUnsentEmailsMutation, UnmarkUnsentEmailsMutationVariables>;
-export const GetSendGridConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSendGridConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"apiKey"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_API_KEY"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"senderEmail"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_SENDER"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"senderName"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_SENDER_NAME"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"replyTo"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_REPLYTO"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetSendGridConfigQuery, GetSendGridConfigQueryVariables>;
+export const GetSendGridConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSendGridConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"apiKey"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_API_KEY"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"senderEmail"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_SENDER"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"senderName"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_SENDER_NAME"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"replyTo"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_REPLYTO"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"webhookPublicKey"},"name":{"kind":"Name","value":"system_Configuration_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"EnumValue","value":"SENDGRID_WEBHOOK_PUBLIC_KEY"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetSendGridConfigQuery, GetSendGridConfigQueryVariables>;
+export const UpdateEmailStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEmailStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"errorMessage"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_Email_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"errorMessage"},"value":{"kind":"Variable","name":{"kind":"Name","value":"errorMessage"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateEmailStatusMutation, UpdateEmailStatusMutationVariables>;
 export const GetEventChatInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventChatInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chatId"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventChatInfoQuery, GetEventChatInfoQueryVariables>;
 export const StartChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<StartChatDuplicationMutation, StartChatDuplicationMutationVariables>;
 export const EndChatDuplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EndChatDuplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"update_chat1"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId1"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"update_chat2"},"name":{"kind":"Name","value":"update_chat_Chat_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chatId2"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"duplicateToId"},"value":{"kind":"NullValue"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<EndChatDuplicationMutation, EndChatDuplicationMutationVariables>;

@@ -128,11 +128,12 @@ export default function EventBox({
         eventIds,
         sortedEvents,
         event.item,
+        event.name,
         event.itemPeople,
         event.exhibitionPeople,
-        event.name,
         eventStartMs,
         durationSeconds,
+        conference.scheduleEventBox_HideExhibitionPeople,
         tags,
     ]);
 

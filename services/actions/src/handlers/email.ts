@@ -4,14 +4,15 @@ import assert from "assert";
 import { compile } from "handlebars";
 import { htmlToText } from "html-to-text";
 import wcmatch from "wildcard-match";
+import type { Email_Insert_Input } from "../generated/graphql";
 import {
     ConferenceEmailConfigurationDocument,
-    Email_Insert_Input,
     GetSendGridConfigDocument,
     InsertEmailsDocument,
     MarkAndSelectUnsentEmailsDocument,
     SelectUnsentEmailIdsDocument,
     UnmarkUnsentEmailsDocument,
+    UpdateEmailStatusDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import type { EmailTemplateContext } from "../lib/email/emailTemplate";
@@ -128,7 +129,7 @@ export async function insertEmails(
         techSupportAddress,
     };
 
-    const emailsToInsert = emails
+    const emailsToInsert: Email_Insert_Input[] = emails
         .filter(
             (email) =>
                 !!email.htmlContents &&
@@ -153,6 +154,7 @@ export async function insertEmails(
                 subject: compiledEmail.subject,
                 htmlContents: compiledEmail.body,
                 plainTextContents: htmlToText(compiledEmail.body),
+                status: "processing",
             };
         });
 
@@ -240,6 +242,9 @@ gql`
         replyTo: system_Configuration_by_pk(key: SENDGRID_REPLYTO) {
             value
         }
+        webhookPublicKey: system_Configuration_by_pk(key: SENDGRID_WEBHOOK_PUBLIC_KEY) {
+            value
+        }
     }
 `;
 
@@ -249,13 +254,15 @@ let sgMailInitialised:
           apiKey: string;
           sender: string | { name: string; email: string };
           replyTo: string;
+          webhookPublicKey: string;
       } = false;
-async function initSGMail(): Promise<
+export async function initSGMail(): Promise<
     | false
     | {
           apiKey: string;
           sender: string | { name: string; email: string };
           replyTo: string;
+          webhookPublicKey: string;
       }
 > {
     if (!sgMailInitialised) {
@@ -275,6 +282,12 @@ async function initSGMail(): Promise<
                 console.error("Unable to initialise SendGrid email. SendGrid Reply-To not configured");
                 return false;
             }
+            if (!response.data.webhookPublicKey) {
+                console.error(
+                    "Unable to initialise SendGrid email. SendGrid Webhook Verification Public Key not configured"
+                );
+                return false;
+            }
 
             sgMail.setApiKey(response.data.apiKey.value);
             sgMailInitialised = {
@@ -283,6 +296,7 @@ async function initSGMail(): Promise<
                     ? { email: response.data.senderEmail.value, name: response.data.senderName.value }
                     : response.data.senderEmail.value,
                 replyTo: response.data.replyTo.value,
+                webhookPublicKey: response.data.webhookPublicKey.value,
             };
         } catch (e) {
             console.error("Failed to initialise SendGrid mail", e);
@@ -323,6 +337,9 @@ export async function processEmailsJobQueue(): Promise<void> {
                             text: email.plainTextContents,
                             html: email.htmlContents,
                             replyTo: replyToAddress,
+                            customArgs: {
+                                midspaceEmailId: email.id,
+                            },
                         };
                         await callWithRetry(() => sgMail.send(msg));
                     }
@@ -350,5 +367,56 @@ export async function processEmailsJobQueue(): Promise<void> {
         console.warn(
             "Unable to send email - could not initialise email client. Perhaps a system configuration key is missing?"
         );
+    }
+}
+
+gql`
+    mutation UpdateEmailStatus($id: uuid!, $status: String!, $errorMessage: String) {
+        update_Email_by_pk(pk_columns: { id: $id }, _set: { status: $status, errorMessage: $errorMessage }) {
+            id
+        }
+    }
+`;
+
+export async function processEmailWebhook(payload: Record<string, any>): Promise<void> {
+    const eventName = payload.event;
+    const midspaceEmailId = payload.midspaceEmailId;
+    if (eventName && typeof eventName === "string" && midspaceEmailId && typeof midspaceEmailId === "string") {
+        let status: string;
+        let errorMessage: string | null = null;
+        switch (eventName) {
+            case "processed":
+                status = "processed";
+                break;
+            case "dropped":
+                status = "dropped";
+                errorMessage = payload.reason;
+                break;
+            case "delivered":
+                status = "delivered";
+                break;
+            case "deferred":
+                status = "deferred";
+                errorMessage = payload.response;
+                break;
+            case "bounce":
+                status = "bounce";
+                errorMessage = payload.reason;
+                break;
+            case "blocked":
+                status = "blocked";
+                errorMessage = payload.reason;
+                break;
+            default:
+                throw new Error("Unrecognised webhook event");
+        }
+        apolloClient.mutate({
+            mutation: UpdateEmailStatusDocument,
+            variables: {
+                id: midspaceEmailId,
+                status,
+                errorMessage,
+            },
+        });
     }
 }

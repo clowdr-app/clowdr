@@ -1,8 +1,9 @@
 import assert from "assert";
 import { json } from "body-parser";
 import cors from "cors";
-import express, { Request, Response } from "express";
-import { AuthenticatedRequest } from "./checkScopes";
+import type { Request, Response } from "express";
+import express from "express";
+import type { AuthenticatedRequest } from "./checkScopes";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { checkEventSecret } from "./middlewares/checkEventSecret";
@@ -18,6 +19,7 @@ import { router as conferenceRouter } from "./router/conference";
 import { router as conferencePrepareJobRouter } from "./router/conferencePrepareJob";
 import { router as elasticTranscoderRouter } from "./router/elasticTranscoder";
 import { router as elementRouter } from "./router/element";
+import { router as emailRouter } from "./router/email";
 import { router as eventRouter } from "./router/event";
 import { router as googleRouter } from "./router/google";
 import { router as hasuraRouter } from "./router/hasura";
@@ -78,6 +80,7 @@ app.use("/shuffle", shuffleRoomsRouter);
 app.use("/chat", chatRouter);
 
 app.use("/queues", queuesRouter);
+app.use("/email", emailRouter);
 app.use("/analytics", analyticsRouter);
 
 app.use("/hasura", hasuraRouter);

@@ -63,6 +63,11 @@ array_relationships:
         name: Participant
         schema: room
 computed_fields:
+- definition:
+    function:
+      name: InvitationEmailStatus
+      schema: registrant
+  name: invitationStatus
 - comment: ""
   definition:
     function:
@@ -111,6 +116,7 @@ select_permissions:
     - updated_at
     - userId
     computed_fields:
+    - invitationStatus
     - inviteSent
     filter:
       _or:

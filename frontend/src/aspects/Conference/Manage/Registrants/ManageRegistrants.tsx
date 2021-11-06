@@ -23,11 +23,10 @@ import {
 } from "@chakra-ui/react";
 import assert from "assert";
 import Papa from "papaparse";
-import type { LegacyRef} from "react";
+import type { LegacyRef } from "react";
 import React, { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-    RegistrantPartsFragment} from "../../../../generated/graphql";
+import type { RegistrantPartsFragment } from "../../../../generated/graphql";
 import {
     InvitationPartsFragmentDoc,
     Permissions_Permission_Enum,
@@ -45,7 +44,12 @@ import {
 import type { BadgeData } from "../../../Badges/ProfileBadge";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import MultiSelect from "../../../Chakra/MultiSelect";
-import { CheckBoxColumnFilter, MultiSelectColumnFilter, TextColumnFilter } from "../../../CRUDTable2/CRUDComponents";
+import {
+    CheckBoxColumnFilter,
+    MultiSelectColumnFilter,
+    SelectColumnFilter,
+    TextColumnFilter,
+} from "../../../CRUDTable2/CRUDComponents";
 import type {
     CellProps,
     ColumnHeaderProps,
@@ -55,13 +59,13 @@ import type {
     ExtraButton,
     Insert,
     RowSpecification,
-    Update} from "../../../CRUDTable2/CRUDTable2";
-import CRUDTable, {
-    SortDirection
+    Update,
 } from "../../../CRUDTable2/CRUDTable2";
+import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { FAIcon } from "../../../Icons/FAIcon";
+import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireAtLeastOnePermissionWrapper from "../../RequireAtLeastOnePermissionWrapper";
 import { useConference } from "../../useConference";
@@ -94,7 +98,7 @@ gql`
         updatedAt
         createdAt
         displayName
-        inviteSent
+        invitationStatus
     }
 
     fragment ManageRegistrants_Profile on registrant_Profile {
@@ -209,6 +213,14 @@ gql`
 
 // TODO: Email validation
 
+type InvitationStatus =
+    | undefined
+    | {
+          sentAt?: string | null;
+          status?: "processing" | "processed" | "dropped" | "delivered" | "deferred" | "bounce" | "blocked" | null;
+          errorMessage?: string | null;
+      };
+
 type RegistrantDescriptor = RegistrantPartsFragment & {
     id?: string;
     groupRegistrants?: ReadonlyArray<
@@ -275,6 +287,28 @@ export default function ManageRegistrants(): JSX.Element {
         []
     );
 
+    const inviteStatusFilterOptions = useMemo(
+        () => [
+            {
+                label: "Unsent",
+                value: "unsent",
+            },
+            {
+                label: "Sending",
+                value: "processed",
+            },
+            {
+                label: "Sent",
+                value: "delivered",
+            },
+            {
+                label: "Error",
+                value: "error",
+            },
+        ],
+        []
+    );
+
     const columns: ColumnSpecification<RegistrantDescriptor>[] = useMemo(() => {
         const groupOptions: { value: string; label: string }[] =
             allGroups?.permissions_Group.map((group) => ({
@@ -330,34 +364,93 @@ export default function ManageRegistrants(): JSX.Element {
                 },
             },
             {
-                id: "inviteSent",
+                id: "invitationStatus",
                 header: function NameHeader({ isInCreate, onClick, sortDir }: ColumnHeaderProps<RegistrantDescriptor>) {
                     if (isInCreate) {
                         return undefined;
                     } else {
                         return (
                             <Button size="xs" onClick={onClick}>
-                                Invite sent?{sortDir !== null ? ` ${sortDir}` : undefined}
+                                Invite status{sortDir !== null ? ` ${sortDir}` : undefined}
                             </Button>
                         );
                     }
                 },
-                get: (data) => data.inviteSent,
-                sort: (x: boolean, y: boolean) => (x && y ? 0 : x ? -1 : y ? 1 : 0),
-                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: boolean) => {
-                    return rows.filter((row) => row.inviteSent === filterValue);
+                get: (data) => (data.invitationStatus ? data.invitationStatus : undefined) as InvitationStatus,
+                sort: (x: InvitationStatus, y: InvitationStatus) =>
+                    maybeCompare(x?.status, y?.status, (a, b) => a.localeCompare(b)),
+                filterFn: (rows: Array<RegistrantDescriptor>, filterValue: string) => {
+                    return rows.filter((row) => {
+                        let status = row.invitationStatus?.status;
+                        status =
+                            status === undefined
+                                ? "unsent"
+                                : status === "processing" || status === "processed"
+                                ? "processed"
+                                : status === "delivered"
+                                ? "delivered"
+                                : "error";
+                        return status === filterValue;
+                    });
                 },
-                filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell({
+                filterEl: SelectColumnFilter(inviteStatusFilterOptions),
+                cell: function InvitationStatusCell({
                     isInCreate,
                     value,
-                }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
+                }: CellProps<Partial<RegistrantDescriptor>, InvitationStatus>) {
                     if (isInCreate) {
                         return undefined;
+                    } else if (value) {
+                        if (value.status === "processing" || value.status === "processed") {
+                            return (
+                                <Center>
+                                    <Tooltip label="Sending in progress">
+                                        <FAIcon iconStyle="s" icon="paper-plane" />
+                                    </Tooltip>
+                                </Center>
+                            );
+                        } else if (
+                            value.status === "blocked" ||
+                            value.status === "bounce" ||
+                            value.status === "deferred" ||
+                            value.status === "dropped"
+                        ) {
+                            return (
+                                <Center>
+                                    <Tooltip
+                                        label={`Error sending invitation email! ${
+                                            value.errorMessage
+                                                ? `Message from server: ${value.errorMessage}`
+                                                : "Reason for failure could not be identified."
+                                        }`}
+                                    >
+                                        <FAIcon iconStyle="s" icon="exclamation-circle" />
+                                    </Tooltip>
+                                </Center>
+                            );
+                        } else if (value.status === "delivered") {
+                            return (
+                                <Center>
+                                    <Tooltip label="Sent">
+                                        <FAIcon iconStyle="s" icon="check" />
+                                    </Tooltip>
+                                </Center>
+                            );
+                        } else {
+                            return (
+                                <Center>
+                                    <Tooltip label="Unrecognised status">
+                                        <FAIcon iconStyle="s" icon="bug" />
+                                    </Tooltip>
+                                </Center>
+                            );
+                        }
                     } else {
                         return (
                             <Center>
-                                <FAIcon iconStyle="s" icon={value ? "check" : "times"} />
+                                <Tooltip label="Unsent">
+                                    <FAIcon iconStyle="s" icon="times" />
+                                </Tooltip>
                             </Center>
                         );
                     }
@@ -382,7 +475,7 @@ export default function ManageRegistrants(): JSX.Element {
                     return rows.filter((row) => !!row.userId === filterValue);
                 },
                 filterEl: CheckBoxColumnFilter,
-                cell: function InviteSentCell({
+                cell: function InvitationAcceptedCell({
                     isInCreate,
                     value,
                 }: CellProps<Partial<RegistrantDescriptor>, boolean>) {
@@ -575,7 +668,7 @@ export default function ManageRegistrants(): JSX.Element {
             },
         ];
         return result;
-    }, [allGroups?.permissions_Group]);
+    }, [allGroups?.permissions_Group, inviteStatusFilterOptions]);
 
     const [insertInvitationEmailJobsMutation, { loading: insertInvitationEmailJobsLoading }] =
         useInsertInvitationEmailJobsMutation();
@@ -776,7 +869,7 @@ export default function ManageRegistrants(): JSX.Element {
                                     Name: registrant.displayName,
                                     Email: registrant.invitation?.invitedEmailAddress ?? "",
                                     "Invite code": registrant.invitation?.inviteCode ?? "",
-                                    "Invite sent": registrant.inviteSent ? "Yes" : "No",
+                                    "Invitation status": JSON.stringify(registrant.invitationStatus),
                                     "Invite accepted": registrant.userId ? "Yes" : "No",
                                     "Group Ids": registrant.groupRegistrants.map((x) => x.groupId),
                                     "Group Names": registrant.groupRegistrants.map(

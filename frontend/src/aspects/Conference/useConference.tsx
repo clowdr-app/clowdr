@@ -3,13 +3,8 @@ import { VStack } from "@chakra-ui/react";
 import assert from "assert";
 import React from "react";
 import { AppError } from "../../AppError";
-import type {
-    AuthdConferenceInfoFragment,
-    PublicConferenceInfoFragment} from "../../generated/graphql";
-import {
-    useConferenceBySlug_WithoutUserQuery,
-    useConferenceBySlug_WithUserQuery,
-} from "../../generated/graphql";
+import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
+import { useConferenceBySlug_WithoutUserQuery, useConferenceBySlug_WithUserQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import PageNotFound from "../Errors/PageNotFound";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
@@ -67,6 +62,13 @@ gql`
             value
         }
         scheduleViewVersion: configurations(where: { key: { _eq: SCHEDULE_VIEW_VERSION } }) {
+            conferenceId
+            key
+            value
+        }
+        scheduleEventBox_HideExhibitionPeople: configurations(
+            where: { key: { _eq: EVENT_BOX_HIDE_EXHIBITION_PEOPLE } }
+        ) {
             conferenceId
             key
             value

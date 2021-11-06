@@ -1,5 +1,5 @@
 import { EventWebhook, EventWebhookHeader } from "@sendgrid/eventwebhook";
-import { json } from "body-parser";
+import { text } from "body-parser";
 import express from "express";
 import { initSGMail, processEmailWebhook } from "../handlers/email";
 
@@ -11,7 +11,7 @@ function verifyRequest(publicKey: string, payload: string | Buffer, signature: s
     return eventWebhook.verifySignature(ecPublicKey, payload, signature, timestamp);
 }
 
-router.use(json());
+router.use(text({ type: "application/json" }));
 
 router.post("/webhook", async (req, resp) => {
     try {

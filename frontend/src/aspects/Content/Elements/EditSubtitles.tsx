@@ -25,7 +25,7 @@ import type { SubtitleDetails } from "@midspace/shared-types/content";
 import { gql } from "@urql/core";
 import AmazonS3Uri from "amazon-s3-uri";
 import * as R from "ramda";
-import React, { Suspense, useCallback, useMemo, useState } from "react";
+import React, { Fragment, lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import type { SrtValidationError } from "srt-validator";
 import srtValidator from "srt-validator";
@@ -53,7 +53,7 @@ class ValidationError extends Error {
     }
 }
 
-const LazyTranscriptEditor = React.lazy(() => import("../../../TranscriptEditor"));
+const LazyTranscriptEditor = lazy(() => import("../../../TranscriptEditor"));
 
 export default function EditSubtitles({
     videoS3URL,
@@ -138,11 +138,11 @@ export default function EditSubtitles({
     );
 
     return (
-        <React.Fragment>
+        <Fragment>
             {loading ? <Spinner /> : undefined}
             {error || (!loading && !error && !subtitlesData) ? <Text>Could not load subtitles.</Text> : undefined}
             {subtitlesData ? (
-                <React.Fragment>
+                <Fragment>
                     <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} />
                     <HStack wrap="wrap">
                         <Alert status="info" my={2} width={{ md: "100%", lg: "auto" }} minWidth="40ch" flex={4}>
@@ -280,8 +280,8 @@ export default function EditSubtitles({
                             handleChange={() => setHasUnsavedChanges(true)}
                         />
                     </Suspense>
-                </React.Fragment>
+                </Fragment>
             ) : undefined}
-        </React.Fragment>
+        </Fragment>
     );
 }

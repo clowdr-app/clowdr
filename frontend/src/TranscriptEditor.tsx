@@ -1,6 +1,6 @@
 import { Button, Flex, FormControl, Textarea } from "@chakra-ui/react";
-import React from "react";
-import srtParser from "srt-parser-2";
+import React, { useState } from "react";
+import srtHandler from "srt-parser-2";
 
 interface Props {
     srtTranscript: string;
@@ -9,10 +9,15 @@ interface Props {
     handleChange?: () => void;
 }
 
-export default (props: Props) => {
-    const SRT = new srtParser();
-    const initialTranscript = SRT.fromSrt(props.srtTranscript);
-    const [transcriptWIP, setTranscriptWIP] = React.useState(initialTranscript);
+export default function TranscriptEditor({
+    srtTranscript,
+    mediaUrl,
+    handleSaveEditor,
+    handleChange,
+}: Props): JSX.Element {
+    const SRT = new srtHandler();
+    const initialTranscript = SRT.fromSrt(srtTranscript);
+    const [transcriptWIP, setTranscriptWIP] = useState(initialTranscript);
     return (
         <Flex flexDirection="row" width="100%">
             <FormControl display="flex" flexBasis={0} flexGrow={1} justifyContent="center">
@@ -29,13 +34,13 @@ export default (props: Props) => {
                 />
             </FormControl>
             <Flex flexBasis={0} flexGrow={1} flexDirection="column" alignItems="center" justifyContent="space-between">
-                <video src={props.mediaUrl} controls>
+                <video src={mediaUrl} controls>
                     This is a video
                 </video>
                 <Button
                     colorScheme="green"
                     onClick={() => {
-                        props.handleSaveEditor(SRT.toSrt(transcriptWIP));
+                        handleSaveEditor(SRT.toSrt(transcriptWIP));
                     }}
                 >
                     Save Subtitles
@@ -43,4 +48,4 @@ export default (props: Props) => {
             </Flex>
         </Flex>
     );
-};
+}

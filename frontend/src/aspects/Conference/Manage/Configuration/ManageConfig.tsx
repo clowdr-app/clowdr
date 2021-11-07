@@ -103,10 +103,7 @@ export default function ManageConfig(): JSX.Element {
                         <MultiSettingUpdater
                             settingNames={[
                                 Conference_ConfigurationKey_Enum.AutomaticInvitationsStart,
-                                Conference_ConfigurationKey_Enum.AutomaticInvitationsEnd,
                                 Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatStart,
-                                Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatEnd,
-                                Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatFrequency,
                             ]}
                         >
                             {(props) => (

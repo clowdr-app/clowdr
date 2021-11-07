@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { Content_ElementType_Enum, ElementBaseType, ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { SourceBlob, SourceType } from "@clowdr-app/shared-types/build/content/element";
 import assert from "assert";
 import { formatRFC7231 } from "date-fns";
 import {
@@ -121,6 +122,7 @@ gql`
                 id
                 name
                 startTime
+                durationSeconds
             }
             id
         }
@@ -130,6 +132,7 @@ gql`
         $id: uuid!
         $message: String!
         $data: jsonb = ""
+        $source: jsonb = null
         $itemId: uuid = ""
         $conferenceId: uuid = ""
         $name: String = ""
@@ -141,7 +144,14 @@ gql`
             id
         }
         insert_content_Element_one(
-            object: { data: $data, itemId: $itemId, conferenceId: $conferenceId, typeName: VIDEO_FILE, name: $name }
+            object: {
+                data: $data
+                itemId: $itemId
+                conferenceId: $conferenceId
+                typeName: VIDEO_FILE
+                name: $name
+                source: $source
+            }
         ) {
             id
         }
@@ -194,6 +204,13 @@ export async function completeMediaPackageHarvestJob(
         },
     ];
 
+    const source: SourceBlob = {
+        source: SourceType.EventRecording,
+        eventId: job.event.id,
+        startTimeMillis: Date.parse(job.event.startTime),
+        durationSeconds: job.event.durationSeconds,
+    };
+
     console.log("Completing MediaPackage harvest job", job.event.id, job.id);
     const startTime = formatRFC7231(Date.parse(job.event.startTime));
     await callWithRetry(
@@ -206,6 +223,7 @@ export async function completeMediaPackageHarvestJob(
                     conferenceId: job.conferenceId,
                     itemId: job.event.item?.id,
                     data,
+                    source,
                     name: `Recording of ${job.event.name} from ${startTime}`,
                 },
             })

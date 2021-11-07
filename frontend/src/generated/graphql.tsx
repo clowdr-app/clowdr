@@ -8404,6 +8404,8 @@ export enum Conference_ConfigurationKey_Enum {
   EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
   /** Boolean. Whether to enable the External RTMP Broadcast feature. */
   EnableExternalRtmpBroadcast = 'ENABLE_EXTERNAL_RTMP_BROADCAST',
+  /** Whether to enable email notifications for recordings (default: true). */
+  EnableRecordingSubtitleEmailNotifications = 'ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS',
   /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
   EventBoxHideExhibitionPeople = 'EVENT_BOX_HIDE_EXHIBITION_PEOPLE',
   /** List of S3 URLs. */
@@ -9522,6 +9524,7 @@ export type Content_Element = {
   readonly permissionGrants: ReadonlyArray<Content_ElementPermissionGrant>;
   /** An aggregate relationship */
   readonly permissionGrants_aggregate: Content_ElementPermissionGrant_Aggregate;
+  readonly source?: Maybe<Scalars['jsonb']>;
   /** An array relationship */
   readonly stats: ReadonlyArray<Analytics_ContentElementStats>;
   /** An aggregate relationship */
@@ -9575,6 +9578,12 @@ export type Content_ElementPermissionGrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<ReadonlyArray<Content_ElementPermissionGrant_Order_By>>;
   where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -10656,6 +10665,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly source?: Maybe<Scalars['jsonb']>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -10697,6 +10707,7 @@ export type Content_Element_Bool_Exp = {
   readonly originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   readonly originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   readonly permissionGrants?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+  readonly source?: Maybe<Jsonb_Comparison_Exp>;
   readonly stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
   readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
   readonly type?: Maybe<Content_ElementType_Bool_Exp>;
@@ -10718,18 +10729,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
   readonly data?: Maybe<ReadonlyArray<Scalars['String']>>;
   readonly layoutData?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly source?: Maybe<ReadonlyArray<Scalars['String']>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
   readonly data?: Maybe<Scalars['Int']>;
   readonly layoutData?: Maybe<Scalars['Int']>;
+  readonly source?: Maybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
   readonly data?: Maybe<Scalars['String']>;
   readonly layoutData?: Maybe<Scalars['String']>;
+  readonly source?: Maybe<Scalars['String']>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -10753,6 +10767,7 @@ export type Content_Element_Insert_Input = {
   readonly originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
   readonly permissionGrants?: Maybe<Content_ElementPermissionGrant_Arr_Rel_Insert_Input>;
+  readonly source?: Maybe<Scalars['jsonb']>;
   readonly stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
   readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
   readonly type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
@@ -10858,6 +10873,7 @@ export type Content_Element_Order_By = {
   readonly originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   readonly originatingDataId?: Maybe<Order_By>;
   readonly permissionGrants_aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Order_By>;
+  readonly source?: Maybe<Order_By>;
   readonly stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
   readonly totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
   readonly type?: Maybe<Content_ElementType_Order_By>;
@@ -10878,6 +10894,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
   readonly data?: Maybe<Scalars['jsonb']>;
   readonly layoutData?: Maybe<Scalars['jsonb']>;
+  readonly source?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "content.Element" */
@@ -10903,6 +10920,8 @@ export enum Content_Element_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Source = 'source',
+  /** column name */
   TypeName = 'typeName',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -10922,6 +10941,7 @@ export type Content_Element_Set_Input = {
   readonly layoutData?: Maybe<Scalars['jsonb']>;
   readonly name?: Maybe<Scalars['String']>;
   readonly originatingDataId?: Maybe<Scalars['uuid']>;
+  readonly source?: Maybe<Scalars['jsonb']>;
   readonly typeName?: Maybe<Content_ElementType_Enum>;
   readonly updatedAt?: Maybe<Scalars['timestamptz']>;
   readonly uploadsRemaining?: Maybe<Scalars['Int']>;
@@ -10993,6 +11013,8 @@ export enum Content_Element_Update_Column {
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  Source = 'source',
   /** column name */
   TypeName = 'typeName',
   /** column name */

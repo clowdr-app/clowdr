@@ -8402,6 +8402,8 @@ export enum Conference_ConfigurationKey_Enum {
   EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
   /** Boolean. Whether to enable the External RTMP Broadcast feature. */
   EnableExternalRtmpBroadcast = 'ENABLE_EXTERNAL_RTMP_BROADCAST',
+  /** Whether to enable email notifications for recordings (default: true). */
+  EnableRecordingSubtitleEmailNotifications = 'ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS',
   /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
   EventBoxHideExhibitionPeople = 'EVENT_BOX_HIDE_EXHIBITION_PEOPLE',
   /** List of S3 URLs. */
@@ -9520,6 +9522,7 @@ export type Content_Element = {
   permissionGrants: Array<Content_ElementPermissionGrant>;
   /** An aggregate relationship */
   permissionGrants_aggregate: Content_ElementPermissionGrant_Aggregate;
+  source?: Maybe<Scalars['jsonb']>;
   /** An array relationship */
   stats: Array<Analytics_ContentElementStats>;
   /** An aggregate relationship */
@@ -9573,6 +9576,12 @@ export type Content_ElementPermissionGrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
   where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -10654,6 +10663,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
   data?: Maybe<Scalars['jsonb']>;
   layoutData?: Maybe<Scalars['jsonb']>;
+  source?: Maybe<Scalars['jsonb']>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -10695,6 +10705,7 @@ export type Content_Element_Bool_Exp = {
   originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   permissionGrants?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+  source?: Maybe<Jsonb_Comparison_Exp>;
   stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
   type?: Maybe<Content_ElementType_Bool_Exp>;
@@ -10716,18 +10727,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
   data?: Maybe<Array<Scalars['String']>>;
   layoutData?: Maybe<Array<Scalars['String']>>;
+  source?: Maybe<Array<Scalars['String']>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
   data?: Maybe<Scalars['Int']>;
   layoutData?: Maybe<Scalars['Int']>;
+  source?: Maybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
   data?: Maybe<Scalars['String']>;
   layoutData?: Maybe<Scalars['String']>;
+  source?: Maybe<Scalars['String']>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -10751,6 +10765,7 @@ export type Content_Element_Insert_Input = {
   originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   permissionGrants?: Maybe<Content_ElementPermissionGrant_Arr_Rel_Insert_Input>;
+  source?: Maybe<Scalars['jsonb']>;
   stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
   type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
@@ -10856,6 +10871,7 @@ export type Content_Element_Order_By = {
   originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   originatingDataId?: Maybe<Order_By>;
   permissionGrants_aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Order_By>;
+  source?: Maybe<Order_By>;
   stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
   type?: Maybe<Content_ElementType_Order_By>;
@@ -10876,6 +10892,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
   data?: Maybe<Scalars['jsonb']>;
   layoutData?: Maybe<Scalars['jsonb']>;
+  source?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "content.Element" */
@@ -10901,6 +10918,8 @@ export enum Content_Element_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Source = 'source',
+  /** column name */
   TypeName = 'typeName',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -10920,6 +10939,7 @@ export type Content_Element_Set_Input = {
   layoutData?: Maybe<Scalars['jsonb']>;
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
+  source?: Maybe<Scalars['jsonb']>;
   typeName?: Maybe<Content_ElementType_Enum>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   uploadsRemaining?: Maybe<Scalars['Int']>;
@@ -10991,6 +11011,8 @@ export enum Content_Element_Update_Column {
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  Source = 'source',
   /** column name */
   TypeName = 'typeName',
   /** column name */
@@ -39788,12 +39810,13 @@ export type Recording_GetMediaPackageHarvestJobQueryVariables = Exact<{
 }>;
 
 
-export type Recording_GetMediaPackageHarvestJobQuery = { __typename?: 'query_root', job_queues_MediaPackageHarvestJob: Array<{ __typename?: 'job_queues_MediaPackageHarvestJob', conferenceId: any, id: any, event: { __typename?: 'schedule_Event', id: any, name: string, startTime: any, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string }> } }> };
+export type Recording_GetMediaPackageHarvestJobQuery = { __typename?: 'query_root', job_queues_MediaPackageHarvestJob: Array<{ __typename?: 'job_queues_MediaPackageHarvestJob', conferenceId: any, id: any, event: { __typename?: 'schedule_Event', id: any, name: string, startTime: any, durationSeconds: number, item?: Maybe<{ __typename?: 'content_Item', id: any, title: string }> } }> };
 
 export type Recording_CompleteMediaPackageHarvestJobMutationVariables = Exact<{
   id: Scalars['uuid'];
   message: Scalars['String'];
   data?: Maybe<Scalars['jsonb']>;
+  source?: Maybe<Scalars['jsonb']>;
   itemId?: Maybe<Scalars['uuid']>;
   conferenceId?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
@@ -40595,8 +40618,8 @@ export const GetEventsWithoutVonageSessionDocument = {"kind":"Document","definit
 export const Recording_GetEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Recording_GetEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schedule_Event_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"channelStack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mediaPackageChannelId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Recording_GetEventQuery, Recording_GetEventQueryVariables>;
 export const StartMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"awsJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_MediaPackageHarvestJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mediaPackageHarvestJobId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"awsJobId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"IN_PROGRESS"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<StartMediaPackageHarvestJobMutation, StartMediaPackageHarvestJobMutationVariables>;
 export const CreateMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_job_queues_MediaPackageHarvestJob_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"NEW"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateMediaPackageHarvestJobMutation, CreateMediaPackageHarvestJobMutationVariables>;
-export const Recording_GetMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Recording_GetMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mediaPackageHarvestJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"job_queues_MediaPackageHarvestJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mediaPackageHarvestJobId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mediaPackageHarvestJobId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<Recording_GetMediaPackageHarvestJobQuery, Recording_GetMediaPackageHarvestJobQueryVariables>;
-export const Recording_CompleteMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Recording_CompleteMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"itemId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_MediaPackageHarvestJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"COMPLETED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"insert_content_Element_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"itemId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"itemId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"typeName"},"value":{"kind":"EnumValue","value":"VIDEO_FILE"}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<Recording_CompleteMediaPackageHarvestJobMutation, Recording_CompleteMediaPackageHarvestJobMutationVariables>;
+export const Recording_GetMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Recording_GetMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mediaPackageHarvestJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"job_queues_MediaPackageHarvestJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mediaPackageHarvestJobId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mediaPackageHarvestJobId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"conferenceId"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"item"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<Recording_GetMediaPackageHarvestJobQuery, Recording_GetMediaPackageHarvestJobQueryVariables>;
+export const Recording_CompleteMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Recording_CompleteMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"jsonb"}},"defaultValue":{"kind":"NullValue"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"itemId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_MediaPackageHarvestJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"COMPLETED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"insert_content_Element_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"itemId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"itemId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"conferenceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"conferenceId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"typeName"},"value":{"kind":"EnumValue","value":"VIDEO_FILE"}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<Recording_CompleteMediaPackageHarvestJobMutation, Recording_CompleteMediaPackageHarvestJobMutationVariables>;
 export const Recording_IgnoreMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Recording_IgnoreMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_MediaPackageHarvestJob_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"COMPLETED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<Recording_IgnoreMediaPackageHarvestJobMutation, Recording_IgnoreMediaPackageHarvestJobMutationVariables>;
 export const FailMediaPackageHarvestJobDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FailMediaPackageHarvestJob"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"awsJobId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_job_queues_MediaPackageHarvestJob"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"jobStatusName"},"value":{"kind":"EnumValue","value":"FAILED"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mediaPackageHarvestJobId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"awsJobId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<FailMediaPackageHarvestJobMutation, FailMediaPackageHarvestJobMutationVariables>;
 export const RegistrantGoogleAccount_GetRegistrantGoogleAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RegistrantGoogleAccount_GetRegistrantGoogleAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrant_GoogleAccount_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrantId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tokenData"}},{"kind":"Field","name":{"kind":"Name","value":"youTubeData"}}]}}]}}]} as unknown as DocumentNode<RegistrantGoogleAccount_GetRegistrantGoogleAccountQuery, RegistrantGoogleAccount_GetRegistrantGoogleAccountQueryVariables>;

@@ -57,10 +57,13 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
   __typename?: 'Email';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt: Scalars['timestamptz'];
   emailAddress: Scalars['String'];
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents: Scalars['String'];
   id: Scalars['uuid'];
+  idempotencyKey: Scalars['uuid'];
   /** An object relationship */
   invitation?: Maybe<Registrant_Invitation>;
   invitationId?: Maybe<Scalars['uuid']>;
@@ -69,6 +72,7 @@ export type Email = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount: Scalars['Int'];
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject: Scalars['String'];
   updatedAt: Scalars['timestamptz'];
   /** An object relationship */
@@ -144,10 +148,13 @@ export type Email_Bool_Exp = {
   _and?: Maybe<Array<Email_Bool_Exp>>;
   _not?: Maybe<Email_Bool_Exp>;
   _or?: Maybe<Array<Email_Bool_Exp>>;
+  conferenceId?: Maybe<Uuid_Comparison_Exp>;
   createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   emailAddress?: Maybe<String_Comparison_Exp>;
+  errorMessage?: Maybe<String_Comparison_Exp>;
   htmlContents?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  idempotencyKey?: Maybe<Uuid_Comparison_Exp>;
   invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
   invitationId?: Maybe<Uuid_Comparison_Exp>;
   plainTextContents?: Maybe<String_Comparison_Exp>;
@@ -155,6 +162,7 @@ export type Email_Bool_Exp = {
   recipientName?: Maybe<String_Comparison_Exp>;
   retriesCount?: Maybe<Int_Comparison_Exp>;
   sentAt?: Maybe<Timestamptz_Comparison_Exp>;
+  status?: Maybe<String_Comparison_Exp>;
   subject?: Maybe<String_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
   user?: Maybe<User_Bool_Exp>;
@@ -163,6 +171,8 @@ export type Email_Bool_Exp = {
 
 /** unique or primary key constraints on table "Email" */
 export enum Email_Constraint {
+  /** unique or primary key constraint */
+  EmailIdempotencyKeyKey = 'Email_idempotencyKey_key',
   /** unique or primary key constraint */
   EmailPkey = 'Email_pkey'
 }
@@ -174,10 +184,13 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  idempotencyKey?: Maybe<Scalars['uuid']>;
   invitation?: Maybe<Registrant_Invitation_Obj_Rel_Insert_Input>;
   invitationId?: Maybe<Scalars['uuid']>;
   plainTextContents?: Maybe<Scalars['String']>;
@@ -185,6 +198,7 @@ export type Email_Insert_Input = {
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -194,16 +208,20 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
   __typename?: 'Email_max_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  idempotencyKey?: Maybe<Scalars['uuid']>;
   invitationId?: Maybe<Scalars['uuid']>;
   plainTextContents?: Maybe<Scalars['String']>;
   reason?: Maybe<Scalars['String']>;
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -211,16 +229,20 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  idempotencyKey?: Maybe<Order_By>;
   invitationId?: Maybe<Order_By>;
   plainTextContents?: Maybe<Order_By>;
   reason?: Maybe<Order_By>;
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   userId?: Maybe<Order_By>;
@@ -229,16 +251,20 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
   __typename?: 'Email_min_fields';
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  idempotencyKey?: Maybe<Scalars['uuid']>;
   invitationId?: Maybe<Scalars['uuid']>;
   plainTextContents?: Maybe<Scalars['String']>;
   reason?: Maybe<Scalars['String']>;
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -246,16 +272,20 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  idempotencyKey?: Maybe<Order_By>;
   invitationId?: Maybe<Order_By>;
   plainTextContents?: Maybe<Order_By>;
   reason?: Maybe<Order_By>;
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   userId?: Maybe<Order_By>;
@@ -279,10 +309,13 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+  conferenceId?: Maybe<Order_By>;
   createdAt?: Maybe<Order_By>;
   emailAddress?: Maybe<Order_By>;
+  errorMessage?: Maybe<Order_By>;
   htmlContents?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  idempotencyKey?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
   invitationId?: Maybe<Order_By>;
   plainTextContents?: Maybe<Order_By>;
@@ -290,6 +323,7 @@ export type Email_Order_By = {
   recipientName?: Maybe<Order_By>;
   retriesCount?: Maybe<Order_By>;
   sentAt?: Maybe<Order_By>;
+  status?: Maybe<Order_By>;
   subject?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
   user?: Maybe<User_Order_By>;
@@ -304,13 +338,19 @@ export type Email_Pk_Columns_Input = {
 /** select columns of table "Email" */
 export enum Email_Select_Column {
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EmailAddress = 'emailAddress',
   /** column name */
+  ErrorMessage = 'errorMessage',
+  /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
   Id = 'id',
+  /** column name */
+  IdempotencyKey = 'idempotencyKey',
   /** column name */
   InvitationId = 'invitationId',
   /** column name */
@@ -324,6 +364,8 @@ export enum Email_Select_Column {
   /** column name */
   SentAt = 'sentAt',
   /** column name */
+  Status = 'status',
+  /** column name */
   Subject = 'subject',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -333,16 +375,20 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+  conferenceId?: Maybe<Scalars['uuid']>;
   createdAt?: Maybe<Scalars['timestamptz']>;
   emailAddress?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']>;
   htmlContents?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  idempotencyKey?: Maybe<Scalars['uuid']>;
   invitationId?: Maybe<Scalars['uuid']>;
   plainTextContents?: Maybe<Scalars['String']>;
   reason?: Maybe<Scalars['String']>;
   recipientName?: Maybe<Scalars['String']>;
   retriesCount?: Maybe<Scalars['Int']>;
   sentAt?: Maybe<Scalars['timestamptz']>;
+  status?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   userId?: Maybe<Scalars['String']>;
@@ -395,13 +441,19 @@ export type Email_Sum_Order_By = {
 /** update columns of table "Email" */
 export enum Email_Update_Column {
   /** column name */
+  ConferenceId = 'conferenceId',
+  /** column name */
   CreatedAt = 'createdAt',
   /** column name */
   EmailAddress = 'emailAddress',
   /** column name */
+  ErrorMessage = 'errorMessage',
+  /** column name */
   HtmlContents = 'htmlContents',
   /** column name */
   Id = 'id',
+  /** column name */
+  IdempotencyKey = 'idempotencyKey',
   /** column name */
   InvitationId = 'invitationId',
   /** column name */
@@ -414,6 +466,8 @@ export enum Email_Update_Column {
   RetriesCount = 'retriesCount',
   /** column name */
   SentAt = 'sentAt',
+  /** column name */
+  Status = 'status',
   /** column name */
   Subject = 'subject',
   /** column name */
@@ -8316,10 +8370,22 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+  /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+  AutomaticInvitationsEnd = 'AUTOMATIC_INVITATIONS_END',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatEnd = 'AUTOMATIC_INVITATIONS_REPEAT_END',
+  /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+  AutomaticInvitationsRepeatFrequency = 'AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatStart = 'AUTOMATIC_INVITATIONS_REPEAT_START',
+  /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+  AutomaticInvitationsStart = 'AUTOMATIC_INVITATIONS_START',
   /** A list of videos to be used as the background for title/sponsor slides. */
   BackgroundVideos = 'BACKGROUND_VIDEOS',
   /** A string representing the app version. Changing this causes the user's browsers to refresh. */
   ClowdrAppVersion = 'CLOWDR_APP_VERSION',
+  /** Boolean. Disable the "All times for this content" section of the Item pages. */
+  DisableAllEventsForItem = 'DISABLE_ALL_EVENTS_FOR_ITEM',
   /** Boolean. Disable the "Events around this content" section of the Item pages. */
   DisableNearbyEvents = 'DISABLE_NEARBY_EVENTS',
   EmailTemplateSubmissionRequest = 'EMAIL_TEMPLATE_SUBMISSION_REQUEST',
@@ -8328,10 +8394,18 @@ export enum Conference_ConfigurationKey_Enum {
   EnableBackstageStreamPreview = 'ENABLE_BACKSTAGE_STREAM_PREVIEW',
   /** Boolean. Whether to enable the External RTMP Broadcast feature. */
   EnableExternalRtmpBroadcast = 'ENABLE_EXTERNAL_RTMP_BROADCAST',
+  /** Whether to enable email notifications for recordings (default: true). */
+  EnableRecordingSubtitleEmailNotifications = 'ENABLE_RECORDING_SUBTITLE_EMAIL_NOTIFICATIONS',
+  /** Boolean. Hide the exhibition people from the event boxes in the schedule. */
+  EventBoxHideExhibitionPeople = 'EVENT_BOX_HIDE_EXHIBITION_PEOPLE',
   /** List of S3 URLs. */
   FillerVideos = 'FILLER_VIDEOS',
+  /** Boolean. Switches on the Sponsors menu button (even if no sponsors exist). */
+  ForceMenuSponsorsLink = 'FORCE_MENU_SPONSORS_LINK',
   /** A string representing the full frontend host URL for the conference. If not provided, this defaults to the system configuration. */
   FrontendHost = 'FRONTEND_HOST',
+  /** String. Name for hidden exhibitions. Default: "Exhibition" */
+  HiddenExhibitionsLabel = 'HIDDEN_EXHIBITIONS_LABEL',
   /** An image to be displayed if AWS MediaLive loses input. */
   InputLossSlate = 'INPUT_LOSS_SLATE',
   /** Additional text for the My Backstages modal. */
@@ -8352,6 +8426,8 @@ export enum Conference_ConfigurationKey_Enum {
   UploadAgreement = 'UPLOAD_AGREEMENT',
   /** The time in milliseconds since the UNIX epoch, as a string. */
   UploadCutoffTimestamp = 'UPLOAD_CUTOFF_TIMESTAMP',
+  /** String. Name for visible exhibitions. Default: "Exhibition" */
+  VisibleExhibitionsLabel = 'VISIBLE_EXHIBITIONS_LABEL',
   /** Integer. The maximum number of simultaneous screen shares allowed in Vonage video chats. */
   VonageMaxSimultaneousScreenShares = 'VONAGE_MAX_SIMULTANEOUS_SCREEN_SHARES'
 }
@@ -9438,6 +9514,7 @@ export type Content_Element = {
   permissionGrants: Array<Content_ElementPermissionGrant>;
   /** An aggregate relationship */
   permissionGrants_aggregate: Content_ElementPermissionGrant_Aggregate;
+  source?: Maybe<Scalars['jsonb']>;
   /** An array relationship */
   stats: Array<Analytics_ContentElementStats>;
   /** An aggregate relationship */
@@ -9491,6 +9568,12 @@ export type Content_ElementPermissionGrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Content_ElementPermissionGrant_Order_By>>;
   where?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "content.Element" */
+export type Content_ElementSourceArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -10572,6 +10655,7 @@ export type Content_Element_Aggregate_Order_By = {
 export type Content_Element_Append_Input = {
   data?: Maybe<Scalars['jsonb']>;
   layoutData?: Maybe<Scalars['jsonb']>;
+  source?: Maybe<Scalars['jsonb']>;
 };
 
 /** input type for inserting array relation for remote table "content.Element" */
@@ -10613,6 +10697,7 @@ export type Content_Element_Bool_Exp = {
   originatingData?: Maybe<Conference_OriginatingData_Bool_Exp>;
   originatingDataId?: Maybe<Uuid_Comparison_Exp>;
   permissionGrants?: Maybe<Content_ElementPermissionGrant_Bool_Exp>;
+  source?: Maybe<Jsonb_Comparison_Exp>;
   stats?: Maybe<Analytics_ContentElementStats_Bool_Exp>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Bool_Exp>;
   type?: Maybe<Content_ElementType_Bool_Exp>;
@@ -10634,18 +10719,21 @@ export enum Content_Element_Constraint {
 export type Content_Element_Delete_At_Path_Input = {
   data?: Maybe<Array<Scalars['String']>>;
   layoutData?: Maybe<Array<Scalars['String']>>;
+  source?: Maybe<Array<Scalars['String']>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Content_Element_Delete_Elem_Input = {
   data?: Maybe<Scalars['Int']>;
   layoutData?: Maybe<Scalars['Int']>;
+  source?: Maybe<Scalars['Int']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Content_Element_Delete_Key_Input = {
   data?: Maybe<Scalars['String']>;
   layoutData?: Maybe<Scalars['String']>;
+  source?: Maybe<Scalars['String']>;
 };
 
 /** input type for incrementing numeric columns in table "content.Element" */
@@ -10669,6 +10757,7 @@ export type Content_Element_Insert_Input = {
   originatingData?: Maybe<Conference_OriginatingData_Obj_Rel_Insert_Input>;
   originatingDataId?: Maybe<Scalars['uuid']>;
   permissionGrants?: Maybe<Content_ElementPermissionGrant_Arr_Rel_Insert_Input>;
+  source?: Maybe<Scalars['jsonb']>;
   stats?: Maybe<Analytics_ContentElementStats_Arr_Rel_Insert_Input>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Obj_Rel_Insert_Input>;
   type?: Maybe<Content_ElementType_Obj_Rel_Insert_Input>;
@@ -10774,6 +10863,7 @@ export type Content_Element_Order_By = {
   originatingData?: Maybe<Conference_OriginatingData_Order_By>;
   originatingDataId?: Maybe<Order_By>;
   permissionGrants_aggregate?: Maybe<Content_ElementPermissionGrant_Aggregate_Order_By>;
+  source?: Maybe<Order_By>;
   stats_aggregate?: Maybe<Analytics_ContentElementStats_Aggregate_Order_By>;
   totalViewsStat?: Maybe<Analytics_ElementTotalViews_Order_By>;
   type?: Maybe<Content_ElementType_Order_By>;
@@ -10794,6 +10884,7 @@ export type Content_Element_Pk_Columns_Input = {
 export type Content_Element_Prepend_Input = {
   data?: Maybe<Scalars['jsonb']>;
   layoutData?: Maybe<Scalars['jsonb']>;
+  source?: Maybe<Scalars['jsonb']>;
 };
 
 /** select columns of table "content.Element" */
@@ -10819,6 +10910,8 @@ export enum Content_Element_Select_Column {
   /** column name */
   OriginatingDataId = 'originatingDataId',
   /** column name */
+  Source = 'source',
+  /** column name */
   TypeName = 'typeName',
   /** column name */
   UpdatedAt = 'updatedAt',
@@ -10838,6 +10931,7 @@ export type Content_Element_Set_Input = {
   layoutData?: Maybe<Scalars['jsonb']>;
   name?: Maybe<Scalars['String']>;
   originatingDataId?: Maybe<Scalars['uuid']>;
+  source?: Maybe<Scalars['jsonb']>;
   typeName?: Maybe<Content_ElementType_Enum>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
   uploadsRemaining?: Maybe<Scalars['Int']>;
@@ -10909,6 +11003,8 @@ export enum Content_Element_Update_Column {
   Name = 'name',
   /** column name */
   OriginatingDataId = 'originatingDataId',
+  /** column name */
+  Source = 'source',
   /** column name */
   TypeName = 'typeName',
   /** column name */
@@ -15199,6 +15295,30 @@ export type Job_Queues_UploadYouTubeVideoJob = {
   videoDescription: Scalars['String'];
   videoPrivacyStatus: Scalars['String'];
   videoTitle: Scalars['String'];
+  /** An array relationship */
+  youTubeUploads: Array<Video_YouTubeUpload>;
+  /** An aggregate relationship */
+  youTubeUploads_aggregate: Video_YouTubeUpload_Aggregate;
+};
+
+
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJobYouTubeUploadsArgs = {
+  distinct_on?: Maybe<Array<Video_YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_YouTubeUpload_Order_By>>;
+  where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
+};
+
+
+/** columns and relationships of "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJobYouTubeUploads_AggregateArgs = {
+  distinct_on?: Maybe<Array<Video_YouTubeUpload_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Video_YouTubeUpload_Order_By>>;
+  where?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
 /** aggregated selection of "job_queues.UploadYouTubeVideoJob" */
@@ -15259,6 +15379,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Bool_Exp = {
   videoDescription?: Maybe<String_Comparison_Exp>;
   videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
   videoTitle?: Maybe<String_Comparison_Exp>;
+  youTubeUploads?: Maybe<Video_YouTubeUpload_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "job_queues.UploadYouTubeVideoJob" */
@@ -15291,6 +15412,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Insert_Input = {
   videoDescription?: Maybe<Scalars['String']>;
   videoPrivacyStatus?: Maybe<Scalars['String']>;
   videoTitle?: Maybe<Scalars['String']>;
+  youTubeUploads?: Maybe<Video_YouTubeUpload_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -15336,6 +15458,13 @@ export type Job_Queues_UploadYouTubeVideoJob_Mutation_Response = {
   returning: Array<Job_Queues_UploadYouTubeVideoJob>;
 };
 
+/** input type for inserting object relation for remote table "job_queues.UploadYouTubeVideoJob" */
+export type Job_Queues_UploadYouTubeVideoJob_Obj_Rel_Insert_Input = {
+  data: Job_Queues_UploadYouTubeVideoJob_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: Maybe<Job_Queues_UploadYouTubeVideoJob_On_Conflict>;
+};
+
 /** on conflict condition type for table "job_queues.UploadYouTubeVideoJob" */
 export type Job_Queues_UploadYouTubeVideoJob_On_Conflict = {
   constraint: Job_Queues_UploadYouTubeVideoJob_Constraint;
@@ -15362,6 +15491,7 @@ export type Job_Queues_UploadYouTubeVideoJob_Order_By = {
   videoDescription?: Maybe<Order_By>;
   videoPrivacyStatus?: Maybe<Order_By>;
   videoTitle?: Maybe<Order_By>;
+  youTubeUploads_aggregate?: Maybe<Video_YouTubeUpload_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: job_queues_UploadYouTubeVideoJob */
@@ -26239,6 +26369,8 @@ export type Registrant_Registrant = {
   id: Scalars['uuid'];
   /** An object relationship */
   invitation?: Maybe<Registrant_Invitation>;
+  /** A computed field, executes function "registrant.InvitationEmailStatus" */
+  invitationStatus?: Maybe<Scalars['jsonb']>;
   /** A computed field, executes function "registrant.HasBeenInvited" */
   inviteSent?: Maybe<Scalars['Boolean']>;
   /** An object relationship */
@@ -26295,6 +26427,12 @@ export type Registrant_RegistrantGroupRegistrants_AggregateArgs = {
   offset?: Maybe<Scalars['Int']>;
   order_by?: Maybe<Array<Permissions_GroupRegistrant_Order_By>>;
   where?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
+};
+
+
+/** columns and relationships of "registrant.Registrant" */
+export type Registrant_RegistrantInvitationStatusArgs = {
+  path?: Maybe<Scalars['String']>;
 };
 
 
@@ -26386,6 +26524,7 @@ export type Registrant_Registrant_Bool_Exp = {
   groupRegistrants?: Maybe<Permissions_GroupRegistrant_Bool_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   invitation?: Maybe<Registrant_Invitation_Bool_Exp>;
+  invitationStatus?: Maybe<Jsonb_Comparison_Exp>;
   inviteSent?: Maybe<Boolean_Comparison_Exp>;
   profile?: Maybe<Registrant_Profile_Bool_Exp>;
   programPeople?: Maybe<Collection_ProgramPerson_Bool_Exp>;
@@ -26496,6 +26635,7 @@ export type Registrant_Registrant_Order_By = {
   groupRegistrants_aggregate?: Maybe<Permissions_GroupRegistrant_Aggregate_Order_By>;
   id?: Maybe<Order_By>;
   invitation?: Maybe<Registrant_Invitation_Order_By>;
+  invitationStatus?: Maybe<Order_By>;
   inviteSent?: Maybe<Order_By>;
   profile?: Maybe<Registrant_Profile_Order_By>;
   programPeople_aggregate?: Maybe<Collection_ProgramPerson_Aggregate_Order_By>;
@@ -35254,6 +35394,8 @@ export enum System_ConfigurationKey_Enum {
   DefaultFrontendHost = 'DEFAULT_FRONTEND_HOST',
   /** Default backend platform for video rooms */
   DefaultVideoRoomBackend = 'DEFAULT_VIDEO_ROOM_BACKEND',
+  /** Templates for emails sent by the application. */
+  EmailTemplates = 'EMAIL_TEMPLATES',
   /** The name of the organisation legally responsible for hosting this instance of the Clowdr software. */
   HostOrganisationName = 'HOST_ORGANISATION_NAME',
   /** The time of the latest revision of the host Privacy Policy. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -35268,6 +35410,7 @@ export enum System_ConfigurationKey_Enum {
   SendgridSender = 'SENDGRID_SENDER',
   /** The name emails are from when sent via SendGrid. */
   SendgridSenderName = 'SENDGRID_SENDER_NAME',
+  SendgridWebhookPublicKey = 'SENDGRID_WEBHOOK_PUBLIC_KEY',
   /** Contact address for people to request emails never be sent to them again. */
   StopEmailsContactEmailAddress = 'STOP_EMAILS_CONTACT_EMAIL_ADDRESS',
   /** The time of the latest revision of the host T&Cs. The value should be a Number representing the milliseconds elapsed since the UNIX epoch. */
@@ -38991,6 +39134,8 @@ export type Video_YouTubeUpload = {
   elementId?: Maybe<Scalars['uuid']>;
   id: Scalars['uuid'];
   updatedAt: Scalars['timestamptz'];
+  /** An object relationship */
+  uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob>;
   uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
   videoId: Scalars['String'];
   videoPrivacyStatus: Scalars['String'];
@@ -39046,6 +39191,7 @@ export type Video_YouTubeUpload_Bool_Exp = {
   elementId?: Maybe<Uuid_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   updatedAt?: Maybe<Timestamptz_Comparison_Exp>;
+  uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Bool_Exp>;
   uploadYouTubeVideoJobId?: Maybe<Uuid_Comparison_Exp>;
   videoId?: Maybe<String_Comparison_Exp>;
   videoPrivacyStatus?: Maybe<String_Comparison_Exp>;
@@ -39070,6 +39216,7 @@ export type Video_YouTubeUpload_Insert_Input = {
   elementId?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   updatedAt?: Maybe<Scalars['timestamptz']>;
+  uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Obj_Rel_Insert_Input>;
   uploadYouTubeVideoJobId?: Maybe<Scalars['uuid']>;
   videoId?: Maybe<Scalars['String']>;
   videoPrivacyStatus?: Maybe<Scalars['String']>;
@@ -39160,6 +39307,7 @@ export type Video_YouTubeUpload_Order_By = {
   elementId?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   updatedAt?: Maybe<Order_By>;
+  uploadYouTubeVideoJob?: Maybe<Job_Queues_UploadYouTubeVideoJob_Order_By>;
   uploadYouTubeVideoJobId?: Maybe<Order_By>;
   videoId?: Maybe<Order_By>;
   videoPrivacyStatus?: Maybe<Order_By>;

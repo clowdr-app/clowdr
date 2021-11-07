@@ -1,4 +1,5 @@
 import { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
+import { SourceBlob } from "@clowdr-app/shared-types/build/content/element";
 import { VonageSessionLayoutData } from "@clowdr-app/shared-types/build/vonage";
 import { CombineVideosJobDataBlob } from "@clowdr-app/shared-types/src/combineVideosJob";
 import { Credentials } from "google-auth-library/build/src/auth/credentials";
@@ -60,6 +61,7 @@ export interface ConferenceData extends BaseData {
 export interface ElementData extends BaseData {
     isHidden: boolean;
     data: ElementDataBlob;
+    source: SourceBlob | null;
     layoutData: any | null;
     typeName: Content_ElementType_Enum;
     name: string;

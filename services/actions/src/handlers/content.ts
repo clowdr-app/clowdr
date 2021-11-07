@@ -4,6 +4,7 @@ import {
     isEmailTemplate_BaseConfig,
 } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import { AWSJobStatus } from "@clowdr-app/shared-types/build/content";
+import { SourceType } from "@clowdr-app/shared-types/build/content/element";
 import { EmailView_SubtitlesGenerated, EMAIL_TEMPLATE_SUBTITLES_GENERATED } from "@clowdr-app/shared-types/build/email";
 import assert from "assert";
 import { compile } from "handlebars";
@@ -31,6 +32,15 @@ gql`
         }
     }
 `;
+
+async function recordingSubtitleEmailsEnabled(conferenceId: string): Promise<boolean> {
+    return (
+        (await getConferenceConfiguration<boolean>(
+            conferenceId,
+            Conference_ConfigurationKey_Enum.EnableRecordingSubtitleEmailNotifications
+        )) ?? true
+    );
+}
 
 export async function handleElementUpdated(payload: Payload<ElementData>): Promise<void> {
     const oldRow = payload.event.data.old;
@@ -105,6 +115,12 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
                 currentVersion.data.transcode?.s3Url &&
                 !currentVersion.data.sourceHasEmbeddedSubtitles &&
                 oldVersion.data.transcode?.s3Url !== currentVersion.data.transcode.s3Url) ||
+            (oldVersion &&
+                oldVersion.data.baseType === "video" &&
+                currentVersion.data.transcode?.s3Url &&
+                oldVersion.data.transcode?.s3Url === currentVersion.data.transcode.s3Url &&
+                Boolean(oldVersion.data.subtitles["en_US"]?.s3Url) &&
+                !currentVersion.data.subtitles["en_US"]?.s3Url) ||
             (!oldVersion && currentVersion.data.transcode?.s3Url && !currentVersion.data.subtitles["en_US"]?.s3Url)
         ) {
             await startTranscribe(currentVersion.data.transcode.s3Url, newRow.id);
@@ -131,7 +147,13 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
     ) {
         // Send email if new machine-generated subtitles have been added
         if (currentVersion.createdBy === "system") {
-            await trySendTranscriptionEmail(newRow.id);
+            if (
+                newRow.source?.source !== SourceType.EventRecording ||
+                (newRow.source?.source === SourceType.EventRecording &&
+                    (await recordingSubtitleEmailsEnabled(newRow.conferenceId)))
+            ) {
+                await trySendTranscriptionEmail(newRow.id);
+            }
         }
     }
 
@@ -141,12 +163,18 @@ export async function handleElementUpdated(payload: Payload<ElementData>): Promi
         oldVersion.data.subtitles["en_US"]?.status !== "FAILED" &&
         currentVersion.data.subtitles["en_US"]?.status === "FAILED"
     ) {
-        await trySendTranscriptionFailedEmail(
-            newRow.id,
-            newRow.name,
-            currentVersion.data.baseType,
-            currentVersion.data.subtitles["en_US"]?.message ?? null
-        );
+        if (
+            newRow.source?.source !== SourceType.EventRecording ||
+            (newRow.source?.source === SourceType.EventRecording &&
+                (await recordingSubtitleEmailsEnabled(newRow.conferenceId)))
+        ) {
+            await trySendTranscriptionFailedEmail(
+                newRow.id,
+                newRow.name,
+                currentVersion.data.baseType,
+                currentVersion.data.subtitles["en_US"]?.message ?? null
+            );
+        }
     }
 
     if (currentVersion.data.baseType === "video") {

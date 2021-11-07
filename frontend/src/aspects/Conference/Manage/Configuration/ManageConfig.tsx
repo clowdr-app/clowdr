@@ -410,6 +410,29 @@ export default function ManageConfig(): JSX.Element {
                             {(props) => <TextAreaSetting {...props} />}
                         </SettingUpdater>
                     </Setting>
+                    <Setting
+                        title="Send email notifications for event recording subtitles"
+                        description="Enable or disable sending email notifications about subtitle corrections to program people when a recording is created for a related event."
+                    >
+                        <SettingUpdater<boolean>
+                            settingName={Conference_ConfigurationKey_Enum.EnableRecordingSubtitleEmailNotifications}
+                            defaultValue={true}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : newValue === "true")
+                                    }
+                                    value={value ? "true" : "false"}
+                                    options={[
+                                        { label: "Enabled", value: "true" },
+                                        { label: "Disabled", value: "false" },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
                 </Section>
             </VStack>
         </DashboardPage>
@@ -448,7 +471,7 @@ function Setting({
         <>
             <GridItem>
                 <VStack spacing={2} alignItems="flex-start">
-                    <Heading as="h3" fontSize="lg">
+                    <Heading as="h3" fontSize="lg" textAlign="left">
                         {title}
                     </Heading>
                     <Text>{description}</Text>

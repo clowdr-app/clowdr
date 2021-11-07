@@ -95,7 +95,8 @@ export function authorize(options: AuthorizeOptions): SocketIOMiddleware {
         }
         try {
             decodedToken = jwt.verify(encodedToken, keySecret, { algorithms });
-        } catch {
+        } catch (error: any) {
+            console.error(`Rejecting connection: Invalid token: ${error?.toString()}`);
             return next(
                 new UnauthorizedError("invalid_token", {
                     message: "Unauthorized: Token is missing or invalid Bearer",

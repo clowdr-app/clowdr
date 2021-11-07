@@ -848,7 +848,7 @@ export class ChatState {
 
             const socket = this.globalState.socket;
             if (!socket) {
-                datadogLogs.logger.error("Cannot subscribe to chat because there is no socket instance!");
+                datadogLogs.logger.info("Cannot subscribe to chat because there is no socket instance.");
             }
             socket?.emit("chat.subscribe", this.Id);
 

@@ -334,6 +334,12 @@ gql`
             }
         ) {
             id
+            initialStart: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_START } }) {
+                value
+            }
+            initialEnd: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_END } }) {
+                value
+            }
             repeatStart: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_START } }) {
                 value
             }
@@ -397,17 +403,24 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
         query: GetAutomaticInvitationsRepeatConfigurationsDocument,
     });
     for (const conference of conferencesResponse.data.conference_Conference) {
+        const initialStartMs = conference.initialStart[0]?.value ?? Number.POSITIVE_INFINITY;
+        const initialEndMs = conference.initialEnd[0]?.value ?? Number.POSITIVE_INFINITY;
         const repeatStartMs = conference.repeatStart[0]?.value ?? Number.POSITIVE_INFINITY;
         const repeatEndMs = conference.repeatEnd[0]?.value ?? Number.POSITIVE_INFINITY;
         const repeatFrequencyMs = conference.repeatFrequency[0]?.value ?? 2 * 24 * 60 * 60 * 1000;
         const now = Date.now();
-        if (
+        const sendInitial =
+            typeof initialStartMs === "number" &&
+            typeof initialEndMs === "number" &&
+            initialStartMs <= now &&
+            now < initialEndMs;
+        const sendRepeats =
             typeof repeatStartMs === "number" &&
             typeof repeatEndMs === "number" &&
             typeof repeatFrequencyMs === "number" &&
             repeatStartMs <= now &&
-            now < repeatEndMs
-        ) {
+            now < repeatEndMs;
+        if (sendInitial || sendRepeats) {
             try {
                 const registrantsResponse = await apolloClient.query({
                     query: GetAutomaticInvitations_ToBeRepeatedDocument,
@@ -419,17 +432,16 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
                     .filter((x) => {
                         const status = x.invitationStatus;
                         if (!status) {
-                            return true;
-                        }
-                        if (status.errorMessage) {
+                            return sendInitial;
+                        } else if (status.errorMessage || status.status === "delivered") {
                             return false;
-                        }
-                        if (status.sentAt) {
+                        } else if (status.sentAt) {
                             const sentAtMs = Date.parse(status.sentAt);
                             const distanceMs = now - sentAtMs;
-                            return distanceMs > repeatFrequencyMs;
+                            return sendRepeats && distanceMs > repeatFrequencyMs;
+                        } else {
+                            return sendInitial;
                         }
-                        return true;
                     })
                     .map((x) => x.id);
                 await apolloClient.mutate({
@@ -437,7 +449,7 @@ export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void
                     variables: {
                         conferenceId: conference.id,
                         registrantIds: registrantIdsToInclude,
-                        sendRepeat: true,
+                        sendRepeat: sendRepeats,
                     },
                 });
             } catch (e: any) {

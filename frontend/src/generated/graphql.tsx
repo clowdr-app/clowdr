@@ -59,6 +59,7 @@ export type CreateRoomDmOutput = {
 /** columns and relationships of "Email" */
 export type Email = {
   readonly __typename?: 'Email';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt: Scalars['timestamptz'];
   readonly emailAddress: Scalars['String'];
   readonly errorMessage?: Maybe<Scalars['String']>;
@@ -149,6 +150,7 @@ export type Email_Bool_Exp = {
   readonly _and?: Maybe<ReadonlyArray<Email_Bool_Exp>>;
   readonly _not?: Maybe<Email_Bool_Exp>;
   readonly _or?: Maybe<ReadonlyArray<Email_Bool_Exp>>;
+  readonly conferenceId?: Maybe<Uuid_Comparison_Exp>;
   readonly createdAt?: Maybe<Timestamptz_Comparison_Exp>;
   readonly emailAddress?: Maybe<String_Comparison_Exp>;
   readonly errorMessage?: Maybe<String_Comparison_Exp>;
@@ -184,6 +186,7 @@ export type Email_Inc_Input = {
 
 /** input type for inserting data into table "Email" */
 export type Email_Insert_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly errorMessage?: Maybe<Scalars['String']>;
@@ -207,6 +210,7 @@ export type Email_Insert_Input = {
 /** aggregate max on columns */
 export type Email_Max_Fields = {
   readonly __typename?: 'Email_max_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly errorMessage?: Maybe<Scalars['String']>;
@@ -227,6 +231,7 @@ export type Email_Max_Fields = {
 
 /** order by max() on columns of table "Email" */
 export type Email_Max_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
   readonly errorMessage?: Maybe<Order_By>;
@@ -248,6 +253,7 @@ export type Email_Max_Order_By = {
 /** aggregate min on columns */
 export type Email_Min_Fields = {
   readonly __typename?: 'Email_min_fields';
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly errorMessage?: Maybe<Scalars['String']>;
@@ -268,6 +274,7 @@ export type Email_Min_Fields = {
 
 /** order by min() on columns of table "Email" */
 export type Email_Min_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
   readonly errorMessage?: Maybe<Order_By>;
@@ -304,6 +311,7 @@ export type Email_On_Conflict = {
 
 /** Ordering options when selecting data from "Email". */
 export type Email_Order_By = {
+  readonly conferenceId?: Maybe<Order_By>;
   readonly createdAt?: Maybe<Order_By>;
   readonly emailAddress?: Maybe<Order_By>;
   readonly errorMessage?: Maybe<Order_By>;
@@ -331,6 +339,8 @@ export type Email_Pk_Columns_Input = {
 
 /** select columns of table "Email" */
 export enum Email_Select_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -367,6 +377,7 @@ export enum Email_Select_Column {
 
 /** input type for updating data in table "Email" */
 export type Email_Set_Input = {
+  readonly conferenceId?: Maybe<Scalars['uuid']>;
   readonly createdAt?: Maybe<Scalars['timestamptz']>;
   readonly emailAddress?: Maybe<Scalars['String']>;
   readonly errorMessage?: Maybe<Scalars['String']>;
@@ -431,6 +442,8 @@ export type Email_Sum_Order_By = {
 
 /** update columns of table "Email" */
 export enum Email_Update_Column {
+  /** column name */
+  ConferenceId = 'conferenceId',
   /** column name */
   CreatedAt = 'createdAt',
   /** column name */
@@ -8367,6 +8380,16 @@ export enum Conference_ConfigurationKey_Constraint {
 }
 
 export enum Conference_ConfigurationKey_Enum {
+  /** Number. Milliseconds UTC. Time from which to stop sending initial invitations automatically. */
+  AutomaticInvitationsEnd = 'AUTOMATIC_INVITATIONS_END',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatEnd = 'AUTOMATIC_INVITATIONS_REPEAT_END',
+  /** Number. Milliseconds. Time between sending repeat emails for unaccepted invitations. */
+  AutomaticInvitationsRepeatFrequency = 'AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY',
+  /** Number. Milliseconds UTC. Time from which to stop sending repeat emails for unaccepted invitations automatically. */
+  AutomaticInvitationsRepeatStart = 'AUTOMATIC_INVITATIONS_REPEAT_START',
+  /** Number. Milliseconds UTC. Time from which to start sending initial invitations automatically. */
+  AutomaticInvitationsStart = 'AUTOMATIC_INVITATIONS_START',
   /** A list of videos to be used as the background for title/sponsor slides. */
   BackgroundVideos = 'BACKGROUND_VIDEOS',
   /** A string representing the app version. Changing this causes the user's browsers to refresh. */
@@ -40157,6 +40180,31 @@ export type PreshowChecklistQueryVariables = Exact<{
 
 export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readonly allTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly itemsWithNoLinkedProgramPeople: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person?: Maybe<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }> }> }>, readonly requiredProgramPeopleNotLinkedToRegistrant: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly submissionsNotReceived: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly livestreamEventsWithoutRegisteredPresenter: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithoutVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly zoomEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly allLiveEventsWithPeople: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeopleWithRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }>, readonly itemPeopleWithoutRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any }> }>, readonly emptyExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly emptyTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly exhibitionEventsWithoutExhibition: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> }>, readonly liveEventsWithoutContent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly overlappingEvents: ReadonlyArray<{ readonly __typename?: 'schedule_OverlappingEvents', readonly eventX?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly eventY?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any> }> }>, readonly shortEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly roomsWithStreams: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly livestreamDuration?: Maybe<{ readonly __typename?: 'room_LivestreamDurations', readonly sum?: Maybe<any> }> }>, readonly eventsWithNegativeDuration: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
+export type SettingUpdater_GetConfigurationQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
+}>;
+
+
+export type SettingUpdater_GetConfigurationQuery = { readonly __typename?: 'query_root', readonly conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+
+export type SettingUpdater_SetConfigurationMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
+  value: Scalars['jsonb'];
+}>;
+
+
+export type SettingUpdater_SetConfigurationMutation = { readonly __typename?: 'mutation_root', readonly insert_conference_Configuration_one?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+
+export type SettingUpdater_DeleteConfigurationMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  key: Conference_ConfigurationKey_Enum;
+}>;
+
+
+export type SettingUpdater_DeleteConfigurationMutation = { readonly __typename?: 'mutation_root', readonly delete_conference_Configuration_by_pk?: Maybe<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum }> };
+
 export type ManageContent_ItemTagFragment = { readonly __typename?: 'content_ItemTag', readonly id: any, readonly itemId: any, readonly tagId: any };
 
 export type ManageContent_ItemExhibitionFragment = { readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly conferenceId: any, readonly exhibitionId: any, readonly priority?: Maybe<number>, readonly layout?: Maybe<any>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } };
@@ -47652,6 +47700,119 @@ export function usePreshowChecklistLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type PreshowChecklistQueryHookResult = ReturnType<typeof usePreshowChecklistQuery>;
 export type PreshowChecklistLazyQueryHookResult = ReturnType<typeof usePreshowChecklistLazyQuery>;
 export type PreshowChecklistQueryResult = Apollo.QueryResult<PreshowChecklistQuery, PreshowChecklistQueryVariables>;
+export const SettingUpdater_GetConfigurationDocument = gql`
+    query SettingUpdater_GetConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
+  conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+
+/**
+ * __useSettingUpdater_GetConfigurationQuery__
+ *
+ * To run a query within a React component, call `useSettingUpdater_GetConfigurationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSettingUpdater_GetConfigurationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSettingUpdater_GetConfigurationQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useSettingUpdater_GetConfigurationQuery(baseOptions: Apollo.QueryHookOptions<SettingUpdater_GetConfigurationQuery, SettingUpdater_GetConfigurationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SettingUpdater_GetConfigurationQuery, SettingUpdater_GetConfigurationQueryVariables>(SettingUpdater_GetConfigurationDocument, options);
+      }
+export function useSettingUpdater_GetConfigurationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SettingUpdater_GetConfigurationQuery, SettingUpdater_GetConfigurationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SettingUpdater_GetConfigurationQuery, SettingUpdater_GetConfigurationQueryVariables>(SettingUpdater_GetConfigurationDocument, options);
+        }
+export type SettingUpdater_GetConfigurationQueryHookResult = ReturnType<typeof useSettingUpdater_GetConfigurationQuery>;
+export type SettingUpdater_GetConfigurationLazyQueryHookResult = ReturnType<typeof useSettingUpdater_GetConfigurationLazyQuery>;
+export type SettingUpdater_GetConfigurationQueryResult = Apollo.QueryResult<SettingUpdater_GetConfigurationQuery, SettingUpdater_GetConfigurationQueryVariables>;
+export const SettingUpdater_SetConfigurationDocument = gql`
+    mutation SettingUpdater_SetConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!, $value: jsonb!) {
+  insert_conference_Configuration_one(
+    object: {conferenceId: $conferenceId, key: $key, value: $value}
+    on_conflict: {constraint: Configuration_pkey, update_columns: [value]}
+  ) {
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+export type SettingUpdater_SetConfigurationMutationFn = Apollo.MutationFunction<SettingUpdater_SetConfigurationMutation, SettingUpdater_SetConfigurationMutationVariables>;
+
+/**
+ * __useSettingUpdater_SetConfigurationMutation__
+ *
+ * To run a mutation, you first call `useSettingUpdater_SetConfigurationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSettingUpdater_SetConfigurationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [settingUpdaterSetConfigurationMutation, { data, loading, error }] = useSettingUpdater_SetConfigurationMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useSettingUpdater_SetConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<SettingUpdater_SetConfigurationMutation, SettingUpdater_SetConfigurationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SettingUpdater_SetConfigurationMutation, SettingUpdater_SetConfigurationMutationVariables>(SettingUpdater_SetConfigurationDocument, options);
+      }
+export type SettingUpdater_SetConfigurationMutationHookResult = ReturnType<typeof useSettingUpdater_SetConfigurationMutation>;
+export type SettingUpdater_SetConfigurationMutationResult = Apollo.MutationResult<SettingUpdater_SetConfigurationMutation>;
+export type SettingUpdater_SetConfigurationMutationOptions = Apollo.BaseMutationOptions<SettingUpdater_SetConfigurationMutation, SettingUpdater_SetConfigurationMutationVariables>;
+export const SettingUpdater_DeleteConfigurationDocument = gql`
+    mutation SettingUpdater_DeleteConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
+  delete_conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {
+    conferenceId
+    key
+  }
+}
+    `;
+export type SettingUpdater_DeleteConfigurationMutationFn = Apollo.MutationFunction<SettingUpdater_DeleteConfigurationMutation, SettingUpdater_DeleteConfigurationMutationVariables>;
+
+/**
+ * __useSettingUpdater_DeleteConfigurationMutation__
+ *
+ * To run a mutation, you first call `useSettingUpdater_DeleteConfigurationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSettingUpdater_DeleteConfigurationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [settingUpdaterDeleteConfigurationMutation, { data, loading, error }] = useSettingUpdater_DeleteConfigurationMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useSettingUpdater_DeleteConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<SettingUpdater_DeleteConfigurationMutation, SettingUpdater_DeleteConfigurationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SettingUpdater_DeleteConfigurationMutation, SettingUpdater_DeleteConfigurationMutationVariables>(SettingUpdater_DeleteConfigurationDocument, options);
+      }
+export type SettingUpdater_DeleteConfigurationMutationHookResult = ReturnType<typeof useSettingUpdater_DeleteConfigurationMutation>;
+export type SettingUpdater_DeleteConfigurationMutationResult = Apollo.MutationResult<SettingUpdater_DeleteConfigurationMutation>;
+export type SettingUpdater_DeleteConfigurationMutationOptions = Apollo.BaseMutationOptions<SettingUpdater_DeleteConfigurationMutation, SettingUpdater_DeleteConfigurationMutationVariables>;
 export const ManageContent_SelectAllItemsDocument = gql`
     query ManageContent_SelectAllItems($conferenceId: uuid!) {
   content_Item(where: {conferenceId: {_eq: $conferenceId}}) {

@@ -30,7 +30,7 @@ insert_permissions:
               - slug:
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
+                  _eq: CONFERENCE_MANAGE_NAME
       - conference:
           createdBy:
             _eq: X-Hasura-User-Id
@@ -85,7 +85,7 @@ select_permissions:
               - slug:
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
+                  _eq: CONFERENCE_MANAGE_NAME
       - conference:
           createdBy:
             _eq: X-Hasura-User-Id
@@ -129,7 +129,31 @@ update_permissions:
               - slug:
                   _eq: X-Hasura-Conference-Slug
               - permission_name:
-                  _eq: CONFERENCE_MANAGE_CONTENT
+                  _eq: CONFERENCE_MANAGE_NAME
+      - conference:
+          createdBy:
+            _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _or:
+      - _and:
+        - conference:
+            slug:
+              _eq: X-Hasura-Conference-Slug
+        - _exists:
+            _table:
+              name: FlatUserPermission
+              schema: public
+            _where:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - slug:
+                  _eq: X-Hasura-Conference-Slug
+              - permission_name:
+                  _eq: CONFERENCE_MANAGE_NAME
       - conference:
           createdBy:
             _eq: X-Hasura-User-Id

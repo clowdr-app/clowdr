@@ -11,7 +11,7 @@
         "run-services-dd-proxy": "npx foreman start --procfile ./DD-Proxy.Procfile -p 3006",
         "lint-staged": "lint-staged",
         "prepare": "node ./prepare.js",
-        "hasura:console-when-ready": "cd hasura && npx wait-on http-get://localhost:8080/v1/version && hasura console",
+        "hasura:console-when-ready": "cd hasura && npx wait-on http-get://localhost:8080/v1/version && hasura console --envfile=.env.local",
         "hasura:migrate": "cd hasura && hasura migrate apply --envfile=.env.local",
         "hasura:metadata": "cd hasura && hasura metadata apply --envfile=.env.local",
         "hasura:reload-metadata": "cd hasura && hasura metadata reload --envfile=.env.local"

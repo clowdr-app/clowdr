@@ -191,6 +191,14 @@ export default function ManagerLandingPage(): JSX.Element {
                     colorScheme="gray"
                 />
                 <RestrictedDashboardButton
+                    to="settings"
+                    name="Settings"
+                    icon="cog"
+                    description="Manage global configuration of your conference."
+                    permissions={[Permissions_Permission_Enum.ConferenceManageName]}
+                    colorScheme="gray"
+                />
+                {/* <RestrictedDashboardButton
                     to="broadcasts"
                     name="Broadcasts"
                     icon="video"
@@ -199,7 +207,7 @@ export default function ManagerLandingPage(): JSX.Element {
                         Permissions_Permission_Enum.ConferenceManageContent, // TODO: Manage broadcasts permission
                     ]}
                     colorScheme="gray"
-                />
+                /> */}
                 <RestrictedDashboardButton
                     to="checklist"
                     name="Checklist"

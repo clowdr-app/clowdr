@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import type { RouteComponentProps} from "react-router-dom";
+import type { RouteComponentProps } from "react-router-dom";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Permissions_Permission_Enum } from "../../generated/graphql";
 import { useConferenceTheme } from "../Chakra/ChakraCustomProvider";
 import ChatRedirectPage from "../Chat/ChatRedirectPage";
 import PageNotFound from "../Errors/PageNotFound";
-import PageNotImplemented from "../Errors/PageNotImplemented";
 import WaitingPage from "../ShuffleRooms/WaitingPage";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 import ConferenceLandingPage from "./Attend/ConferenceLandingPage";
@@ -26,6 +25,7 @@ import AnalyticsDashboard from "./Manage/Analytics/AnalyticsDashboard";
 import ManageBroadcast from "./Manage/Broadcast/ManageBroadcasts";
 import ManageModeration from "./Manage/Chat/Moderation/ManageModeration";
 import ChecklistPage from "./Manage/Checklist/ChecklistPage";
+import ManageConfig from "./Manage/Configuration/ManageConfig";
 import ManageContent from "./Manage/Content/ManageContent";
 import ManageEmail from "./Manage/Email/ManageEmail";
 import ManageExport from "./Manage/Export/ManageExport";
@@ -136,9 +136,6 @@ export default function ConferenceRoutes(): JSX.Element {
             <Route path={`${path}/manage/chats/moderation`}>
                 <ManageModeration />
             </Route>
-            <Route path={`${path}/manage/chats`}>
-                <PageNotImplemented />
-            </Route>
             <Route path={`${path}/manage/email`}>
                 <ManageEmail />
             </Route>
@@ -148,11 +145,11 @@ export default function ConferenceRoutes(): JSX.Element {
             <Route path={`${path}/manage/analytics`}>
                 <AnalyticsDashboard />
             </Route>
-            <Route path={`${path}/manage/support`}>
-                <PageNotImplemented />
-            </Route>
             <Route path={`${path}/manage/theme`}>
                 <ManageTheme />
+            </Route>
+            <Route path={`${path}/manage/settings`}>
+                <ManageConfig />
             </Route>
 
             <Route

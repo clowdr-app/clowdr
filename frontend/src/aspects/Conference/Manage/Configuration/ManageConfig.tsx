@@ -1,10 +1,11 @@
-import { Divider, GridItem, Heading, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { Button, Divider, GridItem, Heading, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
 import { DashboardPage } from "../DashboardPage";
 import DateTimeSetting from "./DateTimeSetting";
+import MultiSettingUpdater from "./MultiSettingUpdater";
 import RadioSetting from "./RadioSetting";
 import SettingUpdater from "./SettingUpdater";
 import TextAreaSetting from "./TextAreaSetting";
@@ -157,46 +158,109 @@ export default function ManageConfig(): JSX.Element {
                         </SettingUpdater>
                     </Setting>
                 </Section>
-                {/* <Section title="Automatic Invitations" description="Automatically send invitations to registrants.">
+                <Section title="Automatic Invitations" description="Automatically send invitations to registrants.">
+                    <Setting
+                        title="Stop automatic invites"
+                        description="Immediately clear automatic invitations configuration to stop further automated invites."
+                    >
+                        <MultiSettingUpdater
+                            settingNames={[
+                                Conference_ConfigurationKey_Enum.AutomaticInvitationsStart,
+                                Conference_ConfigurationKey_Enum.AutomaticInvitationsEnd,
+                                Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatStart,
+                                Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatEnd,
+                                Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatFrequency,
+                            ]}
+                        >
+                            {(props) => (
+                                <Button
+                                    colorScheme="DestructiveActionButton"
+                                    isDisabled={props.values.every((x) => !x.value)}
+                                    onClick={() => {
+                                        props.deleteAll();
+                                    }}
+                                >
+                                    Stop automatic invitations
+                                </Button>
+                            )}
+                        </MultiSettingUpdater>
+                    </Setting>
                     <Setting
                         title="Initial: Start time"
                         description="The time at which to start automatically sending initial invitations to registrants."
                     >
-                        <SettingUpdater<string>
+                        <SettingUpdater<number>
                             settingName={Conference_ConfigurationKey_Enum.AutomaticInvitationsStart}
-                            defaultValue={""}
+                            defaultValue={undefined}
                         >
-                            {(props) => <DateTimePicker />}
+                            {(props) => <DateTimeSetting {...props} />}
                         </SettingUpdater>
                     </Setting>
                     <Setting
                         title="Initial: End time"
                         description="The time at which to stop automatically sending initial invitations to registrants."
                     >
-                        TODO: AUTOMATIC_INVITATIONS_END
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.AutomaticInvitationsEnd}
+                            defaultValue={undefined}
+                        >
+                            {(props) => <DateTimeSetting {...props} />}
+                        </SettingUpdater>
                     </Setting>
                     <Setting
                         title="Reminders: Start time"
                         description="The time at which to start automatically sending repeat invitations to registrants who have not already accepted."
                     >
-                        TODO: AUTOMATIC_INVITATIONS_REPEAT_START
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatStart}
+                            defaultValue={undefined}
+                        >
+                            {(props) => <DateTimeSetting {...props} />}
+                        </SettingUpdater>
                     </Setting>
                     <Setting
                         title="Reminders: End time"
                         description="The time at which to stop automatically sending repeat invitations to registrants who have not already accepted."
                     >
-                        TODO: AUTOMATIC_INVITATIONS_REPEAT_END
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatEnd}
+                            defaultValue={undefined}
+                        >
+                            {(props) => <DateTimeSetting {...props} />}
+                        </SettingUpdater>
                     </Setting>
                     <Setting
                         title="Reminders: Frequency"
                         description="The frequency with which to send repeat invitations."
                     >
-                        TODO: AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.AutomaticInvitationsRepeatFrequency}
+                            defaultValue={2 * 24 * 60 * 60 * 1000}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : parseInt(newValue, 10))
+                                    }
+                                    value={value.toString()}
+                                    options={[
+                                        { label: "1 day", value: (24 * 60 * 60 * 1000).toString() },
+                                        { label: "2 days", value: (2 * 24 * 60 * 60 * 1000).toString() },
+                                        { label: "3 days", value: (3 * 24 * 60 * 60 * 1000).toString() },
+                                        { label: "4 days", value: (4 * 24 * 60 * 60 * 1000).toString() },
+                                        { label: "5 days", value: (5 * 24 * 60 * 60 * 1000).toString() },
+                                        { label: "6 days", value: (6 * 24 * 60 * 60 * 1000).toString() },
+                                        { label: "7 days", value: (7 * 24 * 60 * 60 * 1000).toString() },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
                     </Setting>
-                </Section> */}
+                </Section>
                 <Section title="Submissions" description="Submission controls.">
                     <Setting title="Submission Deadline" description="The time after which to prevent new submissions.">
-                        <SettingUpdater<Date>
+                        <SettingUpdater<number>
                             settingName={Conference_ConfigurationKey_Enum.UploadCutoffTimestamp}
                             defaultValue={undefined}
                         >
@@ -317,7 +381,7 @@ export default function ManageConfig(): JSX.Element {
                     </Setting>
                     <Setting
                         title="Hidden exhibitions label"
-                        description="Relabel hidden exhibitions, e.g. to 'Sessions'"
+                        description="Relabel hidden exhibitions, e.g. to 'session'"
                     >
                         <SettingUpdater<string>
                             settingName={Conference_ConfigurationKey_Enum.HiddenExhibitionsLabel}
@@ -369,7 +433,7 @@ function Section({
                     </Heading>
                     <Text>{description}</Text>
                 </VStack>
-                <SimpleGrid pl={8} columns={2} gridRowGap={8} gridColumnGap={4} w="100%">
+                <SimpleGrid pl={8} pr={2} columns={2} gridRowGap={8} gridColumnGap={4} w="100%">
                     {children}
                 </SimpleGrid>
             </VStack>

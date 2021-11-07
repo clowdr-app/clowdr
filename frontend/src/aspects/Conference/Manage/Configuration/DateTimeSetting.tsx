@@ -6,22 +6,22 @@ export default function DateTimeSetting({
     onChange,
     isDisabled,
 }: {
-    value: Date | undefined;
-    onChange: (value: Date | undefined) => void;
+    value: number | undefined;
+    onChange: (value: number | undefined) => void;
     isDisabled?: boolean;
 }): JSX.Element {
-    const [value_Debounce, setValue_Debounce] = useState<Date | undefined>(value);
+    const [value_Debounce, setValue_Debounce] = useState<Date | undefined>(value ? new Date(value) : undefined);
     const [valueChanged, setValueChanged] = useState<boolean>(false);
     const onChange_Debounce = useCallback((newValue: Date | undefined) => {
         setValue_Debounce(newValue);
     }, []);
     useEffect(() => {
-        if (value !== value_Debounce || valueChanged) {
+        if (value !== value_Debounce?.getTime() || valueChanged) {
             setValueChanged(true);
             const tId = setTimeout(() => {
                 if (valueChanged) {
                     setValueChanged(false);
-                    onChange(value_Debounce);
+                    onChange(value_Debounce?.getTime());
                 }
             }, 1000);
             return () => {
@@ -38,7 +38,7 @@ export default function DateTimeSetting({
             onBlur={() => {
                 if (valueChanged) {
                     setValueChanged(false);
-                    onChange(value_Debounce);
+                    onChange(value_Debounce?.getTime());
                 }
             }}
             isDisabled={isDisabled}

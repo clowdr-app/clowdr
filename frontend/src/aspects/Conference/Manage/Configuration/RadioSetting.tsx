@@ -1,5 +1,5 @@
 import type { UseRadioProps } from "@chakra-ui/react";
-import { Box, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
+import { Box, chakra, HStack, useRadio, useRadioGroup } from "@chakra-ui/react";
 import React from "react";
 import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import { FAIcon } from "../../../Icons/FAIcon";
@@ -24,7 +24,7 @@ export default function RadioSetting({
     const group: any = getRootProps();
 
     return (
-        <HStack {...group}>
+        <HStack {...group} flexWrap="wrap" gridRowGap={2}>
             {options.map((option) => {
                 const radio = getRadioProps({ value: option.value });
                 return (
@@ -69,7 +69,7 @@ function RadioCard(props: React.PropsWithChildren<UseRadioProps>) {
             >
                 <HStack>
                     {isChecked ? <FAIcon iconStyle="s" icon="check-circle" /> : undefined}
-                    <span>{props.children}</span>
+                    <chakra.span whiteSpace="nowrap">{props.children}</chakra.span>
                 </HStack>
             </Box>
         </Box>

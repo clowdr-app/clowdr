@@ -40180,6 +40180,22 @@ export type PreshowChecklistQueryVariables = Exact<{
 
 export type PreshowChecklistQuery = { readonly __typename?: 'query_root', readonly allTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly itemsWithNoLinkedProgramPeople: ReadonlyArray<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemTags: ReadonlyArray<{ readonly __typename?: 'content_ItemTag', readonly id: any, readonly tagId: any }>, readonly itemPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string, readonly person?: Maybe<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }> }> }>, readonly requiredProgramPeopleNotLinkedToRegistrant: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly requiredProgramPeopleNotRegistered: ReadonlyArray<{ readonly __typename?: 'collection_ProgramPersonWithAccessToken', readonly id?: Maybe<any>, readonly name?: Maybe<string>, readonly affiliation?: Maybe<string>, readonly email?: Maybe<string> }>, readonly submissionsNotReceived: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly typeName: Content_ElementType_Enum, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }>, readonly livestreamEventsWithoutRegisteredPresenter: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly livestreamEventsWithoutRegisteredChair: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithoutVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly prerecordedEventsWithVideo: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly zoomEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string, readonly data: any }> }> }>, readonly allLiveEventsWithPeople: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly intendedRoomModeName: Room_Mode_Enum, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly itemPeopleWithRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }>, readonly itemPeopleWithoutRegistrant: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly personId: any }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly eventPeople: ReadonlyArray<{ readonly __typename?: 'schedule_EventProgramPerson', readonly id: any, readonly personId: any }> }>, readonly emptyExhibitions: ReadonlyArray<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string }>, readonly emptyTags: ReadonlyArray<{ readonly __typename?: 'collection_Tag', readonly id: any, readonly name: string }>, readonly exhibitionEventsWithoutExhibition: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly exhibitionEventsWithoutDiscussionRooms: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly name: string, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string } }> }> }>, readonly liveEventsWithoutContent: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly overlappingEvents: ReadonlyArray<{ readonly __typename?: 'schedule_OverlappingEvents', readonly eventX?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string } }>, readonly eventY?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any> }> }>, readonly shortEvents: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly endTime?: Maybe<any>, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }>, readonly roomsWithStreams: ReadonlyArray<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly livestreamDuration?: Maybe<{ readonly __typename?: 'room_LivestreamDurations', readonly sum?: Maybe<any> }> }>, readonly eventsWithNegativeDuration: ReadonlyArray<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly name: string, readonly startTime: any, readonly durationSeconds: number, readonly room: { readonly __typename?: 'room_Room', readonly id: any, readonly name: string }, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string }> }> };
 
+export type MultiSettingUpdater_GetConfigurationsQueryVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  keys: ReadonlyArray<Conference_ConfigurationKey_Enum> | Conference_ConfigurationKey_Enum;
+}>;
+
+
+export type MultiSettingUpdater_GetConfigurationsQuery = { readonly __typename?: 'query_root', readonly conference_Configuration: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum, readonly value: any }> };
+
+export type MultiSettingUpdater_DeleteConfigurationsMutationVariables = Exact<{
+  conferenceId: Scalars['uuid'];
+  keys: ReadonlyArray<Conference_ConfigurationKey_Enum> | Conference_ConfigurationKey_Enum;
+}>;
+
+
+export type MultiSettingUpdater_DeleteConfigurationsMutation = { readonly __typename?: 'mutation_root', readonly delete_conference_Configuration?: Maybe<{ readonly __typename?: 'conference_Configuration_mutation_response', readonly returning: ReadonlyArray<{ readonly __typename?: 'conference_Configuration', readonly conferenceId: any, readonly key: Conference_ConfigurationKey_Enum }> }> };
+
 export type SettingUpdater_GetConfigurationQueryVariables = Exact<{
   conferenceId: Scalars['uuid'];
   key: Conference_ConfigurationKey_Enum;
@@ -47700,6 +47716,85 @@ export function usePreshowChecklistLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type PreshowChecklistQueryHookResult = ReturnType<typeof usePreshowChecklistQuery>;
 export type PreshowChecklistLazyQueryHookResult = ReturnType<typeof usePreshowChecklistLazyQuery>;
 export type PreshowChecklistQueryResult = Apollo.QueryResult<PreshowChecklistQuery, PreshowChecklistQueryVariables>;
+export const MultiSettingUpdater_GetConfigurationsDocument = gql`
+    query MultiSettingUpdater_GetConfigurations($conferenceId: uuid!, $keys: [conference_ConfigurationKey_enum!]!) {
+  conference_Configuration(
+    where: {conferenceId: {_eq: $conferenceId}, key: {_in: $keys}}
+  ) {
+    conferenceId
+    key
+    value
+  }
+}
+    `;
+
+/**
+ * __useMultiSettingUpdater_GetConfigurationsQuery__
+ *
+ * To run a query within a React component, call `useMultiSettingUpdater_GetConfigurationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMultiSettingUpdater_GetConfigurationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMultiSettingUpdater_GetConfigurationsQuery({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      keys: // value for 'keys'
+ *   },
+ * });
+ */
+export function useMultiSettingUpdater_GetConfigurationsQuery(baseOptions: Apollo.QueryHookOptions<MultiSettingUpdater_GetConfigurationsQuery, MultiSettingUpdater_GetConfigurationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MultiSettingUpdater_GetConfigurationsQuery, MultiSettingUpdater_GetConfigurationsQueryVariables>(MultiSettingUpdater_GetConfigurationsDocument, options);
+      }
+export function useMultiSettingUpdater_GetConfigurationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MultiSettingUpdater_GetConfigurationsQuery, MultiSettingUpdater_GetConfigurationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MultiSettingUpdater_GetConfigurationsQuery, MultiSettingUpdater_GetConfigurationsQueryVariables>(MultiSettingUpdater_GetConfigurationsDocument, options);
+        }
+export type MultiSettingUpdater_GetConfigurationsQueryHookResult = ReturnType<typeof useMultiSettingUpdater_GetConfigurationsQuery>;
+export type MultiSettingUpdater_GetConfigurationsLazyQueryHookResult = ReturnType<typeof useMultiSettingUpdater_GetConfigurationsLazyQuery>;
+export type MultiSettingUpdater_GetConfigurationsQueryResult = Apollo.QueryResult<MultiSettingUpdater_GetConfigurationsQuery, MultiSettingUpdater_GetConfigurationsQueryVariables>;
+export const MultiSettingUpdater_DeleteConfigurationsDocument = gql`
+    mutation MultiSettingUpdater_DeleteConfigurations($conferenceId: uuid!, $keys: [conference_ConfigurationKey_enum!]!) {
+  delete_conference_Configuration(
+    where: {conferenceId: {_eq: $conferenceId}, key: {_in: $keys}}
+  ) {
+    returning {
+      conferenceId
+      key
+    }
+  }
+}
+    `;
+export type MultiSettingUpdater_DeleteConfigurationsMutationFn = Apollo.MutationFunction<MultiSettingUpdater_DeleteConfigurationsMutation, MultiSettingUpdater_DeleteConfigurationsMutationVariables>;
+
+/**
+ * __useMultiSettingUpdater_DeleteConfigurationsMutation__
+ *
+ * To run a mutation, you first call `useMultiSettingUpdater_DeleteConfigurationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMultiSettingUpdater_DeleteConfigurationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [multiSettingUpdaterDeleteConfigurationsMutation, { data, loading, error }] = useMultiSettingUpdater_DeleteConfigurationsMutation({
+ *   variables: {
+ *      conferenceId: // value for 'conferenceId'
+ *      keys: // value for 'keys'
+ *   },
+ * });
+ */
+export function useMultiSettingUpdater_DeleteConfigurationsMutation(baseOptions?: Apollo.MutationHookOptions<MultiSettingUpdater_DeleteConfigurationsMutation, MultiSettingUpdater_DeleteConfigurationsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MultiSettingUpdater_DeleteConfigurationsMutation, MultiSettingUpdater_DeleteConfigurationsMutationVariables>(MultiSettingUpdater_DeleteConfigurationsDocument, options);
+      }
+export type MultiSettingUpdater_DeleteConfigurationsMutationHookResult = ReturnType<typeof useMultiSettingUpdater_DeleteConfigurationsMutation>;
+export type MultiSettingUpdater_DeleteConfigurationsMutationResult = Apollo.MutationResult<MultiSettingUpdater_DeleteConfigurationsMutation>;
+export type MultiSettingUpdater_DeleteConfigurationsMutationOptions = Apollo.BaseMutationOptions<MultiSettingUpdater_DeleteConfigurationsMutation, MultiSettingUpdater_DeleteConfigurationsMutationVariables>;
 export const SettingUpdater_GetConfigurationDocument = gql`
     query SettingUpdater_GetConfiguration($conferenceId: uuid!, $key: conference_ConfigurationKey_enum!) {
   conference_Configuration_by_pk(conferenceId: $conferenceId, key: $key) {

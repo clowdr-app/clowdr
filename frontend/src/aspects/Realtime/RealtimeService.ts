@@ -106,6 +106,11 @@ export class RealtimeService {
         })();
     }
 
+    private reconnect: undefined | (() => Promise<void>) = undefined;
+    setReconnect(reconnect: () => Promise<void>): void {
+        this.reconnect = reconnect;
+    }
+
     private onConnect() {
         datadogLogs.logger.info("Connected to realtime service");
     }
@@ -131,8 +136,15 @@ export class RealtimeService {
     }
 
     private onConnectError(e: any) {
-        // TODO
-        datadogLogs.logger.error("Error connecting to realtime service", e);
+        if (
+            e?.message.includes("Unauthorized: Token is missing or invalid Bearer") ||
+            e.toString().includes("Unauthorized: Token is missing or invalid Bearer")
+        ) {
+            datadogLogs.logger.info("Reconnecting to realtime service (token expired)", e);
+            this.reconnect?.();
+        } else {
+            datadogLogs.logger.error("Error connecting to realtime service", e);
+        }
     }
 
     private onUnauthorized(error: any) {

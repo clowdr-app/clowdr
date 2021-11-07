@@ -220,21 +220,37 @@ function ApolloCustomProviderInner({
         [reconnect]
     );
 
+    const reconnectRealtime = useCallback(async () => {
+        if (isAuthenticated) {
+            setPresenceToken(null);
+            const newPresenceToken = await getAccessTokenSilently();
+            setPresenceToken(newPresenceToken);
+        } else {
+            setPresenceToken(null);
+        }
+    }, [getAccessTokenSilently, isAuthenticated]);
+
+    useEffect(() => {
+        const tId = setInterval(() => {
+            reconnectRealtime();
+        }, 10000);
+        return () => {
+            clearInterval(tId);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     if (!client || client.slug !== conferenceSlug) {
         return <>Loading...</>;
     }
 
     return (
         <ApolloCustomContext.Provider value={ctx}>
-            {realtimeToken ? (
-                <RealtimeServiceProvider token={realtimeToken}>
-                    <PresenceStateProvider>
-                        <ApolloProvider client={client.client}>{children}</ApolloProvider>
-                    </PresenceStateProvider>
-                </RealtimeServiceProvider>
-            ) : (
-                <ApolloProvider client={client.client}>{children}</ApolloProvider>
-            )}
+            <RealtimeServiceProvider token={realtimeToken} reconnect={reconnectRealtime}>
+                <PresenceStateProvider>
+                    <ApolloProvider client={client.client}>{children}</ApolloProvider>
+                </PresenceStateProvider>
+            </RealtimeServiceProvider>
         </ApolloCustomContext.Provider>
     );
 }

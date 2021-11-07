@@ -22,101 +22,6 @@ export default function ManageConfig(): JSX.Element {
             {title}
             <VStack alignItems="flex-start" spacing={12}>
                 <Section
-                    title="Live-streams and video chats"
-                    description="Pre-recorded, Presentation and Q&amp;A -mode events, backstages and video-chats."
-                >
-                    <Setting
-                        title="Filler video"
-                        description="This video will play on a loop in live-streams in between pre-recorded videos and live events. It can also be played manually from the backstage to fill time."
-                    >
-                        <Text mt="3.5ex">
-                            Please upload your filler video to your Landing Page content as a &ldquo;hidden&rdquo; Video
-                            File element. Then contact our tech support to ask them to update this setting.
-                        </Text>
-                    </Setting>
-                    <Setting
-                        title="Backstage Stream Preview"
-                        description="Enable or disable the backstage preview stream."
-                    >
-                        <SettingUpdater<boolean>
-                            settingName={Conference_ConfigurationKey_Enum.EnableBackstageStreamPreview}
-                            defaultValue={false}
-                        >
-                            {({ value, onChange, settingName }) => (
-                                <RadioSetting
-                                    settingName={settingName}
-                                    onChange={(newValue) =>
-                                        onChange(newValue === undefined ? undefined : newValue === "true")
-                                    }
-                                    value={value ? "true" : "false"}
-                                    options={[
-                                        { label: "Enabled", value: "true" },
-                                        { label: "Disabled", value: "false" },
-                                    ]}
-                                />
-                            )}
-                        </SettingUpdater>
-                    </Setting>
-                    <Setting
-                        title="External RTMP Broadcast"
-                        description="Enable or disable broadcasting of streams from a room to an external RTMP destination such as YouTube."
-                    >
-                        <SettingUpdater<boolean>
-                            settingName={Conference_ConfigurationKey_Enum.EnableExternalRtmpBroadcast}
-                            defaultValue={false}
-                        >
-                            {({ value, onChange, settingName }) => (
-                                <RadioSetting
-                                    settingName={settingName}
-                                    onChange={(newValue) =>
-                                        onChange(newValue === undefined ? undefined : newValue === "true")
-                                    }
-                                    value={value ? "true" : "false"}
-                                    options={[
-                                        { label: "Enabled", value: "true" },
-                                        { label: "Disabled", value: "false" },
-                                    ]}
-                                />
-                            )}
-                        </SettingUpdater>
-                    </Setting>
-                    <Setting
-                        title="Maximum Simultaneous Screenshares"
-                        description="Maximum number of simultaneous screenshares (from different participants) in a video-chat or backstage."
-                    >
-                        <SettingUpdater<number>
-                            settingName={Conference_ConfigurationKey_Enum.VonageMaxSimultaneousScreenShares}
-                            defaultValue={0}
-                        >
-                            {({ value, onChange, settingName }) => (
-                                <RadioSetting
-                                    settingName={settingName}
-                                    onChange={(newValue) =>
-                                        onChange(newValue === undefined ? undefined : parseInt(newValue, 10))
-                                    }
-                                    value={value.toString()}
-                                    options={[
-                                        { label: "0", value: "0" },
-                                        { label: "1", value: "1" },
-                                        { label: "2", value: "2" },
-                                    ]}
-                                />
-                            )}
-                        </SettingUpdater>
-                    </Setting>
-                    <Setting
-                        title="My Backstages Notice"
-                        description="A message placed at the top of the My Backstages modal."
-                    >
-                        <SettingUpdater<string>
-                            settingName={Conference_ConfigurationKey_Enum.MyBackstagesNotice}
-                            defaultValue={""}
-                        >
-                            {(props) => <TextAreaSetting {...props} />}
-                        </SettingUpdater>
-                    </Setting>
-                </Section>
-                <Section
                     title="Contact &amp; Registration"
                     description="Contact and registration details for your conference."
                 >
@@ -155,6 +60,38 @@ export default function ManageConfig(): JSX.Element {
                             defaultValue={""}
                         >
                             {(props) => <TextSetting type="url" {...props} />}
+                        </SettingUpdater>
+                    </Setting>
+                </Section>
+                <Section title="Submissions" description="Submission controls.">
+                    <Setting title="Submission Deadline" description="The time after which to prevent new submissions.">
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.UploadCutoffTimestamp}
+                            defaultValue={undefined}
+                        >
+                            {(props) => <DateTimeSetting {...props} />}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Submission Agreement"
+                        description="URL to your conference's terms of submission, such as copyright assignment."
+                    >
+                        <SettingUpdater<{ agreementUrl: string }>
+                            settingName={Conference_ConfigurationKey_Enum.UploadAgreement}
+                            defaultValue={{ agreementUrl: "" }}
+                        >
+                            {({ value, settingName, onChange }) => (
+                                <TextSetting
+                                    settingName={settingName}
+                                    value={value.agreementUrl}
+                                    onChange={(newValue) => {
+                                        onChange({
+                                            agreementUrl: newValue,
+                                        });
+                                    }}
+                                    type="url"
+                                />
+                            )}
                         </SettingUpdater>
                     </Setting>
                 </Section>
@@ -253,38 +190,6 @@ export default function ManageConfig(): JSX.Element {
                                         { label: "6 days", value: (6 * 24 * 60 * 60 * 1000).toString() },
                                         { label: "7 days", value: (7 * 24 * 60 * 60 * 1000).toString() },
                                     ]}
-                                />
-                            )}
-                        </SettingUpdater>
-                    </Setting>
-                </Section>
-                <Section title="Submissions" description="Submission controls.">
-                    <Setting title="Submission Deadline" description="The time after which to prevent new submissions.">
-                        <SettingUpdater<number>
-                            settingName={Conference_ConfigurationKey_Enum.UploadCutoffTimestamp}
-                            defaultValue={undefined}
-                        >
-                            {(props) => <DateTimeSetting {...props} />}
-                        </SettingUpdater>
-                    </Setting>
-                    <Setting
-                        title="Submission Agreement"
-                        description="URL to your conference's terms of submission, such as copyright assignment."
-                    >
-                        <SettingUpdater<{ agreementUrl: string }>
-                            settingName={Conference_ConfigurationKey_Enum.UploadAgreement}
-                            defaultValue={{ agreementUrl: "" }}
-                        >
-                            {({ value, settingName, onChange }) => (
-                                <TextSetting
-                                    settingName={settingName}
-                                    value={value.agreementUrl}
-                                    onChange={(newValue) => {
-                                        onChange({
-                                            agreementUrl: newValue,
-                                        });
-                                    }}
-                                    type="url"
                                 />
                             )}
                         </SettingUpdater>
@@ -411,6 +316,101 @@ export default function ManageConfig(): JSX.Element {
                                     ]}
                                 />
                             )}
+                        </SettingUpdater>
+                    </Setting>
+                </Section>
+                <Section
+                    title="Live-streams and video chats"
+                    description="Pre-recorded, Presentation and Q&amp;A -mode events, backstages and video-chats."
+                >
+                    <Setting
+                        title="Filler video"
+                        description="This video will play on a loop in live-streams in between pre-recorded videos and live events. It can also be played manually from the backstage to fill time."
+                    >
+                        <Text mt="3.5ex">
+                            Please upload your filler video to your Landing Page content as a &ldquo;hidden&rdquo; Video
+                            File element. Then contact our tech support to ask them to update this setting.
+                        </Text>
+                    </Setting>
+                    <Setting
+                        title="Backstage Stream Preview"
+                        description="Enable or disable the backstage preview stream."
+                    >
+                        <SettingUpdater<boolean>
+                            settingName={Conference_ConfigurationKey_Enum.EnableBackstageStreamPreview}
+                            defaultValue={false}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : newValue === "true")
+                                    }
+                                    value={value ? "true" : "false"}
+                                    options={[
+                                        { label: "Enabled", value: "true" },
+                                        { label: "Disabled", value: "false" },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="External RTMP Broadcast"
+                        description="Enable or disable broadcasting of streams from a room to an external RTMP destination such as YouTube."
+                    >
+                        <SettingUpdater<boolean>
+                            settingName={Conference_ConfigurationKey_Enum.EnableExternalRtmpBroadcast}
+                            defaultValue={false}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : newValue === "true")
+                                    }
+                                    value={value ? "true" : "false"}
+                                    options={[
+                                        { label: "Enabled", value: "true" },
+                                        { label: "Disabled", value: "false" },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Maximum Simultaneous Screenshares"
+                        description="Maximum number of simultaneous screenshares (from different participants) in a video-chat or backstage."
+                    >
+                        <SettingUpdater<number>
+                            settingName={Conference_ConfigurationKey_Enum.VonageMaxSimultaneousScreenShares}
+                            defaultValue={0}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : parseInt(newValue, 10))
+                                    }
+                                    value={value.toString()}
+                                    options={[
+                                        { label: "0", value: "0" },
+                                        { label: "1", value: "1" },
+                                        { label: "2", value: "2" },
+                                    ]}
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="My Backstages Notice"
+                        description="A message placed at the top of the My Backstages modal."
+                    >
+                        <SettingUpdater<string>
+                            settingName={Conference_ConfigurationKey_Enum.MyBackstagesNotice}
+                            defaultValue={""}
+                        >
+                            {(props) => <TextAreaSetting {...props} />}
                         </SettingUpdater>
                     </Setting>
                 </Section>

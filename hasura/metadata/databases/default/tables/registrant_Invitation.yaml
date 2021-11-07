@@ -152,3 +152,17 @@ delete_permissions:
                   - CONFERENCE_MANAGE_GROUPS
                   - CONFERENCE_MANAGE_ATTENDEES
   role: user
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: x-hasura-event-secret
+    value_from_env: EVENT_SECRET
+  name: Invitation_SendAutomatic
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{ACTION_BASE_URL}}/invitation/automatic"

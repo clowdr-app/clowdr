@@ -1,17 +1,24 @@
 import { gql } from "@apollo/client/core";
 import { v5 as uuidv5 } from "uuid";
-import {
-    CompleteInvitationEmailJobsDocument,
+import type {
     Email_Insert_Input,
     InvitationPartsFragment,
     InvitedUserPartsFragment,
     RegistrantWithInvitePartsFragment,
+} from "../generated/graphql";
+import {
+    CompleteInvitationEmailJobsDocument,
+    GetAutomaticInvitationsConfigurationDocument,
+    GetAutomaticInvitationsRepeatConfigurationsDocument,
+    GetAutomaticInvitations_ToBeRepeatedDocument,
+    InsertInvitationEmailJobDocument,
     SelectInvitationAndUserDocument,
     SelectRegistrantsWithInvitationDocument,
     SelectUnprocessedInvitationEmailJobsDocument,
     SetRegistrantUserIdDocument,
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
+import type { InvitationData, Payload } from "../types/hasura/event";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
 gql`
@@ -305,4 +312,141 @@ export async function invitationConfirmCurrentHandler(
             ? `Invitation already used${invitation.registrant.userId === user.id ? " (same user)" : ""}`
             : true;
     });
+}
+
+gql`
+    query GetAutomaticInvitationsConfiguration($conferenceId: uuid!) {
+        initialStart: conference_Configuration_by_pk(conferenceId: $conferenceId, key: AUTOMATIC_INVITATIONS_START) {
+            value
+        }
+        initialEnd: conference_Configuration_by_pk(conferenceId: $conferenceId, key: AUTOMATIC_INVITATIONS_END) {
+            value
+        }
+    }
+
+    query GetAutomaticInvitationsRepeatConfigurations {
+        conference_Conference(
+            where: {
+                _and: [
+                    { configurations: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_START } } }
+                    { configurations: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_END } } }
+                ]
+            }
+        ) {
+            id
+            repeatStart: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_START } }) {
+                value
+            }
+            repeatEnd: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_END } }) {
+                value
+            }
+            repeatFrequency: configurations(where: { key: { _eq: AUTOMATIC_INVITATIONS_REPEAT_FREQUENCY } }) {
+                value
+            }
+        }
+    }
+
+    mutation InsertInvitationEmailJob($registrantIds: jsonb!, $conferenceId: uuid!, $sendRepeat: Boolean!) {
+        insert_job_queues_InvitationEmailJob_one(
+            object: { registrantIds: $registrantIds, conferenceId: $conferenceId, sendRepeat: $sendRepeat }
+        ) {
+            id
+        }
+    }
+
+    query GetAutomaticInvitations_ToBeRepeated($conferenceId: uuid!) {
+        registrant_Registrant(where: { conferenceId: { _eq: $conferenceId }, userId: { _is_null: true } }) {
+            id
+            invitationStatus
+        }
+    }
+`;
+
+export async function handleInvitationInsert_AutomaticSend(payload: Payload<InvitationData>): Promise<void> {
+    if (payload.event.data.new) {
+        const conferenceId = payload.event.data.new.conferenceId;
+        const configResponse = await apolloClient.query({
+            query: GetAutomaticInvitationsConfigurationDocument,
+            variables: {
+                conferenceId,
+            },
+        });
+        const initialStartMs = configResponse.data.initialStart?.value ?? Number.POSITIVE_INFINITY;
+        const initialEndMs = configResponse.data.initialEnd?.value ?? Number.POSITIVE_INFINITY;
+        const now = Date.now();
+        if (
+            typeof initialStartMs === "number" &&
+            typeof initialEndMs === "number" &&
+            initialStartMs <= now &&
+            now < initialEndMs
+        ) {
+            await apolloClient.mutate({
+                mutation: InsertInvitationEmailJobDocument,
+                variables: {
+                    conferenceId,
+                    registrantIds: payload.event.data.new.registrantId,
+                    sendRepeat: false,
+                },
+            });
+        }
+    }
+}
+
+export async function handleInvitationInsert_AutomaticSendRepeat(): Promise<void> {
+    const conferencesResponse = await apolloClient.query({
+        query: GetAutomaticInvitationsRepeatConfigurationsDocument,
+    });
+    for (const conference of conferencesResponse.data.conference_Conference) {
+        const repeatStartMs = conference.repeatStart[0]?.value ?? Number.POSITIVE_INFINITY;
+        const repeatEndMs = conference.repeatEnd[0]?.value ?? Number.POSITIVE_INFINITY;
+        const repeatFrequencyMs = conference.repeatFrequency[0]?.value ?? 2 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        if (
+            typeof repeatStartMs === "number" &&
+            typeof repeatEndMs === "number" &&
+            typeof repeatFrequencyMs === "number" &&
+            repeatStartMs <= now &&
+            now < repeatEndMs
+        ) {
+            try {
+                const registrantsResponse = await apolloClient.query({
+                    query: GetAutomaticInvitations_ToBeRepeatedDocument,
+                    variables: {
+                        conferenceId: conference.id,
+                    },
+                });
+                const registrantIdsToInclude = registrantsResponse.data.registrant_Registrant
+                    .filter((x) => {
+                        const status = x.invitationStatus;
+                        if (!status) {
+                            return true;
+                        }
+                        if (status.errorMessage) {
+                            return false;
+                        }
+                        if (status.sentAt) {
+                            const sentAtMs = Date.parse(status.sentAt);
+                            const distanceMs = now - sentAtMs;
+                            return distanceMs > repeatFrequencyMs;
+                        }
+                        return true;
+                    })
+                    .map((x) => x.id);
+                await apolloClient.mutate({
+                    mutation: InsertInvitationEmailJobDocument,
+                    variables: {
+                        conferenceId: conference.id,
+                        registrantIds: registrantIdsToInclude,
+                        sendRepeat: true,
+                    },
+                });
+            } catch (e: any) {
+                console.error(
+                    `Error processing automatic repeat invitations for conference: ${
+                        conference.id
+                    }. Error: ${e?.toString()}`
+                );
+            }
+        }
+    }
 }

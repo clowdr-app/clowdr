@@ -195,3 +195,10 @@ export interface FlagData {
     type: Chat_FlagType_Enum;
     updated_at: string;
 }
+
+export interface InvitationData extends BaseData {
+    id: string;
+    registrantId: string;
+    invitedEmailAddress: string;
+    conferenceId: string;
+}

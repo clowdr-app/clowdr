@@ -1033,9 +1033,18 @@ export class ChatState {
             };
             socket.emit("chat.messages.send", action);
             const ackdSId = await new Promise<string>((resolve, reject) => {
-                this.ackSendMessage = resolve;
+                const tId = setTimeout(() => {
+                    this.ackSendMessage = undefined;
+                    this.nackSendMessage = undefined;
+                    reject("Send timed out");
+                }, 10000);
+                this.ackSendMessage = (sId: string) => {
+                    clearTimeout(tId);
+                    resolve(sId);
+                };
                 this.nackSendMessage = (nackSId) => {
                     if (nackSId === sId) {
+                        clearTimeout(tId);
                         reject("Send nack'd");
                     }
                 };

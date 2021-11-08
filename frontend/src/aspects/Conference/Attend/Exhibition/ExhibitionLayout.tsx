@@ -21,7 +21,7 @@ import type {
 } from "../../../../generated/graphql";
 import { Content_ElementType_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
-import { LinkButton } from "../../../Chakra/LinkButton";
+import { ExternalLinkButton, LinkButton } from "../../../Chakra/LinkButton";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { FAIcon } from "../../../Icons/FAIcon";
 import PageCountText from "../../../Realtime/PageCountText";
@@ -241,12 +241,12 @@ function ItemTile({
                     </LinkButton>
                 ) : undefined}
                 {zoomInfo ? (
-                    <LinkButton colorScheme="PrimaryActionButton" to={zoomInfo.url} textDecoration="none">
+                    <ExternalLinkButton colorScheme="PrimaryActionButton" to={zoomInfo.url} textDecoration="none">
                         <FAIcon iconStyle="s" icon="video" mr={2} />
                         <Text as="span" ml={1} mr={2}>
                             Join in {zoomInfo.name}
                         </Text>
-                    </LinkButton>
+                    </ExternalLinkButton>
                 ) : undefined}
                 <LinkButton colorScheme="SecondaryActionButton" to={itemUrl} textDecoration="none">
                     <FAIcon iconStyle="s" icon="link" mr={2} />

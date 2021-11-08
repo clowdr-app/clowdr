@@ -140,10 +140,15 @@ export class RealtimeService {
             e?.message.includes("Unauthorized: Token is missing or invalid Bearer") ||
             e.toString().includes("Unauthorized: Token is missing or invalid Bearer")
         ) {
-            datadogLogs.logger.info("Reconnecting to realtime service (token expired)", e);
+            datadogLogs.logger.info("Reconnecting to realtime service (token expired)", {
+                info: e,
+            });
             this.reconnect?.();
         } else {
-            datadogLogs.logger.error("Error connecting to realtime service", e);
+            datadogLogs.logger.error("Error connecting to realtime service", {
+                errorMessage: e.toString(),
+                errorInfo: e,
+            });
         }
     }
 

@@ -3,8 +3,10 @@ import React from "react";
 import { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import { useTitle } from "../../../Utils/useTitle";
 import { useConference } from "../../useConference";
+import { roleOptions } from "../Content/v2/Submissions/SubmissionRequestsModal";
 import { DashboardPage } from "../DashboardPage";
 import DateTimeSetting from "./DateTimeSetting";
+import MultiSelectSetting from "./MultiSelectSetting";
 import MultiSettingUpdater from "./MultiSettingUpdater";
 import RadioSetting from "./RadioSetting";
 import SettingUpdater from "./SettingUpdater";
@@ -90,6 +92,40 @@ export default function ManageConfig(): JSX.Element {
                                         });
                                     }}
                                     type="url"
+                                />
+                            )}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Roles that should receive submission notifications (e.g. subtitles)"
+                        description="Choose which program people roles which should receive (non-invitation) notification emails about their items (e.g. when subtitles are generated)."
+                    >
+                        <SettingUpdater<string[]>
+                            settingName={Conference_ConfigurationKey_Enum.SubmissionNotificationRoles}
+                            defaultValue={["PRESENTER", "AUTHOR"]}
+                        >
+                            {(props) => <MultiSelectSetting options={roleOptions ?? []} {...props} />}
+                        </SettingUpdater>
+                    </Setting>
+                    <Setting
+                        title="Send email notifications for event recording subtitles"
+                        description="Enable or disable sending email notifications about subtitle corrections to program people when a recording is created for a related event."
+                    >
+                        <SettingUpdater<boolean>
+                            settingName={Conference_ConfigurationKey_Enum.EnableRecordingSubtitleEmailNotifications}
+                            defaultValue={true}
+                        >
+                            {({ value, onChange, settingName }) => (
+                                <RadioSetting
+                                    settingName={settingName}
+                                    onChange={(newValue) =>
+                                        onChange(newValue === undefined ? undefined : newValue === "true")
+                                    }
+                                    value={value ? "true" : "false"}
+                                    options={[
+                                        { label: "Enabled", value: "true" },
+                                        { label: "Disabled", value: "false" },
+                                    ]}
                                 />
                             )}
                         </SettingUpdater>
@@ -408,29 +444,6 @@ export default function ManageConfig(): JSX.Element {
                             defaultValue={""}
                         >
                             {(props) => <TextAreaSetting {...props} />}
-                        </SettingUpdater>
-                    </Setting>
-                    <Setting
-                        title="Send email notifications for event recording subtitles"
-                        description="Enable or disable sending email notifications about subtitle corrections to program people when a recording is created for a related event."
-                    >
-                        <SettingUpdater<boolean>
-                            settingName={Conference_ConfigurationKey_Enum.EnableRecordingSubtitleEmailNotifications}
-                            defaultValue={true}
-                        >
-                            {({ value, onChange, settingName }) => (
-                                <RadioSetting
-                                    settingName={settingName}
-                                    onChange={(newValue) =>
-                                        onChange(newValue === undefined ? undefined : newValue === "true")
-                                    }
-                                    value={value ? "true" : "false"}
-                                    options={[
-                                        { label: "Enabled", value: "true" },
-                                        { label: "Disabled", value: "false" },
-                                    ]}
-                                />
-                            )}
                         </SettingUpdater>
                     </Setting>
                 </Section>

@@ -33,7 +33,7 @@ import {
 } from "../generated/graphql";
 import { apolloClient } from "../graphqlClient";
 import { S3 } from "../lib/aws/awsClient";
-import { getConferenceConfiguration } from "../lib/conferenceConfiguration";
+import { getConferenceConfiguration, getSubmissionNotificationRoles } from "../lib/conferenceConfiguration";
 import { extractLatestVersion } from "../lib/element";
 import { EMAIL_IDEMPOTENCY_NAMESPACE, insertEmails } from "./email";
 
@@ -261,21 +261,20 @@ gql`
         content_Element_by_pk(id: $elementId) {
             id
             conferenceId
+            conference {
+                ...Configuration_SubmissionNotificationRoles
+            }
             typeName
             item {
                 id
-                itemPeople(
-                    where: {
-                        person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] }
-                        roleName: { _in: ["AUTHOR", "PRESENTER", "DISCUSSANT"] }
-                    }
-                ) {
+                itemPeople(where: { person: { _and: [{ email: { _is_null: false } }, { email: { _neq: "" } }] } }) {
                     id
                     person {
                         id
                         name
                         email
                     }
+                    roleName
                 }
             }
         }
@@ -296,6 +295,9 @@ async function sendSubmittedEmail(
     });
 
     if (uploaders.data.content_Element_by_pk?.item.itemPeople.length) {
+        const submissionNotificationRoles = getSubmissionNotificationRoles(
+            uploaders.data.content_Element_by_pk.conference
+        );
         let emails: Email_Insert_Input[];
         if (
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoBroadcast ||
@@ -306,8 +308,10 @@ async function sendSubmittedEmail(
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoPrepublish ||
             uploaders.data.content_Element_by_pk.typeName === Content_ElementType_Enum.VideoSponsorsFiller
         ) {
-            emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
-                const htmlContents = `<p>Dear ${person.name},</p>
+            emails = uploaders.data.content_Element_by_pk.item.itemPeople
+                .filter((p) => submissionNotificationRoles.includes(p.roleName))
+                .map(({ person }) => {
+                    const htmlContents = `<p>Dear ${person.name},</p>
         <p>A new version of <em>${uploadableElementName}</em> (${itemTitle}) was uploaded to ${conferenceName}.</p>
         <p>Our systems will now start processing your video and then auto-generate subtitles.</p>
         <ol>
@@ -317,14 +321,14 @@ async function sendSubmittedEmail(
             <li>If you don't receive an update within 4 hours, please contact us for technical support.</li>
         </ol>`;
 
-                return {
-                    recipientName: person.name,
-                    emailAddress: person.email,
-                    reason: "item_submitted",
-                    subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
-                    htmlContents,
-                };
-            });
+                    return {
+                        recipientName: person.name,
+                        emailAddress: person.email,
+                        reason: "item_submitted",
+                        subject: `Submission RECEIVED: ${uploadableElementName} to ${conferenceName}`,
+                        htmlContents,
+                    };
+                });
         } else {
             emails = uploaders.data.content_Element_by_pk.item.itemPeople.map(({ person }) => {
                 const htmlContents = `<p>Dear ${person.name},</p>

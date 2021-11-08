@@ -8426,6 +8426,8 @@ export enum Conference_ConfigurationKey_Enum {
   ScheduleViewVersion = 'SCHEDULE_VIEW_VERSION',
   /** String. Label for the "sponsors" in the sidebar for when a conference uses a different term. */
   SponsorsLabel = 'SPONSORS_LABEL',
+  /** A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"]. */
+  SubmissionNotificationRoles = 'SUBMISSION_NOTIFICATION_ROLES',
   /** A string representing a valid email address for contacting the conference organisers. */
   SupportAddress = 'SUPPORT_ADDRESS',
   /** A string representing a valid email address for contacting the service hosting company for technical support related to the conference. */

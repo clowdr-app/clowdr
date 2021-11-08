@@ -31,7 +31,7 @@ export enum Conference_ConfigurationKey_Enum {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function isEmailTemplate_BaseConfig(data: any): boolean {
+export function isEmailTemplate_BaseConfig(data: any): data is EmailTemplate_BaseConfig {
     return is<EmailTemplate_BaseConfig>(data);
 }
 

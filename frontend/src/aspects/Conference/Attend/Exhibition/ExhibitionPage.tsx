@@ -1,13 +1,8 @@
 import { gql } from "@apollo/client";
 import { chakra, Circle, Heading, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import type {
-    ExhibitionWithContentFragment,
-    ItemEventFragment} from "../../../../generated/graphql";
-import {
-    Permissions_Permission_Enum,
-    useSelectExhibitionQuery,
-} from "../../../../generated/graphql";
+import type { ExhibitionWithContentFragment, ItemEventFragment } from "../../../../generated/graphql";
+import { Permissions_Permission_Enum, useSelectExhibitionQuery } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../../Chakra/LinkButton";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -27,7 +22,7 @@ gql`
         typeName
         elements(
             where: {
-                isHidden: { _eq: false }
+                _or: [{ isHidden: { _eq: false } }, { typeName: { _eq: ZOOM } }]
                 typeName: {
                     _in: [
                         ABSTRACT
@@ -40,6 +35,7 @@ gql`
                         VIDEO_FILE
                         VIDEO_PREPUBLISH
                         VIDEO_URL
+                        ZOOM
                     ]
                 }
             }

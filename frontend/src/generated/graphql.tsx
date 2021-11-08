@@ -42175,7 +42175,7 @@ export const ExhibitionItemFragmentDoc = gql`
   title
   typeName
   elements(
-    where: {isHidden: {_eq: false}, typeName: {_in: [ABSTRACT, IMAGE_FILE, IMAGE_URL, POSTER_FILE, POSTER_URL, TEXT, VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH, VIDEO_URL]}}
+    where: {_or: [{isHidden: {_eq: false}}, {typeName: {_eq: ZOOM}}], typeName: {_in: [ABSTRACT, IMAGE_FILE, IMAGE_URL, POSTER_FILE, POSTER_URL, TEXT, VIDEO_BROADCAST, VIDEO_FILE, VIDEO_PREPUBLISH, VIDEO_URL, ZOOM]}}
   ) {
     ...ElementData
   }

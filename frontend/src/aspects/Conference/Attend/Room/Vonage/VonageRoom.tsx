@@ -4,8 +4,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import * as portals from "react-reverse-portal";
 import { useLocation } from "react-router-dom";
 import { validate } from "uuid";
-import type {
-    Room_EventSummaryFragment} from "../../../../../generated/graphql";
+import type { Room_EventSummaryFragment } from "../../../../../generated/graphql";
 import {
     Room_EventSummaryFragmentDoc,
     useDeleteEventParticipantMutation,
@@ -15,11 +14,11 @@ import useUserId from "../../../../Auth/useUserId";
 import ChatProfileModalProvider from "../../../../Chat/Frame/ChatProfileModalProvider";
 import { useRaiseHandState } from "../../../../RaiseHand/RaiseHandProvider";
 import { useVonageRoom, VonageRoomStateActionType, VonageRoomStateProvider } from "../../../../Vonage/useVonageRoom";
-import type { RegistrantIdSpec} from "../../../RegistrantsContext";
+import type { RegistrantIdSpec } from "../../../RegistrantsContext";
 import { useRegistrants } from "../../../RegistrantsContext";
 import useCurrentRegistrant, { useMaybeCurrentRegistrant } from "../../../useCurrentRegistrant";
 import { PreJoin } from "../PreJoin";
-import type { DevicesProps} from "../VideoChat/PermissionInstructionsContext";
+import type { DevicesProps } from "../VideoChat/PermissionInstructionsContext";
 import { PermissionInstructionsContext } from "../VideoChat/PermissionInstructionsContext";
 import { CameraViewport } from "./Components/CameraViewport";
 import Layout from "./Components/Layout";
@@ -29,7 +28,7 @@ import SelfScreenComponent from "./Components/SelfScreen";
 import VideoChatVideoPlayer from "./Components/VideoChatVideoPlayer";
 import { useVonageComputedState } from "./useVonageComputedState";
 import { StateType } from "./VonageGlobalState";
-import type { AvailableStream, VonageLayout} from "./VonageLayoutProvider";
+import type { AvailableStream, VonageLayout } from "./VonageLayoutProvider";
 import { useVonageLayout, VonageLayoutProvider } from "./VonageLayoutProvider";
 import { VonageRoomControlBar } from "./VonageRoomControlBar";
 
@@ -62,6 +61,7 @@ gql`
 `;
 
 export function VonageRoom({
+    roomId,
     eventId,
     vonageSessionId,
     getAccessToken,
@@ -74,6 +74,7 @@ export function VonageRoom({
     onLeave,
     canControlRecording,
 }: {
+    roomId: string | null;
     eventId: string | null;
     vonageSessionId: string;
     getAccessToken: () => Promise<string>;
@@ -198,6 +199,7 @@ export function VonageRoom({
                             }
                             onPermissionsProblem={onPermissionsProblem}
                             canControlRecording={canControlRecording}
+                            roomId={roomId ?? undefined}
                             eventId={eventId ?? undefined}
                         />
                     </VonageLayoutProvider>
@@ -221,6 +223,7 @@ function VonageRoomInner({
     completeJoinRef,
     onPermissionsProblem,
     canControlRecording,
+    roomId,
     eventId,
 }: {
     vonageSessionId: string;
@@ -236,6 +239,7 @@ function VonageRoomInner({
     completeJoinRef?: React.MutableRefObject<() => Promise<void>>;
     onPermissionsProblem: (devices: DevicesProps, title: string | null) => void;
     canControlRecording: boolean;
+    roomId?: string;
     eventId?: string;
 }): JSX.Element {
     const cameraPreviewRef = useRef<HTMLVideoElement>(null);
@@ -657,6 +661,7 @@ function VonageRoomInner({
                     isRecordingActive={isRecordingActive}
                     isBackstage={isBackstageRoom}
                     canControlRecording={canControlRecording}
+                    roomId={roomId}
                     eventId={eventId}
                 />
             </Flex>

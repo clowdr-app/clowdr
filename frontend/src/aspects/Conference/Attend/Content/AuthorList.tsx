@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import type { TextProps} from "@chakra-ui/react";
+import type { TextProps } from "@chakra-ui/react";
 import { Badge, Button, HStack, Text, useColorModeValue, useToken, VStack } from "@chakra-ui/react";
 import * as R from "ramda";
 import React, { useMemo } from "react";
@@ -229,7 +229,7 @@ export function AuthorInner({
             ? "ProgramPersonTileRoleNameBadge.presenterColor"
             : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
             ? "ProgramPersonTileRoleNameBadge.discussantColor"
-            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            : programPersonData.roleName.toUpperCase() === "SESSION ORGANIZER"
             ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
             : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
     );
@@ -301,7 +301,7 @@ function AuthorWithProfileContent({
             ? "ProgramPersonTileRoleNameBadge.presenterColor"
             : programPersonData.roleName.toUpperCase() === "DISCUSSANT"
             ? "ProgramPersonTileRoleNameBadge.discussantColor"
-            : programPersonData.roleName.toUpperCase() === "SESSION_ORGANIZER"
+            : programPersonData.roleName.toUpperCase() === "SESSION ORGANIZER"
             ? "ProgramPersonTileRoleNameBadge.sessionOrganizerColor"
             : undefined) ?? "ProgramPersonTileRoleNameBadge.defaultColor"
     );

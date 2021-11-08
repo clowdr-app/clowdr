@@ -14,8 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
-import type {
-    RoomPage_RoomDetailsFragment} from "../../../../../generated/graphql";
+import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import {
     useGetEventVonageTokenMutation,
     useGetRoomVonageSessionIdQuery,
@@ -53,13 +52,13 @@ export function VideoChatVonageRoom({
     eventId,
     enable,
     eventIsFuture,
-    isChairOrOrganizer,
+    isPresenterOrChairOrOrganizer,
 }: {
     room: RoomPage_RoomDetailsFragment;
     eventId: string | undefined;
     enable: boolean;
     eventIsFuture: boolean;
-    isChairOrOrganizer: boolean;
+    isPresenterOrChairOrOrganizer: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
 
@@ -169,7 +168,8 @@ export function VideoChatVonageRoom({
                 disable={!enable}
                 getAccessToken={getAccessToken}
                 isBackstageRoom={false}
-                canControlRecording={!eventId || isChairOrOrganizer}
+                canControlRecording={!eventId || isPresenterOrChairOrOrganizer}
+                roomId={room.id}
                 eventId={eventId}
             />
             <AlertDialog

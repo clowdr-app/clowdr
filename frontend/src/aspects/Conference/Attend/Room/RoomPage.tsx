@@ -34,6 +34,10 @@ gql`
                 id
                 data
             }
+            selfPeople: itemPeople(where: { person: { registrantId: { _eq: $registrantId } } }) {
+                id
+                roleName
+            }
             title
         }
         managementModeName

@@ -20,6 +20,7 @@ export function SharedRoomContextProvider({
             <portals.InPortal node={vonageNode}>
                 <VonageRoom
                     getAccessToken={async () => ""}
+                    roomId={null}
                     eventId={null}
                     vonageSessionId=""
                     disable={true}

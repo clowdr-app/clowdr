@@ -39709,9 +39709,9 @@ export type RoomPage_GetRoomDetailsQueryVariables = Exact<{
 }>;
 
 
-export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> }> };
+export type RoomPage_GetRoomDetailsQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly selfPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> }> };
 
-export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
+export type RoomPage_RoomDetailsFragment = { readonly __typename?: 'room_Room', readonly id: any, readonly name: string, readonly currentModeName: Room_Mode_Enum, readonly isProgramRoom?: Maybe<boolean>, readonly publicVonageSessionId?: Maybe<string>, readonly chatId?: Maybe<any>, readonly managementModeName: Room_ManagementMode_Enum, readonly backendName?: Maybe<Room_Backend_Enum>, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly typeName: Content_ItemType_Enum, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly data: any }>, readonly selfPeople: ReadonlyArray<{ readonly __typename?: 'content_ItemProgramPerson', readonly id: any, readonly roleName: string }> }>, readonly selfAdminPerson: ReadonlyArray<{ readonly __typename?: 'room_RoomPerson', readonly id: any }>, readonly shuffleRooms: ReadonlyArray<{ readonly __typename?: 'room_ShuffleRoom', readonly id: any, readonly startedAt: any, readonly durationMinutes: number, readonly reshuffleUponEnd: boolean, readonly shufflePeriodId: any }> };
 
 export type RoomPage_GetRoomChannelStackQueryVariables = Exact<{
   roomId: Scalars['uuid'];
@@ -39836,6 +39836,13 @@ export type GetEventVideosQueryVariables = Exact<{
 
 
 export type GetEventVideosQuery = { readonly __typename?: 'query_root', readonly schedule_Event_by_pk?: Maybe<{ readonly __typename?: 'schedule_Event', readonly id: any, readonly item?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }>, readonly exhibition?: Maybe<{ readonly __typename?: 'collection_Exhibition', readonly id: any, readonly items: ReadonlyArray<{ readonly __typename?: 'content_ItemExhibition', readonly id: any, readonly priority?: Maybe<number>, readonly item: { readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> } }> }> }> };
+
+export type GetRoomVideosQueryVariables = Exact<{
+  roomId: Scalars['uuid'];
+}>;
+
+
+export type GetRoomVideosQuery = { readonly __typename?: 'query_root', readonly room_Room_by_pk?: Maybe<{ readonly __typename?: 'room_Room', readonly id: any, readonly originatingItem?: Maybe<{ readonly __typename?: 'content_Item', readonly id: any, readonly title: string, readonly elements: ReadonlyArray<{ readonly __typename?: 'content_Element', readonly id: any, readonly name: string }> }> }> };
 
 export type VonageLayoutProvider_GetLatestVonageSessionLayoutQueryVariables = Exact<{
   vonageSessionId: Scalars['String'];
@@ -42355,6 +42362,10 @@ export const RoomPage_RoomDetailsFragmentDoc = gql`
     ) {
       id
       data
+    }
+    selfPeople: itemPeople(where: {person: {registrantId: {_eq: $registrantId}}}) {
+      id
+      roleName
     }
     title
   }
@@ -45848,6 +45859,51 @@ export function useGetEventVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetEventVideosQueryHookResult = ReturnType<typeof useGetEventVideosQuery>;
 export type GetEventVideosLazyQueryHookResult = ReturnType<typeof useGetEventVideosLazyQuery>;
 export type GetEventVideosQueryResult = Apollo.QueryResult<GetEventVideosQuery, GetEventVideosQueryVariables>;
+export const GetRoomVideosDocument = gql`
+    query GetRoomVideos($roomId: uuid!) {
+  room_Room_by_pk(id: $roomId) {
+    id
+    originatingItem {
+      id
+      title
+      elements(
+        where: {typeName: {_in: [VIDEO_BROADCAST, VIDEO_FILE]}, hasBeenSubmitted: {_eq: true}}
+      ) {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRoomVideosQuery__
+ *
+ * To run a query within a React component, call `useGetRoomVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomVideosQuery({
+ *   variables: {
+ *      roomId: // value for 'roomId'
+ *   },
+ * });
+ */
+export function useGetRoomVideosQuery(baseOptions: Apollo.QueryHookOptions<GetRoomVideosQuery, GetRoomVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomVideosQuery, GetRoomVideosQueryVariables>(GetRoomVideosDocument, options);
+      }
+export function useGetRoomVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomVideosQuery, GetRoomVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomVideosQuery, GetRoomVideosQueryVariables>(GetRoomVideosDocument, options);
+        }
+export type GetRoomVideosQueryHookResult = ReturnType<typeof useGetRoomVideosQuery>;
+export type GetRoomVideosLazyQueryHookResult = ReturnType<typeof useGetRoomVideosLazyQuery>;
+export type GetRoomVideosQueryResult = Apollo.QueryResult<GetRoomVideosQuery, GetRoomVideosQueryVariables>;
 export const VonageLayoutProvider_GetLatestVonageSessionLayoutDocument = gql`
     query VonageLayoutProvider_GetLatestVonageSessionLayout($vonageSessionId: String!) {
   video_VonageSessionLayout(

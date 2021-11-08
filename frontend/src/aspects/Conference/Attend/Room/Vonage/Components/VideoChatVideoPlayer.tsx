@@ -1,4 +1,4 @@
-import type { ToastId} from "@chakra-ui/react";
+import type { ToastId } from "@chakra-ui/react";
 import { Box, useToast } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useVonageRoom, VonageRoomStateActionType } from "../../../../../Vonage/useVonageRoom";
@@ -89,7 +89,6 @@ export default function VideoChatVideoPlayer({ elementId }: { elementId: string 
                 "The presenter would like to play a video. Please click play on the video player to join in. (Midspace cannot auto-play due to browser restrictions).",
             isClosable: true,
             duration: 15000,
-            variant: "subtle",
         });
     }, [toast]);
 

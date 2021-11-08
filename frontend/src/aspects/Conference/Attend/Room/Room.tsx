@@ -690,6 +690,7 @@ function RoomInner({
         currentRoomEvent,
         currentEventModeIsNone,
         showDefaultVideoChatRoom,
+        withinStreamLatencySinceBroadcastEvent,
         withinThreeMinutesOfBroadcastEvent,
         showBackstage,
         selectedVideoElementId,
@@ -741,17 +742,31 @@ function RoomInner({
                                             : undefined)
                                     }
                                     eventIsFuture={!currentRoomEvent}
-                                    isChairOrOrganizer={
-                                        currentRoomEvent
+                                    isPresenterOrChairOrOrganizer={
+                                        !!roomDetails.selfAdminPerson?.length ||
+                                        (currentRoomEvent
                                             ? currentRoomEvent.eventPeople.some(
-                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                                  (person) =>
+                                                      person.person?.registrantId === currentRegistrant.id &&
+                                                      person.roleName !==
+                                                          Schedule_EventProgramPersonRole_Enum.Participant
                                               )
                                             : nextRoomEvent &&
                                               nextRoomEvent.intendedRoomModeName === Room_Mode_Enum.VideoChat
                                             ? nextRoomEvent.eventPeople.some(
-                                                  (person) => person.person?.registrantId === currentRegistrant.id
+                                                  (person) =>
+                                                      person.person?.registrantId === currentRegistrant.id &&
+                                                      person.roleName !==
+                                                          Schedule_EventProgramPersonRole_Enum.Participant
                                               )
-                                            : false
+                                            : !!roomDetails.originatingItem?.selfPeople.some(
+                                                  (itemPerson) =>
+                                                      itemPerson.roleName.toUpperCase() === "AUTHOR" ||
+                                                      itemPerson.roleName.toUpperCase() === "PRESENTER" ||
+                                                      itemPerson.roleName.toUpperCase() === "CHAIR" ||
+                                                      itemPerson.roleName.toUpperCase() === "SESSION ORGANIZER" ||
+                                                      itemPerson.roleName.toUpperCase() === "ORGANIZER"
+                                              ))
                                     }
                                 />
                             </Box>

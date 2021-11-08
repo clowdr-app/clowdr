@@ -670,6 +670,7 @@ function VonageRoomInner({
                 <Box position="relative" width="100%">
                     <Layout
                         viewports={viewports}
+                        allowedToControlLayout={canControlRecording}
                         isRecordingMode={isBackstageRoom || isRecordingActive}
                         isBackstage={isBackstageRoom}
                         streamActivities={streamActivities}

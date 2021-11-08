@@ -230,16 +230,6 @@ function ApolloCustomProviderInner({
         }
     }, [getAccessTokenSilently, isAuthenticated]);
 
-    useEffect(() => {
-        const tId = setInterval(() => {
-            reconnectRealtime();
-        }, 10000);
-        return () => {
-            clearInterval(tId);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     if (!client || client.slug !== conferenceSlug) {
         return <>Loading...</>;
     }

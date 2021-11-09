@@ -1232,7 +1232,9 @@ export class GlobalChatState {
         };
     }
 
-    private readonly toast = createStandaloneToast({ theme });
+    private get toast() {
+        return createStandaloneToast({ theme });
+    }
 
     private mutex = new Mutex();
     private hasInitialised = false;

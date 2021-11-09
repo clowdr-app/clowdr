@@ -47,7 +47,7 @@
             "runOptions": {
                 "instanceLimit": 1
             },
-            "args": ["run", "hasura:console-when-ready", "--envfile='./.env.local'"]
+            "args": ["run", "hasura:console-when-ready"]
         },
         // Hasura Console -- CI Testing
         {

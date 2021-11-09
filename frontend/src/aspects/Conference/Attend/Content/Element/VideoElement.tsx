@@ -173,7 +173,7 @@ export function VideoElement({
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
         return !videoURL || !config ? undefined : (
-            <Box flexDir="column" width="100%">
+            <Box flexDir="column" w="min(100%, 90vh * (16 / 9))">
                 {aspectRatio ? (
                     <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" p={2}>
                         {innerPlayer}

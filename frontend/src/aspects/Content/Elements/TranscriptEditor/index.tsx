@@ -1,6 +1,7 @@
-import { Button, Flex, FormControl, Textarea } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import React, { useState } from "react";
 import srtHandler from "srt-parser-2";
+import { SubtitleBlock, validTimecodeToMs } from "./SubtitleBlock";
 
 interface Props {
     srtTranscript: string;
@@ -20,20 +21,24 @@ export default function TranscriptEditor({
     const [transcriptWIP, setTranscriptWIP] = useState(initialTranscript);
     return (
         <Flex flexDirection="row" width="100%">
-            <FormControl display="flex" flexBasis={0} flexGrow={1} justifyContent="center">
-                <Textarea
-                    width="auto"
-                    rows={12}
-                    cols={32}
-                    resize="none"
-                    style={{ fontFamily: "monospace" }}
-                    value={JSON.stringify(transcriptWIP)}
-                    onInput={(e) => {
-                        setTranscriptWIP(JSON.parse((e.target as HTMLTextAreaElement).value));
-                    }}
-                />
-            </FormControl>
-            <Flex flexBasis={0} flexGrow={1} flexDirection="column" alignItems="center" justifyContent="space-between">
+            <Flex flexBasis={0} flexGrow={1} flexDirection="column" justifyContent="center">
+                {transcriptWIP.map((blockData) => (
+                    <SubtitleBlock
+                        key={blockData.startTime}
+                        startTimeMs={validTimecodeToMs(blockData.startTime)}
+                        endTimeMs={validTimecodeToMs(blockData.endTime)}
+                        text={blockData.text}
+                    />
+                ))}
+            </Flex>
+            <Flex
+                flexBasis={0}
+                flexGrow={1}
+                flexShrink={1}
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="space-between"
+            >
                 <video src={mediaUrl} controls>
                     This is a video
                 </video>

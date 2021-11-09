@@ -53,7 +53,7 @@ class ValidationError extends Error {
     }
 }
 
-const LazyTranscriptEditor = lazy(() => import("../../../TranscriptEditor"));
+const LazyTranscriptEditor = lazy(() => import("./TranscriptEditor"));
 
 export default function EditSubtitles({
     videoS3URL,

@@ -1,6 +1,5 @@
 import {
     AspectRatio,
-    Box,
     Button,
     Flex,
     Heading,
@@ -10,6 +9,7 @@ import {
     MenuList,
     MenuOptionGroup,
     Text,
+    VStack,
 } from "@chakra-ui/react";
 import type { AudioElementBlob, VideoElementBlob } from "@clowdr-app/shared-types/build/content";
 import { WebVTTConverter } from "@clowdr-app/srt-webvtt";
@@ -173,7 +173,7 @@ export function VideoElement({
         // Only render the player once both the video URL and the subtitles config are available
         // react-player memoizes internally and only re-renders if the url or key props change.
         return !videoURL || !config ? undefined : (
-            <Box flexDir="column" w="min(100%, 90vh * (16 / 9))">
+            <VStack w="min(100%, 90vh * (16 / 9))" maxW="800px" alignItems="center" spacing={0}>
                 {aspectRatio ? (
                     <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" p={2}>
                         {innerPlayer}
@@ -211,7 +211,7 @@ export function VideoElement({
                         </Menu>
                     </Flex>
                 ) : undefined}
-            </Box>
+            </VStack>
         );
     }, [videoURL, config, isHLS, playbackRate, setPlaybackRate, innerPlayer]);
 

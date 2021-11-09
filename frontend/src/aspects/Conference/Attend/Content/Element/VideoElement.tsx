@@ -1,4 +1,5 @@
 import {
+    AspectRatio,
     Box,
     Button,
     Flex,
@@ -28,6 +29,7 @@ export function VideoElement({
     elementId,
     elementData,
     title,
+    aspectRatio,
     onPlay,
     onPause,
     onFinish,
@@ -35,6 +37,7 @@ export function VideoElement({
     elementId?: string;
     elementData: VideoElementBlob | AudioElementBlob;
     title?: string;
+    aspectRatio?: boolean;
     onPlay?: () => void;
     onPause?: () => void;
     onFinish?: () => void;
@@ -121,11 +124,10 @@ export function VideoElement({
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const playerRef = useRef<ReactPlayer | null>(null);
     const [playbackRate, setPlaybackRate] = useState<number>(1);
-    const player = useMemo(() => {
-        // Only render the player once both the video URL and the subtitles config are available
-        // react-player memoizes internally and only re-renders if the url or key props change.
-        return !videoURL || !config ? undefined : (
-            <Box flexDir="column">
+
+    const innerPlayer = useMemo(
+        () =>
+            !videoURL || !config ? undefined : (
                 <ReactPlayer
                     url={videoURL}
                     controls={true}
@@ -160,6 +162,22 @@ export function VideoElement({
                     style={{ borderRadius: "10px", overflow: "hidden" }}
                     playbackRate={playbackRate}
                 />
+            ),
+        [videoURL, config, playbackRate, onPause, onPlay, onFinish]
+    );
+
+    const player = useMemo(() => {
+        // Only render the player once both the video URL and the subtitles config are available
+        // react-player memoizes internally and only re-renders if the url or key props change.
+        return !videoURL || !config ? undefined : (
+            <Box flexDir="column" width="100%">
+                {aspectRatio ? (
+                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" p={2}>
+                        {innerPlayer}
+                    </AspectRatio>
+                ) : (
+                    innerPlayer
+                )}
                 {!isHLS ? (
                     <Flex borderBottomRadius="2xl" p={1} justifyContent="flex-end" w="100%">
                         <Menu>
@@ -192,7 +210,7 @@ export function VideoElement({
                 ) : undefined}
             </Box>
         );
-    }, [videoURL, config, isHLS, playbackRate, onPause, onPlay, onFinish]);
+    }, [videoURL, config, isHLS, playbackRate, setPlaybackRate, innerPlayer]);
 
     useEffect(() => {
         if (playerRef.current) {

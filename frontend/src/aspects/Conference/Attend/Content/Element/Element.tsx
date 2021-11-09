@@ -1,5 +1,5 @@
 import { AspectRatio, Box, Button, Container, Divider, HStack, Image, Link } from "@chakra-ui/react";
-import type { ElementDataBlob} from "@clowdr-app/shared-types/build/content";
+import type { ElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import { Content_ElementType_Enum, isElementDataBlob } from "@clowdr-app/shared-types/build/content";
 import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
@@ -195,11 +195,7 @@ function ElementInner({
             case Content_ElementType_Enum.VideoPrepublish:
             case Content_ElementType_Enum.VideoSponsorsFiller:
             case Content_ElementType_Enum.VideoTitles:
-                return (
-                    <AspectRatio ratio={16 / 9} w="min(100%, 90vh * (16 / 9))" maxW="800px" maxH="90vh" m={2}>
-                        <VideoElement elementId={elementId} elementData={latestVersion.data} />
-                    </AspectRatio>
-                );
+                return <VideoElement elementId={elementId} elementData={latestVersion.data} aspectRatio={true} />;
 
             case Content_ElementType_Enum.PaperUrl:
                 return (

@@ -135,29 +135,37 @@ export class RealtimeService {
         }
     }
 
-    private onConnectError(e: any) {
+    private checkForTokenExpiredError(e: any): boolean {
         if (
-            e?.message.includes("Unauthorized: Token is missing or invalid Bearer") ||
-            e.toString().includes("Unauthorized: Token is missing or invalid Bearer")
+            e?.data?.code === "invalid_token" ||
+            e?.data?.message?.includes?.("Unauthorized: Token is missing or invalid Bearer") ||
+            e?.message?.includes?.("Unauthorized: Token is missing or invalid Bearer") ||
+            e?.toString?.().includes?.("Unauthorized: Token is missing or invalid Bearer")
         ) {
             datadogLogs.logger.info("Reconnecting to realtime service (token expired)", {
                 info: e,
             });
             this.reconnect?.();
-        } else {
-            datadogLogs.logger.error("Error connecting to realtime service", {
+            return true;
+        }
+        return false;
+    }
+
+    private onConnectError(e: any) {
+        if (!this.checkForTokenExpiredError(e)) {
+            datadogLogs.logger.error("Realtime service: Connection error", {
                 errorMessage: e.toString(),
                 errorInfo: e,
             });
         }
     }
 
-    private onUnauthorized(error: any) {
-        if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-            // TODO
-            datadogLogs.logger.warn("User token has expired");
-        } else {
-            datadogLogs.logger.error("Error connecting to realtime servie", error);
+    private onUnauthorized(e: any) {
+        if (!this.checkForTokenExpiredError(e)) {
+            datadogLogs.logger.error("Realtime service: Unauthorized error", {
+                errorMessage: e.toString(),
+                errorInfo: e,
+            });
         }
     }
 

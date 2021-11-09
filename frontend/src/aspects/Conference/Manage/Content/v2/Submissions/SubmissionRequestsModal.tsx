@@ -27,18 +27,16 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import type {
-    EmailTemplate_BaseConfig} from "@clowdr-app/shared-types/build/conferenceConfiguration";
-import {
-    isEmailTemplate_BaseConfig,
-} from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import type { EmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
+import { isEmailTemplate_BaseConfig } from "@clowdr-app/shared-types/build/conferenceConfiguration";
 import { EMAIL_TEMPLATE_SUBMISSION_REQUEST } from "@clowdr-app/shared-types/build/email";
-import type { FieldProps} from "formik";
+import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { useMemo, useState } from "react";
 import type {
     SubmissionRequestsModal_ConferenceConfigurationFragment,
-    SubmissionRequestsModal_ItemFragment} from "../../../../../../generated/graphql";
+    SubmissionRequestsModal_ItemFragment,
+} from "../../../../../../generated/graphql";
 import {
     Conference_ConfigurationKey_Enum,
     Content_ItemType_Enum,
@@ -168,6 +166,33 @@ function SendSubmissionRequestsModalLazyInner({
     );
 }
 
+export const roleOptions: readonly { label: string; value: string }[] = [
+    {
+        label: "Presenter",
+        value: "PRESENTER",
+    },
+    {
+        label: "Author",
+        value: "AUTHOR",
+    },
+    {
+        label: "Chair",
+        value: "CHAIR",
+    },
+    {
+        label: "Session Organizer",
+        value: "SESSION ORGANIZER",
+    },
+    {
+        label: "Discussant",
+        value: "DISCUSSANT",
+    },
+    {
+        label: "Reviewer",
+        value: "REVIEWER",
+    },
+];
+
 export function SendSubmissionRequestsModalInner({
     onClose,
     items,
@@ -252,35 +277,6 @@ export function SendSubmissionRequestsModalInner({
     const toast = useToast();
 
     const [sendSubmissionRequests] = useInsertSubmissionRequestEmailJobsMutation();
-    const roleOptions = useMemo(
-        () => [
-            {
-                label: "Presenter",
-                value: "PRESENTER",
-            },
-            {
-                label: "Author",
-                value: "AUTHOR",
-            },
-            {
-                label: "Chair",
-                value: "CHAIR",
-            },
-            {
-                label: "Session Organizer",
-                value: "SESSION ORGANIZER",
-            },
-            {
-                label: "Discussant",
-                value: "DISCUSSANT",
-            },
-            {
-                label: "Reviewer",
-                value: "REVIEWER",
-            },
-        ],
-        []
-    );
 
     return (
         <ModalContent>

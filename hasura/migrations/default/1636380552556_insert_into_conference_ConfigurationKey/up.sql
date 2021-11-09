@@ -1,0 +1,1 @@
+INSERT INTO "conference"."ConfigurationKey"("name", "description") VALUES (E'SUBMISSION_NOTIFICATION_ROLES', E'A list of strings indicating which program people roles receive notifications (e.g. subtitles) about submissions. Default: ["PRESENTER","AUTHOR"].');

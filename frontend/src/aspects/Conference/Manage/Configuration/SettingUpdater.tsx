@@ -1,8 +1,11 @@
 import { gql } from "@apollo/client";
 import { Spinner, useToast } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import type { Conference_ConfigurationKey_Enum } from "../../../../generated/graphql";
 import {
+    Conference_ConfigurationKey_Enum,
+    SettingUpdater_GetConfigurationDocument,
+    SettingUpdater_GetConfigurationQuery,
+    SettingUpdater_GetConfigurationQueryVariables,
     useSettingUpdater_DeleteConfigurationMutation,
     useSettingUpdater_GetConfigurationQuery,
     useSettingUpdater_SetConfigurationMutation,
@@ -45,6 +48,7 @@ export interface SettingChildProps<T = any> {
     settingName: Conference_ConfigurationKey_Enum;
     value: T;
     onChange: (value: T | undefined) => void;
+    isUpdating: boolean;
 }
 
 export default function SettingUpdater<T>({
@@ -64,7 +68,7 @@ export default function SettingUpdater<T>({
         },
         fetchPolicy: "network-only",
     });
-    const [updateSetting] = useSettingUpdater_SetConfigurationMutation();
+    const [updateSetting, { loading: isUpdating }] = useSettingUpdater_SetConfigurationMutation();
     const [deleteSetting] = useSettingUpdater_DeleteConfigurationMutation();
 
     const toast = useToast();
@@ -91,6 +95,25 @@ export default function SettingUpdater<T>({
                             conferenceId: conference.id,
                             key: settingName,
                             value: typeof newValue === "string" ? newValue?.trim() : newValue,
+                        },
+                        update: (cache, result) => {
+                            if (result.data) {
+                                cache.writeQuery<
+                                    SettingUpdater_GetConfigurationQuery,
+                                    SettingUpdater_GetConfigurationQueryVariables
+                                >({
+                                    query: SettingUpdater_GetConfigurationDocument,
+                                    variables: {
+                                        conferenceId: conference.id,
+                                        key: settingName,
+                                    },
+                                    broadcast: true,
+                                    data: {
+                                        __typename: setting.data?.__typename ?? "query_root",
+                                        conference_Configuration_by_pk: result.data.insert_conference_Configuration_one,
+                                    },
+                                });
+                            }
                         },
                     });
                     toast({
@@ -119,6 +142,7 @@ export default function SettingUpdater<T>({
             settingName,
             value: setting.data.conference_Configuration_by_pk?.value ?? defaultValue,
             onChange,
+            isUpdating,
         })
     ) : (
         <Spinner label="Loading" />

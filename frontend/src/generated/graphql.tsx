@@ -1,10 +1,10 @@
-import {
+import type {
     OptimisticMutationResolver as GraphCacheOptimisticMutationResolver,
     Resolver as GraphCacheResolver,
     StorageAdapter as GraphCacheStorageAdapter,
     UpdateResolver as GraphCacheUpdateResolver,
 } from "@urql/exchange-graphcache";
-import { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
+import type { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import gql from "graphql-tag";
 import * as Urql from "urql";
 export type Maybe<T> = T | null;
@@ -76180,740 +76180,743 @@ export type GraphCacheResolvers = {
 
 export type GraphCacheOptimisticUpdaters = {
     createItemRoom?: GraphCacheOptimisticMutationResolver<
-        MutationCreateItemRoomArgs,
+        Mutation_RootCreateItemRoomArgs,
         Maybe<WithTypename<CreateItemRoomOutput>>
     >;
     createRoomDm?: GraphCacheOptimisticMutationResolver<
-        MutationCreateRoomDmArgs,
+        Mutation_RootCreateRoomDmArgs,
         Maybe<WithTypename<CreateRoomDmOutput>>
     >;
     delete_Email?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_EmailArgs,
+        Mutation_RootDelete_EmailArgs,
         Maybe<WithTypename<Email_Mutation_Response>>
     >;
     delete_Email_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Email_By_PkArgs,
+        Mutation_RootDelete_Email_By_PkArgs,
         Maybe<WithTypename<Email>>
     >;
     delete_PushNotificationSubscription?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_PushNotificationSubscriptionArgs,
+        Mutation_RootDelete_PushNotificationSubscriptionArgs,
         Maybe<WithTypename<PushNotificationSubscription_Mutation_Response>>
     >;
     delete_PushNotificationSubscription_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_PushNotificationSubscription_By_PkArgs,
+        Mutation_RootDelete_PushNotificationSubscription_By_PkArgs,
         Maybe<WithTypename<PushNotificationSubscription>>
     >;
     delete_User?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_UserArgs,
+        Mutation_RootDelete_UserArgs,
         Maybe<WithTypename<User_Mutation_Response>>
     >;
-    delete_User_by_pk?: GraphCacheOptimisticMutationResolver<MutationDelete_User_By_PkArgs, Maybe<WithTypename<User>>>;
+    delete_User_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootDelete_User_By_PkArgs,
+        Maybe<WithTypename<User>>
+    >;
     delete_analytics_AppStats?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_AppStatsArgs,
+        Mutation_RootDelete_Analytics_AppStatsArgs,
         Maybe<WithTypename<Analytics_AppStats_Mutation_Response>>
     >;
     delete_analytics_AppStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_AppStats_By_PkArgs,
+        Mutation_RootDelete_Analytics_AppStats_By_PkArgs,
         Maybe<WithTypename<Analytics_AppStats>>
     >;
     delete_analytics_ContentElementStats?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_ContentElementStatsArgs,
+        Mutation_RootDelete_Analytics_ContentElementStatsArgs,
         Maybe<WithTypename<Analytics_ContentElementStats_Mutation_Response>>
     >;
     delete_analytics_ContentElementStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_ContentElementStats_By_PkArgs,
+        Mutation_RootDelete_Analytics_ContentElementStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentElementStats>>
     >;
     delete_analytics_ContentItemStats?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_ContentItemStatsArgs,
+        Mutation_RootDelete_Analytics_ContentItemStatsArgs,
         Maybe<WithTypename<Analytics_ContentItemStats_Mutation_Response>>
     >;
     delete_analytics_ContentItemStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_ContentItemStats_By_PkArgs,
+        Mutation_RootDelete_Analytics_ContentItemStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
     >;
     delete_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_RoomStatsArgs,
+        Mutation_RootDelete_Analytics_RoomStatsArgs,
         Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>>
     >;
     delete_analytics_RoomStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Analytics_RoomStats_By_PkArgs,
+        Mutation_RootDelete_Analytics_RoomStats_By_PkArgs,
         Maybe<WithTypename<Analytics_RoomStats>>
     >;
     delete_chat_Chat?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ChatArgs,
+        Mutation_RootDelete_Chat_ChatArgs,
         Maybe<WithTypename<Chat_Chat_Mutation_Response>>
     >;
     delete_chat_Chat_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Chat_By_PkArgs,
+        Mutation_RootDelete_Chat_Chat_By_PkArgs,
         Maybe<WithTypename<Chat_Chat>>
     >;
     delete_chat_Flag?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_FlagArgs,
+        Mutation_RootDelete_Chat_FlagArgs,
         Maybe<WithTypename<Chat_Flag_Mutation_Response>>
     >;
     delete_chat_FlagType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_FlagTypeArgs,
+        Mutation_RootDelete_Chat_FlagTypeArgs,
         Maybe<WithTypename<Chat_FlagType_Mutation_Response>>
     >;
     delete_chat_FlagType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_FlagType_By_PkArgs,
+        Mutation_RootDelete_Chat_FlagType_By_PkArgs,
         Maybe<WithTypename<Chat_FlagType>>
     >;
     delete_chat_Flag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Flag_By_PkArgs,
+        Mutation_RootDelete_Chat_Flag_By_PkArgs,
         Maybe<WithTypename<Chat_Flag>>
     >;
     delete_chat_Message?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_MessageArgs,
+        Mutation_RootDelete_Chat_MessageArgs,
         Maybe<WithTypename<Chat_Message_Mutation_Response>>
     >;
     delete_chat_MessageType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_MessageTypeArgs,
+        Mutation_RootDelete_Chat_MessageTypeArgs,
         Maybe<WithTypename<Chat_MessageType_Mutation_Response>>
     >;
     delete_chat_MessageType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_MessageType_By_PkArgs,
+        Mutation_RootDelete_Chat_MessageType_By_PkArgs,
         Maybe<WithTypename<Chat_MessageType>>
     >;
     delete_chat_Message_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Message_By_PkArgs,
+        Mutation_RootDelete_Chat_Message_By_PkArgs,
         Maybe<WithTypename<Chat_Message>>
     >;
     delete_chat_Pin?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_PinArgs,
+        Mutation_RootDelete_Chat_PinArgs,
         Maybe<WithTypename<Chat_Pin_Mutation_Response>>
     >;
     delete_chat_Pin_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Pin_By_PkArgs,
+        Mutation_RootDelete_Chat_Pin_By_PkArgs,
         Maybe<WithTypename<Chat_Pin>>
     >;
     delete_chat_Reaction?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ReactionArgs,
+        Mutation_RootDelete_Chat_ReactionArgs,
         Maybe<WithTypename<Chat_Reaction_Mutation_Response>>
     >;
     delete_chat_ReactionType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ReactionTypeArgs,
+        Mutation_RootDelete_Chat_ReactionTypeArgs,
         Maybe<WithTypename<Chat_ReactionType_Mutation_Response>>
     >;
     delete_chat_ReactionType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ReactionType_By_PkArgs,
+        Mutation_RootDelete_Chat_ReactionType_By_PkArgs,
         Maybe<WithTypename<Chat_ReactionType>>
     >;
     delete_chat_Reaction_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Reaction_By_PkArgs,
+        Mutation_RootDelete_Chat_Reaction_By_PkArgs,
         Maybe<WithTypename<Chat_Reaction>>
     >;
     delete_chat_ReadUpToIndex?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ReadUpToIndexArgs,
+        Mutation_RootDelete_Chat_ReadUpToIndexArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex_Mutation_Response>>
     >;
     delete_chat_ReadUpToIndex_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_ReadUpToIndex_By_PkArgs,
+        Mutation_RootDelete_Chat_ReadUpToIndex_By_PkArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex>>
     >;
     delete_chat_Subscription?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_SubscriptionArgs,
+        Mutation_RootDelete_Chat_SubscriptionArgs,
         Maybe<WithTypename<Chat_Subscription_Mutation_Response>>
     >;
     delete_chat_Subscription_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Chat_Subscription_By_PkArgs,
+        Mutation_RootDelete_Chat_Subscription_By_PkArgs,
         Maybe<WithTypename<Chat_Subscription>>
     >;
     delete_collection_Exhibition?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_ExhibitionArgs,
+        Mutation_RootDelete_Collection_ExhibitionArgs,
         Maybe<WithTypename<Collection_Exhibition_Mutation_Response>>
     >;
     delete_collection_Exhibition_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_Exhibition_By_PkArgs,
+        Mutation_RootDelete_Collection_Exhibition_By_PkArgs,
         Maybe<WithTypename<Collection_Exhibition>>
     >;
     delete_collection_ProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_ProgramPersonArgs,
+        Mutation_RootDelete_Collection_ProgramPersonArgs,
         Maybe<WithTypename<Collection_ProgramPerson_Mutation_Response>>
     >;
     delete_collection_ProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_ProgramPerson_By_PkArgs,
+        Mutation_RootDelete_Collection_ProgramPerson_By_PkArgs,
         Maybe<WithTypename<Collection_ProgramPerson>>
     >;
     delete_collection_Tag?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_TagArgs,
+        Mutation_RootDelete_Collection_TagArgs,
         Maybe<WithTypename<Collection_Tag_Mutation_Response>>
     >;
     delete_collection_Tag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Collection_Tag_By_PkArgs,
+        Mutation_RootDelete_Collection_Tag_By_PkArgs,
         Maybe<WithTypename<Collection_Tag>>
     >;
     delete_conference_Conference?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_ConferenceArgs,
+        Mutation_RootDelete_Conference_ConferenceArgs,
         Maybe<WithTypename<Conference_Conference_Mutation_Response>>
     >;
     delete_conference_Conference_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_Conference_By_PkArgs,
+        Mutation_RootDelete_Conference_Conference_By_PkArgs,
         Maybe<WithTypename<Conference_Conference>>
     >;
     delete_conference_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_ConfigurationArgs,
+        Mutation_RootDelete_Conference_ConfigurationArgs,
         Maybe<WithTypename<Conference_Configuration_Mutation_Response>>
     >;
     delete_conference_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_ConfigurationKeyArgs,
+        Mutation_RootDelete_Conference_ConfigurationKeyArgs,
         Maybe<WithTypename<Conference_ConfigurationKey_Mutation_Response>>
     >;
     delete_conference_ConfigurationKey_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_ConfigurationKey_By_PkArgs,
+        Mutation_RootDelete_Conference_ConfigurationKey_By_PkArgs,
         Maybe<WithTypename<Conference_ConfigurationKey>>
     >;
     delete_conference_Configuration_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_Configuration_By_PkArgs,
+        Mutation_RootDelete_Conference_Configuration_By_PkArgs,
         Maybe<WithTypename<Conference_Configuration>>
     >;
     delete_conference_DemoCode?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_DemoCodeArgs,
+        Mutation_RootDelete_Conference_DemoCodeArgs,
         Maybe<WithTypename<Conference_DemoCode_Mutation_Response>>
     >;
     delete_conference_DemoCode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_DemoCode_By_PkArgs,
+        Mutation_RootDelete_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
     delete_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_OriginatingDataArgs,
+        Mutation_RootDelete_Conference_OriginatingDataArgs,
         Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
     >;
     delete_conference_OriginatingData_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_OriginatingData_By_PkArgs,
+        Mutation_RootDelete_Conference_OriginatingData_By_PkArgs,
         Maybe<WithTypename<Conference_OriginatingData>>
     >;
     delete_conference_Subconference?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_SubconferenceArgs,
+        Mutation_RootDelete_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
     >;
     delete_conference_Subconference_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_Subconference_By_PkArgs,
+        Mutation_RootDelete_Conference_Subconference_By_PkArgs,
         Maybe<WithTypename<Conference_Subconference>>
     >;
     delete_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_VisibilityLevelArgs,
+        Mutation_RootDelete_Conference_VisibilityLevelArgs,
         Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>>
     >;
     delete_conference_VisibilityLevel_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Conference_VisibilityLevel_By_PkArgs,
+        Mutation_RootDelete_Conference_VisibilityLevel_By_PkArgs,
         Maybe<WithTypename<Conference_VisibilityLevel>>
     >;
     delete_content_Element?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ElementArgs,
+        Mutation_RootDelete_Content_ElementArgs,
         Maybe<WithTypename<Content_Element_Mutation_Response>>
     >;
     delete_content_ElementType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ElementTypeArgs,
+        Mutation_RootDelete_Content_ElementTypeArgs,
         Maybe<WithTypename<Content_ElementType_Mutation_Response>>
     >;
     delete_content_ElementType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ElementType_By_PkArgs,
+        Mutation_RootDelete_Content_ElementType_By_PkArgs,
         Maybe<WithTypename<Content_ElementType>>
     >;
     delete_content_Element_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_Element_By_PkArgs,
+        Mutation_RootDelete_Content_Element_By_PkArgs,
         Maybe<WithTypename<Content_Element>>
     >;
     delete_content_Item?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemArgs,
+        Mutation_RootDelete_Content_ItemArgs,
         Maybe<WithTypename<Content_Item_Mutation_Response>>
     >;
     delete_content_ItemExhibition?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemExhibitionArgs,
+        Mutation_RootDelete_Content_ItemExhibitionArgs,
         Maybe<WithTypename<Content_ItemExhibition_Mutation_Response>>
     >;
     delete_content_ItemExhibition_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemExhibition_By_PkArgs,
+        Mutation_RootDelete_Content_ItemExhibition_By_PkArgs,
         Maybe<WithTypename<Content_ItemExhibition>>
     >;
     delete_content_ItemProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemProgramPersonArgs,
+        Mutation_RootDelete_Content_ItemProgramPersonArgs,
         Maybe<WithTypename<Content_ItemProgramPerson_Mutation_Response>>
     >;
     delete_content_ItemProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemProgramPerson_By_PkArgs,
+        Mutation_RootDelete_Content_ItemProgramPerson_By_PkArgs,
         Maybe<WithTypename<Content_ItemProgramPerson>>
     >;
     delete_content_ItemTag?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemTagArgs,
+        Mutation_RootDelete_Content_ItemTagArgs,
         Maybe<WithTypename<Content_ItemTag_Mutation_Response>>
     >;
     delete_content_ItemTag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemTag_By_PkArgs,
+        Mutation_RootDelete_Content_ItemTag_By_PkArgs,
         Maybe<WithTypename<Content_ItemTag>>
     >;
     delete_content_ItemType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemTypeArgs,
+        Mutation_RootDelete_Content_ItemTypeArgs,
         Maybe<WithTypename<Content_ItemType_Mutation_Response>>
     >;
     delete_content_ItemType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_ItemType_By_PkArgs,
+        Mutation_RootDelete_Content_ItemType_By_PkArgs,
         Maybe<WithTypename<Content_ItemType>>
     >;
     delete_content_Item_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Content_Item_By_PkArgs,
+        Mutation_RootDelete_Content_Item_By_PkArgs,
         Maybe<WithTypename<Content_Item>>
     >;
     delete_job_queues_ChannelStackCreateJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackCreateJobArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackCreateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob_Mutation_Response>>
     >;
     delete_job_queues_ChannelStackCreateJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackCreateJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackCreateJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob>>
     >;
     delete_job_queues_ChannelStackDeleteJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackDeleteJobArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackDeleteJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob_Mutation_Response>>
     >;
     delete_job_queues_ChannelStackDeleteJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackDeleteJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob>>
     >;
     delete_job_queues_ChannelStackUpdateJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackUpdateJobArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackUpdateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob_Mutation_Response>>
     >;
     delete_job_queues_ChannelStackUpdateJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_ChannelStackUpdateJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_ChannelStackUpdateJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob>>
     >;
     delete_job_queues_CombineVideosJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_CombineVideosJobArgs,
+        Mutation_RootDelete_Job_Queues_CombineVideosJobArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob_Mutation_Response>>
     >;
     delete_job_queues_CombineVideosJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_CombineVideosJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_CombineVideosJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob>>
     >;
     delete_job_queues_CustomEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_CustomEmailJobArgs,
+        Mutation_RootDelete_Job_Queues_CustomEmailJobArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob_Mutation_Response>>
     >;
     delete_job_queues_CustomEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_CustomEmailJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_CustomEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
     >;
     delete_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_InvitationEmailJobArgs,
+        Mutation_RootDelete_Job_Queues_InvitationEmailJobArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob_Mutation_Response>>
     >;
     delete_job_queues_InvitationEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_InvitationEmailJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_InvitationEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob>>
     >;
     delete_job_queues_JobStatus?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_JobStatusArgs,
+        Mutation_RootDelete_Job_Queues_JobStatusArgs,
         Maybe<WithTypename<Job_Queues_JobStatus_Mutation_Response>>
     >;
     delete_job_queues_JobStatus_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_JobStatus_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_JobStatus_By_PkArgs,
         Maybe<WithTypename<Job_Queues_JobStatus>>
     >;
     delete_job_queues_MediaPackageHarvestJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_MediaPackageHarvestJobArgs,
+        Mutation_RootDelete_Job_Queues_MediaPackageHarvestJobArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob_Mutation_Response>>
     >;
     delete_job_queues_MediaPackageHarvestJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_MediaPackageHarvestJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_MediaPackageHarvestJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob>>
     >;
     delete_job_queues_PrepareJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_PrepareJobArgs,
+        Mutation_RootDelete_Job_Queues_PrepareJobArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob_Mutation_Response>>
     >;
     delete_job_queues_PrepareJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_PrepareJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_PrepareJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob>>
     >;
     delete_job_queues_PublishVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_PublishVideoJobArgs,
+        Mutation_RootDelete_Job_Queues_PublishVideoJobArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob_Mutation_Response>>
     >;
     delete_job_queues_PublishVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_PublishVideoJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_PublishVideoJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob>>
     >;
     delete_job_queues_SubmissionRequestEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_SubmissionRequestEmailJobArgs,
+        Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJobArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>>
     >;
     delete_job_queues_SubmissionRequestEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_SubmissionRequestEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob>>
     >;
     delete_job_queues_UploadYouTubeVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_UploadYouTubeVideoJobArgs,
+        Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJobArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>>
     >;
     delete_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs,
+        Mutation_RootDelete_Job_Queues_UploadYouTubeVideoJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>
     >;
     delete_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_GoogleAccountArgs,
+        Mutation_RootDelete_Registrant_GoogleAccountArgs,
         Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>
     >;
     delete_registrant_GoogleAccount_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_GoogleAccount_By_PkArgs,
+        Mutation_RootDelete_Registrant_GoogleAccount_By_PkArgs,
         Maybe<WithTypename<Registrant_GoogleAccount>>
     >;
     delete_registrant_Group?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_GroupArgs,
+        Mutation_RootDelete_Registrant_GroupArgs,
         Maybe<WithTypename<Registrant_Group_Mutation_Response>>
     >;
     delete_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_GroupRegistrantArgs,
+        Mutation_RootDelete_Registrant_GroupRegistrantArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>
     >;
     delete_registrant_GroupRegistrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_GroupRegistrant_By_PkArgs,
+        Mutation_RootDelete_Registrant_GroupRegistrant_By_PkArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant>>
     >;
     delete_registrant_Group_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_Group_By_PkArgs,
+        Mutation_RootDelete_Registrant_Group_By_PkArgs,
         Maybe<WithTypename<Registrant_Group>>
     >;
     delete_registrant_Invitation?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_InvitationArgs,
+        Mutation_RootDelete_Registrant_InvitationArgs,
         Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>
     >;
     delete_registrant_Invitation_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_Invitation_By_PkArgs,
+        Mutation_RootDelete_Registrant_Invitation_By_PkArgs,
         Maybe<WithTypename<Registrant_Invitation>>
     >;
     delete_registrant_Profile?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_ProfileArgs,
+        Mutation_RootDelete_Registrant_ProfileArgs,
         Maybe<WithTypename<Registrant_Profile_Mutation_Response>>
     >;
     delete_registrant_Profile_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_Profile_By_PkArgs,
+        Mutation_RootDelete_Registrant_Profile_By_PkArgs,
         Maybe<WithTypename<Registrant_Profile>>
     >;
     delete_registrant_Registrant?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_RegistrantArgs,
+        Mutation_RootDelete_Registrant_RegistrantArgs,
         Maybe<WithTypename<Registrant_Registrant_Mutation_Response>>
     >;
     delete_registrant_RegistrantRole?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_RegistrantRoleArgs,
+        Mutation_RootDelete_Registrant_RegistrantRoleArgs,
         Maybe<WithTypename<Registrant_RegistrantRole_Mutation_Response>>
     >;
     delete_registrant_RegistrantRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_RegistrantRole_By_PkArgs,
+        Mutation_RootDelete_Registrant_RegistrantRole_By_PkArgs,
         Maybe<WithTypename<Registrant_RegistrantRole>>
     >;
     delete_registrant_Registrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_Registrant_By_PkArgs,
+        Mutation_RootDelete_Registrant_Registrant_By_PkArgs,
         Maybe<WithTypename<Registrant_Registrant>>
     >;
     delete_registrant_SavedVonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_SavedVonageRoomRecordingArgs,
+        Mutation_RootDelete_Registrant_SavedVonageRoomRecordingArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording_Mutation_Response>>
     >;
     delete_registrant_SavedVonageRoomRecording_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_SavedVonageRoomRecording_By_PkArgs,
+        Mutation_RootDelete_Registrant_SavedVonageRoomRecording_By_PkArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording>>
     >;
     delete_registrant_SubconferenceMembership?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_SubconferenceMembershipArgs,
+        Mutation_RootDelete_Registrant_SubconferenceMembershipArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership_Mutation_Response>>
     >;
     delete_registrant_SubconferenceMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Registrant_SubconferenceMembership_By_PkArgs,
+        Mutation_RootDelete_Registrant_SubconferenceMembership_By_PkArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership>>
     >;
     delete_room_Backend?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_BackendArgs,
+        Mutation_RootDelete_Room_BackendArgs,
         Maybe<WithTypename<Room_Backend_Mutation_Response>>
     >;
     delete_room_Backend_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_Backend_By_PkArgs,
+        Mutation_RootDelete_Room_Backend_By_PkArgs,
         Maybe<WithTypename<Room_Backend>>
     >;
     delete_room_ChimeMeeting?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ChimeMeetingArgs,
+        Mutation_RootDelete_Room_ChimeMeetingArgs,
         Maybe<WithTypename<Room_ChimeMeeting_Mutation_Response>>
     >;
     delete_room_ChimeMeeting_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ChimeMeeting_By_PkArgs,
+        Mutation_RootDelete_Room_ChimeMeeting_By_PkArgs,
         Maybe<WithTypename<Room_ChimeMeeting>>
     >;
     delete_room_ManagementMode?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ManagementModeArgs,
+        Mutation_RootDelete_Room_ManagementModeArgs,
         Maybe<WithTypename<Room_ManagementMode_Mutation_Response>>
     >;
     delete_room_ManagementMode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ManagementMode_By_PkArgs,
+        Mutation_RootDelete_Room_ManagementMode_By_PkArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
     delete_room_Mode?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ModeArgs,
+        Mutation_RootDelete_Room_ModeArgs,
         Maybe<WithTypename<Room_Mode_Mutation_Response>>
     >;
     delete_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_Mode_By_PkArgs,
+        Mutation_RootDelete_Room_Mode_By_PkArgs,
         Maybe<WithTypename<Room_Mode>>
     >;
     delete_room_Participant?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ParticipantArgs,
+        Mutation_RootDelete_Room_ParticipantArgs,
         Maybe<WithTypename<Room_Participant_Mutation_Response>>
     >;
     delete_room_Participant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_Participant_By_PkArgs,
+        Mutation_RootDelete_Room_Participant_By_PkArgs,
         Maybe<WithTypename<Room_Participant>>
     >;
     delete_room_PersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_PersonRoleArgs,
+        Mutation_RootDelete_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
     >;
     delete_room_PersonRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_PersonRole_By_PkArgs,
+        Mutation_RootDelete_Room_PersonRole_By_PkArgs,
         Maybe<WithTypename<Room_PersonRole>>
     >;
     delete_room_Room?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_RoomArgs,
+        Mutation_RootDelete_Room_RoomArgs,
         Maybe<WithTypename<Room_Room_Mutation_Response>>
     >;
     delete_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_RoomGroupMembershipArgs,
+        Mutation_RootDelete_Room_RoomGroupMembershipArgs,
         Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>
     >;
     delete_room_RoomGroupMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_RoomGroupMembership_By_PkArgs,
+        Mutation_RootDelete_Room_RoomGroupMembership_By_PkArgs,
         Maybe<WithTypename<Room_RoomGroupMembership>>
     >;
     delete_room_RoomMembership?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_RoomMembershipArgs,
+        Mutation_RootDelete_Room_RoomMembershipArgs,
         Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>
     >;
     delete_room_RoomMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_RoomMembership_By_PkArgs,
+        Mutation_RootDelete_Room_RoomMembership_By_PkArgs,
         Maybe<WithTypename<Room_RoomMembership>>
     >;
     delete_room_Room_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_Room_By_PkArgs,
+        Mutation_RootDelete_Room_Room_By_PkArgs,
         Maybe<WithTypename<Room_Room>>
     >;
     delete_room_ShuffleAlgorithm?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleAlgorithmArgs,
+        Mutation_RootDelete_Room_ShuffleAlgorithmArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm_Mutation_Response>>
     >;
     delete_room_ShuffleAlgorithm_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleAlgorithm_By_PkArgs,
+        Mutation_RootDelete_Room_ShuffleAlgorithm_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm>>
     >;
     delete_room_ShufflePeriod?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShufflePeriodArgs,
+        Mutation_RootDelete_Room_ShufflePeriodArgs,
         Maybe<WithTypename<Room_ShufflePeriod_Mutation_Response>>
     >;
     delete_room_ShufflePeriod_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShufflePeriod_By_PkArgs,
+        Mutation_RootDelete_Room_ShufflePeriod_By_PkArgs,
         Maybe<WithTypename<Room_ShufflePeriod>>
     >;
     delete_room_ShuffleQueueEntry?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleQueueEntryArgs,
+        Mutation_RootDelete_Room_ShuffleQueueEntryArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry_Mutation_Response>>
     >;
     delete_room_ShuffleQueueEntry_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleQueueEntry_By_PkArgs,
+        Mutation_RootDelete_Room_ShuffleQueueEntry_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry>>
     >;
     delete_room_ShuffleRoom?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleRoomArgs,
+        Mutation_RootDelete_Room_ShuffleRoomArgs,
         Maybe<WithTypename<Room_ShuffleRoom_Mutation_Response>>
     >;
     delete_room_ShuffleRoom_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Room_ShuffleRoom_By_PkArgs,
+        Mutation_RootDelete_Room_ShuffleRoom_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleRoom>>
     >;
     delete_schedule_Continuation?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_ContinuationArgs,
+        Mutation_RootDelete_Schedule_ContinuationArgs,
         Maybe<WithTypename<Schedule_Continuation_Mutation_Response>>
     >;
     delete_schedule_Continuation_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_Continuation_By_PkArgs,
+        Mutation_RootDelete_Schedule_Continuation_By_PkArgs,
         Maybe<WithTypename<Schedule_Continuation>>
     >;
     delete_schedule_Event?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_EventArgs,
+        Mutation_RootDelete_Schedule_EventArgs,
         Maybe<WithTypename<Schedule_Event_Mutation_Response>>
     >;
     delete_schedule_EventProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_EventProgramPersonArgs,
+        Mutation_RootDelete_Schedule_EventProgramPersonArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson_Mutation_Response>>
     >;
     delete_schedule_EventProgramPersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_EventProgramPersonRoleArgs,
+        Mutation_RootDelete_Schedule_EventProgramPersonRoleArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole_Mutation_Response>>
     >;
     delete_schedule_EventProgramPersonRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_EventProgramPersonRole_By_PkArgs,
+        Mutation_RootDelete_Schedule_EventProgramPersonRole_By_PkArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole>>
     >;
     delete_schedule_EventProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_EventProgramPerson_By_PkArgs,
+        Mutation_RootDelete_Schedule_EventProgramPerson_By_PkArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson>>
     >;
     delete_schedule_Event_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_Event_By_PkArgs,
+        Mutation_RootDelete_Schedule_Event_By_PkArgs,
         Maybe<WithTypename<Schedule_Event>>
     >;
     delete_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_StarredEventArgs,
+        Mutation_RootDelete_Schedule_StarredEventArgs,
         Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>>
     >;
     delete_schedule_StarredEvent_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Schedule_StarredEvent_By_PkArgs,
+        Mutation_RootDelete_Schedule_StarredEvent_By_PkArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
     >;
     delete_system_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_ConfigurationArgs,
+        Mutation_RootDelete_System_ConfigurationArgs,
         Maybe<WithTypename<System_Configuration_Mutation_Response>>
     >;
     delete_system_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_ConfigurationKeyArgs,
+        Mutation_RootDelete_System_ConfigurationKeyArgs,
         Maybe<WithTypename<System_ConfigurationKey_Mutation_Response>>
     >;
     delete_system_ConfigurationKey_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_ConfigurationKey_By_PkArgs,
+        Mutation_RootDelete_System_ConfigurationKey_By_PkArgs,
         Maybe<WithTypename<System_ConfigurationKey>>
     >;
     delete_system_ConfigurationPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_ConfigurationPermissionGrantArgs,
+        Mutation_RootDelete_System_ConfigurationPermissionGrantArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant_Mutation_Response>>
     >;
     delete_system_ConfigurationPermissionGrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_ConfigurationPermissionGrant_By_PkArgs,
+        Mutation_RootDelete_System_ConfigurationPermissionGrant_By_PkArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant>>
     >;
     delete_system_Configuration_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_Configuration_By_PkArgs,
+        Mutation_RootDelete_System_Configuration_By_PkArgs,
         Maybe<WithTypename<System_Configuration>>
     >;
     delete_system_SuperUserPermission?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_SuperUserPermissionArgs,
+        Mutation_RootDelete_System_SuperUserPermissionArgs,
         Maybe<WithTypename<System_SuperUserPermission_Mutation_Response>>
     >;
     delete_system_SuperUserPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_SuperUserPermissionGrantArgs,
+        Mutation_RootDelete_System_SuperUserPermissionGrantArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant_Mutation_Response>>
     >;
     delete_system_SuperUserPermissionGrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_SuperUserPermissionGrant_By_PkArgs,
+        Mutation_RootDelete_System_SuperUserPermissionGrant_By_PkArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant>>
     >;
     delete_system_SuperUserPermission_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_System_SuperUserPermission_By_PkArgs,
+        Mutation_RootDelete_System_SuperUserPermission_By_PkArgs,
         Maybe<WithTypename<System_SuperUserPermission>>
     >;
     delete_video_ChannelStack?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_ChannelStackArgs,
+        Mutation_RootDelete_Video_ChannelStackArgs,
         Maybe<WithTypename<Video_ChannelStack_Mutation_Response>>
     >;
     delete_video_ChannelStack_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_ChannelStack_By_PkArgs,
+        Mutation_RootDelete_Video_ChannelStack_By_PkArgs,
         Maybe<WithTypename<Video_ChannelStack>>
     >;
     delete_video_EventVonageSession?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_EventVonageSessionArgs,
+        Mutation_RootDelete_Video_EventVonageSessionArgs,
         Maybe<WithTypename<Video_EventVonageSession_Mutation_Response>>
     >;
     delete_video_EventVonageSession_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_EventVonageSession_By_PkArgs,
+        Mutation_RootDelete_Video_EventVonageSession_By_PkArgs,
         Maybe<WithTypename<Video_EventVonageSession>>
     >;
     delete_video_ImmediateSwitch?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_ImmediateSwitchArgs,
+        Mutation_RootDelete_Video_ImmediateSwitchArgs,
         Maybe<WithTypename<Video_ImmediateSwitch_Mutation_Response>>
     >;
     delete_video_ImmediateSwitch_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_ImmediateSwitch_By_PkArgs,
+        Mutation_RootDelete_Video_ImmediateSwitch_By_PkArgs,
         Maybe<WithTypename<Video_ImmediateSwitch>>
     >;
     delete_video_InputType?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_InputTypeArgs,
+        Mutation_RootDelete_Video_InputTypeArgs,
         Maybe<WithTypename<Video_InputType_Mutation_Response>>
     >;
     delete_video_InputType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_InputType_By_PkArgs,
+        Mutation_RootDelete_Video_InputType_By_PkArgs,
         Maybe<WithTypename<Video_InputType>>
     >;
     delete_video_MediaLiveChannelStatus?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_MediaLiveChannelStatusArgs,
+        Mutation_RootDelete_Video_MediaLiveChannelStatusArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus_Mutation_Response>>
     >;
     delete_video_MediaLiveChannelStatus_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_MediaLiveChannelStatus_By_PkArgs,
+        Mutation_RootDelete_Video_MediaLiveChannelStatus_By_PkArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
     >;
     delete_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_RoomRtmpOutputArgs,
+        Mutation_RootDelete_Video_RoomRtmpOutputArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>>
     >;
     delete_video_RoomRtmpOutput_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_RoomRtmpOutput_By_PkArgs,
+        Mutation_RootDelete_Video_RoomRtmpOutput_By_PkArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput>>
     >;
     delete_video_RtmpInput?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_RtmpInputArgs,
+        Mutation_RootDelete_Video_RtmpInputArgs,
         Maybe<WithTypename<Video_RtmpInput_Mutation_Response>>
     >;
     delete_video_RtmpInput_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_RtmpInput_By_PkArgs,
+        Mutation_RootDelete_Video_RtmpInput_By_PkArgs,
         Maybe<WithTypename<Video_RtmpInput>>
     >;
     delete_video_TranscriptionJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_TranscriptionJobArgs,
+        Mutation_RootDelete_Video_TranscriptionJobArgs,
         Maybe<WithTypename<Video_TranscriptionJob_Mutation_Response>>
     >;
     delete_video_TranscriptionJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_TranscriptionJob_By_PkArgs,
+        Mutation_RootDelete_Video_TranscriptionJob_By_PkArgs,
         Maybe<WithTypename<Video_TranscriptionJob>>
     >;
     delete_video_VideoRenderJob?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VideoRenderJobArgs,
+        Mutation_RootDelete_Video_VideoRenderJobArgs,
         Maybe<WithTypename<Video_VideoRenderJob_Mutation_Response>>
     >;
     delete_video_VideoRenderJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VideoRenderJob_By_PkArgs,
+        Mutation_RootDelete_Video_VideoRenderJob_By_PkArgs,
         Maybe<WithTypename<Video_VideoRenderJob>>
     >;
     delete_video_VonageParticipantStream?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageParticipantStreamArgs,
+        Mutation_RootDelete_Video_VonageParticipantStreamArgs,
         Maybe<WithTypename<Video_VonageParticipantStream_Mutation_Response>>
     >;
     delete_video_VonageParticipantStream_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageParticipantStream_By_PkArgs,
+        Mutation_RootDelete_Video_VonageParticipantStream_By_PkArgs,
         Maybe<WithTypename<Video_VonageParticipantStream>>
     >;
     delete_video_VonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageRoomRecordingArgs,
+        Mutation_RootDelete_Video_VonageRoomRecordingArgs,
         Maybe<WithTypename<Video_VonageRoomRecording_Mutation_Response>>
     >;
     delete_video_VonageRoomRecording_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageRoomRecording_By_PkArgs,
+        Mutation_RootDelete_Video_VonageRoomRecording_By_PkArgs,
         Maybe<WithTypename<Video_VonageRoomRecording>>
     >;
     delete_video_VonageSessionLayout?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageSessionLayoutArgs,
+        Mutation_RootDelete_Video_VonageSessionLayoutArgs,
         Maybe<WithTypename<Video_VonageSessionLayout_Mutation_Response>>
     >;
     delete_video_VonageSessionLayout_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_VonageSessionLayout_By_PkArgs,
+        Mutation_RootDelete_Video_VonageSessionLayout_By_PkArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
     >;
     delete_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_YouTubeUploadArgs,
+        Mutation_RootDelete_Video_YouTubeUploadArgs,
         Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>>
     >;
     delete_video_YouTubeUpload_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationDelete_Video_YouTubeUpload_By_PkArgs,
+        Mutation_RootDelete_Video_YouTubeUpload_By_PkArgs,
         Maybe<WithTypename<Video_YouTubeUpload>>
     >;
     getGoogleOAuthUrl?: GraphCacheOptimisticMutationResolver<
-        MutationGetGoogleOAuthUrlArgs,
+        Mutation_RootGetGoogleOAuthUrlArgs,
         Maybe<WithTypename<GetGoogleOAuthUrlOutput>>
     >;
     initialiseSuperUser?: GraphCacheOptimisticMutationResolver<
@@ -76921,1499 +76924,1505 @@ export type GraphCacheOptimisticUpdaters = {
         Maybe<WithTypename<InitialiseSuperUserOutput>>
     >;
     insert_Email?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_EmailArgs,
+        Mutation_RootInsert_EmailArgs,
         Maybe<WithTypename<Email_Mutation_Response>>
     >;
-    insert_Email_one?: GraphCacheOptimisticMutationResolver<MutationInsert_Email_OneArgs, Maybe<WithTypename<Email>>>;
+    insert_Email_one?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootInsert_Email_OneArgs,
+        Maybe<WithTypename<Email>>
+    >;
     insert_PushNotificationSubscription?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_PushNotificationSubscriptionArgs,
+        Mutation_RootInsert_PushNotificationSubscriptionArgs,
         Maybe<WithTypename<PushNotificationSubscription_Mutation_Response>>
     >;
     insert_PushNotificationSubscription_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_PushNotificationSubscription_OneArgs,
+        Mutation_RootInsert_PushNotificationSubscription_OneArgs,
         Maybe<WithTypename<PushNotificationSubscription>>
     >;
     insert_User?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_UserArgs,
+        Mutation_RootInsert_UserArgs,
         Maybe<WithTypename<User_Mutation_Response>>
     >;
-    insert_User_one?: GraphCacheOptimisticMutationResolver<MutationInsert_User_OneArgs, Maybe<WithTypename<User>>>;
+    insert_User_one?: GraphCacheOptimisticMutationResolver<Mutation_RootInsert_User_OneArgs, Maybe<WithTypename<User>>>;
     insert_analytics_AppStats?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_AppStatsArgs,
+        Mutation_RootInsert_Analytics_AppStatsArgs,
         Maybe<WithTypename<Analytics_AppStats_Mutation_Response>>
     >;
     insert_analytics_AppStats_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_AppStats_OneArgs,
+        Mutation_RootInsert_Analytics_AppStats_OneArgs,
         Maybe<WithTypename<Analytics_AppStats>>
     >;
     insert_analytics_ContentElementStats?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_ContentElementStatsArgs,
+        Mutation_RootInsert_Analytics_ContentElementStatsArgs,
         Maybe<WithTypename<Analytics_ContentElementStats_Mutation_Response>>
     >;
     insert_analytics_ContentElementStats_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_ContentElementStats_OneArgs,
+        Mutation_RootInsert_Analytics_ContentElementStats_OneArgs,
         Maybe<WithTypename<Analytics_ContentElementStats>>
     >;
     insert_analytics_ContentItemStats?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_ContentItemStatsArgs,
+        Mutation_RootInsert_Analytics_ContentItemStatsArgs,
         Maybe<WithTypename<Analytics_ContentItemStats_Mutation_Response>>
     >;
     insert_analytics_ContentItemStats_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_ContentItemStats_OneArgs,
+        Mutation_RootInsert_Analytics_ContentItemStats_OneArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
     >;
     insert_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_RoomStatsArgs,
+        Mutation_RootInsert_Analytics_RoomStatsArgs,
         Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>>
     >;
     insert_analytics_RoomStats_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Analytics_RoomStats_OneArgs,
+        Mutation_RootInsert_Analytics_RoomStats_OneArgs,
         Maybe<WithTypename<Analytics_RoomStats>>
     >;
     insert_chat_Chat?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ChatArgs,
+        Mutation_RootInsert_Chat_ChatArgs,
         Maybe<WithTypename<Chat_Chat_Mutation_Response>>
     >;
     insert_chat_Chat_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Chat_OneArgs,
+        Mutation_RootInsert_Chat_Chat_OneArgs,
         Maybe<WithTypename<Chat_Chat>>
     >;
     insert_chat_Flag?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_FlagArgs,
+        Mutation_RootInsert_Chat_FlagArgs,
         Maybe<WithTypename<Chat_Flag_Mutation_Response>>
     >;
     insert_chat_FlagType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_FlagTypeArgs,
+        Mutation_RootInsert_Chat_FlagTypeArgs,
         Maybe<WithTypename<Chat_FlagType_Mutation_Response>>
     >;
     insert_chat_FlagType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_FlagType_OneArgs,
+        Mutation_RootInsert_Chat_FlagType_OneArgs,
         Maybe<WithTypename<Chat_FlagType>>
     >;
     insert_chat_Flag_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Flag_OneArgs,
+        Mutation_RootInsert_Chat_Flag_OneArgs,
         Maybe<WithTypename<Chat_Flag>>
     >;
     insert_chat_Message?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_MessageArgs,
+        Mutation_RootInsert_Chat_MessageArgs,
         Maybe<WithTypename<Chat_Message_Mutation_Response>>
     >;
     insert_chat_MessageType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_MessageTypeArgs,
+        Mutation_RootInsert_Chat_MessageTypeArgs,
         Maybe<WithTypename<Chat_MessageType_Mutation_Response>>
     >;
     insert_chat_MessageType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_MessageType_OneArgs,
+        Mutation_RootInsert_Chat_MessageType_OneArgs,
         Maybe<WithTypename<Chat_MessageType>>
     >;
     insert_chat_Message_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Message_OneArgs,
+        Mutation_RootInsert_Chat_Message_OneArgs,
         Maybe<WithTypename<Chat_Message>>
     >;
     insert_chat_Pin?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_PinArgs,
+        Mutation_RootInsert_Chat_PinArgs,
         Maybe<WithTypename<Chat_Pin_Mutation_Response>>
     >;
     insert_chat_Pin_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Pin_OneArgs,
+        Mutation_RootInsert_Chat_Pin_OneArgs,
         Maybe<WithTypename<Chat_Pin>>
     >;
     insert_chat_Reaction?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ReactionArgs,
+        Mutation_RootInsert_Chat_ReactionArgs,
         Maybe<WithTypename<Chat_Reaction_Mutation_Response>>
     >;
     insert_chat_ReactionType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ReactionTypeArgs,
+        Mutation_RootInsert_Chat_ReactionTypeArgs,
         Maybe<WithTypename<Chat_ReactionType_Mutation_Response>>
     >;
     insert_chat_ReactionType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ReactionType_OneArgs,
+        Mutation_RootInsert_Chat_ReactionType_OneArgs,
         Maybe<WithTypename<Chat_ReactionType>>
     >;
     insert_chat_Reaction_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Reaction_OneArgs,
+        Mutation_RootInsert_Chat_Reaction_OneArgs,
         Maybe<WithTypename<Chat_Reaction>>
     >;
     insert_chat_ReadUpToIndex?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ReadUpToIndexArgs,
+        Mutation_RootInsert_Chat_ReadUpToIndexArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex_Mutation_Response>>
     >;
     insert_chat_ReadUpToIndex_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_ReadUpToIndex_OneArgs,
+        Mutation_RootInsert_Chat_ReadUpToIndex_OneArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex>>
     >;
     insert_chat_Subscription?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_SubscriptionArgs,
+        Mutation_RootInsert_Chat_SubscriptionArgs,
         Maybe<WithTypename<Chat_Subscription_Mutation_Response>>
     >;
     insert_chat_Subscription_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Chat_Subscription_OneArgs,
+        Mutation_RootInsert_Chat_Subscription_OneArgs,
         Maybe<WithTypename<Chat_Subscription>>
     >;
     insert_collection_Exhibition?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_ExhibitionArgs,
+        Mutation_RootInsert_Collection_ExhibitionArgs,
         Maybe<WithTypename<Collection_Exhibition_Mutation_Response>>
     >;
     insert_collection_Exhibition_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_Exhibition_OneArgs,
+        Mutation_RootInsert_Collection_Exhibition_OneArgs,
         Maybe<WithTypename<Collection_Exhibition>>
     >;
     insert_collection_ProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_ProgramPersonArgs,
+        Mutation_RootInsert_Collection_ProgramPersonArgs,
         Maybe<WithTypename<Collection_ProgramPerson_Mutation_Response>>
     >;
     insert_collection_ProgramPerson_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_ProgramPerson_OneArgs,
+        Mutation_RootInsert_Collection_ProgramPerson_OneArgs,
         Maybe<WithTypename<Collection_ProgramPerson>>
     >;
     insert_collection_Tag?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_TagArgs,
+        Mutation_RootInsert_Collection_TagArgs,
         Maybe<WithTypename<Collection_Tag_Mutation_Response>>
     >;
     insert_collection_Tag_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Collection_Tag_OneArgs,
+        Mutation_RootInsert_Collection_Tag_OneArgs,
         Maybe<WithTypename<Collection_Tag>>
     >;
     insert_conference_Conference?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_ConferenceArgs,
+        Mutation_RootInsert_Conference_ConferenceArgs,
         Maybe<WithTypename<Conference_Conference_Mutation_Response>>
     >;
     insert_conference_Conference_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_Conference_OneArgs,
+        Mutation_RootInsert_Conference_Conference_OneArgs,
         Maybe<WithTypename<Conference_Conference>>
     >;
     insert_conference_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_ConfigurationArgs,
+        Mutation_RootInsert_Conference_ConfigurationArgs,
         Maybe<WithTypename<Conference_Configuration_Mutation_Response>>
     >;
     insert_conference_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_ConfigurationKeyArgs,
+        Mutation_RootInsert_Conference_ConfigurationKeyArgs,
         Maybe<WithTypename<Conference_ConfigurationKey_Mutation_Response>>
     >;
     insert_conference_ConfigurationKey_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_ConfigurationKey_OneArgs,
+        Mutation_RootInsert_Conference_ConfigurationKey_OneArgs,
         Maybe<WithTypename<Conference_ConfigurationKey>>
     >;
     insert_conference_Configuration_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_Configuration_OneArgs,
+        Mutation_RootInsert_Conference_Configuration_OneArgs,
         Maybe<WithTypename<Conference_Configuration>>
     >;
     insert_conference_DemoCode?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_DemoCodeArgs,
+        Mutation_RootInsert_Conference_DemoCodeArgs,
         Maybe<WithTypename<Conference_DemoCode_Mutation_Response>>
     >;
     insert_conference_DemoCode_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_DemoCode_OneArgs,
+        Mutation_RootInsert_Conference_DemoCode_OneArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
     insert_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_OriginatingDataArgs,
+        Mutation_RootInsert_Conference_OriginatingDataArgs,
         Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
     >;
     insert_conference_OriginatingData_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_OriginatingData_OneArgs,
+        Mutation_RootInsert_Conference_OriginatingData_OneArgs,
         Maybe<WithTypename<Conference_OriginatingData>>
     >;
     insert_conference_Subconference?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_SubconferenceArgs,
+        Mutation_RootInsert_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
     >;
     insert_conference_Subconference_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_Subconference_OneArgs,
+        Mutation_RootInsert_Conference_Subconference_OneArgs,
         Maybe<WithTypename<Conference_Subconference>>
     >;
     insert_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_VisibilityLevelArgs,
+        Mutation_RootInsert_Conference_VisibilityLevelArgs,
         Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>>
     >;
     insert_conference_VisibilityLevel_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Conference_VisibilityLevel_OneArgs,
+        Mutation_RootInsert_Conference_VisibilityLevel_OneArgs,
         Maybe<WithTypename<Conference_VisibilityLevel>>
     >;
     insert_content_Element?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ElementArgs,
+        Mutation_RootInsert_Content_ElementArgs,
         Maybe<WithTypename<Content_Element_Mutation_Response>>
     >;
     insert_content_ElementType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ElementTypeArgs,
+        Mutation_RootInsert_Content_ElementTypeArgs,
         Maybe<WithTypename<Content_ElementType_Mutation_Response>>
     >;
     insert_content_ElementType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ElementType_OneArgs,
+        Mutation_RootInsert_Content_ElementType_OneArgs,
         Maybe<WithTypename<Content_ElementType>>
     >;
     insert_content_Element_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_Element_OneArgs,
+        Mutation_RootInsert_Content_Element_OneArgs,
         Maybe<WithTypename<Content_Element>>
     >;
     insert_content_Item?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemArgs,
+        Mutation_RootInsert_Content_ItemArgs,
         Maybe<WithTypename<Content_Item_Mutation_Response>>
     >;
     insert_content_ItemExhibition?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemExhibitionArgs,
+        Mutation_RootInsert_Content_ItemExhibitionArgs,
         Maybe<WithTypename<Content_ItemExhibition_Mutation_Response>>
     >;
     insert_content_ItemExhibition_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemExhibition_OneArgs,
+        Mutation_RootInsert_Content_ItemExhibition_OneArgs,
         Maybe<WithTypename<Content_ItemExhibition>>
     >;
     insert_content_ItemProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemProgramPersonArgs,
+        Mutation_RootInsert_Content_ItemProgramPersonArgs,
         Maybe<WithTypename<Content_ItemProgramPerson_Mutation_Response>>
     >;
     insert_content_ItemProgramPerson_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemProgramPerson_OneArgs,
+        Mutation_RootInsert_Content_ItemProgramPerson_OneArgs,
         Maybe<WithTypename<Content_ItemProgramPerson>>
     >;
     insert_content_ItemTag?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemTagArgs,
+        Mutation_RootInsert_Content_ItemTagArgs,
         Maybe<WithTypename<Content_ItemTag_Mutation_Response>>
     >;
     insert_content_ItemTag_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemTag_OneArgs,
+        Mutation_RootInsert_Content_ItemTag_OneArgs,
         Maybe<WithTypename<Content_ItemTag>>
     >;
     insert_content_ItemType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemTypeArgs,
+        Mutation_RootInsert_Content_ItemTypeArgs,
         Maybe<WithTypename<Content_ItemType_Mutation_Response>>
     >;
     insert_content_ItemType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_ItemType_OneArgs,
+        Mutation_RootInsert_Content_ItemType_OneArgs,
         Maybe<WithTypename<Content_ItemType>>
     >;
     insert_content_Item_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Content_Item_OneArgs,
+        Mutation_RootInsert_Content_Item_OneArgs,
         Maybe<WithTypename<Content_Item>>
     >;
     insert_job_queues_ChannelStackCreateJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackCreateJobArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackCreateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob_Mutation_Response>>
     >;
     insert_job_queues_ChannelStackCreateJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackCreateJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackCreateJob_OneArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob>>
     >;
     insert_job_queues_ChannelStackDeleteJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackDeleteJobArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackDeleteJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob_Mutation_Response>>
     >;
     insert_job_queues_ChannelStackDeleteJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackDeleteJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackDeleteJob_OneArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob>>
     >;
     insert_job_queues_ChannelStackUpdateJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackUpdateJobArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackUpdateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob_Mutation_Response>>
     >;
     insert_job_queues_ChannelStackUpdateJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_ChannelStackUpdateJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_ChannelStackUpdateJob_OneArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob>>
     >;
     insert_job_queues_CombineVideosJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_CombineVideosJobArgs,
+        Mutation_RootInsert_Job_Queues_CombineVideosJobArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob_Mutation_Response>>
     >;
     insert_job_queues_CombineVideosJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_CombineVideosJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_CombineVideosJob_OneArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob>>
     >;
     insert_job_queues_CustomEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_CustomEmailJobArgs,
+        Mutation_RootInsert_Job_Queues_CustomEmailJobArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob_Mutation_Response>>
     >;
     insert_job_queues_CustomEmailJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_CustomEmailJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_CustomEmailJob_OneArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
     >;
     insert_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_InvitationEmailJobArgs,
+        Mutation_RootInsert_Job_Queues_InvitationEmailJobArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob_Mutation_Response>>
     >;
     insert_job_queues_InvitationEmailJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_InvitationEmailJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_InvitationEmailJob_OneArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob>>
     >;
     insert_job_queues_JobStatus?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_JobStatusArgs,
+        Mutation_RootInsert_Job_Queues_JobStatusArgs,
         Maybe<WithTypename<Job_Queues_JobStatus_Mutation_Response>>
     >;
     insert_job_queues_JobStatus_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_JobStatus_OneArgs,
+        Mutation_RootInsert_Job_Queues_JobStatus_OneArgs,
         Maybe<WithTypename<Job_Queues_JobStatus>>
     >;
     insert_job_queues_MediaPackageHarvestJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_MediaPackageHarvestJobArgs,
+        Mutation_RootInsert_Job_Queues_MediaPackageHarvestJobArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob_Mutation_Response>>
     >;
     insert_job_queues_MediaPackageHarvestJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_MediaPackageHarvestJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_MediaPackageHarvestJob_OneArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob>>
     >;
     insert_job_queues_PrepareJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_PrepareJobArgs,
+        Mutation_RootInsert_Job_Queues_PrepareJobArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob_Mutation_Response>>
     >;
     insert_job_queues_PrepareJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_PrepareJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_PrepareJob_OneArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob>>
     >;
     insert_job_queues_PublishVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_PublishVideoJobArgs,
+        Mutation_RootInsert_Job_Queues_PublishVideoJobArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob_Mutation_Response>>
     >;
     insert_job_queues_PublishVideoJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_PublishVideoJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_PublishVideoJob_OneArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob>>
     >;
     insert_job_queues_SubmissionRequestEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_SubmissionRequestEmailJobArgs,
+        Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJobArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>>
     >;
     insert_job_queues_SubmissionRequestEmailJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_SubmissionRequestEmailJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_SubmissionRequestEmailJob_OneArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob>>
     >;
     insert_job_queues_UploadYouTubeVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_UploadYouTubeVideoJobArgs,
+        Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJobArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>>
     >;
     insert_job_queues_UploadYouTubeVideoJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs,
+        Mutation_RootInsert_Job_Queues_UploadYouTubeVideoJob_OneArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>
     >;
     insert_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_GoogleAccountArgs,
+        Mutation_RootInsert_Registrant_GoogleAccountArgs,
         Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>
     >;
     insert_registrant_GoogleAccount_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_GoogleAccount_OneArgs,
+        Mutation_RootInsert_Registrant_GoogleAccount_OneArgs,
         Maybe<WithTypename<Registrant_GoogleAccount>>
     >;
     insert_registrant_Group?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_GroupArgs,
+        Mutation_RootInsert_Registrant_GroupArgs,
         Maybe<WithTypename<Registrant_Group_Mutation_Response>>
     >;
     insert_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_GroupRegistrantArgs,
+        Mutation_RootInsert_Registrant_GroupRegistrantArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>
     >;
     insert_registrant_GroupRegistrant_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_GroupRegistrant_OneArgs,
+        Mutation_RootInsert_Registrant_GroupRegistrant_OneArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant>>
     >;
     insert_registrant_Group_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_Group_OneArgs,
+        Mutation_RootInsert_Registrant_Group_OneArgs,
         Maybe<WithTypename<Registrant_Group>>
     >;
     insert_registrant_Invitation?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_InvitationArgs,
+        Mutation_RootInsert_Registrant_InvitationArgs,
         Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>
     >;
     insert_registrant_Invitation_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_Invitation_OneArgs,
+        Mutation_RootInsert_Registrant_Invitation_OneArgs,
         Maybe<WithTypename<Registrant_Invitation>>
     >;
     insert_registrant_Profile?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_ProfileArgs,
+        Mutation_RootInsert_Registrant_ProfileArgs,
         Maybe<WithTypename<Registrant_Profile_Mutation_Response>>
     >;
     insert_registrant_Profile_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_Profile_OneArgs,
+        Mutation_RootInsert_Registrant_Profile_OneArgs,
         Maybe<WithTypename<Registrant_Profile>>
     >;
     insert_registrant_Registrant?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_RegistrantArgs,
+        Mutation_RootInsert_Registrant_RegistrantArgs,
         Maybe<WithTypename<Registrant_Registrant_Mutation_Response>>
     >;
     insert_registrant_RegistrantRole?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_RegistrantRoleArgs,
+        Mutation_RootInsert_Registrant_RegistrantRoleArgs,
         Maybe<WithTypename<Registrant_RegistrantRole_Mutation_Response>>
     >;
     insert_registrant_RegistrantRole_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_RegistrantRole_OneArgs,
+        Mutation_RootInsert_Registrant_RegistrantRole_OneArgs,
         Maybe<WithTypename<Registrant_RegistrantRole>>
     >;
     insert_registrant_Registrant_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_Registrant_OneArgs,
+        Mutation_RootInsert_Registrant_Registrant_OneArgs,
         Maybe<WithTypename<Registrant_Registrant>>
     >;
     insert_registrant_SavedVonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_SavedVonageRoomRecordingArgs,
+        Mutation_RootInsert_Registrant_SavedVonageRoomRecordingArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording_Mutation_Response>>
     >;
     insert_registrant_SavedVonageRoomRecording_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_SavedVonageRoomRecording_OneArgs,
+        Mutation_RootInsert_Registrant_SavedVonageRoomRecording_OneArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording>>
     >;
     insert_registrant_SubconferenceMembership?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_SubconferenceMembershipArgs,
+        Mutation_RootInsert_Registrant_SubconferenceMembershipArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership_Mutation_Response>>
     >;
     insert_registrant_SubconferenceMembership_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Registrant_SubconferenceMembership_OneArgs,
+        Mutation_RootInsert_Registrant_SubconferenceMembership_OneArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership>>
     >;
     insert_room_Backend?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_BackendArgs,
+        Mutation_RootInsert_Room_BackendArgs,
         Maybe<WithTypename<Room_Backend_Mutation_Response>>
     >;
     insert_room_Backend_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_Backend_OneArgs,
+        Mutation_RootInsert_Room_Backend_OneArgs,
         Maybe<WithTypename<Room_Backend>>
     >;
     insert_room_ChimeMeeting?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ChimeMeetingArgs,
+        Mutation_RootInsert_Room_ChimeMeetingArgs,
         Maybe<WithTypename<Room_ChimeMeeting_Mutation_Response>>
     >;
     insert_room_ChimeMeeting_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ChimeMeeting_OneArgs,
+        Mutation_RootInsert_Room_ChimeMeeting_OneArgs,
         Maybe<WithTypename<Room_ChimeMeeting>>
     >;
     insert_room_ManagementMode?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ManagementModeArgs,
+        Mutation_RootInsert_Room_ManagementModeArgs,
         Maybe<WithTypename<Room_ManagementMode_Mutation_Response>>
     >;
     insert_room_ManagementMode_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ManagementMode_OneArgs,
+        Mutation_RootInsert_Room_ManagementMode_OneArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
     insert_room_Mode?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ModeArgs,
+        Mutation_RootInsert_Room_ModeArgs,
         Maybe<WithTypename<Room_Mode_Mutation_Response>>
     >;
     insert_room_Mode_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_Mode_OneArgs,
+        Mutation_RootInsert_Room_Mode_OneArgs,
         Maybe<WithTypename<Room_Mode>>
     >;
     insert_room_Participant?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ParticipantArgs,
+        Mutation_RootInsert_Room_ParticipantArgs,
         Maybe<WithTypename<Room_Participant_Mutation_Response>>
     >;
     insert_room_Participant_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_Participant_OneArgs,
+        Mutation_RootInsert_Room_Participant_OneArgs,
         Maybe<WithTypename<Room_Participant>>
     >;
     insert_room_PersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_PersonRoleArgs,
+        Mutation_RootInsert_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
     >;
     insert_room_PersonRole_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_PersonRole_OneArgs,
+        Mutation_RootInsert_Room_PersonRole_OneArgs,
         Maybe<WithTypename<Room_PersonRole>>
     >;
     insert_room_Room?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_RoomArgs,
+        Mutation_RootInsert_Room_RoomArgs,
         Maybe<WithTypename<Room_Room_Mutation_Response>>
     >;
     insert_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_RoomGroupMembershipArgs,
+        Mutation_RootInsert_Room_RoomGroupMembershipArgs,
         Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>
     >;
     insert_room_RoomGroupMembership_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_RoomGroupMembership_OneArgs,
+        Mutation_RootInsert_Room_RoomGroupMembership_OneArgs,
         Maybe<WithTypename<Room_RoomGroupMembership>>
     >;
     insert_room_RoomMembership?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_RoomMembershipArgs,
+        Mutation_RootInsert_Room_RoomMembershipArgs,
         Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>
     >;
     insert_room_RoomMembership_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_RoomMembership_OneArgs,
+        Mutation_RootInsert_Room_RoomMembership_OneArgs,
         Maybe<WithTypename<Room_RoomMembership>>
     >;
     insert_room_Room_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_Room_OneArgs,
+        Mutation_RootInsert_Room_Room_OneArgs,
         Maybe<WithTypename<Room_Room>>
     >;
     insert_room_ShuffleAlgorithm?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleAlgorithmArgs,
+        Mutation_RootInsert_Room_ShuffleAlgorithmArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm_Mutation_Response>>
     >;
     insert_room_ShuffleAlgorithm_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleAlgorithm_OneArgs,
+        Mutation_RootInsert_Room_ShuffleAlgorithm_OneArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm>>
     >;
     insert_room_ShufflePeriod?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShufflePeriodArgs,
+        Mutation_RootInsert_Room_ShufflePeriodArgs,
         Maybe<WithTypename<Room_ShufflePeriod_Mutation_Response>>
     >;
     insert_room_ShufflePeriod_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShufflePeriod_OneArgs,
+        Mutation_RootInsert_Room_ShufflePeriod_OneArgs,
         Maybe<WithTypename<Room_ShufflePeriod>>
     >;
     insert_room_ShuffleQueueEntry?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleQueueEntryArgs,
+        Mutation_RootInsert_Room_ShuffleQueueEntryArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry_Mutation_Response>>
     >;
     insert_room_ShuffleQueueEntry_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleQueueEntry_OneArgs,
+        Mutation_RootInsert_Room_ShuffleQueueEntry_OneArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry>>
     >;
     insert_room_ShuffleRoom?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleRoomArgs,
+        Mutation_RootInsert_Room_ShuffleRoomArgs,
         Maybe<WithTypename<Room_ShuffleRoom_Mutation_Response>>
     >;
     insert_room_ShuffleRoom_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Room_ShuffleRoom_OneArgs,
+        Mutation_RootInsert_Room_ShuffleRoom_OneArgs,
         Maybe<WithTypename<Room_ShuffleRoom>>
     >;
     insert_schedule_Continuation?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_ContinuationArgs,
+        Mutation_RootInsert_Schedule_ContinuationArgs,
         Maybe<WithTypename<Schedule_Continuation_Mutation_Response>>
     >;
     insert_schedule_Continuation_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_Continuation_OneArgs,
+        Mutation_RootInsert_Schedule_Continuation_OneArgs,
         Maybe<WithTypename<Schedule_Continuation>>
     >;
     insert_schedule_Event?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_EventArgs,
+        Mutation_RootInsert_Schedule_EventArgs,
         Maybe<WithTypename<Schedule_Event_Mutation_Response>>
     >;
     insert_schedule_EventProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_EventProgramPersonArgs,
+        Mutation_RootInsert_Schedule_EventProgramPersonArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson_Mutation_Response>>
     >;
     insert_schedule_EventProgramPersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_EventProgramPersonRoleArgs,
+        Mutation_RootInsert_Schedule_EventProgramPersonRoleArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole_Mutation_Response>>
     >;
     insert_schedule_EventProgramPersonRole_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_EventProgramPersonRole_OneArgs,
+        Mutation_RootInsert_Schedule_EventProgramPersonRole_OneArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole>>
     >;
     insert_schedule_EventProgramPerson_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_EventProgramPerson_OneArgs,
+        Mutation_RootInsert_Schedule_EventProgramPerson_OneArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson>>
     >;
     insert_schedule_Event_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_Event_OneArgs,
+        Mutation_RootInsert_Schedule_Event_OneArgs,
         Maybe<WithTypename<Schedule_Event>>
     >;
     insert_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_StarredEventArgs,
+        Mutation_RootInsert_Schedule_StarredEventArgs,
         Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>>
     >;
     insert_schedule_StarredEvent_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Schedule_StarredEvent_OneArgs,
+        Mutation_RootInsert_Schedule_StarredEvent_OneArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
     >;
     insert_system_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_ConfigurationArgs,
+        Mutation_RootInsert_System_ConfigurationArgs,
         Maybe<WithTypename<System_Configuration_Mutation_Response>>
     >;
     insert_system_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_ConfigurationKeyArgs,
+        Mutation_RootInsert_System_ConfigurationKeyArgs,
         Maybe<WithTypename<System_ConfigurationKey_Mutation_Response>>
     >;
     insert_system_ConfigurationKey_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_ConfigurationKey_OneArgs,
+        Mutation_RootInsert_System_ConfigurationKey_OneArgs,
         Maybe<WithTypename<System_ConfigurationKey>>
     >;
     insert_system_ConfigurationPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_ConfigurationPermissionGrantArgs,
+        Mutation_RootInsert_System_ConfigurationPermissionGrantArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant_Mutation_Response>>
     >;
     insert_system_ConfigurationPermissionGrant_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_ConfigurationPermissionGrant_OneArgs,
+        Mutation_RootInsert_System_ConfigurationPermissionGrant_OneArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant>>
     >;
     insert_system_Configuration_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_Configuration_OneArgs,
+        Mutation_RootInsert_System_Configuration_OneArgs,
         Maybe<WithTypename<System_Configuration>>
     >;
     insert_system_SuperUserPermission?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_SuperUserPermissionArgs,
+        Mutation_RootInsert_System_SuperUserPermissionArgs,
         Maybe<WithTypename<System_SuperUserPermission_Mutation_Response>>
     >;
     insert_system_SuperUserPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_SuperUserPermissionGrantArgs,
+        Mutation_RootInsert_System_SuperUserPermissionGrantArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant_Mutation_Response>>
     >;
     insert_system_SuperUserPermissionGrant_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_SuperUserPermissionGrant_OneArgs,
+        Mutation_RootInsert_System_SuperUserPermissionGrant_OneArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant>>
     >;
     insert_system_SuperUserPermission_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_System_SuperUserPermission_OneArgs,
+        Mutation_RootInsert_System_SuperUserPermission_OneArgs,
         Maybe<WithTypename<System_SuperUserPermission>>
     >;
     insert_video_ChannelStack?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_ChannelStackArgs,
+        Mutation_RootInsert_Video_ChannelStackArgs,
         Maybe<WithTypename<Video_ChannelStack_Mutation_Response>>
     >;
     insert_video_ChannelStack_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_ChannelStack_OneArgs,
+        Mutation_RootInsert_Video_ChannelStack_OneArgs,
         Maybe<WithTypename<Video_ChannelStack>>
     >;
     insert_video_EventVonageSession?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_EventVonageSessionArgs,
+        Mutation_RootInsert_Video_EventVonageSessionArgs,
         Maybe<WithTypename<Video_EventVonageSession_Mutation_Response>>
     >;
     insert_video_EventVonageSession_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_EventVonageSession_OneArgs,
+        Mutation_RootInsert_Video_EventVonageSession_OneArgs,
         Maybe<WithTypename<Video_EventVonageSession>>
     >;
     insert_video_ImmediateSwitch?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_ImmediateSwitchArgs,
+        Mutation_RootInsert_Video_ImmediateSwitchArgs,
         Maybe<WithTypename<Video_ImmediateSwitch_Mutation_Response>>
     >;
     insert_video_ImmediateSwitch_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_ImmediateSwitch_OneArgs,
+        Mutation_RootInsert_Video_ImmediateSwitch_OneArgs,
         Maybe<WithTypename<Video_ImmediateSwitch>>
     >;
     insert_video_InputType?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_InputTypeArgs,
+        Mutation_RootInsert_Video_InputTypeArgs,
         Maybe<WithTypename<Video_InputType_Mutation_Response>>
     >;
     insert_video_InputType_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_InputType_OneArgs,
+        Mutation_RootInsert_Video_InputType_OneArgs,
         Maybe<WithTypename<Video_InputType>>
     >;
     insert_video_MediaLiveChannelStatus?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_MediaLiveChannelStatusArgs,
+        Mutation_RootInsert_Video_MediaLiveChannelStatusArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus_Mutation_Response>>
     >;
     insert_video_MediaLiveChannelStatus_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_MediaLiveChannelStatus_OneArgs,
+        Mutation_RootInsert_Video_MediaLiveChannelStatus_OneArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
     >;
     insert_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_RoomRtmpOutputArgs,
+        Mutation_RootInsert_Video_RoomRtmpOutputArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>>
     >;
     insert_video_RoomRtmpOutput_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_RoomRtmpOutput_OneArgs,
+        Mutation_RootInsert_Video_RoomRtmpOutput_OneArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput>>
     >;
     insert_video_RtmpInput?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_RtmpInputArgs,
+        Mutation_RootInsert_Video_RtmpInputArgs,
         Maybe<WithTypename<Video_RtmpInput_Mutation_Response>>
     >;
     insert_video_RtmpInput_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_RtmpInput_OneArgs,
+        Mutation_RootInsert_Video_RtmpInput_OneArgs,
         Maybe<WithTypename<Video_RtmpInput>>
     >;
     insert_video_TranscriptionJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_TranscriptionJobArgs,
+        Mutation_RootInsert_Video_TranscriptionJobArgs,
         Maybe<WithTypename<Video_TranscriptionJob_Mutation_Response>>
     >;
     insert_video_TranscriptionJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_TranscriptionJob_OneArgs,
+        Mutation_RootInsert_Video_TranscriptionJob_OneArgs,
         Maybe<WithTypename<Video_TranscriptionJob>>
     >;
     insert_video_VideoRenderJob?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VideoRenderJobArgs,
+        Mutation_RootInsert_Video_VideoRenderJobArgs,
         Maybe<WithTypename<Video_VideoRenderJob_Mutation_Response>>
     >;
     insert_video_VideoRenderJob_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VideoRenderJob_OneArgs,
+        Mutation_RootInsert_Video_VideoRenderJob_OneArgs,
         Maybe<WithTypename<Video_VideoRenderJob>>
     >;
     insert_video_VonageParticipantStream?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageParticipantStreamArgs,
+        Mutation_RootInsert_Video_VonageParticipantStreamArgs,
         Maybe<WithTypename<Video_VonageParticipantStream_Mutation_Response>>
     >;
     insert_video_VonageParticipantStream_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageParticipantStream_OneArgs,
+        Mutation_RootInsert_Video_VonageParticipantStream_OneArgs,
         Maybe<WithTypename<Video_VonageParticipantStream>>
     >;
     insert_video_VonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageRoomRecordingArgs,
+        Mutation_RootInsert_Video_VonageRoomRecordingArgs,
         Maybe<WithTypename<Video_VonageRoomRecording_Mutation_Response>>
     >;
     insert_video_VonageRoomRecording_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageRoomRecording_OneArgs,
+        Mutation_RootInsert_Video_VonageRoomRecording_OneArgs,
         Maybe<WithTypename<Video_VonageRoomRecording>>
     >;
     insert_video_VonageSessionLayout?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageSessionLayoutArgs,
+        Mutation_RootInsert_Video_VonageSessionLayoutArgs,
         Maybe<WithTypename<Video_VonageSessionLayout_Mutation_Response>>
     >;
     insert_video_VonageSessionLayout_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_VonageSessionLayout_OneArgs,
+        Mutation_RootInsert_Video_VonageSessionLayout_OneArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
     >;
     insert_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_YouTubeUploadArgs,
+        Mutation_RootInsert_Video_YouTubeUploadArgs,
         Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>>
     >;
     insert_video_YouTubeUpload_one?: GraphCacheOptimisticMutationResolver<
-        MutationInsert_Video_YouTubeUpload_OneArgs,
+        Mutation_RootInsert_Video_YouTubeUpload_OneArgs,
         Maybe<WithTypename<Video_YouTubeUpload>>
     >;
     invitationConfirmCurrent?: GraphCacheOptimisticMutationResolver<
-        MutationInvitationConfirmCurrentArgs,
+        Mutation_RootInvitationConfirmCurrentArgs,
         Maybe<WithTypename<ConfirmInvitationOutput>>
     >;
     joinEventVonageSession?: GraphCacheOptimisticMutationResolver<
-        MutationJoinEventVonageSessionArgs,
+        Mutation_RootJoinEventVonageSessionArgs,
         Maybe<WithTypename<JoinEventVonageSessionOutput>>
     >;
     joinRoomChimeSession?: GraphCacheOptimisticMutationResolver<
-        MutationJoinRoomChimeSessionArgs,
+        Mutation_RootJoinRoomChimeSessionArgs,
         Maybe<WithTypename<JoinRoomChimeSessionOutput>>
     >;
     joinRoomVonageSession?: GraphCacheOptimisticMutationResolver<
-        MutationJoinRoomVonageSessionArgs,
+        Mutation_RootJoinRoomVonageSessionArgs,
         Maybe<WithTypename<JoinRoomVonageSessionOutput>>
     >;
     notifyEventEnded?: GraphCacheOptimisticMutationResolver<
-        MutationNotifyEventEndedArgs,
+        Mutation_RootNotifyEventEndedArgs,
         WithTypename<NotifyEventEnded>
     >;
     presence_Flush?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<PresenceFlushOutput>>;
     refreshYouTubeData?: GraphCacheOptimisticMutationResolver<
-        MutationRefreshYouTubeDataArgs,
+        Mutation_RootRefreshYouTubeDataArgs,
         Maybe<WithTypename<RefreshYouTubeDataOutput>>
     >;
     stopEventBroadcast?: GraphCacheOptimisticMutationResolver<
-        MutationStopEventBroadcastArgs,
+        Mutation_RootStopEventBroadcastArgs,
         Maybe<WithTypename<StopEventBroadcastOutput>>
     >;
     submitGoogleOAuthCode?: GraphCacheOptimisticMutationResolver<
-        MutationSubmitGoogleOAuthCodeArgs,
+        Mutation_RootSubmitGoogleOAuthCodeArgs,
         Maybe<WithTypename<SubmitGoogleOAuthCodeOutput>>
     >;
     submitUploadableElement?: GraphCacheOptimisticMutationResolver<
-        MutationSubmitUploadableElementArgs,
+        Mutation_RootSubmitUploadableElementArgs,
         Maybe<WithTypename<SubmitUploadableElementOutput>>
     >;
     toggleVonageRecordingState?: GraphCacheOptimisticMutationResolver<
-        MutationToggleVonageRecordingStateArgs,
+        Mutation_RootToggleVonageRecordingStateArgs,
         Maybe<WithTypename<ToggleVonageRecordingStateOutput>>
     >;
     updateProfilePhoto?: GraphCacheOptimisticMutationResolver<
-        MutationUpdateProfilePhotoArgs,
+        Mutation_RootUpdateProfilePhotoArgs,
         Maybe<WithTypename<UpdateProfilePhotoResponse>>
     >;
     updateSubtitles?: GraphCacheOptimisticMutationResolver<
-        MutationUpdateSubtitlesArgs,
+        Mutation_RootUpdateSubtitlesArgs,
         Maybe<WithTypename<SubmitUpdatedSubtitlesOutput>>
     >;
     update_Email?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_EmailArgs,
+        Mutation_RootUpdate_EmailArgs,
         Maybe<WithTypename<Email_Mutation_Response>>
     >;
     update_Email_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Email_By_PkArgs,
+        Mutation_RootUpdate_Email_By_PkArgs,
         Maybe<WithTypename<Email>>
     >;
     update_PushNotificationSubscription?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_PushNotificationSubscriptionArgs,
+        Mutation_RootUpdate_PushNotificationSubscriptionArgs,
         Maybe<WithTypename<PushNotificationSubscription_Mutation_Response>>
     >;
     update_PushNotificationSubscription_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_PushNotificationSubscription_By_PkArgs,
+        Mutation_RootUpdate_PushNotificationSubscription_By_PkArgs,
         Maybe<WithTypename<PushNotificationSubscription>>
     >;
     update_User?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_UserArgs,
+        Mutation_RootUpdate_UserArgs,
         Maybe<WithTypename<User_Mutation_Response>>
     >;
-    update_User_by_pk?: GraphCacheOptimisticMutationResolver<MutationUpdate_User_By_PkArgs, Maybe<WithTypename<User>>>;
+    update_User_by_pk?: GraphCacheOptimisticMutationResolver<
+        Mutation_RootUpdate_User_By_PkArgs,
+        Maybe<WithTypename<User>>
+    >;
     update_analytics_AppStats?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_AppStatsArgs,
+        Mutation_RootUpdate_Analytics_AppStatsArgs,
         Maybe<WithTypename<Analytics_AppStats_Mutation_Response>>
     >;
     update_analytics_AppStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_AppStats_By_PkArgs,
+        Mutation_RootUpdate_Analytics_AppStats_By_PkArgs,
         Maybe<WithTypename<Analytics_AppStats>>
     >;
     update_analytics_ContentElementStats?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_ContentElementStatsArgs,
+        Mutation_RootUpdate_Analytics_ContentElementStatsArgs,
         Maybe<WithTypename<Analytics_ContentElementStats_Mutation_Response>>
     >;
     update_analytics_ContentElementStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_ContentElementStats_By_PkArgs,
+        Mutation_RootUpdate_Analytics_ContentElementStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentElementStats>>
     >;
     update_analytics_ContentItemStats?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_ContentItemStatsArgs,
+        Mutation_RootUpdate_Analytics_ContentItemStatsArgs,
         Maybe<WithTypename<Analytics_ContentItemStats_Mutation_Response>>
     >;
     update_analytics_ContentItemStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_ContentItemStats_By_PkArgs,
+        Mutation_RootUpdate_Analytics_ContentItemStats_By_PkArgs,
         Maybe<WithTypename<Analytics_ContentItemStats>>
     >;
     update_analytics_RoomStats?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_RoomStatsArgs,
+        Mutation_RootUpdate_Analytics_RoomStatsArgs,
         Maybe<WithTypename<Analytics_RoomStats_Mutation_Response>>
     >;
     update_analytics_RoomStats_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Analytics_RoomStats_By_PkArgs,
+        Mutation_RootUpdate_Analytics_RoomStats_By_PkArgs,
         Maybe<WithTypename<Analytics_RoomStats>>
     >;
     update_chat_Chat?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ChatArgs,
+        Mutation_RootUpdate_Chat_ChatArgs,
         Maybe<WithTypename<Chat_Chat_Mutation_Response>>
     >;
     update_chat_Chat_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Chat_By_PkArgs,
+        Mutation_RootUpdate_Chat_Chat_By_PkArgs,
         Maybe<WithTypename<Chat_Chat>>
     >;
     update_chat_Flag?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_FlagArgs,
+        Mutation_RootUpdate_Chat_FlagArgs,
         Maybe<WithTypename<Chat_Flag_Mutation_Response>>
     >;
     update_chat_FlagType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_FlagTypeArgs,
+        Mutation_RootUpdate_Chat_FlagTypeArgs,
         Maybe<WithTypename<Chat_FlagType_Mutation_Response>>
     >;
     update_chat_FlagType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_FlagType_By_PkArgs,
+        Mutation_RootUpdate_Chat_FlagType_By_PkArgs,
         Maybe<WithTypename<Chat_FlagType>>
     >;
     update_chat_Flag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Flag_By_PkArgs,
+        Mutation_RootUpdate_Chat_Flag_By_PkArgs,
         Maybe<WithTypename<Chat_Flag>>
     >;
     update_chat_Message?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_MessageArgs,
+        Mutation_RootUpdate_Chat_MessageArgs,
         Maybe<WithTypename<Chat_Message_Mutation_Response>>
     >;
     update_chat_MessageType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_MessageTypeArgs,
+        Mutation_RootUpdate_Chat_MessageTypeArgs,
         Maybe<WithTypename<Chat_MessageType_Mutation_Response>>
     >;
     update_chat_MessageType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_MessageType_By_PkArgs,
+        Mutation_RootUpdate_Chat_MessageType_By_PkArgs,
         Maybe<WithTypename<Chat_MessageType>>
     >;
     update_chat_Message_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Message_By_PkArgs,
+        Mutation_RootUpdate_Chat_Message_By_PkArgs,
         Maybe<WithTypename<Chat_Message>>
     >;
     update_chat_Pin?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_PinArgs,
+        Mutation_RootUpdate_Chat_PinArgs,
         Maybe<WithTypename<Chat_Pin_Mutation_Response>>
     >;
     update_chat_Pin_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Pin_By_PkArgs,
+        Mutation_RootUpdate_Chat_Pin_By_PkArgs,
         Maybe<WithTypename<Chat_Pin>>
     >;
     update_chat_Reaction?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ReactionArgs,
+        Mutation_RootUpdate_Chat_ReactionArgs,
         Maybe<WithTypename<Chat_Reaction_Mutation_Response>>
     >;
     update_chat_ReactionType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ReactionTypeArgs,
+        Mutation_RootUpdate_Chat_ReactionTypeArgs,
         Maybe<WithTypename<Chat_ReactionType_Mutation_Response>>
     >;
     update_chat_ReactionType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ReactionType_By_PkArgs,
+        Mutation_RootUpdate_Chat_ReactionType_By_PkArgs,
         Maybe<WithTypename<Chat_ReactionType>>
     >;
     update_chat_Reaction_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Reaction_By_PkArgs,
+        Mutation_RootUpdate_Chat_Reaction_By_PkArgs,
         Maybe<WithTypename<Chat_Reaction>>
     >;
     update_chat_ReadUpToIndex?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ReadUpToIndexArgs,
+        Mutation_RootUpdate_Chat_ReadUpToIndexArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex_Mutation_Response>>
     >;
     update_chat_ReadUpToIndex_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_ReadUpToIndex_By_PkArgs,
+        Mutation_RootUpdate_Chat_ReadUpToIndex_By_PkArgs,
         Maybe<WithTypename<Chat_ReadUpToIndex>>
     >;
     update_chat_Subscription?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_SubscriptionArgs,
+        Mutation_RootUpdate_Chat_SubscriptionArgs,
         Maybe<WithTypename<Chat_Subscription_Mutation_Response>>
     >;
     update_chat_Subscription_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Chat_Subscription_By_PkArgs,
+        Mutation_RootUpdate_Chat_Subscription_By_PkArgs,
         Maybe<WithTypename<Chat_Subscription>>
     >;
     update_collection_Exhibition?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_ExhibitionArgs,
+        Mutation_RootUpdate_Collection_ExhibitionArgs,
         Maybe<WithTypename<Collection_Exhibition_Mutation_Response>>
     >;
     update_collection_Exhibition_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_Exhibition_By_PkArgs,
+        Mutation_RootUpdate_Collection_Exhibition_By_PkArgs,
         Maybe<WithTypename<Collection_Exhibition>>
     >;
     update_collection_ProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_ProgramPersonArgs,
+        Mutation_RootUpdate_Collection_ProgramPersonArgs,
         Maybe<WithTypename<Collection_ProgramPerson_Mutation_Response>>
     >;
     update_collection_ProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_ProgramPerson_By_PkArgs,
+        Mutation_RootUpdate_Collection_ProgramPerson_By_PkArgs,
         Maybe<WithTypename<Collection_ProgramPerson>>
     >;
     update_collection_Tag?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_TagArgs,
+        Mutation_RootUpdate_Collection_TagArgs,
         Maybe<WithTypename<Collection_Tag_Mutation_Response>>
     >;
     update_collection_Tag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Collection_Tag_By_PkArgs,
+        Mutation_RootUpdate_Collection_Tag_By_PkArgs,
         Maybe<WithTypename<Collection_Tag>>
     >;
     update_conference_Conference?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_ConferenceArgs,
+        Mutation_RootUpdate_Conference_ConferenceArgs,
         Maybe<WithTypename<Conference_Conference_Mutation_Response>>
     >;
     update_conference_Conference_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_Conference_By_PkArgs,
+        Mutation_RootUpdate_Conference_Conference_By_PkArgs,
         Maybe<WithTypename<Conference_Conference>>
     >;
     update_conference_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_ConfigurationArgs,
+        Mutation_RootUpdate_Conference_ConfigurationArgs,
         Maybe<WithTypename<Conference_Configuration_Mutation_Response>>
     >;
     update_conference_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_ConfigurationKeyArgs,
+        Mutation_RootUpdate_Conference_ConfigurationKeyArgs,
         Maybe<WithTypename<Conference_ConfigurationKey_Mutation_Response>>
     >;
     update_conference_ConfigurationKey_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_ConfigurationKey_By_PkArgs,
+        Mutation_RootUpdate_Conference_ConfigurationKey_By_PkArgs,
         Maybe<WithTypename<Conference_ConfigurationKey>>
     >;
     update_conference_Configuration_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_Configuration_By_PkArgs,
+        Mutation_RootUpdate_Conference_Configuration_By_PkArgs,
         Maybe<WithTypename<Conference_Configuration>>
     >;
     update_conference_DemoCode?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_DemoCodeArgs,
+        Mutation_RootUpdate_Conference_DemoCodeArgs,
         Maybe<WithTypename<Conference_DemoCode_Mutation_Response>>
     >;
     update_conference_DemoCode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_DemoCode_By_PkArgs,
+        Mutation_RootUpdate_Conference_DemoCode_By_PkArgs,
         Maybe<WithTypename<Conference_DemoCode>>
     >;
     update_conference_OriginatingData?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_OriginatingDataArgs,
+        Mutation_RootUpdate_Conference_OriginatingDataArgs,
         Maybe<WithTypename<Conference_OriginatingData_Mutation_Response>>
     >;
     update_conference_OriginatingData_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_OriginatingData_By_PkArgs,
+        Mutation_RootUpdate_Conference_OriginatingData_By_PkArgs,
         Maybe<WithTypename<Conference_OriginatingData>>
     >;
     update_conference_Subconference?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_SubconferenceArgs,
+        Mutation_RootUpdate_Conference_SubconferenceArgs,
         Maybe<WithTypename<Conference_Subconference_Mutation_Response>>
     >;
     update_conference_Subconference_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_Subconference_By_PkArgs,
+        Mutation_RootUpdate_Conference_Subconference_By_PkArgs,
         Maybe<WithTypename<Conference_Subconference>>
     >;
     update_conference_VisibilityLevel?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_VisibilityLevelArgs,
+        Mutation_RootUpdate_Conference_VisibilityLevelArgs,
         Maybe<WithTypename<Conference_VisibilityLevel_Mutation_Response>>
     >;
     update_conference_VisibilityLevel_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Conference_VisibilityLevel_By_PkArgs,
+        Mutation_RootUpdate_Conference_VisibilityLevel_By_PkArgs,
         Maybe<WithTypename<Conference_VisibilityLevel>>
     >;
     update_content_Element?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ElementArgs,
+        Mutation_RootUpdate_Content_ElementArgs,
         Maybe<WithTypename<Content_Element_Mutation_Response>>
     >;
     update_content_ElementType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ElementTypeArgs,
+        Mutation_RootUpdate_Content_ElementTypeArgs,
         Maybe<WithTypename<Content_ElementType_Mutation_Response>>
     >;
     update_content_ElementType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ElementType_By_PkArgs,
+        Mutation_RootUpdate_Content_ElementType_By_PkArgs,
         Maybe<WithTypename<Content_ElementType>>
     >;
     update_content_Element_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_Element_By_PkArgs,
+        Mutation_RootUpdate_Content_Element_By_PkArgs,
         Maybe<WithTypename<Content_Element>>
     >;
     update_content_Item?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemArgs,
+        Mutation_RootUpdate_Content_ItemArgs,
         Maybe<WithTypename<Content_Item_Mutation_Response>>
     >;
     update_content_ItemExhibition?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemExhibitionArgs,
+        Mutation_RootUpdate_Content_ItemExhibitionArgs,
         Maybe<WithTypename<Content_ItemExhibition_Mutation_Response>>
     >;
     update_content_ItemExhibition_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemExhibition_By_PkArgs,
+        Mutation_RootUpdate_Content_ItemExhibition_By_PkArgs,
         Maybe<WithTypename<Content_ItemExhibition>>
     >;
     update_content_ItemProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemProgramPersonArgs,
+        Mutation_RootUpdate_Content_ItemProgramPersonArgs,
         Maybe<WithTypename<Content_ItemProgramPerson_Mutation_Response>>
     >;
     update_content_ItemProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemProgramPerson_By_PkArgs,
+        Mutation_RootUpdate_Content_ItemProgramPerson_By_PkArgs,
         Maybe<WithTypename<Content_ItemProgramPerson>>
     >;
     update_content_ItemTag?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemTagArgs,
+        Mutation_RootUpdate_Content_ItemTagArgs,
         Maybe<WithTypename<Content_ItemTag_Mutation_Response>>
     >;
     update_content_ItemTag_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemTag_By_PkArgs,
+        Mutation_RootUpdate_Content_ItemTag_By_PkArgs,
         Maybe<WithTypename<Content_ItemTag>>
     >;
     update_content_ItemType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemTypeArgs,
+        Mutation_RootUpdate_Content_ItemTypeArgs,
         Maybe<WithTypename<Content_ItemType_Mutation_Response>>
     >;
     update_content_ItemType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_ItemType_By_PkArgs,
+        Mutation_RootUpdate_Content_ItemType_By_PkArgs,
         Maybe<WithTypename<Content_ItemType>>
     >;
     update_content_Item_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Content_Item_By_PkArgs,
+        Mutation_RootUpdate_Content_Item_By_PkArgs,
         Maybe<WithTypename<Content_Item>>
     >;
     update_job_queues_ChannelStackCreateJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackCreateJobArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackCreateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob_Mutation_Response>>
     >;
     update_job_queues_ChannelStackCreateJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackCreateJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackCreateJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackCreateJob>>
     >;
     update_job_queues_ChannelStackDeleteJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackDeleteJobArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob_Mutation_Response>>
     >;
     update_job_queues_ChannelStackDeleteJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackDeleteJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackDeleteJob>>
     >;
     update_job_queues_ChannelStackUpdateJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackUpdateJobArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJobArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob_Mutation_Response>>
     >;
     update_job_queues_ChannelStackUpdateJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_ChannelStackUpdateJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_ChannelStackUpdateJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_ChannelStackUpdateJob>>
     >;
     update_job_queues_CombineVideosJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_CombineVideosJobArgs,
+        Mutation_RootUpdate_Job_Queues_CombineVideosJobArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob_Mutation_Response>>
     >;
     update_job_queues_CombineVideosJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_CombineVideosJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_CombineVideosJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CombineVideosJob>>
     >;
     update_job_queues_CustomEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_CustomEmailJobArgs,
+        Mutation_RootUpdate_Job_Queues_CustomEmailJobArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob_Mutation_Response>>
     >;
     update_job_queues_CustomEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_CustomEmailJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_CustomEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_CustomEmailJob>>
     >;
     update_job_queues_InvitationEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_InvitationEmailJobArgs,
+        Mutation_RootUpdate_Job_Queues_InvitationEmailJobArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob_Mutation_Response>>
     >;
     update_job_queues_InvitationEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_InvitationEmailJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_InvitationEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_InvitationEmailJob>>
     >;
     update_job_queues_JobStatus?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_JobStatusArgs,
+        Mutation_RootUpdate_Job_Queues_JobStatusArgs,
         Maybe<WithTypename<Job_Queues_JobStatus_Mutation_Response>>
     >;
     update_job_queues_JobStatus_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_JobStatus_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_JobStatus_By_PkArgs,
         Maybe<WithTypename<Job_Queues_JobStatus>>
     >;
     update_job_queues_MediaPackageHarvestJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_MediaPackageHarvestJobArgs,
+        Mutation_RootUpdate_Job_Queues_MediaPackageHarvestJobArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob_Mutation_Response>>
     >;
     update_job_queues_MediaPackageHarvestJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_MediaPackageHarvestJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_MediaPackageHarvestJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_MediaPackageHarvestJob>>
     >;
     update_job_queues_PrepareJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_PrepareJobArgs,
+        Mutation_RootUpdate_Job_Queues_PrepareJobArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob_Mutation_Response>>
     >;
     update_job_queues_PrepareJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_PrepareJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_PrepareJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_PrepareJob>>
     >;
     update_job_queues_PublishVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_PublishVideoJobArgs,
+        Mutation_RootUpdate_Job_Queues_PublishVideoJobArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob_Mutation_Response>>
     >;
     update_job_queues_PublishVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_PublishVideoJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_PublishVideoJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_PublishVideoJob>>
     >;
     update_job_queues_SubmissionRequestEmailJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_SubmissionRequestEmailJobArgs,
+        Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJobArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob_Mutation_Response>>
     >;
     update_job_queues_SubmissionRequestEmailJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_SubmissionRequestEmailJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_SubmissionRequestEmailJob>>
     >;
     update_job_queues_UploadYouTubeVideoJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_UploadYouTubeVideoJobArgs,
+        Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJobArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob_Mutation_Response>>
     >;
     update_job_queues_UploadYouTubeVideoJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs,
+        Mutation_RootUpdate_Job_Queues_UploadYouTubeVideoJob_By_PkArgs,
         Maybe<WithTypename<Job_Queues_UploadYouTubeVideoJob>>
     >;
     update_registrant_GoogleAccount?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_GoogleAccountArgs,
+        Mutation_RootUpdate_Registrant_GoogleAccountArgs,
         Maybe<WithTypename<Registrant_GoogleAccount_Mutation_Response>>
     >;
     update_registrant_GoogleAccount_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_GoogleAccount_By_PkArgs,
+        Mutation_RootUpdate_Registrant_GoogleAccount_By_PkArgs,
         Maybe<WithTypename<Registrant_GoogleAccount>>
     >;
     update_registrant_Group?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_GroupArgs,
+        Mutation_RootUpdate_Registrant_GroupArgs,
         Maybe<WithTypename<Registrant_Group_Mutation_Response>>
     >;
     update_registrant_GroupRegistrant?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_GroupRegistrantArgs,
+        Mutation_RootUpdate_Registrant_GroupRegistrantArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant_Mutation_Response>>
     >;
     update_registrant_GroupRegistrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_GroupRegistrant_By_PkArgs,
+        Mutation_RootUpdate_Registrant_GroupRegistrant_By_PkArgs,
         Maybe<WithTypename<Registrant_GroupRegistrant>>
     >;
     update_registrant_Group_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_Group_By_PkArgs,
+        Mutation_RootUpdate_Registrant_Group_By_PkArgs,
         Maybe<WithTypename<Registrant_Group>>
     >;
     update_registrant_Invitation?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_InvitationArgs,
+        Mutation_RootUpdate_Registrant_InvitationArgs,
         Maybe<WithTypename<Registrant_Invitation_Mutation_Response>>
     >;
     update_registrant_Invitation_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_Invitation_By_PkArgs,
+        Mutation_RootUpdate_Registrant_Invitation_By_PkArgs,
         Maybe<WithTypename<Registrant_Invitation>>
     >;
     update_registrant_Profile?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_ProfileArgs,
+        Mutation_RootUpdate_Registrant_ProfileArgs,
         Maybe<WithTypename<Registrant_Profile_Mutation_Response>>
     >;
     update_registrant_Profile_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_Profile_By_PkArgs,
+        Mutation_RootUpdate_Registrant_Profile_By_PkArgs,
         Maybe<WithTypename<Registrant_Profile>>
     >;
     update_registrant_Registrant?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_RegistrantArgs,
+        Mutation_RootUpdate_Registrant_RegistrantArgs,
         Maybe<WithTypename<Registrant_Registrant_Mutation_Response>>
     >;
     update_registrant_RegistrantRole?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_RegistrantRoleArgs,
+        Mutation_RootUpdate_Registrant_RegistrantRoleArgs,
         Maybe<WithTypename<Registrant_RegistrantRole_Mutation_Response>>
     >;
     update_registrant_RegistrantRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_RegistrantRole_By_PkArgs,
+        Mutation_RootUpdate_Registrant_RegistrantRole_By_PkArgs,
         Maybe<WithTypename<Registrant_RegistrantRole>>
     >;
     update_registrant_Registrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_Registrant_By_PkArgs,
+        Mutation_RootUpdate_Registrant_Registrant_By_PkArgs,
         Maybe<WithTypename<Registrant_Registrant>>
     >;
     update_registrant_SavedVonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_SavedVonageRoomRecordingArgs,
+        Mutation_RootUpdate_Registrant_SavedVonageRoomRecordingArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording_Mutation_Response>>
     >;
     update_registrant_SavedVonageRoomRecording_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_SavedVonageRoomRecording_By_PkArgs,
+        Mutation_RootUpdate_Registrant_SavedVonageRoomRecording_By_PkArgs,
         Maybe<WithTypename<Registrant_SavedVonageRoomRecording>>
     >;
     update_registrant_SubconferenceMembership?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_SubconferenceMembershipArgs,
+        Mutation_RootUpdate_Registrant_SubconferenceMembershipArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership_Mutation_Response>>
     >;
     update_registrant_SubconferenceMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Registrant_SubconferenceMembership_By_PkArgs,
+        Mutation_RootUpdate_Registrant_SubconferenceMembership_By_PkArgs,
         Maybe<WithTypename<Registrant_SubconferenceMembership>>
     >;
     update_room_Backend?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_BackendArgs,
+        Mutation_RootUpdate_Room_BackendArgs,
         Maybe<WithTypename<Room_Backend_Mutation_Response>>
     >;
     update_room_Backend_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_Backend_By_PkArgs,
+        Mutation_RootUpdate_Room_Backend_By_PkArgs,
         Maybe<WithTypename<Room_Backend>>
     >;
     update_room_ChimeMeeting?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ChimeMeetingArgs,
+        Mutation_RootUpdate_Room_ChimeMeetingArgs,
         Maybe<WithTypename<Room_ChimeMeeting_Mutation_Response>>
     >;
     update_room_ChimeMeeting_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ChimeMeeting_By_PkArgs,
+        Mutation_RootUpdate_Room_ChimeMeeting_By_PkArgs,
         Maybe<WithTypename<Room_ChimeMeeting>>
     >;
     update_room_ManagementMode?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ManagementModeArgs,
+        Mutation_RootUpdate_Room_ManagementModeArgs,
         Maybe<WithTypename<Room_ManagementMode_Mutation_Response>>
     >;
     update_room_ManagementMode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ManagementMode_By_PkArgs,
+        Mutation_RootUpdate_Room_ManagementMode_By_PkArgs,
         Maybe<WithTypename<Room_ManagementMode>>
     >;
     update_room_Mode?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ModeArgs,
+        Mutation_RootUpdate_Room_ModeArgs,
         Maybe<WithTypename<Room_Mode_Mutation_Response>>
     >;
     update_room_Mode_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_Mode_By_PkArgs,
+        Mutation_RootUpdate_Room_Mode_By_PkArgs,
         Maybe<WithTypename<Room_Mode>>
     >;
     update_room_Participant?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ParticipantArgs,
+        Mutation_RootUpdate_Room_ParticipantArgs,
         Maybe<WithTypename<Room_Participant_Mutation_Response>>
     >;
     update_room_Participant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_Participant_By_PkArgs,
+        Mutation_RootUpdate_Room_Participant_By_PkArgs,
         Maybe<WithTypename<Room_Participant>>
     >;
     update_room_PersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_PersonRoleArgs,
+        Mutation_RootUpdate_Room_PersonRoleArgs,
         Maybe<WithTypename<Room_PersonRole_Mutation_Response>>
     >;
     update_room_PersonRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_PersonRole_By_PkArgs,
+        Mutation_RootUpdate_Room_PersonRole_By_PkArgs,
         Maybe<WithTypename<Room_PersonRole>>
     >;
     update_room_Room?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_RoomArgs,
+        Mutation_RootUpdate_Room_RoomArgs,
         Maybe<WithTypename<Room_Room_Mutation_Response>>
     >;
     update_room_RoomGroupMembership?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_RoomGroupMembershipArgs,
+        Mutation_RootUpdate_Room_RoomGroupMembershipArgs,
         Maybe<WithTypename<Room_RoomGroupMembership_Mutation_Response>>
     >;
     update_room_RoomGroupMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_RoomGroupMembership_By_PkArgs,
+        Mutation_RootUpdate_Room_RoomGroupMembership_By_PkArgs,
         Maybe<WithTypename<Room_RoomGroupMembership>>
     >;
     update_room_RoomMembership?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_RoomMembershipArgs,
+        Mutation_RootUpdate_Room_RoomMembershipArgs,
         Maybe<WithTypename<Room_RoomMembership_Mutation_Response>>
     >;
     update_room_RoomMembership_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_RoomMembership_By_PkArgs,
+        Mutation_RootUpdate_Room_RoomMembership_By_PkArgs,
         Maybe<WithTypename<Room_RoomMembership>>
     >;
     update_room_Room_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_Room_By_PkArgs,
+        Mutation_RootUpdate_Room_Room_By_PkArgs,
         Maybe<WithTypename<Room_Room>>
     >;
     update_room_ShuffleAlgorithm?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleAlgorithmArgs,
+        Mutation_RootUpdate_Room_ShuffleAlgorithmArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm_Mutation_Response>>
     >;
     update_room_ShuffleAlgorithm_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleAlgorithm_By_PkArgs,
+        Mutation_RootUpdate_Room_ShuffleAlgorithm_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleAlgorithm>>
     >;
     update_room_ShufflePeriod?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShufflePeriodArgs,
+        Mutation_RootUpdate_Room_ShufflePeriodArgs,
         Maybe<WithTypename<Room_ShufflePeriod_Mutation_Response>>
     >;
     update_room_ShufflePeriod_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShufflePeriod_By_PkArgs,
+        Mutation_RootUpdate_Room_ShufflePeriod_By_PkArgs,
         Maybe<WithTypename<Room_ShufflePeriod>>
     >;
     update_room_ShuffleQueueEntry?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleQueueEntryArgs,
+        Mutation_RootUpdate_Room_ShuffleQueueEntryArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry_Mutation_Response>>
     >;
     update_room_ShuffleQueueEntry_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleQueueEntry_By_PkArgs,
+        Mutation_RootUpdate_Room_ShuffleQueueEntry_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleQueueEntry>>
     >;
     update_room_ShuffleRoom?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleRoomArgs,
+        Mutation_RootUpdate_Room_ShuffleRoomArgs,
         Maybe<WithTypename<Room_ShuffleRoom_Mutation_Response>>
     >;
     update_room_ShuffleRoom_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Room_ShuffleRoom_By_PkArgs,
+        Mutation_RootUpdate_Room_ShuffleRoom_By_PkArgs,
         Maybe<WithTypename<Room_ShuffleRoom>>
     >;
     update_schedule_Continuation?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_ContinuationArgs,
+        Mutation_RootUpdate_Schedule_ContinuationArgs,
         Maybe<WithTypename<Schedule_Continuation_Mutation_Response>>
     >;
     update_schedule_Continuation_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_Continuation_By_PkArgs,
+        Mutation_RootUpdate_Schedule_Continuation_By_PkArgs,
         Maybe<WithTypename<Schedule_Continuation>>
     >;
     update_schedule_Event?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_EventArgs,
+        Mutation_RootUpdate_Schedule_EventArgs,
         Maybe<WithTypename<Schedule_Event_Mutation_Response>>
     >;
     update_schedule_EventProgramPerson?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_EventProgramPersonArgs,
+        Mutation_RootUpdate_Schedule_EventProgramPersonArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson_Mutation_Response>>
     >;
     update_schedule_EventProgramPersonRole?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_EventProgramPersonRoleArgs,
+        Mutation_RootUpdate_Schedule_EventProgramPersonRoleArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole_Mutation_Response>>
     >;
     update_schedule_EventProgramPersonRole_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_EventProgramPersonRole_By_PkArgs,
+        Mutation_RootUpdate_Schedule_EventProgramPersonRole_By_PkArgs,
         Maybe<WithTypename<Schedule_EventProgramPersonRole>>
     >;
     update_schedule_EventProgramPerson_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_EventProgramPerson_By_PkArgs,
+        Mutation_RootUpdate_Schedule_EventProgramPerson_By_PkArgs,
         Maybe<WithTypename<Schedule_EventProgramPerson>>
     >;
     update_schedule_Event_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_Event_By_PkArgs,
+        Mutation_RootUpdate_Schedule_Event_By_PkArgs,
         Maybe<WithTypename<Schedule_Event>>
     >;
     update_schedule_StarredEvent?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_StarredEventArgs,
+        Mutation_RootUpdate_Schedule_StarredEventArgs,
         Maybe<WithTypename<Schedule_StarredEvent_Mutation_Response>>
     >;
     update_schedule_StarredEvent_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Schedule_StarredEvent_By_PkArgs,
+        Mutation_RootUpdate_Schedule_StarredEvent_By_PkArgs,
         Maybe<WithTypename<Schedule_StarredEvent>>
     >;
     update_system_Configuration?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_ConfigurationArgs,
+        Mutation_RootUpdate_System_ConfigurationArgs,
         Maybe<WithTypename<System_Configuration_Mutation_Response>>
     >;
     update_system_ConfigurationKey?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_ConfigurationKeyArgs,
+        Mutation_RootUpdate_System_ConfigurationKeyArgs,
         Maybe<WithTypename<System_ConfigurationKey_Mutation_Response>>
     >;
     update_system_ConfigurationKey_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_ConfigurationKey_By_PkArgs,
+        Mutation_RootUpdate_System_ConfigurationKey_By_PkArgs,
         Maybe<WithTypename<System_ConfigurationKey>>
     >;
     update_system_ConfigurationPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_ConfigurationPermissionGrantArgs,
+        Mutation_RootUpdate_System_ConfigurationPermissionGrantArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant_Mutation_Response>>
     >;
     update_system_ConfigurationPermissionGrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_ConfigurationPermissionGrant_By_PkArgs,
+        Mutation_RootUpdate_System_ConfigurationPermissionGrant_By_PkArgs,
         Maybe<WithTypename<System_ConfigurationPermissionGrant>>
     >;
     update_system_Configuration_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_Configuration_By_PkArgs,
+        Mutation_RootUpdate_System_Configuration_By_PkArgs,
         Maybe<WithTypename<System_Configuration>>
     >;
     update_system_SuperUserPermission?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_SuperUserPermissionArgs,
+        Mutation_RootUpdate_System_SuperUserPermissionArgs,
         Maybe<WithTypename<System_SuperUserPermission_Mutation_Response>>
     >;
     update_system_SuperUserPermissionGrant?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_SuperUserPermissionGrantArgs,
+        Mutation_RootUpdate_System_SuperUserPermissionGrantArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant_Mutation_Response>>
     >;
     update_system_SuperUserPermissionGrant_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_SuperUserPermissionGrant_By_PkArgs,
+        Mutation_RootUpdate_System_SuperUserPermissionGrant_By_PkArgs,
         Maybe<WithTypename<System_SuperUserPermissionGrant>>
     >;
     update_system_SuperUserPermission_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_System_SuperUserPermission_By_PkArgs,
+        Mutation_RootUpdate_System_SuperUserPermission_By_PkArgs,
         Maybe<WithTypename<System_SuperUserPermission>>
     >;
     update_video_ChannelStack?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_ChannelStackArgs,
+        Mutation_RootUpdate_Video_ChannelStackArgs,
         Maybe<WithTypename<Video_ChannelStack_Mutation_Response>>
     >;
     update_video_ChannelStack_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_ChannelStack_By_PkArgs,
+        Mutation_RootUpdate_Video_ChannelStack_By_PkArgs,
         Maybe<WithTypename<Video_ChannelStack>>
     >;
     update_video_EventVonageSession?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_EventVonageSessionArgs,
+        Mutation_RootUpdate_Video_EventVonageSessionArgs,
         Maybe<WithTypename<Video_EventVonageSession_Mutation_Response>>
     >;
     update_video_EventVonageSession_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_EventVonageSession_By_PkArgs,
+        Mutation_RootUpdate_Video_EventVonageSession_By_PkArgs,
         Maybe<WithTypename<Video_EventVonageSession>>
     >;
     update_video_ImmediateSwitch?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_ImmediateSwitchArgs,
+        Mutation_RootUpdate_Video_ImmediateSwitchArgs,
         Maybe<WithTypename<Video_ImmediateSwitch_Mutation_Response>>
     >;
     update_video_ImmediateSwitch_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_ImmediateSwitch_By_PkArgs,
+        Mutation_RootUpdate_Video_ImmediateSwitch_By_PkArgs,
         Maybe<WithTypename<Video_ImmediateSwitch>>
     >;
     update_video_InputType?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_InputTypeArgs,
+        Mutation_RootUpdate_Video_InputTypeArgs,
         Maybe<WithTypename<Video_InputType_Mutation_Response>>
     >;
     update_video_InputType_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_InputType_By_PkArgs,
+        Mutation_RootUpdate_Video_InputType_By_PkArgs,
         Maybe<WithTypename<Video_InputType>>
     >;
     update_video_MediaLiveChannelStatus?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_MediaLiveChannelStatusArgs,
+        Mutation_RootUpdate_Video_MediaLiveChannelStatusArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus_Mutation_Response>>
     >;
     update_video_MediaLiveChannelStatus_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_MediaLiveChannelStatus_By_PkArgs,
+        Mutation_RootUpdate_Video_MediaLiveChannelStatus_By_PkArgs,
         Maybe<WithTypename<Video_MediaLiveChannelStatus>>
     >;
     update_video_RoomRtmpOutput?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_RoomRtmpOutputArgs,
+        Mutation_RootUpdate_Video_RoomRtmpOutputArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput_Mutation_Response>>
     >;
     update_video_RoomRtmpOutput_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_RoomRtmpOutput_By_PkArgs,
+        Mutation_RootUpdate_Video_RoomRtmpOutput_By_PkArgs,
         Maybe<WithTypename<Video_RoomRtmpOutput>>
     >;
     update_video_RtmpInput?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_RtmpInputArgs,
+        Mutation_RootUpdate_Video_RtmpInputArgs,
         Maybe<WithTypename<Video_RtmpInput_Mutation_Response>>
     >;
     update_video_RtmpInput_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_RtmpInput_By_PkArgs,
+        Mutation_RootUpdate_Video_RtmpInput_By_PkArgs,
         Maybe<WithTypename<Video_RtmpInput>>
     >;
     update_video_TranscriptionJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_TranscriptionJobArgs,
+        Mutation_RootUpdate_Video_TranscriptionJobArgs,
         Maybe<WithTypename<Video_TranscriptionJob_Mutation_Response>>
     >;
     update_video_TranscriptionJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_TranscriptionJob_By_PkArgs,
+        Mutation_RootUpdate_Video_TranscriptionJob_By_PkArgs,
         Maybe<WithTypename<Video_TranscriptionJob>>
     >;
     update_video_VideoRenderJob?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VideoRenderJobArgs,
+        Mutation_RootUpdate_Video_VideoRenderJobArgs,
         Maybe<WithTypename<Video_VideoRenderJob_Mutation_Response>>
     >;
     update_video_VideoRenderJob_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VideoRenderJob_By_PkArgs,
+        Mutation_RootUpdate_Video_VideoRenderJob_By_PkArgs,
         Maybe<WithTypename<Video_VideoRenderJob>>
     >;
     update_video_VonageParticipantStream?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageParticipantStreamArgs,
+        Mutation_RootUpdate_Video_VonageParticipantStreamArgs,
         Maybe<WithTypename<Video_VonageParticipantStream_Mutation_Response>>
     >;
     update_video_VonageParticipantStream_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageParticipantStream_By_PkArgs,
+        Mutation_RootUpdate_Video_VonageParticipantStream_By_PkArgs,
         Maybe<WithTypename<Video_VonageParticipantStream>>
     >;
     update_video_VonageRoomRecording?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageRoomRecordingArgs,
+        Mutation_RootUpdate_Video_VonageRoomRecordingArgs,
         Maybe<WithTypename<Video_VonageRoomRecording_Mutation_Response>>
     >;
     update_video_VonageRoomRecording_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageRoomRecording_By_PkArgs,
+        Mutation_RootUpdate_Video_VonageRoomRecording_By_PkArgs,
         Maybe<WithTypename<Video_VonageRoomRecording>>
     >;
     update_video_VonageSessionLayout?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageSessionLayoutArgs,
+        Mutation_RootUpdate_Video_VonageSessionLayoutArgs,
         Maybe<WithTypename<Video_VonageSessionLayout_Mutation_Response>>
     >;
     update_video_VonageSessionLayout_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_VonageSessionLayout_By_PkArgs,
+        Mutation_RootUpdate_Video_VonageSessionLayout_By_PkArgs,
         Maybe<WithTypename<Video_VonageSessionLayout>>
     >;
     update_video_YouTubeUpload?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_YouTubeUploadArgs,
+        Mutation_RootUpdate_Video_YouTubeUploadArgs,
         Maybe<WithTypename<Video_YouTubeUpload_Mutation_Response>>
     >;
     update_video_YouTubeUpload_by_pk?: GraphCacheOptimisticMutationResolver<
-        MutationUpdate_Video_YouTubeUpload_By_PkArgs,
+        Mutation_RootUpdate_Video_YouTubeUpload_By_PkArgs,
         Maybe<WithTypename<Video_YouTubeUpload>>
     >;
 };

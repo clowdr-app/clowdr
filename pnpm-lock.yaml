@@ -106,12 +106,12 @@ importers:
       '@fortawesome/free-regular-svg-icons': ^5.15.4
       '@graphql-codegen/cli': 2.2.2
       '@graphql-codegen/fragment-matcher': 3.2.0
-      '@graphql-codegen/typescript': 2.3.0
+      '@graphql-codegen/typescript': 2.3.1
       '@graphql-codegen/typescript-document-nodes': 2.2.0
       '@graphql-codegen/typescript-graphql-files-modules': 2.1.0
       '@graphql-codegen/typescript-operations': 2.2.0
-      '@graphql-codegen/typescript-urql': ^3.3.0
-      '@graphql-codegen/typescript-urql-graphcache': ^2.2.0
+      '@graphql-codegen/typescript-urql': ^3.4.0
+      '@graphql-codegen/typescript-urql-graphcache': ^2.2.1
       '@graphql-codegen/urql-introspection': ^2.1.0
       '@midspace/assert': workspace:*
       '@midspace/graphql': workspace:*
@@ -120,10 +120,10 @@ importers:
       '@researchgate/react-intersection-observer': ^1.3.5
       '@types/emoji-mart': ^3.0.8
       '@types/levenshtein-edit-distance': ^2.0.1
-      '@types/luxon': ^2.0.5
+      '@types/luxon': ^2.0.7
       '@types/mustache': ^4.1.2
       '@types/papaparse': ^5.3.1
-      '@types/ramda': ^0.27.46
+      '@types/ramda': ^0.27.47
       '@types/react': ^17.0.34
       '@types/react-color': ^3.0.6
       '@types/react-dom': ^17.0.11
@@ -152,7 +152,7 @@ importers:
       '@urql/exchange-request-policy': ^0.1.4
       '@urql/exchange-retry': ^0.3.0
       '@vitejs/plugin-legacy': ^1.6.2
-      '@vitejs/plugin-react': ^1.0.7
+      '@vitejs/plugin-react': ^1.0.8
       amazon-chime-sdk-component-library-react: ^2.11.1
       amazon-chime-sdk-js: ^2.20.1
       amazon-s3-uri: ^0.1.1
@@ -223,7 +223,7 @@ importers:
       video.js: ^7.15.4
       videojs-contrib-quality-levels: ^2.1.0
       videojs-hls-quality-selector: ^1.1.4
-      vite: ^2.6.13
+      vite: ^2.6.14
       xml-js: ^1.6.11
     dependencies:
       '@ahanapediatrics/ahana-fp': 2.6.0
@@ -246,10 +246,10 @@ importers:
       '@researchgate/react-intersection-observer': 1.3.5_react-dom@17.0.2+react@17.0.2
       '@types/emoji-mart': 3.0.8
       '@types/levenshtein-edit-distance': 2.0.1
-      '@types/luxon': 2.0.5
+      '@types/luxon': 2.0.7
       '@types/mustache': 4.1.2
       '@types/papaparse': 5.3.1
-      '@types/ramda': 0.27.46
+      '@types/ramda': 0.27.47
       '@types/react': 17.0.34
       '@types/react-color': 3.0.6
       '@types/react-dom': 17.0.11
@@ -276,8 +276,8 @@ importers:
       '@urql/exchange-graphcache': 4.3.5_graphql@15.7.2
       '@urql/exchange-request-policy': 0.1.4_graphql@15.7.2
       '@urql/exchange-retry': 0.3.0_graphql@15.7.2
-      '@vitejs/plugin-legacy': 1.6.2_vite@2.6.13
-      '@vitejs/plugin-react': 1.0.7
+      '@vitejs/plugin-legacy': 1.6.2_vite@2.6.14
+      '@vitejs/plugin-react': 1.0.8
       amazon-chime-sdk-component-library-react: 2.11.1_80edaeabebf4529030c1276319057f95
       amazon-chime-sdk-js: 2.20.1
       amazon-s3-uri: 0.1.1
@@ -344,17 +344,17 @@ importers:
       video.js: 7.15.4
       videojs-contrib-quality-levels: 2.1.0
       videojs-hls-quality-selector: 1.1.4
-      vite: 2.6.13
+      vite: 2.6.14
       xml-js: 1.6.11
     devDependencies:
       '@graphql-codegen/cli': 2.2.2_graphql@15.7.2+typescript@4.4.4
       '@graphql-codegen/fragment-matcher': 3.2.0_graphql@15.7.2
-      '@graphql-codegen/typescript': 2.3.0_graphql@15.7.2
+      '@graphql-codegen/typescript': 2.3.1_graphql@15.7.2
       '@graphql-codegen/typescript-document-nodes': 2.2.0_graphql@15.7.2
       '@graphql-codegen/typescript-graphql-files-modules': 2.1.0_graphql@15.7.2
       '@graphql-codegen/typescript-operations': 2.2.0_graphql@15.7.2
-      '@graphql-codegen/typescript-urql': 3.3.0_eafe594c8348de22d1705a6c5772654c
-      '@graphql-codegen/typescript-urql-graphcache': 2.2.0_0eb281deb1c9cbb2b68cb93f912d7be2
+      '@graphql-codegen/typescript-urql': 3.4.0_eafe594c8348de22d1705a6c5772654c
+      '@graphql-codegen/typescript-urql-graphcache': 2.2.1_0eb281deb1c9cbb2b68cb93f912d7be2
       '@graphql-codegen/urql-introspection': 2.1.0_graphql@15.7.2
       '@urql/devtools': 2.0.3_@urql+core@2.3.4+graphql@15.7.2
       dotenv: 10.0.0
@@ -6171,7 +6171,6 @@ packages:
       '@graphql-tools/utils': 8.5.1_graphql@15.7.2
       graphql: 15.7.2
       tslib: 2.3.1
-    dev: false
 
   /@graphql-codegen/typed-document-node/1.18.10_graphql@15.7.2:
     resolution: {integrity: sha512-bZD5MIE4cVHtzdNv3P2H06J7KkotBBBn7zfseePhz1ZxgFMj7cScWuhInf0tgkhNcyRjuSf/SYtmDWoxsG+Niw==}
@@ -6379,7 +6378,7 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     dependencies:
       '@graphql-codegen/plugin-helpers': 2.3.0_graphql@15.7.2
-      '@graphql-codegen/typescript': 2.3.0_graphql@15.7.2
+      '@graphql-codegen/typescript': 2.3.1_graphql@15.7.2
       '@graphql-codegen/visitor-plugin-common': 2.5.0_graphql@15.7.2
       auto-bind: 4.0.0
       graphql: 15.7.2
@@ -6387,11 +6386,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@graphql-codegen/typescript-urql-graphcache/2.2.0_0eb281deb1c9cbb2b68cb93f912d7be2:
-    resolution: {integrity: sha512-mraa/dOkQk1/I96Wpy6MCszVp7lwXc2fljixamx0Zj3eJKc5y+V1/4jyPxgVc2Iq2Epyto/b1wSQOmQdWCa3+w==}
+  /@graphql-codegen/typescript-urql-graphcache/2.2.1_0eb281deb1c9cbb2b68cb93f912d7be2:
+    resolution: {integrity: sha512-ggkNI1UKRJ4r26j4fI1RXRx6+g28MWmVc1jHH5JQucXQJzvd/ESlwNwym1pwc2dB3WAu/yOabSmnTA6MQbnc+w==}
     peerDependencies:
       '@urql/exchange-graphcache': ^4.1.1
-      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
       graphql-tag: ^2.0.0
     dependencies:
       '@graphql-codegen/plugin-helpers': 2.3.0_graphql@15.7.2
@@ -6421,6 +6420,23 @@ packages:
       tslib: 2.3.1
     transitivePeerDependencies:
       - supports-color
+
+  /@graphql-codegen/typescript-urql/3.4.0_eafe594c8348de22d1705a6c5772654c:
+    resolution: {integrity: sha512-TPyEHleOJyPOTPI1VJXu7eDn/hyMcU2MuAZiNJQ4GTAQb4qIaCE6sGPfcQfxqqxYnkm8Pb1h8Q4s/6rQjT5Tyg==}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+      graphql-tag: ^2.0.0
+    dependencies:
+      '@graphql-codegen/plugin-helpers': 2.3.0_graphql@15.7.2
+      '@graphql-codegen/visitor-plugin-common': 2.5.0_graphql@15.7.2
+      auto-bind: 4.0.0
+      change-case-all: 1.0.14
+      graphql: 15.7.2
+      graphql-tag: 2.12.5_graphql@15.7.2
+      tslib: 2.3.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@graphql-codegen/typescript/1.23.0_graphql@15.7.2:
     resolution: {integrity: sha512-ZfFgk5mGfuOy4kEpy+dcuvJMphigMfJ4AkiP1qWmWFufDW3Sg2yayTSNmzeFdcXMrWGgfNW2dKtuuTmbmQhS5g==}
@@ -6462,6 +6478,7 @@ packages:
       tslib: 2.3.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@graphql-codegen/typescript/2.3.1_graphql@15.7.2:
     resolution: {integrity: sha512-5wfuJhXnDVdufznLZG2/YlPMy5qGVYAEodBACVT8Dfgnt7T8eQOdaTfEPh04hqf/WR6DDoiLrJDcdyqWUO305w==}
@@ -6476,7 +6493,6 @@ packages:
       tslib: 2.3.1
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@graphql-codegen/urql-introspection/2.1.0_graphql@15.7.2:
     resolution: {integrity: sha512-OBKKJqNsySrslQMKRiL5yLtLXHKYK5WMG6sDLTOBwz12hChqqeCKu39bfFGgP26Pe6x1YWGqHpnsXPTMPWaNjQ==}
@@ -8520,8 +8536,8 @@ packages:
     resolution: {integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==}
     dev: false
 
-  /@types/luxon/2.0.5:
-    resolution: {integrity: sha512-GKrG5v16BOs9XGpouu33hOkAFaiSDi3ZaDXG9F2yAoyzHRBtksZnI60VWY5aM/yAENCccBejrxw8jDY+9OVlxw==}
+  /@types/luxon/2.0.7:
+    resolution: {integrity: sha512-AxiYycfO+/M4VIH0ribSr2iPFC+APewpJIaQSydwVnzorK3mjSFXkA3HmhQidGx44MpwaatFyEkbW/WD4zdDaQ==}
     dev: false
 
   /@types/markdown-it/12.2.3:
@@ -8635,6 +8651,12 @@ packages:
 
   /@types/ramda/0.27.46:
     resolution: {integrity: sha512-PpHUGfV3AkUT57kP9GzS6NIHHebd5wHuA19tV/SDqrVNkHrJJSfNEq/imyt7JGKBdn7VgktXUN137mrI/shzkw==}
+    dependencies:
+      ts-toolbelt: 6.15.5
+    dev: false
+
+  /@types/ramda/0.27.47:
+    resolution: {integrity: sha512-kWB51Q/R+5jS6StvaZq2Q4+EFlUPAB5Av6OwgWddAEkjXMdrefRwR2/B5B9V7xYFO37dwwZ/q2iMLQHFIcOwDw==}
     dependencies:
       ts-toolbelt: 6.15.5
     dev: false
@@ -9311,7 +9333,7 @@ packages:
       is-function: 1.0.2
     dev: false
 
-  /@vitejs/plugin-legacy/1.6.2_vite@2.6.13:
+  /@vitejs/plugin-legacy/1.6.2_vite@2.6.14:
     resolution: {integrity: sha512-p5Bv/827WUpVN2m95ZYXzmjE3AblFE4CHasVoZ7dIwOPlyNcpg70SehEi5AWqyC0E7C1rHD8Nju9rWoV9uBLiw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -9322,11 +9344,11 @@ packages:
       magic-string: 0.25.7
       regenerator-runtime: 0.13.9
       systemjs: 6.11.0
-      vite: 2.6.13
+      vite: 2.6.14
     dev: false
 
-  /@vitejs/plugin-react/1.0.7:
-    resolution: {integrity: sha512-dzxzohFOAVVXpGlFn6Uvw2xaSLp80Vjmg2e5G1XdMV266vVKrcDqg9CWP/AiJiXuubNUdgy1k4E8dNXI6WCyhw==}
+  /@vitejs/plugin-react/1.0.8:
+    resolution: {integrity: sha512-Rt0tClew2QQokF03MoiIXTMMTIVKTH0eYulN9i81v/LitH4MfDHzIgetPzKvp+uCO9Fyb3tfYNKCw6l2/zW00w==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@babel/core': 7.16.0
@@ -21107,8 +21129,8 @@ packages:
       global: 4.4.0
     dev: false
 
-  /vite/2.6.13:
-    resolution: {integrity: sha512-+tGZ1OxozRirTudl4M3N3UTNJOlxdVo/qBl2IlDEy/ZpTFcskp+k5ncNjayR3bRYTCbqSOFz2JWGN1UmuDMScA==}
+  /vite/2.6.14:
+    resolution: {integrity: sha512-2HA9xGyi+EhY2MXo0+A2dRsqsAG3eFNEVIo12olkWhOmc8LfiM+eMdrXf+Ruje9gdXgvSqjLI9freec1RUM5EA==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:

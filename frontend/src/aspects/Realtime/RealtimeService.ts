@@ -81,7 +81,7 @@ export class RealtimeService {
 
             datadogLogs.logger.info("Connecting to realtime service: Done.");
         } catch (e) {
-            datadogLogs.logger.error("Failed to create socket for realtime service.", e);
+            datadogLogs.logger.error("Failed to create socket for realtime service.", { error: e });
             this.socket = undefined;
         } finally {
             release();

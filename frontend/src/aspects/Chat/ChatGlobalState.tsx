@@ -362,7 +362,7 @@ export class MessageState {
             this.reactions.push(fullRct);
             this.reactionsObs.publish([...this.reactions]);
         } catch (e) {
-            datadogLogs.logger.error(`Error adding reaction: ${this.sId} / ${rct.symbol}`, e);
+            datadogLogs.logger.error(`Error adding reaction: ${this.sId} / ${rct.symbol}`, { error: e });
         }
     }
     public async deleteReaction(reactionSId: string): Promise<void> {
@@ -379,7 +379,7 @@ export class MessageState {
             this.reactions = this.reactions.filter((x) => x.sId !== reactionSId);
             this.reactionsObs.publish([...this.reactions]);
         } catch (e) {
-            datadogLogs.logger.error(`Error deleting reaction: ${this.sId} / ${reactionSId}`, e);
+            datadogLogs.logger.error(`Error deleting reaction: ${this.sId} / ${reactionSId}`, { error: e });
         }
     }
     public get Reactions(): Observable<ChatReactionDataFragment[]> {
@@ -592,7 +592,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error toggling chat pin: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error toggling chat pin: ${this.Id}`, { error: e });
         } finally {
             this.isTogglingPinned = false;
             release();
@@ -668,7 +668,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error toggling chat subscription: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error toggling chat subscription: ${this.Id}`, { error: e });
         } finally {
             this.isTogglingSubscribed = false;
             release();
@@ -774,7 +774,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error loading more messages: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error loading more messages: ${this.Id}`, { error: e });
         } finally {
             this.isLoadingMessages = false;
             release();
@@ -815,7 +815,7 @@ export class ChatState {
                 await this.applyConnect(false, false);
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error subscribing to chat: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error subscribing to chat: ${this.Id}`, { error: e });
         } finally {
             release();
         }
@@ -827,7 +827,7 @@ export class ChatState {
             this.lastDisconnect = Date.now();
             this.connectionCount--;
         } catch (e) {
-            datadogLogs.logger.error(`Error unsubscribing from chat: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error unsubscribing from chat: ${this.Id}`, { error: e });
         } finally {
             release();
         }
@@ -930,7 +930,7 @@ export class ChatState {
                 }
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error processing new messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing new messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
             if (newMessageStates && newMessageStates.length > 0) {
@@ -950,7 +950,7 @@ export class ChatState {
                 deletedSId = msg.sId;
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error processing removed messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing removed messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
             if (deletedSId) {
@@ -970,7 +970,7 @@ export class ChatState {
                 existingMsg.update(msg);
             }
         } catch (e) {
-            datadogLogs.logger.error(`Error processing updated messages from remote service: ${this.Id}`, e);
+            datadogLogs.logger.error(`Error processing updated messages from remote service: ${this.Id}`, { error: e });
         } finally {
             release();
         }
@@ -1090,7 +1090,7 @@ export class ChatState {
                 throw new Error("New message mutation returned null or undefined");
             }
         } catch (e) {
-            datadogLogs.logger.error(`Failed to send message: ${this.Id}`, e);
+            datadogLogs.logger.error(`Failed to send message: ${this.Id}`, { error: e });
         } finally {
             this.isSending = false;
             release();
@@ -1106,7 +1106,7 @@ export class ChatState {
                 messageSIds: [messageSId],
             });
         } catch (e) {
-            datadogLogs.logger.error(`Error deleting message: ${this.Id} @ ${messageSId}`, e);
+            datadogLogs.logger.error(`Error deleting message: ${this.Id} @ ${messageSId}`, { error: e });
             throw e;
         } finally {
             release();
@@ -1392,7 +1392,9 @@ export class GlobalChatState {
                                         release();
                                     }
                                 } catch (e) {
-                                    datadogLogs.logger.error(`Error initialising newly pinned chat: ${chatId}`, e);
+                                    datadogLogs.logger.error(`Error initialising newly pinned chat: ${chatId}`, {
+                                        error: e,
+                                    });
                                 }
                             }
                         });
@@ -1500,7 +1502,7 @@ export class GlobalChatState {
                 }
             }
         } catch (e) {
-            datadogLogs.logger.error("Failed to initialise chat state", e);
+            datadogLogs.logger.error("Failed to initialise chat state", { error: e });
         } finally {
             release();
         }
@@ -1597,7 +1599,7 @@ export class GlobalChatState {
                 release();
             }
         } catch (e) {
-            datadogLogs.logger.error(`Failed to fetch chat: ${chatId}`, e);
+            datadogLogs.logger.error(`Failed to fetch chat: ${chatId}`, { error: e });
         }
     }
 
@@ -1645,7 +1647,7 @@ export class GlobalChatState {
                 );
                 this.chatStatesObs.publish(states);
             } catch (e) {
-                datadogLogs.logger.error("One or more errors tearing down old chats", e);
+                datadogLogs.logger.error("One or more errors tearing down old chats", { error: e });
             } finally {
                 release();
             }

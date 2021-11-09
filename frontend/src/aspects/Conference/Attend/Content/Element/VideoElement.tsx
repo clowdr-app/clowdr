@@ -117,6 +117,9 @@ export function VideoElement({
                 tracks,
                 hlsVersion: "1.0.4",
                 hlsOptions,
+                attributes: {
+                    preload: "metadata",
+                },
             },
         };
     }, [error, loading, subtitlesUrl]);

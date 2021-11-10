@@ -39,6 +39,10 @@
     },
     "typesVersions": {
         "*": {
+            ".": [
+                "build/cjs/index.d.ts",
+                "build/esm/index.d.ts"
+            ],
             "*": [
                 "build/cjs/*",
                 "build/esm/*"

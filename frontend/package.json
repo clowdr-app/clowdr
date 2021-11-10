@@ -7,7 +7,7 @@
         "build:tsc": "tsc --build",
         "build:vite": "vite build",
         "clean": "rimraf build node_modules/.vite dist",
-        "dev": "tsc-watch --noClear --onFirstSuccess \"vite\"",
+        "dev": "tsc-watch --build --noClear --onFirstSuccess \"vite\"",
         "start": "vite preview --port 3000",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",

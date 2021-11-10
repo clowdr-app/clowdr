@@ -92,6 +92,20 @@
             },
             "args": ["codegen", "-r", "--filter \"...^@midspace/graphql\""]
         },
+        // Single -- GraphQL Codegen
+        {
+            "label": "Single -- GraphQL Codegen",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["codegen", "--filter", "${input:package-name}"]
+        },
         // Action service -- Local Development
         {
             "label": "Actions Service -- Local Development",
@@ -247,6 +261,34 @@
             },
             "args": ["build", "-r"]
         },
+        // All -- Clean
+        {
+            "label": "All -- Clean",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["clean", "-r"]
+        },
+        // Single -- Build
+        {
+            "label": "Single -- Build",
+            "type": "shell",
+            "command": "pnpm",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "args": ["build", "--filter", "${input:package-name}..."]
+        },
         // Packetriot
         {
             "label": "Packetriot",
@@ -357,6 +399,22 @@
             "description": "AWS profile name",
             "default": "sandbox",
             "type": "promptString"
+        },
+        {
+            "id": "package-name",
+            "description": "Package name",
+            "default": "service-actions",
+            "options": [
+                "frontend",
+                "service-actions",
+                "service-playout",
+                "service-realtime",
+                "auth",
+                "caches",
+                "graphql",
+                "hasura"
+            ],
+            "type": "pickString"
         }
     ]
 }

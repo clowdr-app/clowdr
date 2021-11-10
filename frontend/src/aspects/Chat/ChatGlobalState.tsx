@@ -600,9 +600,10 @@ export class ChatState {
             this.isPinnedObs.publish(this.isPinned);
         }
     }
-    public async setIsPinned(value: boolean): Promise<void> {
+    public async setIsPinned_NoMutation(value: boolean): Promise<void> {
         if (value !== this.isPinned) {
-            await this.togglePinned();
+            this.isPinned = !this.isPinned;
+            this.isPinnedObs.publish(this.isPinned);
         }
     }
 
@@ -676,9 +677,10 @@ export class ChatState {
             this.isSubscribedObs.publish(this.isSubscribed);
         }
     }
-    public async setIsSubscribed(value: boolean): Promise<void> {
+    public async setIsSubscribed_NoMutation(value: boolean): Promise<void> {
         if (value !== this.isSubscribed) {
-            await this.toggleSubscribed();
+            this.isSubscribed = !this.isSubscribed;
+            this.isSubscribedObs.publish(this.isSubscribed);
         }
     }
 
@@ -1354,19 +1356,19 @@ export class GlobalChatState {
                         socket.on("chat.subscribed", (chatId: string) => {
                             // console.info(`Chat subscribed: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsSubscribed(true);
+                            existing?.setIsSubscribed_NoMutation(true);
                         });
                         socket.on("chat.unsubscribed", (chatId: string) => {
                             // console.info(`Chat unsubscribed: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsSubscribed(false);
+                            existing?.setIsSubscribed_NoMutation(false);
                         });
 
                         socket.on("chat.pinned", async (chatId: string) => {
                             // console.info(`Chat pinned: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
                             if (existing) {
-                                existing.setIsPinned(true);
+                                existing.setIsPinned_NoMutation(true);
                             } else {
                                 try {
                                     const newlyPinSubChats = await this.apolloClient.query<
@@ -1403,7 +1405,7 @@ export class GlobalChatState {
                         socket.on("chat.unpinned", (chatId: string) => {
                             // console.info(`Chat unpinned: ${chatId}`);
                             const existing = this.chatStates?.get(chatId);
-                            existing?.setIsPinned(false);
+                            existing?.setIsPinned_NoMutation(false);
                         });
 
                         socket.on("chat.messages.receive", (msg: Message) => {

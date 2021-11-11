@@ -11,7 +11,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useItemsByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
@@ -41,9 +41,14 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
     const title = useTitle("Submissions");
 
     const accessToken = magicToken;
-    const context = useShieldedHeaders({
-        "X-Auth-Magic-Token": magicToken,
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Magic-Token": magicToken,
+            }),
+            [magicToken]
+        )
+    );
     const [itemsResponse] = useItemsByPersonAccessTokenQuery({
         variables: {
             accessToken,

@@ -13,7 +13,7 @@ import {
 import type { VideoFileBlob } from "@midspace/shared-types/content";
 import type { LayoutDataBlob } from "@midspace/shared-types/content/layoutData";
 import * as R from "ramda";
-import React from "react";
+import React, { useMemo } from "react";
 import { gql } from "urql";
 import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
@@ -51,9 +51,14 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const title = useTitle("Submission");
 
     const accessToken = magicToken;
-    const context = useShieldedHeaders({
-        "X-Auth-Magic-Token": magicToken,
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Magic-Token": magicToken,
+            }),
+            [magicToken]
+        )
+    );
     const [itemResponse] = useItemByPersonAccessTokenQuery({
         variables: {
             itemId,

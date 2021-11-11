@@ -126,9 +126,14 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [result] = useSubmissionRequestsModalDataQuery({
         variables: {
             conferenceId: conference.id,

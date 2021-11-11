@@ -19,7 +19,7 @@ import {
     Tr,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { gql } from "urql";
 import { useGetChannelStacksQuery } from "../../../../generated/graphql";
@@ -44,9 +44,14 @@ gql`
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ data, fetching: loading, error }, refetch] = useGetChannelStacksQuery({
         variables: { conferenceId },
         context,

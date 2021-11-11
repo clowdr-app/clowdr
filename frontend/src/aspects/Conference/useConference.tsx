@@ -1,7 +1,7 @@
 import { VStack } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
 import { gql } from "@urql/core";
-import React from "react";
+import React, { useMemo } from "react";
 import { AppError } from "../../AppError";
 import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "../../generated/graphql";
 import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
@@ -149,9 +149,14 @@ function ConferenceProvider_WithoutUser({
     children: string | JSX.Element | JSX.Element[];
     conferenceId: string;
 }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "unauthenticated",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "unauthenticated",
+            }),
+            []
+        )
+    );
     const [{ fetching: loading, error, data }] = useConferenceById_WithoutUserQuery({
         variables: {
             id: conferenceId,
@@ -191,9 +196,14 @@ function ConferenceProvider_WithUser({
     userId: string;
     conferenceId: string;
 }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "attendee",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "attendee",
+            }),
+            []
+        )
+    );
     const [{ fetching: loading, error, data }] = useConferenceById_WithUserQuery({
         variables: {
             id: conferenceId,

@@ -166,9 +166,14 @@ export default function LivestreamMonitoring(): JSX.Element {
     const nowRoundedUp = roundUpToNearest(now, 60 * 1000);
     const nowStr = useMemo(() => new Date(nowRoundedDown + 3000).toISOString(), [nowRoundedDown]);
     const laterStr = useMemo(() => new Date(roundUpToNearest(now + 20 * 60 * 1000, 60 * 1000)).toISOString(), [now]);
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [response] = useMonitorLivestreamsQuery({
         variables: {
             conferenceId: conference.id,
@@ -559,9 +564,14 @@ export default function LivestreamMonitoring(): JSX.Element {
 
 function RoomTile({ id, name }: { id: string; name: string }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [roomChannelStackResponse] = useRoomPage_GetRoomChannelStackQuery({
         variables: {
             roomId: id,

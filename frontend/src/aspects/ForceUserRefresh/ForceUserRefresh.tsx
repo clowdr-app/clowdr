@@ -12,7 +12,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { compare } from "compare-versions";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useGetForceUserRefreshConfigQuery } from "../../generated/graphql";
@@ -34,9 +34,14 @@ gql`
 export default function ForceUserRefresh(): JSX.Element {
     const conference = useConference();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "attendee",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "attendee",
+            }),
+            []
+        )
+    );
     const [query, refetch] = useGetForceUserRefreshConfigQuery({
         variables: {
             conferenceId: conference.id,

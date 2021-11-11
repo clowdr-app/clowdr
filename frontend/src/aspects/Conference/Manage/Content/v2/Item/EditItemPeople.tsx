@@ -44,14 +44,20 @@ import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
             itemId,
         },
         context,
+        requestPolicy: "cache-and-network",
     });
     const itemPeople = itemPeopleResponse.data?.content_ItemProgramPerson;
     const itemPeopleIds = useMemo(() => itemPeople?.map((x) => x.id), [itemPeople]);
@@ -130,9 +136,14 @@ function AddItemPersonBody({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {
             conferenceId: conference.id,

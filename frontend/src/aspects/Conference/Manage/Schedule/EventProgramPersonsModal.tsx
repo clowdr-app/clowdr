@@ -114,9 +114,14 @@ export function AddEventProgramPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {
             conferenceId: event.conferenceId,

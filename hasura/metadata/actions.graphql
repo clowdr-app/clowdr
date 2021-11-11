@@ -26,9 +26,7 @@ type Query {
 }
 
 type Query {
-  getUploadAgreement(
-    magicToken: String!
-  ): GetUploadAgreementOutput
+  getUploadAgreement: GetUploadAgreementOutput
 }
 
 type Mutation {

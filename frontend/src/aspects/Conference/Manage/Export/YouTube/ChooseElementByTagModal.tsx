@@ -73,9 +73,14 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {
             conferenceId: conference.id,

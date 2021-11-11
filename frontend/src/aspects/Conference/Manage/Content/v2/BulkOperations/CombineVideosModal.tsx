@@ -114,9 +114,14 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {
             conferenceId: conference.id,

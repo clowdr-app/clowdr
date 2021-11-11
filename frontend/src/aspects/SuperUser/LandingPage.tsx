@@ -1,5 +1,5 @@
 import { Code, Container, Heading, Text, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useSuperUserStateQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
@@ -20,9 +20,14 @@ gql`
 export default function SuperUserLandingPage(): JSX.Element {
     const title = useTitle("Superuser");
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "superuser",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "superuser",
+            }),
+            []
+        )
+    );
     const [suStateResponse] = useSuperUserStateQuery({
         context,
     });

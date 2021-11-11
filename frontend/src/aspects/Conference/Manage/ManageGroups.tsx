@@ -69,9 +69,14 @@ export default function ManageGroups(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }, refetchAllGroups] =
         useSelectAllGroupsQuery({
             requestPolicy: "network-only",

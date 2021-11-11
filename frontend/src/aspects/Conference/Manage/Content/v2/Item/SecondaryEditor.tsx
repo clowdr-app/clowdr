@@ -18,7 +18,7 @@ import {
     useClipboard,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import type {
     ManageContent_ElementFragment,
     ManageContent_ItemSecondaryFragment,
@@ -107,9 +107,14 @@ function SecondaryEditorInner({
     openSendSubmissionRequests: (itemId: string, personIds: string[]) => void;
 }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [itemResponse, refetchItem] = useManageContent_SelectItemQuery({
         variables: {
             itemId,

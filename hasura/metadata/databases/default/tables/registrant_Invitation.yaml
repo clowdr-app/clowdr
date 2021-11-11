@@ -42,6 +42,21 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - conferenceId
+    - created_at
+    - id
+    - invitedEmailAddress
+    - registrantId
+    - updated_at
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - registrantId:
+          _in: X-Hasura-Registrant-Ids
+  role: attendee
+- permission:
+    columns:
     - invitedEmailAddress
     - linkToUserId
     - created_at

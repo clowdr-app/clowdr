@@ -1,5 +1,5 @@
 import { gql } from "@urql/core";
-import React from "react";
+import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
@@ -86,9 +86,14 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Room-Id": roomId,
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Room-Id": roomId,
+            }),
+            [roomId]
+        )
+    );
     const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {
             roomId,

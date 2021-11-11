@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle, Button, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useInitialiseSuperUserMutation } from "../../generated/graphql";
 import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
@@ -14,9 +14,14 @@ gql`
 `;
 
 export default function SuperUserInitialise(): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "superuser",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "superuser",
+            }),
+            []
+        )
+    );
     const [initialiseResponse, initialiseMutation] = useInitialiseSuperUserMutation();
 
     // TODO: System initialisation (when there's only a single user)

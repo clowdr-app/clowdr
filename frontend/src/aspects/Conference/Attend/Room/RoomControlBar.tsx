@@ -115,10 +115,15 @@ function RoomMembersModalInner({ roomDetails }: { roomDetails: RoomPage_RoomDeta
         ),
         [conferencePath, sortedRegistrants]
     );
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "room-member",
-        "X-Auth-Room-Id": roomDetails.id,
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "room-member",
+                "X-Auth-Room-Id": roomDetails.id,
+            }),
+            [roomDetails.id]
+        )
+    );
     const [selfIsAdminResponse] = useRoomPage_IsAdminQuery({
         variables: {
             roomId: roomDetails.id,

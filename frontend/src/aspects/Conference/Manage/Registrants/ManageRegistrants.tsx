@@ -225,9 +225,14 @@ export default function ManageRegistrants(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "main-conference-organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "main-conference-organizer",
+            }),
+            []
+        )
+    );
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
         requestPolicy: "network-only",
         variables: {
@@ -237,9 +242,14 @@ export default function ManageRegistrants(): JSX.Element {
     });
     useQueryErrorToast(errorAllGroups, false);
 
-    const selectAllRegistrantsContext = useShieldedHeaders({
-        "X-Auth-Role": "main-conference-organizer",
-    });
+    const selectAllRegistrantsContext = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "main-conference-organizer",
+            }),
+            []
+        )
+    );
     const [
         { fetching: loadingAllRegistrants, error: errorAllRegistrants, data: allRegistrants },
         refetchAllRegistrants,

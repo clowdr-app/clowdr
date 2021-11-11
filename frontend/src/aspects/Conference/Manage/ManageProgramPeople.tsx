@@ -132,9 +132,14 @@ export default function ManageProgramPeople(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage program people at ${conference.shortName}`);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ data: registrantsData }] = useManageProgramPeople_SelectAllRegistrantsQuery({
         variables: {
             conferenceId: conference.id,

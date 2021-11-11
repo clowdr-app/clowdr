@@ -1,17 +1,13 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
-import type {
-    getUploadAgreementArgs,
-    GetUploadAgreementOutput,
-    submitElementArgs,
-    updateSubtitlesArgs,
-} from "@midspace/hasura/actionTypes";
+import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import { json } from "body-parser";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import { assertType } from "typescript-is";
+import { assertType, TypeGuardError } from "typescript-is";
 import { handleElementUpdated, handleGetUploadAgreement } from "../handlers/content";
 import { handleElementSubmitted, handleUpdateSubtitles } from "../handlers/upload";
+import { BadRequestError, UnexpectedServerError } from "../lib/errors";
 
 export const router = express.Router();
 
@@ -76,20 +72,22 @@ router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
     }
 });
 
-router.post("/getUploadAgreement", json(), async (req: Request, res: Response<GetUploadAgreementOutput | string>) => {
-    const params = req.body.input;
-    try {
-        assertType<getUploadAgreementArgs>(params);
-    } catch (e: any) {
-        req.log.error({ input: req.body.input }, "Invalid request");
-        return res.status(500).json("Invalid request");
+router.post(
+    "/getUploadAgreement",
+    json(),
+    async (req: Request, res: Response<GetUploadAgreementOutput | string>, next: NextFunction) => {
+        try {
+            const magicToken = assertType<string>(req.magicToken);
+            const result = await handleGetUploadAgreement(magicToken);
+            res.status(200).json(result);
+        } catch (err: unknown) {
+            if (err instanceof TypeGuardError) {
+                next(new BadRequestError("Invalid request", { originalError: err }));
+            } else if (err instanceof Error) {
+                next(err);
+            } else {
+                next(new UnexpectedServerError("Server error", undefined, err));
+            }
+        }
     }
-
-    try {
-        const result = await handleGetUploadAgreement(params);
-        return res.status(200).json(result);
-    } catch (e: any) {
-        req.log.error({ err: e }, "Failed to retrieve agreement text");
-        return res.status(500).json("Failed to retrieve agreement text");
-    }
-});
+);

@@ -70,9 +70,14 @@ export default function ImportPanel({
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "main-conference-organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "main-conference-organizer",
+            }),
+            []
+        )
+    );
     const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
         variables: {
             conferenceId: conference.id,

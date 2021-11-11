@@ -60,9 +60,14 @@ gql`
 
 export default function SystemConfiguration(): JSX.Element {
     const currentUser = useCurrentUser();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "superuser",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "superuser",
+            }),
+            []
+        )
+    );
     const [currentUserPermissionsResponse] = useUserSysConfigPermissionsQuery({
         variables: {
             userId: currentUser.user.id,

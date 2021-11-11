@@ -12,7 +12,7 @@ import {
     useToast,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { gql } from "urql";
 import {
     Job_Queues_JobStatus_Enum,
@@ -90,9 +90,14 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {
             roomId,

@@ -308,9 +308,14 @@ export default function ManageContentV2(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags }, refetchAllTags] =
         useManageContent_SelectAllTagsQuery({
             requestPolicy: "network-only",

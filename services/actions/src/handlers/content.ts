@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client/core";
-import type { getUploadAgreementArgs, GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
+import type { GetUploadAgreementOutput } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import type { EmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
 import { isEmailTemplate_BaseConfig } from "@midspace/shared-types/conferenceConfiguration";
@@ -421,38 +421,24 @@ gql`
     }
 `;
 
-export async function handleGetUploadAgreement(args: getUploadAgreementArgs): Promise<GetUploadAgreementOutput> {
+export async function handleGetUploadAgreement(magicToken: string): Promise<GetUploadAgreementOutput> {
     const result = await apolloClient.query({
         query: GetUploadAgreementDocument,
         variables: {
-            accessToken: args.magicToken,
+            accessToken: magicToken,
         },
     });
 
-    if (result.error) {
-        throw new Error("No item found");
+    const value = result.data.collection_ProgramPerson?.[0]?.conference?.configurations?.[0].value;
+    const agreement = {
+        agreementText: value?.text,
+        agreementUrl: value?.url,
+    };
+    if (!agreement.agreementText) {
+        delete agreement.agreementText;
     }
-
-    if (
-        result.data.collection_ProgramPerson.length === 1 &&
-        result.data.collection_ProgramPerson[0].conference.configurations.length === 1
-    ) {
-        const value = result.data.collection_ProgramPerson[0].conference.configurations[0].value;
-        if ("text" in value && "url" in value) {
-            return {
-                agreementText: value.text,
-                agreementUrl: value.url,
-            };
-        } else if ("text" in value) {
-            return {
-                agreementText: value.text,
-            };
-        } else if ("url" in value) {
-            return {
-                agreementUrl: value.url,
-            };
-        }
+    if (!agreement.agreementUrl) {
+        delete agreement.agreementUrl;
     }
-
-    return {};
+    return agreement;
 }

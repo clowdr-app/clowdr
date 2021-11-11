@@ -62,9 +62,14 @@ function toS3Url(s3Url: string): string | undefined {
 export function AllVideoElements(): JSX.Element {
     const conference = useConference();
     const { reset } = useContext(VideoDownloadContext);
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {
             conferenceId: conference.id,

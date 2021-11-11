@@ -68,9 +68,14 @@ export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [shufflePeriodsQ, refetchShufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {
             conferenceId: conference.id,

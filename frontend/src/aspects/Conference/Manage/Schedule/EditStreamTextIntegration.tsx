@@ -15,7 +15,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { gql } from "urql";
 import {
     useSelectEventStreamTextEventIdQuery,
@@ -40,9 +40,14 @@ gql`
 `;
 
 export default function EditStreamTextIntegration({ eventId }: { eventId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [response] = useSelectEventStreamTextEventIdQuery({
         variables: {
             eventId,

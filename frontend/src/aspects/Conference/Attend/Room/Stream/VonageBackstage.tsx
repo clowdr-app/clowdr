@@ -6,6 +6,7 @@ import type { RoomEventDetailsFragment } from "../../../../../generated/graphql"
 import { useGetEventDetailsQuery, useGetEventVonageTokenMutation } from "../../../../../generated/graphql";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
+import useCurrentRegistrant from "../../../useCurrentRegistrant";
 import { BackstageControls } from "./Controls/BackstageControls";
 
 gql`
@@ -86,15 +87,18 @@ export function EventVonageRoomInner({
 }): JSX.Element {
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
 
+    const registrant = useCurrentRegistrant();
+
     const getAccessToken = useCallback(async () => {
         const result = await getEventVonageToken({
             eventId: event.id,
+            registrantId: registrant.id,
         });
         if (!result.data?.joinEventVonageSession?.accessToken) {
             throw new Error("No Vonage session ID");
         }
         return result.data?.joinEventVonageSession.accessToken;
-    }, [getEventVonageToken, event.id]);
+    }, [getEventVonageToken, event.id, registrant.id]);
 
     const sharedRoomContext = useSharedRoomContext();
 

@@ -135,6 +135,30 @@ function UrqlProviderInner({
                         retryIf: (err: CombinedError, _operation: Operation) => !!err && !!err.networkError,
                     };
 
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    const cache = cacheExchange<GraphCacheConfig>({
+                        keys: {
+                            analytics_ElementTotalViews: (data) => data.elementId as string,
+                            analytics_ItemTotalViews: (data) => data.itemId as string,
+                            chat_Pin: (data) => data.chatId + "-" + data.registrantId,
+                            chat_Reaction: (data) => data.sId as string,
+                            chat_ReadUpToIndex: (data) => data.chatId + "-" + data.registrantId,
+                            chat_Subscription: (data) => data.chatId + "-" + data.registrantId,
+                            conference_Configuration: (data) => data.key + "-" + data.conferenceId,
+                            PushNotificationSubscription: (data) => data.userId + "-" + data.endpoint,
+                            registrant_Profile: (data) => data.registrantId as string,
+                            registrant_ProfileBadges: (data) => data.registrantId + "-" + data.name,
+                            room_LivestreamDurations: (data) => data.roomId as string,
+                            schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
+                            system_Configuration: (data) => data.key as string,
+                        },
+                        schema: schema as any,
+                        storage,
+                        // resolvers,
+                        // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
+                    });
+
                     const newClient = createClient({
                         url: GraphQLHTTPUrl,
                         exchanges: [
@@ -145,31 +169,12 @@ function UrqlProviderInner({
                             //     shouldUpgrade: () =>
                             //         authCtxRef.current.isOnManagementPage || Date.now() - loadedAt > 30 * 1000,
                             // }),
-                            cacheExchange<GraphCacheConfig>({
-                                keys: {
-                                    analytics_ElementTotalViews: (data) => data.elementId as string,
-                                    analytics_ItemTotalViews: (data) => data.itemId as string,
-                                    chat_Pin: (data) => data.chatId + "-" + data.registrantId,
-                                    chat_Reaction: (data) => data.sId as string,
-                                    chat_ReadUpToIndex: (data) => data.chatId + "-" + data.registrantId,
-                                    chat_Subscription: (data) => data.chatId + "-" + data.registrantId,
-                                    conference_Configuration: (data) => data.key + "-" + data.conferenceId,
-                                    PushNotificationSubscription: (data) => data.userId + "-" + data.endpoint,
-                                    registrant_Profile: (data) => data.registrantId as string,
-                                    registrant_ProfileBadges: (data) => data.registrantId + "-" + data.name,
-                                    room_LivestreamDurations: (data) => data.roomId as string,
-                                    schedule_OverlappingEvents: (data) => data.xId + "-" + data.yId,
-                                    system_Configuration: (data) => data.key as string,
-                                },
-                                schema: schema as any,
-                                storage,
-                                // resolvers,
-                                // TODO: updates (for mutations) -- not sure if these are needed since we supply the schema
-                            }),
+                            cache,
                             authExchange(authOptions),
                             retryExchange(retryOptions),
                             fetchExchange,
                         ],
+                        requestPolicy: "cache-and-network",
                     });
                     setClient(newClient);
 
@@ -189,7 +194,7 @@ function UrqlProviderInner({
                 }
             }
         },
-        [getAccessTokenSilently, isAuthenticated, loadedAt]
+        [getAccessTokenSilently, isAuthenticated]
     );
 
     useEffect(() => {

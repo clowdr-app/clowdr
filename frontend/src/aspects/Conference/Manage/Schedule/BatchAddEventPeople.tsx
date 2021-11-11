@@ -370,9 +370,14 @@ function AddEventPeople_SingleProgramPersonPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [selectProgramPeopleQuery] = useAddEventPeople_SelectProgramPeopleQuery({
         pause: !hasBeenExpanded,
         variables: {
@@ -529,9 +534,14 @@ function AddEventPeople_FromGroupPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,
         variables: {
@@ -730,9 +740,14 @@ function AddEventPeople_SingleRegistrantPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,
         variables: {

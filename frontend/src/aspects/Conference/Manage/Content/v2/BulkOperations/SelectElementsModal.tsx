@@ -107,9 +107,14 @@ function ModalInner({
     restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [infos] = useSEoUm_InfosQuery({
         variables: {
             itemIds,

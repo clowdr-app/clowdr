@@ -488,7 +488,9 @@ function EditProfilePageInner({ registrant }: { registrant: RegistrantContextT }
                     <Alert status="error">
                         <AlertIcon />
                         <AlertTitle mr={2}>Error saving changes</AlertTitle>
-                        <AlertDescription>{errorUpdateProfile || errorUpdateRegistrantDisplayName}</AlertDescription>
+                        <AlertDescription>
+                            {errorUpdateProfile?.message ?? errorUpdateRegistrantDisplayName?.message}
+                        </AlertDescription>
                     </Alert>
                 ) : undefined}
                 <EditProfilePitureForm registrant={registrant} />

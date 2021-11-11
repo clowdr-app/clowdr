@@ -26,9 +26,14 @@ gql`
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {
             conferenceId,

@@ -261,9 +261,14 @@ function RoomSecondaryEditor({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [groups] = useManageRooms_SelectGroupsQuery({
         variables: {
             conferenceId: conference.id,
@@ -548,9 +553,14 @@ function EditableRoomsCRUDTable() {
     const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
     const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
         variables: {
             conferenceId: conference.id,

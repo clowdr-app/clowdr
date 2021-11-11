@@ -83,9 +83,14 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {
             itemIds,

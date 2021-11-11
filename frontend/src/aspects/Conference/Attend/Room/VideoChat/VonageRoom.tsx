@@ -12,7 +12,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as portals from "react-reverse-portal";
 import { useClient } from "urql";
 import type {
@@ -70,10 +70,16 @@ export function VideoChatVonageRoom({
     const sharedRoomContext = useSharedRoomContext();
     const { id: registrantId } = useCurrentRegistrant();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "room-member",
-        "X-Auth-Room-Id": room.id,
-    });
+    const registrant = useCurrentRegistrant();
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "room-member",
+                "X-Auth-Room-Id": room.id,
+            }),
+            [room.id]
+        )
+    );
     const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
 
@@ -85,6 +91,7 @@ export function VideoChatVonageRoom({
                 getEventVonageToken(
                     {
                         eventId,
+                        registrantId: registrant.id,
                     },
                     context
                 )

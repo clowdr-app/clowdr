@@ -50,6 +50,10 @@ export const parseSessionVariables = (req: Request, _res: Response, next: NextFu
     if (typeof userId === "string") {
         req.userId = userId;
     }
+    const magicToken = getAuthHeader(req.body.session_variables, HasuraHeaders.MagicToken);
+    if (typeof magicToken === "string") {
+        req.magicToken = magicToken;
+    }
     next();
 };
 
@@ -60,5 +64,6 @@ declare module "http" {
         conferenceIds: string[];
         subconferenceIds: string[];
         userId: string | undefined;
+        magicToken: string | undefined;
     }
 }

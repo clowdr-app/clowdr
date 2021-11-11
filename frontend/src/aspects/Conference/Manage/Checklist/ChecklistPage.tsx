@@ -430,9 +430,14 @@ export default function ChecklistPage(): JSX.Element {
     const title = useTitle(`Pre-conference checklist at ${conference.shortName}`);
 
     const now = useMemo(() => new Date().toISOString(), []);
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [checklistResponse] = usePreshowChecklistQuery({
         variables: {
             now,

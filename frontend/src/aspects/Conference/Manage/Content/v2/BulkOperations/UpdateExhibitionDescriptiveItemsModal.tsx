@@ -68,9 +68,14 @@ function ModalInner({
     items: readonly ManageContent_ItemFragment[];
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [exhibitionsResponse] = useUpdateExhibitionDescriptiveItems_SelectExhibitionsQuery({
         variables: {
             conferenceId: conference.id,

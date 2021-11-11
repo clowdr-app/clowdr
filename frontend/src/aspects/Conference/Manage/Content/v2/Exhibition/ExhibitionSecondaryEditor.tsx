@@ -132,9 +132,14 @@ function SecondaryEditorInner({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {
             exhibitionId,

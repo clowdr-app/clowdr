@@ -55,9 +55,14 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {
             conferenceId: conference.id,

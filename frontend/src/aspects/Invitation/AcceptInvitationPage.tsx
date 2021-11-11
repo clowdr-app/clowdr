@@ -15,7 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { assert } from "@midspace/assert";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { useInvitation_ConfirmCurrentMutation, useSelectInvitationForAcceptQuery } from "../../generated/graphql";
@@ -144,9 +144,14 @@ export default function AcceptInvitationPage({ inviteCode }: Props): JSX.Element
     const title = useTitle("Accept invitation");
     const { user, loading } = useMaybeCurrentUser();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Invite-Code": inviteCode ?? "",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Invite-Code": inviteCode ?? "",
+            }),
+            [inviteCode]
+        )
+    );
     const [{ fetching: inviteLoading, data: inviteData }] = useSelectInvitationForAcceptQuery({
         context,
         variables: {

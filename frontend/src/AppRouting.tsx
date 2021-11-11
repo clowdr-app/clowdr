@@ -102,9 +102,14 @@ function CheckSlug(): JSX.Element {
 function CheckSlugInner(): JSX.Element {
     const origin = useMemo(() => window.location.origin, []);
     const mUser = useMaybeCurrentUser();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": mUser ? "user" : "unauthenticated",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": mUser ? "user" : "unauthenticated",
+            }),
+            [mUser]
+        )
+    );
     const [response] = useGetSlugForUrlQuery({
         variables: {
             url: origin,

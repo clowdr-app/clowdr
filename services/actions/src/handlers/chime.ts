@@ -27,7 +27,7 @@ export async function handleJoinRoom(
     }
 
     if (!allowedRoomIds.includes(payload.roomId)) {
-        throw new ForbiddenError("Forbiddent to join room", {
+        throw new ForbiddenError("Forbidden to join room", {
             privateMessage: "Room is not in list of allowed rooms",
             privateErrorData: {
                 roomId: payload.roomId,

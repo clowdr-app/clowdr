@@ -33,9 +33,14 @@ gql`
 `;
 
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ data }] = useEventVonageControls_GetEventsQuery({
         variables: {
             conferenceId,

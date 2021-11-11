@@ -207,11 +207,9 @@ export type getElementArgs = {
     magicToken: string;
 };
 
-export type getUploadAgreementArgs = {
-    magicToken: string;
-};
+export type getUploadAgreementArgs = Record<string, never>;
 
-export type presence_SummaryArgs = {};
+export type presence_SummaryArgs = Record<string, never>;
 
 export type protectedEchoArgs = {
     message: string;
@@ -227,13 +225,13 @@ export type createRoomDmArgs = {
     registrantIds: Array<uuid>;
 };
 
-export type generateChatRemoteServiceIdsArgs = {};
+export type generateChatRemoteServiceIdsArgs = Record<string, never>;
 
 export type generateChatRemoteTokenArgs = {
     registrantId: uuid;
 };
 
-export type generateChatRemoteUserIdsArgs = {};
+export type generateChatRemoteUserIdsArgs = Record<string, never>;
 
 export type getGoogleOAuthUrlArgs = {
     registrantId: uuid;
@@ -271,7 +269,7 @@ export type joinRoomVonageSessionArgs = {
     roomId: uuid;
 };
 
-export type presence_FlushArgs = {};
+export type presence_FlushArgs = Record<string, never>;
 
 export type refreshYouTubeDataArgs = {
     registrantId: uuid;

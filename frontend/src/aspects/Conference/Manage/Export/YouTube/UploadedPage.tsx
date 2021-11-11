@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Link, Spinner, Table, Tbody, Td, Th, Thead, Tooltip, Tr, VStack } from "@chakra-ui/react";
 import { gql } from "@urql/core";
-import { default as React, useCallback } from "react";
+import { default as React, useCallback, useMemo } from "react";
 import ReactPlayer from "react-player";
 import type {
     UploadYouTubeVideos_UploadYouTubeVideoJobFragment,
@@ -59,9 +59,14 @@ gql`
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [existingJobsResult, refetchExistingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {
             conferenceId: conference.id,

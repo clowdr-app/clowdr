@@ -137,15 +137,21 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "user",
-        NoConferenceId: "true",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "user",
+                NoConferenceId: "true",
+            }),
+            []
+        )
+    );
     const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
         context,
+        requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 

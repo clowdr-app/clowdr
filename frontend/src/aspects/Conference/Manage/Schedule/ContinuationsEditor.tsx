@@ -99,9 +99,14 @@ export default function ContinuationsEditor({
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {
             fromId: eventId ?? shufflePeriodId,

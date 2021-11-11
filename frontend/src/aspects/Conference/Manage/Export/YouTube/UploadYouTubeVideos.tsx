@@ -329,9 +329,14 @@ export function UploadYouTubeVideos(): JSX.Element {
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {
             elementIds,

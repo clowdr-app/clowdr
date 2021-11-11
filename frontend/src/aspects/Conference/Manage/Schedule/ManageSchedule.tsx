@@ -247,9 +247,14 @@ function EditableScheduleTable(): JSX.Element {
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {
             conferenceId: conference.id,

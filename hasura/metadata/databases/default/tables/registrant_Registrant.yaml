@@ -179,6 +179,21 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - displayName
+    filter:
+      _and:
+      - conferenceId:
+          _in: X-Hasura-Conference-Ids
+      - id:
+          _in: X-Hasura-Registrant-Ids
+      - userId:
+          _eq: X-Hasura-User-Id
+      - userId:
+          _is_null: false
+  role: attendee
+- permission:
+    check: null
+    columns:
     - conferenceRole
     - displayName
     - userId

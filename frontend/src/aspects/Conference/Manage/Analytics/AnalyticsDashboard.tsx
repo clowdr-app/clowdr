@@ -145,9 +145,14 @@ function JSDateToExcelDate(inDate: Date) {
 
 export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useShieldedHeaders(
+        useMemo(
+            () => ({
+                "X-Auth-Role": "organizer",
+            }),
+            []
+        )
+    );
     const [statsResponse] = useConferenceStatsQuery({
         variables: {
             id: conference.id,

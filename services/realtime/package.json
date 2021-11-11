@@ -55,6 +55,7 @@
         "@types/ws": "^7.4.5",
         "amqplib": "^0.8.0",
         "assert": "^2.0.0",
+        "async-mutex": "^0.3.2",
         "bufferutil": "^4.0.3",
         "cpy-cli": "^3.1.1",
         "express": "^4.17.1",

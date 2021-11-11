@@ -5,3 +5,8 @@ chatMessagesWritebackWorker: node services/realtime/build/workers/chat/messages/
 
 chatReactionsDistributionWorker: node services/realtime/build/workers/chat/reactions/distribution.js
 chatReactionsWritebackWorker: node services/realtime/build/workers/chat/reactions/writeback.js
+
+analyticsConferenceComputationWorker: node services/realtime/build/workers/analytics/conferenceComputation.js
+analyticsItemComputationWorker: node services/realtime/build/workers/analytics/itemComputation.js
+analyticsElementComputationWorker: node services/realtime/build/workers/analytics/elementComputation.js
+analyticsRoomComputationWorker: node services/realtime/build/workers/analytics/roomComputation.js

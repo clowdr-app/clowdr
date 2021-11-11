@@ -58,8 +58,7 @@ if (process.env.GRAPHQL_API_DOMAIN && process.env.HASURA_ADMIN_SECRET) {
         cache,
         defaultOptions: {
             query: {
-                fetchPolicy: "network-only",
-                partialRefetch: true,
+                fetchPolicy: "no-cache",
             },
         },
     });

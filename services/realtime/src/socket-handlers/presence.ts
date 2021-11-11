@@ -1,6 +1,6 @@
-import crypto from "crypto";
-import { Socket } from "socket.io";
-import { enterPresence, exitAllPresences, exitPresence, presenceChannelName, presenceListKey } from "../lib/presence";
+import type { Socket } from "socket.io";
+import { getVerifiedPageKey, presenceChannelName, presenceListKey } from "../lib/presence";
+import { enterPresence, exitAllPresences, exitPresence } from "../lib/presenceSocketFunctions";
 import { redisClientPool } from "../redis";
 import { socketServer } from "../servers/socket-server";
 
@@ -83,18 +83,12 @@ function getPageKey(confSlugs: string[], path: string): string | undefined {
     if (path.startsWith("/conference/")) {
         const confSlug = path.split("/")[2];
         if (confSlugs.includes(confSlug)) {
-            const hash = crypto.createHash("sha256");
-            hash.write(confSlug, "utf8");
-            hash.write(path, "utf8");
-            return hash.digest("hex").toLowerCase();
+            return getVerifiedPageKey(confSlug, path);
         } else {
             return undefined;
         }
     } else {
-        const hash = crypto.createHash("sha256");
-        hash.write("/<<NO-CONF>>/", "utf8");
-        hash.write(path, "utf8");
-        return hash.digest("hex").toLowerCase();
+        return getVerifiedPageKey("/<<NO-CONF>>/", path);
     }
 }
 

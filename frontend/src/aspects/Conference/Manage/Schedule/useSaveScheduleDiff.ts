@@ -1,7 +1,7 @@
 import { assert } from "@midspace/assert";
 import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
     Collection_Tag_Insert_Input,
     Conference_OriginatingData_Insert_Input,
@@ -22,8 +22,8 @@ import {
     useUpdateRoomMutation,
     useUpdateTagMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 import type { ExhibitionDescriptor, ItemDescriptor, ProgramPersonDescriptor } from "../Content/Types";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
@@ -278,9 +278,13 @@ export function useSaveScheduleDiff():
     const [, insertEventMutation] = useInsertEventMutation();
     const [, updateEventMutation] = useUpdateEventMutation();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Role": "organizer",
+            }),
+        []
+    );
     const [{ fetching: loadingContent, error: errorContent, data: wholeSchedule }] = useSelectWholeScheduleQuery({
         requestPolicy: "network-only",
         variables: {

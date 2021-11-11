@@ -26,7 +26,7 @@ import {
     useCombineVideosModal_GetCombineVideosJobQuery,
     useCombineVideosModal_GetElementsQuery,
 } from "../../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../../GQL/make-context";
 import useCurrentUser from "../../../../../Users/CurrentUser/useCurrentUser";
 import { useConference } from "../../../../useConference";
 
@@ -114,13 +114,12 @@ function ModalInner({
     const itemIds = useMemo(() => elementsByItem.map((x) => x.itemId), [elementsByItem]);
 
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [combineVideosResponse] = useCombineVideosModal_GetCombineVideosJobQuery({
         variables: {

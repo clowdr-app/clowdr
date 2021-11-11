@@ -46,7 +46,7 @@ import {
     useUploadYouTubeVideos_RefreshYouTubeDataMutation,
 } from "../../../../../generated/graphql";
 import { useRestorableState } from "../../../../Generic/useRestorableState";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
@@ -329,13 +329,12 @@ export function UploadYouTubeVideos(): JSX.Element {
     const chooseVideoDisclosure = useDisclosure();
     const chooseByTagDisclosure = useDisclosure();
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [{ data }] = useUploadYouTubeVideos_GetElementsQuery({
         variables: {

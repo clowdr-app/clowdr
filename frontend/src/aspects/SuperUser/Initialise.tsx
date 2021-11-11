@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertTitle, Button, Text } from "@chakra-ui/re
 import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useInitialiseSuperUserMutation } from "../../generated/graphql";
-import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
+import { makeContext } from "../GQL/make-context";
 
 gql`
     mutation InitialiseSuperUser {
@@ -14,13 +14,12 @@ gql`
 `;
 
 export default function SuperUserInitialise(): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "superuser",
             }),
-            []
-        )
+        []
     );
     const [initialiseResponse, initialiseMutation] = useInitialiseSuperUserMutation();
 

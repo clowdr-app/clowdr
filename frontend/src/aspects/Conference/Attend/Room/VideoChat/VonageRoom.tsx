@@ -26,7 +26,7 @@ import {
     useGetRoomVonageTokenMutation,
 } from "../../../../../generated/graphql";
 import { useRealTime } from "../../../../Generic/useRealTime";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
@@ -70,15 +70,13 @@ export function VideoChatVonageRoom({
     const sharedRoomContext = useSharedRoomContext();
     const { id: registrantId } = useCurrentRegistrant();
 
-    const registrant = useCurrentRegistrant();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "room-member",
                 "X-Auth-Room-Id": room.id,
             }),
-            [room.id]
-        )
+        [room.id]
     );
     const [, getRoomVonageToken] = useGetRoomVonageTokenMutation();
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
@@ -91,7 +89,7 @@ export function VideoChatVonageRoom({
                 getEventVonageToken(
                     {
                         eventId,
-                        registrantId: registrant.id,
+                        registrantId,
                     },
                     context
                 )

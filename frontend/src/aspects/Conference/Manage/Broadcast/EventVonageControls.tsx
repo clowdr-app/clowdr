@@ -7,7 +7,7 @@ import {
     useEventVonageControls_GetEventsQuery,
     useEventVonageControls_StopEventBroadcastMutation,
 } from "../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query EventVonageControls_GetEvents($conferenceId: uuid!) {
@@ -33,13 +33,12 @@ gql`
 `;
 
 export function EventVonageControls({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [{ data }] = useEventVonageControls_GetEventsQuery({
         variables: {

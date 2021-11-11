@@ -37,27 +37,25 @@ import {
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../../GQL/make-context";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
 
 export function EditItemPeoplePanel({ itemId }: { itemId: string }): JSX.Element {
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [itemPeopleResponse] = useManageContent_SelectItemPeopleQuery({
         variables: {
             itemId,
         },
         context,
-        requestPolicy: "cache-and-network",
     });
     const itemPeople = itemPeopleResponse.data?.content_ItemProgramPerson;
     const itemPeopleIds = useMemo(() => itemPeople?.map((x) => x.id), [itemPeople]);
@@ -136,13 +134,12 @@ function AddItemPersonBody({
     onClose: () => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [peopleResponse] = useManageContent_SelectProgramPeopleQuery({
         variables: {

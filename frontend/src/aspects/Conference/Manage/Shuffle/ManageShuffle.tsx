@@ -15,7 +15,7 @@ import { useManageShufflePeriods_SelectAllQuery } from "../../../../generated/gr
 import PageNotFound from "../../../Errors/PageNotFound";
 import usePolling from "../../../Generic/usePolling";
 import { useRealTime } from "../../../Generic/useRealTime";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
@@ -68,13 +68,12 @@ export default function ManageShuffle(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage shuffle queues at ${conference.shortName}`);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [shufflePeriodsQ, refetchShufflePeriodsQ] = useManageShufflePeriods_SelectAllQuery({
         variables: {

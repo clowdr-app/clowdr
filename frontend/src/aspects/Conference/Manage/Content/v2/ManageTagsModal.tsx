@@ -43,7 +43,7 @@ import type {
     RowSpecification,
 } from "../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../CRUDTable2/CRUDTable2";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { maybeCompare } from "../../../../Utils/maybeSort";
 import { useConference } from "../../../useConference";
 
@@ -96,13 +96,12 @@ export default function ManageTagsModal({ onClose: onCloseCb }: { onClose?: () =
 
 function ManageTagsModalBody(): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [tagsResponse] = useManageContent_SelectAllTagsQuery({
         variables: {

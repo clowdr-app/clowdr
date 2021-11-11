@@ -19,7 +19,7 @@ import { useGetForceUserRefreshConfigQuery } from "../../generated/graphql";
 import { useConference } from "../Conference/useConference";
 import { useRealTime } from "../Generic/useRealTime";
 import { useRestorableState } from "../Generic/useRestorableState";
-import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
+import { makeContext } from "../GQL/make-context";
 
 gql`
     query GetForceUserRefreshConfig($conferenceId: uuid!) {
@@ -34,13 +34,12 @@ gql`
 export default function ForceUserRefresh(): JSX.Element {
     const conference = useConference();
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "attendee",
             }),
-            []
-        )
+        []
     );
     const [query, refetch] = useGetForceUserRefreshConfigQuery({
         variables: {

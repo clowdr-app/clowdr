@@ -44,8 +44,8 @@ import {
     useSubmissionRequestsModalDataQuery,
 } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
+import { makeContext } from "../../../../../GQL/make-context";
 import QueryWrapper from "../../../../../GQL/QueryWrapper";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { useConference } from "../../../../useConference";
 
@@ -126,13 +126,12 @@ function SendSubmissionRequestsModalLazyInner({
     personIds: string[] | null;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [result] = useSubmissionRequestsModalDataQuery({
         variables: {

@@ -19,7 +19,7 @@ import { Content_ElementType_Enum, useItemByPersonAccessTokenQuery } from "../..
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
 import { contentSortOrder } from "../../Conference/Attend/Content/Element/ElementsGridLayout";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
+import { makeContext } from "../../GQL/make-context";
 import FAIcon from "../../Icons/FAIcon";
 import { maybeCompare } from "../../Utils/maybeSort";
 import { useTitle } from "../../Utils/useTitle";
@@ -51,13 +51,12 @@ export default function ViewItemPage({ magicToken, itemId }: { magicToken: strin
     const title = useTitle("Submission");
 
     const accessToken = magicToken;
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Magic-Token": magicToken,
             }),
-            [magicToken]
-        )
+        [magicToken]
     );
     const [itemResponse] = useItemByPersonAccessTokenQuery({
         variables: {

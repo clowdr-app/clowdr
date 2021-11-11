@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import type { RoomPage_RoomDetailsFragment } from "../../../../generated/graphql";
 import { useRoomPage_GetRoomDetailsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
+import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
 import Room from "./Room";
@@ -86,13 +86,12 @@ export default function RoomPage({ roomId }: { roomId: string }): JSX.Element {
 }
 
 function RoomPageInner({ roomId }: { roomId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Room-Id": roomId,
             }),
-            [roomId]
-        )
+        [roomId]
     );
     const [roomDetailsResponse] = useRoomPage_GetRoomDetailsQuery({
         variables: {

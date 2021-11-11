@@ -12,8 +12,8 @@ import {
     useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery,
 } from "../../../../../generated/graphql";
 import usePolling from "../../../../Generic/usePolling";
+import { makeContext } from "../../../../GQL/make-context";
 import QueryWrapper from "../../../../GQL/QueryWrapper";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useTitle } from "../../../../Utils/useTitle";
 import { useConference } from "../../../useConference";
@@ -59,13 +59,12 @@ gql`
 export function UploadedPage(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`YouTube Uploads from ${conference.shortName}`);
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [existingJobsResult, refetchExistingJobsResult] = useUploadYouTubeVideos_GetUploadYouTubeVideoJobsQuery({
         variables: {

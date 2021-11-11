@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { gql } from "@urql/core";
 import React, { useEffect, useMemo, useState } from "react";
+import { makeContext } from "../../../../../../aspects/GQL/make-context";
 import type {
     ManageContent_ItemFragment,
     SelectElements_ElementFragment,
@@ -32,7 +33,6 @@ import type {
 } from "../../../../../../generated/graphql";
 import { Content_ElementType_Enum, useSEoUm_InfosQuery } from "../../../../../../generated/graphql";
 import MultiSelect from "../../../../../Chakra/MultiSelect";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
 
 gql`
     fragment SelectElements_Item on content_Item {
@@ -107,13 +107,12 @@ function ModalInner({
     restrictToTypes: Content_ElementType_Enum[] | null;
 }): JSX.Element {
     const itemIds = useMemo(() => items.map((x) => x.id), [items]);
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [infos] = useSEoUm_InfosQuery({
         variables: {

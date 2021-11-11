@@ -8,8 +8,8 @@ import {
     Conference_ConfigurationKey_Enum,
     useConferenceConfiguration_GetConferenceConfigurationsQuery,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 
 gql`
     query ConferenceConfiguration_GetConferenceConfigurations($conferenceId: uuid!) {
@@ -26,13 +26,12 @@ gql`
 `;
 
 export function Configuration({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [conferenceConfigurationsResult] = useConferenceConfiguration_GetConferenceConfigurationsQuery({
         variables: {

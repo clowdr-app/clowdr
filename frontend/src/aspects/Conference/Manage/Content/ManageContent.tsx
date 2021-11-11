@@ -19,8 +19,7 @@ import {
 import { gql } from "@urql/core";
 import Papa from "papaparse";
 import * as R from "ramda";
-import type { LegacyRef } from "react";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { LegacyRef, useCallback, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -55,8 +54,8 @@ import type {
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -308,13 +307,12 @@ export default function ManageContentV2(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage content at ${conference.shortName}`);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loadingAllTags, error: errorAllTags, data: allTags }, refetchAllTags] =
         useManageContent_SelectAllTagsQuery({

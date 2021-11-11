@@ -28,8 +28,8 @@ import {
     useConfigureEmailTemplates_GetConferenceConfigurationsQuery,
     useConfigureEmailTemplates_UpdateConferenceConfigurationMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import QueryWrapper from "../../../GQL/QueryWrapper";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 
 gql`
@@ -64,13 +64,12 @@ gql`
 export function ConfigureEmailTemplates(): JSX.Element {
     const conference = useConference();
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [conferenceConfigurationResult] = useConfigureEmailTemplates_GetConferenceConfigurationsQuery({
         variables: {

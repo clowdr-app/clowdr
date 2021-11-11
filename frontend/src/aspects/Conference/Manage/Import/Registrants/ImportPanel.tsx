@@ -28,8 +28,8 @@ import {
     useSelectAllRegistrantsQuery,
 } from "../../../../../generated/graphql";
 import { LinkButton } from "../../../../Chakra/LinkButton";
+import { makeContext } from "../../../../GQL/make-context";
 import useQueryErrorToast from "../../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -70,13 +70,12 @@ export default function ImportPanel({
     const conference = useConference();
     const [hasImported, setHasImported] = useState<boolean>(false);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "main-conference-organizer",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: groupsLoading, data: groupsData, error: groupsError }] = useSelectAllGroupsQuery({
         variables: {

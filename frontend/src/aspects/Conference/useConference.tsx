@@ -7,7 +7,7 @@ import type { AuthdConferenceInfoFragment, PublicConferenceInfoFragment } from "
 import { useConferenceById_WithoutUserQuery, useConferenceById_WithUserQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
 import PageNotFound from "../Errors/PageNotFound";
-import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
+import { makeContext } from "../GQL/make-context";
 import useMaybeCurrentUser from "../Users/CurrentUser/useMaybeCurrentUser";
 
 gql`
@@ -149,13 +149,12 @@ function ConferenceProvider_WithoutUser({
     children: string | JSX.Element | JSX.Element[];
     conferenceId: string;
 }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "unauthenticated",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loading, error, data }] = useConferenceById_WithoutUserQuery({
         variables: {
@@ -196,13 +195,12 @@ function ConferenceProvider_WithUser({
     userId: string;
     conferenceId: string;
 }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "attendee",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loading, error, data }] = useConferenceById_WithUserQuery({
         variables: {

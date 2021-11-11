@@ -82,8 +82,8 @@ import type {
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../Errors/PageNotFound";
 import { useAuthParameters } from "../../GQL/AuthParameters";
+import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import FAIcon from "../../Icons/FAIcon";
 import { useTitle } from "../../Utils/useTitle";
 import RequireRole from "../RequireRole";
@@ -261,13 +261,12 @@ function RoomSecondaryEditor({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [groups] = useManageRooms_SelectGroupsQuery({
         variables: {
@@ -553,13 +552,12 @@ function EditableRoomsCRUDTable() {
     const [deleteRoomsResponse, deleteRooms] = useDeleteRoomsMutation();
     const [updateRoomResponse, updateRoom] = useUpdateRoomsWithParticipantsMutation();
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [externalRtmpBroadcastEnabledResponse] = useGetIsExternalRtmpBroadcastEnabledQuery({
         variables: {

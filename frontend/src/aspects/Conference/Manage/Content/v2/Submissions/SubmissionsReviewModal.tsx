@@ -27,7 +27,7 @@ import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { SubmissionsReviewModal_ElementFragment } from "../../../../../../generated/graphql";
 import { useSubmissionsReviewModalDataQuery } from "../../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../../GQL/make-context";
 import { Element } from "../../../../Attend/Content/Element/Element";
 
 gql`
@@ -83,13 +83,12 @@ export function SubmissionsReviewModal({
 }
 
 function SubmissionsReviewModalLazyInner({ itemIds }: { itemIds: string[] }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [itemsResponse] = useSubmissionsReviewModalDataQuery({
         variables: {

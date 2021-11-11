@@ -5,8 +5,8 @@ import React, { useCallback, useMemo } from "react";
 import { gql } from "urql";
 import { Content_ElementType_Enum, useGetElementQuery, useGetUploadAgreementQuery } from "../../generated/graphql";
 import { LinkButton } from "../Chakra/LinkButton";
+import { makeContext } from "../GQL/make-context";
 import useQueryErrorToast from "../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
 import FAIcon from "../Icons/FAIcon";
 import { useTitle } from "../Utils/useTitle";
 import UploadedElement from "./Elements/UploadedElement";
@@ -42,8 +42,8 @@ gql`
         }
     }
 
-    query GetUploadAgreement {
-        getUploadAgreement {
+    query GetUploadAgreement($magicToken: String!) {
+        getUploadAgreement(magicToken: $magicToken) {
             agreementText
             agreementUrl
         }
@@ -59,36 +59,36 @@ export default function SubmitElementPage({
     itemId: string;
     elementId: string;
 }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context1 = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "unauthenticated",
-                "X-Auth-Magic-Token": magicToken,
             }),
-            [magicToken]
-        )
+        []
     );
     const [{ fetching: uploadAgreementLoading, error: uploadAgreementError, data: uploadAgreementData }] =
         useGetUploadAgreementQuery({
             requestPolicy: "network-only",
-            context,
+            variables: {
+                magicToken,
+            },
+            context: context1,
         });
     useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
-    // const context2 = useShieldedHeaders(
-    //     useMemo(
-    //         () => ({
-    //             "X-Auth-Magic-Token": magicToken,
-    //         }),
-    //         [magicToken]
-    //     )
-    // );
+    const context2 = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Magic-Token": magicToken,
+            }),
+        []
+    );
     const [{ fetching: loading, error, data }, refetch] = useGetElementQuery({
         variables: {
             accessToken: magicToken,
             elementId,
         },
-        context,
+        context: context2,
         requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");

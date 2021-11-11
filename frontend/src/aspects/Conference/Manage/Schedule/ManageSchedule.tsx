@@ -83,7 +83,7 @@ import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useRealTime } from "../../../Generic/useRealTime";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 import FAIcon from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -247,13 +247,12 @@ function EditableScheduleTable(): JSX.Element {
     const {
         developer: { allowOngoingEventCreation },
     } = useAppSettings();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [wholeSchedule] = useSelectWholeScheduleQuery({
         variables: {

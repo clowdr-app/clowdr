@@ -11,8 +11,8 @@ import {
 import type { CRUDTableProps, PrimaryField, UpdateResult } from "../../CRUDTable/CRUDTable";
 import CRUDTable, { defaultStringFilter, FieldType } from "../../CRUDTable/CRUDTable";
 import PageNotFound from "../../Errors/PageNotFound";
+import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import isValidUUID from "../../Utils/isValidUUID";
 import { useTitle } from "../../Utils/useTitle";
 import RequireRole from "../RequireRole";
@@ -69,13 +69,12 @@ export default function ManageGroups(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage groups of ${conference.shortName}`);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }, refetchAllGroups] =
         useSelectAllGroupsQuery({

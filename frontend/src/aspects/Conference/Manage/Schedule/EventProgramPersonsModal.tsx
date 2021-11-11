@@ -55,7 +55,7 @@ import type {
     RowSpecification,
 } from "../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 import FAIcon from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import { addRegistrantsToEvent } from "./BatchAddEventPeople";
@@ -114,13 +114,11 @@ export function AddEventProgramPerson_RegistrantModal({
 }): JSX.Element {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () => makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         variables: {

@@ -10,7 +10,7 @@ import { useConferenceTheme } from "./aspects/Chakra/ChakraCustomProvider";
 import { LinkButton } from "./aspects/Chakra/LinkButton";
 import ConferenceRoutes from "./aspects/Conference/ConferenceRoutes";
 import { useAuthParameters } from "./aspects/GQL/AuthParameters";
-import { useShieldedHeaders } from "./aspects/GQL/useShieldedHeaders";
+import { makeContext } from "./aspects/GQL/make-context";
 import useMaybeCurrentUser from "./aspects/Users/CurrentUser/useMaybeCurrentUser";
 import { useGetSlugForUrlQuery } from "./generated/graphql";
 
@@ -102,13 +102,12 @@ function CheckSlug(): JSX.Element {
 function CheckSlugInner(): JSX.Element {
     const origin = useMemo(() => window.location.origin, []);
     const mUser = useMaybeCurrentUser();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": mUser ? "user" : "unauthenticated",
             }),
-            [mUser]
-        )
+        [mUser]
     );
     const [response] = useGetSlugForUrlQuery({
         variables: {

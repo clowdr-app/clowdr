@@ -86,7 +86,6 @@ export function EventVonageRoomInner({
     hlsUri: string | undefined;
 }): JSX.Element {
     const [, getEventVonageToken] = useGetEventVonageTokenMutation();
-
     const registrant = useCurrentRegistrant();
 
     const getAccessToken = useCallback(async () => {

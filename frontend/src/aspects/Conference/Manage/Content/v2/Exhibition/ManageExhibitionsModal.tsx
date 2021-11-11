@@ -52,7 +52,7 @@ import type {
     RowSpecification,
 } from "../../../../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../../../../CRUDTable2/CRUDTable2";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../../GQL/make-context";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
 import { SecondaryEditor } from "./ExhibitionSecondaryEditor";
@@ -106,13 +106,12 @@ export default function ManageExhibitionsModal({ onClose: onCloseCb }: { onClose
 
 function ManageExhibitionsModalBody(): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [exhibitionsResponse] = useManageContent_SelectAllExhibitionsQuery({
         variables: {

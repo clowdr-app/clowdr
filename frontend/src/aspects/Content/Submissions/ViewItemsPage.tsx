@@ -16,7 +16,7 @@ import { gql } from "urql";
 import { useItemsByPersonAccessTokenQuery } from "../../../generated/graphql";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { LinkButton } from "../../Chakra/LinkButton";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
+import { makeContext } from "../../GQL/make-context";
 import { useTitle } from "../../Utils/useTitle";
 
 gql`
@@ -41,13 +41,12 @@ export default function ViewItemsPage({ magicToken }: { magicToken: string }): J
     const title = useTitle("Submissions");
 
     const accessToken = magicToken;
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Magic-Token": magicToken,
             }),
-            [magicToken]
-        )
+        [magicToken]
     );
     const [itemsResponse] = useItemsByPersonAccessTokenQuery({
         variables: {

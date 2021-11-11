@@ -20,7 +20,7 @@ import {
     useChooseElementModal_GetItemsQuery,
     useChooseElementModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { useConference } from "../../../useConference";
 
 gql`
@@ -55,13 +55,12 @@ export function ChooseElementModal({
     chooseItem: (elementId: string) => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [itemsResult] = useChooseElementModal_GetItemsQuery({
         variables: {

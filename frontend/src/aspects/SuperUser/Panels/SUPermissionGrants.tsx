@@ -55,7 +55,7 @@ import type {
     RowSpecification,
 } from "../../CRUDTable2/CRUDTable2";
 import CRUDTable, { SortDirection } from "../../CRUDTable2/CRUDTable2";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
+import { makeContext } from "../../GQL/make-context";
 import { FAIcon } from "../../Icons/FAIcon";
 import useCurrentUser from "../../Users/CurrentUser/useCurrentUser";
 
@@ -660,13 +660,12 @@ const Roles: Role[] = [
 
 export default function SUPermissionGrants(): JSX.Element {
     const currentUser = useCurrentUser();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "superuser",
             }),
-            []
-        )
+        []
     );
     const [currentUserPermissionsResponse] = useUserSuPermissionsQuery({
         variables: {

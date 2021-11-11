@@ -21,7 +21,7 @@ import {
     useSelectEventStreamTextEventIdQuery,
     useUpdateEventStreamTextEventIdMutation,
 } from "../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query SelectEventStreamTextEventId($eventId: uuid!) {
@@ -40,13 +40,12 @@ gql`
 `;
 
 export default function EditStreamTextIntegration({ eventId }: { eventId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [response] = useSelectEventStreamTextEventIdQuery({
         variables: {

@@ -60,8 +60,8 @@ import type {
 import CRUDTable, { SortDirection } from "../../../CRUDTable2/CRUDTable2";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { useAuthParameters } from "../../../GQL/AuthParameters";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
@@ -225,13 +225,12 @@ export default function ManageRegistrants(): JSX.Element {
     const { conferencePath } = useAuthParameters();
     const title = useTitle(`Manage registrants at ${conference.shortName}`);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "main-conference-organizer",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loadingAllGroups, error: errorAllGroups, data: allGroups }] = useSelectAllGroupsQuery({
         requestPolicy: "network-only",
@@ -242,13 +241,12 @@ export default function ManageRegistrants(): JSX.Element {
     });
     useQueryErrorToast(errorAllGroups, false);
 
-    const selectAllRegistrantsContext = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const selectAllRegistrantsContext = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "main-conference-organizer",
             }),
-            []
-        )
+        []
     );
     const [
         { fetching: loadingAllRegistrants, error: errorAllRegistrants, data: allRegistrants },

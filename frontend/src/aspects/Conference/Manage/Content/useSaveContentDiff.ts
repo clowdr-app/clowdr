@@ -1,7 +1,7 @@
 import { assert } from "@midspace/assert";
 import type { CombinedError } from "@urql/core";
 import { gql } from "@urql/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
     Collection_Exhibition_Insert_Input,
     Collection_ProgramPerson_Insert_Input,
@@ -32,8 +32,8 @@ import {
     useUpdatePersonMutation,
     useUpdateTagMutation,
 } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import { useConference } from "../../useConference";
 import type { OriginatingDataDescriptor, TagDescriptor } from "../Shared/Types";
 import { convertContentToDescriptors } from "./Functions";
@@ -487,9 +487,13 @@ export function useSaveContentDiff():
     const [, updateGroupPersonMutation] = useUpdateGroupPersonMutation();
     const [, updateGroupExhibitionMutation] = useUpdateGroupExhibitionMutation();
 
-    const context = useShieldedHeaders({
-        "X-Auth-Role": "organizer",
-    });
+    const context = useMemo(
+        () =>
+            makeContext({
+                "X-Auth-Role": "organizer",
+            }),
+        []
+    );
     const [{ fetching: loadingContent, error: errorContent, data: allContent }] = useSelectAllContentQuery({
         requestPolicy: "network-only",
         variables: {

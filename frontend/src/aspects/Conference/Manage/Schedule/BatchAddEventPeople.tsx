@@ -64,7 +64,7 @@ import {
 } from "../../../../generated/graphql";
 import { DateTimePicker } from "../../../CRUDTable/DateTimePicker";
 import { formatEnumValue } from "../../../CRUDTable2/CRUDComponents";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 import { FAIcon } from "../../../Icons/FAIcon";
 import { maybeCompare } from "../../../Utils/maybeSort";
 import RequireRole from "../../RequireRole";
@@ -370,13 +370,12 @@ function AddEventPeople_SingleProgramPersonPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [selectProgramPeopleQuery] = useAddEventPeople_SelectProgramPeopleQuery({
         pause: !hasBeenExpanded,
@@ -534,13 +533,12 @@ function AddEventPeople_FromGroupPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,
@@ -740,13 +738,12 @@ function AddEventPeople_SingleRegistrantPanel({
         }
     }, [isExpanded]);
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [selectRegistrantsQuery] = useAddEventPeople_SelectRegistrantsQuery({
         pause: !hasBeenExpanded,

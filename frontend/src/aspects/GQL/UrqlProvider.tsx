@@ -63,7 +63,7 @@ function UrqlProviderInner({
     // used imperatively within the operation formation function.
     authCtxRef.current = authParams;
 
-    const loadedAt = useMemo(() => Date.now(), []);
+    // const loadedAt = useMemo(() => Date.now(), []);
 
     const connect = useCallback(
         async (cb?: () => void) => {

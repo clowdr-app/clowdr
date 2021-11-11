@@ -1,9 +1,8 @@
 import { gql } from "@urql/core";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import * as portals from "react-reverse-portal";
 import type { RoomPage_RoomDetailsFragment } from "../../../../../generated/graphql";
 import { useGetRoomChimeDataMutation } from "../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
 import { useSharedRoomContext } from "../../../../Room/useSharedRoomContext";
 import useCurrentRegistrant from "../../../useCurrentRegistrant";
 
@@ -25,22 +24,15 @@ export function VideoChatChimeRoom({
     enable: boolean;
 }): JSX.Element {
     const sharedRoomContext = useSharedRoomContext();
+    const registrant = useCurrentRegistrant();
 
     const [, getRoomChimeData] = useGetRoomChimeDataMutation();
 
-    const registrant = useCurrentRegistrant();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
-                "X-Auth-Role": "room-member",
-                "X-Auth-Room-Id": room.id,
-            }),
-            [room.id]
-        )
-    );
-
     const getMeetingData = useCallback(async () => {
-        const result = await getRoomChimeData({ roomId: room.id, registrantId: registrant.id }, context);
+        const result = await getRoomChimeData({
+            roomId: room.id,
+            registrantId: registrant.id,
+        });
         if (!result.data?.joinRoomChimeSession?.registrant || !result.data.joinRoomChimeSession.meeting) {
             throw new Error(`Could not join meeting: ${result.data?.joinRoomChimeSession?.message}`);
         }
@@ -48,7 +40,7 @@ export function VideoChatChimeRoom({
             attendeeInfo: result.data.joinRoomChimeSession.registrant,
             meetingInfo: result.data.joinRoomChimeSession.meeting,
         };
-    }, [context, getRoomChimeData, registrant.id, room.id]);
+    }, [getRoomChimeData, registrant.id, room.id]);
 
     return sharedRoomContext ? (
         <portals.OutPortal

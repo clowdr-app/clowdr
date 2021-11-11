@@ -32,7 +32,7 @@ import { gql } from "urql";
 import { useConferenceStatsQuery } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
 import { roundDownToNearest, roundUpToNearest } from "../../../Generic/MathUtils";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
@@ -145,13 +145,12 @@ function JSDateToExcelDate(inDate: Date) {
 
 export default function AnalyticsDashboard(): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [statsResponse] = useConferenceStatsQuery({
         variables: {

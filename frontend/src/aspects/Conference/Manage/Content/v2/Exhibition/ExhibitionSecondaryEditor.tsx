@@ -45,7 +45,7 @@ import {
 } from "../../../../../../generated/graphql";
 import { LinkButton } from "../../../../../Chakra/LinkButton";
 import { useAuthParameters } from "../../../../../GQL/AuthParameters";
-import { useShieldedHeaders } from "../../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../../GQL/make-context";
 import { FAIcon } from "../../../../../Icons/FAIcon";
 import { maybeCompare } from "../../../../../Utils/maybeSort";
 import { useConference } from "../../../../useConference";
@@ -132,13 +132,12 @@ function SecondaryEditorInner({
 }): JSX.Element {
     const conference = useConference();
     const { conferencePath } = useAuthParameters();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [itemExhibitionsResponse] = useManageContent_SelectItemExhibitionsQuery({
         variables: {

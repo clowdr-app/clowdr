@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { gql } from "urql";
 import { useSuperUserStateQuery } from "../../generated/graphql";
 import CenteredSpinner from "../Chakra/CenteredSpinner";
-import { useShieldedHeaders } from "../GQL/useShieldedHeaders";
+import { makeContext } from "../GQL/make-context";
 import { useTitle } from "../Utils/useTitle";
 import SuperUserInitialise from "./Initialise";
 import SuperUserLandingPageContent from "./LandingPageContent";
@@ -20,13 +20,12 @@ gql`
 export default function SuperUserLandingPage(): JSX.Element {
     const title = useTitle("Superuser");
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "superuser",
             }),
-            []
-        )
+        []
     );
     const [suStateResponse] = useSuperUserStateQuery({
         context,

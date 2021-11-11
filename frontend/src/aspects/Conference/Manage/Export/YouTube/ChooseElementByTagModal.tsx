@@ -29,7 +29,7 @@ import {
     useChooseElementByTagModal_GetTagsQuery,
     useChooseElementByTagModal_GetVideoElementsQuery,
 } from "../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 
@@ -73,13 +73,12 @@ export function ChooseElementByTagModal({
     chooseItems: (elementIds: string[]) => void;
 }): JSX.Element {
     const conference = useConference();
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [tagsResult] = useChooseElementByTagModal_GetTagsQuery({
         variables: {

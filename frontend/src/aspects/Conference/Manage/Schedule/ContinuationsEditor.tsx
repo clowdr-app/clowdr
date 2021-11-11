@@ -33,8 +33,8 @@ import {
     useContinuationsEditor_UpdateMutation,
 } from "../../../../generated/graphql";
 import { useRestorableState } from "../../../Generic/useRestorableState";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 import CreateContinuationModal from "./CreateContinuationModal";
 
@@ -99,13 +99,12 @@ export default function ContinuationsEditor({
     const shufflePeriodId = "shufflePeriodId" in from ? from.shufflePeriodId : undefined;
     const fromNoun = "eventId" in from ? "an event" : "a shuffle period";
 
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [response] = useContinuationsEditor_SelectContinuationsQuery({
         variables: {

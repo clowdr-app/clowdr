@@ -22,7 +22,7 @@ import {
     useUpdateRoomRtmpOutputMutation,
 } from "../../../../generated/graphql";
 import CenteredSpinner from "../../../Chakra/CenteredSpinner";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../GQL/make-context";
 
 gql`
     query GetRoomRtmpOutput($roomId: uuid!) {
@@ -90,13 +90,12 @@ gql`
 `;
 
 export default function ExternalRtmpBroadcastEditor({ roomId }: { roomId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [rtmpOutputResponse, refetchRtmpOutputResponse] = useGetRoomRtmpOutputQuery({
         variables: {

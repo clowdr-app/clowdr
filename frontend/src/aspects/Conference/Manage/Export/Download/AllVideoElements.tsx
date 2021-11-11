@@ -11,7 +11,7 @@ import AmazonS3URI from "amazon-s3-uri";
 import * as R from "ramda";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useDownloadVideos_GetAllVideosQuery } from "../../../../../generated/graphql";
-import { useShieldedHeaders } from "../../../../GQL/useShieldedHeaders";
+import { makeContext } from "../../../../GQL/make-context";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import { useConference } from "../../../useConference";
 import { VideoDownloadContext } from "./VideoDownloadContext";
@@ -62,13 +62,12 @@ function toS3Url(s3Url: string): string | undefined {
 export function AllVideoElements(): JSX.Element {
     const conference = useConference();
     const { reset } = useContext(VideoDownloadContext);
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [result] = useDownloadVideos_GetAllVideosQuery({
         variables: {

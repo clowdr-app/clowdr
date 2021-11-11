@@ -21,8 +21,8 @@ import { useAgreeToTermsMutation, useSelectCurrentUserQuery, useTermsConfigsQuer
 import useUserId from "../../Auth/useUserId";
 import CenteredSpinner from "../../Chakra/CenteredSpinner";
 import { useRestorableState } from "../../Generic/useRestorableState";
+import { makeContext } from "../../GQL/make-context";
 import useQueryErrorToast from "../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../GQL/useShieldedHeaders";
 import FAIcon from "../../Icons/FAIcon";
 import type { UserInfo } from "./useMaybeCurrentUser";
 import { CurrentUserContext, defaultCurrentUserContext } from "./useMaybeCurrentUser";
@@ -137,21 +137,19 @@ function CurrentUserProvider_IsAuthenticated({
     children: string | JSX.Element | Array<JSX.Element>;
     userId: string;
 }) {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "user",
                 NoConferenceId: "true",
             }),
-            []
-        )
+        []
     );
     const [{ fetching: loading, error, data }] = useSelectCurrentUserQuery({
         variables: {
             userId,
         },
         context,
-        requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "useSelectCurrentUserQuery");
 

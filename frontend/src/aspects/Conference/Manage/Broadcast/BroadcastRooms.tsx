@@ -23,8 +23,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 import { gql } from "urql";
 import { useGetChannelStacksQuery } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
-import { useShieldedHeaders } from "../../../GQL/useShieldedHeaders";
 import FAIcon from "../../../Icons/FAIcon";
 
 gql`
@@ -44,13 +44,12 @@ gql`
 `;
 
 export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const context = useShieldedHeaders(
-        useMemo(
-            () => ({
+    const context = useMemo(
+        () =>
+            makeContext({
                 "X-Auth-Role": "organizer",
             }),
-            []
-        )
+        []
     );
     const [{ data, fetching: loading, error }, refetch] = useGetChannelStacksQuery({
         variables: { conferenceId },

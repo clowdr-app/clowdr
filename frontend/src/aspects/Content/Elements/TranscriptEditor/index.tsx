@@ -1,30 +1,13 @@
 import { Button, Flex } from "@chakra-ui/react";
 import React, { useState } from "react";
 import srtHandler from "srt-parser-2";
-import { SubtitleBlock } from "./SubtitleBlock";
+import { SubtitleBlock, timecodeToTenths } from "./SubtitleBlock";
 
 interface Props {
     srtTranscript: string;
     mediaUrl: string;
     handleSaveEditor: (srtTranscript: any) => void;
     handleChange?: () => void;
-}
-
-const anyDecimalSeparator = /[,.٫‎⎖]/;
-
-function timecodeToTenths(timecode: string): number {
-    const [secondsFloatStr, minutesStr, hoursStr] = timecode.split(":").reverse();
-    const [secondsStr, fractionStr] = secondsFloatStr.split(anyDecimalSeparator);
-
-    let tenthsFloat = fractionStr ? parseInt(fractionStr, 10) : 0;
-    while (tenthsFloat >= 10) tenthsFloat /= 10;
-
-    const tenths = Math.round(tenthsFloat);
-    const seconds = parseInt(secondsStr, 10);
-    const minutes = minutesStr ? parseInt(minutesStr, 10) : 0;
-    const hours = hoursStr ? parseInt(hoursStr, 10) : 0;
-
-    return ((hours * 60 + minutes) * 60 + seconds) * 10 + tenths;
 }
 
 export default function TranscriptEditor({
@@ -48,7 +31,29 @@ export default function TranscriptEditor({
                 {transcriptWIP.reduce(
                     (elements, { endTenths, text }, startTenths) => [
                         ...elements,
-                        <SubtitleBlock {...{ key: startTenths, startTenths, endTenths, text }} />,
+                        <SubtitleBlock
+                            {...{
+                                key: startTenths,
+                                startTenths,
+                                endTenths,
+                                text,
+                                onChange: (newData) => {
+                                    setTranscriptWIP((prevTranscript) =>
+                                        prevTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
+                                            if (thisIndex === startTenths) {
+                                                nextTranscript[newData.startTenths] = {
+                                                    endTenths: newData.endTenths,
+                                                    text: newData.text,
+                                                };
+                                            } else {
+                                                nextTranscript[thisIndex] = thisBlock;
+                                            }
+                                            return nextTranscript;
+                                        }, [] as { endTenths: number; text: string }[])
+                                    );
+                                },
+                            }}
+                        />,
                     ],
                     [] as JSX.Element[]
                 )}

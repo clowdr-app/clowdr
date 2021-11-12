@@ -48,21 +48,28 @@ async function batchUpdatesDownChannel(modelName: ModelName) {
     return channel;
 }
 
-export async function publishBatchUpdate(modelName: ModelName, id: string): Promise<boolean> {
+export async function publishBatchUpdate(
+    modelName: ModelName,
+    id: string,
+    backdateDistance?: number
+): Promise<boolean> {
     const channel = await uplinkChannel();
-    return channel.publish(exchange, modelName, Buffer.from(id), {
+    return channel.publish(exchange, modelName, Buffer.from(JSON.stringify({ id, backdateDistance })), {
         persistent: false,
     });
 }
 
-export async function onBatchUpdate(modelName: ModelName, handler: (id: string) => Promise<void>): Promise<void> {
+export async function onBatchUpdate(
+    modelName: ModelName,
+    handler: (id: string, backdateDistance?: number) => Promise<void>
+): Promise<void> {
     const channel = await batchUpdatesDownChannel(modelName);
     channel.consume(updatesQueue(modelName), async (rabbitMQMsg) => {
         try {
             if (rabbitMQMsg) {
-                const id = rabbitMQMsg.content.toString();
+                const { id, backdateDistance } = JSON.parse(rabbitMQMsg.content.toString());
                 try {
-                    await handler(id);
+                    await handler(id, backdateDistance);
                 } finally {
                     channel.ack(rabbitMQMsg);
                 }

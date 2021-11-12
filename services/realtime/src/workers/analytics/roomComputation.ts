@@ -47,8 +47,15 @@ gql`
     }
 `;
 
-async function onRoomBatchUpdate(conferenceId: string) {
-    console.log(`Rooms Batch Update: Conference Id ${conferenceId}`);
+async function onRoomBatchUpdate(conferenceId: string, backdateDistance?: number) {
+    backdateDistance =
+        backdateDistance ??
+        (process.env.ANALYTICS_BACKDATE_CUTOFF
+            ? parseInt(process.env.ANALYTICS_BACKDATE_CUTOFF, 10)
+            : 7 * 24 * 60 * 60 * 1000);
+    const dateCutoff = new Date(Date.now() - backdateDistance).toISOString();
+
+    console.log(`Rooms Batch Update: Conference Id ${conferenceId} (stats going back to ${dateCutoff})`);
 
     const roomsResponse = await apolloClient?.query({
         query: Analytics_ListRoomsDocument,
@@ -70,25 +77,26 @@ async function onRoomBatchUpdate(conferenceId: string) {
         const batchSize = 100;
         let lastResponseSize = Number.POSITIVE_INFINITY;
         let offset = 0;
-        const dateCutoff =
-            Date.now() -
-            (process.env.ANALYTICS_BACKDATE_CUTOFF
-                ? parseInt(process.env.ANALYTICS_BACKDATE_CUTOFF, 10)
-                : 7 * 24 * 60 * 60 * 1000);
-        const dateCutoffStr = new Date(dateCutoff).toISOString();
         while (lastResponseSize > 0) {
             const statsResponse = await apolloClient?.query({
                 query: Analytics_FetchRoomPresenceDocument,
                 variables: {
                     limit: batchSize,
                     offset,
-                    dateCutoff: dateCutoffStr,
+                    dateCutoff,
                 },
             });
             offset += batchSize;
             lastResponseSize = statsResponse?.data.analytics_AppStats.length ?? 0;
 
-            if (statsResponse) {
+            if (statsResponse && statsResponse.data.analytics_AppStats.length > 0) {
+                const firstSet = statsResponse.data.analytics_AppStats[0];
+                const lastSet = statsResponse.data.analytics_AppStats[statsResponse.data.analytics_AppStats.length - 1];
+                const numSets = statsResponse.data.analytics_AppStats.length;
+                console.log(
+                    `Rooms Batch Update: Conference Id ${conferenceId}. Processing stat sets for: ${firstSet.created_at} to ${lastSet.created_at} (${numSets} sets) (Offset: ${offset}, Batch size: ${batchSize}, Date cutoff: ${dateCutoff})`
+                );
+
                 for (const statSet of statsResponse.data.analytics_AppStats) {
                     try {
                         if (statSet.pages) {
@@ -129,6 +137,8 @@ async function onRoomBatchUpdate(conferenceId: string) {
                 }
             }
         }
+
+        console.log(`Rooms Batch Update: Conference Id ${conferenceId}: Done processing stat sets.`);
     }
 }
 

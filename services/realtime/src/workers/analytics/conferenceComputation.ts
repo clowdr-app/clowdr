@@ -16,8 +16,8 @@ gql`
     }
 `;
 
-async function onConferenceBatchUpdate(conferenceId: string) {
-    console.log(`Conference Batch Update: ${conferenceId}`);
+async function onConferenceBatchUpdate(conferenceId: string, backdateDistance?: number) {
+    console.log(`Conference Batch Update: ${conferenceId} (Backdate distance: ${backdateDistance})`);
 
     const response = await apolloClient?.query({
         query: Analytics_ListRecordsForAnalyticsDocument,
@@ -44,9 +44,12 @@ async function onConferenceBatchUpdate(conferenceId: string) {
         }
 
         try {
-            publishBatchUpdate(ModelName.Room, conferenceId);
+            publishBatchUpdate(ModelName.Room, conferenceId, backdateDistance);
         } catch (error: any) {
-            console.error("Error publishing batch update for rooms: " + conferenceId, error);
+            console.error(
+                `Error publishing batch update for rooms: ${conferenceId} (Backdate distance: ${backdateDistance})`,
+                error
+            );
         }
     }
 }

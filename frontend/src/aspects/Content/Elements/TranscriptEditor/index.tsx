@@ -1,7 +1,7 @@
 import { Button, Flex } from "@chakra-ui/react";
 import React, { useState } from "react";
-import srtHandler from "srt-parser-2";
-import { SubtitleBlock, timecodeToTenths } from "./SubtitleBlock";
+import srtHandler, { Line as SerializableBlock } from "srt-parser-2";
+import { SubtitleBlock, tenthsToTimecode, timecodeToTenths } from "./SubtitleBlock";
 
 interface Props {
     srtTranscript: string;
@@ -157,7 +157,19 @@ export default function TranscriptEditor({
                 <Button
                     colorScheme="green"
                     onClick={() => {
-                        //handleSaveEditor(SRT.toSrt(transcriptWIP));
+                        handleSaveEditor(
+                            SRT.toSrt(
+                                transcriptWIP.reduce((serializableTranscript, { endTenths, text }, startTenths) => {
+                                    serializableTranscript.push({
+                                        id: (serializableTranscript.length + 1).toString(),
+                                        startTime: tenthsToTimecode(startTenths),
+                                        endTime: tenthsToTimecode(endTenths),
+                                        text,
+                                    });
+                                    return serializableTranscript;
+                                }, [] as SerializableBlock[])
+                            )
+                        );
                     }}
                 >
                     Save Subtitles

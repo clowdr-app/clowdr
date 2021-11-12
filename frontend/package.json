@@ -133,6 +133,7 @@
         "videojs-contrib-quality-levels": "^2.1.0",
         "videojs-hls-quality-selector": "^1.1.4",
         "vite": "^2.6.14",
+        "wonka": "^4.0.15",
         "xml-js": "^1.6.11"
     },
     "devDependencies": {

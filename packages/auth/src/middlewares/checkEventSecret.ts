@@ -9,7 +9,7 @@ export const checkEventSecret = (req: Request, res: Response, next: NextFunction
         ) {
             res.status(401);
             res.send({});
-            console.log("Request failed event secret check", req.originalUrl);
+            req.log.error("Request failed event secret check");
             next(new Error("Event secret missing"));
         } else {
             next();

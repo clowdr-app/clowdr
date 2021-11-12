@@ -17,6 +17,7 @@ import { PresenceStateProvider } from "../Realtime/PresenceStateProvider";
 import { RealtimeServiceProvider } from "../Realtime/RealtimeServiceProvider";
 import type { AuthParameters } from "./AuthParameters";
 import { useAuthParameters } from "./AuthParameters";
+import { requestTracingExchange } from "./request-tracing-exchange";
 
 const useSecureProtocols = import.meta.env.VITE_GRAPHQL_API_SECURE_PROTOCOLS !== "false";
 const httpProtocol = useSecureProtocols ? "https" : "http";
@@ -164,6 +165,7 @@ function UrqlProviderInner({
                         exchanges: [
                             devtoolsExchange,
                             dedupExchange,
+                            requestTracingExchange,
                             // requestPolicyExchange({
                             //     ttl: 30 * 60 * 1000,
                             //     shouldUpgrade: () =>

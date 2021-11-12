@@ -13,6 +13,7 @@ import { roomMembershipsCache } from "@midspace/caches/roomMembership";
 import { subconferenceCache } from "@midspace/caches/subconference";
 import { subconferenceRoomsCache } from "@midspace/caches/subconferenceRoom";
 import { userCache } from "@midspace/caches/user";
+import type { P } from "pino";
 
 export enum HasuraHeaders {
     Role = "x-hasura-role",
@@ -104,6 +105,7 @@ function formatArrayForHasuraHeader(values: string | string[]): string {
 }
 
 export async function computeAuthHeaders(
+    logger: P.Logger,
     verifiedParams: Partial<{ userId: string }>,
     unverifiedParams: Partial<{
         conferenceId: string;
@@ -115,7 +117,7 @@ export async function computeAuthHeaders(
         includeRoomIds: boolean;
     }>
 ): Promise<false | Partial<Record<HasuraHeaders, string>>> {
-    console.log("Auth webhook inputs", { verifiedParams, unverifiedParams });
+    logger.info({ verifiedParams, unverifiedParams }, "Auth webhook inputs");
 
     // TODO: Do we want to cache the outcome of this logic?
     //          And if so, what is the invalidation strategy?

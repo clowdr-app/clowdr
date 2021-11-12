@@ -8,7 +8,7 @@ assert(process.env.REDIS_KEY, "REDIS_KEY env var not defined.");
 assert(process.env.AUTH0_API_DOMAIN, "AUTH0_API_DOMAIN env var not defined");
 assert(process.env.CORS_ORIGIN, "CORS_ORIGIN env var not provided.");
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3005;
 const server = express();
 server.use(
     cors({

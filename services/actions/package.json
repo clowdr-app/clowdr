@@ -5,7 +5,7 @@
     "scripts": {
         "build": "tsc --build",
         "clean": "rimraf build",
-        "start": "node -r dotenv/config build/server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
+        "start": "node --enable-source-maps -r dotenv/config build/server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
         "dev": "tsc-watch -b --onSuccess \"pnpm start\"",
         "codegen": "pnpm exec graphql-codegen --config codegen.js",
         "test": "jest --config jest.config.ts --forceExit"

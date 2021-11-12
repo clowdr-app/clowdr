@@ -75,6 +75,7 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
         const includeRoomIds = getHeader("X-Auth-Include-Room-Ids");
 
         const result = await computeAuthHeaders(
+            req.log,
             { userId },
             {
                 conferenceId,
@@ -86,14 +87,14 @@ router.get("/auth", json() as any, async (req: Request, res: Response) => {
                 includeRoomIds: includeRoomIds?.toLowerCase() === "true",
             }
         );
-        console.log(result);
+        req.log.info({ result }, "Handled webhook");
         if (result !== false) {
             res.status(200).json(result);
         } else {
             res.status(401).json("Unauthorized");
         }
-    } catch (e) {
-        console.error("Failure while handling Hasura Auth webhook", e);
+    } catch (err) {
+        req.log.error({ err }, "Failure while handling Hasura Auth webhook");
         res.status(500).json("Failure while handling Hasura Auth webhook");
         return;
     }

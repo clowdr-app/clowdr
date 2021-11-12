@@ -1,5 +1,6 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
 import { checkJwt } from "@midspace/auth/middlewares/checkJwt";
+import { requestId } from "@midspace/auth/middlewares/request-id";
 import type { invitationConfirmCurrentArgs } from "@midspace/hasura/actionTypes";
 import assert from "assert";
 import { json } from "body-parser";
@@ -12,7 +13,6 @@ import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { logger } from "./lib/logger";
 import { errorHandler } from "./middlewares/error-handler";
-import { requestId } from "./middlewares/request-id";
 import { router as amazonTranscribeRouter } from "./router/amazonTranscribe";
 import { router as analyticsRouter } from "./router/analytics";
 import { router as chatRouter } from "./router/chat";

@@ -6,7 +6,7 @@
         "build": "tsc --build && pnpm copy-resources",
         "clean": "rimraf build",
         "copy-resources": "rimraf build/resources && cpy --cwd=src/resources \"**/*\" ../../build/resources --parents",
-        "start": "pnpm nf start --procfile Procfile -p 3004",
+        "start": "node --enable-source-maps -r dotenv/config build/web-server.js | pino-pretty -t SYS:HH:MM:ss.l -S -i hostname,pid",
         "dev": "pnpm copy-resources && tsc-watch -b --onSuccess \"pnpm start\"",
         "test-publisher": "node-env-run -E ./src/test/.publisher.env -e \"ts-node ./src/test/publisher.ts\"",
         "test-consumer": "node-env-run -E ./src/test/.consumer.env -e \"ts-node ./src/test/consumer.ts\""
@@ -23,6 +23,7 @@
         "@types/jsonwebtoken": "^8.5.3",
         "@types/jwk-to-pem": "^2.0.0",
         "@types/node-fetch": "^2.5.10",
+        "@types/pino-http": "^5.8.0",
         "@types/redis": "^2.8.30",
         "@types/redlock": "^4.0.2",
         "@types/uuid": "^8.3.0",
@@ -42,6 +43,8 @@
         "jwks-rsa": "^2.0.3",
         "node-env-run": "^4.0.2",
         "node-fetch": "^2.6.1",
+        "pino": "^7.1.0",
+        "pino-http": "^6.0.0",
         "redis": "^3.1.2",
         "redlock": "^4.2.0",
         "rimraf": "^3.0.2",
@@ -53,6 +56,7 @@
         "uuid": "^8.3.2"
     },
     "devDependencies": {
+        "pino-pretty": "^7.2.0",
         "tsc-watch": "^4.4.0"
     },
     "engines": {

@@ -1,6 +1,6 @@
 - name: BatchUpdateAnalytics
   webhook: '{{REALTIME_BASE_URL}}/analytics/batchUpdate'
-  schedule: 7 * * * *
+  schedule: 7 */6 * * *
   include_in_metadata: true
   payload: {}
   headers:

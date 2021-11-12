@@ -19624,10 +19624,6 @@ export type Query_RootGetSlugArgs = {
     url: Scalars["String"];
 };
 
-export type Query_RootGetUploadAgreementArgs = {
-    magicToken: Scalars["String"];
-};
-
 export type Query_RootJob_Queues_ChannelStackCreateJobArgs = {
     distinct_on?: Maybe<ReadonlyArray<Job_Queues_ChannelStackCreateJob_Select_Column>>;
     limit?: Maybe<Scalars["Int"]>;
@@ -45655,9 +45651,7 @@ export type SubmitUploadableElementMutation = {
         | undefined;
 };
 
-export type GetUploadAgreementQueryVariables = Exact<{
-    magicToken: Scalars["String"];
-}>;
+export type GetUploadAgreementQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUploadAgreementQuery = {
     readonly __typename?: "query_root";
@@ -53931,8 +53925,8 @@ export function useSubmitUploadableElementMutation() {
     );
 }
 export const GetUploadAgreementDocument = gql`
-    query GetUploadAgreement($magicToken: String!) {
-        getUploadAgreement(magicToken: $magicToken) {
+    query GetUploadAgreement {
+        getUploadAgreement {
             agreementText
             agreementUrl
         }
@@ -56755,7 +56749,7 @@ export type GraphCacheResolvers = {
         >;
         getUploadAgreement?: GraphCacheResolver<
             WithTypename<Query_Root>,
-            Query_RootGetUploadAgreementArgs,
+            Record<string, never>,
             WithTypename<GetUploadAgreementOutput> | string
         >;
         job_queues_ChannelStackCreateJob?: GraphCacheResolver<

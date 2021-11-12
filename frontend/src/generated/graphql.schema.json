@@ -49848,18 +49848,7 @@
                             "name": "GetUploadAgreementOutput",
                             "ofType": null
                         },
-                        "args": [
-                            {
-                                "name": "magicToken",
-                                "type": {
-                                    "kind": "NON_NULL",
-                                    "ofType": {
-                                        "kind": "SCALAR",
-                                        "name": "Any"
-                                    }
-                                }
-                            }
-                        ]
+                        "args": []
                     },
                     {
                         "name": "job_queues_ChannelStackCreateJob",

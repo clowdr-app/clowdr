@@ -39,8 +39,8 @@
         "composite": true
     },
     "references": [
-        { "path": "../packages/shared-types/tsconfig.esm.json" },
-        { "path": "../packages/assert/tsconfig.esm.json" },
-        { "path": "../packages/graphql/tsconfig.esm.json" }
+        { "path": "../packages/shared/shared-types/tsconfig.esm.json" },
+        { "path": "../packages/shared/assert/tsconfig.esm.json" },
+        { "path": "../packages/shared/graphql/tsconfig.esm.json" }
     ]
 }

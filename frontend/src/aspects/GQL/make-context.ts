@@ -1,47 +1,12 @@
+import type { AuthHeaders } from "@midspace/shared-types/auth";
 import type { OperationContext } from "urql";
 
-export function makeContext(headers: Record<string, string>): Partial<OperationContext> {
+export function makeContext(
+    headers: Partial<Record<AuthHeaders | "NoConferenceId", string>>
+): Partial<OperationContext> {
     return {
         fetchOptions: {
             headers,
         },
     };
 }
-
-// export function useShieldedHeaders(headers: Record<string, string>): Partial<OperationContext> | undefined {
-//     const [outHeaders, setOutHeaders] = useState<Record<string, string>>(headers);
-
-//     useEffect(() => {
-//         const inKeys = Object.keys(headers);
-//         const outKeys = Object.keys(outHeaders);
-//         if (inKeys.length !== outKeys.length) {
-//             setOutHeaders(headers);
-//         } else {
-//             let different = outKeys.some((outKey) => !inKeys.includes(outKey));
-//             if (!different) {
-//                 for (const inKey of inKeys) {
-//                     if (outHeaders[inKey] !== headers[inKey]) {
-//                         different = true;
-//                         break;
-//                     }
-//                 }
-//             }
-
-//             if (different) {
-//                 setOutHeaders(headers);
-//             }
-//         }
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [headers]);
-
-//     const outContext = useMemo<Partial<OperationContext> | undefined>(
-//         () => ({
-//             fetchOptions: {
-//                 headers: outHeaders,
-//             },
-//         }),
-//         [outHeaders]
-//     );
-
-//     return outContext;
-// }

@@ -10,6 +10,7 @@ import {
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
+import { AuthHeaders } from "@midspace/shared-types/auth";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
@@ -20,6 +21,7 @@ import type { FieldProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSubmitUploadableElementMutation } from "../../../generated/graphql";
+import { makeContext } from "../../GQL/make-context";
 import FAIcon from "../../Icons/FAIcon";
 import UnsavedChangesWarning from "../../LeavingPageWarnings/UnsavedChangesWarning";
 import UploadAgreementField from "./UploadAgreementField";
@@ -48,7 +50,8 @@ export default function UploadFileForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
-    const [_submitUploadableElementResponse, submitUploadableElement] = useSubmitUploadableElementMutation();
+    const context = useMemo(() => makeContext({ [AuthHeaders.MagicToken]: magicToken }), [magicToken]);
+    const [, submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
         const uppy = new Uppy({
             id: "required-content-item-upload",
@@ -137,13 +140,16 @@ export default function UploadFileForm({
                     }
 
                     try {
-                        const submitResult = await submitUploadableElement({
-                            elementData: {
-                                s3Url: result.successful[0].uploadURL,
-                                altText: values.altText,
+                        const submitResult = await submitUploadableElement(
+                            {
+                                elementData: {
+                                    s3Url: result.successful[0].uploadURL,
+                                    altText: values.altText,
+                                },
+                                magicToken,
                             },
-                            magicToken,
-                        });
+                            context
+                        );
 
                         if (submitResult.error || !submitResult.data?.submitUploadableElement?.success) {
                             throw new Error(

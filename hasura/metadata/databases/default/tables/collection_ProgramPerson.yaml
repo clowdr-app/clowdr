@@ -112,6 +112,18 @@ select_permissions:
   role: organizer
 - permission:
     columns:
+    - accessToken
+    - affiliation
+    - conferenceId
+    - id
+    - name
+    filter:
+      accessToken:
+        _eq: X-Hasura-Magic-Token
+    limit: 1
+  role: submitter
+- permission:
+    columns:
     - affiliation
     - conferenceId
     - id

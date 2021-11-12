@@ -429,7 +429,7 @@ export async function handleGetUploadAgreement(magicToken: string): Promise<GetU
         },
     });
 
-    const value = result.data.collection_ProgramPerson?.[0]?.conference?.configurations?.[0].value;
+    const value = result.data.collection_ProgramPerson?.[0]?.conference?.configurations?.[0]?.value;
     const agreement = {
         agreementText: value?.text,
         agreementUrl: value?.url,

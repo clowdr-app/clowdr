@@ -1,4 +1,5 @@
 import { checkEventSecret } from "@midspace/auth/middlewares/checkEventSecret";
+import { parseSessionVariables } from "@midspace/auth/middlewares/parse-session-variables";
 import type { GetUploadAgreementOutput, submitElementArgs, updateSubtitlesArgs } from "@midspace/hasura/actionTypes";
 import type { ElementData, Payload } from "@midspace/hasura/event";
 import { json } from "body-parser";
@@ -75,6 +76,7 @@ router.post("/updateSubtitles", json(), async (req: Request, res: Response) => {
 router.post(
     "/getUploadAgreement",
     json(),
+    parseSessionVariables,
     async (req: Request, res: Response<GetUploadAgreementOutput | string>, next: NextFunction) => {
         try {
             const magicToken = assertType<string>(req.magicToken);

@@ -42,8 +42,8 @@ gql`
         }
     }
 
-    query GetUploadAgreement($magicToken: String!) {
-        getUploadAgreement(magicToken: $magicToken) {
+    query GetUploadAgreement {
+        getUploadAgreement {
             agreementText
             agreementUrl
         }
@@ -59,36 +59,27 @@ export default function SubmitElementPage({
     itemId: string;
     elementId: string;
 }): JSX.Element {
-    const context1 = useMemo(
+    const context = useMemo(
         () =>
             makeContext({
-                "X-Auth-Role": "unauthenticated",
+                "X-Auth-Role": "submitter",
+                "X-Auth-Magic-Token": magicToken,
             }),
-        []
+        [magicToken]
     );
     const [{ fetching: uploadAgreementLoading, error: uploadAgreementError, data: uploadAgreementData }] =
         useGetUploadAgreementQuery({
             requestPolicy: "network-only",
-            variables: {
-                magicToken,
-            },
-            context: context1,
+            context,
         });
     useQueryErrorToast(uploadAgreementError, false, "SubmitItemPage -- upload agreement");
 
-    const context2 = useMemo(
-        () =>
-            makeContext({
-                "X-Auth-Magic-Token": magicToken,
-            }),
-        []
-    );
     const [{ fetching: loading, error, data }, refetch] = useGetElementQuery({
         variables: {
             accessToken: magicToken,
             elementId,
         },
-        context: context2,
+        context,
         requestPolicy: "network-only",
     });
     useQueryErrorToast(error, false, "SubmitItemPage -- content item");

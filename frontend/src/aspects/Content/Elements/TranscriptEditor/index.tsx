@@ -19,22 +19,19 @@ function validateNewStartTenths({
     oldStartTenths: number;
     newStartTenths: number;
 }): Boolean {
-    // Assume:
-    // - end time not changing
-    // - all times are integers and old start time was non-negative
     if (newStartTenths < oldStartTenths) {
         if (newStartTenths < 0) return false;
 
-        let prevBlockStartTenths = oldStartTenths;
-        while (--prevBlockStartTenths >= 0) {
+        for (let prevBlockStartTenths = oldStartTenths - 1; prevBlockStartTenths >= 0; --prevBlockStartTenths) {
             if (oldTranscript[prevBlockStartTenths]) {
-                return newStartTenths > oldTranscript[prevBlockStartTenths].endTenths;
+                return newStartTenths >= oldTranscript[prevBlockStartTenths].endTenths;
             }
         }
+
         return true;
-    } else if (newStartTenths > oldStartTenths) {
-        return newStartTenths < oldTranscript[oldStartTenths].endTenths;
-    } else return true;
+    }
+
+    return newStartTenths < oldTranscript[oldStartTenths].endTenths;
 }
 
 function validateNewEndTenths({
@@ -46,21 +43,21 @@ function validateNewEndTenths({
     startTenths: number;
     newEndTenths: number;
 }): Boolean {
-    // Assume:
-    // - start time not changing
-    // - all times are integers and old start time was non-negative
     if (newEndTenths > oldTranscript[startTenths].endTenths) {
         // TODO upper limit is end of video
-        if (newEndTenths >= oldTranscript.length) return true;
 
-        let nextBlockStartTenths = oldTranscript[startTenths].endTenths;
-        while (++nextBlockStartTenths <= newEndTenths) {
+        for (
+            let nextBlockStartTenths = oldTranscript[startTenths].endTenths;
+            nextBlockStartTenths < newEndTenths;
+            ++nextBlockStartTenths
+        ) {
             if (oldTranscript[nextBlockStartTenths]) return false;
         }
+
         return true;
-    } else if (newEndTenths < oldTranscript[startTenths].endTenths) {
-        return newEndTenths > startTenths;
-    } else return true;
+    }
+
+    return newEndTenths > startTenths;
 }
 
 export default function TranscriptEditor({

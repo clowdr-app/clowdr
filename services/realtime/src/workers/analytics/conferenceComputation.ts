@@ -28,14 +28,26 @@ async function onConferenceBatchUpdate(conferenceId: string) {
 
     if (response) {
         for (const record of response.data.content_Item) {
-            publishBatchUpdate(ModelName.Item, record.id);
+            try {
+                publishBatchUpdate(ModelName.Item, record.id);
+            } catch (error: any) {
+                console.error("Error publishing batch update for item: " + record.id, error);
+            }
         }
 
         for (const record of response.data.content_Element) {
-            publishBatchUpdate(ModelName.Element, record.id);
+            try {
+                publishBatchUpdate(ModelName.Element, record.id);
+            } catch (error: any) {
+                console.error("Error publishing batch update for element: " + record.id, error);
+            }
         }
 
-        publishBatchUpdate(ModelName.Room, conferenceId);
+        try {
+            publishBatchUpdate(ModelName.Room, conferenceId);
+        } catch (error: any) {
+            console.error("Error publishing batch update for rooms: " + conferenceId, error);
+        }
     }
 }
 

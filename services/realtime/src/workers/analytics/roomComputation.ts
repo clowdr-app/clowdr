@@ -90,20 +90,41 @@ async function onRoomBatchUpdate(conferenceId: string) {
 
             if (statsResponse) {
                 for (const statSet of statsResponse.data.analytics_AppStats) {
-                    if (statSet.pages) {
-                        for (const roomHash of roomHashes) {
-                            const stat = statSet.pages[`PresenceList:${roomHash.hash}`];
-                            if (typeof stat === "number") {
-                                await apolloClient?.mutate({
-                                    mutation: Analytics_InsertRoomPresenceDocument,
-                                    variables: {
-                                        roomId: roomHash.id,
-                                        createdAt: statSet.created_at,
-                                        count: stat,
-                                    },
-                                });
-                            }
+                    try {
+                        if (statSet.pages) {
+                            await Promise.all(
+                                roomHashes.map(async (roomHash) => {
+                                    try {
+                                        const stat = statSet.pages[`PresenceList:${roomHash.hash}`];
+                                        if (typeof stat === "number") {
+                                            await apolloClient?.mutate({
+                                                mutation: Analytics_InsertRoomPresenceDocument,
+                                                variables: {
+                                                    roomId: roomHash.id,
+                                                    createdAt: statSet.created_at,
+                                                    count: stat,
+                                                },
+                                            });
+                                        }
+                                    } catch (error: any) {
+                                        console.error(
+                                            "Error processing room statistic: " +
+                                                conferenceId +
+                                                " @ " +
+                                                statSet.created_at +
+                                                " / " +
+                                                roomHash.id +
+                                                " / PresenceList:" +
+                                                roomHash.hash
+                                        );
+                                    }
+                                })
+                            );
                         }
+                    } catch (error: any) {
+                        console.error(
+                            "Error processing room statistics set: " + conferenceId + " @ " + statSet.created_at
+                        );
                     }
                 }
             }

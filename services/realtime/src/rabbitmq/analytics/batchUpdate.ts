@@ -39,7 +39,7 @@ async function updatesDownlinkChannel() {
 
 async function batchUpdatesDownChannel(modelName: ModelName) {
     const channel = await updatesDownlinkChannel();
-    channel.prefetch(1);
+    channel.prefetch(modelName === ModelName.Room ? 1 : 10);
     await channel.assertQueue(updatesQueue(modelName), {
         autoDelete: true,
         durable: false,

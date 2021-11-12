@@ -7531,6 +7531,10 @@ export type Conference_Conference = {
     demoCode: Conference_DemoCode;
     demoCodeId: Scalars["uuid"];
     /** An array relationship */
+    events: Array<Schedule_Event>;
+    /** An aggregate relationship */
+    events_aggregate: Schedule_Event_Aggregate;
+    /** An array relationship */
     exhibitions: Array<Collection_Exhibition>;
     /** An aggregate relationship */
     exhibitions_aggregate: Collection_Exhibition_Aggregate;
@@ -7619,6 +7623,24 @@ export type Conference_ConferenceConfigurations_AggregateArgs = {
     offset?: Maybe<Scalars["Int"]>;
     order_by?: Maybe<Array<Conference_Configuration_Order_By>>;
     where?: Maybe<Conference_Configuration_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEventsArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
+};
+
+/** columns and relationships of "conference.Conference" */
+export type Conference_ConferenceEvents_AggregateArgs = {
+    distinct_on?: Maybe<Array<Schedule_Event_Select_Column>>;
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    order_by?: Maybe<Array<Schedule_Event_Order_By>>;
+    where?: Maybe<Schedule_Event_Bool_Exp>;
 };
 
 /** columns and relationships of "conference.Conference" */
@@ -7885,6 +7907,7 @@ export type Conference_Conference_Bool_Exp = {
     creator?: Maybe<User_Bool_Exp>;
     demoCode?: Maybe<Conference_DemoCode_Bool_Exp>;
     demoCodeId?: Maybe<Uuid_Comparison_Exp>;
+    events?: Maybe<Schedule_Event_Bool_Exp>;
     exhibitions?: Maybe<Collection_Exhibition_Bool_Exp>;
     groups?: Maybe<Permissions_Group_Bool_Exp>;
     id?: Maybe<Uuid_Comparison_Exp>;
@@ -7928,6 +7951,7 @@ export type Conference_Conference_Insert_Input = {
     creator?: Maybe<User_Obj_Rel_Insert_Input>;
     demoCode?: Maybe<Conference_DemoCode_Obj_Rel_Insert_Input>;
     demoCodeId?: Maybe<Scalars["uuid"]>;
+    events?: Maybe<Schedule_Event_Arr_Rel_Insert_Input>;
     exhibitions?: Maybe<Collection_Exhibition_Arr_Rel_Insert_Input>;
     groups?: Maybe<Permissions_Group_Arr_Rel_Insert_Input>;
     id?: Maybe<Scalars["uuid"]>;
@@ -8030,6 +8054,7 @@ export type Conference_Conference_Order_By = {
     creator?: Maybe<User_Order_By>;
     demoCode?: Maybe<Conference_DemoCode_Order_By>;
     demoCodeId?: Maybe<Order_By>;
+    events_aggregate?: Maybe<Schedule_Event_Aggregate_Order_By>;
     exhibitions_aggregate?: Maybe<Collection_Exhibition_Aggregate_Order_By>;
     groups_aggregate?: Maybe<Permissions_Group_Aggregate_Order_By>;
     id?: Maybe<Order_By>;
@@ -37815,7 +37840,9 @@ export type EmptyQueryQuery = { __typename?: "query_root" } & {
     conference_Conference: Array<{ __typename?: "conference_Conference" } & Pick<Conference_Conference, "id">>;
 };
 
-export type Analytics_ListConferencesQueryVariables = Exact<{ [key: string]: never }>;
+export type Analytics_ListConferencesQueryVariables = Exact<{
+    cutoff: Scalars["timestamptz"];
+}>;
 
 export type Analytics_ListConferencesQuery = { __typename?: "query_root" } & {
     conference_Conference: Array<{ __typename?: "conference_Conference" } & Pick<Conference_Conference, "id">>;
@@ -38027,15 +38054,34 @@ export type Analytics_ListRecordsForAnalyticsQuery = { __typename?: "query_root"
     content_Element: Array<{ __typename?: "content_Element" } & Pick<Content_Element, "id">>;
 };
 
-export type Analytics_ListRoomsQueryVariables = Exact<{
-    conferenceId: Scalars["uuid"];
+export type Analytics_AggregateElementTotalViewsQueryVariables = Exact<{
+    elementId: Scalars["uuid"];
 }>;
 
-export type Analytics_ListRoomsQuery = { __typename?: "query_root" } & {
-    conference_Conference_by_pk?: Maybe<
-        { __typename?: "conference_Conference" } & Pick<Conference_Conference, "id" | "slug">
+export type Analytics_AggregateElementTotalViewsQuery = { __typename?: "query_root" } & {
+    analytics_ContentElementStats_aggregate: { __typename?: "analytics_ContentElementStats_aggregate" } & {
+        aggregate?: Maybe<
+            { __typename?: "analytics_ContentElementStats_aggregate_fields" } & {
+                sum?: Maybe<
+                    { __typename?: "analytics_ContentElementStats_sum_fields" } & Pick<
+                        Analytics_ContentElementStats_Sum_Fields,
+                        "viewCount"
+                    >
+                >;
+            }
+        >;
+    };
+};
+
+export type Analytics_InsertElementTotalViewStatMutationVariables = Exact<{
+    elementId: Scalars["uuid"];
+    count: Scalars["bigint"];
+}>;
+
+export type Analytics_InsertElementTotalViewStatMutation = { __typename?: "mutation_root" } & {
+    insert_analytics_ElementTotalViews_one?: Maybe<
+        { __typename?: "analytics_ElementTotalViews" } & Pick<Analytics_ElementTotalViews, "elementId">
     >;
-    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id">>;
 };
 
 export type Analytics_AggregateItemTotalViewsQueryVariables = Exact<{
@@ -38057,23 +38103,26 @@ export type Analytics_AggregateItemTotalViewsQuery = { __typename?: "query_root"
     };
 };
 
-export type Analytics_AggregateElementTotalViewsQueryVariables = Exact<{
-    elementId: Scalars["uuid"];
+export type Analytics_InsertItemTotalViewStatMutationVariables = Exact<{
+    itemId: Scalars["uuid"];
+    count: Scalars["bigint"];
 }>;
 
-export type Analytics_AggregateElementTotalViewsQuery = { __typename?: "query_root" } & {
-    analytics_ContentElementStats_aggregate: { __typename?: "analytics_ContentElementStats_aggregate" } & {
-        aggregate?: Maybe<
-            { __typename?: "analytics_ContentElementStats_aggregate_fields" } & {
-                sum?: Maybe<
-                    { __typename?: "analytics_ContentElementStats_sum_fields" } & Pick<
-                        Analytics_ContentElementStats_Sum_Fields,
-                        "viewCount"
-                    >
-                >;
-            }
-        >;
-    };
+export type Analytics_InsertItemTotalViewStatMutation = { __typename?: "mutation_root" } & {
+    insert_analytics_ItemTotalViews_one?: Maybe<
+        { __typename?: "analytics_ItemTotalViews" } & Pick<Analytics_ItemTotalViews, "itemId">
+    >;
+};
+
+export type Analytics_ListRoomsQueryVariables = Exact<{
+    conferenceId: Scalars["uuid"];
+}>;
+
+export type Analytics_ListRoomsQuery = { __typename?: "query_root" } & {
+    conference_Conference_by_pk?: Maybe<
+        { __typename?: "conference_Conference" } & Pick<Conference_Conference, "id" | "slug">
+    >;
+    room_Room: Array<{ __typename?: "room_Room" } & Pick<Room_Room, "id">>;
 };
 
 export type Analytics_FetchRoomPresenceQueryVariables = Exact<{
@@ -38088,28 +38137,6 @@ export type Analytics_FetchRoomPresenceQuery = { __typename?: "query_root" } & {
             Analytics_AppStats,
             "created_at" | "total_unique_tabs" | "total_unique_user_ids" | "pages"
         >
-    >;
-};
-
-export type Analytics_InsertItemTotalViewStatMutationVariables = Exact<{
-    itemId: Scalars["uuid"];
-    count: Scalars["bigint"];
-}>;
-
-export type Analytics_InsertItemTotalViewStatMutation = { __typename?: "mutation_root" } & {
-    insert_analytics_ItemTotalViews_one?: Maybe<
-        { __typename?: "analytics_ItemTotalViews" } & Pick<Analytics_ItemTotalViews, "itemId">
-    >;
-};
-
-export type Analytics_InsertElementTotalViewStatMutationVariables = Exact<{
-    elementId: Scalars["uuid"];
-    count: Scalars["bigint"];
-}>;
-
-export type Analytics_InsertElementTotalViewStatMutation = { __typename?: "mutation_root" } & {
-    insert_analytics_ElementTotalViews_one?: Maybe<
-        { __typename?: "analytics_ElementTotalViews" } & Pick<Analytics_ElementTotalViews, "elementId">
     >;
 };
 
@@ -38302,12 +38329,59 @@ export const Analytics_ListConferencesDocument = {
             kind: "OperationDefinition",
             operation: "query",
             name: { kind: "Name", value: "Analytics_ListConferences" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "cutoff" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "timestamptz" } },
+                    },
+                },
+            ],
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "conference_Conference" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "events" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "endTime" },
+                                                        value: {
+                                                            kind: "ObjectValue",
+                                                            fields: [
+                                                                {
+                                                                    kind: "ObjectField",
+                                                                    name: { kind: "Name", value: "_gte" },
+                                                                    value: {
+                                                                        kind: "Variable",
+                                                                        name: { kind: "Name", value: "cutoff" },
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
@@ -39835,160 +39909,6 @@ export const Analytics_ListRecordsForAnalyticsDocument = {
         },
     ],
 } as unknown as DocumentNode<Analytics_ListRecordsForAnalyticsQuery, Analytics_ListRecordsForAnalyticsQueryVariables>;
-export const Analytics_ListRoomsDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "query",
-            name: { kind: "Name", value: "Analytics_ListRooms" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "conference_Conference_by_pk" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "id" },
-                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                { kind: "Field", name: { kind: "Name", value: "id" } },
-                                { kind: "Field", name: { kind: "Name", value: "slug" } },
-                            ],
-                        },
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "room_Room" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "conferenceId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "conferenceId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
-                        },
-                    },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<Analytics_ListRoomsQuery, Analytics_ListRoomsQueryVariables>;
-export const Analytics_AggregateItemTotalViewsDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "query",
-            name: { kind: "Name", value: "Analytics_AggregateItemTotalViews" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "analytics_ContentItemStats_aggregate" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "where" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "itemId" },
-                                            value: {
-                                                kind: "ObjectValue",
-                                                fields: [
-                                                    {
-                                                        kind: "ObjectField",
-                                                        name: { kind: "Name", value: "_eq" },
-                                                        value: {
-                                                            kind: "Variable",
-                                                            name: { kind: "Name", value: "itemId" },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "Field",
-                                    name: { kind: "Name", value: "aggregate" },
-                                    selectionSet: {
-                                        kind: "SelectionSet",
-                                        selections: [
-                                            {
-                                                kind: "Field",
-                                                name: { kind: "Name", value: "sum" },
-                                                selectionSet: {
-                                                    kind: "SelectionSet",
-                                                    selections: [
-                                                        { kind: "Field", name: { kind: "Name", value: "viewCount" } },
-                                                    ],
-                                                },
-                                            },
-                                        ],
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<Analytics_AggregateItemTotalViewsQuery, Analytics_AggregateItemTotalViewsQueryVariables>;
 export const Analytics_AggregateElementTotalViewsDocument = {
     kind: "Document",
     definitions: [
@@ -40070,6 +39990,322 @@ export const Analytics_AggregateElementTotalViewsDocument = {
     Analytics_AggregateElementTotalViewsQuery,
     Analytics_AggregateElementTotalViewsQueryVariables
 >;
+export const Analytics_InsertElementTotalViewStatDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "Analytics_InsertElementTotalViewStat" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_analytics_ElementTotalViews_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "elementId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "totalViewCount" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "ElementTotalViews_pkey" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "elementId" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    Analytics_InsertElementTotalViewStatMutation,
+    Analytics_InsertElementTotalViewStatMutationVariables
+>;
+export const Analytics_AggregateItemTotalViewsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_AggregateItemTotalViews" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "analytics_ContentItemStats_aggregate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "itemId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "itemId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "aggregate" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "Field",
+                                                name: { kind: "Name", value: "sum" },
+                                                selectionSet: {
+                                                    kind: "SelectionSet",
+                                                    selections: [
+                                                        { kind: "Field", name: { kind: "Name", value: "viewCount" } },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<Analytics_AggregateItemTotalViewsQuery, Analytics_AggregateItemTotalViewsQueryVariables>;
+export const Analytics_InsertItemTotalViewStatDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "Analytics_InsertItemTotalViewStat" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "insert_analytics_ItemTotalViews_one" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "object" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "itemId" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "totalViewCount" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "on_conflict" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "constraint" },
+                                            value: { kind: "EnumValue", value: "ItemTotalViews_pkey" },
+                                        },
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "update_columns" },
+                                            value: {
+                                                kind: "ListValue",
+                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "itemId" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<
+    Analytics_InsertItemTotalViewStatMutation,
+    Analytics_InsertItemTotalViewStatMutationVariables
+>;
+export const Analytics_ListRoomsDocument = {
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "Analytics_ListRooms" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
+                },
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "conference_Conference_by_pk" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "conferenceId" } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "Field", name: { kind: "Name", value: "id" } },
+                                { kind: "Field", name: { kind: "Name", value: "slug" } },
+                            ],
+                        },
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "room_Room" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "where" },
+                                value: {
+                                    kind: "ObjectValue",
+                                    fields: [
+                                        {
+                                            kind: "ObjectField",
+                                            name: { kind: "Name", value: "conferenceId" },
+                                            value: {
+                                                kind: "ObjectValue",
+                                                fields: [
+                                                    {
+                                                        kind: "ObjectField",
+                                                        name: { kind: "Name", value: "_eq" },
+                                                        value: {
+                                                            kind: "Variable",
+                                                            name: { kind: "Name", value: "conferenceId" },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "Field", name: { kind: "Name", value: "id" } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode<Analytics_ListRoomsQuery, Analytics_ListRoomsQueryVariables>;
 export const Analytics_FetchRoomPresenceDocument = {
     kind: "Document",
     definitions: [
@@ -40170,168 +40406,6 @@ export const Analytics_FetchRoomPresenceDocument = {
         },
     ],
 } as unknown as DocumentNode<Analytics_FetchRoomPresenceQuery, Analytics_FetchRoomPresenceQueryVariables>;
-export const Analytics_InsertItemTotalViewStatDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "Analytics_InsertItemTotalViewStat" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "insert_analytics_ItemTotalViews_one" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "object" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "itemId" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "itemId" } },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "totalViewCount" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
-                                        },
-                                    ],
-                                },
-                            },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "on_conflict" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "constraint" },
-                                            value: { kind: "EnumValue", value: "ItemTotalViews_pkey" },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "update_columns" },
-                                            value: {
-                                                kind: "ListValue",
-                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "itemId" } }],
-                        },
-                    },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<
-    Analytics_InsertItemTotalViewStatMutation,
-    Analytics_InsertItemTotalViewStatMutationVariables
->;
-export const Analytics_InsertElementTotalViewStatDocument = {
-    kind: "Document",
-    definitions: [
-        {
-            kind: "OperationDefinition",
-            operation: "mutation",
-            name: { kind: "Name", value: "Analytics_InsertElementTotalViewStat" },
-            variableDefinitions: [
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "uuid" } } },
-                },
-                {
-                    kind: "VariableDefinition",
-                    variable: { kind: "Variable", name: { kind: "Name", value: "count" } },
-                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "bigint" } } },
-                },
-            ],
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "insert_analytics_ElementTotalViews_one" },
-                        arguments: [
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "object" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "elementId" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "elementId" } },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "totalViewCount" },
-                                            value: { kind: "Variable", name: { kind: "Name", value: "count" } },
-                                        },
-                                    ],
-                                },
-                            },
-                            {
-                                kind: "Argument",
-                                name: { kind: "Name", value: "on_conflict" },
-                                value: {
-                                    kind: "ObjectValue",
-                                    fields: [
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "constraint" },
-                                            value: { kind: "EnumValue", value: "ElementTotalViews_pkey" },
-                                        },
-                                        {
-                                            kind: "ObjectField",
-                                            name: { kind: "Name", value: "update_columns" },
-                                            value: {
-                                                kind: "ListValue",
-                                                values: [{ kind: "EnumValue", value: "totalViewCount" }],
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        ],
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [{ kind: "Field", name: { kind: "Name", value: "elementId" } }],
-                        },
-                    },
-                ],
-            },
-        },
-    ],
-} as unknown as DocumentNode<
-    Analytics_InsertElementTotalViewStatMutation,
-    Analytics_InsertElementTotalViewStatMutationVariables
->;
 export const Analytics_InsertRoomPresenceDocument = {
     kind: "Document",
     definitions: [

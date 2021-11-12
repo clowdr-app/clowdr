@@ -37,6 +37,15 @@ array_relationships:
       table:
         name: Configuration
         schema: conference
+- name: events
+  using:
+    manual_configuration:
+      column_mapping:
+        id: conferenceId
+      insertion_order: null
+      remote_table:
+        name: Event
+        schema: schedule
 - name: exhibitions
   using:
     foreign_key_constraint_on:

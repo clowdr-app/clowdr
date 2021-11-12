@@ -5,8 +5,8 @@ import { apolloClient } from "../graphqlClient";
 import { ModelName, publishBatchUpdate } from "../rabbitmq/analytics/batchUpdate";
 
 gql`
-    query Analytics_ListConferences {
-        conference_Conference {
+    query Analytics_ListConferences($cutoff: timestamptz!) {
+        conference_Conference(where: { events: { endTime: { _gte: $cutoff } } }) {
             id
         }
     }
@@ -14,8 +14,16 @@ gql`
 
 export async function queueConferenceBatchUpdates(_req: Request, res: Response): Promise<void> {
     try {
+        const cutoff =
+            Date.now() -
+            (process.env.ANALYTICS_BACKDATE_CUTOFF
+                ? parseInt(process.env.ANALYTICS_BACKDATE_CUTOFF, 10)
+                : 7 * 24 * 60 * 60 * 1000);
         const conferences = await apolloClient?.query({
             query: Analytics_ListConferencesDocument,
+            variables: {
+                cutoff: new Date(cutoff).toISOString(),
+            },
         });
         if (conferences) {
             for (const conference of conferences.data.conference_Conference) {

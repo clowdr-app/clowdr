@@ -10,6 +10,59 @@ interface Props {
     handleChange?: () => void;
 }
 
+function validateNewStartTenths({
+    oldTranscript,
+    oldStartTenths,
+    newStartTenths,
+}: {
+    oldTranscript: { endTenths: number; text: string }[];
+    oldStartTenths: number;
+    newStartTenths: number;
+}): Boolean {
+    // Assume:
+    // - end time not changing
+    // - all times are integers and old start time was non-negative
+    if (newStartTenths < oldStartTenths) {
+        if (newStartTenths < 0) return false;
+
+        let prevBlockStartTenths = oldStartTenths;
+        while (--prevBlockStartTenths >= 0) {
+            if (oldTranscript[prevBlockStartTenths]) {
+                return newStartTenths > oldTranscript[prevBlockStartTenths].endTenths;
+            }
+        }
+        return true;
+    } else if (newStartTenths > oldStartTenths) {
+        return newStartTenths < oldTranscript[oldStartTenths].endTenths;
+    } else return true;
+}
+
+function validateNewEndTenths({
+    oldTranscript,
+    startTenths,
+    newEndTenths,
+}: {
+    oldTranscript: { endTenths: number; text: string }[];
+    startTenths: number;
+    newEndTenths: number;
+}): Boolean {
+    // Assume:
+    // - start time not changing
+    // - all times are integers and old start time was non-negative
+    if (newEndTenths > oldTranscript[startTenths].endTenths) {
+        // TODO upper limit is end of video
+        if (newEndTenths >= oldTranscript.length) return true;
+
+        let nextBlockStartTenths = oldTranscript[startTenths].endTenths;
+        while (++nextBlockStartTenths <= newEndTenths) {
+            if (oldTranscript[nextBlockStartTenths]) return false;
+        }
+        return true;
+    } else if (newEndTenths < oldTranscript[startTenths].endTenths) {
+        return newEndTenths > startTenths;
+    } else return true;
+}
+
 export default function TranscriptEditor({
     srtTranscript,
     mediaUrl,
@@ -27,7 +80,7 @@ export default function TranscriptEditor({
     const [transcriptWIP, setTranscriptWIP] = useState(initialTranscript);
     return (
         <Flex flexDirection="row" width="100%">
-            <Flex flexBasis={0} flexGrow={1} flexDirection="column" justifyContent="center">
+            <Flex flexBasis={0} flexGrow={2} flexDirection="column" justifyContent="center">
                 {transcriptWIP.reduce(
                     (elements, { endTenths, text }, startTenths) => [
                         ...elements,
@@ -37,17 +90,52 @@ export default function TranscriptEditor({
                                 startTenths,
                                 endTenths,
                                 text,
-                                onChange: (newData) => {
-                                    setTranscriptWIP((prevTranscript) =>
-                                        prevTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
-                                            if (thisIndex === startTenths) {
-                                                nextTranscript[newData.startTenths] = {
-                                                    endTenths: newData.endTenths,
-                                                    text: newData.text,
-                                                };
-                                            } else {
-                                                nextTranscript[thisIndex] = thisBlock;
-                                            }
+                                onTextInput: (newText) => {
+                                    setTranscriptWIP((oldTranscript) =>
+                                        oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
+                                            nextTranscript[thisIndex] =
+                                                thisIndex === startTenths
+                                                    ? {
+                                                          endTenths: thisBlock.endTenths,
+                                                          text: newText,
+                                                      }
+                                                    : thisBlock;
+                                            return nextTranscript;
+                                        }, [] as { endTenths: number; text: string }[])
+                                    );
+                                },
+                                onStartTenthsInput: (newStartTenths) => {
+                                    setTranscriptWIP((oldTranscript) =>
+                                        oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
+                                            nextTranscript[
+                                                thisIndex === startTenths &&
+                                                validateNewStartTenths({
+                                                    oldTranscript,
+                                                    oldStartTenths: startTenths,
+                                                    newStartTenths,
+                                                })
+                                                    ? newStartTenths
+                                                    : thisIndex
+                                            ] = thisBlock;
+                                            return nextTranscript;
+                                        }, [] as { endTenths: number; text: string }[])
+                                    );
+                                },
+                                onEndTenthsInput: (newEndTenths) => {
+                                    setTranscriptWIP((oldTranscript) =>
+                                        oldTranscript.reduce((nextTranscript, thisBlock, thisIndex) => {
+                                            nextTranscript[thisIndex] =
+                                                thisIndex === startTenths &&
+                                                validateNewEndTenths({
+                                                    oldTranscript,
+                                                    startTenths,
+                                                    newEndTenths,
+                                                })
+                                                    ? {
+                                                          endTenths: newEndTenths,
+                                                          text: thisBlock.text,
+                                                      }
+                                                    : thisBlock;
                                             return nextTranscript;
                                         }, [] as { endTenths: number; text: string }[])
                                     );

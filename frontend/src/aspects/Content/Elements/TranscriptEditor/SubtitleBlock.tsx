@@ -1,4 +1,12 @@
-import { Flex, Input, Textarea } from "@chakra-ui/react";
+import {
+    Flex,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    Textarea,
+} from "@chakra-ui/react";
 import React from "react";
 
 const secondsFormat = new Intl.NumberFormat(undefined, {
@@ -48,9 +56,13 @@ export function SubtitleBlock({
     startTenths,
     endTenths,
     text,
-    onChange,
+    onTextInput,
+    onStartTenthsInput,
+    onEndTenthsInput,
 }: SubtitleBlockData & {
-    onChange: (data: SubtitleBlockData) => void;
+    onTextInput: (newText: string) => void;
+    onStartTenthsInput: (newStartTenths: number) => void;
+    onEndTenthsInput: (newEndTenths: number) => void;
 }): JSX.Element {
     return (
         <Flex style={{ fontFamily: "monospace" }}>
@@ -62,12 +74,24 @@ export function SubtitleBlock({
                 resize="none"
                 value={text}
                 onInput={(e) => {
-                    onChange({ startTenths, endTenths, text: (e.target as HTMLTextAreaElement).value });
+                    onTextInput((e.target as HTMLTextAreaElement).value);
                 }}
             />
             <Flex flexBasis={"16em"} flexGrow={0} flexDirection="column" justifyContent="space-between">
-                <Input value={tenthsToTimecode(startTenths)} />
-                <Input value={tenthsToTimecode(endTenths)} />
+                <NumberInput value={tenthsToTimecode(startTenths)}>
+                    <NumberInputField readOnly />
+                    <NumberInputStepper>
+                        <NumberIncrementStepper onClick={() => onStartTenthsInput(startTenths + 1)} />
+                        <NumberDecrementStepper onClick={() => onStartTenthsInput(startTenths - 1)} />
+                    </NumberInputStepper>
+                </NumberInput>
+                <NumberInput value={tenthsToTimecode(endTenths)}>
+                    <NumberInputField readOnly />
+                    <NumberInputStepper>
+                        <NumberIncrementStepper onClick={() => onEndTenthsInput(endTenths + 1)} />
+                        <NumberDecrementStepper onClick={() => onEndTenthsInput(endTenths - 1)} />
+                    </NumberInputStepper>
+                </NumberInput>
             </Flex>
         </Flex>
     );

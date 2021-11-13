@@ -1,4 +1,5 @@
 import type { Channel } from "amqplib";
+import { Mutex } from "async-mutex";
 import { downlink, uplink } from "../../rabbitmq";
 
 export enum ModelName {
@@ -15,11 +16,17 @@ const exchangeParams = {
 };
 
 let _uplinkChannel: Channel;
+const uplinkChannelMutex = new Mutex();
 async function uplinkChannel() {
-    if (!_uplinkChannel) {
-        const connection = await uplink();
-        _uplinkChannel = await connection.createChannel();
-        await _uplinkChannel.assertExchange(exchange, "direct", exchangeParams);
+    const release = await uplinkChannelMutex.acquire();
+    try {
+        if (!_uplinkChannel) {
+            const connection = await uplink();
+            _uplinkChannel = await connection.createChannel();
+            await _uplinkChannel.assertExchange(exchange, "direct", exchangeParams);
+        }
+    } finally {
+        release();
     }
     return _uplinkChannel;
 }
@@ -27,12 +34,18 @@ async function uplinkChannel() {
 const updatesQueue = (modelName: ModelName) => `${exchange}.${modelName}`;
 
 let _updatesDownlinkChannel: Channel;
+const updatesDownChannelMutex = new Mutex();
 async function updatesDownlinkChannel() {
-    if (!_updatesDownlinkChannel) {
-        const connection = await downlink();
-        _updatesDownlinkChannel = await connection.createChannel();
+    const release = await updatesDownChannelMutex.acquire();
+    try {
+        if (!_updatesDownlinkChannel) {
+            const connection = await downlink();
+            _updatesDownlinkChannel = await connection.createChannel();
 
-        await _updatesDownlinkChannel.assertExchange(exchange, "direct", exchangeParams);
+            await _updatesDownlinkChannel.assertExchange(exchange, "direct", exchangeParams);
+        }
+    } finally {
+        release();
     }
     return _updatesDownlinkChannel;
 }

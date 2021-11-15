@@ -3,8 +3,10 @@ import assert from "assert";
 import cors from "cors";
 import express from "express";
 import path from "path";
+import type { P } from "pino";
 import { pino } from "pino";
 import pinoHttp from "pino-http";
+import { is } from "typescript-is";
 import { router as hasuraRouter } from "./hasura";
 import { logger } from "./logger";
 
@@ -25,7 +27,7 @@ server.use(requestId());
 server.use(
     pinoHttp({
         logger: logger as any, // 7.0-compatible @types not yet released for pino-http
-        autoLogging: process.env.DEBUG === "true" ? true : false,
+        autoLogging: process.env.LOG_LEVEL === "trace" ? true : false,
         genReqId: (req) => req.id,
         serializers: {
             req: pino.stdSerializers.wrapRequestSerializer((r) => {
@@ -40,7 +42,7 @@ server.use(
                 return s;
             }),
         },
-        useLevel: process.env.DEBUG === "true" ? "trace" : "info",
+        useLevel: is<P.Level>(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : "info",
     })
 );
 

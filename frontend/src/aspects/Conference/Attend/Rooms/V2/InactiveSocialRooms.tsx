@@ -1,9 +1,11 @@
 import { Spinner } from "@chakra-ui/react";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import { gql } from "@urql/core";
 import * as R from "ramda";
 import React, { useMemo } from "react";
 import type { RoomParticipantDetailsFragment, SocialRoomFragment } from "../../../../../generated/graphql";
 import { useGetSocialRoomsQuery } from "../../../../../generated/graphql";
+import { makeContext } from "../../../../GQL/make-context";
 import useRoomParticipants from "../../../../Room/useRoomParticipants";
 import { useConference } from "../../../useConference";
 import RoomSummary from "./RoomsSummary";
@@ -36,10 +38,18 @@ gql`
 
 export default function InactiveSocialRooms(): JSX.Element {
     const conference = useConference();
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.IncludeRoomIds]: "true",
+            }),
+        []
+    );
     const [result] = useGetSocialRoomsQuery({
         variables: {
             conferenceId: conference.id,
         },
+        context,
         requestPolicy: "cache-and-network",
     });
     const roomParticipants = useRoomParticipants();

@@ -1,9 +1,11 @@
 import { AspectRatio, Box, Button, Center, Heading, Spinner, useColorModeValue, VStack } from "@chakra-ui/react";
-import React from "react";
+import { AuthHeader } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { gql } from "urql";
 import { Room_ManagementMode_Enum, useRoomTile_GetRoomQuery } from "../../../../../generated/graphql";
 import { useAuthParameters } from "../../../../GQL/AuthParameters";
+import { makeContext } from "../../../../GQL/make-context";
 import { FAIcon } from "../../../../Icons/FAIcon";
 import EventHighlight from "./EventHighlight";
 import RoomPresenceGrid from "./RoomPresenceGrid";
@@ -50,12 +52,20 @@ gql`
 `;
 
 export default function RoomTile({ roomId, eventId }: { roomId: string; eventId?: string }): JSX.Element {
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeader.RoomId]: roomId,
+            }),
+        [roomId]
+    );
     const [response] = useRoomTile_GetRoomQuery({
         variables: {
             roomId,
             eventId,
             withEvent: !!eventId,
         },
+        context,
     });
     const shadow = useColorModeValue("md", "light-md");
     const bgColour = useColorModeValue("gray.100", "gray.800");

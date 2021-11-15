@@ -10,7 +10,7 @@ import {
     UnorderedList,
     useToast,
 } from "@chakra-ui/react";
-import { AuthHeaders } from "@midspace/shared-types/auth";
+import { AuthHeader } from "@midspace/shared-types/auth";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import type { UppyFile } from "@uppy/core";
 import Uppy from "@uppy/core";
@@ -50,7 +50,7 @@ export default function UploadFileForm({
 }): JSX.Element {
     const toast = useToast();
     const [files, setFiles] = useState<UppyFile[]>([]);
-    const context = useMemo(() => makeContext({ [AuthHeaders.MagicToken]: magicToken }), [magicToken]);
+    const context = useMemo(() => makeContext({ [AuthHeader.MagicToken]: magicToken }), [magicToken]);
     const [, submitUploadableElement] = useSubmitUploadableElementMutation();
     const uppy = useMemo(() => {
         const uppy = new Uppy({

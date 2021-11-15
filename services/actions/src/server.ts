@@ -7,8 +7,10 @@ import { json } from "body-parser";
 import cors from "cors";
 import type { Request, Response } from "express";
 import express from "express";
+import type { P } from "pino";
 import pino from "pino";
 import pinoHttp from "pino-http";
+import { is } from "typescript-is";
 import { invitationConfirmCurrentHandler } from "./handlers/invitation";
 import { initialiseAwsClient } from "./lib/aws/awsClient";
 import { logger } from "./lib/logger";
@@ -59,7 +61,7 @@ app.use(requestId());
 app.use(
     pinoHttp({
         logger: logger as any, // 7.0-compatible @types not yet released for pino-http
-        autoLogging: process.env.DEBUG === "true" ? true : false,
+        autoLogging: process.env.LOG_LEVEL === "trace" ? true : false,
         genReqId: (req) => req.id,
         serializers: {
             req: pino.stdSerializers.wrapRequestSerializer((r) => {
@@ -74,7 +76,7 @@ app.use(
                 return s;
             }),
         },
-        useLevel: process.env.DEBUG === "true" ? "trace" : "info",
+        useLevel: is<P.Level>(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : "info",
     })
 );
 

@@ -1072,6 +1072,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.3
       '@types/jwk-to-pem': ^2.0.0
       '@types/node-fetch': ^2.5.10
+      '@types/pino-http': ^5.8.0
       '@types/redis': ^2.8.30
       '@types/redlock': ^4.0.2
       '@types/uuid': ^8.3.0
@@ -1084,6 +1085,7 @@ importers:
       bufferutil: ^4.0.3
       cors: ^2.8.5
       cpy-cli: ^3.1.1
+      dotenv: ^10.0.0
       express: ^4.17.1
       generic-pool: ^3.8.2
       jsonwebtoken: ^8.5.1
@@ -1091,6 +1093,9 @@ importers:
       jwks-rsa: ^2.0.3
       node-env-run: ^4.0.2
       node-fetch: ^2.6.1
+      pino: ^7.1.0
+      pino-http: ^6.0.0
+      pino-pretty: ^7.2.0
       redis: ^3.1.2
       redlock: ^4.2.0
       rimraf: ^3.0.2
@@ -1113,6 +1118,7 @@ importers:
       '@types/jsonwebtoken': 8.5.5
       '@types/jwk-to-pem': 2.0.1
       '@types/node-fetch': 2.5.12
+      '@types/pino-http': 5.8.0
       '@types/redis': 2.8.32
       '@types/redlock': 4.0.2
       '@types/uuid': 8.3.1
@@ -1132,6 +1138,8 @@ importers:
       jwks-rsa: 2.0.5
       node-env-run: 4.0.2
       node-fetch: 2.6.5
+      pino: 7.1.0
+      pino-http: 6.0.0
       redis: 3.1.2
       redlock: 4.2.0
       subscriptions-transport-ws: 0.9.19_5971b5a749a91823f5467a6d31a2f8b3
@@ -1141,6 +1149,8 @@ importers:
       utf-8-validate: 5.0.7
       uuid: 8.3.2
     devDependencies:
+      dotenv: 10.0.0
+      pino-pretty: 7.2.0
       rimraf: 3.0.2
       tsc-watch: 4.5.0_typescript@4.4.4
 

@@ -1,5 +1,5 @@
 /** @summary Input headers (unverified) to the auth service. */
-export enum AuthHeaders {
+export enum AuthHeader {
     Role = "X-Auth-Role",
 
     ConferenceId = "X-Auth-Conference-Id",
@@ -7,5 +7,5 @@ export enum AuthHeaders {
     RoomId = "X-Auth-Room-Id",
     MagicToken = "X-Auth-Magic-Token",
     InviteCode = "X-Auth-Invite-Code",
-    includeRoomIds = "X-Auth-Include-Room-Ids",
+    IncludeRoomIds = "X-Auth-Include-Room-Ids",
 }

@@ -277,7 +277,7 @@ function ManageConferenceRoutes(): JSX.Element {
                 <Route path={`${path}/theme`}>
                     <ManageTheme />
                 </Route>
-                <Route path={`${path}/manage/settings`}>
+                <Route path={`${path}/settings`}>
                     <ManageConfig />
                 </Route>
 

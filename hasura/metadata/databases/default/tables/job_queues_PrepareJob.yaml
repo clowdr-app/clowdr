@@ -43,6 +43,18 @@ select_permissions:
       conferenceId:
         _in: X-Hasura-Conference-Ids
   role: main-conference-organizer
+- permission:
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - jobStatusName
+    - conferenceId
+    - message
+    filter:
+      conferenceId:
+        _in: X-Hasura-Conference-Ids
+  role: organizer
 event_triggers:
 - definition:
     enable_manual: false

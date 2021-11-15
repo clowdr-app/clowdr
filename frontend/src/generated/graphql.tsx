@@ -40170,12 +40170,12 @@ export type CreateConferencePrepareJobMutation = {
         | undefined;
 };
 
-export type ConferencePrepareJobSubscriptionSubscriptionVariables = Exact<{
+export type GetConferencePrepareJobsQueryVariables = Exact<{
     conferenceId: Scalars["uuid"];
 }>;
 
-export type ConferencePrepareJobSubscriptionSubscription = {
-    readonly __typename?: "subscription_root";
+export type GetConferencePrepareJobsQuery = {
+    readonly __typename?: "query_root";
     readonly job_queues_PrepareJob: ReadonlyArray<{
         readonly __typename?: "job_queues_PrepareJob";
         readonly id: any;
@@ -50731,8 +50731,8 @@ export function useCreateConferencePrepareJobMutation() {
         CreateConferencePrepareJobDocument
     );
 }
-export const ConferencePrepareJobSubscriptionDocument = gql`
-    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
+export const GetConferencePrepareJobsDocument = gql`
+    query GetConferencePrepareJobs($conferenceId: uuid!) {
         job_queues_PrepareJob(
             where: { conferenceId: { _eq: $conferenceId } }
             order_by: { createdAt: desc }
@@ -50753,15 +50753,10 @@ export const ConferencePrepareJobSubscriptionDocument = gql`
     }
 `;
 
-export function useConferencePrepareJobSubscriptionSubscription<TData = ConferencePrepareJobSubscriptionSubscription>(
-    options: Omit<Urql.UseSubscriptionArgs<ConferencePrepareJobSubscriptionSubscriptionVariables>, "query"> = {},
-    handler?: Urql.SubscriptionHandler<ConferencePrepareJobSubscriptionSubscription, TData>
+export function useGetConferencePrepareJobsQuery(
+    options: Omit<Urql.UseQueryArgs<GetConferencePrepareJobsQueryVariables>, "query"> = {}
 ) {
-    return Urql.useSubscription<
-        ConferencePrepareJobSubscriptionSubscription,
-        TData,
-        ConferencePrepareJobSubscriptionSubscriptionVariables
-    >({ query: ConferencePrepareJobSubscriptionDocument, ...options }, handler);
+    return Urql.useQuery<GetConferencePrepareJobsQuery>({ query: GetConferencePrepareJobsDocument, ...options });
 }
 export const ManageModeration_SelectFlagsDocument = gql`
     query ManageModeration_SelectFlags($conferenceId: uuid!) {

@@ -1,8 +1,28 @@
-import { Spinner, Table, TableCaption, Tbody, Td, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import React from "react";
+import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    Button,
+    HStack,
+    Table,
+    TableCaption,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tooltip,
+    Tr,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
+import { AuthHeaders } from "@midspace/shared-types/auth";
+import React, { useMemo } from "react";
 import { gql } from "urql";
-import { useConferencePrepareJobSubscriptionSubscription } from "../../../../generated/graphql";
+import { useCreateConferencePrepareJobMutation, useGetConferencePrepareJobsQuery } from "../../../../generated/graphql";
+import { makeContext } from "../../../GQL/make-context";
 import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
+import { useConference } from "../../useConference";
 
 gql`
     mutation CreateConferencePrepareJob($conferenceId: uuid!) {
@@ -12,7 +32,7 @@ gql`
         }
     }
 
-    subscription ConferencePrepareJobSubscription($conferenceId: uuid!) {
+    query GetConferencePrepareJobs($conferenceId: uuid!) {
         job_queues_PrepareJob(
             where: { conferenceId: { _eq: $conferenceId } }
             order_by: { createdAt: desc }
@@ -34,36 +54,95 @@ gql`
 `;
 
 export function PrepareJobsList({ conferenceId }: { conferenceId: string }): JSX.Element {
-    const [{ data, fetching: loading, error }] = useConferencePrepareJobSubscriptionSubscription({
+    const context = useMemo(
+        () =>
+            makeContext({
+                [AuthHeaders.Role]: "organizer",
+            }),
+        []
+    );
+    const [jobs, getJobs] = useGetConferencePrepareJobsQuery({
         variables: { conferenceId },
+        context,
     });
-    useQueryErrorToast(error, false);
+    useQueryErrorToast(jobs.error, false);
 
-    return loading && !data ? (
-        <Spinner />
-    ) : error ? (
-        <>Error while loading list of jobs.</>
-    ) : (
-        <Table variant="simple" w="auto">
-            <TableCaption>Ongoing and past broadcast preparation jobs</TableCaption>
-            <Thead>
-                <Tr>
-                    <Th>Started at</Th>
-                    <Th>Status</Th>
-                    <Th>Last updated</Th>
-                </Tr>
-            </Thead>
-            <Tbody>
-                {data?.job_queues_PrepareJob.map((job) => (
-                    <Tr key={job.id}>
-                        <Td>{job.createdAt}</Td>
-                        <Td>
-                            <Tooltip label={job.message}>{job.jobStatusName}</Tooltip>
-                        </Td>
-                        <Td>{job.updatedAt}</Td>
+    const [createJobResult, createJob] = useCreateConferencePrepareJobMutation();
+    useQueryErrorToast(createJobResult.error, false);
+    const conference = useConference();
+    const toast = useToast();
+
+    return (
+        <VStack w="100%" alignItems="left">
+            <HStack justifyContent="space-between">
+                <Button
+                    mt={5}
+                    aria-label="Prepare broadcasts"
+                    isLoading={createJobResult.fetching}
+                    onClick={async () => {
+                        try {
+                            await createJob(
+                                {
+                                    conferenceId: conference.id,
+                                },
+                                {
+                                    fetchOptions: {
+                                        headers: {
+                                            "X-Auth-Role": "main-conference-organizer",
+                                        },
+                                    },
+                                }
+                            );
+                            getJobs();
+                            toast({
+                                status: "success",
+                                description: "Started preparing broadcasts.",
+                            });
+                        } catch (err) {
+                            console.error("Failed to start preparing broadcasts", err);
+                            toast({
+                                status: "error",
+                                description: "Failed to start preparing broadcasts.",
+                            });
+                        }
+                    }}
+                >
+                    Prepare broadcasts
+                </Button>
+                <Button mt={5} aria-label="Refresh job list" onClick={async () => getJobs()}>
+                    Refresh
+                </Button>
+            </HStack>
+            {jobs.error ? (
+                <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>Failed to load data</AlertTitle>
+                    <AlertDescription>
+                        {jobs.error.name}: {jobs.error.message}
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+            <Table variant="simple" w="100%">
+                <TableCaption>Ongoing and past broadcast preparation jobs</TableCaption>
+                <Thead>
+                    <Tr>
+                        <Th>Started at</Th>
+                        <Th>Status</Th>
+                        <Th>Last updated</Th>
                     </Tr>
-                ))}
-            </Tbody>
-        </Table>
+                </Thead>
+                <Tbody>
+                    {jobs.data?.job_queues_PrepareJob.map((job) => (
+                        <Tr key={job.id}>
+                            <Td>{job.createdAt}</Td>
+                            <Td>
+                                <Tooltip label={job.message}>{job.jobStatusName}</Tooltip>
+                            </Td>
+                            <Td>{job.updatedAt}</Td>
+                        </Tr>
+                    ))}
+                </Tbody>
+            </Table>
+        </VStack>
     );
 }

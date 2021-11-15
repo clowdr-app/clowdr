@@ -1,21 +1,6 @@
-import {
-    Box,
-    Button,
-    Heading,
-    Spinner,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Text,
-    useToast,
-    VStack,
-} from "@chakra-ui/react";
+import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React from "react";
-import { useCreateConferencePrepareJobMutation } from "../../../../generated/graphql";
 import PageNotFound from "../../../Errors/PageNotFound";
-import useQueryErrorToast from "../../../GQL/useQueryErrorToast";
 import { useTitle } from "../../../Utils/useTitle";
 import RequireRole from "../../RequireRole";
 import { useConference } from "../../useConference";
@@ -28,10 +13,6 @@ import { PrepareJobsList } from "./PrepareJobsList";
 export default function ManageBroadcast(): JSX.Element {
     const conference = useConference();
     const title = useTitle(`Manage broadcasts at ${conference.shortName}`);
-
-    const [{ fetching: loading, error }, create] = useCreateConferencePrepareJobMutation();
-    useQueryErrorToast(error, false);
-    const toast = useToast();
 
     return (
         <RequireRole organizerRole componentIfDenied={<PageNotFound />}>
@@ -47,6 +28,7 @@ export default function ManageBroadcast(): JSX.Element {
                     <Tab>Monitor streams</Tab>
                     <Tab>Configuration</Tab>
                     <Tab>Prepare broadcasts</Tab>
+                    <Tab>Rooms</Tab>
                     <Tab>RTMP broadcast recovery</Tab>
                 </TabList>
                 <TabPanels>
@@ -57,45 +39,10 @@ export default function ManageBroadcast(): JSX.Element {
                         <ConferenceConfiguration conferenceId={conference.id} />
                     </TabPanel>
                     <TabPanel>
-                        <VStack>
-                            <Button
-                                mt={5}
-                                aria-label="Prepare broadcasts"
-                                onClick={async () => {
-                                    await create(
-                                        {
-                                            conferenceId: conference.id,
-                                        },
-                                        {
-                                            fetchOptions: {
-                                                headers: {
-                                                    "X-Auth-Role": "main-conference-organizer",
-                                                },
-                                            },
-                                        }
-                                    );
-                                    toast({
-                                        status: "success",
-                                        description: "Started preparing broadcasts.",
-                                    });
-                                }}
-                            >
-                                Prepare broadcasts
-                            </Button>
-                            {loading ? (
-                                <Spinner />
-                            ) : error ? (
-                                <Text mt={3}>Failed to start broadcast preparation.</Text>
-                            ) : (
-                                <></>
-                            )}
-                            <Box mt={5}>
-                                <PrepareJobsList conferenceId={conference.id} />
-                            </Box>
-                            <Box mt={5}>
-                                <BroadcastRooms conferenceId={conference.id} />
-                            </Box>
-                        </VStack>
+                        <PrepareJobsList conferenceId={conference.id} />
+                    </TabPanel>
+                    <TabPanel>
+                        <BroadcastRooms conferenceId={conference.id} />
                     </TabPanel>
                     <TabPanel>
                         <EventVonageControls conferenceId={conference.id} />

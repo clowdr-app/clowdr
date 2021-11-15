@@ -1,7 +1,10 @@
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
     Box,
     Button,
-    Center,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -66,18 +69,23 @@ export function BroadcastRooms({ conferenceId }: { conferenceId: string }): JSX.
     const [streamUri, setStreamUri] = useState<string | null>(null);
     const streamDisclosure = useDisclosure();
 
-    return loading && !data ? (
-        <Spinner />
-    ) : error ? (
-        <>Error while loading list of rooms.</>
-    ) : (
+    return (
         <>
-            <Center>
-                <Button aria-label="Refresh rooms" onClick={() => refetch()} size="sm">
-                    <FAIcon icon="sync" iconStyle="s" />
-                </Button>
-            </Center>
-            <Table variant="simple" w="auto">
+            {loading ? <Spinner /> : undefined}
+            {error ? (
+                <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>Failed to load data</AlertTitle>
+                    <AlertDescription>
+                        {error.name}: {error.message}
+                    </AlertDescription>
+                </Alert>
+            ) : undefined}
+
+            <Button aria-label="Refresh rooms" onClick={() => refetch()} size="sm">
+                <FAIcon icon="sync" iconStyle="s" />
+            </Button>
+            <Table variant="simple" w="100%">
                 <TableCaption>Rooms that are set up for broadcast</TableCaption>
                 <Thead>
                     <Tr>
